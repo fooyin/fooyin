@@ -542,7 +542,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="42"/>
@@ -682,17 +682,17 @@
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="108"/>
         <source>Time elapsed</source>
-        <translation type="unfinished"></translation>
+        <translation>经过时长</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="114"/>
         <source>Estimated</source>
-        <translation type="unfinished"></translation>
+        <translation>预计</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="117"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>计算中…</translation>
     </message>
 </context>
 <context>
@@ -859,7 +859,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="44"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
@@ -1632,7 +1632,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="439"/>
         <source>Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>音量</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="441"/>
@@ -1657,7 +1657,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="480"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="491"/>
@@ -2482,7 +2482,7 @@
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="55"/>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
         <source>Layout</source>
-        <translation type="unfinished">布局</translation>
+        <translation>布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="58"/>
@@ -2532,7 +2532,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
         <source>Switch</source>
-        <translation type="unfinished"></translation>
+        <translation>开关</translation>
     </message>
 </context>
 <context>
@@ -2621,7 +2621,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="142"/>
         <source>Scan libraries for changes on startup</source>
-        <translation>启动时更新媒体库</translation>
+        <translation>启动时扫描媒体库更改</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="143"/>
@@ -2654,7 +2654,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="46"/>
         <source>Library</source>
-        <translation type="unfinished">媒体库</translation>
+        <translation>媒体库</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="49"/>
@@ -2674,7 +2674,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
         <source>&amp;Scan for changes</source>
-        <translation>检查更改(&amp;S)</translation>
+        <translation>扫描更改(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="60"/>
@@ -2787,7 +2787,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="70"/>
         <source>&amp;Scan for changes</source>
-        <translation>检查更改(&amp;S)</translation>
+        <translation>扫描更改(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="74"/>
@@ -3388,7 +3388,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="60"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="70"/>
@@ -3413,7 +3413,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="102"/>
         <source>Order</source>
-        <translation type="unfinished"></translation>
+        <translation>顺序</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
@@ -4382,7 +4382,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="306"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="317"/>
@@ -4740,17 +4740,17 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="43"/>
         <source>ReplayGain Scan Results</source>
-        <translation type="unfinished">回放增益检索结果</translation>
+        <translation>回放增益扫描结果</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="55"/>
         <source>&amp;Update File Tags</source>
-        <translation type="unfinished">更新文件标签(&amp;U)</translation>
+        <translation>更新文件标签(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="59"/>
         <source>Time taken</source>
-        <translation type="unfinished"></translation>
+        <translation>用时</translation>
     </message>
 </context>
 <context>
@@ -4758,27 +4758,27 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="44"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="46"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="48"/>
         <source>Album Gain</source>
-        <translation type="unfinished">专辑增益</translation>
+        <translation>专辑增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="50"/>
         <source>Track Peak</source>
-        <translation type="unfinished">音轨峰值</translation>
+        <translation>音轨峰值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="52"/>
         <source>Album Peak</source>
-        <translation type="unfinished">专辑峰值</translation>
+        <translation>专辑峰值</translation>
     </message>
 </context>
 <context>
@@ -4786,67 +4786,67 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="61"/>
         <source>Scanning tracks…</source>
-        <translation type="unfinished">正在检索音轨…</translation>
+        <translation>正在扫描音轨…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="61"/>
         <source>Abort</source>
-        <translation type="unfinished">放弃</translation>
+        <translation>放弃</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="65"/>
         <source>ReplayGain Scan Progress</source>
-        <translation type="unfinished">回放增益扫描进度</translation>
+        <translation>回放增益扫描进度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="86"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>当前文件</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="106"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>回放增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="109"/>
         <source>Calculate ReplayGain values per-file</source>
-        <translation type="unfinished">每个文件独立计算回放增益</translation>
+        <translation>每个文件独立计算回放增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="110"/>
         <source>Calculate ReplayGain values as a single album</source>
-        <translation type="unfinished">所有文件作为一张专辑整体计算回放增益</translation>
+        <translation>所有文件作为一张专辑整体计算回放增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="111"/>
         <source>Calculate ReplayGain values as albums (by tags)</source>
-        <translation type="unfinished">按标签拆分专辑后计算回放增益</translation>
+        <translation>按标签拆分专辑后计算回放增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="112"/>
         <source>Remove ReplayGain information from files</source>
-        <translation type="unfinished">从文件中删除回放增益信息</translation>
+        <translation>从文件中删除回放增益信息</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="114"/>
         <source>Calculate ReplayGain values for selected files, considering each file individually</source>
-        <translation type="unfinished">给选中的文件计算回放增益，每个文件独立计算</translation>
+        <translation>给选中的文件计算回放增益，每个文件独立计算</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="116"/>
         <source>Calculate ReplayGain values for selected files, considering all files as part of one album</source>
-        <translation type="unfinished">给选中的文件计算回放增益，所有文件整体记为一个专辑</translation>
+        <translation>给选中的文件计算回放增益，所有文件整体记为一个专辑</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="117"/>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation type="unfinished">给选中的文件计算回放增益，按标签拆分专辑</translation>
+        <translation>给选中的文件计算回放增益，按标签拆分专辑</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="118"/>
         <source>Remove ReplayGain values from the selected files</source>
-        <translation type="unfinished">从选中的文件中删除回放增益信息</translation>
+        <translation>从选中的文件中删除回放增益信息</translation>
     </message>
 </context>
 <context>
@@ -4940,12 +4940,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="77"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>使用样本峰值计算峰值</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
         <source>Use true peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>使用真实峰值计算峰值</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="81"/>
@@ -5015,7 +5015,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="145"/>
         <source>Calculate as albums (by tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>按标签划分专辑计算</translation>
     </message>
 </context>
 <context>
@@ -5227,7 +5227,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="55"/>
         <source>Scrobbler</source>
-        <translation type="unfinished"></translation>
+        <translation>歌曲记录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="59"/>
@@ -6064,7 +6064,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="140"/>
         <source>Tracks</source>
-        <translation type="unfinished">音轨</translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="144"/>
@@ -6191,7 +6191,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="39"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="41"/>
@@ -6263,7 +6263,7 @@
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="55"/>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="65"/>
         <source>Visualisations</source>
-        <translation type="unfinished"></translation>
+        <translation>可视化</translation>
     </message>
 </context>
 <context>
@@ -6271,17 +6271,17 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="230"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="231"/>
         <source>Widgets</source>
-        <translation type="unfinished">小部件</translation>
+        <translation>小部件</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="231"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>音量计</translation>
     </message>
 </context>
 <context>
@@ -6289,77 +6289,77 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="78"/>
         <source>Custom colours</source>
-        <translation type="unfinished">自定义颜色</translation>
+        <translation>自定义颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="84"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="87"/>
         <source>Peak hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值保持时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="88"/>
         <source>Falloff time</source>
-        <translation type="unfinished"></translation>
+        <translation>衰减时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="91"/>
         <source>seconds</source>
-        <translation type="unfinished">秒</translation>
+        <translation>秒</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="93"/>
         <source>dB per second</source>
-        <translation type="unfinished"></translation>
+        <translation>dB/s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="102"/>
         <source>Dimension</source>
-        <translation type="unfinished">尺寸</translation>
+        <translation>尺寸</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="105"/>
         <source>Channel spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>信道间距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="106"/>
         <source>Bar size</source>
-        <translation type="unfinished"></translation>
+        <translation>柱子大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="107"/>
         <source>Bar spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>柱子间隔</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="108"/>
         <source>Sections</source>
-        <translation type="unfinished"></translation>
+        <translation>部分</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="109"/>
         <source>Section spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>部分间距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="143"/>
         <source>Background colour</source>
-        <translation type="unfinished"></translation>
+        <translation>背景色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="144"/>
         <source>Peak colour</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="145"/>
         <source>Bar colours</source>
-        <translation type="unfinished"></translation>
+        <translation>柱子颜色</translation>
     </message>
 </context>
 <context>
@@ -6367,42 +6367,42 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="622"/>
         <source>Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值计</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="622"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>音量计</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="799"/>
         <source>Show peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>显示峰值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="804"/>
         <source>Show legend</source>
-        <translation type="unfinished"></translation>
+        <translation>显示图例</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="809"/>
         <source>Orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>方向</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="812"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="813"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>竖直</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="827"/>
         <source>Settings…</source>
-        <translation type="unfinished">设置…</translation>
+        <translation>设置…</translation>
     </message>
 </context>
 <context>
@@ -6911,17 +6911,17 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="319"/>
         <source>Scanning files</source>
-        <translation>正在检索文件</translation>
+        <translation>正在扫描文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="322"/>
         <source>Scanning tracks</source>
-        <translation>正在检索音轨</translation>
+        <translation>正在扫描音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="325"/>
         <source>Scanning %1</source>
-        <translation>正在检索%1</translation>
+        <translation>正在扫描%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="328"/>
