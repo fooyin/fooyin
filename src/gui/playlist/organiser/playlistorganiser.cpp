@@ -149,14 +149,22 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
 
     actionManager->addContextObject(m_context);
 
+    const QStringList editCategory{tr("Edit")};
+    const QStringList organiserCategory{tr("Playlist Organiser")};
+
+    m_removeCmd->setCategories(editCategory);
     m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
+
+    m_renameCmd->setCategories(editCategory);
     m_renameCmd->setDefaultShortcut(Qt::Key_F2);
     m_renameCmd->setAttribute(ProxyAction::UpdateText);
 
+    m_newGroupCmd->setCategories(organiserCategory);
     m_newGroup->setStatusTip(tr("Create a new empty group"));
     m_newGroupCmd->setAttribute(ProxyAction::UpdateText);
     m_newGroupCmd->setDefaultShortcut(QKeySequence::AddTab);
 
+    m_newPlaylistCmd->setCategories(organiserCategory);
     m_newPlaylist->setStatusTip(tr("Create a new empty playlist"));
     m_newPlaylistCmd->setAttribute(ProxyAction::UpdateText);
     m_newPlaylistCmd->setDefaultShortcut(QKeySequence::New);

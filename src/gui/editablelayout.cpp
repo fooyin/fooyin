@@ -546,8 +546,11 @@ void EditableLayout::initialise()
 {
     auto* editMenu = p->m_actionManager->actionContainer(Constants::Menus::Edit);
 
+    const QStringList editCategory{tr("Edit")};
+
     auto* undo    = new QAction(tr("&Undo"), this);
     auto* undoCmd = p->m_actionManager->registerAction(undo, Constants::Actions::Undo, p->m_editingContext->context());
+    undoCmd->setCategories(editCategory);
     undoCmd->setDefaultShortcut(QKeySequence::Undo);
     editMenu->addAction(undoCmd);
     QObject::connect(undo, &QAction::triggered, this, [this]() { p->m_layoutHistory->undo(); });
@@ -557,6 +560,7 @@ void EditableLayout::initialise()
 
     auto* redo    = new QAction(tr("&Redo"), this);
     auto* redoCmd = p->m_actionManager->registerAction(redo, Constants::Actions::Redo, p->m_editingContext->context());
+    redoCmd->setCategories(editCategory);
     redoCmd->setDefaultShortcut(QKeySequence::Redo);
     editMenu->addAction(redoCmd);
     QObject::connect(redo, &QAction::triggered, this, [this]() { p->m_layoutHistory->redo(); });

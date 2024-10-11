@@ -34,6 +34,7 @@
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/tooltipfilter.h>
@@ -274,58 +275,77 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     m_dirTree->setRootIndex(m_proxyModel->mapFromSource(m_model->setRootPath(rootPath)));
     updateIndent(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
 
+    const QStringList browserCategory{DirBrowser::tr("Directory Browser")};
+
     m_goUp->setStatusTip(DirBrowser::tr("Go up to the parent directory"));
+    auto* goUpCmd = m_actionManager->registerAction(m_goUp, "Directory Browser.GoUp", m_context->context());
+    goUpCmd->setCategories(browserCategory);
     QObject::connect(m_goUp, &QAction::triggered, m_self, [this]() { goUp(); });
-    m_actionManager->registerAction(m_goUp, "Directory Browser.GoUp", m_context->context());
 
     m_goBack->setStatusTip(DirBrowser::tr("Return to the previous directory"));
+    auto* goBackCmd = m_actionManager->registerAction(m_goBack, "Directory Browser.GoBack", m_context->context());
+    goBackCmd->setCategories(browserCategory);
     QObject::connect(m_goBack, &QAction::triggered, m_self, [this]() {
         if(m_dirHistory.canUndo()) {
             m_dirHistory.undo();
         }
     });
-    m_actionManager->registerAction(m_goBack, "Directory Browser.GoBack", m_context->context());
 
     m_goForward->setStatusTip(DirBrowser::tr("Undo a Go->Back action"));
+    auto* goForwardCmd
+        = m_actionManager->registerAction(m_goForward, "Directory Browser.GoForward", m_context->context());
+    goForwardCmd->setCategories(browserCategory);
     QObject::connect(m_goForward, &QAction::triggered, m_self, [this]() {
         if(m_dirHistory.canRedo()) {
             m_dirHistory.redo();
         }
     });
-    m_actionManager->registerAction(m_goForward, "Directory Browser.GoForward", m_context->context());
+
+    const QStringList tracksCategory{DirBrowser::tr("Tracks")};
 
     m_playAction->setStatusTip(DirBrowser::tr("Start playback of the selected files"));
     QObject::connect(m_playAction, &QAction::triggered, m_self, [this]() { handleAction(TrackAction::Play, false); });
 
     m_addCurrent->setStatusTip(DirBrowser::tr("Append selected tracks to the current playlist"));
+    auto* addCurrentCmd
+        = m_actionManager->registerAction(m_addCurrent, Constants::Actions::AddToCurrent, m_context->context());
+    addCurrentCmd->setCategories(tracksCategory);
     QObject::connect(m_addCurrent, &QAction::triggered, m_self,
                      [this]() { handleAction(TrackAction::AddCurrentPlaylist, true); });
-    m_actionManager->registerAction(m_addCurrent, Constants::Actions::AddToCurrent, m_context->context());
 
     m_addActive->setStatusTip(DirBrowser::tr("Append selected tracks to the active playlist"));
+    auto* addActiveCmd
+        = m_actionManager->registerAction(m_addActive, Constants::Actions::AddToActive, m_context->context());
+    addActiveCmd->setCategories(tracksCategory);
     QObject::connect(m_addActive, &QAction::triggered, m_self,
                      [this]() { handleAction(TrackAction::AddActivePlaylist, true); });
-    m_actionManager->registerAction(m_addActive, Constants::Actions::AddToActive, m_context->context());
 
     m_sendCurrent->setStatusTip(DirBrowser::tr("Replace contents of the current playlist with the selected tracks"));
+    auto* sendCurrentCmd
+        = m_actionManager->registerAction(m_sendCurrent, Constants::Actions::SendToCurrent, m_context->context());
+    sendCurrentCmd->setCategories(tracksCategory);
     QObject::connect(m_sendCurrent, &QAction::triggered, m_self,
                      [this]() { handleAction(TrackAction::SendCurrentPlaylist, true); });
-    m_actionManager->registerAction(m_sendCurrent, Constants::Actions::SendToCurrent, m_context->context());
 
     m_sendNew->setStatusTip(DirBrowser::tr("Create a new playlist containing the selected tracks"));
+    auto* sendNewCmd = m_actionManager->registerAction(m_sendNew, Constants::Actions::SendToNew, m_context->context());
+    sendNewCmd->setCategories(tracksCategory);
     QObject::connect(m_sendNew, &QAction::triggered, m_self,
                      [this]() { handleAction(TrackAction::SendNewPlaylist, true); });
-    m_actionManager->registerAction(m_sendNew, Constants::Actions::SendToNew, m_context->context());
 
     m_addQueue->setStatusTip(DirBrowser::tr("Add the selected tracks to the playback queue"));
+    auto* addQueueCmd
+        = m_actionManager->registerAction(m_addQueue, Constants::Actions::AddToQueue, m_context->context());
+    addQueueCmd->setCategories(tracksCategory);
     QObject::connect(m_addQueue, &QAction::triggered, m_self,
                      [this]() { handleAction(TrackAction::AddToQueue, true); });
-    m_actionManager->registerAction(m_addQueue, Constants::Actions::AddToQueue, m_context->context());
 
     m_sendQueue->setStatusTip(DirBrowser::tr("Replace the playback queue with the selected tracks"));
+    auto* sendQueue
+        = m_actionManager->registerAction(m_sendQueue, Constants::Actions::SendToQueue, m_context->context());
+    sendQueue->setCategories(tracksCategory);
     QObject::connect(m_sendQueue, &QAction::triggered, m_self,
                      [this]() { handleAction(TrackAction::SendToQueue, true); });
-    m_actionManager->registerAction(m_sendQueue, Constants::Actions::SendToQueue, m_context->context());
 }
 
 void DirBrowserPrivate::checkIconProvider()
