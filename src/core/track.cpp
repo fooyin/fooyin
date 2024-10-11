@@ -1423,36 +1423,39 @@ void Track::clearWasModified()
 
 QString Track::findCommonField(const TrackList& tracks)
 {
-    QString name;
-
-    if(tracks.size() == 1) {
-        name = tracks.front().title();
-        if(name.isEmpty()) {
-            name = tracks.front().filename();
-        }
-        return name;
+    if(tracks.size() < 2) {
+        return {};
     }
 
-    QString primaryArtist       = tracks.front().effectiveAlbumArtist();
-    const QString primaryAlbum  = tracks.front().album();
-    const QString primaryGenre  = tracks.front().genre();
-    const QString primaryDir    = tracks.front().directory();
+    const Track& firstTrack = tracks.front();
 
-    const bool sameArtist = std::ranges::all_of(tracks, [&primaryArtist](const Track& track) {
-        return track.effectiveAlbumArtist() == primaryArtist;
-    });
-    const bool sameAlbum  = std::ranges::all_of(tracks, [&primaryAlbum](const Track& track) {
-        return track.album() == primaryAlbum;
-    });
+    QString primaryArtist{firstTrack.effectiveAlbumArtist()};
+    QString primaryAlbum{firstTrack.album()};
+    QString primaryGenre{firstTrack.genre()};
+    QString primaryDir{firstTrack.directory()};
+
+    const auto hasSameField = [&tracks]<typename Func>(const QString& field, const Func& trackFunc) {
+        return !field.isEmpty() && std::ranges::all_of(tracks, [&field, &trackFunc](const Track& track) {
+            if constexpr(std::is_member_function_pointer_v<Func>) {
+                return (track.*trackFunc)() == field;
+            }
+            else {
+                return trackFunc(track) == field;
+            }
+        });
+    };
+
+    const bool sameArtist
+        = hasSameField(primaryArtist, [](const Track& track) { return track.effectiveAlbumArtist(); });
+    const bool sameAlbum = hasSameField(primaryAlbum, &Track::album);
+
+    if(sameArtist) {
+        primaryArtist.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
+    }
 
     if(sameAlbum) {
         if(sameArtist) {
-            if(!primaryArtist.isEmpty() && !primaryAlbum.isEmpty()) {
-                if(primaryArtist.contains(QLatin1String{Constants::UnitSeparator})) {
-                    primaryArtist.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
-                }
-                return QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
-            }   
+            return QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
         }
         return primaryAlbum;
     }
@@ -1461,20 +1464,18 @@ QString Track::findCommonField(const TrackList& tracks)
         return primaryArtist;
     }
 
-    const bool sameGenre = std::ranges::all_of(tracks, [&primaryGenre](const Track& track) {
-        return track.genre() == primaryGenre;
-    });
-
+    const bool sameGenre = hasSameField(primaryGenre, &Track::genre);
     if(sameGenre) {
+        primaryGenre.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
         return primaryGenre;
     }
 
-    const bool sameDir = std::ranges::all_of(tracks, [&primaryDir](const Track& track) { return track.directory() == primaryDir; });
+    const bool sameDir = hasSameField(primaryDir, &Track::directory);
     if(sameDir) {
         return primaryDir;
     }
 
-    return name;
+    return {};
 }
 
 TrackIds Track::trackIdsForTracks(const TrackList& tracks)
