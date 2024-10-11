@@ -88,6 +88,11 @@ void ElapsedProgressDialog::setText(const QString& text)
     m_label->setText(text);
 }
 
+void ElapsedProgressDialog::startTimer()
+{
+    m_elapsedTimer.reset();
+}
+
 bool ElapsedProgressDialog::wasCancelled() const
 {
     return m_wasCancelled;

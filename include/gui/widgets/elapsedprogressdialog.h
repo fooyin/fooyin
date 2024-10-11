@@ -44,6 +44,7 @@ public:
 
     void setText(const QString& text);
 
+    void startTimer();
     [[nodiscard]] bool wasCancelled() const;
     [[nodiscard]] std::chrono::milliseconds elapsedTime() const;
 

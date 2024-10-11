@@ -97,6 +97,8 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
             scanner->calculateByAlbumTags(tracksToScan);
             break;
     }
+
+    progress->startTimer();
 }
 
 void RGScannerPlugin::setupReplayGainMenu()
