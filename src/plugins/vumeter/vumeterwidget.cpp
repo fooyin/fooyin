@@ -204,7 +204,7 @@ void VuMeterWidgetPrivate::updateSize()
             if(width > 300 && height > 60) {
                 m_drawLegend  = true;
                 m_legendSize  = static_cast<float>(textRect.height() + LegendPadding);
-                m_labelsSize  = static_cast<float>(fm.horizontalAdvance(QStringLiteral("LFE")) + 5);
+                m_labelsSize  = static_cast<float>(fm.horizontalAdvance(QStringLiteral("TFLR")) + 5);
                 m_meterHeight = height - m_legendSize;
                 m_meterWidth  = width - m_labelsSize;
             }
@@ -293,9 +293,9 @@ QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel)
         const int snappedMaxX = ((maxX + barSize - 1) / barSize) * barSize;
         int width             = snappedMaxX - snappedMinX;
 
-        if(snappedMinX - barSize > labelSize) {
-            snappedMinX -= barSize;
-            width += (2 * barSize);
+        if(snappedMinX - (2 * barSize) > labelSize) {
+            snappedMinX -= (2 * barSize);
+            width += (4 * barSize);
         }
 
         return {snappedMinX, y, width, static_cast<int>(channelSize()) + 1};
@@ -314,9 +314,9 @@ QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel)
     const int snappedMaxY = ((maxY + barSize - 1) / barSize) * barSize;
     int height            = snappedMaxY - snappedMinY;
 
-    if(snappedMinY - barSize > labelSize) {
-        snappedMinY -= barSize;
-        height += (2 * barSize);
+    if(snappedMinY - (2 * barSize) > labelSize) {
+        snappedMinY -= (2 * barSize);
+        height += (4 * barSize);
     }
 
     return {x, snappedMinY, static_cast<int>(channelSize()) + 1, height};
@@ -525,8 +525,7 @@ void VuMeterWidgetPrivate::drawHorizontalBars(QPainter& painter, float x, float 
     }
     else {
         const auto first = static_cast<int>(std::max(0.0F, (((start - m_labelsSize) / m_meterWidth) * bars)));
-
-        for(int column = first; column < barCount; ++column) {
+        for(int column{first}; column < barCount; ++column) {
             const float barDb = MinDb + static_cast<float>(column) * dbStep;
             if(channelLevel > barDb) {
                 const float barX = x + (static_cast<float>(column) * barSize);
