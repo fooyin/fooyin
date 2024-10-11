@@ -126,9 +126,7 @@ void Ebur128Scanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
             }
 
             const float albumPeak
-                = std::ranges::max_element(m_scannedTracks, [](const Track& track1, const Track& track2) {
-                      return track1.rgTrackPeak() < track2.rgTrackPeak();
-                  })->rgTrackPeak();
+                = std::ranges::max_element(m_scannedTracks, std::ranges::less{}, &Track::rgTrackPeak)->rgTrackPeak();
 
             for(Track& track : m_scannedTracks) {
                 track.setRGAlbumGain(static_cast<float>(albumGain));
@@ -295,9 +293,8 @@ void Ebur128Scanner::scanAlbum(bool truePeak)
 
             auto& albumTracks = m_currentAlbum->second;
 
-            const float albumPeak = std::ranges::max_element(albumTracks, [](const Track& track1, const Track& track2) {
-                                        return track1.rgTrackPeak() < track2.rgTrackPeak();
-                                    })->rgTrackPeak();
+            const float albumPeak
+                = std::ranges::max_element(albumTracks, std::ranges::less{}, &Track::rgTrackPeak)->rgTrackPeak();
 
             for(Track& track : albumTracks) {
                 track.setRGAlbumGain(static_cast<float>(albumGain));
