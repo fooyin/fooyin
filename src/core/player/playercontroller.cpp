@@ -107,19 +107,21 @@ void PlayerController::reset()
 
 void PlayerController::play()
 {
-    if(!p->m_currentTrack.isValid() && !p->m_queue.empty()) {
-        changeCurrentTrack(p->m_queue.nextTrackChange());
-        emit tracksDequeued({p->m_currentTrack});
+    if(!p->m_currentTrack.isValid()) {
+        if(!p->m_queue.empty()) {
+            changeCurrentTrack(p->m_queue.nextTrackChange());
+            emit tracksDequeued({p->m_currentTrack});
+        }
+        else if(p->m_playlistHandler) {
+            const PlaylistTrack track = p->m_playlistHandler->changeNextTrack();
+            changeCurrentTrack(track);
+        }
     }
 
     if(p->m_currentTrack.isValid()) {
         if(std::exchange(p->m_playStatus, Player::PlayState::Playing) != Player::PlayState::Playing) {
             emit playStateChanged(p->m_playStatus);
         }
-    }
-    else if(p->m_playlistHandler) {
-        const PlaylistTrack track = p->m_playlistHandler->changeNextTrack();
-        changeCurrentTrack(track);
     }
     else {
         p->m_currentTrack = {};
