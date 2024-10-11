@@ -116,7 +116,7 @@ public:
     ScriptParser m_parser;
     TrackSorter m_sorter;
 
-    int m_currentTrackIndex{0};
+    int m_currentTrackIndex{-1};
     int m_nextTrackIndex{-1};
 
     int m_trackShuffleIndex{-1};
