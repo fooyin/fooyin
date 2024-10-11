@@ -542,7 +542,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="42"/>
@@ -682,17 +682,17 @@
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="108"/>
         <source>Time elapsed</source>
-        <translation type="unfinished"></translation>
+        <translation>Time elapsed</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="114"/>
         <source>Estimated</source>
-        <translation type="unfinished"></translation>
+        <translation>Estimated</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="117"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculating…</translation>
     </message>
 </context>
 <context>
@@ -859,7 +859,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="44"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>File</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
@@ -1632,7 +1632,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="439"/>
         <source>Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>Volume</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="441"/>
@@ -1657,7 +1657,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="480"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>File</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="491"/>
@@ -2482,7 +2482,7 @@
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="55"/>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="58"/>
@@ -2532,7 +2532,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
         <source>Switch</source>
-        <translation type="unfinished"></translation>
+        <translation>Switch</translation>
     </message>
 </context>
 <context>
@@ -2654,7 +2654,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="46"/>
         <source>Library</source>
-        <translation type="unfinished">Library</translation>
+        <translation>Library</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="49"/>
@@ -3388,7 +3388,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="60"/>
         <source>Playback</source>
-        <translation type="unfinished">Playback</translation>
+        <translation>Playback</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="70"/>
@@ -3413,7 +3413,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="102"/>
         <source>Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Order</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
@@ -4382,7 +4382,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="306"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="317"/>
@@ -4740,17 +4740,17 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="43"/>
         <source>ReplayGain Scan Results</source>
-        <translation type="unfinished">ReplayGain Scan Results</translation>
+        <translation>ReplayGain Scan Results</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="55"/>
         <source>&amp;Update File Tags</source>
-        <translation type="unfinished">&amp;Update File Tags</translation>
+        <translation>&amp;Update File Tags</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="59"/>
         <source>Time taken</source>
-        <translation type="unfinished"></translation>
+        <translation>Time taken</translation>
     </message>
 </context>
 <context>
@@ -4758,27 +4758,27 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="44"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="46"/>
         <source>Track Gain</source>
-        <translation type="unfinished">Track Gain</translation>
+        <translation>Track Gain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="48"/>
         <source>Album Gain</source>
-        <translation type="unfinished">Album Gain</translation>
+        <translation>Album Gain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="50"/>
         <source>Track Peak</source>
-        <translation type="unfinished">Track Peak</translation>
+        <translation>Track Peak</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="52"/>
         <source>Album Peak</source>
-        <translation type="unfinished">Album Peak</translation>
+        <translation>Album Peak</translation>
     </message>
 </context>
 <context>
@@ -4786,67 +4786,67 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="61"/>
         <source>Scanning tracks…</source>
-        <translation type="unfinished">Scanning tracks…</translation>
+        <translation>Scanning tracks…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="61"/>
         <source>Abort</source>
-        <translation type="unfinished">Abort</translation>
+        <translation>Abort</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="65"/>
         <source>ReplayGain Scan Progress</source>
-        <translation type="unfinished">ReplayGain Scan Progress</translation>
+        <translation>ReplayGain Scan Progress</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="86"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>Current file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="106"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">ReplayGain</translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="109"/>
         <source>Calculate ReplayGain values per-file</source>
-        <translation type="unfinished">Calculate ReplayGain values per-file</translation>
+        <translation>Calculate ReplayGain values per-file</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="110"/>
         <source>Calculate ReplayGain values as a single album</source>
-        <translation type="unfinished">Calculate ReplayGain values as a single album</translation>
+        <translation>Calculate ReplayGain values as a single album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="111"/>
         <source>Calculate ReplayGain values as albums (by tags)</source>
-        <translation type="unfinished">Calculate ReplayGain values as albums (by tags)</translation>
+        <translation>Calculate ReplayGain values as albums (by tags)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="112"/>
         <source>Remove ReplayGain information from files</source>
-        <translation type="unfinished">Remove ReplayGain information from files</translation>
+        <translation>Remove ReplayGain information from files</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="114"/>
         <source>Calculate ReplayGain values for selected files, considering each file individually</source>
-        <translation type="unfinished">Calculate ReplayGain values for selected files, considering each file individually</translation>
+        <translation>Calculate ReplayGain values for selected files, considering each file individually</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="116"/>
         <source>Calculate ReplayGain values for selected files, considering all files as part of one album</source>
-        <translation type="unfinished">Calculate ReplayGain values for selected files, considering all files as part of one album</translation>
+        <translation>Calculate ReplayGain values for selected files, considering all files as part of one album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="117"/>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation type="unfinished">Calculate ReplayGain values for selected files, dividing into albums by tags</translation>
+        <translation>Calculate ReplayGain values for selected files, dividing into albums by tags</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="118"/>
         <source>Remove ReplayGain values from the selected files</source>
-        <translation type="unfinished">Remove ReplayGain values from the selected files</translation>
+        <translation>Remove ReplayGain values from the selected files</translation>
     </message>
 </context>
 <context>
@@ -4940,12 +4940,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="77"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Use sample peak for calculating peaks</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
         <source>Use true peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Use true peak for calculating peaks</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="81"/>
@@ -5015,7 +5015,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="145"/>
         <source>Calculate as albums (by tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate as albums (by tags)</translation>
     </message>
 </context>
 <context>
@@ -5227,7 +5227,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="55"/>
         <source>Scrobbler</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrobbler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="59"/>
@@ -6065,7 +6065,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="140"/>
         <source>Tracks</source>
-        <translation type="unfinished">Tracks</translation>
+        <translation>Tracks</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="144"/>
@@ -6192,7 +6192,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="39"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>View</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="41"/>
@@ -6264,7 +6264,7 @@
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="55"/>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="65"/>
         <source>Visualisations</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualizations</translation>
     </message>
 </context>
 <context>
@@ -6272,17 +6272,17 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="230"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="231"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="231"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>VU Meter</translation>
     </message>
 </context>
 <context>
@@ -6290,77 +6290,77 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="78"/>
         <source>Custom colours</source>
-        <translation type="unfinished">Custom colors</translation>
+        <translation>Custom colours</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="84"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="87"/>
         <source>Peak hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Peak hold time</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="88"/>
         <source>Falloff time</source>
-        <translation type="unfinished"></translation>
+        <translation>Falloff time</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="91"/>
         <source>seconds</source>
-        <translation type="unfinished">seconds</translation>
+        <translation>seconds</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="93"/>
         <source>dB per second</source>
-        <translation type="unfinished"></translation>
+        <translation>dB per second</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="102"/>
         <source>Dimension</source>
-        <translation type="unfinished">Dimension</translation>
+        <translation>Dimension</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="105"/>
         <source>Channel spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Channel spacing</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="106"/>
         <source>Bar size</source>
-        <translation type="unfinished"></translation>
+        <translation>Bar size</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="107"/>
         <source>Bar spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Bar spacing</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="108"/>
         <source>Sections</source>
-        <translation type="unfinished"></translation>
+        <translation>Sections</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="109"/>
         <source>Section spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Section spacing</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="143"/>
         <source>Background colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Background color</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="144"/>
         <source>Peak colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Peak color</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="145"/>
         <source>Bar colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Bar colors</translation>
     </message>
 </context>
 <context>
@@ -6368,42 +6368,42 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="622"/>
         <source>Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>Peak Meter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="622"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>VU Meter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="799"/>
         <source>Show peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Show peaks</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="804"/>
         <source>Show legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Show legend</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="809"/>
         <source>Orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Orientation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="812"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="813"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="827"/>
         <source>Settings…</source>
-        <translation type="unfinished">Settings…</translation>
+        <translation>Settings…</translation>
     </message>
 </context>
 <context>
