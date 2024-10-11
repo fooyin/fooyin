@@ -1087,10 +1087,12 @@ void PlaylistWidgetPrivate::selectTrackIds(const std::vector<int>& ids) const
         }
     }
 
-    m_playlistView->selectionModel()->select(selection,
-                                             QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
     if(!selection.empty()) {
-        m_playlistView->scrollTo(selection.indexes().front(), QAbstractItemView::PositionAtCenter);
+        const QModelIndex firstIndex = selection.indexes().front();
+        m_playlistView->setCurrentIndex(firstIndex);
+        m_playlistView->selectionModel()->select(selection,
+                                                 QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+        m_playlistView->scrollTo(firstIndex, QAbstractItemView::PositionAtCenter);
     }
 }
 
