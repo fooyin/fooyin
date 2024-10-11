@@ -119,7 +119,7 @@ PlaylistControllerPrivate::PlaylistControllerPrivate(PlaylistController* self, P
 
 void PlaylistControllerPrivate::restoreLastPlaylist()
 {
-    FyStateSettings stateSettings;
+    const FyStateSettings stateSettings;
     const int lastId = stateSettings.value(QLatin1String{LastPlaylistId}).toInt();
 
     if(lastId >= 0) {
@@ -127,6 +127,10 @@ void PlaylistControllerPrivate::restoreLastPlaylist()
         if(!m_currentPlaylist) {
             m_currentPlaylist = m_handler->playlistByIndex(0);
         }
+    }
+
+    if(m_currentPlaylist && !m_handler->activePlaylist()) {
+        m_handler->changeActivePlaylist(m_currentPlaylist);
     }
 
     m_loaded = true;
@@ -479,6 +483,10 @@ void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
 {
     if(!playlist) {
         return;
+    }
+
+    if(!p->m_handler->activePlaylist()) {
+        p->m_handler->changeActivePlaylist(playlist);
     }
 
     auto* prevPlaylist = std::exchange(p->m_currentPlaylist, playlist);
