@@ -30,6 +30,7 @@ namespace Fooyin {
 class MusicLibrary;
 class Playlist;
 class PlaylistController;
+class PlaylistHandler;
 class SettingsManager;
 class SearchController;
 
@@ -76,9 +77,11 @@ protected:
 
 private:
     [[nodiscard]] bool isQuickSearch() const;
-    [[nodiscard]] Playlist* findOrAddPlaylist(const TrackList& tracks) const;
-    [[nodiscard]] TrackList getTracksToSearch() const;
-    bool handleFilteredTracks(const TrackList& tracks);
+    Playlist* findOrAddPlaylist(const TrackList& tracks);
+    [[nodiscard]] TrackList getTracksToSearch(SearchMode mode) const;
+    void deleteWord();
+
+    bool handleFilteredTracks(SearchMode mode, const TrackList& tracks);
     void handleSearchFailed();
 
     void loadColours();
@@ -91,6 +94,7 @@ private:
 
     SearchController* m_searchController;
     PlaylistController* m_playlistController;
+    PlaylistHandler* m_playlistHandler;
     MusicLibrary* m_library;
     SettingsManager* m_settings;
 
@@ -98,6 +102,8 @@ private:
     QLineEdit* m_searchBox;
     QString m_defaultPlaceholder;
     SearchMode m_mode;
+    std::optional<SearchMode> m_forceMode;
+    bool m_forceNewPlaylist;
     bool m_unconnected;
     bool m_autoSearch;
     SearchColours m_colours;

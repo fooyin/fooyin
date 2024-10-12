@@ -51,11 +51,13 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
     : FyWidget{parent}
     , m_searchController{controller}
     , m_playlistController{playlistController}
+    , m_playlistHandler{m_playlistController->playlistHandler()}
     , m_library{library}
     , m_settings{settings}
     , m_searchBox{new QLineEdit(this)}
     , m_defaultPlaceholder{tr("Search library…")}
     , m_mode{SearchMode::Library}
+    , m_forceNewPlaylist{false}
     , m_unconnected{true}
     , m_autoSearch{!isQuickSearch()}
 {
@@ -214,12 +216,38 @@ void SearchWidget::closeEvent(QCloseEvent* event)
 
 void SearchWidget::keyPressEvent(QKeyEvent* event)
 {
-    const int key = event->key();
+    const int key        = event->key();
+    const auto modifiers = event->modifiers();
+
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+        if(modifiers == Qt::ControlModifier) {
+            m_forceNewPlaylist = true;
+        }
+        else if(modifiers == Qt::AltModifier) {
+            m_forceMode = SearchMode::Playlist;
+        }
+        else if(modifiers == (Qt::AltModifier | Qt::ShiftModifier)) {
+            m_forceMode = SearchMode::AllPlaylists;
+        }
+        else if(modifiers == Qt::ShiftModifier) {
+            m_forceMode = SearchMode::PlaylistInline;
+        }
+        else if(modifiers == (Qt::ControlModifier | Qt::AltModifier)) {
+            m_forceMode        = SearchMode::Playlist;
+            m_forceNewPlaylist = true;
+        }
+        else if(modifiers == (Qt::ControlModifier | Qt::AltModifier | Qt::ShiftModifier)) {
+            m_forceMode        = SearchMode::AllPlaylists;
+            m_forceNewPlaylist = true;
+        }
+
         searchChanged(true);
     }
     else if(key == Qt::Key_Escape && isQuickSearch()) {
         close();
+    }
+    else if(key == Qt::Key_Backspace && modifiers == Qt::ControlModifier) {
+        deleteWord();
     }
 
     FyWidget::keyPressEvent(event);
@@ -239,28 +267,33 @@ bool SearchWidget::isQuickSearch() const
     return parentWidget() == nullptr;
 }
 
-Playlist* SearchWidget::findOrAddPlaylist(const TrackList& tracks) const
+Playlist* SearchWidget::findOrAddPlaylist(const TrackList& tracks)
 {
-    QString playlistName = m_settings->value<Settings::Gui::SearchPlaylistName>();
+    QString searchResultsName = m_settings->value<Settings::Gui::SearchPlaylistName>();
 
-    const auto playlists = m_playlistController->playlistHandler()->playlists();
-    for(auto* playlist : playlists) {
-        if(playlist->name().startsWith(playlistName)) {
-            if(m_settings->value<Settings::Gui::SearchPlaylistAppendSearch>()) {
-                playlistName.append(QStringLiteral(" [%1]").arg(m_searchBox->text()));
+    if(!m_forceNewPlaylist) {
+        const auto playlists = m_playlistHandler->playlists();
+        for(auto* playlist : playlists) {
+            if(playlist->name().startsWith(searchResultsName)) {
+                if(m_settings->value<Settings::Gui::SearchPlaylistAppendSearch>()) {
+                    searchResultsName.append(QStringLiteral(" [%1]").arg(m_searchBox->text()));
+                }
+                if(searchResultsName != playlist->name()) {
+                    m_playlistHandler->renamePlaylist(playlist->id(), searchResultsName);
+                }
+                m_playlistHandler->replacePlaylistTracks(playlist->id(), tracks);
+                return playlist;
             }
-            if(playlistName != playlist->name()) {
-                m_playlistController->playlistHandler()->renamePlaylist(playlist->id(), playlistName);
-            }
-            m_playlistController->playlistHandler()->replacePlaylistTracks(playlist->id(), tracks);
-            return playlist;
         }
     }
 
-    if(auto* playlist = m_playlistController->playlistHandler()->createPlaylist(playlistName, tracks)) {
+    const bool forceNew = std::exchange(m_forceNewPlaylist, false);
+
+    if(auto* playlist = forceNew ? m_playlistHandler->createNewPlaylist(searchResultsName, tracks)
+                                 : m_playlistHandler->createPlaylist(searchResultsName, tracks)) {
         if(m_settings->value<Settings::Gui::SearchPlaylistAppendSearch>()) {
-            playlistName.append(QStringLiteral(" (%1)").arg(m_searchBox->text()));
-            m_playlistController->playlistHandler()->renamePlaylist(playlist->id(), playlistName);
+            searchResultsName.append(QStringLiteral(" (%1)").arg(m_searchBox->text()));
+            m_playlistHandler->renamePlaylist(playlist->id(), searchResultsName);
         }
         m_playlistController->changeCurrentPlaylist(playlist);
         return playlist;
@@ -269,15 +302,18 @@ Playlist* SearchWidget::findOrAddPlaylist(const TrackList& tracks) const
     return nullptr;
 }
 
-TrackList SearchWidget::getTracksToSearch() const
+TrackList SearchWidget::getTracksToSearch(SearchMode mode) const
 {
-    switch(m_mode) {
+    switch(mode) {
         case(SearchMode::AllPlaylists): {
-            const auto playlists = m_playlistController->playlistHandler()->playlists();
+            QString searchResultsName = m_settings->value<Settings::Gui::SearchPlaylistName>();
+            const auto playlists      = m_playlistHandler->playlists();
             TrackList allTracks;
             for(const Playlist* playlist : playlists) {
-                const TrackList playlistTracks = playlist->tracks();
-                allTracks.insert(allTracks.end(), playlistTracks.cbegin(), playlistTracks.cend());
+                if(!playlist->name().contains(searchResultsName)) {
+                    const TrackList playlistTracks = playlist->tracks();
+                    allTracks.insert(allTracks.end(), playlistTracks.cbegin(), playlistTracks.cend());
+                }
             }
             return allTracks;
         }
@@ -294,7 +330,23 @@ TrackList SearchWidget::getTracksToSearch() const
     }
 }
 
-bool SearchWidget::handleFilteredTracks(const TrackList& tracks)
+void SearchWidget::deleteWord()
+{
+    QString text             = m_searchBox->text();
+    const int cursorPosition = m_searchBox->cursorPosition();
+
+    static const QRegularExpression wordRegex{QStringLiteral("\\W")};
+
+    int lastWordBoundary = static_cast<int>(text.lastIndexOf(wordRegex, cursorPosition - 1));
+    if(lastWordBoundary == -1) {
+        lastWordBoundary = 0;
+    }
+
+    m_searchBox->setText(text.remove(lastWordBoundary, cursorPosition - lastWordBoundary));
+    m_searchBox->setCursorPosition(lastWordBoundary);
+}
+
+bool SearchWidget::handleFilteredTracks(SearchMode mode, const TrackList& tracks)
 {
     if(tracks.empty()) {
         if(!m_searchBox->text().isEmpty()) {
@@ -305,7 +357,7 @@ bool SearchWidget::handleFilteredTracks(const TrackList& tracks)
 
     resetColours();
 
-    if(m_mode == SearchMode::PlaylistInline) {
+    if(mode == SearchMode::PlaylistInline) {
         m_playlistController->selectTrackIds(Track::trackIdsForTracks(tracks));
     }
     else {
@@ -367,6 +419,27 @@ void SearchWidget::updateConnectedState()
 {
     const auto widgets = m_searchController->connectedWidgets(id());
     m_unconnected      = widgets.empty() || (widgets.size() == 1 && qobject_cast<PlaylistWidget*>(widgets.front()));
+
+    if(m_unconnected) {
+        static const QString searchTooltip
+            = QStringLiteral("<b>%1</b><br><br>"
+                             "<b>Ctrl</b>: %2<br>"
+                             "<b>Alt</b>: %3<br>"
+                             "<b>Alt + Shift</b>: %4<br>"
+                             "<b>Shift</b>: %5<br>"
+                             "<b>Ctrl + Alt</b>: %6<br>"
+                             "<b>Ctrl + Alt + Shift</b>: %7<br>"
+                             "<b>Ctrl + Backspace</b>: %8<br>")
+                  .arg(tr("Special Keys"), tr("Force the creation of a new results playlist"),
+                       tr("Force search in the current playlist"), tr("Force search in all playlists"),
+                       tr("Force inline playlist search"),
+                       tr("Force new results playlist using the current playlist as the source"),
+                       tr("Force new results playlist using all playlists"), tr("Delete a word in the search box"));
+        m_searchBox->setToolTip(searchTooltip);
+    }
+    else {
+        m_searchBox->setToolTip({});
+    }
 }
 
 void SearchWidget::searchChanged(bool enterKey)
@@ -376,11 +449,13 @@ void SearchWidget::searchChanged(bool enterKey)
         return;
     }
 
-    Utils::asyncExec([search = m_searchBox->text(), tracks = getTracksToSearch()]() {
+    const auto mode = m_forceMode ? std::exchange(m_forceMode, {}).value() : m_mode; // NOLINT
+
+    Utils::asyncExec([search = m_searchBox->text(), tracks = getTracksToSearch(mode)]() {
         ScriptParser parser;
         return parser.filter(search, tracks);
-    }).then(this, [this, enterKey](const TrackList& filteredTracks) {
-        if(handleFilteredTracks(filteredTracks) && enterKey) {
+    }).then(this, [this, mode, enterKey](const TrackList& filteredTracks) {
+        if(enterKey && handleFilteredTracks(mode, filteredTracks)) {
             if(isQuickSearch() && m_settings->value<Settings::Gui::SearchSuccessClose>()) {
                 close();
             }
