@@ -24,6 +24,7 @@
 #include "playlist/playlistwidget.h"
 #include "searchcontroller.h"
 
+#include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/scripting/scriptparser.h>
@@ -42,6 +43,8 @@
 #include <QMenu>
 #include <QStyleOptionFrame>
 
+constexpr auto QuickSearchState = "Searching/QuickSearchState";
+
 namespace Fooyin {
 SearchWidget::SearchWidget(SearchController* controller, PlaylistController* playlistController, MusicLibrary* library,
                            SettingsManager* settings, QWidget* parent)
@@ -54,7 +57,7 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
     , m_defaultPlaceholder{tr("Search library…")}
     , m_mode{SearchMode::Library}
     , m_unconnected{true}
-    , m_autoSearch{false}
+    , m_autoSearch{!isQuickSearch()}
 {
     setObjectName(SearchWidget::name());
 
@@ -187,7 +190,26 @@ QSize SearchWidget::minimumSizeHint() const
 void SearchWidget::showEvent(QShowEvent* event)
 {
     updateConnectedState();
+
+    if(isQuickSearch()) {
+        const FyStateSettings stateSettings;
+        const QJsonObject layoutData = stateSettings.value(QLatin1String{QuickSearchState}).toJsonObject();
+        loadLayoutData(layoutData);
+    }
+
     FyWidget::showEvent(event);
+}
+
+void SearchWidget::closeEvent(QCloseEvent* event)
+{
+    if(isQuickSearch()) {
+        QJsonObject layoutData;
+        SearchWidget::saveLayoutData(layoutData);
+
+        FyStateSettings stateSettings;
+        stateSettings.setValue(QLatin1String{QuickSearchState}, layoutData);
+    }
+    FyWidget::closeEvent(event);
 }
 
 void SearchWidget::keyPressEvent(QKeyEvent* event)
@@ -196,7 +218,7 @@ void SearchWidget::keyPressEvent(QKeyEvent* event)
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
         searchChanged(true);
     }
-    else if(key == Qt::Key_Escape && !parentWidget()) {
+    else if(key == Qt::Key_Escape && isQuickSearch()) {
         close();
     }
 
@@ -210,6 +232,11 @@ void SearchWidget::timerEvent(QTimerEvent* event)
         searchChanged();
     }
     FyWidget::timerEvent(event);
+}
+
+bool SearchWidget::isQuickSearch() const
+{
+    return parentWidget() == nullptr;
 }
 
 Playlist* SearchWidget::findOrAddPlaylist(const TrackList& tracks) const
@@ -423,8 +450,8 @@ void SearchWidget::showOptionsMenu()
 
     menu->addSeparator();
 
-    if(parentWidget()) {
-        // Don't allow changing persistent settings if we're quick search
+    if(!isQuickSearch()) {
+        // Quick search widget can't be connected to other widgets
         auto* changePlaceholder = new QAction(tr("Change placeholder text"), this);
         QObject::connect(changePlaceholder, &QAction::triggered, this, &SearchWidget::changePlaceholderText);
         menu->addAction(changePlaceholder);
