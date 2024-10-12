@@ -204,7 +204,7 @@ void SearchWidget::closeEvent(QCloseEvent* event)
 {
     if(isQuickSearch()) {
         QJsonObject layoutData;
-        SearchWidget::saveLayoutData(layoutData);
+        saveLayoutData(layoutData);
 
         FyStateSettings stateSettings;
         stateSettings.setValue(QLatin1String{QuickSearchState}, layoutData);
@@ -381,7 +381,10 @@ void SearchWidget::searchChanged(bool enterKey)
         return parser.filter(search, tracks);
     }).then(this, [this, enterKey](const TrackList& filteredTracks) {
         if(handleFilteredTracks(filteredTracks) && enterKey) {
-            if(m_settings->value<Settings::Gui::SearchSuccessClear>()) {
+            if(isQuickSearch() && m_settings->value<Settings::Gui::SearchSuccessClose>()) {
+                close();
+            }
+            else if(m_settings->value<Settings::Gui::SearchSuccessClear>()) {
                 m_searchBox->clear();
             }
         }

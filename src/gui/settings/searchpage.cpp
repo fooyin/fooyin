@@ -54,6 +54,7 @@ private:
     QLineEdit* m_playlistName;
     QCheckBox* m_appendSearchString;
     QCheckBox* m_focusOnSuccess;
+    QCheckBox* m_closeOnSuccess;
 
     QCheckBox* m_failBg;
     ColourButton* m_failBgColour;
@@ -68,6 +69,7 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     , m_playlistName{new QLineEdit(this)}
     , m_appendSearchString{new QCheckBox(tr("Append search string to the playlist name"), this)}
     , m_focusOnSuccess{new QCheckBox(tr("Switch focus to playlist on successful search"), this)}
+    , m_closeOnSuccess{new QCheckBox(tr("Close quick search when successful"), this)}
     , m_failBg{new QCheckBox(tr("Error background") + u":", this)}
     , m_failBgColour{new ColourButton(this)}
     , m_failFg{new QCheckBox(tr("Error foreground") + u":", this)}
@@ -82,8 +84,12 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     m_autosearchDelay->addSpecialValue(2, tr("Medium"));
     m_autosearchDelay->addSpecialValue(3, tr("Slow"));
 
+    auto* successHint = new QLabel(u"🛈 " + tr("These settings will only apply if autosearch is disabled."), this);
+
     int row{0};
     searchGroupLayout->addWidget(m_clearOnSuccess, row++, 0, 1, 3);
+    searchGroupLayout->addWidget(m_closeOnSuccess, row++, 0, 1, 3);
+    searchGroupLayout->addWidget(successHint, row++, 0, 1, 3);
     searchGroupLayout->addWidget(m_autosearchDelay, row++, 0, 1, 3);
     searchGroupLayout->addWidget(m_failBg, row, 0);
     searchGroupLayout->addWidget(m_failBgColour, row++, 1, 1, 2);
@@ -116,6 +122,7 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
 void SearchPageWidget::load()
 {
     m_clearOnSuccess->setChecked(m_settings->value<Settings::Gui::SearchSuccessClear>());
+    m_closeOnSuccess->setChecked(m_settings->value<Settings::Gui::SearchSuccessClose>());
     m_autosearchDelay->setValue(m_settings->value<Settings::Gui::SearchAutoDelay>());
 
     loadColours();
@@ -128,6 +135,7 @@ void SearchPageWidget::load()
 void SearchPageWidget::apply()
 {
     m_settings->set<Settings::Gui::SearchSuccessClear>(m_clearOnSuccess->isChecked());
+    m_settings->set<Settings::Gui::SearchSuccessClose>(m_closeOnSuccess->isChecked());
     m_settings->set<Settings::Gui::SearchAutoDelay>(m_autosearchDelay->value());
     m_settings->set<Settings::Gui::SearchPlaylistName>(m_playlistName->text());
     m_settings->set<Settings::Gui::SearchPlaylistAppendSearch>(m_appendSearchString->isChecked());
@@ -152,6 +160,7 @@ void SearchPageWidget::apply()
 void SearchPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::SearchSuccessClear>();
+    m_settings->reset<Settings::Gui::SearchSuccessClose>();
     m_settings->reset<Settings::Gui::SearchAutoDelay>();
     m_settings->reset<Settings::Gui::SearchPlaylistName>();
     m_settings->reset<Settings::Gui::SearchPlaylistAppendSearch>();

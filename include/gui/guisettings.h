@@ -62,6 +62,7 @@ enum GuiSettings : uint32_t
     SearchSuccessFocus         = 22 | Type::Bool,
     SearchErrorBg              = 23 | Type::Variant,
     SearchErrorFg              = 24 | Type::Variant,
+    SearchSuccessClose         = 25 | Type::Bool,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Fooyin::Settings::Gui
