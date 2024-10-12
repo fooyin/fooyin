@@ -117,7 +117,7 @@ FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* li
     , m_moveOp{new QRadioButton(FileOpsDialog::tr("Move"), self)}
     , m_renameOp{new QRadioButton(FileOpsDialog::tr("Rename"), self)}
     , m_destination{new QLineEdit(self)}
-    , m_filename{new ScriptLineEdit(QStringLiteral("%filename%"), self)}
+    , m_filename{new ScriptLineEdit(QStringLiteral("%filename%"), tracks.front(), self)}
     , m_entireSource{new QCheckBox(self)}
     , m_removeEmpty{new QCheckBox(FileOpsDialog::tr("Remove empty source folders"), self)}
     , m_presetBox{new QComboBox(self)}

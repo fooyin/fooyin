@@ -31,32 +31,54 @@
 
 namespace Fooyin {
 ScriptLineEdit::ScriptLineEdit(QWidget* parent)
-    : ScriptLineEdit{{}, parent}
+    : ScriptLineEdit{{}, {}, parent}
 { }
 
 ScriptLineEdit::ScriptLineEdit(const QString& script, QWidget* parent)
+    : ScriptLineEdit{script, {}, parent}
+{ }
+
+ScriptLineEdit::ScriptLineEdit(const QString& script, const Track& track, QWidget* parent)
     : QLineEdit{script, parent}
 {
     auto* openEditor
         = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptEditor), tr("Open in script editor"), this);
-    QObject::connect(openEditor, &QAction::triggered, this, [this]() {
-        ScriptEditor::openEditor(text(), [this](const QString& editedScript) {
-            if(!isReadOnly()) {
-                setText(editedScript);
-            }
-        });
+    QObject::connect(openEditor, &QAction::triggered, this, [this, track]() {
+        ScriptEditor::openEditor(
+            text(),
+            [this](const QString& editedScript) {
+                if(!isReadOnly()) {
+                    setText(editedScript);
+                }
+            },
+            track);
     });
     addAction(openEditor, TrailingPosition);
 }
 
 ScriptTextEdit::ScriptTextEdit(QWidget* parent)
-    : ScriptTextEdit{{}, parent}
+    : ScriptTextEdit{{}, {}, parent}
 { }
 
 ScriptTextEdit::ScriptTextEdit(const QString& script, QWidget* parent)
-    : QPlainTextEdit{script, parent}
-    , m_openEditor{nullptr}
+    : ScriptTextEdit{script, {}, parent}
 { }
+
+ScriptTextEdit::ScriptTextEdit(const QString& script, const Track& track, QWidget* parent)
+    : QPlainTextEdit{script, parent}
+    , m_openEditor{new QAction(Utils::iconFromTheme(Constants::Icons::ScriptEditor), tr("Open in script editor"), this)}
+{
+    QObject::connect(m_openEditor, &QAction::triggered, this, [this, track]() {
+        ScriptEditor::openEditor(
+            text(),
+            [this, track](const QString& editedScript) {
+                if(!isReadOnly()) {
+                    setText(editedScript);
+                }
+            },
+            track);
+    });
+}
 
 QString ScriptTextEdit::text() const
 {
@@ -72,18 +94,6 @@ void ScriptTextEdit::contextMenuEvent(QContextMenuEvent* event)
 {
     QMenu* menu = createStandardContextMenu(event->pos());
     menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    if(!m_openEditor) {
-        m_openEditor
-            = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptEditor), tr("Open in script editor"), this);
-        QObject::connect(m_openEditor, &QAction::triggered, this, [this]() {
-            ScriptEditor::openEditor(text(), [this](const QString& editedScript) {
-                if(!isReadOnly()) {
-                    setText(editedScript);
-                }
-            });
-        });
-    }
 
     m_openEditor->setDisabled(isReadOnly());
 

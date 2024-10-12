@@ -27,6 +27,8 @@
 #include <QPlainTextEdit>
 
 namespace Fooyin {
+class Track;
+
 class FYGUI_EXPORT ScriptLineEdit : public QLineEdit
 {
     Q_OBJECT
@@ -34,6 +36,7 @@ class FYGUI_EXPORT ScriptLineEdit : public QLineEdit
 public:
     explicit ScriptLineEdit(QWidget* parent = nullptr);
     explicit ScriptLineEdit(const QString& script, QWidget* parent = nullptr);
+    ScriptLineEdit(const QString& script, const Track& track, QWidget* parent = nullptr);
 };
 
 class FYGUI_EXPORT ScriptTextEdit : public QPlainTextEdit
@@ -43,6 +46,7 @@ class FYGUI_EXPORT ScriptTextEdit : public QPlainTextEdit
 public:
     explicit ScriptTextEdit(QWidget* parent = nullptr);
     explicit ScriptTextEdit(const QString& script, QWidget* parent = nullptr);
+    ScriptTextEdit(const QString& script, const Track& track, QWidget* parent = nullptr);
 
     [[nodiscard]] QString text() const;
     void setText(const QString& text);
