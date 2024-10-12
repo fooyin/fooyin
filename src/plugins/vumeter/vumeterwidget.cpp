@@ -25,6 +25,7 @@
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audioconverter.h>
 #include <core/player/playercontroller.h>
+#include <gui/guisettings.h>
 #include <utils/async.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
@@ -607,11 +608,15 @@ VuMeterWidget::VuMeterWidget(Type type, PlayerController* playerController, Sett
     p->m_settings->subscribe<Settings::VuMeter::BarSpacing>(this, &VuMeterWidget::setBarSpacing);
     p->m_settings->subscribe<Settings::VuMeter::BarSections>(this, &VuMeterWidget::setBarSections);
     p->m_settings->subscribe<Settings::VuMeter::SectionSpacing>(this, &VuMeterWidget::setSectionSpacing);
-    p->m_settings->subscribe<Settings::VuMeter::MeterColours>(this, [this](const QVariant& var) {
-        p->m_colours = var.value<Colours>();
+
+    auto updateColours = [this]() {
+        p->m_colours = p->m_settings->value<Settings::VuMeter::MeterColours>().value<Colours>();
         p->createGradient();
         update();
-    });
+    };
+    p->m_settings->subscribe<Settings::VuMeter::MeterColours>(this, updateColours);
+    p->m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
+    p->m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
 }
 
 VuMeterWidget::~VuMeterWidget() = default;

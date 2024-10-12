@@ -23,6 +23,7 @@
 #include <QColor>
 #include <QDataStream>
 #include <QMetaType>
+#include <QPalette>
 
 namespace Fooyin::VuMeter {
 struct Colours
@@ -37,8 +38,8 @@ struct Colours
 
     QMap<Type, QColor> meterColours{{Type::Background, Qt::transparent},
                                     {Type::Peak, QColor{190, 40, 10}},
-                                    {Type::Gradient1, QColor{255, 255, 20}},
-                                    {Type::Gradient2, QColor{190, 40, 10}}};
+                                    {Type::Gradient1, QColor{65, 65, 65}},
+                                    {Type::Gradient2, QApplication::palette().highlight().color()}};
 
     [[nodiscard]] QColor colour(Type type) const
     {
