@@ -306,8 +306,8 @@ TrackList SearchWidget::getTracksToSearch(SearchMode mode) const
 {
     switch(mode) {
         case(SearchMode::AllPlaylists): {
-            QString searchResultsName = m_settings->value<Settings::Gui::SearchPlaylistName>();
-            const auto playlists      = m_playlistHandler->playlists();
+            const QString searchResultsName = m_settings->value<Settings::Gui::SearchPlaylistName>();
+            const auto playlists            = m_playlistHandler->playlists();
             TrackList allTracks;
             for(const Playlist* playlist : playlists) {
                 if(!playlist->name().contains(searchResultsName)) {
@@ -455,7 +455,7 @@ void SearchWidget::searchChanged(bool enterKey)
         ScriptParser parser;
         return parser.filter(search, tracks);
     }).then(this, [this, mode, enterKey](const TrackList& filteredTracks) {
-        if(enterKey && handleFilteredTracks(mode, filteredTracks)) {
+        if(handleFilteredTracks(mode, filteredTracks) && enterKey) {
             if(isQuickSearch() && m_settings->value<Settings::Gui::SearchSuccessClose>()) {
                 close();
             }
