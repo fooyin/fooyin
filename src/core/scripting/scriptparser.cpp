@@ -461,7 +461,7 @@ Expression ScriptParserPrivate::function()
     }
 
     expr.value = funcExpr;
-    consume(TokenType::TokRightParen, QObject::tr("Expected %1 at end of function").arg(u")"));
+    consume(TokenType::TokRightParen, QObject::tr("Expected %1 at end of function").arg(u"')'"));
     return expr;
 }
 
@@ -723,7 +723,7 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
             advance();
             if(validUserCount) {
                 args.emplace_back(Expr::Date, QString::number(date.toMSecsSinceEpoch()));
-                args.emplace_back(Expr::Date, QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()));
+                args.emplace_back(Expr::Date, QString::number(QDateTime::currentMSecsSinceEpoch()));
             }
             else {
                 return {};
