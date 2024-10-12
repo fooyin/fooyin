@@ -33,35 +33,41 @@ protected:
 
 TEST_F(ScriptParserTest, BasicLiteral)
 {
-    const auto script = m_parser.parse(QStringLiteral("I am a test."));
-    EXPECT_EQ(u"I am a test.", m_parser.evaluate(script));
+    EXPECT_EQ(u"I am a test.", m_parser.evaluate(QStringLiteral("I am a test.")));
+    EXPECT_EQ(u"", m_parser.evaluate(QString{}));
 }
 
 TEST_F(ScriptParserTest, EscapeComment)
 {
-    const auto script1 = m_parser.parse(QStringLiteral(R"("I am a \% test.")"));
-    EXPECT_EQ(u"I am a % test.", m_parser.evaluate(script1));
-
-    const auto script2 = m_parser.parse(QStringLiteral(R"("I am an \"escape test.")"));
-    EXPECT_EQ(u"I am an \"escape test.", m_parser.evaluate(script2));
+    EXPECT_EQ(u"I am a % test.", m_parser.evaluate(QStringLiteral(R"("I am a \% test.")")));
+    EXPECT_EQ(u"I am an \"escape test.", m_parser.evaluate(QStringLiteral(R"("I am an \"escape test.")")));
 }
 
 TEST_F(ScriptParserTest, Quote)
 {
-    const auto script = m_parser.parse(QStringLiteral(R"("I %am% a $test$.")"));
-    EXPECT_EQ(u"I %am% a $test$.", m_parser.evaluate(script));
+    EXPECT_EQ(u"I %am% a $test$.", m_parser.evaluate(QStringLiteral(R"("I %am% a $test$.")")));
 }
 
 TEST_F(ScriptParserTest, StringTest)
 {
     EXPECT_EQ(u"01", m_parser.evaluate(QStringLiteral("$num(1,2)")));
     EXPECT_EQ(u"04", m_parser.evaluate(QStringLiteral("$num(04,2)")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$num()")));
     EXPECT_EQ(u"A replace cesc", m_parser.evaluate(QStringLiteral("$replace(A replace test,t,c)")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$replace()")));
     EXPECT_EQ(u"test", m_parser.evaluate(QStringLiteral("$slice(A slice test,8)")));
     EXPECT_EQ(u"slice", m_parser.evaluate(QStringLiteral("$slice(A slice test,2,5)")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$slice()")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$slice(1,2,3,4,5)")));
     EXPECT_EQ(u"A chop", m_parser.evaluate(QStringLiteral("$chop(A chop test,5)")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$chop()")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$chop(1,2,3,4,5)")));
     EXPECT_EQ(u"L", m_parser.evaluate(QStringLiteral("$left(Left test,1)")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$left(1,2,3,4,5)")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$left()")));
     EXPECT_EQ(u"est", m_parser.evaluate(QStringLiteral("$right(Right test,3)")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$right()")));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$right(1,2,3,4,5)")));
     EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$if($stricmp(cmp,cMp),true,false)")));
     EXPECT_EQ(u"false", m_parser.evaluate(QStringLiteral("$if($strcmp(cmp,cMp),true,false)")));
 }
