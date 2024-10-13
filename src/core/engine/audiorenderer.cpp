@@ -41,6 +41,16 @@ using namespace std::chrono_literals;
 
 constexpr auto FadeInterval = 10;
 
+namespace {
+void alignBufferOffset(int& bufferOffset, int oldBps, int newBps)
+{
+    if(bufferOffset > 0 && oldBps > 0 && newBps > 0) {
+        const int frameIndex = bufferOffset / oldBps;
+        bufferOffset         = frameIndex * newBps;
+    }
+}
+} // namespace
+
 namespace Fooyin {
 AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
     : QObject{parent}
@@ -72,7 +82,7 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
 
 void AudioRenderer::init(const Track& track, const AudioFormat& format)
 {
-    m_format                 = format;
+    const auto prevFormat    = std::exchange(m_format, format);
     m_currentTrack           = track;
     m_currentBufferResampled = false;
     m_bufferPrefilled        = false;
@@ -92,6 +102,10 @@ void AudioRenderer::init(const Track& track, const AudioFormat& format)
     }
 
     const bool success = initOutput();
+
+    // Align offset in case format was changed
+    alignBufferOffset(m_currentBufferOffset, prevFormat.bytesPerFrame(), m_format.bytesPerFrame());
+
     emit initialised(success);
 }
 
@@ -510,7 +524,8 @@ void AudioRenderer::writeNext()
         return;
     }
 
-    const int freeSamples = m_audioOutput->currentState().freeSamples;
+    const int bps         = m_outputFormat.bytesPerFrame();
+    const int freeSamples = m_audioOutput->currentState().freeSamples / bps * bps;
 
     const bool hasPrevWrite = (freeSamples == 0 && m_samplePos > 0);
     const bool bufferFilled = (freeSamples > 0 && renderAudio(freeSamples) == freeSamples);

@@ -601,8 +601,8 @@ void AudioPlaybackEngine::reloadOutput()
                     updateTrackStatus(TrackStatus::NoTrack);
                 }
                 else if(playbackState() == PlaybackState::Playing) {
-                    QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::play));
                     m_clock.setPaused(false);
+                    QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::play));
                 }
             },
             Qt::SingleShotConnection);
