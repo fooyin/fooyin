@@ -27,6 +27,7 @@
 #include "playlistpreset.h"
 #include "playlistscriptregistry.h"
 
+#include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
@@ -1378,7 +1379,8 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         return {};
     };
 
-    if(role == Qt::DisplayRole && !m_columns.empty() && m_columns.at(column).field == QLatin1String{RatingEditor}) {
+    if(role == Qt::DisplayRole && !m_columns.empty()
+       && m_columns.at(column).field == QLatin1String{Constants::RatingEditor}) {
         return QVariant::fromValue(StarRating{track.track().rating(), 5, m_starRatingSize});
     }
 
@@ -1396,13 +1398,13 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
             const QString field = m_columns.at(column).field;
 
-            if(field == QLatin1String(FrontCover)) {
+            if(field == QLatin1String(Constants::FrontCover)) {
                 return getCover(Track::Cover::Front);
             }
-            if(field == QLatin1String(BackCover)) {
+            if(field == QLatin1String(Constants::BackCover)) {
                 return getCover(Track::Cover::Back);
             }
-            if(field == QLatin1String(ArtistPicture)) {
+            if(field == QLatin1String(Constants::ArtistPicture)) {
                 return getCover(Track::Cover::Artist);
             }
             if(field == QLatin1String(PlayingIcon) && isPlaying) {

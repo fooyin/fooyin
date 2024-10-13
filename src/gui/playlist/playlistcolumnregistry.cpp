@@ -55,12 +55,12 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 17, .name = tr("Last Modified"), .field = QStringLiteral("%lastmodified%")});
     addDefaultItem(
         {.id = 6, .name = tr("Playcount"), .field = QStringLiteral("$ifgreater(%playcount%,0,%playcount%)")});
-    addDefaultItem({.id = 21, .name = tr("Rating"), .field = QString::fromLatin1(RatingEditor)});
+    addDefaultItem({.id = 21, .name = tr("Rating"), .field = QStringLiteral("%rating_editor%")});
     addDefaultItem({.id = 19, .name = tr("First Played"), .field = QStringLiteral("%firstplayed%")});
     addDefaultItem({.id = 20, .name = tr("Last Played"), .field = QStringLiteral("%lastplayed%")});
-    addDefaultItem({.id = 13, .name = tr("Front Cover"), .field = QString::fromLatin1(FrontCover), .isPixmap = true});
-    addDefaultItem({.id = 14, .name = tr("Back Cover"), .field = QString::fromLatin1(BackCover), .isPixmap = true});
+    addDefaultItem({.id = 13, .name = tr("Front Cover"), .field = QStringLiteral("%frontcover%"), .isPixmap = true});
+    addDefaultItem({.id = 14, .name = tr("Back Cover"), .field = QStringLiteral("%backcover%"), .isPixmap = true});
     addDefaultItem(
-        {.id = 15, .name = tr("Artist Picture"), .field = QString::fromLatin1(ArtistPicture), .isPixmap = true});
+        {.id = 15, .name = tr("Artist Picture"), .field = QStringLiteral("%artistpicture%"), .isPixmap = true});
 }
 } // namespace Fooyin

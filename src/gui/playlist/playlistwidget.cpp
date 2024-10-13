@@ -30,6 +30,7 @@
 #include "playlistwidget_p.h"
 
 #include <core/application.h>
+#include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
@@ -1162,8 +1163,8 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
 void PlaylistWidgetPrivate::updateSpans()
 {
     auto isPixmap = [](const QString& field) {
-        return field == QLatin1String(FrontCover) || field == QLatin1String(BackCover)
-            || field == QLatin1String(ArtistPicture);
+        return field == QLatin1String(Constants::FrontCover) || field == QLatin1String(Constants::BackCover)
+            || field == QLatin1String(Constants::ArtistPicture);
     };
 
     bool hasRating{false};
@@ -1175,7 +1176,7 @@ void PlaylistWidgetPrivate::updateSpans()
             m_playlistView->setSpan(i, false);
         }
 
-        if(column.field == QLatin1String{RatingEditor}) {
+        if(column.field == QLatin1String{Constants::RatingEditor}) {
             hasRating = true;
             if(!m_starDelegate) {
                 m_starDelegate = new StarDelegate(this);

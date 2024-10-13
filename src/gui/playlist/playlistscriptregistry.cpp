@@ -19,20 +19,22 @@
 
 #include "playlistscriptregistry.h"
 
+#include <core/constants.h>
+
 namespace {
 QString frontCover()
 {
-    return QString::fromLatin1(Fooyin::FrontCover);
+    return QString::fromLatin1(Fooyin::Constants::FrontCover);
 }
 
 QString backCover()
 {
-    return QString::fromLatin1(Fooyin::BackCover);
+    return QString::fromLatin1(Fooyin::Constants::BackCover);
 }
 
 QString artistPicture()
 {
-    return QString::fromLatin1(Fooyin::ArtistPicture);
+    return QString::fromLatin1(Fooyin::Constants::ArtistPicture);
 }
 } // namespace
 

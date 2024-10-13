@@ -26,11 +26,7 @@
 namespace Fooyin {
 class PlaylistScriptRegistryPrivate;
 
-constexpr auto PlayingIcon   = "%playingicon%";
-constexpr auto FrontCover    = "%frontcover%";
-constexpr auto BackCover     = "%backcover%";
-constexpr auto ArtistPicture = "%artistpicture%";
-constexpr auto RatingEditor  = "%rating_editor%";
+constexpr auto PlayingIcon = "%playingicon%";
 
 class PlaylistScriptRegistry : public ScriptRegistry
 {

@@ -73,4 +73,9 @@ constexpr auto Directory       = "DIRECTORY";
 constexpr auto Path            = "PATH";
 constexpr auto Subsong         = "SUBSONG";
 } // namespace MetaData
+
+constexpr auto FrontCover    = "%frontcover%";
+constexpr auto BackCover     = "%backcover%";
+constexpr auto ArtistPicture = "%artistpicture%";
+constexpr auto RatingEditor  = "%rating_editor%";
 } // namespace Fooyin::Constants
