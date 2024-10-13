@@ -5112,7 +5112,7 @@
 <context>
     <name>Fooyin::ScriptLineEdit</name>
     <message>
-        <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="41"/>
+        <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="45"/>
         <source>Open in script editor</source>
         <translation>Open in script editor</translation>
     </message>
@@ -5120,7 +5120,7 @@
 <context>
     <name>Fooyin::ScriptTextEdit</name>
     <message>
-        <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="78"/>
+        <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="69"/>
         <source>Open in script editor</source>
         <translation>Open in script editor</translation>
     </message>
@@ -5363,17 +5363,17 @@
 <context>
     <name>Fooyin::SearchPage</name>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="193"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="202"/>
         <source>General</source>
         <translation>General</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="194"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Library</source>
         <translation>Library</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="194"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Searching</source>
         <translation>Searching</translation>
     </message>
@@ -5381,67 +5381,77 @@
 <context>
     <name>Fooyin::SearchPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="66"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="67"/>
         <source>Clear search string when successful</source>
         <translation>Clear search string when successful</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="67"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="68"/>
         <source>Autosearch delay</source>
         <translation>Autosearch delay</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="69"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="70"/>
         <source>Append search string to the playlist name</source>
         <translation>Append search string to the playlist name</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="70"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="71"/>
         <source>Switch focus to playlist on successful search</source>
         <translation>Switch focus to playlist on successful search</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="71"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="72"/>
+        <source>Close quick search when successful</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
         <source>Error background</source>
         <translation>Error background</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="75"/>
         <source>Error foreground</source>
         <translation>Error foreground</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="76"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="78"/>
         <source>Search</source>
         <translation>Search</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="80"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="82"/>
         <source>Very fast</source>
         <translation>Very fast</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="81"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="83"/>
         <source>Fast</source>
         <translation>Fast</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="82"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="84"/>
         <source>Medium</source>
         <translation>Medium</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="83"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="85"/>
         <source>Slow</source>
         <translation>Slow</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="94"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
+        <source>These settings will only apply if autosearch is disabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
         <source>Search Results</source>
         <translation>Search Results</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/searchpage.cpp" line="97"/>
+        <location filename="../../src/gui/settings/searchpage.cpp" line="103"/>
         <source>Playlist name</source>
         <translation>Playlist name</translation>
     </message>
@@ -5449,64 +5459,104 @@
 <context>
     <name>Fooyin::SearchWidget</name>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="54"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="58"/>
         <source>Search library…</source>
         <translation>Search library…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="82"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="386"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="87"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="491"/>
         <source>Options</source>
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="99"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="104"/>
         <source>Search Results</source>
         <translation>Search Results</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="104"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="109"/>
         <source>Search Bar</source>
         <translation>Search Bar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="389"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="433"/>
+        <source>Special Keys</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="433"/>
+        <source>Force the creation of a new results playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="434"/>
+        <source>Force search in the current playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="434"/>
+        <source>Force search in all playlists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="435"/>
+        <source>Force inline playlist search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="436"/>
+        <source>Force new results playlist using the current playlist as the source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
+        <source>Force new results playlist using all playlists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
+        <source>Delete a word in the search box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="494"/>
         <source>Autosearch</source>
         <translation>Autosearch</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="396"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="501"/>
         <source>Search in</source>
         <translation>Search in</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="398"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="503"/>
         <source>Library</source>
         <translation>Library</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="404"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="509"/>
         <source>Playlist</source>
         <translation>Playlist</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="410"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="515"/>
         <source>Playlist (Inline)</source>
         <translation>Playlist (Inline)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="417"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="522"/>
         <source>All Playlists</source>
         <translation>All Playlists</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="428"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="533"/>
         <source>Change placeholder text</source>
         <translation>Change placeholder text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="114"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="432"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="119"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="537"/>
         <source>Manage connections</source>
         <translation>Manage connections</translation>
     </message>
@@ -6383,42 +6433,42 @@
 <context>
     <name>Fooyin::VuMeter::VuMeterWidget</name>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="621"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="626"/>
         <source>Peak Meter</source>
         <translation>Peak Meter</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="621"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="626"/>
         <source>VU Meter</source>
         <translation>VU Meter</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="798"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="803"/>
         <source>Show peaks</source>
         <translation>Show peaks</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="803"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="808"/>
         <source>Show legend</source>
         <translation>Show legend</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="808"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="813"/>
         <source>Orientation</source>
         <translation>Orientation</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="811"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="816"/>
         <source>Horizontal</source>
         <translation>Horizontal</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="812"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="817"/>
         <source>Vertical</source>
         <translation>Vertical</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="826"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="831"/>
         <source>Settings…</source>
         <translation>Settings…</translation>
     </message>
