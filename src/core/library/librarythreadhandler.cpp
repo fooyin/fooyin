@@ -45,7 +45,7 @@ struct LibraryScanRequest
     int id;
     ScanRequest::Type type;
     LibraryInfo library;
-    QString dir;
+    QStringList dirs;
     QList<QUrl> files;
     TrackList tracks;
     bool onlyModified{true};
@@ -67,7 +67,7 @@ public:
     ScanRequest addLibraryScanRequest(const LibraryInfo& libraryInfo, bool onlyModified);
     ScanRequest addTracksScanRequest(const TrackList& tracks, bool onlyModified);
     ScanRequest addFilesScanRequest(const QList<QUrl>& files);
-    ScanRequest addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QString& dir);
+    ScanRequest addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QStringList& dirs);
     ScanRequest addPlaylistRequest(const QList<QUrl>& files);
 
     [[nodiscard]] std::optional<LibraryScanRequest> currentRequest() const;
@@ -145,7 +145,7 @@ void LibraryThreadHandlerPrivate::scanFiles(const LibraryScanRequest& request)
 void LibraryThreadHandlerPrivate::scanDirectory(const LibraryScanRequest& request)
 {
     QMetaObject::invokeMethod(&m_scanner, [this, request]() {
-        m_scanner.scanLibraryDirectory(request.library, request.dir, m_library->tracks());
+        m_scanner.scanLibraryDirectoies(request.library, request.dirs, m_library->tracks());
     });
 }
 
@@ -235,7 +235,8 @@ ScanRequest LibraryThreadHandlerPrivate::addFilesScanRequest(const QList<QUrl>& 
     return request;
 }
 
-ScanRequest LibraryThreadHandlerPrivate::addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QString& dir)
+ScanRequest LibraryThreadHandlerPrivate::addDirectoryScanRequest(const LibraryInfo& libraryInfo,
+                                                                 const QStringList& dirs)
 {
     const int id = nextRequestId();
 
@@ -247,7 +248,7 @@ ScanRequest LibraryThreadHandlerPrivate::addDirectoryScanRequest(const LibraryIn
     libraryRequest.id      = id;
     libraryRequest.type    = ScanRequest::Library;
     libraryRequest.library = libraryInfo;
-    libraryRequest.dir     = dir;
+    libraryRequest.dirs    = dirs;
 
     m_scanRequests.emplace_back(libraryRequest);
 
@@ -315,7 +316,7 @@ void LibraryThreadHandlerPrivate::execNextRequest()
             scanTracks(request);
             break;
         case(ScanRequest::Library):
-            if(request.dir.isEmpty()) {
+            if(request.dirs.isEmpty()) {
                 scanLibrary(request);
             }
             else {
@@ -397,9 +398,10 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      [this](const TrackList& tracks) { emit playlistLoaded(p->m_currentRequestId, tracks); });
     QObject::connect(&p->m_scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
     QObject::connect(&p->m_scanner, &LibraryScanner::scanUpdate, this, &LibraryThreadHandler::scanUpdate);
-    QObject::connect(
-        &p->m_scanner, &LibraryScanner::directoryChanged, this,
-        [this](const LibraryInfo& libraryInfo, const QString& dir) { p->addDirectoryScanRequest(libraryInfo, dir); });
+    QObject::connect(&p->m_scanner, &LibraryScanner::directoriesChanged, this,
+                     [this](const LibraryInfo& libraryInfo, const QStringList& dirs) {
+                         p->addDirectoryScanRequest(libraryInfo, dirs);
+                     });
 
     QMetaObject::invokeMethod(&p->m_scanner, &Worker::initialiseThread);
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager, &Worker::initialiseThread);

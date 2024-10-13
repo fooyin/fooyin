@@ -83,7 +83,7 @@ std::optional<QFileInfo> findMatchingCue(const QFileInfo& file)
     return {};
 }
 
-QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExtensions,
+QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExtensions,
                        const QStringList& excludeExtensions, const QStringList& playlistExtensions)
 {
     QFileInfoList files;
@@ -93,12 +93,8 @@ QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExten
         nameFilters.removeAll(ext);
     }
 
-    for(const QUrl& url : urls) {
-        if(!url.isLocalFile()) {
-            continue;
-        }
-
-        const QFileInfo file{url.toLocalFile()};
+    for(const QString& path : paths) {
+        const QFileInfo file{path};
 
         if(file.isDir()) {
             QDirIterator dirIt{file.absoluteFilePath(), Fooyin::Utils::extensionsToWildcards(nameFilters), QDir::Files,
@@ -127,12 +123,6 @@ QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExten
     sortFiles(files);
 
     return files;
-}
-
-QFileInfoList getFiles(const QString& baseDirectory, const QStringList& restrictExtensions,
-                       const QStringList& excludeExtensions)
-{
-    return getFiles({QUrl::fromLocalFile(baseDirectory)}, restrictExtensions, excludeExtensions, {});
 }
 } // namespace
 
@@ -179,7 +169,7 @@ public:
 
     void readFile(const QString& file, bool onlyModified);
     void populateExistingTracks(const TrackList& tracks, bool includeMissing = true);
-    bool getAndSaveAllTracks(const QString& path, const TrackList& tracks, bool onlyModified);
+    bool getAndSaveAllTracks(const QStringList& paths, const TrackList& tracks, bool onlyModified);
 
     void changeLibraryStatus(LibraryInfo::Status status);
 
@@ -250,10 +240,10 @@ void LibraryScannerPrivate::addWatcher(const LibraryInfo& library)
 
     watchPaths(library.path);
 
-    QObject::connect(&m_watchers.at(library.id), &LibraryWatcher::libraryDirChanged, m_self,
-                     [this, watchPaths, library](const QString& dir) {
-                         watchPaths(dir);
-                         emit m_self->directoryChanged(library, dir);
+    QObject::connect(&m_watchers.at(library.id), &LibraryWatcher::libraryDirsChanged, m_self,
+                     [this, watchPaths, library](const QStringList& dirs) {
+                         std::ranges::for_each(dirs, watchPaths);
+                         emit m_self->directoriesChanged(library, dirs);
                      });
 }
 
@@ -729,7 +719,7 @@ void LibraryScannerPrivate::populateExistingTracks(const TrackList& tracks, bool
     }
 }
 
-bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const TrackList& tracks, bool onlyModified)
+bool LibraryScannerPrivate::getAndSaveAllTracks(const QStringList& paths, const TrackList& tracks, bool onlyModified)
 {
     populateExistingTracks(tracks);
 
@@ -744,7 +734,7 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const Track
         restrictExtensions.append(QStringLiteral("cue"));
     }
 
-    const auto files = getFiles(path, restrictExtensions, excludeExtensions);
+    const auto files = getFiles(paths, restrictExtensions, excludeExtensions, {});
 
     m_totalFiles = files.size();
     reportProgress();
@@ -861,7 +851,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         if(p->m_monitor && !p->m_watchers.contains(library.id)) {
             p->addWatcher(library);
         }
-        p->getAndSaveAllTracks(library.path, tracks, onlyModified);
+        p->getAndSaveAllTracks({library.path}, tracks, onlyModified);
         p->cleanupScan();
     }
 
@@ -877,14 +867,14 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
     }
 }
 
-void LibraryScanner::scanLibraryDirectory(const LibraryInfo& library, const QString& dir, const TrackList& tracks)
+void LibraryScanner::scanLibraryDirectoies(const LibraryInfo& library, const QStringList& dirs, const TrackList& tracks)
 {
     setState(Running);
 
     p->m_currentLibrary = library;
     p->changeLibraryStatus(LibraryInfo::Status::Scanning);
 
-    p->getAndSaveAllTracks(dir, tracks, true);
+    p->getAndSaveAllTracks(dirs, tracks, true);
     p->cleanupScan();
 
     if(state() == Paused) {
@@ -980,7 +970,10 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         restrictExtensions.append(QStringLiteral("cue"));
     }
 
-    const auto files = getFiles(urls, restrictExtensions, excludeExtensions, playlistExtensions);
+    QStringList paths;
+    std::ranges::transform(urls, std::back_inserter(paths), [](const QUrl& url) { return url.toLocalFile(); });
+
+    const auto files = getFiles(paths, restrictExtensions, excludeExtensions, playlistExtensions);
 
     p->m_totalFiles = files.size();
 

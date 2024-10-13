@@ -55,13 +55,14 @@ signals:
     void scanUpdate(const Fooyin::ScanResult& result);
     void scannedTracks(const Fooyin::TrackList& tracks);
     void playlistLoaded(const Fooyin::TrackList& tracks);
-    void directoryChanged(const Fooyin::LibraryInfo& library, const QString& dir);
+    void directoriesChanged(const Fooyin::LibraryInfo& library, const QStringList& dirs);
 
 public slots:
     void setMonitorLibraries(bool enabled);
     void setupWatchers(const Fooyin::LibraryInfoMap& libraries, bool enabled);
     void scanLibrary(const Fooyin::LibraryInfo& library, const Fooyin::TrackList& tracks, bool onlyModified);
-    void scanLibraryDirectory(const Fooyin::LibraryInfo& library, const QString& dir, const Fooyin::TrackList& tracks);
+    void scanLibraryDirectoies(const Fooyin::LibraryInfo& library, const QStringList& dirs,
+                               const Fooyin::TrackList& tracks);
     void scanTracks(const Fooyin::TrackList& libraryTracks, const Fooyin::TrackList& tracks, bool onlyModified);
     void scanFiles(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);
     void scanPlaylist(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);

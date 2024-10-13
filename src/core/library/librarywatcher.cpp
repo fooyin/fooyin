@@ -20,32 +20,36 @@
 #include "librarywatcher.h"
 
 #include <QTimer>
+#include <QTimerEvent>
 
 using namespace std::chrono_literals;
 
-constexpr auto Interval = 15ms;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+constexpr auto Interval = 1000ms;
+#else
+constexpr auto Interval = 1000;
+#endif
 
 namespace Fooyin {
 LibraryWatcher::LibraryWatcher(QObject* parent)
     : QFileSystemWatcher{parent}
-    , m_timer{new QTimer(this)}
 {
-    m_timer->setSingleShot(true);
-    m_timer->setInterval(Interval);
-
     QObject::connect(this, &QFileSystemWatcher::directoryChanged, this, [this](const QString& path) {
-        if(!m_dir.isEmpty() && path != m_dir) {
-            m_timer->stop();
-            emit libraryDirChanged(m_dir);
-        }
-        m_dir = path;
-        m_timer->start();
+        m_dirs.emplace(path);
+        m_timer.start(Interval, this);
     });
+}
 
-    QObject::connect(m_timer, &QTimer::timeout, this, [this]() {
-        emit libraryDirChanged(m_dir);
-        m_dir.clear();
-    });
+void LibraryWatcher::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_timer.timerId()) {
+        m_timer.stop();
+
+        const QStringList paths{m_dirs.cbegin(), m_dirs.cend()};
+        m_dirs.clear();
+        emit libraryDirsChanged(paths);
+    }
+    QFileSystemWatcher::timerEvent(event);
 }
 } // namespace Fooyin
 

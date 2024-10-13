@@ -19,9 +19,10 @@
 
 #pragma once
 
+#include <QBasicTimer>
 #include <QFileSystemWatcher>
 
-class QTimer;
+#include <set>
 
 namespace Fooyin {
 class LibraryWatcher : public QFileSystemWatcher
@@ -32,10 +33,13 @@ public:
     explicit LibraryWatcher(QObject* parent = nullptr);
 
 signals:
-    void libraryDirChanged(const QString& path);
+    void libraryDirsChanged(const QStringList& paths);
+
+protected:
+    void timerEvent(QTimerEvent* event) override;
 
 private:
-    QTimer* m_timer;
-    QString m_dir;
+    QBasicTimer m_timer;
+    std::set<QString> m_dirs;
 };
 } // namespace Fooyin
