@@ -64,6 +64,9 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
 
             const QPluginLoader pluginLoader{filepath};
             auto metaData = pluginLoader.metaData();
+            if (metaData.empty() || !metaData.contains(u"MetaData")) {
+                continue;
+            }
 
             auto plugin = std::make_unique<PluginInfo>(filepath, metaData);
             if(disabledPlugins.contains(plugin->identifier())) {
