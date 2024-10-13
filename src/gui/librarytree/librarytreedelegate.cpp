@@ -19,6 +19,8 @@
 
 #include "librarytreedelegate.h"
 
+#include "librarytreeitem.h"
+
 #include <QApplication>
 #include <QPainter>
 
@@ -27,6 +29,12 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
 {
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
+    opt.decorationSize = option.decorationSize;
+
+    const auto decPos = index.data(LibraryTreeItem::Role::DecorationPosition).value<QStyleOptionViewItem::Position>();
+    if(!opt.icon.isNull()) {
+        opt.decorationPosition = decPos;
+    }
 
     QStyle* style = option.widget ? option.widget->style() : QApplication::style();
 
@@ -39,5 +47,27 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
 
     painter->restore();
+}
+
+QSize LibraryTreeDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    QStyleOptionViewItem opt{option};
+    initStyleOption(&opt, index);
+    opt.decorationSize = option.decorationSize;
+
+    const auto decPos = index.data(LibraryTreeItem::Role::DecorationPosition).value<QStyleOptionViewItem::Position>();
+    if(!opt.icon.isNull()) {
+        opt.decorationPosition = decPos;
+    }
+
+    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    QSize size          = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, {}, opt.widget);
+
+    const QSize sizeHint = index.data(Qt::SizeHintRole).toSize();
+    if(sizeHint.height() > 0) {
+        size.setHeight(sizeHint.height());
+    }
+
+    return size;
 }
 } // namespace Fooyin

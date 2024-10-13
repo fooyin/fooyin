@@ -19,6 +19,8 @@
 
 #include "librarytreepopulator.h"
 
+#include "librarytreescriptregistry.h"
+
 #include <core/constants.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
@@ -32,7 +34,7 @@ class LibraryTreePopulatorPrivate
 public:
     explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self, LibraryManager* libraryManager)
         : m_self{self}
-        , m_parser{new ScriptRegistry(libraryManager)}
+        , m_parser{new LibraryTreeScriptRegistry(libraryManager)}
         , m_data{}
     { }
 

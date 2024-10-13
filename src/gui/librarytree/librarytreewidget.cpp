@@ -252,7 +252,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
     , m_resetThrottler{new SignalThrottler(m_self)}
     , m_layout{new QVBoxLayout(m_self)}
     , m_libraryTree{new LibraryTreeView(m_self)}
-    , m_model{new LibraryTreeModel(core->libraryManager(), m_settings, m_self)}
+    , m_model{new LibraryTreeModel(core->libraryManager(), core->audioLoader(), m_settings, m_self)}
     , m_sortProxy{new LibraryTreeSortModel(m_self)}
     , m_widgetContext{new WidgetContext(m_self, Context{Id{"Fooyin.Context.LibraryTree."}.append(m_self->id())},
                                         m_self)}
@@ -274,6 +274,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
                                            || m_doubleClickAction == TrackAction::Play);
     m_libraryTree->setAnimated(m_settings->value<Settings::Gui::Internal::LibTreeAnimated>());
     m_libraryTree->setHeaderHidden(!m_settings->value<Settings::Gui::Internal::LibTreeHeader>());
+    m_libraryTree->setIconSize(m_settings->value<Settings::Gui::Internal::LibTreeIconSize>().toSize());
 
     setScrollbarEnabled(m_settings->value<LibTreeScrollBar>());
     m_libraryTree->setAlternatingRowColors(m_settings->value<LibTreeAltColours>());
@@ -322,6 +323,8 @@ void LibraryTreeWidgetPrivate::setupConnections()
                      });
     QObject::connect(m_libraryTree->header(), &QHeaderView::customContextMenuRequested, m_self,
                      [this](const QPoint& pos) { setupHeaderContextMenu(pos); });
+    QObject::connect(m_libraryTree, &QAbstractItemView::iconSizeChanged, m_self,
+                     [this](const QSize& size) { m_settings->set<Settings::Gui::Internal::LibTreeIconSize>(size); });
     QObject::connect(m_groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, m_self,
                      [this](const LibraryTreeGrouping& changedGrouping) {
                          if(m_grouping.id == changedGrouping.id) {
@@ -366,6 +369,9 @@ void LibraryTreeWidgetPrivate::setupConnections()
         m_model->setRowHeight(height);
         QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
     });
+    m_settings->subscribe<Settings::Gui::Internal::LibTreeIconSize>(
+        m_self, [this](const auto& size) { m_libraryTree->setIconSize(size.toSize()); });
+
     m_settings->subscribe<Settings::Gui::Theme>(m_model, &LibraryTreeModel::resetPalette);
     m_settings->subscribe<Settings::Gui::Style>(m_model, &LibraryTreeModel::resetPalette);
 

@@ -19,9 +19,12 @@
 
 #include "librarytreemodel.h"
 
+#include "internalguisettings.h"
 #include "librarytreepopulator.h"
 
+#include <core/constants.h>
 #include <core/coresettings.h>
+#include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <utils/datastream.h>
 #include <utils/settings/settingsmanager.h>
@@ -117,7 +120,8 @@ bool LibraryTreeSortModel::lessThan(const QModelIndex& left, const QModelIndex& 
 class LibraryTreeModelPrivate
 {
 public:
-    explicit LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager, SettingsManager* settings);
+    explicit LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager,
+                                     std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings);
 
     void updateSummary();
 
@@ -134,7 +138,10 @@ public:
     void beginReset();
 
     LibraryTreeModel* m_self;
+    std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
+
+    CoverProvider m_coverProvider;
 
     QString m_grouping;
     bool m_loaded{false};
@@ -157,13 +164,17 @@ public:
     QString m_playingPath;
     int m_rowHeight{0};
     QColor m_playingColour{QApplication::palette().highlight().color()};
+    QSize m_iconSize;
 };
 
 LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager,
-                                                 SettingsManager* settings)
+                                                 std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings)
     : m_self{self}
+    , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
+    , m_coverProvider{m_audioLoader, m_settings}
     , m_populator{libraryManager}
+    , m_iconSize{m_settings->value<Settings::Gui::Internal::LibTreeIconSize>().toSize()}
 {
     m_playingColour.setAlpha(90);
 
@@ -389,9 +400,10 @@ void LibraryTreeModelPrivate::beginReset()
     updateSummary();
 }
 
-LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, SettingsManager* settings, QObject* parent)
+LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::shared_ptr<AudioLoader>& audioLoader,
+                                   SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager, settings)}
+    , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager, audioLoader, settings)}
 {
     QObject::connect(&p->m_populator, &LibraryTreePopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
@@ -404,6 +416,23 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, SettingsManag
             p->m_loaded = true;
             emit modelLoaded();
         }
+    });
+
+    QObject::connect(&p->m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
+        if(p->m_trackParents.contains(track.id())) {
+            const auto items = p->m_trackParents.at(track.id());
+            for(const auto& itemHash : items) {
+                if(p->m_nodes.contains(itemHash)) {
+                    const QModelIndex index = indexOfItem(&p->m_nodes.at(itemHash));
+                    emit dataChanged(index, index, {Qt::DecorationRole});
+                }
+            }
+        }
+    });
+
+    p->m_settings->subscribe<Settings::Gui::Internal::LibTreeIconSize>(this, [this](const auto& size) {
+        p->m_iconSize = size.toSize();
+        emit dataChanged({}, {}, {Qt::DecorationRole});
     });
 }
 
@@ -512,6 +541,20 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
         case(Qt::SizeHintRole): {
             if(p->m_rowHeight > 0) {
                 return QSize{0, p->m_rowHeight};
+            }
+            break;
+        }
+        case(LibraryTreeItem::Role::DecorationPosition): {
+            if(item->coverType()) {
+                return item->coverPosition();
+            }
+            break;
+        }
+        case(Qt::DecorationRole): {
+            if(item->trackCount() > 0) {
+                if(const auto cover = item->coverType()) {
+                    return p->m_coverProvider.trackCoverThumbnail(item->tracks().front(), p->m_iconSize, cover.value());
+                }
             }
             break;
         }

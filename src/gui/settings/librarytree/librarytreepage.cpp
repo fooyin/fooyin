@@ -67,6 +67,8 @@ private:
     QCheckBox* m_altColours;
     QCheckBox* m_overrideRowHeight;
     QSpinBox* m_rowHeight;
+    QSpinBox* m_iconWidth;
+    QSpinBox* m_iconHeight;
 };
 
 LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
@@ -85,6 +87,8 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + QStringLiteral(":"), this)}
     , m_rowHeight{new QSpinBox(this)}
+    , m_iconWidth{new QSpinBox(this)}
+    , m_iconHeight{new QSpinBox(this)}
 {
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -121,15 +125,44 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     auto* appearanceGroup       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceGroupLayout = new QGridLayout(appearanceGroup);
 
-    m_rowHeight->setMinimum(1);
+    auto* iconGroup       = new QGroupBox(tr("Icon"), this);
+    auto* iconGroupLayout = new QGridLayout(iconGroup);
+
+    auto* widthLabel  = new QLabel(tr("Width") + QStringLiteral(":"), this);
+    auto* heightLabel = new QLabel(tr("Height") + QStringLiteral(":"), this);
+
+    m_iconWidth->setSuffix(QStringLiteral("px"));
+    m_iconHeight->setSuffix(QStringLiteral("px"));
+
+    m_iconWidth->setMaximum(512);
+    m_iconHeight->setMaximum(512);
+
+    m_iconWidth->setSingleStep(5);
+    m_iconHeight->setSingleStep(5);
+
+    auto* iconSizeHint = new QLabel(
+        QStringLiteral("🛈 ")
+            + tr("Size can also be changed using %1 in the widget.").arg(QStringLiteral("<b>Ctrl+Scroll</b>")),
+        this);
 
     int row{0};
+    iconGroupLayout->addWidget(widthLabel, row, 0);
+    iconGroupLayout->addWidget(m_iconWidth, row++, 1);
+    iconGroupLayout->addWidget(heightLabel, row, 0);
+    iconGroupLayout->addWidget(m_iconHeight, row++, 1);
+    iconGroupLayout->addWidget(iconSizeHint, row, 0, 1, 4);
+    iconGroupLayout->setColumnStretch(2, 1);
+
+    m_rowHeight->setMinimum(1);
+
+    row = 0;
     appearanceGroupLayout->addWidget(m_animated, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_header, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_showScrollbar, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_altColours, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_overrideRowHeight, row, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_rowHeight, row++, 2);
+    appearanceGroupLayout->addWidget(iconGroup, row++, 0, 1, 2);
     appearanceGroupLayout->setColumnStretch(appearanceGroupLayout->columnCount(), 1);
     appearanceGroupLayout->setRowStretch(appearanceGroupLayout->rowCount(), 1);
 
@@ -210,6 +243,10 @@ void LibraryTreePageWidget::load()
     m_overrideRowHeight->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeRowHeight>() > 0);
     m_rowHeight->setValue(m_settings->value<Settings::Gui::Internal::LibTreeRowHeight>());
     m_rowHeight->setEnabled(m_overrideRowHeight->isChecked());
+
+    const auto iconSize = m_settings->value<Settings::Gui::Internal::LibTreeIconSize>().toSize();
+    m_iconWidth->setValue(iconSize.width());
+    m_iconHeight->setValue(iconSize.height());
 }
 
 void LibraryTreePageWidget::apply()
@@ -234,6 +271,9 @@ void LibraryTreePageWidget::apply()
     else {
         m_settings->reset<Settings::Gui::Internal::LibTreeRowHeight>();
     }
+
+    const QSize iconSize{m_iconWidth->value(), m_iconHeight->value()};
+    m_settings->set<Settings::Gui::Internal::LibTreeIconSize>(iconSize);
 }
 
 void LibraryTreePageWidget::reset()
@@ -252,6 +292,7 @@ void LibraryTreePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreeScrollBar>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAltColours>();
     m_settings->reset<Settings::Gui::Internal::LibTreeRowHeight>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeIconSize>();
 }
 
 LibraryTreePage::LibraryTreePage(SettingsManager* settings, QObject* parent)

@@ -22,6 +22,7 @@
 #include "librarytreegroup.h"
 #include "librarytreeitem.h"
 
+#include <core/engine/audioloader.h>
 #include <core/player/playerdefs.h>
 #include <utils/treemodel.h>
 
@@ -52,7 +53,8 @@ class LibraryTreeModel : public TreeModel<LibraryTreeItem>
     Q_OBJECT
 
 public:
-    explicit LibraryTreeModel(LibraryManager* libraryManager, SettingsManager* settings, QObject* parent = nullptr);
+    explicit LibraryTreeModel(LibraryManager* libraryManager, const std::shared_ptr<AudioLoader>& audioLoader,
+                              SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryTreeModel() override;
 
     void resetPalette();

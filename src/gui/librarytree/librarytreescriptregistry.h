@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,30 +19,17 @@
 
 #pragma once
 
-#include <QObject>
-#include <QTreeView>
+#include <core/scripting/scriptregistry.h>
 
 namespace Fooyin {
-class LibraryTreeView : public QTreeView
+class LibraryTreeScriptRegistry : public ScriptRegistry
 {
-    Q_OBJECT
-
 public:
-    explicit LibraryTreeView(QWidget* parent = nullptr);
+    using ScriptRegistry::isVariable;
+    using ScriptRegistry::ScriptRegistry;
+    using ScriptRegistry::value;
 
-    void setLoading(bool isLoading);
-
-signals:
-    void middleClicked(const QModelIndex& index);
-
-protected:
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseDoubleClickEvent(QMouseEvent* event) override;
-    void wheelEvent(QWheelEvent* event) override;
-    void paintEvent(QPaintEvent* event) override;
-    QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
-
-private:
-    bool m_isLoading;
+    [[nodiscard]] bool isVariable(const QString& var, const Track& track) const override;
+    [[nodiscard]] ScriptResult value(const QString& var, const Track& track) const override;
 };
 } // namespace Fooyin

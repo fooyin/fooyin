@@ -164,5 +164,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<Internal::SystemPalette>(QApplication::palette());
     m_settings->createSetting<Internal::DirBrowserShowHorizScroll>(
         true, QStringLiteral("DirectoryBrowser/ShowHorizontalScrollbar"));
+    m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, QStringLiteral("LibraryTree/IconSize"));
 }
 } // namespace Fooyin

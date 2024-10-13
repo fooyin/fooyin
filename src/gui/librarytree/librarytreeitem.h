@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStyleOptionViewItem>
 
 namespace Fooyin {
 class LibraryTreeItem : public TreeItem<LibraryTreeItem>
@@ -38,6 +39,7 @@ public:
         Key,
         Tracks,
         TrackCount,
+        DecorationPosition,
     };
 
     LibraryTreeItem();
@@ -49,6 +51,8 @@ public:
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] Md5Hash key() const;
+    [[nodiscard]] std::optional<Track::Cover> coverType() const;
+    [[nodiscard]] QStyleOptionViewItem::Position coverPosition() const;
 
     void setPending(bool pending);
     void setTitle(const QString& title);
@@ -65,6 +69,8 @@ private:
     int m_level;
     Md5Hash m_key;
     QString m_title;
+    std::optional<Track::Cover> m_coverType;
+    QStyleOptionViewItem::Position m_coverPosition;
     TrackList m_tracks;
 };
 } // namespace Fooyin

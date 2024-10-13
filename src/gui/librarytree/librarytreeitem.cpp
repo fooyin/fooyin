@@ -19,7 +19,19 @@
 
 #include "librarytreeitem.h"
 
+#include <core/constants.h>
 #include <core/library/tracksort.h>
+
+namespace {
+QStyleOptionViewItem::Position getCoverPosition(const QString& text, const char* cover)
+{
+    if(text.indexOf(QLatin1String{cover}) == 0) {
+        return QStyleOptionViewItem::Left;
+    }
+
+    return QStyleOptionViewItem::Right;
+}
+} // namespace
 
 namespace Fooyin {
 LibraryTreeItem::LibraryTreeItem()
@@ -31,7 +43,24 @@ LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent, int lev
     , m_pending{false}
     , m_level{level}
     , m_title{std::move(title)}
-{ }
+    , m_coverPosition{QStyleOptionViewItem::Left}
+{
+    if(m_title.contains(QLatin1String{Constants::FrontCover})) {
+        m_coverType     = Track::Cover::Front;
+        m_coverPosition = getCoverPosition(m_title, Constants::FrontCover);
+        m_title.remove(QLatin1String{Constants::FrontCover});
+    }
+    else if(m_title.contains(QLatin1String{Constants::BackCover})) {
+        m_coverType     = Track::Cover::Back;
+        m_coverPosition = getCoverPosition(m_title, Constants::BackCover);
+        m_title.remove(QLatin1String{Constants::BackCover});
+    }
+    else if(m_title.contains(QLatin1String{Constants::ArtistPicture})) {
+        m_coverType     = Track::Cover::Artist;
+        m_coverPosition = getCoverPosition(m_title, Constants::ArtistPicture);
+        m_title.remove(QLatin1String{Constants::ArtistPicture});
+    }
+}
 
 bool LibraryTreeItem::pending() const
 {
@@ -61,6 +90,16 @@ int LibraryTreeItem::trackCount() const
 Md5Hash LibraryTreeItem::key() const
 {
     return m_key;
+}
+
+std::optional<Track::Cover> LibraryTreeItem::coverType() const
+{
+    return m_coverType;
+}
+
+QStyleOptionViewItem::Position LibraryTreeItem::coverPosition() const
+{
+    return m_coverPosition;
 }
 
 void LibraryTreeItem::setPending(bool pending)

@@ -23,13 +23,14 @@
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QWheelEvent>
 
 namespace Fooyin {
 LibraryTreeView::LibraryTreeView(QWidget* parent)
     : QTreeView{parent}
     , m_isLoading{false}
 {
-    setUniformRowHeights(true);
+    setUniformRowHeights(false);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setHeaderHidden(true);
     setDragEnabled(true);
@@ -70,6 +71,22 @@ void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
         return;
     }
     QTreeView::mouseDoubleClickEvent(event);
+}
+
+void LibraryTreeView::wheelEvent(QWheelEvent* event)
+{
+    if(!(event->modifiers() & Qt::ControlModifier)) {
+        QAbstractItemView::wheelEvent(event);
+        return;
+    }
+
+    const int delta     = event->angleDelta().y();
+    const int increment = (delta > 0) ? 1 : -1;
+    int newSize         = iconSize().width() + increment * 2;
+    newSize             = std::clamp(newSize, 16, 1024);
+    setIconSize({newSize, newSize});
+
+    event->accept();
 }
 
 void LibraryTreeView::paintEvent(QPaintEvent* event)
