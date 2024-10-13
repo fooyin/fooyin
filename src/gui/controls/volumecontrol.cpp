@@ -262,7 +262,7 @@ void VolumeControlPrivate::updateToolTip(int value)
 
         if(displayLeft) {
             alignment = Qt::AlignRight;
-            toolTipPos.setX(pos.x() - m_volumeSlider->width());
+            toolTipPos.setX(pos.x() - m_volumeSlider->width() * 3);
         }
         else {
             toolTipPos.setX(pos.x() + m_volumeSlider->width());
