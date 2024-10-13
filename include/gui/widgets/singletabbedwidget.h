@@ -40,6 +40,7 @@ public:
     Q_ENUM(TabShape)
 
     explicit SingleTabbedWidget(QWidget* parent = nullptr);
+    ~SingleTabbedWidget() override;
 
     void setWidget(QWidget* widget);
 

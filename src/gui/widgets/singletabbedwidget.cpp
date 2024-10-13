@@ -224,6 +224,8 @@ SingleTabbedWidget::SingleTabbedWidget(QWidget* parent)
     p->setupLayout();
 }
 
+SingleTabbedWidget::~SingleTabbedWidget() = default;
+
 void SingleTabbedWidget::setWidget(QWidget* widget)
 {
     if(p->m_widget) {

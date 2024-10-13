@@ -66,7 +66,7 @@ private:
     QBuffer m_buffer;
 };
 
-class FYCORE_EXPORT LibArchiveReader : public ArchiveReader
+class LibArchiveReader : public ArchiveReader
 {
 public:
     [[nodiscard]] QStringList extensions() const override;

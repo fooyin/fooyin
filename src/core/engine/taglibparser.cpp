@@ -234,7 +234,11 @@ public:
         return m_input->isOpen();
     }
 
+#if TAGLIB_MAJOR_VERSION >= 2
+    void seek(TagLib::offset_t offset, Position p) override
+#else
     void seek(long offset, Position p) override
+#endif
     {
         if(!isOpen()) {
             qCDebug(TAGLIB) << "Unable to write to unopened file";
@@ -261,17 +265,29 @@ public:
         TagLib::IOStream::clear();
     }
 
+#if TAGLIB_MAJOR_VERSION >= 2
+    [[nodiscard]] TagLib::offset_t tell() const override
+#else
     [[nodiscard]] long tell() const override
+#endif
     {
         return m_input->pos();
     }
 
+#if TAGLIB_MAJOR_VERSION >= 2
+    TagLib::offset_t length() override
+#else
     long length() override
+#endif
     {
         return m_input->size();
     }
 
+#if TAGLIB_MAJOR_VERSION >= 2
+    void truncate(TagLib::offset_t length) override
+#else
     void truncate(long length) override
+#endif
     {
         if(!isOpen()) {
             qCDebug(TAGLIB) << "Unable to write to unopened file";

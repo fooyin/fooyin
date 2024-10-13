@@ -134,7 +134,7 @@ AudioBuffer OpenMptDecoder::readBuffer(size_t bytes)
 
     size_t framesWritten{0};
     while(framesWritten < frames) {
-        const size_t framesToWrite = std::min(frames - framesWritten, BufferLen);
+        const size_t framesToWrite = std::min<size_t>(frames - framesWritten, BufferLen);
         const size_t readCount     = m_module->read_interleaved_stereo(
             SampleRate, framesToWrite, std::bit_cast<float*>(buffer.data()) + framesWritten * 2);
         if(readCount == 0) {
