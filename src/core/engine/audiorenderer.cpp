@@ -420,9 +420,11 @@ void AudioRenderer::recalculateGain()
 
 void AudioRenderer::calculateGain(bool reloadIfChanged)
 {
-    const double prevGain = m_gainScale;
+    const double prevGain = std::exchange(m_gainScale, 1.0);
 
-    m_gainScale = 1.0;
+    if(!m_currentTrack.isValid()) {
+        return;
+    }
 
     const auto mode = m_settings->value<Settings::Core::RGMode>();
     if(mode != AudioEngine::NoProcessing) {
