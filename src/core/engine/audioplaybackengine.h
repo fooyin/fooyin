@@ -67,6 +67,7 @@ private:
     void stopWorkers(bool full = false);
 
     void handleOutputState(AudioOutput::State outState);
+    void reloadOutput();
 
     bool checkOpenSource();
     void setupDuration();

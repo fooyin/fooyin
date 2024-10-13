@@ -74,6 +74,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
 {
     m_renderer.moveToThread(m_outputThread);
 
+    QObject::connect(&m_renderer, &AudioRenderer::requestOutputReload, this, &AudioPlaybackEngine::reloadOutput);
     QObject::connect(&m_renderer, &AudioRenderer::bufferProcessed, this, &AudioPlaybackEngine::onBufferProcessed);
     QObject::connect(&m_renderer, &AudioRenderer::finished, this, &AudioPlaybackEngine::onRendererFinished);
     QObject::connect(&m_renderer, &AudioRenderer::outputStateChanged, this, &AudioPlaybackEngine::handleOutputState);
@@ -582,6 +583,30 @@ void AudioPlaybackEngine::handleOutputState(AudioOutput::State outState)
     }
     else if(m_outputState == AudioOutput::State::Error) {
         stop();
+    }
+}
+
+void AudioPlaybackEngine::reloadOutput()
+{
+    const bool outputActive = playbackState() != PlaybackState::Stopped;
+
+    if(outputActive) {
+        m_clock.setPaused(true);
+        QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::pause));
+
+        QObject::connect(
+            &m_renderer, &AudioRenderer::initialised, this,
+            [this](bool success) {
+                if(!success) {
+                    updateTrackStatus(TrackStatus::NoTrack);
+                }
+                else if(playbackState() == PlaybackState::Playing) {
+                    QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::play));
+                    m_clock.setPaused(false);
+                }
+            },
+            Qt::SingleShotConnection);
+        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
     }
 }
 

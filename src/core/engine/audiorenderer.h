@@ -27,7 +27,7 @@
 #include <QBasicTimer>
 #include <QObject>
 
-#include <queue>
+#include <deque>
 
 namespace Fooyin {
 class AudioBuffer;
@@ -65,6 +65,7 @@ signals:
     void paused(uint64_t delay);
     void outputClosed();
     void outputStateChanged(AudioOutput::State state);
+    void requestOutputReload();
     void bufferProcessed(const Fooyin::AudioBuffer& buffer);
     void error(const QString& error);
     void finished();
@@ -84,7 +85,9 @@ private:
     [[nodiscard]] bool validOutputState() const;
     void handleStateChanged(AudioOutput::State state);
     void updateInterval();
-    void calculateGain();
+    void recalculateGain();
+    void calculateGain(bool reloadIfChanged);
+    void checkNeedResampling();
 
     void pauseOutput();
     void writeNext();
@@ -102,7 +105,7 @@ private:
     bool m_bufferPrefilled;
     std::unique_ptr<FFmpegResampler> m_resampler;
 
-    std::queue<AudioBuffer> m_bufferQueue;
+    std::deque<AudioBuffer> m_bufferQueue;
     AudioBuffer m_tempBuffer;
     int m_samplePos;
     int m_currentBufferOffset;

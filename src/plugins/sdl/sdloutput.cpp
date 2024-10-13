@@ -36,6 +36,25 @@ constexpr auto EventInterval = 200;
 #endif
 
 namespace {
+SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
+{
+    switch(format) {
+        case(Fooyin::SampleFormat::U8):
+            return AUDIO_U8;
+        case(Fooyin::SampleFormat::S16):
+            return AUDIO_S16SYS;
+        case(Fooyin::SampleFormat::S24):
+        case(Fooyin::SampleFormat::S32):
+            return AUDIO_S32SYS;
+        case(Fooyin::SampleFormat::F32):
+        case(Fooyin::SampleFormat::F64):
+            return AUDIO_F32SYS;
+        case(Fooyin::SampleFormat::Unknown):
+        default:
+            return AUDIO_S16;
+    }
+}
+
 Fooyin::SampleFormat findSampleFormat(SDL_AudioFormat format)
 {
     switch(format) {
@@ -68,7 +87,7 @@ bool SdlOutput::init(const AudioFormat& format)
     SDL_Init(SDL_INIT_AUDIO);
 
     m_desiredSpec.freq     = format.sampleRate();
-    m_desiredSpec.format   = AUDIO_F32SYS;
+    m_desiredSpec.format   = findFormat(format.sampleFormat());
     m_desiredSpec.channels = format.channelCount();
     m_desiredSpec.samples  = m_bufferSize;
     m_desiredSpec.callback = nullptr;
@@ -86,15 +105,18 @@ bool SdlOutput::init(const AudioFormat& format)
         return false;
     }
 
-    m_format.setSampleFormat(findSampleFormat(m_obtainedSpec.format));
-
+    if(format.sampleFormat() == SampleFormat::F64 || m_obtainedSpec.format != m_desiredSpec.format) {
+        qCDebug(SDL) << "Format not supported:" << m_format.prettyFormat();
+        m_format.setSampleFormat(findSampleFormat(m_obtainedSpec.format));
+        qCDebug(SDL) << "Using compatible format:" << m_format.prettyFormat();
+    }
     if(m_obtainedSpec.freq != m_desiredSpec.freq) {
-        qCInfo(SDL) << "Sample rate not supported:" << m_desiredSpec.freq << "Hz";
-        qCInfo(SDL) << "Using sample rate:" << m_obtainedSpec.freq << "Hz";
+        qCDebug(SDL) << "Sample rate not supported:" << m_desiredSpec.freq << "Hz";
+        qCDebug(SDL) << "Using sample rate:" << m_obtainedSpec.freq << "Hz";
         m_format.setSampleRate(m_obtainedSpec.freq);
     }
     if(m_obtainedSpec.channels != m_desiredSpec.channels) {
-        qCInfo(SDL) << "Using channels:" << m_obtainedSpec.channels;
+        qCDebug(SDL) << "Using channels:" << m_obtainedSpec.channels;
         m_format.setChannelCount(m_obtainedSpec.channels);
     }
 

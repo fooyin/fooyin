@@ -63,20 +63,21 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
 {
     setObjectName(QStringLiteral("Renderer"));
 
-    m_settings->subscribe<Settings::Core::PlayMode>(this, &AudioRenderer::calculateGain);
-    m_settings->subscribe<Settings::Core::RGMode>(this, &AudioRenderer::calculateGain);
-    m_settings->subscribe<Settings::Core::RGType>(this, &AudioRenderer::calculateGain);
-    m_settings->subscribe<Settings::Core::RGPreAmp>(this, &AudioRenderer::calculateGain);
-    m_settings->subscribe<Settings::Core::NonRGPreAmp>(this, &AudioRenderer::calculateGain);
+    m_settings->subscribe<Settings::Core::PlayMode>(this, &AudioRenderer::recalculateGain);
+    m_settings->subscribe<Settings::Core::RGMode>(this, &AudioRenderer::recalculateGain);
+    m_settings->subscribe<Settings::Core::RGType>(this, &AudioRenderer::recalculateGain);
+    m_settings->subscribe<Settings::Core::RGPreAmp>(this, &AudioRenderer::recalculateGain);
+    m_settings->subscribe<Settings::Core::NonRGPreAmp>(this, &AudioRenderer::recalculateGain);
 }
 
 void AudioRenderer::init(const Track& track, const AudioFormat& format)
 {
-    m_format = format;
-    m_format.setSampleFormat(SampleFormat::F64);
-    m_currentTrack = track;
+    m_format                 = format;
+    m_currentTrack           = track;
+    m_currentBufferResampled = false;
+    m_bufferPrefilled        = false;
 
-    calculateGain();
+    calculateGain(false);
 
     if(!m_audioOutput) {
         emit initialised(false);
@@ -84,6 +85,10 @@ void AudioRenderer::init(const Track& track, const AudioFormat& format)
 
     if(m_audioOutput->initialised()) {
         m_audioOutput->uninit();
+    }
+
+    for(auto& buffer : m_bufferQueue) {
+        buffer = Audio::convert(buffer, m_format);
     }
 
     const bool success = initOutput();
@@ -194,13 +199,13 @@ void AudioRenderer::pause(int fadeLength)
 void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
 {
     if(!buffer.isValid()) {
-        m_bufferQueue.emplace(buffer);
+        m_bufferQueue.push_back(buffer);
         return;
     }
 
     auto convertedBuffer = Audio::convert(buffer, m_format);
     if(convertedBuffer.isValid()) {
-        m_bufferQueue.emplace(convertedBuffer);
+        m_bufferQueue.push_back(convertedBuffer);
     }
 }
 
@@ -394,75 +399,89 @@ void AudioRenderer::updateInterval()
     m_writeInterval = interval;
 }
 
-void AudioRenderer::calculateGain()
+void AudioRenderer::recalculateGain()
 {
+    calculateGain(true);
+}
+
+void AudioRenderer::calculateGain(bool reloadIfChanged)
+{
+    const double prevGain = m_gainScale;
+
     m_gainScale = 1.0;
 
     const auto mode = m_settings->value<Settings::Core::RGMode>();
-    if(mode == AudioEngine::NoProcessing) {
-        return;
+    if(mode != AudioEngine::NoProcessing) {
+        float gain{0.0F};
+        float peak{1.0F};
+        bool haveGain{false};
+        bool havePeak{false};
+
+        auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
+
+        if(gainType == ReplayGainType::PlaybackOrder) {
+            const auto playMode = m_settings->value<Settings::Core::PlayMode>();
+            gainType            = playMode == Playlist::ShuffleTracks ? ReplayGainType::Track : ReplayGainType::Album;
+        }
+
+        if(gainType == ReplayGainType::Track) {
+            if(m_currentTrack.hasTrackGain()) {
+                gain     = m_currentTrack.rgTrackGain();
+                haveGain = true;
+            }
+            else if(m_currentTrack.hasAlbumGain()) {
+                gain     = m_currentTrack.rgAlbumGain();
+                haveGain = true;
+            }
+            if(m_currentTrack.hasTrackPeak()) {
+                peak     = m_currentTrack.rgTrackPeak();
+                havePeak = true;
+            }
+            else if(m_currentTrack.hasAlbumPeak()) {
+                peak     = m_currentTrack.rgAlbumPeak();
+                havePeak = true;
+            }
+        }
+        else if(gainType == ReplayGainType::Album) {
+            if(m_currentTrack.hasAlbumGain()) {
+                gain     = m_currentTrack.rgAlbumGain();
+                haveGain = true;
+            }
+            else if(m_currentTrack.hasTrackGain()) {
+                gain     = m_currentTrack.rgTrackGain();
+                haveGain = true;
+            }
+            if(m_currentTrack.hasAlbumPeak()) {
+                peak     = m_currentTrack.rgAlbumPeak();
+                havePeak = true;
+            }
+            else if(m_currentTrack.hasTrackPeak()) {
+                peak     = m_currentTrack.rgTrackPeak();
+                havePeak = true;
+            }
+        }
+
+        gain += haveGain ? m_settings->value<Settings::Core::RGPreAmp>()
+                         : m_settings->value<Settings::Core::NonRGPreAmp>();
+
+        if(mode & AudioEngine::ApplyGain) {
+            m_gainScale = std::pow(10.0, gain / 20.0);
+        }
+
+        if((mode & AudioEngine::PreventClipping) && havePeak) {
+            m_gainScale = (m_gainScale * peak) > 1.0 ? (1.0 / peak) : m_gainScale;
+        }
+
+        m_gainScale = std::clamp(m_gainScale, 0.1, 10.0); // Clamp to +-20 dB
     }
 
-    float gain{0.0F};
-    float peak{1.0F};
-    bool haveGain{false};
-    bool havePeak{false};
-
-    auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
-
-    if(gainType == ReplayGainType::PlaybackOrder) {
-        const auto playMode = m_settings->value<Settings::Core::PlayMode>();
-        gainType            = playMode == Playlist::ShuffleTracks ? ReplayGainType::Track : ReplayGainType::Album;
+    if(m_gainScale != 1.0) {
+        m_format.setSampleFormat(SampleFormat::F64);
     }
 
-    if(gainType == ReplayGainType::Track) {
-        if(m_currentTrack.hasTrackGain()) {
-            gain     = m_currentTrack.rgTrackGain();
-            haveGain = true;
-        }
-        else if(m_currentTrack.hasAlbumGain()) {
-            gain     = m_currentTrack.rgAlbumGain();
-            haveGain = true;
-        }
-        if(m_currentTrack.hasTrackPeak()) {
-            peak     = m_currentTrack.rgTrackPeak();
-            havePeak = true;
-        }
-        else if(m_currentTrack.hasAlbumPeak()) {
-            peak     = m_currentTrack.rgAlbumPeak();
-            havePeak = true;
-        }
+    if(reloadIfChanged && (prevGain == 1.0) ^ (m_gainScale == 1.0)) {
+        emit requestOutputReload();
     }
-    else if(gainType == ReplayGainType::Album) {
-        if(m_currentTrack.hasAlbumGain()) {
-            gain     = m_currentTrack.rgAlbumGain();
-            haveGain = true;
-        }
-        else if(m_currentTrack.hasTrackGain()) {
-            gain     = m_currentTrack.rgTrackGain();
-            haveGain = true;
-        }
-        if(m_currentTrack.hasAlbumPeak()) {
-            peak     = m_currentTrack.rgAlbumPeak();
-            havePeak = true;
-        }
-        else if(m_currentTrack.hasTrackPeak()) {
-            peak     = m_currentTrack.rgTrackPeak();
-            havePeak = true;
-        }
-    }
-
-    gain += haveGain ? m_settings->value<Settings::Core::RGPreAmp>() : m_settings->value<Settings::Core::NonRGPreAmp>();
-
-    if(mode & AudioEngine::ApplyGain) {
-        m_gainScale = std::pow(10.0, gain / 20.0);
-    }
-
-    if((mode & AudioEngine::PreventClipping) && havePeak) {
-        m_gainScale = (m_gainScale * peak) > 1.0 ? (1.0 / peak) : m_gainScale;
-    }
-
-    m_gainScale = std::clamp(m_gainScale, 0.1, 10.0); // Clamp to +-20 dB
 }
 
 void AudioRenderer::pauseOutput()
@@ -516,7 +535,7 @@ int AudioRenderer::writeAudioSamples(int samples)
             // End of file
             m_currentBufferOffset    = 0;
             m_currentBufferResampled = false;
-            m_bufferQueue.pop();
+            m_bufferQueue.pop_front();
             emit finished();
             return samplesBuffered;
         }
@@ -536,7 +555,7 @@ int AudioRenderer::writeAudioSamples(int samples)
             m_currentBufferOffset    = 0;
             m_currentBufferResampled = false;
             emit bufferProcessed(buffer);
-            m_bufferQueue.pop();
+            m_bufferQueue.pop_front();
             continue;
         }
 

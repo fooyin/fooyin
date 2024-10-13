@@ -62,7 +62,7 @@ FFmpegResampler::FFmpegResampler(const AudioFormat& inFormat, const AudioFormat&
 
 bool FFmpegResampler::canResample() const
 {
-    return !!m_context;
+    return m_context != nullptr;
 }
 
 AudioBuffer FFmpegResampler::resample(const AudioBuffer& buffer)
