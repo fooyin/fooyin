@@ -48,6 +48,9 @@ Q_LOGGING_CATEGORY(COV_PROV, "fy.coverprovider")
 
 constexpr auto MaxSize = 1024;
 
+// Used to keep track of tracks without artwork so we don't query the filesystem more than necessary
+std::set<QString> Fooyin::CoverProvider::m_noCoverKeys;
+
 namespace {
 using Fooyin::CoverProvider;
 
@@ -277,7 +280,7 @@ CoverLoader loadCoverImage(CoverLoader loader)
 } // namespace
 
 namespace Fooyin {
-class CoverProviderPrivate
+class FYGUI_NO_EXPORT CoverProvider::CoverProviderPrivate
 {
 public:
     explicit CoverProviderPrivate(CoverProvider* self, std::shared_ptr<AudioLoader> audioLoader,
@@ -295,13 +298,12 @@ public:
     bool m_usePlacerholder{true};
     QPixmapCache::Key m_noCoverKey;
     std::set<QString> m_pendingCovers;
-    std::set<QString> m_noCoverKeys;
 
     CoverPaths m_paths;
 };
 
-CoverProviderPrivate::CoverProviderPrivate(CoverProvider* self, std::shared_ptr<AudioLoader> audioLoader,
-                                           SettingsManager* settings)
+CoverProvider::CoverProviderPrivate::CoverProviderPrivate(CoverProvider* self, std::shared_ptr<AudioLoader> audioLoader,
+                                                          SettingsManager* settings)
     : m_self{self}
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
@@ -312,7 +314,7 @@ CoverProviderPrivate::CoverProviderPrivate(CoverProvider* self, std::shared_ptr<
     m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { QPixmapCache::remove(m_noCoverKey); });
 }
 
-QPixmap CoverProviderPrivate::loadNoCover()
+QPixmap CoverProvider::CoverProviderPrivate::loadNoCover()
 {
     QPixmap cachedCover;
     if(QPixmapCache::find(m_noCoverKey, &cachedCover)) {
@@ -328,11 +330,12 @@ QPixmap CoverProviderPrivate::loadNoCover()
     return cover;
 }
 
-void CoverProviderPrivate::processCoverResult(const CoverLoader& loader)
+void CoverProvider::CoverProviderPrivate::processCoverResult(const CoverLoader& loader)
 {
     m_pendingCovers.erase(loader.key);
 
     if(loader.cover.isNull()) {
+        CoverProvider::m_noCoverKeys.emplace(loader.key);
         return;
     }
 
@@ -346,8 +349,8 @@ void CoverProviderPrivate::processCoverResult(const CoverLoader& loader)
     emit m_self->coverAdded(loader.track);
 }
 
-void CoverProviderPrivate::fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail,
-                                      CoverProvider::ThumbnailSize size)
+void CoverProvider::CoverProviderPrivate::fetchCover(const QString& key, const Track& track, Track::Cover type,
+                                                     bool thumbnail, CoverProvider::ThumbnailSize size)
 {
     CoverLoader loader;
     loader.key         = key;
@@ -386,7 +389,7 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
     }
 
     const QString coverKey = generateCoverKey(track, type);
-    if(!p->m_pendingCovers.contains(coverKey)) {
+    if(!p->m_pendingCovers.contains(coverKey) && !m_noCoverKeys.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey);
         if(!cover.isNull()) {
             return cover;
@@ -406,7 +409,7 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, ThumbnailSize siz
     }
 
     const QString coverKey = generateCoverKey(track, type);
-    if(!p->m_pendingCovers.contains(coverKey)) {
+    if(!p->m_pendingCovers.contains(coverKey) && !m_noCoverKeys.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey, size);
         if(!cover.isNull()) {
             return cover;
@@ -466,6 +469,7 @@ void CoverProvider::removeFromCache(const Track& track)
     auto removeKey = [](const QString& key) {
         QDir cache{Fooyin::Gui::coverPath()};
         cache.remove(coverThumbnailPath(key));
+        m_noCoverKeys.erase(key);
         QPixmapCache::remove(key);
     };
 

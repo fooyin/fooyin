@@ -26,13 +26,13 @@
 #include <QObject>
 
 #include <memory>
+#include <set>
 
 class QPixmap;
 class QString;
 class QSize;
 
 namespace Fooyin {
-class CoverProviderPrivate;
 class AudioLoader;
 class SettingsManager;
 
@@ -116,6 +116,8 @@ signals:
     void coverAdded(const Fooyin::Track& track);
 
 private:
+    class CoverProviderPrivate;
     std::unique_ptr<CoverProviderPrivate> p;
+    static std::set<QString> m_noCoverKeys;
 };
 } // namespace Fooyin
