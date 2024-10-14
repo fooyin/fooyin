@@ -140,16 +140,15 @@ QString slice(const QStringList& vec)
     }
 
     bool posSuccess{false};
-
     const int pos = vec.at(1).toInt(&posSuccess);
 
-    if(posSuccess) {
+    if(posSuccess && pos >= 0) {
         if(count == 2) {
             return vec.at(0).sliced(pos);
         }
         bool numSuccess{false};
         const int num = vec.at(2).toInt(&numSuccess);
-        if(numSuccess) {
+        if(numSuccess && num >= 0) {
             return vec.at(0).sliced(pos, num);
         }
     }
@@ -163,10 +162,8 @@ QString chop(const QStringList& vec)
     }
 
     bool numSuccess{false};
-
     const int num = vec.at(1).toInt(&numSuccess);
-
-    if(numSuccess) {
+    if(numSuccess && num >= 0) {
         return vec.at(0).chopped(num);
     }
 
@@ -182,10 +179,9 @@ QString left(const QStringList& vec)
     bool numSuccess{false};
 
     const int num = vec.at(1).toInt(&numSuccess);
-
-    if(numSuccess) {
+    if(numSuccess && num >= 0) {
         const QStringView str = vec.at(0);
-        if(num >= 0 && num <= str.size()) {
+        if(num <= str.size()) {
             return str.first(num).toString();
         }
     }
@@ -202,10 +198,9 @@ QString right(const QStringList& vec)
     bool numSuccess{false};
 
     const int num = vec[1].toInt(&numSuccess);
-
-    if(numSuccess) {
+    if(numSuccess && num >= 0) {
         const QStringView str = vec.at(0);
-        if(num >= 0 && num <= str.size()) {
+        if(num <= str.size()) {
             return str.last(num).toString();
         }
     }
@@ -225,14 +220,13 @@ QString insert(const QStringList& vec)
     if(count == 3) {
         bool numSuccess{false};
         index = vec.at(2).toInt(&numSuccess);
-        if(!numSuccess) {
-            return {};
+        if(numSuccess && index >= 0) {
+            QString ret{vec.front()};
+            ret.insert(index, vec.at(1));
+            return ret;
         }
     }
-
-    QString ret{vec.front()};
-    ret.insert(index, vec.at(1));
-    return ret;
+    return {};
 }
 
 QString substr(const QStringList& vec)
@@ -246,7 +240,7 @@ QString substr(const QStringList& vec)
     const int from = vec.at(1).toInt(&fromSuccess);
     const int to   = vec.at(2).toInt(&toSuccess);
 
-    if(fromSuccess && toSuccess && to >= from) {
+    if(fromSuccess && toSuccess && to >= from && from >= 0 && to >= 0) {
         return vec.front().mid(from, to - from + 1);
     }
 
@@ -410,7 +404,7 @@ QString pad(const QStringList& vec)
     bool numSuccess{false};
     const int len = vec.at(1).toInt(&numSuccess);
 
-    if(!numSuccess) {
+    if(!numSuccess || len < 0) {
         return {};
     }
 
@@ -436,7 +430,7 @@ QString padRight(const QStringList& vec)
     bool numSuccess{false};
     const int len = vec.at(1).toInt(&numSuccess);
 
-    if(!numSuccess) {
+    if(!numSuccess || len < 0) {
         return {};
     }
 
