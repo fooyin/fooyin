@@ -27,6 +27,7 @@
 
 class QLabel;
 class QProgressBar;
+class QTextEdit;
 
 namespace Fooyin {
 class ElidedLabel;
@@ -53,7 +54,7 @@ public:
 private:
     void updateStatus();
 
-    ElidedLabel* m_label;
+    QTextEdit* m_text;
     QProgressBar* m_progressBar;
     bool m_wasCancelled;
 

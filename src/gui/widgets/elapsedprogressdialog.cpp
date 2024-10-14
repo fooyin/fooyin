@@ -28,13 +28,14 @@
 #include <QLabel>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QTextEdit>
 #include <QTimer>
 
 namespace Fooyin {
 ElapsedProgressDialog::ElapsedProgressDialog(const QString& labelText, const QString& cancelButtonText, int minimum,
                                              int maximum, QWidget* parent)
     : QDialog{parent}
-    , m_label{new ElidedLabel(this)}
+    , m_text{new QTextEdit(this)}
     , m_progressBar{new QProgressBar(this)}
     , m_updateTimer{new QTimer(this)}
     , m_elapsedLabel{new QLabel(this)}
@@ -48,13 +49,12 @@ ElapsedProgressDialog::ElapsedProgressDialog(const QString& labelText, const QSt
     statusLayout->addWidget(m_cancelButton);
 
     auto* layout = new QGridLayout(this);
-    layout->addWidget(m_label, 0, 0, 2, 1);
-    layout->addWidget(m_progressBar, 2, 0);
-    layout->addLayout(statusLayout, 3, 0);
-    layout->setRowStretch(1, 1);
+    layout->addWidget(m_text, 0, 0);
+    layout->addWidget(m_progressBar, 1, 0);
+    layout->addLayout(statusLayout, 2, 0);
 
-    m_label->setElideMode(Qt::ElideMiddle);
-    m_label->setText(labelText);
+    m_text->setText(labelText);
+    m_text->setReadOnly(true);
     m_cancelButton->setText(cancelButtonText);
     m_progressBar->setRange(minimum, maximum);
     m_progressBar->setValue(minimum);
@@ -85,7 +85,7 @@ void ElapsedProgressDialog::setValue(int value)
 
 void ElapsedProgressDialog::setText(const QString& text)
 {
-    m_label->setText(text);
+    m_text->setText(text);
 }
 
 void ElapsedProgressDialog::startTimer()

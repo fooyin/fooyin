@@ -83,7 +83,7 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
             return;
         }
         progress->setValue(progress->value() + 1);
-        progress->setText(tr("Current file") + u": " + filepath);
+        progress->setText(tr("Current file") + u":\n" + filepath);
     });
 
     switch(type) {
