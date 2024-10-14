@@ -4,7 +4,7 @@ This document outlines the upcoming features for fooyin.
 
 ### Next Release
 
-**0.8.0** - 14/10/2024
+**0.9.0** - 18/11/2024
 
 ## New Features
 
