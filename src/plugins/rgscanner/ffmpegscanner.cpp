@@ -334,9 +334,13 @@ FFmpegScanner::FFmpegScanner(QObject* parent)
 void FFmpegScanner::closeThread()
 {
     RGWorker::closeThread();
-    QMetaObject::invokeMethod(p->m_future, [this]() {
-        p->m_future->cancel();
-        p->m_future->waitForFinished();
+
+    QMetaObject::invokeMethod(this, [this]() {
+        if(p->m_future) {
+            p->m_future->cancel();
+            p->m_future->waitForFinished();
+        }
+        emit closed();
     });
 }
 

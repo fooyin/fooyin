@@ -68,7 +68,7 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
     QObject::connect(scanner, &RGScanner::calculationFinished, this,
                      [this, scanner, progress](const TrackList& tracks) {
                          const auto finishTime = progress->elapsedTime();
-                         scanner->deleteLater();
+                         scanner->close();
                          progress->deleteLater();
 
                          auto* rgResults = new RGScanResults(m_library, tracks, finishTime);
@@ -78,8 +78,8 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
 
     QObject::connect(scanner, &RGScanner::startingCalculation, progress, [scanner, progress](const QString& filepath) {
         if(progress->wasCancelled()) {
-            scanner->deleteLater();
-            progress->close();
+            scanner->close();
+            progress->deleteLater();
             return;
         }
         progress->setValue(progress->value() + 1);

@@ -44,6 +44,7 @@ public:
 signals:
     void startingCalculation(const QString& filepath);
     void calculationFinished(const Fooyin::TrackList& tracks);
+    void closed();
 };
 
 class RGScanner : public QObject
@@ -54,6 +55,8 @@ public:
     explicit RGScanner(const std::shared_ptr<AudioLoader>& audioLoader, SettingsManager* settings,
                        QObject* parent = nullptr);
     ~RGScanner() override;
+
+    void close();
 
     void calculatePerTrack(const TrackList& tracks);
     void calculateAsAlbum(const TrackList& tracks);

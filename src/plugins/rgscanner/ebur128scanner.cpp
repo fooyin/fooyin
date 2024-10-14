@@ -48,17 +48,21 @@ void Ebur128Scanner::closeThread()
 {
     RGWorker::closeThread();
 
-    auto cancelFuture = [](QFutureWatcher<void>* watcher) {
-        if(watcher) {
-            watcher->cancel();
-            watcher->waitForFinished();
-        }
-    };
+    QMetaObject::invokeMethod(this, [this]() {
+        auto cancelFuture = [](QFutureWatcher<void>* watcher) {
+            if(watcher) {
+                watcher->cancel();
+                watcher->waitForFinished();
+            }
+        };
 
-    cancelFuture(m_watcher);
-    for(const auto& [_, watcher] : m_albumWatchers) {
-        cancelFuture(watcher);
-    }
+        cancelFuture(m_watcher);
+        for(const auto& [_, watcher] : m_albumWatchers) {
+            cancelFuture(watcher);
+        }
+
+        emit closed();
+    });
 }
 
 void Ebur128Scanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
