@@ -304,6 +304,8 @@ void Ebur128Scanner::scanAlbum(bool truePeak)
                 track.setRGAlbumGain(static_cast<float>(albumGain));
                 track.setRGAlbumPeak(albumPeak);
             }
+
+            albumState->second.clear();
         }
 
         ++m_currentAlbum;
