@@ -19,6 +19,7 @@
 
 #include "cueparser.h"
 
+#include <core/constants.h>
 #include <core/track.h>
 
 #include <QBuffer>
@@ -46,6 +47,9 @@ struct CueSheet
     QString disc;
     uint64_t lastModified{0};
 
+    float rgAlbumGain{Fooyin::Constants::InvalidGain};
+    float rgAlbumPeak{Fooyin::Constants::InvalidPeak};
+
     Fooyin::Track currentFile;
 
     bool singleTrackFile{false};
@@ -57,6 +61,33 @@ struct CueSheet
 };
 
 namespace {
+float parseGain(const QString& gainStr)
+{
+    static const QRegularExpression regex{QStringLiteral(R"([+-]?\d+(\.\d+))")};
+    const QRegularExpressionMatch match = regex.match(gainStr);
+
+    if(match.hasMatch()) {
+        bool ok{false};
+        const float gain = match.captured(0).toFloat(&ok);
+        if(ok) {
+            return gain;
+        }
+    }
+
+    return Fooyin::Constants::InvalidGain;
+}
+
+float parsePeak(const QString& peakStr)
+{
+    bool ok{false};
+    const float peak = peakStr.toFloat(&ok);
+    if(ok) {
+        return peak;
+    }
+
+    return Fooyin::Constants::InvalidPeak;
+}
+
 QStringList splitCueLine(const QString& line)
 {
     static const QRegularExpression lineRegex{QLatin1String{CueLineRegex}};
@@ -112,7 +143,7 @@ QString findMatchingFile(const QString& filepath)
     return filepath;
 }
 
-void readRemLine(CueSheet& sheet, const QStringList& lineParts)
+void readRemLine(CueSheet& sheet, Fooyin::Track& track, const QStringList& lineParts)
 {
     if(lineParts.size() < 2) {
         return;
@@ -133,6 +164,18 @@ void readRemLine(CueSheet& sheet, const QStringList& lineParts)
     else if(field.compare(u"COMMENT", Qt::CaseInsensitive) == 0) {
         sheet.comment = value;
     }
+    else if(field.compare(u"REPLAYGAIN_ALBUM_GAIN", Qt::CaseInsensitive) == 0) {
+        sheet.rgAlbumGain = parseGain(value);
+    }
+    else if(field.compare(u"REPLAYGAIN_ALBUM_PEAK", Qt::CaseInsensitive) == 0) {
+        sheet.rgAlbumPeak = parsePeak(value);
+    }
+    else if(field.compare(u"REPLAYGAIN_TRACK_GAIN", Qt::CaseInsensitive) == 0) {
+        track.setRGTrackGain(parseGain(value));
+    }
+    else if(field.compare(u"REPLAYGAIN_TRACK_PEAK", Qt::CaseInsensitive) == 0) {
+        track.setRGTrackPeak(parsePeak(value));
+    }
 }
 
 void finaliseTrack(const CueSheet& sheet, Fooyin::Track& track)
@@ -147,6 +190,8 @@ void finaliseTrack(const CueSheet& sheet, Fooyin::Track& track)
     track.setDiscNumber(sheet.disc);
     track.setComment(sheet.comment);
     track.setComposers({sheet.composer});
+    track.setRGAlbumGain(sheet.rgAlbumGain);
+    track.setRGAlbumPeak(sheet.rgAlbumPeak);
 }
 
 void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QString& trackPath, Fooyin::TrackList& tracks)
@@ -340,7 +385,7 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
         }
     }
     else if(field.compare(u"REM", Qt::CaseInsensitive) == 0) {
-        readRemLine(sheet, parts.sliced(1));
+        readRemLine(sheet, track, parts.sliced(1));
     }
     else if(field.compare(u"TRACK", Qt::CaseInsensitive) == 0) {
         if(QFile::exists(trackPath) || !sheet.skipNotFound) {
