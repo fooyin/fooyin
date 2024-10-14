@@ -55,7 +55,7 @@ void paintEntry(QPainter* painter, const QStyleOptionViewItem& opt, const QModel
     QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
-    if(!index.data(Fooyin::ReplayGainItem::IsSummary).toBool()) {
+    if(index.column() > 0 && !index.data(Fooyin::ReplayGainItem::IsSummary).toBool()) {
         QPen linePen = painter->pen();
         linePen.setWidth(1);
         QColor lineColour = opt.palette.color(QPalette::Text);
@@ -63,7 +63,7 @@ void paintEntry(QPainter* painter, const QStyleOptionViewItem& opt, const QModel
         linePen.setColor(lineColour);
 
         painter->setPen(linePen);
-        const int x = opt.rect.right();
+        const int x = opt.rect.left();
         painter->drawLine(x, opt.rect.top(), x, opt.rect.bottom());
     }
 }
