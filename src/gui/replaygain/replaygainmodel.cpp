@@ -203,12 +203,13 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
             return QStringLiteral("<<multiple values>>");
         }
 
-        const QString value = formatGain(item->trackGain(), 2);
+        const float trackGain = item->trackGain();
+        const QString value   = formatGain(trackGain, 2);
         if(value.isEmpty()) {
             return {};
         }
 
-        return isEdit ? value : QStringLiteral("%1 dB").arg(value);
+        return isEdit ? value : QStringLiteral("%1 dB").arg(value).prepend(trackGain > 0 ? u"+" : u"");
     }
 
     if(column == 2) {
@@ -216,12 +217,12 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
     }
 
     if(column == 3) {
-        const float gain = item->albumGain();
-        if(gain == Constants::InvalidGain) {
+        const float albumGain = item->albumGain();
+        const QString value   = formatGain(albumGain, 2);
+        if(value.isEmpty()) {
             return {};
         }
-        const auto gainStr = QString::number(gain, 'f', 2);
-        return isEdit ? gainStr : QStringLiteral("%1 dB").arg(gainStr);
+        return isEdit ? value : QStringLiteral("%1 dB").arg(value).prepend(albumGain > 0 ? u"+" : u"");
     }
 
     if(column == 4) {
