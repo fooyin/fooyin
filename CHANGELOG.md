@@ -1,5 +1,57 @@
 # Changelog
 
+## [0.8.0](https://github.com/fooyin/fooyin/releases/tag/v0.8.0) (2024-10-14)
+
+### New Features
+
+* Support for calculating ReplayGain ([#269](https://github.com/fooyin/fooyin/pull/269))
+  - Uses libebur128 if found, or FFmpeg as a fallback
+* Quick search and query syntax ([#291](https://github.com/fooyin/fooyin/pull/291))
+* VU and peak meter plugin ([#317](https://github.com/fooyin/fooyin/pull/317))
+
+### Improvements
+
+* Engine
+  - Support playback of DSD ([#325](https://github.com/fooyin/fooyin/pull/325))
+  - Only convert to 64bit float when necessary
+* Interface
+  - Add mnemonics to all menubar actions 
+  - Improve volume tooltip positioning ([#328](https://github.com/fooyin/fooyin/pull/328))
+  - Reduce amount of filesystem queries for tracks without artwork
+* Scripting
+  - Add $split for splitting fields with a delimiter
+  - Add $elide_mid, $elide_end ([#316](https://github.com/fooyin/fooyin/pull/316))
+* Search
+  - Add different search modes to unconnected search widgets
+  - Add settings page under Library for configuration
+  - Remove minimum character limit and show message when empty ([#307](https://github.com/fooyin/fooyin/issues/307))
+* Controls: Improve volume tooltip positioning ([#328](https://github.com/fooyin/fooyin/pull/328))
+* DirBrowser: Rename elide text setting to 'Show horizontal scrollbar'
+* CUE: Support reading ReplayGain
+* LibraryTree: Add ability to display artwork
+* Properties: Improve appearance
+* Settings: Save state-related settings to XDG_STATE_HOME ([#312](https://github.com/fooyin/fooyin/issues/312))
+
+### Fixes
+
+* Engine
+  - Resolve rare crash when resuming playback on startup
+  - Fix gapless playback occasionally failing on some outputs
+* Playlist
+  - Fix stop after current behaviour ([#302](https://github.com/fooyin/fooyin/issues/302))
+  - Fix restoring state in rare instances
+  - Improve performance when dropping a large number of tracks
+* Search
+  - Fix crash when dragging tracks from dialog
+  - Fix incorrect track count
+* CMake: Fix finding SndFile ([#305](https://github.com/fooyin/fooyin/issues/305))
+* Controls: Fix playlist controls not responding to external changes
+* Library: Fix race condition leading to a repeated scan request
+* ReplayGain: Fix editing of values
+* Scripting: Fix $iflonger behaviour ([#310](https://github.com/fooyin/fooyin/issues/310))
+* TreeItem: Fix undefined behaviour
+
+
 ## [0.7.3](https://github.com/fooyin/fooyin/releases/tag/v0.7.3) (2024-09-28)
 
 ### Improvements
