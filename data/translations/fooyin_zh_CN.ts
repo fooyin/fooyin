@@ -5402,7 +5402,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="72"/>
         <source>Close quick search when successful</source>
-        <translation type="unfinished"></translation>
+        <translation>成功后关闭快速搜索框</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
@@ -5442,7 +5442,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
         <source>These settings will only apply if autosearch is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>这些设置仅在关闭自动搜索时生效。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
@@ -5481,32 +5481,32 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="433"/>
         <source>Special Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>特殊键</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="433"/>
         <source>Force the creation of a new results playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>强制新建结果播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="434"/>
         <source>Force search in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>强制在当前播放列表中搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="434"/>
         <source>Force search in all playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>强制在所有播放列表中搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="435"/>
         <source>Force inline playlist search</source>
-        <translation type="unfinished"></translation>
+        <translation>强制搜索内联播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="436"/>
         <source>Force new results playlist using the current playlist as the source</source>
-        <translation type="unfinished"></translation>
+        <translation>强制使用当前播放列表作为源新建结果播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
@@ -5516,7 +5516,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
         <source>Delete a word in the search box</source>
-        <translation type="unfinished"></translation>
+        <translation>在搜索框中删除一个词</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="494"/>

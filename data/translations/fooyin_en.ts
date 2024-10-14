@@ -5403,7 +5403,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="72"/>
         <source>Close quick search when successful</source>
-        <translation type="unfinished"></translation>
+        <translation>Close quick search when successful</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
@@ -5443,7 +5443,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
         <source>These settings will only apply if autosearch is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>These settings will only apply if autosearch is disabled.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="100"/>
@@ -5482,42 +5482,42 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="433"/>
         <source>Special Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Special Keys</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="433"/>
         <source>Force the creation of a new results playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Force the creation of a new results playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="434"/>
         <source>Force search in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Force search in the current playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="434"/>
         <source>Force search in all playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Force search in all playlists</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="435"/>
         <source>Force inline playlist search</source>
-        <translation type="unfinished"></translation>
+        <translation>Force inline playlist search</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="436"/>
         <source>Force new results playlist using the current playlist as the source</source>
-        <translation type="unfinished"></translation>
+        <translation>Force new results playlist using the current playlist as the source</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
         <source>Force new results playlist using all playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Force new results playlist using all playlists</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
         <source>Delete a word in the search box</source>
-        <translation type="unfinished"></translation>
+        <translation>Delete a word in the search box</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="494"/>
