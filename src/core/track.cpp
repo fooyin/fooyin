@@ -1175,7 +1175,11 @@ QString Track::techInfo(const QString& name) const
         {QString::fromLatin1(Bitrate),      [validNum](const Track& track) { return validNum(track.bitrate()); }},
         {QString::fromLatin1(Channels),     [validNum](const Track& track) { return validNum(track.channels()); }},
         {QString::fromLatin1(BitDepth),     [validNum](const Track& track) { return validNum(track.bitDepth()); }},
-        {QString::fromLatin1(Duration),     [validNum](const Track& track) { return validNum(track.duration()); }}
+        {QString::fromLatin1(Duration),     [validNum](const Track& track) { return validNum(track.duration()); }},
+        {QString::fromLatin1(RGTrackGain),  [](const Track& track) { return track.hasTrackGain() ? QString::number(track.rgTrackGain()) : QString{}; }},
+        {QString::fromLatin1(RGTrackPeak),  [](const Track& track) { return track.hasTrackPeak() ? QString::number(track.rgTrackPeak()) : QString{}; }},
+        {QString::fromLatin1(RGAlbumGain),  [](const Track& track) { return track.hasAlbumGain() ? QString::number(track.rgAlbumGain()) : QString{}; }},
+        {QString::fromLatin1(RGAlbumPeak),  [](const Track& track) { return track.hasAlbumPeak() ? QString::number(track.rgAlbumPeak()) : QString{}; }}
     };
     // clang-format on
 

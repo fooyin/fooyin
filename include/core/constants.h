@@ -72,6 +72,12 @@ constexpr auto FileNameWithExt = "FILENAME_EXT";
 constexpr auto Directory       = "DIRECTORY";
 constexpr auto Path            = "PATH";
 constexpr auto Subsong         = "SUBSONG";
+constexpr auto RGTrackGain     = "REPLAYGAIN_TRACK_GAIN";
+constexpr auto RGTrackPeak     = "REPLAYGAIN_TRACK_PEAK";
+constexpr auto RGTrackPeakDB   = "REPLAYGAIN_TRACK_PEAK_DB";
+constexpr auto RGAlbumGain     = "REPLAYGAIN_ALBUM_GAIN";
+constexpr auto RGAlbumPeak     = "REPLAYGAIN_ALBUM_PEAK";
+constexpr auto RGAlbumPeakDB   = "REPLAYGAIN_ALBUM_PEAK_DB";
 } // namespace MetaData
 
 constexpr auto FrontCover    = "%frontcover%";

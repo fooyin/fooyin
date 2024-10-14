@@ -29,6 +29,7 @@
 #include <core/constants.h>
 #include <core/player/playercontroller.h>
 #include <core/track.h>
+#include <utils/audioutils.h>
 #include <utils/utils.h>
 
 #include <QDateTime>
@@ -107,6 +108,17 @@ QString trackChannels(const Fooyin::Track& track)
         default:
             return QStringLiteral("%1ch").arg(track.channels());
     }
+}
+
+QString formatGain(const float gain)
+{
+    return QStringLiteral("%1 dB").arg(gain);
+}
+
+QString formatPeak(const float peak)
+{
+    const double dbPeak = Fooyin::Audio::volumeToDb(static_cast<double>(peak));
+    return QStringLiteral("%1 dB").arg(dbPeak, 0, 'f', 2).prepend(dbPeak > 0 ? u"+" : u"");
 }
 
 QString formatDateTime(const uint64_t ms)
@@ -347,6 +359,20 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Directory)]       = &Track::directory;
     m_metadata[QString::fromLatin1(MetaData::Path)]            = &Track::path;
     m_metadata[QString::fromLatin1(MetaData::Subsong)]         = &Track::subsong;
+    m_metadata[QString::fromLatin1(MetaData::RGTrackGain)]     = [](const Track& track) {
+        return formatGain(track.rgTrackGain());
+    };
+    m_metadata[QString::fromLatin1(MetaData::RGTrackPeak)]   = &Track::rgTrackPeak;
+    m_metadata[QString::fromLatin1(MetaData::RGTrackPeakDB)] = [](const Track& track) {
+        return formatPeak(track.rgTrackPeak());
+    };
+    m_metadata[QString::fromLatin1(MetaData::RGAlbumGain)] = [](const Track& track) {
+        return formatGain(track.rgAlbumGain());
+    };
+    m_metadata[QString::fromLatin1(MetaData::RGAlbumPeak)]   = &Track::rgAlbumPeak;
+    m_metadata[QString::fromLatin1(MetaData::RGAlbumPeakDB)] = [](const Track& track) {
+        return formatPeak(track.rgAlbumPeak());
+    };
 
     m_setMetadata[QString::fromLatin1(MetaData::Title)]        = generateSetFunc(&Track::setTitle);
     m_setMetadata[QString::fromLatin1(MetaData::Artist)]       = generateSetFunc(&Track::setArtists);
