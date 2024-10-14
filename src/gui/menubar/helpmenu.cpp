@@ -59,6 +59,12 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
         QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/scripting/basics.html"));
     });
 
+    auto* searching = new QAction(tr("S&earching help"), this);
+    searching->setStatusTip(tr("Open the search documentation"));
+    QObject::connect(searching, &QAction::triggered, this, []() {
+        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/searching/basics.html"));
+    });
+
     auto* faq = new QAction(tr("&Frequently asked questions"), this);
     faq->setStatusTip(tr("Open the FAQ"));
     QObject::connect(faq, &QAction::triggered, this,
@@ -70,6 +76,7 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
 
     helpMenu->addAction(quickStart);
     helpMenu->addAction(scripting);
+    helpMenu->addAction(searching);
     helpMenu->addAction(faq);
     helpMenu->addAction(about);
 }

@@ -33,6 +33,7 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QDesktopServices>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -64,11 +65,9 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
     layout->addWidget(m_searchBar);
     layout->addWidget(m_view);
 
-    if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
-        auto* searchMenu = new QAction(Utils::iconFromTheme(Constants::Icons::Options), tr("Options"), this);
-        QObject::connect(searchMenu, &QAction::triggered, this, &SearchDialog::showOptionsMenu);
-        m_searchBar->addAction(searchMenu, QLineEdit::TrailingPosition);
-    }
+    auto* searchMenu = new QAction(Utils::iconFromTheme(Constants::Icons::Options), tr("Options"), this);
+    QObject::connect(searchMenu, &QAction::triggered, this, &SearchDialog::showOptionsMenu);
+    m_searchBar->addAction(searchMenu, QLineEdit::TrailingPosition);
 
     QObject::connect(m_view->view()->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &SearchDialog::selectInPlaylist);
@@ -137,14 +136,22 @@ void SearchDialog::showOptionsMenu()
     auto* menu = new QMenu(tr("Options"), this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* autoSelect = new QAction(tr("Auto-select on search"), this);
-    QObject::connect(autoSelect, &QAction::triggered, this, [this](const bool checked) {
-        m_autoSelect = checked;
-        m_settings->fileSet(AutoSelect, checked);
+    if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
+        auto* autoSelect = new QAction(tr("Auto-select on search"), this);
+        QObject::connect(autoSelect, &QAction::triggered, this, [this](const bool checked) {
+            m_autoSelect = checked;
+            m_settings->fileSet(AutoSelect, checked);
+        });
+        autoSelect->setCheckable(true);
+        autoSelect->setChecked(m_autoSelect);
+        menu->addAction(autoSelect);
+    }
+
+    auto* searching = new QAction(tr("Help"), this);
+    QObject::connect(searching, &QAction::triggered, this, []() {
+        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/searching/basics.html"));
     });
-    autoSelect->setCheckable(true);
-    autoSelect->setChecked(m_autoSelect);
-    menu->addAction(autoSelect);
+    menu->addAction(searching);
 
     QStyleOptionFrame opt;
     opt.initFrom(m_searchBar);

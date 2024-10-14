@@ -36,6 +36,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QDesktopServices>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -539,6 +540,12 @@ void SearchWidget::showOptionsMenu()
                          [this]() { m_searchController->setupWidgetConnections(id()); });
         menu->addAction(manageConnections);
     }
+
+    auto* searching = new QAction(tr("Help"), this);
+    QObject::connect(searching, &QAction::triggered, this, []() {
+        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/searching/basics.html"));
+    });
+    menu->addAction(searching);
 
     QStyleOptionFrame opt;
     opt.initFrom(m_searchBox);
