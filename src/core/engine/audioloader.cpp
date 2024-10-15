@@ -21,6 +21,7 @@
 
 #include <core/coresettings.h>
 #include <core/track.h>
+#include <utils/helpers.h>
 
 #include <QFileInfo>
 #include <QLoggingCategory>
@@ -498,9 +499,9 @@ void AudioLoader::changeDecoderIndex(const QString& name, int index)
     const std::unique_lock lock{p->m_mutex};
     auto decoder = std::ranges::find_if(p->m_decoders, [&name](const auto& entry) { return entry.name == name; });
     if(decoder != p->m_decoders.end()) {
-        decoder->index = index;
+        Utils::move(p->m_decoders, decoder->index, index);
     }
-    sortLoaderEntries(p->m_decoders);
+    std::ranges::for_each(p->m_decoders, [i = 0](auto& loader) mutable { loader.index = i++; });
 }
 
 void AudioLoader::setReaderEnabled(const QString& name, bool enabled)
@@ -517,9 +518,9 @@ void AudioLoader::changeReaderIndex(const QString& name, int index)
     const std::unique_lock lock{p->m_mutex};
     auto reader = std::ranges::find_if(p->m_readers, [&name](const auto& entry) { return entry.name == name; });
     if(reader != p->m_readers.end()) {
-        reader->index = index;
+        Utils::move(p->m_readers, reader->index, index);
     }
-    sortLoaderEntries(p->m_readers);
+    std::ranges::for_each(p->m_readers, [i = 0](auto& loader) mutable { loader.index = i++; });
 }
 
 void AudioLoader::reloadDecoderExtensions(const QString& name)
