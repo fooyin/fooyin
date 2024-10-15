@@ -44,6 +44,7 @@ public:
     void setValue(int value);
 
     void setText(const QString& text);
+    void setMinimumDuration(std::chrono::milliseconds duration);
 
     void startTimer();
     [[nodiscard]] bool wasCancelled() const;
@@ -56,8 +57,11 @@ private:
 
     QTextEdit* m_text;
     QProgressBar* m_progressBar;
+    bool m_isStarting;
+    bool m_isFinished;
     bool m_wasCancelled;
 
+    std::chrono::milliseconds m_minDuration;
     QTimer* m_updateTimer;
     Timer m_elapsedTimer;
     QLabel* m_elapsedLabel;

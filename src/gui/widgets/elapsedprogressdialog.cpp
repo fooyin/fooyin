@@ -36,7 +36,10 @@ ElapsedProgressDialog::ElapsedProgressDialog(const QString& labelText, const QSt
     : QDialog{parent}
     , m_text{new QTextEdit(this)}
     , m_progressBar{new QProgressBar(this)}
+    , m_isStarting{false}
+    , m_isFinished{false}
     , m_wasCancelled{false}
+    , m_minDuration{0}
     , m_updateTimer{new QTimer(this)}
     , m_elapsedLabel{new QLabel(this)}
     , m_remainingLabel{new QLabel(this)}
@@ -66,11 +69,6 @@ ElapsedProgressDialog::ElapsedProgressDialog(const QString& labelText, const QSt
         m_updateTimer->stop();
         hide();
     });
-
-    m_updateTimer->start();
-    m_elapsedTimer.reset();
-    updateStatus();
-    show();
 }
 
 int ElapsedProgressDialog::value() const
@@ -81,11 +79,32 @@ int ElapsedProgressDialog::value() const
 void ElapsedProgressDialog::setValue(int value)
 {
     m_progressBar->setValue(value);
+
+    if(!m_isStarting) {
+        m_isStarting = true;
+        QTimer::singleShot(m_minDuration, this, [this]() {
+            if(!m_isFinished && !m_wasCancelled) {
+                m_updateTimer->start();
+                updateStatus();
+                show();
+            }
+        });
+    }
+    else if(value == m_progressBar->maximum()) {
+        m_isFinished = true;
+        m_updateTimer->stop();
+        hide();
+    }
 }
 
 void ElapsedProgressDialog::setText(const QString& text)
 {
     m_text->setText(text);
+}
+
+void ElapsedProgressDialog::setMinimumDuration(std::chrono::milliseconds duration)
+{
+    m_minDuration = duration;
 }
 
 void ElapsedProgressDialog::startTimer()
