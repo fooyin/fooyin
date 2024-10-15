@@ -129,7 +129,8 @@ void PlaylistControllerPrivate::restoreLastPlaylist()
         }
     }
 
-    if(m_currentPlaylist && !m_handler->activePlaylist()) {
+    if(m_currentPlaylist && !m_handler->activePlaylist()
+       && m_playerController->playState() == Player::PlayState::Stopped) {
         m_handler->changeActivePlaylist(m_currentPlaylist);
     }
 
@@ -485,7 +486,7 @@ void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
         return;
     }
 
-    if(!p->m_handler->activePlaylist()) {
+    if(!p->m_handler->activePlaylist() && p->m_playerController->playState() == Player::PlayState::Stopped) {
         p->m_handler->changeActivePlaylist(playlist);
     }
 
