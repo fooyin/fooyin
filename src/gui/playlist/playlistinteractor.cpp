@@ -33,7 +33,6 @@
 
 #include <QIODevice>
 #include <QMainWindow>
-#include <QProgressDialog>
 
 using namespace std::chrono_literals;
 
@@ -63,9 +62,14 @@ void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& f
                          }
 
                          scanDialog->setValue(progress.percentage());
+
                          if(!progress.file.isEmpty()) {
                              scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + u":\n"
                                                  + progress.file);
+                         }
+
+                         if(progress.current >= progress.total) {
+                             scanDialog->close();
                          }
                      });
 
@@ -102,9 +106,14 @@ void loadPlaylistTracks(Fooyin::MusicLibrary* library, const QList<QUrl>& files,
                          }
 
                          scanDialog->setValue(progress.percentage());
+
                          if(!progress.file.isEmpty()) {
                              scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + u":\n"
                                                  + progress.file);
+                         }
+
+                         if(progress.current >= progress.total) {
+                             scanDialog->close();
                          }
                      });
 
