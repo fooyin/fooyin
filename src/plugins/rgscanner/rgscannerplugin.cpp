@@ -30,8 +30,11 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/utils.h>
 
+#include <QDialog>
+#include <QLabel>
 #include <QMainWindow>
 #include <QMenu>
+#include <QVBoxLayout>
 
 namespace Fooyin::RGScanner {
 void RGScannerPlugin::initialise(const CorePluginContext& context)
@@ -123,7 +126,23 @@ void RGScannerPlugin::setupReplayGainMenu()
         for(Track& track : tracks) {
             track.clearRGInfo();
         }
+
+        auto* removeDialog = new QDialog(Utils::getMainWindow());
+        removeDialog->setAttribute(Qt::WA_DeleteOnClose);
+        removeDialog->setWindowTitle(tr("Remove ReplayGain Info"));
+        removeDialog->setModal(true);
+
+        auto* label = new QLabel(tr("Writing to file tags…"), removeDialog);
+        label->setAlignment(Qt::AlignCenter);
+
+        auto* layout = new QVBoxLayout(removeDialog);
+        layout->addWidget(label);
+
+        QObject::connect(
+            m_library, &MusicLibrary::tracksMetadataChanged, this, [removeDialog]() { removeDialog->close(); },
+            Qt::SingleShotConnection);
         m_library->writeTrackMetadata(tracks);
+        removeDialog->show();
     };
 
     const auto canWriteInfo = [this]() -> bool {
