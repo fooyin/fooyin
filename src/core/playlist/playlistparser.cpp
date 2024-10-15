@@ -91,28 +91,4 @@ QByteArray PlaylistParser::toUtf8(QIODevice* file)
 
     return string.toUtf8();
 }
-
-Track PlaylistParser::readMetadata(const Track& track)
-{
-    Track readTrack{track};
-    const QFileInfo fileInfo{track.filepath()};
-    readTrack.setFileSize(fileInfo.size());
-
-    if(!m_audioLoader->readTrackMetadata(readTrack)) {
-        return track;
-    }
-
-    if(readTrack.addedTime() == 0) {
-        readTrack.setAddedTime(QDateTime::currentMSecsSinceEpoch());
-    }
-    if(readTrack.modifiedTime() == 0) {
-        const QDateTime modifiedTime = fileInfo.lastModified();
-        readTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
-    }
-
-    readTrack.generateHash();
-
-    return readTrack;
-}
-
 } // namespace Fooyin

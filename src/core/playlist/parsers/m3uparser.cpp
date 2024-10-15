@@ -102,7 +102,8 @@ bool M3uParser::saveIsSupported() const
     return true;
 }
 
-TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/, const QDir& dir, bool skipNotFound)
+TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/, const QDir& dir,
+                                  const ReadEntryCallback& readTrack, bool skipNotFound)
 {
     Type type{Type::Standard};
     Metadata metadata;
@@ -155,15 +156,15 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
                 track.setFilePath(path.replace(u'\\', u'/'));
             }
 
-            Track readTrack = PlaylistParser::readMetadata(track);
-            if(readTrack.isValid() || !skipNotFound) {
-                if(readTrack.title().isEmpty() && !metadata.title.isEmpty()) {
-                    readTrack.setTitle(metadata.title);
+            track = readTrack(track);
+            if(track.isValid() || !skipNotFound) {
+                if(track.title().isEmpty() && !metadata.title.isEmpty()) {
+                    track.setTitle(metadata.title);
                 }
-                if(readTrack.artists().empty() && !metadata.artist.isEmpty()) {
-                    readTrack.setArtists({metadata.artist});
+                if(track.artists().empty() && !metadata.artist.isEmpty()) {
+                    track.setArtists({metadata.artist});
                 }
-                tracks.push_back(readTrack);
+                tracks.push_back(track);
             }
         }
     }

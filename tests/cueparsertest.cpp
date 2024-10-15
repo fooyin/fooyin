@@ -47,7 +47,11 @@ TEST_F(CueParserTest, SingleCue)
         QDir dir{filepath};
         dir.cdUp();
 
-        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, false);
+        const auto readTrack = [](const Track& track) {
+            return track;
+        };
+
+        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, readTrack, false);
         ASSERT_EQ(2, tracks.size());
 
         EXPECT_EQ(1991, tracks.at(0).year());
