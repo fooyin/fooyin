@@ -40,6 +40,7 @@ RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, std::chron
     , m_resultsView{new QTableView(this)}
     , m_resultsModel{new RGScanResultsModel(m_tracks, this)}
     , m_status{new QLabel(tr("Time taken") + u": " + Utils::msToString(timeTaken, false), this)}
+    , m_buttonBox{new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this)}
 {
     setWindowTitle(tr("ReplayGain Scan Results"));
     setModal(true);
@@ -52,16 +53,15 @@ RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, std::chron
     m_resultsView->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     m_resultsView->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 
-    auto* buttonBox   = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    auto* applyButton = buttonBox->button(QDialogButtonBox::Ok);
+    auto* applyButton = m_buttonBox->button(QDialogButtonBox::Ok);
     applyButton->setText(tr("&Update File Tags"));
-    QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-    QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    QObject::connect(m_buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    QObject::connect(m_buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     auto* layout = new QGridLayout(this);
     layout->addWidget(m_resultsView, 0, 0, 1, 2);
     layout->addWidget(m_status, 1, 0);
-    layout->addWidget(buttonBox, 1, 1);
+    layout->addWidget(m_buttonBox, 1, 1);
     layout->setColumnStretch(1, 1);
 }
 
@@ -71,7 +71,8 @@ void RGScanResults::accept()
         m_library, &MusicLibrary::tracksMetadataChanged, this, [this]() { QDialog::accept(); },
         Qt::SingleShotConnection);
     m_library->writeTrackMetadata(m_tracks);
-    m_status->setText(tr("Applying to file tags…"));
+    m_status->setText(tr("Writing to file tags…"));
+    m_buttonBox->setEnabled(false);
 }
 
 QSize RGScanResults::sizeHint() const
