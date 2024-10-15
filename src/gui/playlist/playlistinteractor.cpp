@@ -67,16 +67,13 @@ void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& f
                              scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + u":\n"
                                                  + progress.file);
                          }
-
-                         if(progress.current >= progress.total) {
-                             scanDialog->close();
-                         }
                      });
 
     QObject::connect(library, &Fooyin::MusicLibrary::tracksScanned, scanDialog,
-                     [request, func](int id, const Fooyin::TrackList& scannedTracks) {
+                     [scanDialog, request, func](int id, const Fooyin::TrackList& scannedTracks) {
                          if(id == request.id) {
                              func(scannedTracks);
+                             scanDialog->close();
                          }
                      });
 }
@@ -111,16 +108,13 @@ void loadPlaylistTracks(Fooyin::MusicLibrary* library, const QList<QUrl>& files,
                              scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + u":\n"
                                                  + progress.file);
                          }
-
-                         if(progress.current >= progress.total) {
-                             scanDialog->close();
-                         }
                      });
 
     QObject::connect(library, &Fooyin::MusicLibrary::tracksScanned, scanDialog,
-                     [request, func](int id, const Fooyin::TrackList& scannedTracks) {
+                     [scanDialog, request, func](int id, const Fooyin::TrackList& scannedTracks) {
                          if(id == request.id) {
                              func(scannedTracks);
+                             scanDialog->close();
                          }
                      });
 }
