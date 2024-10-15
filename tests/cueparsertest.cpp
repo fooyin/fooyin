@@ -51,7 +51,7 @@ TEST_F(CueParserTest, SingleCue)
             return track;
         };
 
-        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, readTrack, false);
+        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, {readTrack}, false);
         ASSERT_EQ(2, tracks.size());
 
         EXPECT_EQ(1991, tracks.at(0).year());

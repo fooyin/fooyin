@@ -37,13 +37,13 @@ public:
     [[nodiscard]] bool saveIsSupported() const override;
 
     TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,
-                           const ReadEntryCallback& readTrack, bool skipNotFound) override;
+                           const ReadPlaylistEntry& readEntry, bool skipNotFound) override;
 
 private:
     TrackList readCueTracks(QIODevice* device, const QString& filepath, const QDir& dir,
-                            const ReadEntryCallback& readTrack, bool skipNotFound);
-    TrackList readEmbeddedCueTracks(QIODevice* device, const QString& filepath, const ReadEntryCallback& readTrack);
+                            const ReadPlaylistEntry& readEntry, bool skipNotFound);
+    TrackList readEmbeddedCueTracks(QIODevice* device, const QString& filepath, const ReadPlaylistEntry& readEntry);
     void processCueLine(CueSheet& sheet, const QString& line, Track& track, QString& trackPath, const QDir& dir,
-                        const ReadEntryCallback& readTrack, TrackList& tracks);
+                        const ReadPlaylistEntry& readEntry, TrackList& tracks);
 };
 } // namespace Fooyin

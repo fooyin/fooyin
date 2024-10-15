@@ -51,7 +51,7 @@ TEST_F(M3uParserTest, StandardM3u)
             return track;
         };
 
-        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, readTrack, false);
+        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, {readTrack}, false);
         ASSERT_EQ(3, tracks.size());
     }
 }
@@ -68,7 +68,7 @@ TEST_F(M3uParserTest, ExtendedM3u)
             return track;
         };
 
-        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, readTrack, false);
+        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, {readTrack}, false);
         ASSERT_EQ(7, tracks.size());
 
         EXPECT_EQ(u"Rotten Apple", tracks.at(0).title());

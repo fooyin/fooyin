@@ -363,6 +363,10 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
     const QDateTime modifiedTime = archiveInfo.lastModified();
 
     auto readEntry = [&](const QString& entry, QIODevice* device) {
+        if(!m_self->mayRun()) {
+            return;
+        }
+
         auto* fileReader = m_audioLoader->readerForFile(entry);
         if(!fileReader) {
             qCDebug(LIB_SCANNER) << "Unsupported file:" << entry;
@@ -453,7 +457,13 @@ TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool ad
     QDir dir{path};
     dir.cdUp();
 
-    const auto readPlaylistTrack = [this](const Track& playlistTrack) {
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [this, &readEntry](const Track& playlistTrack) {
+        if(!m_self->mayRun()) {
+            readEntry.cancel = true;
+            return playlistTrack;
+        }
+
         Track readTrack{playlistTrack};
 
         if(!m_audioLoader->readTrackMetadata(readTrack)) {
@@ -470,7 +480,7 @@ TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool ad
     };
 
     if(auto* parser = m_playlistLoader->parserForExtension(info.suffix())) {
-        return parser->readPlaylist(&playlistFile, path, dir, readPlaylistTrack, !addMissing);
+        return parser->readPlaylist(&playlistFile, path, dir, readEntry, !addMissing);
     }
 
     return {};
@@ -486,7 +496,13 @@ TrackList LibraryScannerPrivate::readEmbeddedPlaylistTracks(const Track& track)
         return {};
     }
 
-    const auto readPlaylistTrack = [this](const Track& playlistTrack) {
+    PlaylistParser::ReadPlaylistEntry readEntry;
+    readEntry.readTrack = [this, &readEntry](const Track& playlistTrack) {
+        if(!m_self->mayRun()) {
+            readEntry.cancel = true;
+            return playlistTrack;
+        }
+
         Track readTrack{playlistTrack};
 
         if(!m_audioLoader->readTrackMetadata(readTrack)) {
@@ -503,7 +519,7 @@ TrackList LibraryScannerPrivate::readEmbeddedPlaylistTracks(const Track& track)
     };
 
     if(auto* parser = m_playlistLoader->parserForExtension(QStringLiteral("cue"))) {
-        TrackList tracks = parser->readPlaylist(&buffer, track.filepath(), {}, readPlaylistTrack, false);
+        TrackList tracks = parser->readPlaylist(&buffer, track.filepath(), {}, readEntry, false);
         for(auto& plTrack : tracks) {
             plTrack.generateHash();
         }

@@ -34,7 +34,7 @@ public:
     [[nodiscard]] bool saveIsSupported() const override;
 
     TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,
-                           const ReadEntryCallback& readTrack, bool skipNotFound) override;
+                           const ReadPlaylistEntry& readEntry, bool skipNotFound) override;
     void savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
                       PathType type, bool writeMetdata) override;
 };

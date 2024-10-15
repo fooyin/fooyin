@@ -31,7 +31,11 @@ namespace Fooyin {
 class FYCORE_EXPORT PlaylistParser
 {
 public:
-    using ReadEntryCallback = std::function<Track(const Track& filepath)>;
+    struct ReadPlaylistEntry
+    {
+        std::function<Track(const Track& filepath)> readTrack;
+        bool cancel{false};
+    };
 
     enum class PathType : uint8_t
     {
@@ -48,7 +52,7 @@ public:
     [[nodiscard]] virtual bool saveIsSupported() const            = 0;
 
     virtual TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,
-                                   const ReadEntryCallback& readTrack, bool skipNotFound)
+                                   const ReadPlaylistEntry& readEntry, bool skipNotFound)
         = 0;
     virtual void savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
                               PathType type, bool writeMetdata);

@@ -103,7 +103,7 @@ bool M3uParser::saveIsSupported() const
 }
 
 TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/, const QDir& dir,
-                                  const ReadEntryCallback& readTrack, bool skipNotFound)
+                                  const ReadPlaylistEntry& readEntry, bool skipNotFound)
 {
     Type type{Type::Standard};
     Metadata metadata;
@@ -116,7 +116,7 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
 
     TrackList tracks;
 
-    while(!buffer.atEnd()) {
+    while(!buffer.atEnd() && !readEntry.cancel) {
         const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
 
         if(line.startsWith(u"#EXTM3U")) {
@@ -156,7 +156,7 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
                 track.setFilePath(path.replace(u'\\', u'/'));
             }
 
-            track = readTrack(track);
+            track = readEntry.readTrack(track);
             if(track.isValid() || !skipNotFound) {
                 if(track.title().isEmpty() && !metadata.title.isEmpty()) {
                     track.setTitle(metadata.title);

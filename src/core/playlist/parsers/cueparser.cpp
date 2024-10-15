@@ -241,17 +241,17 @@ bool CueParser::saveIsSupported() const
 }
 
 TrackList CueParser::readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,
-                                  const ReadEntryCallback& readTrack, bool skipNotFound)
+                                  const ReadPlaylistEntry& readEntry, bool skipNotFound)
 {
     if(dir.path() == u".") {
-        return readEmbeddedCueTracks(device, filepath, readTrack);
+        return readEmbeddedCueTracks(device, filepath, readEntry);
     }
 
-    return readCueTracks(device, filepath, dir, readTrack, skipNotFound);
+    return readCueTracks(device, filepath, dir, readEntry, skipNotFound);
 }
 
 Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& filepath, const QDir& dir,
-                                           const ReadEntryCallback& readTrack, bool skipNotFound)
+                                           const ReadPlaylistEntry& readEntry, bool skipNotFound)
 {
     Fooyin::TrackList tracks;
 
@@ -275,9 +275,13 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
         return {};
     }
 
-    while(!buffer.atEnd()) {
+    while(!buffer.atEnd() && !readEntry.cancel) {
         const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
-        processCueLine(sheet, line, track, trackPath, dir, readTrack, tracks);
+        processCueLine(sheet, line, track, trackPath, dir, readEntry, tracks);
+    }
+
+    if(readEntry.cancel) {
+        return {};
     }
 
     finaliseLastTrack(sheet, track, trackPath, tracks);
@@ -287,7 +291,7 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
 }
 
 Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QString& filepath,
-                                                   const ReadEntryCallback& readTrack)
+                                                   const ReadPlaylistEntry& readEntry)
 {
     Fooyin::TrackList tracks;
 
@@ -305,9 +309,13 @@ Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QStr
         return {};
     }
 
-    while(!buffer.atEnd()) {
+    while(!buffer.atEnd() && !readEntry.cancel) {
         const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
-        processCueLine(sheet, line, track, trackPath, {}, readTrack, tracks);
+        processCueLine(sheet, line, track, trackPath, {}, readEntry, tracks);
+    }
+
+    if(readEntry.cancel) {
+        return {};
     }
 
     finaliseLastTrack(sheet, track, filepath, tracks);
@@ -317,7 +325,7 @@ Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QStr
 }
 
 void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& track, QString& trackPath, const QDir& dir,
-                               const ReadEntryCallback& readTrack, TrackList& tracks)
+                               const ReadPlaylistEntry& readEntry, TrackList& tracks)
 {
     const QStringList parts = splitCueLine(line);
     if(parts.size() < 2) {
@@ -373,7 +381,7 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
         }
 
         if(QFile::exists(trackPath) || !sheet.skipNotFound) {
-            sheet.currentFile = readTrack(Track{trackPath});
+            sheet.currentFile = readEntry.readTrack(Track{trackPath});
 
             if(!track.trackNumber().isEmpty()) {
                 sheet.singleTrackFile = true;
