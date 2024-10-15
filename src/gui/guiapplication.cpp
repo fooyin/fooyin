@@ -64,6 +64,7 @@
 #include <gui/theme/themeregistry.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
+#include <gui/widgets/elapsedprogressdialog.h>
 #include <gui/widgets/elidedlabel.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
@@ -91,6 +92,8 @@
 #include <QTimer>
 
 Q_LOGGING_CATEGORY(GUI_APP, "fy.gui")
+
+using namespace std::chrono_literals;
 
 namespace Fooyin {
 class GuiApplicationPrivate
@@ -489,15 +492,16 @@ void GuiApplicationPrivate::registerActions()
 
 void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModified) const
 {
-    auto* scanDialog = new QProgressDialog(GuiApplication::tr("Reading tracks…"), GuiApplication::tr("Abort"), 0, 100,
-                                           Utils::getMainWindow());
+    auto* scanDialog = new ElapsedProgressDialog(GuiApplication::tr("Reading tracks…"), GuiApplication::tr("Abort"), 0,
+                                                 100, Utils::getMainWindow());
     scanDialog->setAttribute(Qt::WA_DeleteOnClose);
     scanDialog->setModal(true);
-    scanDialog->setValue(0);
+    scanDialog->setMinimumDuration(500ms);
 
     auto* library = m_core->library();
 
     const ScanRequest request = onlyModified ? library->scanModifiedTracks(tracks) : library->scanTracks(tracks);
+    scanDialog->startTimer();
 
     QObject::connect(library, &MusicLibrary::scanProgress, scanDialog,
                      [scanDialog, request](const ScanProgress& progress) {
@@ -505,12 +509,15 @@ void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModif
                              return;
                          }
 
-                         if(scanDialog->wasCanceled()) {
+                         if(scanDialog->wasCancelled()) {
                              request.cancel();
                              scanDialog->close();
                          }
 
                          scanDialog->setValue(progress.percentage());
+                         if(!progress.file.isEmpty()) {
+                             scanDialog->setText(GuiApplication::tr("Current file") + u":\n" + progress.file);
+                         }
                      });
 }
 

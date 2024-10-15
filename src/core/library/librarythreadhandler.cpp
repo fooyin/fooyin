@@ -73,7 +73,7 @@ public:
     [[nodiscard]] std::optional<LibraryScanRequest> currentRequest() const;
     void execNextRequest();
 
-    void updateProgress(int current, int total);
+    void updateProgress(int current, const QString& file, int total);
     void finishScanRequest();
     void cancelScanRequest(int id);
 
@@ -329,12 +329,13 @@ void LibraryThreadHandlerPrivate::execNextRequest()
     }
 }
 
-void LibraryThreadHandlerPrivate::updateProgress(int current, int total)
+void LibraryThreadHandlerPrivate::updateProgress(int current, const QString& file, int total)
 {
     ScanProgress progress;
     progress.id      = m_currentRequestId;
     progress.total   = total;
     progress.current = current;
+    progress.file    = file;
 
     if(!m_scanRequests.empty()) {
         const auto& request = m_scanRequests.front();
@@ -391,7 +392,7 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      &LibraryThreadHandler::tracksStatsUpdated);
     QObject::connect(&p->m_scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
     QObject::connect(&p->m_scanner, &LibraryScanner::progressChanged, this,
-                     [this](int current, int total) { p->updateProgress(current, total); });
+                     [this](int current, const QString& file, int total) { p->updateProgress(current, file, total); });
     QObject::connect(&p->m_scanner, &LibraryScanner::scannedTracks, this,
                      [this](const TrackList& tracks) { emit scannedTracks(p->m_currentRequestId, tracks); });
     QObject::connect(&p->m_scanner, &LibraryScanner::playlistLoaded, this,

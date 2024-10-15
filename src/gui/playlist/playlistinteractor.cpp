@@ -26,6 +26,7 @@
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
+#include <gui/widgets/elapsedprogressdialog.h>
 #include <utils/datastream.h>
 #include <utils/fileutils.h>
 #include <utils/utils.h>
@@ -34,19 +35,21 @@
 #include <QMainWindow>
 #include <QProgressDialog>
 
+using namespace std::chrono_literals;
+
 namespace {
 template <typename Func>
 void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& func)
 {
-    auto* scanDialog
-        = new QProgressDialog(Fooyin::PlaylistInteractor::tr("Reading tracks…"),
-                              Fooyin::PlaylistInteractor::tr("Abort"), 0, 100, Fooyin::Utils::getMainWindow());
+    auto* scanDialog = new Fooyin::ElapsedProgressDialog(Fooyin::PlaylistInteractor::tr("Reading tracks…"),
+                                                         Fooyin::PlaylistInteractor::tr("Abort"), 0, 100,
+                                                         Fooyin::Utils::getMainWindow());
     scanDialog->setAttribute(Qt::WA_DeleteOnClose);
     scanDialog->setModal(true);
-    scanDialog->setMinimumDuration(500);
-    scanDialog->setValue(0);
+    scanDialog->setMinimumDuration(500ms);
 
     const Fooyin::ScanRequest request = library->scanFiles(files);
+    scanDialog->startTimer();
 
     QObject::connect(library, &Fooyin::MusicLibrary::scanProgress, scanDialog,
                      [scanDialog, request](const Fooyin::ScanProgress& progress) {
@@ -54,12 +57,16 @@ void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& f
                              return;
                          }
 
-                         if(scanDialog->wasCanceled()) {
+                         if(scanDialog->wasCancelled()) {
                              request.cancel();
                              scanDialog->close();
                          }
 
                          scanDialog->setValue(progress.percentage());
+                         if(!progress.file.isEmpty()) {
+                             scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + u":\n"
+                                                 + progress.file);
+                         }
                      });
 
     QObject::connect(library, &Fooyin::MusicLibrary::tracksScanned, scanDialog,
@@ -73,15 +80,15 @@ void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& f
 template <typename Func>
 void loadPlaylistTracks(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& func)
 {
-    auto* scanDialog
-        = new QProgressDialog(Fooyin::PlaylistInteractor::tr("Loading playlist…"),
-                              Fooyin::PlaylistInteractor::tr("Abort"), 0, 100, Fooyin::Utils::getMainWindow());
+    auto* scanDialog = new Fooyin::ElapsedProgressDialog(Fooyin::PlaylistInteractor::tr("Loading playlist…"),
+                                                         Fooyin::PlaylistInteractor::tr("Abort"), 0, 100,
+                                                         Fooyin::Utils::getMainWindow());
     scanDialog->setAttribute(Qt::WA_DeleteOnClose);
     scanDialog->setModal(true);
-    scanDialog->setMinimumDuration(500);
-    scanDialog->setValue(0);
+    scanDialog->setMinimumDuration(500ms);
 
     const Fooyin::ScanRequest request = library->loadPlaylist(files);
+    scanDialog->startTimer();
 
     QObject::connect(library, &Fooyin::MusicLibrary::scanProgress, scanDialog,
                      [scanDialog, request](const Fooyin::ScanProgress& progress) {
@@ -89,12 +96,16 @@ void loadPlaylistTracks(Fooyin::MusicLibrary* library, const QList<QUrl>& files,
                              return;
                          }
 
-                         if(scanDialog->wasCanceled()) {
+                         if(scanDialog->wasCancelled()) {
                              request.cancel();
                              scanDialog->close();
                          }
 
                          scanDialog->setValue(progress.percentage());
+                         if(!progress.file.isEmpty()) {
+                             scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + u":\n"
+                                                 + progress.file);
+                         }
                      });
 
     QObject::connect(library, &Fooyin::MusicLibrary::tracksScanned, scanDialog,

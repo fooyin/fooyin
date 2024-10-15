@@ -143,7 +143,7 @@ public:
 
     void addWatcher(const Fooyin::LibraryInfo& library);
 
-    void reportProgress() const;
+    void reportProgress(const QString& file) const;
     void fileScanned(const QString& file);
 
     Track matchMissingTrack(const Track& track);
@@ -208,7 +208,7 @@ void LibraryScannerPrivate::finishScan()
     if(m_self->state() != LibraryScanner::Paused) {
         m_self->setState(LibraryScanner::Idle);
         m_totalFiles = m_filesScanned.size();
-        reportProgress();
+        reportProgress({});
         cleanupScan();
         emit m_self->finished();
     }
@@ -247,15 +247,15 @@ void LibraryScannerPrivate::addWatcher(const LibraryInfo& library)
                      });
 }
 
-void LibraryScannerPrivate::reportProgress() const
+void LibraryScannerPrivate::reportProgress(const QString& file) const
 {
-    emit m_self->progressChanged(static_cast<int>(m_filesScanned.size()), static_cast<int>(m_totalFiles));
+    emit m_self->progressChanged(static_cast<int>(m_filesScanned.size()), file, static_cast<int>(m_totalFiles));
 }
 
 void LibraryScannerPrivate::fileScanned(const QString& file)
 {
     m_filesScanned.emplace(file);
-    reportProgress();
+    reportProgress(file);
 }
 
 Track LibraryScannerPrivate::matchMissingTrack(const Track& track)
@@ -737,7 +737,7 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QStringList& paths, const 
     const auto files = getFiles(paths, restrictExtensions, excludeExtensions, {});
 
     m_totalFiles = files.size();
-    reportProgress();
+    reportProgress({});
 
     for(const auto& file : files) {
         if(!m_self->mayRun()) {
@@ -803,7 +803,9 @@ void LibraryScanner::stopThread()
     if(state() == Running) {
         QMetaObject::invokeMethod(
             this,
-            [this]() { emit progressChanged(static_cast<int>(p->m_totalFiles), static_cast<int>(p->m_totalFiles)); },
+            [this]() {
+                emit progressChanged(static_cast<int>(p->m_totalFiles), {}, static_cast<int>(p->m_totalFiles));
+            },
             Qt::QueuedConnection);
     }
 
@@ -977,7 +979,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
     p->m_totalFiles = files.size();
 
-    p->reportProgress();
+    p->reportProgress({});
 
     for(const auto& file : files) {
         if(!mayRun()) {
@@ -1059,7 +1061,7 @@ void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QU
     TrackList tracksScanned;
 
     p->populateExistingTracks(libraryTracks, false);
-    p->reportProgress();
+    p->reportProgress({});
 
     if(!mayRun()) {
         p->finishScan();

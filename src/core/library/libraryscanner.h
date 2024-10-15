@@ -50,7 +50,7 @@ public:
     void stopThread() override;
 
 signals:
-    void progressChanged(int current, int total);
+    void progressChanged(int current, const QString& file, int total);
     void statusChanged(const Fooyin::LibraryInfo& library);
     void scanUpdate(const Fooyin::ScanResult& result);
     void scannedTracks(const Fooyin::TrackList& tracks);

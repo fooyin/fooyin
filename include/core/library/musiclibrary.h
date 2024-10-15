@@ -57,6 +57,7 @@ struct ScanProgress
     int id{-1};
     int total{0};
     int current{0};
+    QString file;
 
     [[nodiscard]] int percentage() const
     {
