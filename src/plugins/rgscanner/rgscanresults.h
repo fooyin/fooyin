@@ -23,6 +23,7 @@
 
 #include <QDialog>
 
+class QLabel;
 class QTableView;
 
 namespace Fooyin {
@@ -50,6 +51,7 @@ private:
 
     QTableView* m_resultsView;
     RGScanResultsModel* m_resultsModel;
+    QLabel* m_status;
 };
 } // namespace RGScanner
 } // namespace Fooyin

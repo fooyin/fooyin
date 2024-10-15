@@ -60,7 +60,6 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
     auto* progress
         = new ElapsedProgressDialog(tr("Scanning tracks…"), tr("Abort"), 0, total + 1, Utils::getMainWindow());
     progress->setAttribute(Qt::WA_DeleteOnClose);
-    progress->setWindowModality(Qt::ApplicationModal);
     progress->setValue(0);
     progress->setWindowTitle(tr("ReplayGain Scan Progress"));
 
@@ -71,7 +70,7 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
                          scanner->close();
                          progress->deleteLater();
 
-                         auto* rgResults = new RGScanResults(m_library, tracks, finishTime);
+                         auto* rgResults = new RGScanResults(m_library, tracks, finishTime, Utils::getMainWindow());
                          rgResults->setAttribute(Qt::WA_DeleteOnClose);
                          rgResults->show();
                      });

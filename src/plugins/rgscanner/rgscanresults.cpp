@@ -39,8 +39,10 @@ RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, std::chron
     , m_tracks{std::move(tracks)}
     , m_resultsView{new QTableView(this)}
     , m_resultsModel{new RGScanResultsModel(m_tracks, this)}
+    , m_status{new QLabel(tr("Time taken") + u": " + Utils::msToString(timeTaken, false), this)}
 {
     setWindowTitle(tr("ReplayGain Scan Results"));
+    setModal(true);
 
     m_resultsView->setModel(m_resultsModel);
     m_resultsView->verticalHeader()->hide();
@@ -56,19 +58,20 @@ RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, std::chron
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    auto* timeLabel = new QLabel(tr("Time taken") + u": " + Utils::msToString(timeTaken, false), this);
-
     auto* layout = new QGridLayout(this);
     layout->addWidget(m_resultsView, 0, 0, 1, 2);
-    layout->addWidget(timeLabel, 1, 0);
+    layout->addWidget(m_status, 1, 0);
     layout->addWidget(buttonBox, 1, 1);
     layout->setColumnStretch(1, 1);
 }
 
 void RGScanResults::accept()
 {
+    QObject::connect(
+        m_library, &MusicLibrary::tracksMetadataChanged, this, [this]() { QDialog::accept(); },
+        Qt::SingleShotConnection);
     m_library->writeTrackMetadata(m_tracks);
-    QDialog::accept();
+    m_status->setText(tr("Applying to file tags…"));
 }
 
 QSize RGScanResults::sizeHint() const
