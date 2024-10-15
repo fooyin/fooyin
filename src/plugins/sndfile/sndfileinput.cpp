@@ -68,7 +68,7 @@ sf_count_t sndSeek(sf_count_t offset, int whence, void* data)
     }
 
     if(file->seek(start + offset)) {
-        return start + offset;
+        return file->pos();
     }
 
     return -1;
@@ -129,7 +129,7 @@ bool SndFileDecoder::isSeekable() const
 std::optional<AudioFormat> SndFileDecoder::init(const AudioSource& source, const Track& track,
                                                 DecoderOptions /*options*/)
 {
-    SF_INFO info;
+    SF_INFO info{};
     info.format = 0;
 
     m_file = source.device;
@@ -141,7 +141,7 @@ std::optional<AudioFormat> SndFileDecoder::init(const AudioSource& source, const
 
     m_sndFile = sf_open_virtual(&m_vio, SFM_READ, &info, m_file);
     if(!m_sndFile) {
-        qCWarning(SND_FILE) << "Unable to open" << track.filepath();
+        qCWarning(SND_FILE) << "Unable to open" << track.filepath() << ":" << sf_strerror(nullptr);
         return {};
     }
 
@@ -207,7 +207,7 @@ bool SndFileReader::canWriteMetaData() const
 
 bool SndFileReader::readTrack(const AudioSource& source, Track& track)
 {
-    SF_INFO info;
+    SF_INFO info{};
     info.format = 0;
 
     SF_VIRTUAL_IO vio;
@@ -219,7 +219,7 @@ bool SndFileReader::readTrack(const AudioSource& source, Track& track)
 
     SNDFILE* sndFile = sf_open_virtual(&vio, SFM_READ, &info, source.device);
     if(!sndFile) {
-        qCWarning(SND_FILE) << "Unable to open" << track.filepath();
+        qCWarning(SND_FILE) << "Unable to open" << track.filepath() << ":" << sf_strerror(nullptr);
         return {};
     }
 
