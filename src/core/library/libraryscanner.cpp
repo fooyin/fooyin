@@ -151,8 +151,8 @@ public:
     void checkBatchFinished();
     void readFileProperties(Track& track);
 
-    [[nodiscard]] TrackList readTracks(const QString& filepath) const;
-    [[nodiscard]] TrackList readArchiveTracks(const QString& filepath) const;
+    [[nodiscard]] TrackList readTracks(const QString& filepath);
+    [[nodiscard]] TrackList readArchiveTracks(const QString& filepath);
     [[nodiscard]] TrackList readPlaylist(const QString& filepath) const;
     [[nodiscard]] TrackList readPlaylistTracks(const QString& filepath, bool addMissing = false) const;
     [[nodiscard]] TrackList readEmbeddedPlaylistTracks(const Track& track) const;
@@ -305,7 +305,7 @@ void LibraryScannerPrivate::readFileProperties(Track& track)
     }
 }
 
-TrackList LibraryScannerPrivate::readTracks(const QString& filepath) const
+TrackList LibraryScannerPrivate::readTracks(const QString& filepath)
 {
     if(m_audioLoader->isArchive(filepath)) {
         return readArchiveTracks(filepath);
@@ -345,7 +345,7 @@ TrackList LibraryScannerPrivate::readTracks(const QString& filepath) const
     return tracks;
 }
 
-TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) const
+TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
 {
     auto* archiveReader = m_audioLoader->archiveReaderForFile(filepath);
     if(!archiveReader) {
@@ -385,6 +385,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
         }
 
         const int subsongCount = std::max(fileReader->subsongCount(), 1);
+        m_totalFiles += subsongCount;
 
         for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
             Track subTrack{archivePath + entry, subIndex};
@@ -396,6 +397,8 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
             if(fileReader->readTrack(source, subTrack)) {
                 subTrack.generateHash();
                 tracks.push_back(subTrack);
+                m_filesScanned.emplace(subTrack.prettyFilepath());
+                reportProgress(subTrack.prettyFilepath());
             }
         }
     };
