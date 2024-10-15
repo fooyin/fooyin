@@ -70,9 +70,13 @@ void RGScanResults::accept()
     QObject::connect(
         m_library, &MusicLibrary::tracksMetadataChanged, this, [this]() { QDialog::accept(); },
         Qt::SingleShotConnection);
-    m_library->writeTrackMetadata(m_tracks);
+
     m_status->setText(tr("Writing to file tags…"));
-    m_buttonBox->setEnabled(false);
+    m_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+
+    const auto request = m_library->writeTrackMetadata(m_tracks);
+    QObject::connect(
+        m_buttonBox, &QDialogButtonBox::rejected, this, [request]() { request.cancel(); }, Qt::SingleShotConnection);
 }
 
 QSize RGScanResults::sizeHint() const

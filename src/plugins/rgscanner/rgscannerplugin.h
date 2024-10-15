@@ -24,6 +24,8 @@
 #include <core/track.h>
 #include <gui/plugins/guiplugin.h>
 
+class QDialog;
+
 namespace Fooyin::RGScanner {
 class RGScannerPlugin : public QObject,
                         public Plugin,
@@ -47,6 +49,7 @@ private:
     };
     void calculateReplayGain(RGScanType type);
     void setupReplayGainMenu();
+    static QDialog* createRemoveDialog();
 
     std::shared_ptr<AudioLoader> m_audioLoader;
     MusicLibrary* m_library;

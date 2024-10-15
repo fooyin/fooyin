@@ -31,9 +31,11 @@
 #include <utils/utils.h>
 
 #include <QDialog>
+#include <QDialogButtonBox>
 #include <QLabel>
 #include <QMainWindow>
 #include <QMenu>
+#include <QPushButton>
 #include <QVBoxLayout>
 
 namespace Fooyin::RGScanner {
@@ -127,21 +129,22 @@ void RGScannerPlugin::setupReplayGainMenu()
             track.clearRGInfo();
         }
 
-        auto* removeDialog = new QDialog(Utils::getMainWindow());
-        removeDialog->setAttribute(Qt::WA_DeleteOnClose);
-        removeDialog->setWindowTitle(tr("Remove ReplayGain Info"));
-        removeDialog->setModal(true);
-
-        auto* label = new QLabel(tr("Writing to file tags…"), removeDialog);
-        label->setAlignment(Qt::AlignCenter);
-
-        auto* layout = new QVBoxLayout(removeDialog);
-        layout->addWidget(label);
+        auto* removeDialog = createRemoveDialog();
 
         QObject::connect(
-            m_library, &MusicLibrary::tracksMetadataChanged, this, [removeDialog]() { removeDialog->close(); },
+            m_library, &MusicLibrary::tracksMetadataChanged, this, [removeDialog]() { removeDialog->accept(); },
             Qt::SingleShotConnection);
-        m_library->writeTrackMetadata(tracks);
+
+        const auto request = m_library->writeTrackMetadata(tracks);
+
+        QObject::connect(
+            removeDialog, &QDialog::rejected, this,
+            [request, removeDialog]() {
+                request.cancel();
+                removeDialog->reject();
+            },
+            Qt::SingleShotConnection);
+
         removeDialog->show();
     };
 
@@ -172,6 +175,27 @@ void RGScannerPlugin::setupReplayGainMenu()
     replayGainMenu->menu()->addAction(rgSingleAlbumAction);
     replayGainMenu->menu()->addAction(rgAlbumAction);
     replayGainMenu->menu()->addAction(rgRemoveAction);
+}
+
+QDialog* RGScannerPlugin::createRemoveDialog()
+{
+    auto* removeDialog = new QDialog(Utils::getMainWindow());
+    removeDialog->setAttribute(Qt::WA_DeleteOnClose);
+    removeDialog->setWindowTitle(tr("Remove ReplayGain Info"));
+    removeDialog->setModal(true);
+
+    auto* label = new QLabel(tr("Writing to file tags…"), removeDialog);
+    label->setAlignment(Qt::AlignCenter);
+
+    auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel, removeDialog);
+    buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Abort"));
+    QObject::connect(buttonBox, &QDialogButtonBox::rejected, removeDialog, &QDialog::reject);
+
+    auto* layout = new QVBoxLayout(removeDialog);
+    layout->addWidget(label);
+    layout->addWidget(buttonBox);
+
+    return removeDialog;
 }
 } // namespace Fooyin::RGScanner
 
