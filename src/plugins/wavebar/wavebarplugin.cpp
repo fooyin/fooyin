@@ -31,12 +31,16 @@
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
+#include <gui/widgets/elapsedprogressdialog.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/async.h>
+#include <utils/utils.h>
 
+#include <QMainWindow>
 #include <QMenu>
-#include <QProgressDialog>
+
+using namespace std::chrono_literals;
 
 namespace {
 Fooyin::DbConnection::DbParams dbConnectionParams()
@@ -148,17 +152,23 @@ void WaveBarPlugin::regenerateSelection(bool onlyMissing) const
     }
 
     const auto total = static_cast<int>(selectedTracks.size());
-    auto* dialog     = new QProgressDialog(tr("Generating waveform data…"), tr("Abort"), 0, total, nullptr);
+    auto* dialog
+        = new ElapsedProgressDialog(tr("Generating waveform data…"), tr("Abort"), 0, total, Utils::getMainWindow());
     dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->setWindowModality(Qt::WindowModal);
-    dialog->setMinimumDuration(500);
-    dialog->setValue(0);
+    dialog->setMinimumDuration(500ms);
 
     // Deleted on close of dialog
     auto* builder = new WaveformBuilder(m_audioLoader, m_dbPool, m_settings, dialog);
 
-    QObject::connect(builder, &WaveformBuilder::waveformGenerated, dialog,
-                     [dialog]() { dialog->setValue(dialog->value() + 1); });
+    QObject::connect(builder, &WaveformBuilder::waveformGenerated, dialog, [dialog, total](const Track& track) {
+        dialog->setValue(dialog->value() + 1);
+        if(track.isValid()) {
+            dialog->setText(track.prettyFilepath());
+        }
+        if(dialog->value() >= total) {
+            dialog->close();
+        }
+    });
 
     for(const Track& track : selectedTracks) {
         builder->generate(track, !onlyMissing);

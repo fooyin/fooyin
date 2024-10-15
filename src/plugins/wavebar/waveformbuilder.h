@@ -50,7 +50,7 @@ public:
 
 signals:
     void generatingWaveform();
-    void waveformGenerated();
+    void waveformGenerated(const Fooyin::Track& track);
     void waveformRescaled(const Fooyin::WaveBar::WaveformData<float>& data);
 
 private:

@@ -40,12 +40,14 @@ WaveformBuilder::WaveformBuilder(std::shared_ptr<AudioLoader> decoderProvider, D
     m_rescaler.moveToThread(&m_rescalerThread);
 
     QObject::connect(&m_generator, &WaveformGenerator::generatingWaveform, this, &WaveformBuilder::generatingWaveform);
-    QObject::connect(&m_generator, &WaveformGenerator::waveformGenerated, this, &WaveformBuilder::waveformGenerated);
-    QObject::connect(&m_generator, &WaveformGenerator::waveformGenerated, &m_rescaler, [this](const auto& data) {
-        if(m_rescale) {
-            m_rescaler.rescale(data, m_width);
-        }
-    });
+    QObject::connect(&m_generator, &WaveformGenerator::waveformGenerated, this,
+                     [this](const Fooyin::Track& track, const auto& /*data*/) { emit waveformGenerated(track); });
+    QObject::connect(&m_generator, &WaveformGenerator::waveformGenerated, &m_rescaler,
+                     [this](const Track& /*track*/, const auto& data) {
+                         if(m_rescale) {
+                             m_rescaler.rescale(data, m_width);
+                         }
+                     });
     QObject::connect(&m_rescaler, &WaveformRescaler::waveformRescaled, this, &WaveformBuilder::waveformRescaled);
 
     m_settings->subscribe<Settings::WaveBar::BarWidth>(this, &WaveformBuilder::updateRescaler);

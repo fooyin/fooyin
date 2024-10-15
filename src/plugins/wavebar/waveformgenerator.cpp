@@ -141,12 +141,12 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
                 m_data.complete      = true;
 
                 setState(Idle);
-                emit waveformGenerated(m_data);
+                emit waveformGenerated(track, m_data);
             }
         }
         else {
             setState(Idle);
-            emit waveformGenerated({});
+            emit waveformGenerated(track, {});
         }
         return;
     }
@@ -198,7 +198,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
 
         if(render && processedCount++ == updateThreshold) {
             processedCount = 0;
-            emit waveformGenerated(m_data);
+            emit waveformGenerated(track, m_data);
         }
     }
 
@@ -212,7 +212,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         setState(Idle);
     }
 
-    emit waveformGenerated(m_data);
+    emit waveformGenerated(track, m_data);
 }
 
 QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
