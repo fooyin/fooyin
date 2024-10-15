@@ -453,23 +453,14 @@ TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool ad
     QDir dir{path};
     dir.cdUp();
 
-    const auto readPlaylistTrack = [this](const Track& track) {
-        Track readTrack{track};
-        const QFileInfo fileInfo{track.filepath()};
-        readTrack.setFileSize(fileInfo.size());
+    const auto readPlaylistTrack = [this](const Track& playlistTrack) {
+        Track readTrack{playlistTrack};
 
         if(!m_audioLoader->readTrackMetadata(readTrack)) {
-            return track;
+            return playlistTrack;
         }
 
-        if(readTrack.addedTime() == 0) {
-            readTrack.setAddedTime(QDateTime::currentMSecsSinceEpoch());
-        }
-        if(readTrack.modifiedTime() == 0) {
-            const QDateTime modifiedTime = fileInfo.lastModified();
-            readTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
-        }
-
+        readFileProperties(readTrack);
         readTrack.generateHash();
 
         ++m_totalFiles;
@@ -495,23 +486,14 @@ TrackList LibraryScannerPrivate::readEmbeddedPlaylistTracks(const Track& track)
         return {};
     }
 
-    const auto readPlaylistTrack = [this](const Track& track) {
-        Track readTrack{track};
-        const QFileInfo fileInfo{track.filepath()};
-        readTrack.setFileSize(fileInfo.size());
+    const auto readPlaylistTrack = [this](const Track& playlistTrack) {
+        Track readTrack{playlistTrack};
 
         if(!m_audioLoader->readTrackMetadata(readTrack)) {
-            return track;
+            return playlistTrack;
         }
 
-        if(readTrack.addedTime() == 0) {
-            readTrack.setAddedTime(QDateTime::currentMSecsSinceEpoch());
-        }
-        if(readTrack.modifiedTime() == 0) {
-            const QDateTime modifiedTime = fileInfo.lastModified();
-            readTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
-        }
-
+        readFileProperties(readTrack);
         readTrack.generateHash();
 
         ++m_totalFiles;
