@@ -19,7 +19,6 @@
 
 #include <gui/widgets/elapsedprogressdialog.h>
 
-#include <gui/widgets/elidedlabel.h>
 #include <utils/timer.h>
 #include <utils/utils.h>
 
@@ -37,6 +36,7 @@ ElapsedProgressDialog::ElapsedProgressDialog(const QString& labelText, const QSt
     : QDialog{parent}
     , m_text{new QTextEdit(this)}
     , m_progressBar{new QProgressBar(this)}
+    , m_wasCancelled{false}
     , m_updateTimer{new QTimer(this)}
     , m_elapsedLabel{new QLabel(this)}
     , m_remainingLabel{new QLabel(this)}
