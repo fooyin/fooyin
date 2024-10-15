@@ -47,12 +47,12 @@ using namespace std::chrono_literals;
 namespace {
 QStringList fileExtensions(bool allSupported)
 {
-    QStringList extensions{QStringLiteral("mp3"), QStringLiteral("ogg"),  QStringLiteral("opus"),
-                           QStringLiteral("oga"), QStringLiteral("m4a"),  QStringLiteral("wav"),
-                           QStringLiteral("wv"),  QStringLiteral("flac"), QStringLiteral("wma"),
-                           QStringLiteral("asf"), QStringLiteral("mpc"),  QStringLiteral("aiff"),
-                           QStringLiteral("ape"), QStringLiteral("webm"), QStringLiteral("mp4"),
-                           QStringLiteral("mka"), QStringLiteral("dsf"),  QStringLiteral("dff")};
+    QStringList extensions{
+        QStringLiteral("mp3"), QStringLiteral("ogg"),  QStringLiteral("opus"), QStringLiteral("oga"),
+        QStringLiteral("m4a"), QStringLiteral("wav"),  QStringLiteral("wv"),   QStringLiteral("flac"),
+        QStringLiteral("wma"), QStringLiteral("asf"),  QStringLiteral("mpc"),  QStringLiteral("aiff"),
+        QStringLiteral("ape"), QStringLiteral("webm"), QStringLiteral("mp4"),  QStringLiteral("mka"),
+        QStringLiteral("dsf"), QStringLiteral("dff"),  QStringLiteral("wv")};
 
     if(!allSupported) {
         return extensions;

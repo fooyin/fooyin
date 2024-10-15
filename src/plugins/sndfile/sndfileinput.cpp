@@ -34,7 +34,7 @@ QStringList fileExtensions()
     static const QStringList extensions
         = {QStringLiteral("aif"), QStringLiteral("aiff"), QStringLiteral("au"),  QStringLiteral("snd"),
            QStringLiteral("sph"), QStringLiteral("voc"),  QStringLiteral("wav"), QStringLiteral("wavex"),
-           QStringLiteral("w64"), QStringLiteral("wv"),   QStringLiteral("wve")};
+           QStringLiteral("w64"), QStringLiteral("wve")};
     return extensions;
 }
 
