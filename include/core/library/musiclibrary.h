@@ -68,6 +68,11 @@ struct ScanProgress
     }
 };
 
+struct WriteRequest
+{
+    std::function<void()> cancel;
+};
+
 /*!
  * Represents a music library containing Track objects.
  * Acts as a unified library view for all tracks in all libraries,
@@ -141,7 +146,7 @@ public:
     /** Updates the metadata in the database for @p tracks.  */
     virtual void updateTrackMetadata(const TrackList& tracks) = 0;
     /** Updates the metadata in the database for @p tracks and writes metadata to files.  */
-    virtual void writeTrackMetadata(const TrackList& tracks) = 0;
+    virtual WriteRequest writeTrackMetadata(const TrackList& tracks) = 0;
 
     /** Updates the statistics (playcount, rating etc) in the database for @p tracks.  */
     virtual void updateTrackStats(const TrackList& tracks) = 0;

@@ -416,9 +416,9 @@ void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
     p->m_threadHandler.saveUpdatedTracks(tracks);
 }
 
-void UnifiedMusicLibrary::writeTrackMetadata(const TrackList& tracks)
+WriteRequest UnifiedMusicLibrary::writeTrackMetadata(const TrackList& tracks)
 {
-    p->m_threadHandler.writeUpdatedTracks(tracks);
+    return p->m_threadHandler.writeUpdatedTracks(tracks);
 }
 
 void UnifiedMusicLibrary::updateTrackStats(const TrackList& tracks)

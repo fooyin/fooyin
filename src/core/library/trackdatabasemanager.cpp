@@ -52,6 +52,8 @@ void TrackDatabaseManager::initialiseThread()
 
 void TrackDatabaseManager::getAllTracks()
 {
+    setState(Running);
+
     TrackList tracks = m_trackDatabase.getAllTracks();
 
     if(m_settings->fileValue(Settings::Core::Internal::MarkUnavailableStartup, false).toBool()) {
@@ -59,10 +61,14 @@ void TrackDatabaseManager::getAllTracks()
     }
 
     emit gotTracks(tracks);
+
+    setState(Idle);
 }
 
 void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
 {
+    setState(Running);
+
     TrackList tracksUpdated;
 
     AudioReader::WriteOptions options;
@@ -74,6 +80,10 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
     }
 
     for(const Track& track : tracks) {
+        if(!mayRun()) {
+            break;
+        }
+
         Track updatedTrack{track};
 
         if(write) {
@@ -95,10 +105,14 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
     if(!tracksUpdated.empty()) {
         emit updatedTracks(tracksUpdated);
     }
+
+    setState(Idle);
 }
 
 void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
 {
+    setState(Running);
+
     TrackList tracksUpdated;
 
     AudioReader::WriteOptions options;
@@ -112,6 +126,10 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
     const bool writeToFile = options & AudioReader::Rating || options & AudioReader::Playcount;
 
     for(const Track& track : tracks) {
+        if(!mayRun()) {
+            break;
+        }
+
         Track updatedTrack{track};
         bool success{true};
         if(!track.isInArchive() && writeToFile) {
@@ -130,11 +148,17 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
     if(!tracksUpdated.empty()) {
         emit updatedTracksStats(tracksUpdated);
     }
+
+    setState(Idle);
 }
 
 void TrackDatabaseManager::cleanupTracks()
 {
+    setState(Running);
+
     m_trackDatabase.cleanupTracks();
+
+    setState(Idle);
 }
 } // namespace Fooyin
 

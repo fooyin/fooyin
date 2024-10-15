@@ -65,7 +65,7 @@ public:
     void updateTracks(const TrackList& tracks) override;
 
     void updateTrackMetadata(const TrackList& tracks) override;
-    void writeTrackMetadata(const TrackList& tracks) override;
+    WriteRequest writeTrackMetadata(const TrackList& tracks) override;
 
     void updateTrackStats(const TrackList& tracks) override;
     void updateTrackStats(const Track& track) override;

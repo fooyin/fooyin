@@ -34,6 +34,7 @@ struct ScanProgress;
 struct ScanResult;
 struct ScanRequest;
 class SettingsManager;
+struct WriteRequest;
 
 class LibraryThreadHandler : public QObject
 {
@@ -57,7 +58,7 @@ public:
     ScanRequest loadPlaylist(const QList<QUrl>& files);
 
     void saveUpdatedTracks(const TrackList& tracks);
-    void writeUpdatedTracks(const TrackList& tracks);
+    WriteRequest writeUpdatedTracks(const TrackList& tracks);
     void saveUpdatedTrackStats(const TrackList& track);
 
     void cleanupTracks();
