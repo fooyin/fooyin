@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.8.1](https://github.com/fooyin/fooyin/releases/tag/v0.8.1) (2024-10-15)
+
+### Improvements
+
+* LibraryScanner: Use a more detailed dialog that displays elapsed and estimated time
+* LibraryScanner: Show per-file progress for archive and playlist scans
+* RGScanner: Add dialog for removing RG info
+* WaveBar: Use elapsed and estimated time dialog for generating waveforms
+
+### Fixes
+
+* Engine: Fix playback of WavPack
+* RGScanner: Wait to close results dialog until files have been updated
+* Settings: Fix reordering of decoders and tagreaders
+
+
 ## [0.8.0](https://github.com/fooyin/fooyin/releases/tag/v0.8.0) (2024-10-14)
 
 ### New Features
@@ -25,9 +41,8 @@
   - Add different search modes to unconnected search widgets
   - Add settings page under Library for configuration
   - Remove minimum character limit and show message when empty ([#307](https://github.com/fooyin/fooyin/issues/307))
-* Controls: Improve volume tooltip positioning ([#328](https://github.com/fooyin/fooyin/pull/328))
-* DirBrowser: Rename elide text setting to 'Show horizontal scrollbar'
 * CUE: Support reading ReplayGain
+* DirBrowser: Rename elide text setting to 'Show horizontal scrollbar'
 * LibraryTree: Add ability to display artwork
 * Properties: Improve appearance
 * Settings: Save state-related settings to XDG_STATE_HOME ([#312](https://github.com/fooyin/fooyin/issues/312))
