@@ -96,7 +96,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
             "[%codec% | ][%bitrate% kbps | ][%samplerate% Hz | ][%channels% | ]%playback_time%[ / %duration%]"),
         QStringLiteral("StatusWidget/PlayingScript"));
     m_settings->createSetting<Internal::StatusSelectionScript>(
-        QStringLiteral("%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%"),
+        QStringLiteral("[%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%]"),
         QStringLiteral("StatusWidget/SelectionScript"));
 
     m_settings->createSetting<Internal::LibTreeDoubleClick>(0, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
