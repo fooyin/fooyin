@@ -21,6 +21,7 @@
 
 #include "librarytree/librarytreecontroller.h"
 #include "search/searchwidget.h"
+#include "widgets/statuswidget.h"
 
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
@@ -91,13 +92,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::InfoScrollBar>(true, QStringLiteral("InfoPanel/Scrollbar"));
     m_settings->createSetting<Internal::StatusShowIcon>(false, QStringLiteral("StatusWidget/ShowIcon"));
     m_settings->createSetting<Internal::StatusShowSelection>(false, QStringLiteral("StatusWidget/ShowSelection"));
-    m_settings->createSetting<Internal::StatusPlayingScript>(
-        QStringLiteral(
-            "[%codec% | ][%bitrate% kbps | ][%samplerate% Hz | ][%channels% | ]%playback_time%[ / %duration%]"),
-        QStringLiteral("StatusWidget/PlayingScript"));
-    m_settings->createSetting<Internal::StatusSelectionScript>(
-        QStringLiteral("[%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%]"),
-        QStringLiteral("StatusWidget/SelectionScript"));
+    m_settings->createSetting<Internal::StatusPlayingScript>(StatusWidget::defaultPlayingScript(),
+                                                             QStringLiteral("StatusWidget/PlayingScript"));
+    m_settings->createSetting<Internal::StatusSelectionScript>(StatusWidget::defaultSelectionScript(),
+                                                               QStringLiteral("StatusWidget/SelectionScript"));
 
     m_settings->createSetting<Internal::LibTreeDoubleClick>(0, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
     m_settings->createSetting<Internal::LibTreeMiddleClick>(0, QStringLiteral("LibraryTree/MiddleClickBehaviour"));

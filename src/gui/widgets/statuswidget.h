@@ -39,6 +39,9 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    static QString defaultPlayingScript();
+    static QString defaultSelectionScript();
+
     void showMessage(const QString& message);
     void showTempMessage(const QString& message);
     void showTempMessage(const QString& message, int timeout);

@@ -284,6 +284,17 @@ QString StatusWidget::layoutName() const
     return QStringLiteral("StatusBar");
 }
 
+QString StatusWidget::defaultPlayingScript()
+{
+    return QStringLiteral(
+        "[%codec% | ][%bitrate% kbps | ][%samplerate% Hz | ][%channels% | ]%playback_time%[ / %duration%]");
+}
+
+QString StatusWidget::defaultSelectionScript()
+{
+    return QStringLiteral("[%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%]");
+}
+
 void StatusWidget::showMessage(const QString& message)
 {
     p->showMessage(message, 0);
