@@ -73,8 +73,6 @@ enum CoreSettings : uint32_t
     UseVariousForCompilations = 26 | Type::Bool,
     ShuffleAlbumsGroupScript  = 27 | Type::String,
     ShuffleAlbumsSortScript   = 28 | Type::String,
-    RGTruePeak                = 29 | Type::Bool,
-    RGAlbumGroupScript        = 30 | Type::String,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

@@ -20,6 +20,7 @@
 #include "rgscannerplugin.h"
 
 #include "rgscanner.h"
+#include "rgscannerpage.h"
 #include "rgscanresults.h"
 
 #include <core/library/musiclibrary.h>
@@ -51,6 +52,7 @@ void RGScannerPlugin::initialise(const GuiPluginContext& context)
     m_actionManager       = context.actionManager;
     m_selectionController = context.trackSelection;
 
+    new RGScannerPage(m_settings, this);
     setupReplayGainMenu();
 }
 
@@ -68,7 +70,7 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
     progress->setValue(0);
     progress->setWindowTitle(tr("ReplayGain Scan Progress"));
 
-    auto* scanner = new RGScanner(m_audioLoader, m_settings, this);
+    auto* scanner = new RGScanner(m_audioLoader, this);
     QObject::connect(scanner, &RGScanner::calculationFinished, this,
                      [this, scanner, progress](const TrackList& tracks) {
                          const auto finishTime = progress->elapsedTime();

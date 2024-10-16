@@ -26,10 +26,7 @@
 #include <QObject>
 #include <QThread>
 
-namespace Fooyin {
-class SettingsManager;
-
-namespace RGScanner {
+namespace Fooyin::RGScanner {
 class RGWorker : public Worker
 {
     Q_OBJECT
@@ -52,11 +49,12 @@ class RGScanner : public QObject
     Q_OBJECT
 
 public:
-    explicit RGScanner(const std::shared_ptr<AudioLoader>& audioLoader, SettingsManager* settings,
-                       QObject* parent = nullptr);
+    explicit RGScanner(const std::shared_ptr<AudioLoader>& audioLoader, QObject* parent = nullptr);
     ~RGScanner() override;
 
     void close();
+
+    static QStringList scannerNames();
 
     void calculatePerTrack(const TrackList& tracks);
     void calculateAsAlbum(const TrackList& tracks);
@@ -67,9 +65,7 @@ signals:
     void calculationFinished(const Fooyin::TrackList& tracks);
 
 private:
-    SettingsManager* m_settings;
     QThread m_scanThread;
     std::unique_ptr<RGWorker> m_worker;
 };
-} // namespace RGScanner
-} // namespace Fooyin
+} // namespace Fooyin::RGScanner

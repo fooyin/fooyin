@@ -19,29 +19,37 @@
 
 #include "rgscanner.h"
 
+#include "ffmpegscanner.h"
+#include "rgscannerdefs.h"
+
 #ifdef HAVE_EBUR128
 #include "ebur128scanner.h"
-#else
-#include "ffmpegscanner.h"
 #endif
 
 #include <core/coresettings.h>
-#include <utils/settings/settingsmanager.h>
 
 namespace Fooyin::RGScanner {
 RGWorker::RGWorker(QObject* parent)
     : Worker{parent}
 { }
 
-RGScanner::RGScanner(const std::shared_ptr<AudioLoader>& audioLoader, SettingsManager* settings, QObject* parent)
+RGScanner::RGScanner(const std::shared_ptr<AudioLoader>& audioLoader, QObject* parent)
     : QObject{parent}
-    , m_settings{settings}
-#ifdef HAVE_EBUR128
-    , m_worker{std::make_unique<Ebur128Scanner>(audioLoader)}
-#else
-    , m_worker{std::make_unique<FFmpegScanner>()}
-#endif
 {
+    const FySettings settings;
+    const auto scanner = settings.value(QLatin1String{ScannerOption}, QStringLiteral("libebur128")).toString();
+
+#ifdef HAVE_EBUR128
+    if(scanner == u"libebur128") {
+        m_worker = std::make_unique<Ebur128Scanner>(audioLoader);
+    }
+    else {
+        m_worker = std::make_unique<FFmpegScanner>();
+    }
+#else
+    m_worker = std::make_unique<FFmpegScanner>();
+#endif
+
     m_worker->moveToThread(&m_scanThread);
     m_scanThread.start();
 
@@ -61,25 +69,42 @@ void RGScanner::close()
     m_worker->closeThread();
 }
 
+QStringList RGScanner::scannerNames()
+{
+    QStringList scanners{
+        QStringLiteral("FFmpeg"),
+#ifdef HAVE_EBUR128
+        QStringLiteral("libebur128"),
+#endif
+    };
+    return scanners;
+}
+
 void RGScanner::calculatePerTrack(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
-        m_worker->calculatePerTrack(tracks, m_settings->value<Settings::Core::RGTruePeak>());
+        const FySettings settings;
+        m_worker->calculatePerTrack(tracks, settings.value(QLatin1String{TruePeakSetting}, false).toBool());
     });
 }
 
 void RGScanner::calculateAsAlbum(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
-        m_worker->calculateAsAlbum(tracks, m_settings->value<Settings::Core::RGTruePeak>());
+        const FySettings settings;
+        m_worker->calculateAsAlbum(tracks, settings.value(QLatin1String{TruePeakSetting}, false).toBool());
     });
 }
 
 void RGScanner::calculateByAlbumTags(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
-        m_worker->calculateByAlbumTags(tracks, m_settings->value<Settings::Core::RGAlbumGroupScript>(),
-                                       m_settings->value<Settings::Core::RGTruePeak>());
+        const FySettings settings;
+        m_worker->calculateByAlbumTags(
+            tracks,
+            settings.value(QLatin1String{AlbumGroupScriptSetting}, QStringLiteral("%albumartist% - %date% - %album%"))
+                .toString(),
+            settings.value(QLatin1String{TruePeakSetting}, false).toBool());
     });
 }
 } // namespace Fooyin::RGScanner
