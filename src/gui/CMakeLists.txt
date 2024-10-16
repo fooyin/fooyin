@@ -129,8 +129,6 @@ set(SOURCES
     librarytree/librarytreeview.h
     librarytree/librarytreewidget.cpp
     librarytree/librarytreewidget.h
-    lyrics/lyricswidget.h
-    lyrics/lyricswidget.cpp
     menubar/editmenu.cpp
     menubar/editmenu.h
     menubar/filemenu.cpp
