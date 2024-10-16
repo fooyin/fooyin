@@ -69,6 +69,8 @@ void Ebur128Scanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
 {
     setState(Running);
 
+    qCDebug(EBUR128) << "Calculating RG using ebur128 for" << tracks.size() << "tracks";
+
     m_watcher       = new QFutureWatcher<void>(this);
     m_tracks        = tracks;
     m_scannedTracks = tracks;
@@ -86,6 +88,7 @@ void Ebur128Scanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
 
     future.then(this, [this]() {
         if(mayRun()) {
+            qCDebug(EBUR128) << "Finished calculating RG for" << m_scannedTracks.size() << "tracks";
             emit calculationFinished(m_scannedTracks);
         }
         if(m_runningWatchers.fetch_sub(1, std::memory_order_release) <= 1) {
@@ -98,6 +101,8 @@ void Ebur128Scanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
 void Ebur128Scanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
 {
     setState(Running);
+
+    qCDebug(EBUR128) << "Calculating RG using ebur128 for" << tracks.size() << "tracks";
 
     m_watcher       = new QFutureWatcher<void>(this);
     m_tracks        = tracks;
@@ -139,6 +144,7 @@ void Ebur128Scanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
         }
 
         if(mayRun()) {
+            qCDebug(EBUR128) << "Finished calculating RG for" << m_scannedTracks.size() << "tracks";
             emit calculationFinished(m_scannedTracks);
         }
         if(m_runningWatchers.fetch_sub(1, std::memory_order_release) <= 1) {
@@ -151,6 +157,8 @@ void Ebur128Scanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
 void Ebur128Scanner::calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak)
 {
     setState(Running);
+
+    qCDebug(EBUR128) << "Calculating RG using ebur128 for" << tracks.size() << "tracks";
 
     for(const auto& track : tracks) {
         const QString album = m_parser.evaluate(groupScript, track);
@@ -258,6 +266,7 @@ void Ebur128Scanner::scanAlbum(bool truePeak)
             for(const auto& [_, tracks] : m_albums) {
                 m_scannedTracks.insert(m_scannedTracks.end(), tracks.cbegin(), tracks.cend());
             }
+            qCDebug(EBUR128) << "Finished calculating RG for" << m_scannedTracks.size() << "tracks";
             emit calculationFinished(m_scannedTracks);
         }
         if(m_runningWatchers.fetch_sub(1, std::memory_order_release) <= 1) {

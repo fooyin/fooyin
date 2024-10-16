@@ -155,7 +155,7 @@ ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool true
     AVFilterGraph* filterGraph = avfilter_graph_alloc();
     if(!filterGraph) {
         qCWarning(REPLAYGAIN, "Unable to allocate filter graph");
-        return filter;
+        return {};
     }
     filter.filterGraph.reset(filterGraph);
 
@@ -176,7 +176,7 @@ ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool true
                                       nullptr, filterGraph);
     if(rc < 0) {
         Fooyin::Utils::printError(rc);
-        return filter;
+        return {};
     }
     filter.filterContext = filterCtx;
 
@@ -184,7 +184,7 @@ ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool true
     AVFilterInOut* outputs = avfilter_inout_alloc();
     if(!outputs) {
         qCWarning(REPLAYGAIN, "Unable to allocate filter output");
-        return filter;
+        return {};
     }
     outputs->name       = av_strdup("in");
     outputs->filter_ctx = filterCtx;
@@ -192,19 +192,18 @@ ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool true
     outputs->next       = nullptr;
     filter.filterOutput = outputs;
 
-    AVFilterInOut* inputs = nullptr;
-    const auto filterParams
-        = QString{QStringLiteral("ebur128=peak=%1:framelog=quiet,anullsink")}.arg(truePeak ? u"true" : u"sample");
+    AVFilterInOut* inputs   = nullptr;
+    const auto filterParams = QString{QStringLiteral("ebur128=peak=%1,anullsink")}.arg(truePeak ? u"true" : u"sample");
     rc = avfilter_graph_parse_ptr(filterGraph, filterParams.toUtf8().constData(), &inputs, &outputs, nullptr);
     if(rc < 0) {
         Fooyin::Utils::printError(rc);
-        return filter;
+        return {};
     }
 
     rc = avfilter_graph_config(filterGraph, nullptr);
     if(rc < 0) {
         Fooyin::Utils::printError(rc);
-        return filter;
+        return {};
     }
 
     return filter;
@@ -231,6 +230,10 @@ bool setupTrack(FFmpegContext& context, const Fooyin::Track& track, ReplayGainFi
 
     context.format = format.value();
     filter         = initialiseRGFilter(context.format, context.truePeak);
+    if(!filter.filterContext || !filter.filterGraph) {
+        return false;
+    }
+
     context.decoder.start();
 
     return true;
@@ -277,6 +280,7 @@ public:
     TrackList m_scannedTracks;
     ScriptParser m_parser;
     QFutureWatcher<void>* m_future{nullptr};
+    int m_logLevel{av_log_get_level()};
 
     using Albums = std::unordered_map<QString, TrackList>;
     Albums m_albums;
@@ -284,7 +288,9 @@ public:
 
 FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(FFmpegScanner* self)
     : m_self{self}
-{ }
+{
+    av_log_set_level(AV_LOG_QUIET);
+}
 
 void FFmpegReplayGainPrivate::scanAlbum(FFmpegContext& context, TrackList& tracks) const
 {
@@ -344,11 +350,16 @@ void FFmpegScanner::closeThread()
     });
 }
 
-FFmpegScanner::~FFmpegScanner() = default;
+FFmpegScanner::~FFmpegScanner()
+{
+    av_log_set_level(p->m_logLevel);
+};
 
 void FFmpegScanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
 {
     setState(Running);
+
+    qCDebug(FFMPEG) << "Calculating RG using ffmpeg for" << tracks.size() << "tracks";
 
     p->m_future = new QFutureWatcher<void>(this);
 
@@ -375,6 +386,7 @@ void FFmpegScanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
 
     future.then(this, [this]() {
         if(mayRun()) {
+            qCDebug(FFMPEG) << "Finished calculating RG for" << p->m_scannedTracks.size() << "tracks";
             emit calculationFinished(p->m_scannedTracks);
         }
 
@@ -387,12 +399,15 @@ void FFmpegScanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
 {
     setState(Running);
 
+    qCDebug(FFMPEG) << "Calculating RG using ffmpeg for" << tracks.size() << "tracks";
+
     FFmpegContext context{truePeak};
 
     TrackList scannedTracks{tracks};
     p->scanAlbum(context, scannedTracks);
 
     if(mayRun()) {
+        qCDebug(FFMPEG) << "Finished calculating RG for" << p->m_scannedTracks.size() << "tracks";
         emit calculationFinished(scannedTracks);
     }
 
@@ -403,6 +418,8 @@ void FFmpegScanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
 void FFmpegScanner::calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak)
 {
     setState(Running);
+
+    qCDebug(FFMPEG) << "Calculating RG using ffmpeg for" << tracks.size() << "tracks";
 
     p->m_future = new QFutureWatcher<void>(this);
 
@@ -423,6 +440,7 @@ void FFmpegScanner::calculateByAlbumTags(const TrackList& tracks, const QString&
             for(const auto& [_, album] : p->m_albums) {
                 p->m_scannedTracks.insert(p->m_scannedTracks.end(), album.cbegin(), album.cend());
             }
+            qCDebug(FFMPEG) << "Finished calculating RG for" << p->m_scannedTracks.size() << "tracks";
             emit calculationFinished(p->m_scannedTracks);
         }
 
