@@ -27,7 +27,6 @@
 #include "guiapplication.h"
 #include "librarytree/librarytreecontroller.h"
 #include "librarytree/librarytreewidget.h"
-#include "lyrics/lyricswidget.h"
 #include "mainwindow.h"
 #include "playlist/organiser/playlistorganiser.h"
 #include "playlist/playlistbox.h"
@@ -195,11 +194,6 @@ void Widgets::registerWidgets()
                                    m_settings, m_window);
         },
         tr("Artwork Panel"));
-
-    provider->registerWidget(
-        QStringLiteral("Lyrics"), [this]() { return new LyricsWidget(m_core->playerController(), m_window); },
-        tr("Lyrics"));
-    provider->setLimit(QStringLiteral("Lyrics"), 1);
 
     provider->registerWidget(
         QStringLiteral("Playlist"),

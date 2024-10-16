@@ -19,29 +19,18 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
-
-class QTextEdit;
+#include <utils/settings/settingspage.h>
 
 namespace Fooyin {
-class PlayerController;
-class Track;
+class SettingsManager;
 
-class LyricsWidget : public FyWidget
+namespace Lyrics {
+class LyricsGuiPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    explicit LyricsWidget(PlayerController* playerController, QWidget* parent = nullptr);
-
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QString layoutName() const override;
-
-private:
-    void updateLyrics(const Track& track);
-
-    PlayerController* m_playerController;
-    QTextEdit* m_lyricsTextArea;
+    explicit LyricsGuiPage(SettingsManager* settings, QObject* parent = nullptr);
 };
-
+} // namespace Lyrics
 } // namespace Fooyin
