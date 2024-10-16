@@ -235,15 +235,26 @@ MainWindow::WindowState MainWindow::currentState()
     return Normal;
 }
 
-void MainWindow::restoreState(WindowState state)
+void MainWindow::saveWindowGeometry()
+{
+    FyStateSettings stateSettings;
+    stateSettings.setValue(QLatin1String{MainWindowGeometry}, saveGeometry());
+}
+
+void MainWindow::restoreWindowGeometry()
 {
     const FyStateSettings stateSettings;
+    restoreGeometry(stateSettings.value(QLatin1String{MainWindowGeometry}).toByteArray());
+}
 
+void MainWindow::restoreState(WindowState state)
+{
     switch(state) {
-        case(Normal):
-            restoreGeometry(stateSettings.value(QLatin1String{MainWindowGeometry}).toByteArray());
+        case(Normal): {
+            restoreWindowGeometry();
             show();
             break;
+        }
         case(Maximised):
             showMaximized();
             break;
@@ -258,6 +269,7 @@ void MainWindow::hideToTray(bool hide)
     if(hide) {
         m_isHiding  = true;
         m_prevState = std::exchange(m_state, Hidden);
+        saveWindowGeometry();
         close();
         m_isHiding = false;
     }
@@ -268,6 +280,7 @@ void MainWindow::hideToTray(bool hide)
         }
         else {
             m_state = Normal;
+            restoreWindowGeometry();
             show();
         }
     }

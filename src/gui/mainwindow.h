@@ -72,6 +72,8 @@ protected:
 
 private:
     WindowState currentState();
+    void saveWindowGeometry();
+    void restoreWindowGeometry();
     void restoreState(WindowState state);
     void hideToTray(bool hide);
 
