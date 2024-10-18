@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="83"/>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Apie %1</translation>
     </message>
 </context>
 <context>
@@ -14,37 +14,37 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="47"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>Failas</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Redaguoti</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vaizdas</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished"></translation>
+        <translation>Išdėstymas</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Grojimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Dainų kolekcija</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="71"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Pagalba</translation>
     </message>
 </context>
 <context>
@@ -52,17 +52,17 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="33"/>
         <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Nustatymai</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="40"/>
         <source>Buffer length</source>
-        <translation type="unfinished"></translation>
+        <translation>Buferio ilgis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="41"/>
         <source>Period length</source>
-        <translation type="unfinished"></translation>
+        <translation>Periodo ilgis</translation>
     </message>
 </context>
 <context>
@@ -71,7 +71,7 @@
         <location filename="../../src/gui/settings/artworkpage.cpp" line="157"/>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="158"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Iliustracija</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="158"/>
@@ -84,42 +84,42 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="65"/>
         <source>Prefer currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Teikti pirmenybę dabar grojančiai dainai</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="66"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Teikti pirmenybę dabartiniui pasirinkimui</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="75"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Demonstracija</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="85"/>
         <source>Front Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Priekinis viršelis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="86"/>
         <source>Back Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Galinis viršelis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="87"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Dainininkas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="89"/>
         <source>Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Talpykla</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="92"/>
         <source>Pixmap cache size</source>
-        <translation type="unfinished"></translation>
+        <translation>Pixmap talpyklos dydis</translation>
     </message>
 </context>
 <context>
@@ -127,37 +127,37 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="480"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-dydžio skyriai</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="488"/>
         <source>Show hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti paslėptus</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="497"/>
         <source>Hide %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Paslėpti %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="520"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Sulyginimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="530"/>
         <source>&amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Kairė</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="531"/>
         <source>&amp;Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Centras</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="532"/>
         <source>&amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Dešinė</translation>
     </message>
 </context>
 <context>
@@ -165,7 +165,7 @@
     <message>
         <location filename="../../src/gui/widgets/colourbutton.cpp" line="71"/>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Pasirinkti spalvą</translation>
     </message>
 </context>
 <context>
@@ -173,42 +173,42 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="83"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Viršelis</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="125"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Išlaikyti kraštinių santykį</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="138"/>
         <source>Align to centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Sulyginti centre</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="139"/>
         <source>Align to left</source>
-        <translation type="unfinished"></translation>
+        <translation>Sulyginti kairėje</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="140"/>
         <source>Align to right</source>
-        <translation type="unfinished"></translation>
+        <translation>Sulyginti dešinėje</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="161"/>
         <source>Front cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Priekinis viršelis</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="162"/>
         <source>Back cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Galinis viršelis</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="163"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Dainininkas</translation>
     </message>
 </context>
 <context>
@@ -216,12 +216,12 @@
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="82"/>
         <source>Select Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Pasirinkti fontą</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="91"/>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Pasirinkti spalvą</translation>
     </message>
 </context>
 <context>
@@ -229,7 +229,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="80"/>
         <source>Supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Palaikomi išplėtimai</translation>
     </message>
 </context>
 <context>
@@ -237,17 +237,17 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="166"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Bendra</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="167"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Grojimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="167"/>
         <source>Decoding</source>
-        <translation type="unfinished"></translation>
+        <translation>dekodavimas</translation>
     </message>
 </context>
 <context>
@@ -255,12 +255,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="93"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Įjungti visus palaikomus išplėtimus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="104"/>
         <source>Decoders</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekoderiai</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="105"/>
@@ -273,47 +273,47 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="242"/>
         <source>&amp;Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="243"/>
         <source>Add to &amp;current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti į dabartinį grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="244"/>
         <source>Add to &amp;active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti į aktyvų grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="245"/>
         <source>&amp;Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Siųsti į dabartinį grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="246"/>
         <source>Send to &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Siųsti į naują grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="247"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti į grojimo eilę</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="248"/>
         <source>Send to playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>Siūsti į grojimo eilę</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="280"/>
         <source>Go up to the parent directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Eiti į pirminį katalogą</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="285"/>
         <source>Return to the previous directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Grįžti į praeitą katalogą</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="294"/>
@@ -323,68 +323,68 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="304"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Dainos</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="309"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Prijungti pasirinktas dainas į dabartinį grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="316"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti pasirinktas dainas į aktyvų grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="323"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Pakeisti grojaraščio dainas su pasirinktomis dainomis</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="330"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Sukurti naują grojaraštį su pasirinktomis dainomis</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="336"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti pasirinktas dainas į grojimo eilę</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="343"/>
         <source>Replace the playback queue with the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Pakeisti grojimo eilę su pasirinktomis dainomis</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="239"/>
         <source>Go up</source>
-        <translation type="unfinished"></translation>
+        <translation>Eiti į viršų</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="240"/>
         <source>Go back</source>
-        <translation type="unfinished"></translation>
+        <translation>Grįžti</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="241"/>
         <source>Go forwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Eiti į priekį</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="306"/>
         <source>Start playback of the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>Pradėti pasirinktų dainų grojimą</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="278"/>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="718"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Katalogo naršyklė</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="789"/>
         <source>Set as root</source>
-        <translation type="unfinished"></translation>
+        <translation>Nustatyti kaip &quot;root&quot;</translation>
     </message>
 </context>
 <context>
@@ -392,17 +392,17 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="222"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Bendras</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="223"/>
         <source>Widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>Validikliai</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="223"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Katalogo naršyklė</translation>
     </message>
 </context>
 <context>
@@ -415,91 +415,91 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="75"/>
         <source>List</source>
-        <translation type="unfinished"></translation>
+        <translation>Sąrašas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="76"/>
         <source>Show icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti ikonas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="77"/>
         <source>Show indent</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti įtrauką</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show horizontal scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti horizontalią slinkties juostą</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="79"/>
         <source>Show controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti valdymo mygtukus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="80"/>
         <source>Show location</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti lokaciją</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="83"/>
         <source>Start playback on send</source>
-        <translation type="unfinished"></translation>
+        <translation>Pradėti grojimą išsiuntus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="85"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Paspaudymo elgesys</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="88"/>
         <source>Double-click</source>
-        <translation type="unfinished"></translation>
+        <translation>Dvigubas paspaudimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="89"/>
         <source>Middle-click</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidurinis paspaudimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="98"/>
         <source>Browser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Naršyklės režimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="109"/>
         <source>Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodymo nustatymai</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="134"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Padidinti/Sumažinti/Paleisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="135"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="143"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti į dabartinį grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="136"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="144"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti į aktyvų grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="137"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="145"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Siūsti į dabartinį grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="138"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="146"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Siūsti į naują grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
@@ -680,12 +680,12 @@
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Edit %1 Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Redaguoti %1 pavadinimą</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="73"/>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 pavadinimas:</translation>
     </message>
 </context>
 <context>
@@ -784,7 +784,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="142"/>
         <source>%1 Layout %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Išdėstymas %2</translation>
     </message>
 </context>
 <context>
@@ -7078,37 +7078,37 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>Start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Pradėti grojimą</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Pause playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Pristabdyti grojimą</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Stop playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Sustabdyti grojimą</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Skip to next track</source>
-        <translation type="unfinished"></translation>
+        <translation>Praleisti iki kitos dainos</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Skip to previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Grįžti į ankstesnę dainą</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Argumentai</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Files to open</source>
-        <translation type="unfinished"></translation>
+        <translation>Failai kurie bus atidaryti</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="408"/>
