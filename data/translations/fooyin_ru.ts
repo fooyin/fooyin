@@ -548,12 +548,12 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Правка</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="42"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Найти</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
@@ -631,17 +631,17 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="549"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Правка</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="551"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Отменить</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="561"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Повторить</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="444"/>
@@ -1643,7 +1643,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="440"/>
         <source>Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>Громкость</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="442"/>
@@ -1668,7 +1668,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="481"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="492"/>
@@ -2059,7 +2059,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="112"/>
         <source>Lock splitters</source>
-        <translation type="unfinished"></translation>
+        <translation>Фиксировать разделители</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="113"/>
@@ -2215,7 +2215,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="62"/>
         <source>S&amp;earching help</source>
-        <translation type="unfinished"></translation>
+        <translation>Справка по п&amp;оиску</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
@@ -2627,7 +2627,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="129"/>
         <source>Use &apos;Various Artists&apos; for compilations</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать &apos;Various Artists&apos; для сборников</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="130"/>
@@ -2715,7 +2715,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="70"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>Н&amp;айти</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="73"/>
@@ -3383,7 +3383,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
@@ -3394,12 +3394,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>P&amp;revious</source>
-        <translation type="unfinished"></translation>
+        <translation>П&amp;редыдущий</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation>С&amp;ледующий</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
@@ -3414,12 +3414,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="54"/>
         <source>Shu&amp;ffle albums</source>
-        <translation type="unfinished"></translation>
+        <translation>П&amp;еремешать альбомы</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
         <source>&amp;Random</source>
-        <translation type="unfinished"></translation>
+        <translation>С&amp;учайный</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="56"/>
@@ -3454,7 +3454,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="102"/>
         <source>Order</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Порядок</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
@@ -3475,7 +3475,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="131"/>
         <source>Set playback order to repeat the current album</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить порядок для повторения в текущем альбоме</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="137"/>
@@ -3510,7 +3510,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="214"/>
         <source>&amp;Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>П&amp;ауза</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
@@ -3520,12 +3520,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Repeat &amp;track</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторить т&amp;рек</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Repeat &amp;album</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторить &amp;альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="76"/>
@@ -3899,7 +3899,7 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="105"/>
         <source>Repeat album</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторять альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="106"/>

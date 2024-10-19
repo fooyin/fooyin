@@ -2210,17 +2210,17 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="57"/>
         <source>Open the scripting documentation</source>
-        <translation>大概脚本帮助文档</translation>
+        <translation>打开脚本帮助文档</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="62"/>
         <source>S&amp;earching help</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索帮助</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
         <source>Open the search documentation</source>
-        <translation type="unfinished"></translation>
+        <translation>打开搜索文档</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="68"/>
@@ -3007,22 +3007,22 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="128"/>
         <source>Icon</source>
-        <translation type="unfinished">图标</translation>
+        <translation>图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="131"/>
         <source>Width</source>
-        <translation type="unfinished">宽度</translation>
+        <translation>宽度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="132"/>
         <source>Height</source>
-        <translation type="unfinished">高度</translation>
+        <translation>高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="145"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>在小部件中也可以使用 %1 调整大小。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="200"/>
@@ -5391,7 +5391,7 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="150"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>帮助</translation>
     </message>
 </context>
 <context>
@@ -5546,7 +5546,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="438"/>
         <source>Force new results playlist using all playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>强制以所有播放列表为源新建结果播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="438"/>
@@ -5591,7 +5591,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="544"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>帮助</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="120"/>
@@ -6783,7 +6783,7 @@ for waveform data. Higher values will result
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
         <translation>用作波形数据的样本数量（基于每一轨道）。
-更高的值将生成更准确和详细的波形。
+更高的值将生成更准确和详细的波形，
 但是会使用更多的磁盘缓存空间。</translation>
     </message>
     <message>
