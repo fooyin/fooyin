@@ -1683,7 +1683,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
         <source>Current file</source>
-        <translation type="unfinished">当前文件</translation>
+        <translation>当前文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="528"/>
@@ -3171,17 +3171,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="187"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="188"/>
         <source>Widgets</source>
-        <translation type="unfinished">小部件</translation>
+        <translation>小部件</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="188"/>
         <source>Lyrics</source>
-        <translation type="unfinished">歌词</translation>
+        <translation>歌词</translation>
     </message>
 </context>
 <context>
@@ -3214,7 +3214,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="80"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="83"/>
@@ -3259,7 +3259,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="116"/>
         <source>Searching</source>
-        <translation type="unfinished">搜索中</translation>
+        <translation>搜索中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="120"/>
@@ -3277,17 +3277,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="358"/>
         <source>Appearance</source>
-        <translation type="unfinished">外观</translation>
+        <translation>外观</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="359"/>
         <source>Widgets</source>
-        <translation type="unfinished">小部件</translation>
+        <translation>小部件</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="359"/>
         <source>Lyrics</source>
-        <translation type="unfinished">歌词</translation>
+        <translation>歌词</translation>
     </message>
 </context>
 <context>
@@ -3295,12 +3295,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="87"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">显示滚动条</translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="94"/>
         <source>Background colour</source>
-        <translation type="unfinished">背景色</translation>
+        <translation>背景色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="96"/>
@@ -3337,22 +3337,22 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="113"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="116"/>
         <source>Align to centre</source>
-        <translation type="unfinished">居中对齐</translation>
+        <translation>居中对齐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="117"/>
         <source>Align to left</source>
-        <translation type="unfinished">左对齐</translation>
+        <translation>左对齐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="118"/>
         <source>Align to right</source>
-        <translation type="unfinished">右对齐</translation>
+        <translation>右对齐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="125"/>
@@ -3362,7 +3362,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="127"/>
         <source>Alignment</source>
-        <translation type="unfinished">对齐</translation>
+        <translation>对齐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="131"/>
@@ -3372,27 +3372,27 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="145"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="147"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="149"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="151"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="155"/>
         <source>Fonts</source>
-        <translation type="unfinished">字体</translation>
+        <translation>字体</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="158"/>
@@ -3409,7 +3409,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="180"/>
         <source>Colours</source>
-        <translation type="unfinished">颜色</translation>
+        <translation>颜色</translation>
     </message>
 </context>
 <context>
@@ -3418,7 +3418,7 @@
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="46"/>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="47"/>
         <source>Lyrics</source>
-        <translation type="unfinished">歌词</translation>
+        <translation>歌词</translation>
     </message>
 </context>
 <context>
@@ -3426,12 +3426,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="203"/>
         <source>Lyrics</source>
-        <translation type="unfinished">歌词</translation>
+        <translation>歌词</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="226"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">显示滚动条</translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="232"/>
@@ -3441,22 +3441,22 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="236"/>
         <source>Align to centre</source>
-        <translation type="unfinished">居中对齐</translation>
+        <translation>居中对齐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="237"/>
         <source>Align to left</source>
-        <translation type="unfinished">左对齐</translation>
+        <translation>左对齐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="238"/>
         <source>Align to right</source>
-        <translation type="unfinished">右对齐</translation>
+        <translation>右对齐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="262"/>
         <source>Settings…</source>
-        <translation type="unfinished">设置…</translation>
+        <translation>设置…</translation>
     </message>
 </context>
 <context>
@@ -4393,7 +4393,7 @@
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="67"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="108"/>
         <source>Current file</source>
-        <translation type="unfinished">当前文件</translation>
+        <translation>当前文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="84"/>
@@ -5134,12 +5134,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="141"/>
         <source>Calculation</source>
-        <translation type="unfinished">计算</translation>
+        <translation>计算</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="142"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="142"/>
@@ -5152,12 +5152,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="57"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation type="unfinished">使用样本峰值计算峰值</translation>
+        <translation>使用样本峰值计算峰值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="58"/>
         <source>Use true peak for calculating peaks</source>
-        <translation type="unfinished">使用真实峰值计算峰值</translation>
+        <translation>使用真实峰值计算峰值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="61"/>
@@ -5167,22 +5167,22 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="73"/>
         <source>Options</source>
-        <translation type="unfinished">选项</translation>
+        <translation>选项</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="80"/>
         <source>Album grouping pattern</source>
-        <translation type="unfinished">专辑分组模式</translation>
+        <translation>专辑分组模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Used with the %1 action</source>
-        <translation type="unfinished">与%1一起使用</translation>
+        <translation>与%1一起使用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Calculate as albums (by tags)</source>
-        <translation type="unfinished">按标签划分专辑计算</translation>
+        <translation>按标签划分专辑计算</translation>
     </message>
 </context>
 <context>
