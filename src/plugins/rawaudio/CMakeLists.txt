@@ -6,7 +6,3 @@ create_fooyin_plugin_internal(
             rawaudioplugin.cpp
             rawaudioplugin.h
 )
-
-fooyin_append_mimes(
-    application/octet-stream
-)
