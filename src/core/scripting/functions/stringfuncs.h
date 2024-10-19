@@ -40,7 +40,7 @@ ScriptResult strcmp(const QStringList& vec);
 ScriptResult stricmp(const QStringList& vec);
 ScriptResult longer(const QStringList& vec);
 QString sep();
-QString crlf();
+QString crlf(const QStringList& vec);
 QString tab(const QStringList& vec);
 QString swapPrefix(const QStringList& vec);
 QString stripPrefix(const QStringList& vec);

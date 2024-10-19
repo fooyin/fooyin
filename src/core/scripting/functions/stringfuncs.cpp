@@ -315,8 +315,19 @@ QString sep()
     return QDir::separator();
 }
 
-QString crlf()
+QString crlf(const QStringList& vec)
 {
+    if(vec.empty()) {
+        return QStringLiteral("\n");
+    }
+
+    bool numSuccess{false};
+    const int num = vec.front().toInt(&numSuccess);
+
+    if(numSuccess) {
+        return QStringLiteral("\n").repeated(num);
+    }
+
     return QStringLiteral("\n");
 }
 
