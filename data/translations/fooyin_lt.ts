@@ -34,7 +34,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Playback</source>
-        <translation>Grojimas</translation>
+        <translation>&amp;Grojimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
@@ -76,7 +76,7 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="158"/>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Sąsaja</translation>
     </message>
 </context>
 <context>
@@ -265,7 +265,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="105"/>
         <source>Tag readers</source>
-        <translation type="unfinished"></translation>
+        <translation>Žymų skaitytojai</translation>
     </message>
 </context>
 <context>
@@ -505,18 +505,18 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="147"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti į grojimo eilę</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="148"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Siųsti į grojimo eilę</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="142"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuščia</translation>
     </message>
 </context>
 <context>
@@ -530,17 +530,17 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="97"/>
         <source>Missing Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Trūksta valdiklio</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="100"/>
         <source>Right-click to add a new widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Paspauskite dešinį pelės mygtuką kad pridėti naują valdiklį</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="103"/>
         <source>Enter layout editing mode to edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Eikite į išdėstymo redagavimo režimą kad pakeisti</translation>
     </message>
 </context>
 <context>
@@ -548,7 +548,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Redaguoti</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="42"/>
@@ -558,17 +558,17 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
         <source>Search the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Ieškoti dabartiniame grojaraštyje</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="50"/>
         <source>&amp;Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nustatymai</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="51"/>
         <source>Open the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Atidaryti nustatymų dialogą</translation>
     </message>
 </context>
 <context>
@@ -576,98 +576,98 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="375"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Kairė</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="375"/>
         <source>Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Aukščiau</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="382"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Dešinė</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="382"/>
         <source>Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Žemyn</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="389"/>
         <source>Far Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Tolima kairė</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="389"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Viršus</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="396"/>
         <source>Far Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Tolima dešinė</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="396"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Žemiau</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="411"/>
         <source>Paste (Insert)</source>
-        <translation type="unfinished"></translation>
+        <translation>Įklijuoti</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="449"/>
         <source>&amp;Split</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Padalinti</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>&amp;Move</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pajudinti</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="549"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Redaguoti</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="551"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sugražinti atgal</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="561"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sugražinti į priekį</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="444"/>
         <source>&amp;Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pakeisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="352"/>
         <location filename="../../src/gui/editablelayout.cpp" line="359"/>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Įterpti</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="454"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopijuoti</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="467"/>
         <source>Paste (Replace)</source>
-        <translation type="unfinished"></translation>
+        <translation>Įklijuoti (Pakeisti)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="482"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Pašalinti</translation>
     </message>
 </context>
 <context>
@@ -693,17 +693,17 @@
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="113"/>
         <source>Time elapsed</source>
-        <translation type="unfinished"></translation>
+        <translation>Praleistas laikas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="119"/>
         <source>Estimated</source>
-        <translation type="unfinished"></translation>
+        <translation>Numatomas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="122"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Apskaičiuojama…</translation>
     </message>
 </context>
 <context>
@@ -716,12 +716,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="67"/>
         <source>Left-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>Sulyginta su kaire</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="68"/>
         <source>Right-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>Sulyginta su dešine</translation>
     </message>
 </context>
 <context>
@@ -729,57 +729,57 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="46"/>
         <source>Save window size</source>
-        <translation type="unfinished"></translation>
+        <translation>Išsaugoti lango dydį</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="47"/>
         <source>Save colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Išsaugoti spalvas</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="48"/>
         <source>Save fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Išsaugoti fontus</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="51"/>
         <source>Export Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuoti išdėstymą</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="60"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Pavadinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="61"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Kelias</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="63"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Naršyti…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="70"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Išsaugoti</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="109"/>
         <source>Failed to save the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepavyko išsaugoti dabartinio išdėstymo</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="135"/>
         <source>Failed to export layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepavyko eksportuoti dabartinio išdėstymo</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="142"/>
         <source>Save Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Išsaugoti išdėstymą</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="142"/>
@@ -792,22 +792,22 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="139"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="140"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Pašalinti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="180"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Pajudinti į viršų</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="188"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>pajudinti į apačią</translation>
     </message>
 </context>
 <context>
@@ -815,32 +815,32 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="46"/>
         <source>Add &amp;files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti &amp;failus…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="47"/>
         <source>Add the specified files to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti pasirinktus failus į dabartinį grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="53"/>
         <source>Ad&amp;d folders…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti &amp;Aplankus…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="54"/>
         <source>Add the contents of the specified directory to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti pasirinkto aplanko turinį į dabartinį grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="62"/>
         <source>&amp;New playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Naujas grojaraštis</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="63"/>
         <source>Create a new empty playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Sukurti naują tuščią grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="70"/>
@@ -850,42 +850,42 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="77"/>
         <source>&amp;Save playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Išsaugoti grojaraštį . . .</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Išeiti</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
         <source>Quit %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Išeiti %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>Load the playlist from the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Įkelti grojaraštį iš pasirinkto failo</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="44"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Failas</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
         <source>Save the current playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Išsaugoti dabartinį grojaraštį į pasirinktą failą</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="84"/>
         <source>Save &amp;all playlists…</source>
-        <translation type="unfinished"></translation>
+        <translation>Išsaugoti &amp;visus grojaraščius. . .</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="85"/>
         <source>Save all playlists to the specified location</source>
-        <translation type="unfinished"></translation>
+        <translation>Išsaugoti visus grojaraščius į pasirinktą aplanką</translation>
     </message>
 </context>
 <context>
@@ -893,52 +893,52 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="116"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopijuoti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="117"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Perkelti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="118"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Pervadinti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="122"/>
         <source>Remove empty source folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Pašalinti tuščius šaltinio aplankus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="124"/>
         <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Įkelti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="125"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Išsaugoti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="126"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pašalinti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="427"/>
         <source>Determining operations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nustatomos operacijos…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="451"/>
         <source>Nothing to do</source>
-        <translation type="unfinished"></translation>
+        <translation>Nėra ką daryti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="455"/>
         <source>Cannot write to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Negalima įrašyti į %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="459"/>
