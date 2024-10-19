@@ -49,7 +49,7 @@ public:
     [[nodiscard]] QSize minimumSizeHint() const override;
 
 signals:
-    int currentLineChanged(int scrollValue);
+    void currentLineChanged(int scrollValue);
     void linePressed(uint64_t timestamp);
 
 protected:
