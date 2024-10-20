@@ -63,6 +63,9 @@ public:
 
     void showQuickSetup();
 
+signals:
+    void layoutChanged();
+
 private:
     std::unique_ptr<EditableLayoutPrivate> p;
 };
