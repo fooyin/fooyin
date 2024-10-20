@@ -247,6 +247,7 @@ void GuiApplicationPrivate::initialise()
     m_layoutMenu->setup();
     m_editableLayout->initialise();
     m_mainWindow->setCentralWidget(m_editableLayout.get());
+    m_searchController->loadWidgets();
 
     auto openMainWindow = [this]() {
         m_mainWindow->open();
@@ -321,6 +322,8 @@ void GuiApplicationPrivate::setupConnections()
 
     QObject::connect(&m_layoutProvider, &LayoutProvider::requestChangeLayout, m_editableLayout.get(),
                      &EditableLayout::changeLayout);
+    QObject::connect(m_editableLayout.get(), &EditableLayout::layoutChanged, m_searchController,
+                     &SearchController::loadWidgets);
 
     QObject::connect(m_core->engine(), &EngineController::engineError, m_self,
                      [this](const QString& error) { showEngineError(error); });
