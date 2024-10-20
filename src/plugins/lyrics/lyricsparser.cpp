@@ -296,11 +296,11 @@ Fooyin::Lyrics::ParsedLine splitLine(Fooyin::Lyrics::ParsedLine& parsedLine, Foo
     QStringList splitWords;
     if(parsedWord.word.isEmpty() && lyricsLine.words.size() == 1) {
         wordTime = lyricsLine.words.front().timestamp;
-        splitWords.append(lyricsLine.words.front().word.split(u' ', Qt::SkipEmptyParts));
+        splitWords.append(lyricsLine.words.front().word.split(u' '));
         lyricsLine.words.clear();
     }
     else {
-        splitWords = parsedWord.word.split(u' ', Qt::SkipEmptyParts);
+        splitWords = parsedWord.word.split(u' ');
         wordTime   = parsedWord.timestamp;
     }
 
