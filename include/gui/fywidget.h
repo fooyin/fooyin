@@ -59,7 +59,7 @@ public:
          */
         Search = 1 << 1,
         /*!
-         * Same as search, but this widget forms an exclusive connection to s search widget.
+         * Same as search, but this widget forms an exclusive connection to a search widget.
          */
         ExclusiveSearch = 1 << 2,
     };
@@ -138,6 +138,10 @@ public:
     virtual void finalise();
 
 signals:
+    /*!
+     * Sets the search term of the connected search widget.
+     * @note this is only usable with the ExclusiveSearch feature.
+     */
     void changeSearch(const QString& search);
 
 private:
