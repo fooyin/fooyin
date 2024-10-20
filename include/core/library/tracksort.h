@@ -109,26 +109,33 @@ public:
                              Qt::SortOrder order = Qt::AscendingOrder);
 
     template <typename Container, typename Extractor>
-    void calcSortFields(const QString& sort, Container& items, Extractor extractor)
+    Container calcSortFields(const QString& sort, const Container& items, Extractor extractor)
     {
+        Container calculatedTracks;
+        calculatedTracks.reserve(items.size());
+
         const std::scoped_lock lock{m_parserGuard};
 
-        for(auto& item : items) {
-            Track& track = extractor(item);
+        for(const auto& item : items) {
+            auto evalItem{item};
+            Track& track = extractor(evalItem);
             track.setSort(m_parser.evaluate(sort, track));
+            calculatedTracks.push_back(evalItem);
         }
+
+        return calculatedTracks;
     }
 
     template <typename Container, typename SortExtractor, typename Extractor>
-    void calcSortTracks(const QString& sort, Container& items, SortExtractor sortExtractor, Extractor extractor,
-                        Qt::SortOrder order = Qt::AscendingOrder)
+    Container calcSortTracks(const QString& sort, const Container& items, SortExtractor sortExtractor,
+                             Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
     {
-        calcSortFields(sort, items, sortExtractor);
+        Container sortedTracks = calcSortFields(sort, items, sortExtractor);
 
         QCollator collator;
         collator.setNumericMode(true);
 
-        std::ranges::stable_sort(items, [order, collator, extractor](const auto& lhs, const auto& rhs) {
+        std::ranges::stable_sort(sortedTracks, [order, collator, extractor](const auto& lhs, const auto& rhs) {
             const Track& leftTrack  = extractor(lhs);
             const Track& rightTrack = extractor(rhs);
 
@@ -143,6 +150,8 @@ public:
             }
             return cmp > 0;
         });
+
+        return sortedTracks;
     }
 
 private:

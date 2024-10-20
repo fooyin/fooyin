@@ -24,6 +24,8 @@
 #include "expression.h"
 #include "scriptregistry.h"
 
+#include <core/playlist/playlist.h>
+
 #include <QObject>
 
 namespace Fooyin {
@@ -76,6 +78,9 @@ public:
 
     TrackList filter(const QString& input, const TrackList& tracks);
     TrackList filter(const ParsedScript& input, const TrackList& tracks);
+
+    PlaylistTrackList filter(const QString& input, const PlaylistTrackList& tracks);
+    PlaylistTrackList filter(const ParsedScript& input, const PlaylistTrackList& tracks);
 
     [[nodiscard]] int cacheLimit() const;
     void setCacheLimit(int limit);
