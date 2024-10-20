@@ -246,7 +246,9 @@ void LyricsArea::paintEvent(QPaintEvent* event)
     painter.fillRect(rect(), m_colours.colour(Colours::Type::Background));
 
     if(!m_displayString.isEmpty()) {
-        const QRect textRect = painter.boundingRect(rect(), Qt::AlignCenter | Qt::TextWordWrap, m_displayString);
+        const QRect boundingRect{m_margins.left(), m_margins.top(), width() - m_margins.right() - m_margins.left(),
+                                 height() - m_margins.bottom() - m_margins.top()};
+        const QRect textRect = painter.boundingRect(boundingRect, Qt::AlignCenter | Qt::TextWordWrap, m_displayString);
         painter.drawText(textRect, Qt::AlignCenter | Qt::TextWordWrap, m_displayString);
         return;
     }
@@ -351,9 +353,9 @@ void LyricsArea::recalculateArea()
     m_lineRects.resize(m_lyrics.lines.size());
 
     int y{m_margins.top()};
-    const int rightEdge{width() - m_margins.right()};
-    const QRect boundingRect{m_margins.left(), m_margins.top(), rightEdge - m_margins.right(),
-                             height() - m_margins.bottom()};
+    const int rightEdge{width() - m_margins.right() - m_margins.left()};
+    const QRect boundingRect{m_margins.left(), m_margins.top(), rightEdge,
+                             height() - m_margins.bottom() - m_margins.top()};
 
     for(int line{0}; const auto& parsedLine : m_lyrics.lines) {
         int wordX{m_margins.left()};
