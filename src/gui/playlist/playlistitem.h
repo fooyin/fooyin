@@ -99,7 +99,6 @@ private:
     mutable Data m_data;
     Md5Hash m_baseKey;
     UId m_key;
-    int m_index;
 };
 using PlaylistItemList = std::vector<PlaylistItem*>;
 } // namespace Fooyin

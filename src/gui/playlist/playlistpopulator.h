@@ -33,7 +33,7 @@ class PlaylistPopulatorPrivate;
 struct PlaylistPreset;
 
 using ItemList       = std::vector<PlaylistItem>;
-using TrackItemMap   = std::unordered_map<Track, PlaylistItem, Track::TrackHash>;
+using TrackItemMap   = std::unordered_map<PlaylistTrack, PlaylistItem, PlaylistTrack::PlaylistTrackHash>;
 using ItemKeyMap     = std::unordered_map<UId, PlaylistItem, UId::UIdHash>;
 using NodeKeyMap     = std::unordered_map<UId, std::vector<UId>, UId::UIdHash>;
 using TrackIdNodeMap = std::unordered_map<int, std::vector<UId>>;
@@ -76,9 +76,9 @@ public:
     void setUseVarious(bool enabled);
 
     void run(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
-             const TrackList& tracks);
+             const PlaylistTrackList& tracks);
     void runTracks(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
-                   const std::map<int, TrackList>& tracks);
+                   const std::map<int, PlaylistTrackList>& tracks);
     void updateTracks(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                       const TrackItemMap& tracks);
     void updateHeaders(const ItemList& headers);

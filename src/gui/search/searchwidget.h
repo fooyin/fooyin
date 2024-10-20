@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/playlist/playlist.h>
 #include <core/track.h>
 #include <gui/fywidget.h>
 
@@ -43,7 +44,7 @@ public:
     {
         Library = 0,
         Playlist,
-        PlaylistInline,
+        PlaylistFilter,
         AllPlaylists,
     };
 
@@ -78,10 +79,10 @@ protected:
 private:
     [[nodiscard]] bool isQuickSearch() const;
     Playlist* findOrAddPlaylist(const TrackList& tracks);
-    [[nodiscard]] TrackList getTracksToSearch(SearchMode mode) const;
+    [[nodiscard]] PlaylistTrackList getTracksToSearch(SearchMode mode) const;
     void deleteWord();
 
-    bool handleFilteredTracks(SearchMode mode, const TrackList& tracks);
+    bool handleFilteredTracks(SearchMode mode, const PlaylistTrackList& playlistTracks);
     void handleSearchFailed();
 
     void loadColours();
@@ -105,6 +106,7 @@ private:
     std::optional<SearchMode> m_forceMode;
     bool m_forceNewPlaylist;
     bool m_unconnected;
+    bool m_exclusivePlaylist;
     bool m_autoSearch;
     SearchColours m_colours;
 };

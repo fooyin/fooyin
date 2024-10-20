@@ -85,7 +85,11 @@ public:
     void changeCurrentPlaylist(Playlist* playlist);
     void changeCurrentPlaylist(const UId& id);
     void changePlaylistIndex(const UId& playlistId, int index);
+    void filterCurrentPlaylist(const PlaylistTrackList& tracks);
     void clearCurrentPlaylist();
+
+    [[nodiscard]] QString currentSearch(Playlist* playlist) const;
+    void setSearch(Playlist* playlist, const QString& search);
 
     [[nodiscard]] std::optional<PlaylistViewState> playlistState(Playlist* playlist) const;
     void savePlaylistState(Playlist* playlist, const PlaylistViewState& state);
@@ -115,7 +119,8 @@ signals:
     void playlistHistoryChanged();
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
     void showCurrentTrack();
-    void selectTracks(const TrackIds& ids);
+    void selectTracks(const Fooyin::TrackIds& ids);
+    void filterTracks(const Fooyin::PlaylistTrackList& tracks);
     void requestPlaylistFocus();
 
 public slots:

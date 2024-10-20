@@ -34,7 +34,6 @@ PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
     , m_state{State::None}
     , m_type{type}
     , m_data{std::move(data)}
-    , m_index{-1}
 { }
 
 bool PlaylistItem::pending() const
@@ -69,7 +68,11 @@ UId PlaylistItem::key() const
 
 int PlaylistItem::index() const
 {
-    return m_index;
+    if(m_type != PlaylistItem::Track) {
+        return -1;
+    }
+    const auto& trackItem = std::get<PlaylistTrackItem>(m_data);
+    return trackItem.index();
 }
 
 void PlaylistItem::setPending(bool pending)
@@ -99,7 +102,11 @@ void PlaylistItem::setKey(const UId& key)
 
 void PlaylistItem::setIndex(int index)
 {
-    m_index = index;
+    if(m_type != PlaylistItem::Track) {
+        return;
+    }
+    auto& trackItem = std::get<PlaylistTrackItem>(m_data);
+    trackItem.setIndex(index);
 }
 
 void PlaylistItem::removeColumn(int column)

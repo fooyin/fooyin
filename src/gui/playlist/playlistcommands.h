@@ -21,6 +21,7 @@
 
 #include "playlistmodel.h"
 
+#include <core/playlist/playlist.h>
 #include <core/track.h>
 
 #include <QUndoCommand>
@@ -80,14 +81,14 @@ private:
 class ResetTracks : public PlaylistCommand
 {
 public:
-    ResetTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId, TrackList oldTracks,
-                TrackList newTracks);
+    ResetTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId,
+                PlaylistTrackList oldTracks, PlaylistTrackList newTracks);
 
     void undo() override;
     void redo() override;
 
 private:
-    TrackList m_oldTracks;
-    TrackList m_newTracks;
+    PlaylistTrackList m_oldTracks;
+    PlaylistTrackList m_newTracks;
 };
 } // namespace Fooyin

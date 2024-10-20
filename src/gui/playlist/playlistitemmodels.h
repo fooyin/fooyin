@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/playlist/playlist.h>
 #include <core/track.h>
 #include <gui/scripting/scriptformatter.h>
 
@@ -74,21 +75,23 @@ class PlaylistTrackItem
 {
 public:
     PlaylistTrackItem() = default;
-    PlaylistTrackItem(std::vector<RichScript> columns, const Track& track);
-    PlaylistTrackItem(RichScript left, RichScript right, const Track& track);
+    PlaylistTrackItem(std::vector<RichScript> columns, const PlaylistTrack& track);
+    PlaylistTrackItem(RichScript left, RichScript right, const PlaylistTrack& track);
 
     [[nodiscard]] std::vector<RichScript> columns() const;
     [[nodiscard]] RichScript column(int column) const;
     [[nodiscard]] RichScript left() const;
     [[nodiscard]] RichScript right() const;
-    [[nodiscard]] Track track() const;
+    [[nodiscard]] PlaylistTrack track() const;
+    [[nodiscard]] int index() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] int depth() const;
     [[nodiscard]] QSize size(int column = 0) const;
 
     void setColumns(const std::vector<RichScript>& columns);
     void setLeftRight(const RichScript& left, const RichScript& right);
-    void setTrack(const Track& track);
+    void setTrack(const PlaylistTrack& track);
+    void setIndex(int index);
 
     void setRowHeight(int height);
     void setDepth(int depth);
@@ -101,7 +104,7 @@ private:
     RichScript m_left;
     RichScript m_right;
 
-    Track m_track;
+    PlaylistTrack m_track;
     std::vector<QSize> m_sizes;
     int m_rowHeight;
     int m_depth;

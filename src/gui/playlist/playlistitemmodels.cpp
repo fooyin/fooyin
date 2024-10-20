@@ -187,13 +187,13 @@ void PlaylistContainerItem::calculateSize()
     m_size = totalSize;
 }
 
-PlaylistTrackItem::PlaylistTrackItem(std::vector<RichScript> columns, const Track& track)
+PlaylistTrackItem::PlaylistTrackItem(std::vector<RichScript> columns, const PlaylistTrack& track)
     : m_columns{std::move(columns)}
     , m_track{track}
     , m_rowHeight{0}
 { }
 
-PlaylistTrackItem::PlaylistTrackItem(RichScript left, RichScript right, const Track& track)
+PlaylistTrackItem::PlaylistTrackItem(RichScript left, RichScript right, const PlaylistTrack& track)
     : m_left{std::move(left)}
     , m_right{std::move(right)}
     , m_track{track}
@@ -225,9 +225,14 @@ RichScript PlaylistTrackItem::right() const
     return m_right;
 }
 
-Track PlaylistTrackItem::track() const
+PlaylistTrack PlaylistTrackItem::track() const
 {
     return m_track;
+}
+
+int PlaylistTrackItem::index() const
+{
+    return m_track.indexInPlaylist;
 }
 
 int PlaylistTrackItem::rowHeight() const
@@ -260,9 +265,14 @@ void PlaylistTrackItem::setLeftRight(const RichScript& left, const RichScript& r
     m_right = right;
 }
 
-void PlaylistTrackItem::setTrack(const Track& track)
+void PlaylistTrackItem::setTrack(const PlaylistTrack& track)
 {
     m_track = track;
+}
+
+void PlaylistTrackItem::setIndex(int index)
+{
+    m_track.indexInPlaylist = index;
 }
 
 void PlaylistTrackItem::setRowHeight(int height)

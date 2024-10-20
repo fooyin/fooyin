@@ -162,7 +162,7 @@ void MoveTracks::redo()
 }
 
 ResetTracks::ResetTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId,
-                         TrackList oldTracks, TrackList newTracks)
+                         PlaylistTrackList oldTracks, PlaylistTrackList newTracks)
     : PlaylistCommand{playerController, model, playlistId}
     , m_oldTracks{std::move(oldTracks)}
     , m_newTracks{std::move(newTracks)}

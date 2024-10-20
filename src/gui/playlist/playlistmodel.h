@@ -47,7 +47,7 @@ struct TrackIndexResult
     bool endOfPlaylist{false};
 };
 
-using TrackGroups = std::map<int, TrackList>;
+using TrackGroups = std::map<int, PlaylistTrackList>;
 
 struct TrackIndexRange
 {
@@ -118,9 +118,9 @@ public:
     void setPixmapColumnSize(int column, int size);
     void setPixmapColumnSizes(const std::vector<int>& sizes);
 
-    void reset(const TrackList& tracks);
+    void reset(const PlaylistTrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist,
-               const TrackList& tracks);
+               const PlaylistTrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
     [[nodiscard]] PlaylistTrack playingTrack() const;
@@ -208,7 +208,7 @@ private:
     void removeEmptyHeaders();
     void mergeHeaders();
     void updateHeaders();
-    void updateTrackIndexes();
+    void updateTrackIndexes(bool updateItems = true);
     void deleteNodes(PlaylistItem* node);
 
     std::vector<int> pixmapColumns() const;

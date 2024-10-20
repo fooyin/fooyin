@@ -78,6 +78,7 @@ public:
 
     std::unordered_map<Playlist*, QUndoStack> m_histories;
     std::unordered_map<Playlist*, PlaylistViewState> m_states;
+    std::unordered_map<Playlist*, QString> m_currentSearches;
     TrackList m_clipboard;
 };
 
@@ -515,11 +516,36 @@ void PlaylistController::changePlaylistIndex(const UId& playlistId, int index)
     p->m_handler->changePlaylistIndex(playlistId, index);
 }
 
+void PlaylistController::filterCurrentPlaylist(const PlaylistTrackList& tracks)
+{
+    if(currentPlaylist()) {
+        emit filterTracks(tracks);
+    }
+}
+
 void PlaylistController::clearCurrentPlaylist()
 {
     if(p->m_currentPlaylist) {
         p->m_handler->clearPlaylistTracks(p->m_currentPlaylist->id());
     }
+}
+
+QString PlaylistController::currentSearch(Playlist* playlist) const
+{
+    if(!playlist || !p->m_currentSearches.contains(playlist)) {
+        return {};
+    }
+
+    return p->m_currentSearches.at(playlist);
+}
+
+void PlaylistController::setSearch(Playlist* playlist, const QString& search)
+{
+    if(!playlist) {
+        return;
+    }
+
+    p->m_currentSearches[playlist] = search;
 }
 
 std::optional<PlaylistViewState> PlaylistController::playlistState(Playlist* playlist) const

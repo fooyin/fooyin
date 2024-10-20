@@ -52,10 +52,10 @@ public:
     void iterateHeader(const Track& track, PlaylistItem*& parent, int index);
     void iterateSubheaders(const Track& track, PlaylistItem*& parent, int index);
     void evaluateTrackScript(RichScript& script, const Track& track);
-    PlaylistItem* iterateTrack(const Track& track, int index);
+    PlaylistItem* iterateTrack(const PlaylistTrack& track, int index);
 
     void runBatch(int size, int index);
-    void runTracksGroup(const std::map<int, TrackList>& tracks);
+    void runTracksGroup(const std::map<int, PlaylistTrackList>& tracks);
 
     PlaylistPopulator* m_self;
     PlayerController* m_playerController;
@@ -80,7 +80,7 @@ public:
     PendingData m_data;
     using ContainerKeyMap = std::unordered_map<UId, PlaylistContainerItem*, UId::UIdHash>;
     ContainerKeyMap m_headers;
-    TrackList m_pendingTracks;
+    PlaylistTrackList m_pendingTracks;
 };
 
 void PlaylistPopulatorPrivate::reset()
@@ -90,7 +90,7 @@ void PlaylistPopulatorPrivate::reset()
     m_trackDepth = 0;
     m_prevBaseSubheaderKey.clear();
     m_prevSubheaderKey.clear();
-    m_prevBaseHeaderKey = 0;
+    m_prevBaseHeaderKey = nullptr;
     m_prevHeaderKey     = {};
 }
 PlaylistItem* PlaylistPopulatorPrivate::getOrInsertItem(const UId& key, PlaylistItem::ItemType type, const Data& item,
@@ -247,12 +247,12 @@ void PlaylistPopulatorPrivate::evaluateTrackScript(RichScript& script, const Tra
     }
 }
 
-PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const Track& track, int index)
+PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track, int index)
 {
     PlaylistItem* parent = &m_root;
 
-    iterateHeader(track, parent, index);
-    iterateSubheaders(track, parent, index);
+    iterateHeader(track.track, parent, index);
+    iterateSubheaders(track.track, parent, index);
 
     if(!m_currentPreset.track.isValid()) {
         return nullptr;
@@ -265,14 +265,14 @@ PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const Track& track, int ind
 
     if(!m_columns.empty()) {
         for(const auto& column : m_columns) {
-            const auto evalScript = m_parser.evaluate(column.field, track);
+            const auto evalScript = m_parser.evaluate(column.field, track.track);
             trackRow.columns.emplace_back(column.field, m_formatter.evaluate(evalScript));
         }
         playlistTrack = {trackRow.columns, track};
     }
     else {
-        evaluateTrackScript(trackRow.leftText, track);
-        evaluateTrackScript(trackRow.rightText, track);
+        evaluateTrackScript(trackRow.leftText, track.track);
+        evaluateTrackScript(trackRow.rightText, track.track);
 
         playlistTrack = {trackRow.leftText, trackRow.rightText, track};
     }
@@ -282,11 +282,11 @@ PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const Track& track, int ind
     playlistTrack.calculateSize();
 
     const auto baseKey
-        = Utils::generateMd5Hash(parent->key().toString(UId::Id128), track.hash(), QString::number(index));
+        = Utils::generateMd5Hash(parent->key().toString(UId::Id128), track.track.hash(), QString::number(index));
     const UId key{UId::create()};
 
     auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent, baseKey);
-    m_data.trackParents[track.id()].push_back(key);
+    m_data.trackParents[track.track.id()].push_back(key);
 
     m_trackDepth = 0;
     m_prevIndex  = index;
@@ -301,7 +301,7 @@ void PlaylistPopulatorPrivate::runBatch(int size, int index)
 
     auto tracksBatch = std::ranges::views::take(m_pendingTracks, size);
 
-    for(const Track& track : tracksBatch) {
+    for(const PlaylistTrack& track : tracksBatch) {
         if(!m_self->mayRun()) {
             return;
         }
@@ -317,7 +317,7 @@ void PlaylistPopulatorPrivate::runBatch(int size, int index)
     emit m_self->populated(m_data);
 
     auto tracksToKeep = std::ranges::views::drop(m_pendingTracks, size);
-    TrackList tempTracks;
+    PlaylistTrackList tempTracks;
     std::ranges::copy(tracksToKeep, std::back_inserter(tempTracks));
     m_pendingTracks = std::move(tempTracks);
 
@@ -327,14 +327,14 @@ void PlaylistPopulatorPrivate::runBatch(int size, int index)
     runBatch(remaining, index);
 }
 
-void PlaylistPopulatorPrivate::runTracksGroup(const std::map<int, TrackList>& tracks)
+void PlaylistPopulatorPrivate::runTracksGroup(const std::map<int, PlaylistTrackList>& tracks)
 {
     for(const auto& [index, trackGroup] : tracks) {
         std::vector<UId> trackKeys;
 
         int trackIndex{index};
 
-        for(const Track& track : trackGroup) {
+        for(const PlaylistTrack& track : trackGroup) {
             if(!m_self->mayRun()) {
                 return;
             }
@@ -374,7 +374,7 @@ void PlaylistPopulator::setUseVarious(bool enabled)
 }
 
 void PlaylistPopulator::run(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
-                            const TrackList& tracks)
+                            const PlaylistTrackList& tracks)
 {
     setState(Running);
 
@@ -394,7 +394,7 @@ void PlaylistPopulator::run(const UId& playlistId, const PlaylistPreset& preset,
 }
 
 void PlaylistPopulator::runTracks(const UId& playlistId, const PlaylistPreset& preset,
-                                  const PlaylistColumnList& columns, const std::map<int, TrackList>& tracks)
+                                  const PlaylistColumnList& columns, const std::map<int, PlaylistTrackList>& tracks)
 {
     setState(Running);
 
@@ -424,12 +424,12 @@ void PlaylistPopulator::updateTracks(const UId& playlistId, const PlaylistPreset
         PlaylistTrackItem& trackData = std::get<0>(item.data());
 
         trackData.setTrack(track);
-        p->m_registry->setTrackProperties(item.index(), trackData.depth());
+        p->m_registry->setTrackProperties(trackData.track().indexInPlaylist, trackData.depth());
 
         if(!columns.empty()) {
             std::vector<RichScript> trackColumns;
             for(const auto& column : columns) {
-                const auto evalScript = p->m_parser.evaluate(column.field, track);
+                const auto evalScript = p->m_parser.evaluate(column.field, track.track);
                 trackColumns.emplace_back(column.field, p->m_formatter.evaluate(evalScript));
             }
             trackData.setColumns(trackColumns);
@@ -438,8 +438,8 @@ void PlaylistPopulator::updateTracks(const UId& playlistId, const PlaylistPreset
             RichScript trackLeft{preset.track.leftText};
             RichScript trackRight{preset.track.rightText};
 
-            p->evaluateTrackScript(trackLeft, track);
-            p->evaluateTrackScript(trackRight, track);
+            p->evaluateTrackScript(trackLeft, track.track);
+            p->evaluateTrackScript(trackRight, track.track);
 
             trackData.setLeftRight(trackLeft, trackRight);
         }

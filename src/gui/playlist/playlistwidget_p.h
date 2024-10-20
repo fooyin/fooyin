@@ -114,6 +114,7 @@ public:
     void handleQueueTracksChanged(const QueueTracks& removed, const QueueTracks& tracks);
     void handlePlayingTrackChanged(const PlaylistTrack& track) const;
     void selectTrackIds(const std::vector<int>& ids) const;
+    void filterTracks(const PlaylistTrackList& tracks);
 
     void setSingleMode(bool enabled);
     void updateSpans();
@@ -169,6 +170,8 @@ public:
     WidgetContext* m_playlistContext;
     TrackAction m_middleClickAction;
 
+    QAction* m_undoAction;
+    QAction* m_redoAction;
     QAction* m_playAction;
     QAction* m_cropAction;
     QAction* m_stopAfter;
@@ -187,6 +190,6 @@ public:
 
     int m_dropIndex;
     QString m_search;
-    TrackList m_filteredTracks;
+    PlaylistTrackList m_filteredTracks;
 };
 } // namespace Fooyin
