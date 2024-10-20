@@ -32,22 +32,6 @@
 
 namespace {
 using AlbumTracks = std::vector<int>;
-
-struct TrackIndex
-{
-    Fooyin::Track track;
-    int index;
-
-    static Fooyin::Track& extractor(TrackIndex& item)
-    {
-        return item.track;
-    };
-
-    static const Fooyin::Track& extractorConst(const TrackIndex& item)
-    {
-        return item.track;
-    };
-};
 } // namespace
 
 namespace Fooyin {
@@ -59,6 +43,38 @@ bool PlaylistTrack::isValid() const
 bool PlaylistTrack::isInPlaylist() const
 {
     return playlistId.isValid();
+}
+
+PlaylistTrackList PlaylistTrack::fromTracks(const TrackList& tracks, const UId& playlistId)
+{
+    PlaylistTrackList playlistTracks;
+
+    for(int i{0}; const Track& track : tracks) {
+        playlistTracks.emplace_back(track, playlistId, i++);
+    }
+
+    return playlistTracks;
+}
+
+TrackList PlaylistTrack::toTracks(const PlaylistTrackList& playlistTracks)
+{
+    TrackList tracks;
+
+    for(const PlaylistTrack& track : playlistTracks) {
+        tracks.emplace_back(track.track);
+    }
+
+    return tracks;
+}
+
+Track& PlaylistTrack::extractor(PlaylistTrack& item)
+{
+    return item.track;
+}
+
+const Track& PlaylistTrack::extractorConst(const PlaylistTrack& item)
+{
+    return item.track;
 }
 
 bool PlaylistTrack::operator==(const PlaylistTrack& other) const
@@ -221,18 +237,13 @@ AlbumTracks PlaylistPrivate::getAlbumTracks(int currentIndex)
 
 void PlaylistPrivate::sortAlbumTracks(AlbumTracks& album, const QString& sortScript)
 {
-    std::vector<TrackIndex> trackIndexes;
-    trackIndexes.reserve(album.size());
-
-    for(const int trackIndex : album) {
-        trackIndexes.emplace_back(m_tracks.at(trackIndex), trackIndex);
-    }
-
-    m_sorter.calcSortTracks(sortScript, trackIndexes, TrackIndex::extractor, TrackIndex::extractorConst);
+    const PlaylistTrackList trackIndexes = PlaylistTrack::fromTracks(m_tracks, m_id);
+    const auto sortedIndexes
+        = m_sorter.calcSortTracks(sortScript, trackIndexes, PlaylistTrack::extractor, PlaylistTrack::extractorConst);
 
     album.clear();
-    for(const auto& track : trackIndexes) {
-        album.emplace_back(track.index);
+    for(const auto& track : sortedIndexes) {
+        album.emplace_back(track.indexInPlaylist);
     }
 }
 
@@ -490,9 +501,26 @@ TrackList Playlist::tracks() const
     return p->m_tracks;
 }
 
+PlaylistTrackList Playlist::playlistTracks() const
+{
+    PlaylistTrackList tracks;
+    for(int i{0}; const auto& track : p->m_tracks) {
+        tracks.emplace_back(track, p->m_id, i++);
+    }
+    return tracks;
+}
+
 std::optional<Track> Playlist::track(int index) const
 {
     return p->getTrack(index);
+}
+
+std::optional<PlaylistTrack> Playlist::playlistTrack(int index) const
+{
+    if(const auto track = p->getTrack(index)) {
+        return PlaylistTrack{track.value(), p->m_id, index};
+    }
+    return {};
 }
 
 int Playlist::trackCount() const

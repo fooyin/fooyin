@@ -28,7 +28,10 @@
 
 namespace Fooyin {
 class PlaylistPrivate;
+struct PlaylistTrack;
 class SettingsManager;
+
+using PlaylistTrackList = std::vector<PlaylistTrack>;
 
 struct FYCORE_EXPORT PlaylistTrack
 {
@@ -39,9 +42,24 @@ struct FYCORE_EXPORT PlaylistTrack
     [[nodiscard]] bool isValid() const;
     [[nodiscard]] bool isInPlaylist() const;
 
+    static PlaylistTrackList fromTracks(const TrackList& tracks, const UId& playlistId);
+    static TrackList toTracks(const PlaylistTrackList& playlistTracks);
+
+    static Track& extractor(PlaylistTrack& item);
+    static const Track& extractorConst(const PlaylistTrack& item);
+
     bool operator==(const PlaylistTrack& other) const;
     bool operator!=(const PlaylistTrack& other) const;
     bool operator<(const PlaylistTrack& other) const;
+
+    struct PlaylistTrackHash
+    {
+        size_t operator()(const PlaylistTrack& plTrack) const
+        {
+            return (std::hash<QString>{}(plTrack.track.uniqueFilepath()))
+                 ^ (std::hash<int>{}(plTrack.indexInPlaylist) << 11) ^ (qHash(plTrack.playlistId) << 22);
+        }
+    };
 };
 
 /*!
@@ -80,7 +98,9 @@ public:
     [[nodiscard]] int index() const;
 
     [[nodiscard]] TrackList tracks() const;
+    [[nodiscard]] PlaylistTrackList playlistTracks() const;
     [[nodiscard]] std::optional<Track> track(int index) const;
+    [[nodiscard]] std::optional<PlaylistTrack> playlistTrack(int index) const;
     [[nodiscard]] int trackCount() const;
 
     [[nodiscard]] int currentTrackIndex() const;
