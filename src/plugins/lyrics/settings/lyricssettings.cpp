@@ -20,6 +20,7 @@
 #include "lyricssettings.h"
 
 #include "lyricscolours.h"
+#include "lyricswidget.h"
 
 #include <utils/settings/settingsmanager.h>
 
@@ -57,9 +58,8 @@ LyricsSettings::LyricsSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Settings::Lyrics::LineSpacing>(5, QStringLiteral("Lyrics/LineSpacing"));
     m_settings->createSetting<Settings::Lyrics::Margins>(QVariant::fromValue(QMargins{20, 20, 20, 20}),
                                                          QStringLiteral("Lyrics/Margins"));
-    m_settings->createSetting<Settings::Lyrics::NoLyricsScript>(
-        QStringLiteral("[Artist: %artist%$crlf(2)][Album: %album%$crlf(2)]Title: %title%"),
-        QStringLiteral("Lyrics/NoLyricsScript"));
+    m_settings->createSetting<Settings::Lyrics::NoLyricsScript>(LyricsWidget::defaultNoLyricsScript(),
+                                                                QStringLiteral("Lyrics/NoLyricsScript"));
     m_settings->createSetting<Settings::Lyrics::SeekOnClick>(true, QStringLiteral("Lyrics/SeekOnClick"));
     m_settings->createSetting<Settings::Lyrics::ShowScrollbar>(true, QStringLiteral("Lyrics/ShowScrollbar"));
     m_settings->createSetting<Settings::Lyrics::ScrollMode>(static_cast<int>(ScrollMode::Synced),

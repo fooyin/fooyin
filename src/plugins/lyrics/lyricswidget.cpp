@@ -198,6 +198,12 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, SettingsManager* 
     updateLyrics(m_playerController->currentTrack());
 }
 
+QString LyricsWidget::defaultNoLyricsScript()
+{
+    return QStringLiteral("[%1: %artist%$crlf(2)][%2: %album%$crlf(2)]%3: %title%")
+        .arg(tr("Artist"), tr("Album"), tr("Title"));
+}
+
 QString LyricsWidget::name() const
 {
     return tr("Lyrics");

@@ -48,6 +48,8 @@ class LyricsWidget : public FyWidget
 public:
     explicit LyricsWidget(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
 
+    static QString defaultNoLyricsScript();
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
