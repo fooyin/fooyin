@@ -41,6 +41,10 @@ public:
 
     void updateDialog(const Id& sourceId) const;
 
+    bool hasConnections(const Id& sourceId);
+    bool hasExclusiveConnection(const Id& sourceId);
+    Id exclusiveConnection(const Id& widgetId);
+    bool isConnected(const Id& widgetId);
     bool isConnected(const Id& sourceId, const Id& widgetId);
     bool isConnectedToOther(const Id& sourceId, const Id& widgetId);
 
@@ -48,8 +52,11 @@ public:
     void setupWidgetOverlay(const Id& sourceId, FyWidget* widget);
     void createControlDialog(const Id& sourceId);
 
+    void retrieveWidgets();
     void setupWidgetConnections(const Id& sourceId);
     void removeWidget(const Id& widgetId);
+
+    void setSearch(const Id& id, const QString& Search);
 
     SearchController* m_self;
     EditableLayout* m_editableLayout;
@@ -67,6 +74,7 @@ public:
 
     std::unordered_map<Id, FyWidget*, Id::IdHash> m_searchableWidgets;
     std::unordered_map<Id, std::set<Id>, Id::IdHash> m_connections;
+    std::unordered_map<Id, std::function<void(const QString&)>, Id::IdHash> m_setFuncs;
 };
 
 SearchControllerPrivate::SearchControllerPrivate(SearchController* self, EditableLayout* editableLayout)
@@ -91,6 +99,39 @@ void SearchControllerPrivate::updateDialog(const Id& sourceId) const
     m_clearAll->setEnabled(m_connections.contains(sourceId) && !m_connections.at(sourceId).empty());
 }
 
+bool SearchControllerPrivate::hasConnections(const Id& sourceId)
+{
+    return m_connections.contains(sourceId) && !m_connections.at(sourceId).empty();
+}
+
+bool SearchControllerPrivate::hasExclusiveConnection(const Id& sourceId)
+{
+    if(!m_connections.contains(sourceId)) {
+        return false;
+    }
+
+    const auto connections = m_connections.at(sourceId);
+    return std::ranges::any_of(connections, [this](const auto& id) {
+        return m_searchableWidgets.contains(id) && m_searchableWidgets.at(id)->hasFeature(FyWidget::ExclusiveSearch);
+    });
+}
+
+Id SearchControllerPrivate::exclusiveConnection(const Id& widgetId)
+{
+    for(const auto& [sourceId, widgetIds] : m_connections) {
+        if(std::ranges::any_of(widgetIds, [widgetId](const Id& id) { return widgetId == id; })) {
+            return sourceId;
+        }
+    }
+    return {};
+}
+
+bool SearchControllerPrivate::isConnected(const Id& widgetId)
+{
+    return std::ranges::any_of(m_connections,
+                               [widgetId](const auto& connection) { return connection.second.contains(widgetId); });
+}
+
 bool SearchControllerPrivate::isConnected(const Id& sourceId, const Id& widgetId)
 {
     return m_connections.contains(sourceId) && m_connections.at(sourceId).contains(widgetId);
@@ -107,18 +148,53 @@ void SearchControllerPrivate::addOrRemoveConnection(const Id& sourceId, FyWidget
 {
     const Id id = widget->id();
 
+    const auto updateOverlay
+        = [](OverlayWidget* olWidget, const QString& text, const QColor& color, bool enabled = true) {
+              olWidget->setButtonText(text);
+              olWidget->setColour(color);
+              olWidget->button()->setEnabled(enabled);
+          };
+
+    const auto updateAllOverlays = [this, &sourceId, widget, &id, updateOverlay]() {
+        const bool isExclusive = widget->hasFeature(FyWidget::ExclusiveSearch) && isConnected(id);
+
+        for(const auto& [otherId, otherOverlay] : m_overlays) {
+            if(otherId == id) {
+                continue;
+            }
+
+            if(isExclusive) {
+                updateOverlay(otherOverlay, SearchController::tr("Unavailable"), m_unavailableColour, false);
+                continue;
+            }
+
+            if(m_searchableWidgets.contains(otherId)) {
+                const auto* otherWidget = m_searchableWidgets.at(otherId);
+                if((otherWidget->hasFeature(FyWidget::ExclusiveSearch)
+                    && (isConnected(otherId) || hasConnections(sourceId)))) {
+                    updateOverlay(otherOverlay, SearchController::tr("Unavailable"), m_unavailableColour, false);
+                    continue;
+                }
+            }
+
+            const bool otherConnected = isConnected(sourceId, otherId);
+            updateOverlay(otherOverlay,
+                          otherConnected ? SearchController::tr("Disconnect") : SearchController::tr("Connect"),
+                          otherConnected ? m_connectedColour : m_disconnectedColour, true);
+        }
+    };
+
     if(isConnected(sourceId, id)) {
         widget->searchEvent({});
         m_connections[sourceId].erase(id);
-        overlay->button()->setText(SearchController::tr("Connect"));
-        overlay->setColour(m_disconnectedColour);
+        updateOverlay(overlay, SearchController::tr("Connect"), m_disconnectedColour);
     }
     else {
         m_connections[sourceId].emplace(id);
-        overlay->button()->setText(SearchController::tr("Disconnect"));
-        overlay->setColour(m_connectedColour);
+        updateOverlay(overlay, SearchController::tr("Disconnect"), m_connectedColour);
     }
 
+    updateAllOverlays();
     updateDialog(sourceId);
     emit m_self->connectionChanged(sourceId);
 }
@@ -127,24 +203,31 @@ void SearchControllerPrivate::setupWidgetOverlay(const Id& sourceId, FyWidget* w
 {
     const Id widgetId = widget->id();
 
+    const bool connected        = isConnected(sourceId, widgetId);
     const bool connectedToOther = isConnectedToOther(sourceId, widgetId);
-    const auto overlayFlags = OverlayWidget::Resize | (connectedToOther ? OverlayWidget::Label : OverlayWidget::Button);
+    const bool exclusiveWidget  = widget->hasFeature(FyWidget::ExclusiveSearch);
+    const bool exclusiveSource  = hasExclusiveConnection(sourceId);
+    const bool hasAnyConnection = hasConnections(sourceId);
 
-    auto* overlay = m_overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
+    const bool isUnavailable
+        = connectedToOther || (!connected && (exclusiveSource || (exclusiveWidget && hasAnyConnection)));
 
-    if(connectedToOther) {
-        overlay->setText(SearchController::tr("Unavailable"));
+    const auto overlayFlags = OverlayWidget::Resize | OverlayWidget::Button;
+    auto* overlay           = m_overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
+    overlay->button()->setDisabled(isUnavailable);
+    QObject::connect(overlay->button(), &QPushButton::clicked, m_self,
+                     [this, sourceId, widget, overlay]() { addOrRemoveConnection(sourceId, widget, overlay); });
+
+    if(isUnavailable) {
+        overlay->setButtonText(SearchController::tr("Unavailable"));
         overlay->setColour(m_unavailableColour);
     }
     else {
-        const bool connected = m_connections.contains(sourceId) && m_connections.at(sourceId).contains(widgetId);
         overlay->setButtonText(connected ? SearchController::tr("Disconnect") : SearchController::tr("Connect"));
         overlay->setColour(connected ? m_connectedColour : m_disconnectedColour);
-        QObject::connect(overlay->button(), &QPushButton::clicked, m_self,
-                         [this, sourceId, widget, overlay]() { addOrRemoveConnection(sourceId, widget, overlay); });
     }
-    overlay->resize(widget->size());
 
+    overlay->resize(widget->size());
     overlay->show();
 }
 
@@ -189,13 +272,37 @@ void SearchControllerPrivate::createControlDialog(const Id& sourceId)
     m_controlDialog->resize(120, 80);
 }
 
+void SearchControllerPrivate::retrieveWidgets()
+{
+    const auto widgets = m_editableLayout->findWidgetsByFeatures(FyWidget::Search | FyWidget::ExclusiveSearch);
+
+    if(widgets.empty()) {
+        return;
+    }
+
+    for(FyWidget* widget : widgets) {
+        const Id widgetId = widget->id();
+
+        if(!m_searchableWidgets.contains(widgetId)) {
+            QObject::connect(widget, &QObject::destroyed, m_self, [this, widgetId]() { removeWidget(widgetId); });
+            if(widget->hasFeature(FyWidget::ExclusiveSearch)) {
+                QObject::connect(widget, &FyWidget::changeSearch, m_self, [this, widgetId](const QString& search) {
+                    const Id sourceId = exclusiveConnection(widgetId);
+                    if(sourceId.isValid()) {
+                        setSearch(sourceId, search);
+                    }
+                });
+            }
+        }
+        m_searchableWidgets.emplace(widgetId, widget);
+    }
+}
+
 void SearchControllerPrivate::setupWidgetConnections(const Id& sourceId)
 {
     clearOverlays();
 
-    const auto widgets = m_editableLayout->findWidgetsByFeatures(FyWidget::Search);
-
-    if(widgets.empty()) {
+    if(m_searchableWidgets.empty()) {
         return;
     }
 
@@ -204,12 +311,7 @@ void SearchControllerPrivate::setupWidgetConnections(const Id& sourceId)
 
     createControlDialog(sourceId);
 
-    for(FyWidget* widget : widgets) {
-        const Id widgetId = widget->id();
-        if(!m_searchableWidgets.contains(widgetId)) {
-            QObject::connect(widget, &QObject::destroyed, m_self, [this, widgetId]() { removeWidget(widgetId); });
-        }
-        m_searchableWidgets.emplace(widget->id(), widget);
+    for(const auto& [_, widget] : m_searchableWidgets) {
         setupWidgetOverlay(sourceId, widget);
     }
 
@@ -222,6 +324,13 @@ void SearchControllerPrivate::removeWidget(const Id& widgetId)
     m_connections.erase(widgetId);
 }
 
+void SearchControllerPrivate::setSearch(const Id& id, const QString& Search)
+{
+    if(m_setFuncs.contains(id)) {
+        m_setFuncs.at(id)(Search);
+    }
+}
+
 SearchController::SearchController(EditableLayout* editableLayout, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<SearchControllerPrivate>(this, editableLayout)}
@@ -229,9 +338,19 @@ SearchController::SearchController(EditableLayout* editableLayout, QObject* pare
 
 SearchController::~SearchController() = default;
 
+void SearchController::loadWidgets()
+{
+    p->retrieveWidgets();
+}
+
 void SearchController::setupWidgetConnections(const Id& id)
 {
     p->setupWidgetConnections(id);
+}
+
+void SearchController::registerSetFunction(const Id& id, const std::function<void(const QString&)>& func)
+{
+    p->m_setFuncs.emplace(id, func);
 }
 
 WidgetList SearchController::connectedWidgets(const Id& id)
@@ -245,14 +364,7 @@ WidgetList SearchController::connectedWidgets(const Id& id)
     const auto connections = p->m_connections.at(id);
     for(const auto& widgetId : connections) {
         if(p->m_searchableWidgets.contains(widgetId)) {
-            if(auto* widget = p->m_searchableWidgets.at(widgetId)) {
-                widgets.emplace_back(widget);
-            }
-        }
-        else if(auto* widget = p->m_editableLayout->findWidget(widgetId)) {
-            QObject::connect(widget, &QObject::destroyed, this, [this, widgetId]() { p->removeWidget(widgetId); });
-            p->m_searchableWidgets.emplace(widgetId, widget);
-            widgets.emplace_back(widget);
+            widgets.emplace_back(p->m_searchableWidgets.at(widgetId));
         }
     }
 
@@ -287,13 +399,7 @@ void SearchController::changeSearch(const Id& id, const QString& search)
     const auto connections = p->m_connections.at(id);
     for(const auto& widgetId : connections) {
         if(p->m_searchableWidgets.contains(widgetId)) {
-            if(auto* widget = p->m_searchableWidgets.at(widgetId)) {
-                widget->searchEvent(search);
-            }
-        }
-        else if(auto* widget = p->m_editableLayout->findWidget(widgetId)) {
-            QObject::connect(widget, &QObject::destroyed, this, [this, widgetId]() { p->removeWidget(widgetId); });
-            p->m_searchableWidgets.emplace(widgetId, widget);
+            auto* widget = p->m_searchableWidgets.at(widgetId);
             widget->searchEvent(search);
         }
     }

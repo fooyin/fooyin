@@ -58,6 +58,10 @@ public:
          * Reimplement @fn searchEvent to receive search events.
          */
         Search = 1 << 1,
+        /*!
+         * Same as search, but this widget forms an exclusive connection to s search widget.
+         */
+        ExclusiveSearch = 1 << 2,
     };
     Q_DECLARE_FLAGS(Features, Feature)
 
@@ -75,6 +79,7 @@ public:
     [[nodiscard]] virtual QString layoutName() const = 0;
 
     [[nodiscard]] Features features() const;
+    [[nodiscard]] bool hasFeature(Feature feature) const;
     void setFeature(Feature feature, bool on = true);
 
     /** Returns the closest FyWidget parent of this widget. */
@@ -131,6 +136,9 @@ public:
      * @note the base class implementation of this function does nothing.
      */
     virtual void finalise();
+
+signals:
+    void changeSearch(const QString& search);
 
 private:
     Id m_id;

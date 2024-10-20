@@ -41,6 +41,11 @@ FyWidget::Features FyWidget::features() const
     return m_features;
 }
 
+bool FyWidget::hasFeature(Feature feature) const
+{
+    return m_features & feature;
+}
+
 void FyWidget::setFeature(Feature feature, bool on)
 {
     if(on) {
@@ -79,7 +84,7 @@ void FyWidget::saveLayout(QJsonArray& layout)
 {
     QJsonObject widgetData;
 
-    if(m_features & PersistId || m_features & Search) {
+    if(m_features & PersistId || m_features & (Search | ExclusiveSearch)) {
         widgetData[u"ID"] = m_id.name();
     }
 
