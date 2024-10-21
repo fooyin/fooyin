@@ -130,7 +130,7 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
         const QModelIndexList selected = selectionModel()->selectedRows();
         for(const QModelIndex& selectedIndex : selected) {
             if(selectedIndex.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
-                auto track = selectedIndex.data(PlaylistItem::ItemData).value<Track>();
+                auto track = selectedIndex.data(PlaylistItem::ItemData).value<PlaylistTrack>().track;
                 track.setRating(rating);
                 tracks.push_back(track);
             }
@@ -138,7 +138,7 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
         emit tracksRated(tracks);
     }
     else {
-        auto track = index.data(PlaylistItem::ItemData).value<Track>();
+        auto track = index.data(PlaylistItem::ItemData).value<PlaylistTrack>().track;
         track.setRating(rating);
         emit tracksRated({track});
     }
