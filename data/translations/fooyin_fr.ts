@@ -784,7 +784,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="142"/>
         <source>%1 Layout %2</source>
-        <translation type="unfinished">%1 la Disposition %2</translation>
+        <translation>%1 la Disposition %2</translation>
     </message>
 </context>
 <context>
@@ -3224,7 +3224,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="85"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ce message s&apos;affiche si les paroles de la piste en cours sont introuvables.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="90"/>
