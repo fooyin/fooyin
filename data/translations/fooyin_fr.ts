@@ -1683,7 +1683,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
         <source>Current file</source>
-        <translation type="unfinished">Fichier en cours</translation>
+        <translation>Fichier en cours</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="528"/>
@@ -3171,17 +3171,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="187"/>
         <source>General</source>
-        <translation type="unfinished">Général</translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="188"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="188"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Paroles</translation>
+        <translation>Paroles</translation>
     </message>
 </context>
 <context>
@@ -3194,32 +3194,32 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
         <source>Synced scroll duration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vitesse de défilement synchronisée</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="74"/>
         <source>Manual</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Manuel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="75"/>
         <source>Synced</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Synchronisé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="76"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatique</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="80"/>
         <source>General</source>
-        <translation type="unfinished">Général</translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="83"/>
         <source>This will only function with synced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cela ne fonctionnera que si les paroles sont synchronisées.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="85"/>
@@ -3234,7 +3234,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="94"/>
         <source>Scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Défilement</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="100"/>
@@ -3244,27 +3244,27 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="103"/>
         <source>No automatic scrolling will take place</source>
-        <translation type="unfinished"></translation>
+        <translation>Défilement automatique désactivé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="104"/>
         <source>Synced lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>Les paroles synchronisées défileront</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="105"/>
         <source>All lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>Toutes les paroles défileront</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="116"/>
         <source>Searching</source>
-        <translation type="unfinished">Recherche</translation>
+        <translation>Recherche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="120"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Étiquettes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="122"/>
@@ -3277,17 +3277,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="358"/>
         <source>Appearance</source>
-        <translation type="unfinished">Apparence</translation>
+        <translation>Apparence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="359"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="359"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Paroles</translation>
+        <translation>Paroles</translation>
     </message>
 </context>
 <context>
@@ -3295,17 +3295,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="87"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Afficher la barre de défilement</translation>
+        <translation>Afficher la barre de défilement</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="94"/>
         <source>Background colour</source>
-        <translation type="unfinished">Couleur de l&apos;arrière-plan</translation>
+        <translation>Couleur de l&apos;arrière-plan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="96"/>
         <source>Line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur de la ligne</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
@@ -3316,89 +3316,89 @@
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="100"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="102"/>
         <source>Current line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur de la ligne en cours</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="104"/>
         <source>Current word colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur du mot en cours</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="106"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="108"/>
         <source>Current line font</source>
-        <translation type="unfinished"></translation>
+        <translation>Police de la ligne en cours</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="110"/>
         <source>Current word font</source>
-        <translation type="unfinished"></translation>
+        <translation>Police du mot en cours</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="113"/>
         <source>General</source>
-        <translation type="unfinished">Général</translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="116"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Centrer</translation>
+        <translation>Centrer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="117"/>
         <source>Align to left</source>
-        <translation type="unfinished">Aligner à gauche</translation>
+        <translation>Aligner à gauche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="118"/>
         <source>Align to right</source>
-        <translation type="unfinished">Aligner à droite</translation>
+        <translation>Aligner à droite</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="125"/>
         <source>Line spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Espacement des lignes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="127"/>
         <source>Alignment</source>
-        <translation type="unfinished">Alignement</translation>
+        <translation>Alignement</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="131"/>
         <source>Margins</source>
-        <translation type="unfinished"></translation>
+        <translation>Marges</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="145"/>
         <source>Left</source>
-        <translation type="unfinished">Gauche</translation>
+        <translation>Gauche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="147"/>
         <source>Right</source>
-        <translation type="unfinished">Droite</translation>
+        <translation>Droite</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="149"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Haut</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="151"/>
         <source>Bottom</source>
-        <translation type="unfinished">Tout en Bas</translation>
+        <translation>Bas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="155"/>
         <source>Fonts</source>
-        <translation type="unfinished">Polices</translation>
+        <translation>Polices</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="158"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="183"/>
         <source>Synced</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Synchronisé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="166"/>
@@ -3409,7 +3409,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="180"/>
         <source>Colours</source>
-        <translation type="unfinished">Couleurs</translation>
+        <translation>Couleurs</translation>
     </message>
 </context>
 <context>
@@ -3418,7 +3418,7 @@
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="46"/>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="47"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Paroles</translation>
+        <translation>Paroles</translation>
     </message>
 </context>
 <context>
@@ -3426,37 +3426,37 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="203"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Paroles</translation>
+        <translation>Paroles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="226"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Afficher la barre de défilement</translation>
+        <translation>Afficher la barre de défilement</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="232"/>
         <source>Text-align</source>
-        <translation type="unfinished"></translation>
+        <translation>Alignement du texte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="236"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Centrer</translation>
+        <translation>Centrer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="237"/>
         <source>Align to left</source>
-        <translation type="unfinished">Aligner à gauche</translation>
+        <translation>Aligner à gauche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="238"/>
         <source>Align to right</source>
-        <translation type="unfinished">Aligner à droite</translation>
+        <translation>Aligner à droite</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="262"/>
         <source>Settings…</source>
-        <translation type="unfinished">Réglages…</translation>
+        <translation>Réglages…</translation>
     </message>
 </context>
 <context>
@@ -4393,7 +4393,7 @@
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="67"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="108"/>
         <source>Current file</source>
-        <translation type="unfinished">Fichier en cours</translation>
+        <translation>Fichier en cours</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="84"/>
@@ -5093,7 +5093,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="74"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished"></translation>
+        <translation>Écriture des étiquettes du fichier…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="42"/>
@@ -5139,12 +5139,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="142"/>
         <source>Playback</source>
-        <translation type="unfinished">Lecture en cours</translation>
+        <translation>Lecture en cours</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="142"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">ReplayGain</translation>
+        <translation>ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -5167,7 +5167,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="73"/>
         <source>Options</source>
-        <translation type="unfinished">Options</translation>
+        <translation>Options</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="80"/>
@@ -5182,7 +5182,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Calculate as albums (by tags)</source>
-        <translation type="unfinished">Considérés comme des albums (selon les étiquettes)</translation>
+        <translation>Considérés comme des albums (selon les étiquettes)</translation>
     </message>
 </context>
 <context>
@@ -5256,12 +5256,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="186"/>
         <source>Remove ReplayGain Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer les infos ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="189"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished"></translation>
+        <translation>Écriture des étiquettes du fichier…</translation>
     </message>
 </context>
 <context>
