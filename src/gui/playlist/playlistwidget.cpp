@@ -605,16 +605,18 @@ void PlaylistWidgetPrivate::resetModel() const
     m_playlistView->playlistAboutToBeReset();
 
     const bool isSearching = !m_search.isEmpty();
-    m_playlistView->setDragEnabled(!isSearching);
-    m_playlistView->setDragDropMode(!isSearching ? QAbstractItemView::DragDrop : QAbstractItemView::NoDragDrop);
-    m_undoAction->setEnabled(!isSearching);
-    m_redoAction->setEnabled(!isSearching);
+    if(m_mode == PlaylistWidget::Mode::Playlist) {
+        m_playlistView->setDragEnabled(!isSearching);
+        m_playlistView->setDragDropMode(!isSearching ? QAbstractItemView::DragDrop : QAbstractItemView::NoDragDrop);
+        m_undoAction->setEnabled(!isSearching);
+        m_redoAction->setEnabled(!isSearching);
+    }
 
     switch(m_mode) {
         case(PlaylistWidget::Mode::Playlist):
             if(auto* playlist = m_playlistController->currentPlaylist()) {
                 m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns, playlist,
-                               !m_filteredTracks.empty() ? m_filteredTracks : playlist->playlistTracks());
+                               isSearching ? m_filteredTracks : playlist->playlistTracks());
             }
             break;
         case(PlaylistWidget::Mode::DetachedPlaylist):
