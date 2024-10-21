@@ -709,7 +709,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
     for(const QModelIndex& index : std::as_const(indexes)) {
         const auto type = index.data(PlaylistItem::Type).toInt();
         if(type == PlaylistItem::Track) {
-            tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<Track>());
+            tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<PlaylistTrack>().track);
             const int trackIndex = index.data(PlaylistItem::Role::Index).toInt();
             trackIndexes.emplace(trackIndex);
             firstIndex = firstIndex >= 0 ? std::min(firstIndex, trackIndex) : trackIndex;

@@ -678,7 +678,7 @@ void PlaylistModel::fetchMore(const QModelIndex& parent)
 
     rows.erase(rows.begin(), rows.begin() + rowCount);
 
-    updateTrackIndexes();
+    updateTrackIndexes(false);
 }
 
 bool PlaylistModel::canFetchMore(const QModelIndex& parent) const
@@ -988,7 +988,7 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
     }
 
     // End of playlist - return last track index
-    const auto lastIndex = static_cast<int>(m_trackIndexes.size()) - 1;
+    const auto lastIndex = std::prev(m_trackIndexes.cend())->first;
     const auto key       = m_trackIndexes.at(lastIndex);
     if(m_nodes.contains(key)) {
         auto& item = m_nodes.at(key);
@@ -2221,10 +2221,13 @@ void PlaylistModel::updateTrackIndexes(bool updateItems)
         }
 
         if(node->type() == PlaylistItem::Track) {
-            if(updateItems) {
+            if(updateItems || node->index() < 0) {
                 node->setIndex(index);
+                m_trackIndexes.emplace(index++, node->key());
             }
-            m_trackIndexes.emplace(index++, node->key());
+            else {
+                m_trackIndexes.emplace(node->index(), node->key());
+            }
         }
 
         const auto children = node->children();
