@@ -193,6 +193,9 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
                 tokenLayout->addWidget(urlLabel, 1, 0, 1, 2);
             }
 
+            QObject::connect(tokenInput, &QLineEdit::textChanged, this,
+                             [loginBtn](const QString& text) { loginBtn->setEnabled(!text.isEmpty()); });
+
             tokenLayout->setColumnStretch(1, 1);
             layout->addLayout(tokenLayout, ++row, 1, 1, 3);
 
@@ -253,7 +256,12 @@ void ScrobblerPageWidget::updateServiceState(const QString& name)
     else {
         button->setText(tr("Sign In"));
         label->setText(tr("Not signed in"));
+        tokenInput->setReadOnly(false);
         icon->hide();
+    }
+
+    if(tokenInput) {
+        tokenInput->setReadOnly(service->isAuthenticated());
     }
 
     if(!error.isEmpty()) {
