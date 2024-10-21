@@ -179,6 +179,8 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
             auto* tokenLabel  = new QLabel(tr("User token") + u":", this);
             auto* tokenInput  = new QLineEdit(this);
 
+            tokenInput->setReadOnly(service->isAuthenticated());
+
             tokenLayout->addWidget(tokenLabel, 0, 0);
             tokenLayout->addWidget(tokenInput, 0, 1);
 
