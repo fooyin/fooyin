@@ -38,12 +38,8 @@ void applyChanges(std::vector<T> existing, std::vector<T> loaders,
                   const std::function<void(const QString&, int)>& changeIndexFunc,
                   const std::function<void(const QString&, bool)>& setEnabledFunc)
 {
-    const auto sortByName = [](const auto& a, const auto& b) {
-        return a.name < b.name;
-    };
-
-    std::ranges::sort(existing, sortByName);
-    std::ranges::sort(loaders, sortByName);
+    std::ranges::sort(existing, {}, &T::name);
+    std::ranges::sort(loaders, {}, &T::name);
 
     const size_t minSize = std::min(loaders.size(), existing.size());
     for(size_t i{0}; i < minSize; ++i) {
