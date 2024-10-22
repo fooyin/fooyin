@@ -35,7 +35,7 @@ namespace Fooyin::Scrobbler {
 void ScrobblerPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
-    m_networkAccess    = context.m_networkAccess;
+    m_networkAccess    = context.networkAccess;
     m_settings         = context.settingsManager;
 
     m_scrobbler         = std::make_unique<Scrobbler>(m_playerController, m_networkAccess, m_settings);

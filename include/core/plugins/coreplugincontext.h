@@ -40,7 +40,7 @@ struct CorePluginContext
     CorePluginContext(EngineController* engine_, PlayerController* playerController_, LibraryManager* libraryManager_,
                       MusicLibrary* library_, PlaylistHandler* playlistHandler_, SettingsManager* settingsManager_,
                       std::shared_ptr<AudioLoader> audioLoader_, SortingRegistry* sortingRegistry_,
-                      std::shared_ptr<NetworkAccessManager> networkAccess)
+                      std::shared_ptr<NetworkAccessManager> networkAccess_)
         : playerController{playerController_}
         , libraryManager{libraryManager_}
         , library{library_}
@@ -49,7 +49,7 @@ struct CorePluginContext
         , engine{engine_}
         , audioLoader{std::move(audioLoader_)}
         , sortingRegistry{sortingRegistry_}
-        , m_networkAccess{std::move(networkAccess)}
+        , networkAccess{std::move(networkAccess_)}
     { }
 
     PlayerController* playerController;
@@ -60,6 +60,6 @@ struct CorePluginContext
     EngineController* engine;
     std::shared_ptr<AudioLoader> audioLoader;
     SortingRegistry* sortingRegistry;
-    std::shared_ptr<NetworkAccessManager> m_networkAccess;
+    std::shared_ptr<NetworkAccessManager> networkAccess;
 };
 } // namespace Fooyin
