@@ -36,14 +36,10 @@ constexpr auto DecoderState = "Engine/DecoderState";
 constexpr auto ReaderState  = "Engine/ReaderState";
 
 namespace {
-void sortLoaderEntries(auto& entries)
+template <typename T>
+void sortLoaderEntries(std::vector<T>& entries)
 {
-    std::ranges::sort(entries, [](const auto& a, const auto& b) {
-        if(a.index == b.index) {
-            return false;
-        }
-        return a.index < b.index;
-    });
+    std::ranges::sort(entries, {}, &T::index);
     std::ranges::for_each(entries, [i = 0](auto& loader) mutable { loader.index = i++; });
 }
 } // namespace
