@@ -3189,27 +3189,27 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
         <source>Seek on click</source>
-        <translation type="unfinished"></translation>
+        <translation>点击定位</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
         <source>Synced scroll duration</source>
-        <translation type="unfinished"></translation>
+        <translation>同步滚动时长</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="74"/>
         <source>Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>手动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="75"/>
         <source>Synced</source>
-        <translation type="unfinished"></translation>
+        <translation>同步</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="76"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="80"/>
@@ -3219,42 +3219,42 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="83"/>
         <source>This will only function with synced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>只对有时间信息的歌词生效。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="85"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前音轨未匹配到歌词时显示。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="90"/>
         <source>No lyrics script</source>
-        <translation type="unfinished"></translation>
+        <translation>无歌词时脚本</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="94"/>
         <source>Scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>滚动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="100"/>
         <source>Scroll Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>滚动模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="103"/>
         <source>No automatic scrolling will take place</source>
-        <translation type="unfinished"></translation>
+        <translation>禁止自动滚动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="104"/>
         <source>Synced lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>带时间信息的歌词会被滚动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="105"/>
         <source>All lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>所有歌词都会被滚动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="116"/>
@@ -3264,12 +3264,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="120"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="122"/>
         <source>Local paths</source>
-        <translation type="unfinished"></translation>
+        <translation>本地路径</translation>
     </message>
 </context>
 <context>
@@ -3305,34 +3305,34 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="96"/>
         <source>Line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>未播放行的颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
         <source>Played line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>已播放行的颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="100"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="102"/>
         <source>Current line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放行的颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="104"/>
         <source>Current word colour</source>
-        <translation type="unfinished"></translation>
+        <translation>当前的单词颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="106"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="108"/>
         <source>Current line font</source>
-        <translation type="unfinished"></translation>
+        <translation>当前行的字体</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="110"/>
         <source>Current word font</source>
-        <translation type="unfinished"></translation>
+        <translation>当前单词的字体</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="113"/>
@@ -3357,7 +3357,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="125"/>
         <source>Line spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>行间距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="127"/>
@@ -3367,7 +3367,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="131"/>
         <source>Margins</source>
-        <translation type="unfinished"></translation>
+        <translation>边距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="145"/>
@@ -3398,13 +3398,13 @@
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="158"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="183"/>
         <source>Synced</source>
-        <translation type="unfinished"></translation>
+        <translation>按行同步</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="166"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="193"/>
         <source>Synced Words</source>
-        <translation type="unfinished"></translation>
+        <translation>按词同步</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="180"/>
@@ -3436,7 +3436,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="232"/>
         <source>Text-align</source>
-        <translation type="unfinished"></translation>
+        <translation>文本对齐</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="236"/>
@@ -5093,7 +5093,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="74"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在写入标签…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="42"/>
@@ -5144,7 +5144,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="142"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>回放增益</translation>
     </message>
 </context>
 <context>
@@ -5162,7 +5162,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="61"/>
         <source>Scanner</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="73"/>
@@ -5256,12 +5256,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="186"/>
         <source>Remove ReplayGain Info</source>
-        <translation type="unfinished"></translation>
+        <translation>删除回放增益信息</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="189"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在写入标签…</translation>
     </message>
 </context>
 <context>
@@ -6923,7 +6923,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="105"/>
         <source>Seeking</source>
-        <translation>寻找中</translation>
+        <translation>定位中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="106"/>
