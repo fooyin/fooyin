@@ -519,14 +519,16 @@ void LibraryThreadHandler::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == p->m_writeTimer.timerId()) {
         p->m_writeTimer.stop();
-        QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                                  [this]() { p->m_trackDatabaseManager.updateTracks(p->m_tracksPendingWrite, true); });
+        QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, tracks = p->m_tracksPendingWrite]() {
+            p->m_trackDatabaseManager.updateTracks(tracks, true);
+        });
         p->m_tracksPendingWrite.clear();
     }
     else if(event->timerId() == p->m_updateTimer.timerId()) {
         p->m_updateTimer.stop();
-        QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                                  [this]() { p->m_trackDatabaseManager.updateTrackStats(p->m_tracksPendingUpdate); });
+        QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, tracks = p->m_tracksPendingUpdate]() {
+            p->m_trackDatabaseManager.updateTrackStats(tracks);
+        });
         p->m_tracksPendingUpdate.clear();
     }
 
