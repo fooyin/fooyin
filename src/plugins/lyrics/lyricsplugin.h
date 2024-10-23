@@ -27,6 +27,8 @@ namespace Fooyin {
 class FyWidget;
 
 namespace Lyrics {
+class LyricsFinder;
+class LyricsSaver;
 class LyricsSettings;
 
 class LyricsPlugin : public QObject,
@@ -41,6 +43,7 @@ class LyricsPlugin : public QObject,
 public:
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
+    void shutdown() override;
 
 private:
     ActionManager* m_actionManager;
@@ -48,6 +51,8 @@ private:
     WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
     std::unique_ptr<LyricsSettings> m_lyricsSettings;
+    LyricsFinder* m_lyricsFinder;
+    LyricsSaver* m_lyricsSaver;
 };
 } // namespace Lyrics
 } // namespace Fooyin

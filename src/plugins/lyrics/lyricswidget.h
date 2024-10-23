@@ -39,6 +39,8 @@ class Track;
 
 namespace Lyrics {
 class LyricsArea;
+class LyricsFinder;
+class LyricsSaver;
 class LyricsScrollArea;
 
 class LyricsWidget : public FyWidget
@@ -46,7 +48,8 @@ class LyricsWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit LyricsWidget(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit LyricsWidget(PlayerController* playerController, LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver,
+                          SettingsManager* settings, QWidget* parent = nullptr);
 
     static QString defaultNoLyricsScript();
 
@@ -59,6 +62,8 @@ protected:
 
 private:
     void updateLyrics(const Track& track);
+    void loadLyrics(const std::vector<Lyrics>& lyrics);
+    void loadLyric(const Lyrics& lyric);
 
     void scrollToCurrentLine(int scrollValue);
     void updateScrollMode(ScrollMode mode);
@@ -73,13 +78,19 @@ private:
     LyricsScrollArea* m_scrollArea;
     LyricsArea* m_lyricsArea;
 
+    LyricsFinder* m_lyricsFinder;
+    LyricsSaver* m_lyricsSaver;
+
     Lyrics::Type m_type;
+    Track m_currentTrack;
+    std::vector<Lyrics> m_lyrics;
+    QMetaObject::Connection m_finderConnection;
+    ScriptParser m_parser;
+
     ScrollMode m_scrollMode;
     QPointer<QPropertyAnimation> m_scrollAnim;
     bool m_isUserScrolling;
     QBasicTimer m_scrollTimer;
-
-    ScriptParser m_parser;
 };
 } // namespace Lyrics
 } // namespace Fooyin

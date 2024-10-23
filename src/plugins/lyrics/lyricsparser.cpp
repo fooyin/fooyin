@@ -396,12 +396,20 @@ void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
 namespace Fooyin::Lyrics {
 Lyrics parse(const QString& text)
 {
+    if(text.isEmpty()) {
+        return {};
+    }
+
     const QByteArray bytes{text.toUtf8()};
     return parse(bytes);
 }
 
 Lyrics parse(const QByteArray& text)
 {
+    if(text.isEmpty()) {
+        return {};
+    }
+
     Lyrics lyrics;
 
     QByteArray data{text};
@@ -412,7 +420,8 @@ Lyrics parse(const QByteArray& text)
     }
 
     while(!buffer.atEnd()) {
-        const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
+        QString line = QString::fromUtf8(buffer.readLine()).trimmed();
+        line.replace(QLatin1String{"&apos;"}, QLatin1String{"'"});
         parseLine(lyrics, line);
     }
 
