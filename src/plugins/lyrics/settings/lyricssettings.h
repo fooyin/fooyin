@@ -31,20 +31,33 @@ namespace Settings::Lyrics {
 Q_NAMESPACE
 enum LyricsSettings : uint32_t
 {
-    Paths          = 1 | Type::StringList,
-    Colours        = 2 | Type::Variant,
-    LineFont       = 3 | Type::String,
-    WordLineFont   = 4 | Type::String,
-    WordFont       = 5 | Type::String,
-    Alignment      = 6 | Type::Int,
-    ScrollDuration = 7 | Type::Int,
-    SearchTags     = 8 | Type::StringList,
-    LineSpacing    = 9 | Type::Int,
-    Margins        = 10 | Type::Variant,
-    NoLyricsScript = 11 | Type::String,
-    SeekOnClick    = 12 | Type::Bool,
-    ShowScrollbar  = 13 | Type::Bool,
-    ScrollMode     = 14 | Type::Int,
+    Paths           = 1 | Type::StringList,
+    Colours         = 2 | Type::Variant,
+    LineFont        = 3 | Type::String,
+    WordLineFont    = 4 | Type::String,
+    WordFont        = 5 | Type::String,
+    Alignment       = 6 | Type::Int,
+    ScrollDuration  = 7 | Type::Int,
+    SearchTags      = 8 | Type::StringList,
+    LineSpacing     = 9 | Type::Int,
+    Margins         = 10 | Type::Variant,
+    NoLyricsScript  = 11 | Type::String,
+    SeekOnClick     = 12 | Type::Bool,
+    ShowScrollbar   = 13 | Type::Bool,
+    ScrollMode      = 14 | Type::Int,
+    TitleField      = 15 | Type::String,
+    AlbumField      = 16 | Type::String,
+    ArtistField     = 17 | Type::String,
+    SaveScheme      = 18 | Type::Int,
+    SaveMethod      = 19 | Type::Int,
+    SavePrefer      = 20 | Type::Int,
+    SaveSyncedTag   = 21 | Type::String,
+    SaveUnsyncedTag = 22 | Type::String,
+    SaveDir         = 23 | Type::String,
+    SaveFilename    = 24 | Type::String,
+    SkipRemaining   = 25 | Type::Bool,
+    SkipExternal    = 26 | Type::Bool,
+    AutoSearch      = 27 | Type::Bool,
 };
 Q_ENUM_NS(LyricsSettings)
 } // namespace Settings::Lyrics
@@ -55,6 +68,26 @@ enum class ScrollMode : uint8_t
     Manual = 0,
     Synced,
     Automatic
+};
+
+enum class SaveScheme : uint8_t
+{
+    Manual = 0,
+    Autosave,
+    AutosavePeriod
+};
+
+enum class SaveMethod : uint8_t
+{
+    Tag = 0,
+    Directory
+};
+
+enum class SavePrefer : uint8_t
+{
+    None = 0,
+    Synced,
+    Unsynced
 };
 
 class LyricsSettings

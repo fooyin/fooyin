@@ -99,9 +99,16 @@ struct Lyrics
     };
 
     Type type{Type::Unknown};
+    QString source;
+    bool isLocal{false};
     Metadata metadata;
     uint64_t offset{0};
     std::vector<ParsedLine> lines;
+
+    [[nodiscard]] bool isValid() const noexcept
+    {
+        return type != Type::Unknown;
+    }
 
     bool operator==(const Lyrics& other) const noexcept
     {

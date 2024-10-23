@@ -19,12 +19,18 @@
 
 #pragma once
 
-namespace Fooyin::Lyrics::Constants {
-namespace Page {
-constexpr auto LyricsGeneral   = "Fooyin.Page.Lyrics.General";
-constexpr auto LyricsInterface = "Fooyin.Page.Lyrics.Interface";
-constexpr auto LyricsSources   = "Fooyin.Page.Lyrics.Sources";
-constexpr auto LyricsSearching = "Fooyin.Page.Lyrics.Searching";
-constexpr auto LyricsSaving    = "Fooyin.Page.Lyrics.Saving";
-} // namespace Page
-} // namespace Fooyin::Lyrics::Constants
+#include <utils/settings/settingspage.h>
+
+namespace Fooyin {
+class SettingsManager;
+
+namespace Lyrics {
+class LyricsSavingPage : public SettingsPage
+{
+    Q_OBJECT
+
+public:
+    explicit LyricsSavingPage(SettingsManager* settings, QObject* parent = nullptr);
+};
+} // namespace Lyrics
+} // namespace Fooyin

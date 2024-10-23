@@ -106,6 +106,11 @@ LyricsArea::LyricsArea(SettingsManager* settings, QWidget* parent)
     loadSettings();
 }
 
+Lyrics LyricsArea::lyrics() const
+{
+    return m_lyrics;
+}
+
 void LyricsArea::setDisplayString(const QString& string)
 {
     m_lyrics        = {};

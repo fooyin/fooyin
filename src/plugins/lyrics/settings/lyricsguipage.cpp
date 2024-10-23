@@ -356,7 +356,7 @@ LyricsGuiPage::LyricsGuiPage(SettingsManager* settings, QObject* parent)
 {
     setId(Constants::Page::LyricsInterface);
     setName(tr("Appearance"));
-    setCategory({tr("Widgets"), tr("Lyrics")});
+    setCategory({tr("Lyrics")});
     setWidgetCreator([settings] { return new LyricsGuiPageWidget(settings); });
 }
 } // namespace Fooyin::Lyrics
