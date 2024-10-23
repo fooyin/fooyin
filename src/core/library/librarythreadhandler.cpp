@@ -27,9 +27,20 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QThread>
+#include <QTimerEvent>
 #include <QUrl>
 
 #include <deque>
+
+using namespace std::chrono_literals;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+constexpr auto WriteInterval  = 2s;
+constexpr auto UpdateInterval = 2s;
+#else
+constexpr auto WriteInterval  = 2000;
+constexpr auto UpdateInterval = 2000;
+#endif
 
 namespace {
 int nextRequestId()
@@ -56,7 +67,7 @@ class LibraryThreadHandlerPrivate
 public:
     LibraryThreadHandlerPrivate(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                 std::shared_ptr<PlaylistLoader> playlistLoader,
-                                std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings);
+                                const std::shared_ptr<AudioLoader>& audioLoader, SettingsManager* settings);
 
     void scanLibrary(const LibraryScanRequest& request);
     void scanTracks(const LibraryScanRequest& request);
@@ -87,6 +98,11 @@ public:
     LibraryScanner m_scanner;
     TrackDatabaseManager m_trackDatabaseManager;
 
+    QBasicTimer m_writeTimer;
+    TrackList m_tracksPendingWrite;
+    QBasicTimer m_updateTimer;
+    TrackList m_tracksPendingUpdate;
+
     std::deque<LibraryScanRequest> m_scanRequests;
     int m_currentRequestId{-1};
     bool m_currentRequestFinished{false};
@@ -96,7 +112,7 @@ public:
 LibraryThreadHandlerPrivate::LibraryThreadHandlerPrivate(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool,
                                                          MusicLibrary* library,
                                                          std::shared_ptr<PlaylistLoader> playlistLoader,
-                                                         std::shared_ptr<AudioLoader> audioLoader,
+                                                         const std::shared_ptr<AudioLoader>& audioLoader,
                                                          SettingsManager* settings)
     : m_self{self}
     , m_dbPool{std::move(dbPool)}
@@ -465,15 +481,17 @@ WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
     request.cancel = [this]() {
         p->m_trackDatabaseManager.stopThread();
     };
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks]() { p->m_trackDatabaseManager.updateTracks(tracks, true); });
+
+    p->m_tracksPendingWrite.insert(p->m_tracksPendingWrite.end(), tracks.cbegin(), tracks.cend());
+    p->m_writeTimer.start(WriteInterval, this);
+
     return request;
 }
 
-void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& track)
+void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, track]() { p->m_trackDatabaseManager.updateTrackStats(track); });
+    p->m_tracksPendingUpdate.insert(p->m_tracksPendingUpdate.end(), tracks.cbegin(), tracks.cend());
+    p->m_writeTimer.start(UpdateInterval, this);
 }
 
 void LibraryThreadHandler::cleanupTracks()
@@ -494,6 +512,24 @@ void LibraryThreadHandler::libraryRemoved(int id)
     else {
         std::erase_if(p->m_scanRequests, [id](const auto& pendingRequest) { return pendingRequest.library.id == id; });
     }
+}
+
+void LibraryThreadHandler::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == p->m_writeTimer.timerId()) {
+        p->m_writeTimer.stop();
+        QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
+                                  [this]() { p->m_trackDatabaseManager.updateTracks(p->m_tracksPendingWrite, true); });
+        p->m_tracksPendingWrite.clear();
+    }
+    else if(event->timerId() == p->m_updateTimer.timerId()) {
+        p->m_updateTimer.stop();
+        QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
+                                  [this]() { p->m_trackDatabaseManager.updateTrackStats(p->m_tracksPendingUpdate); });
+        p->m_tracksPendingUpdate.clear();
+    }
+
+    QObject::timerEvent(event);
 }
 } // namespace Fooyin
 

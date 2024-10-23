@@ -59,7 +59,7 @@ public:
 
     void saveUpdatedTracks(const TrackList& tracks);
     WriteRequest writeUpdatedTracks(const TrackList& tracks);
-    void saveUpdatedTrackStats(const TrackList& track);
+    void saveUpdatedTrackStats(const TrackList& tracks);
 
     void cleanupTracks();
     void libraryRemoved(int id);
@@ -74,6 +74,9 @@ signals:
     void tracksStatsUpdated(const Fooyin::TrackList& tracks);
 
     void gotTracks(const Fooyin::TrackList& result);
+
+protected:
+    void timerEvent(QTimerEvent* event) override;
 
 private:
     std::unique_ptr<LibraryThreadHandlerPrivate> p;
