@@ -36,6 +36,7 @@ struct Colours
         LineSynced,
         WordLineSynced,
         WordSynced,
+        LineUnsynced
     };
 
     QMap<Type, QColor> lyricsColours{{Type::Background, QApplication::palette().base().color()},
@@ -43,7 +44,8 @@ struct Colours
                                      {Type::LinePlayed, QApplication::palette().text().color().darker(150)},
                                      {Type::LineSynced, QApplication::palette().text().color()},
                                      {Type::WordLineSynced, QApplication::palette().text().color()},
-                                     {Type::WordSynced, QApplication::palette().highlight().color()}};
+                                     {Type::WordSynced, QApplication::palette().highlight().color()},
+                                     {Type::LineUnsynced, QApplication::palette().text().color()}};
 
     [[nodiscard]] QColor colour(Type type) const
     {

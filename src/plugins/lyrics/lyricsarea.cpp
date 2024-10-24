@@ -308,6 +308,8 @@ void LyricsArea::paintEvent(QPaintEvent* event)
                     break;
                 }
                 case(Lyrics::Type::Unsynced):
+                    painter.setPen(m_colours.colour(Colours::Type::LineUnsynced));
+                    break;
                 case(Lyrics::Type::Unknown):
                     break;
             }

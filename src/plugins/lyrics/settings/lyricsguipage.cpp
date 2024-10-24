@@ -62,24 +62,26 @@ private:
     QSpinBox* m_bottomMargin;
 
     QCheckBox* m_bgColour;
-    ColourButton* m_bgColourButton;
-    QCheckBox* m_unplayedColour;
-    ColourButton* m_unplayedColourButton;
-    QCheckBox* m_playedColour;
-    ColourButton* m_playedColourButton;
+    ColourButton* m_bgColourBtn;
     QCheckBox* m_lineColour;
-    ColourButton* m_lineColourButton;
+    ColourButton* m_lineColourBtn;
+    QCheckBox* m_unplayedColour;
+    ColourButton* m_unplayedColourBtn;
+    QCheckBox* m_playedColour;
+    ColourButton* m_playedColourBtn;
+    QCheckBox* m_syncedLineColour;
+    ColourButton* m_syncedLineColourBtn;
     QCheckBox* m_wordLineColour;
-    ColourButton* m_wordLineColourButton;
+    ColourButton* m_wordLineColourBtn;
     QCheckBox* m_wordColour;
-    ColourButton* m_wordColourButton;
+    ColourButton* m_wordColourBtn;
 
     QCheckBox* m_lineFont;
-    FontButton* m_lineFontButton;
+    FontButton* m_lineFontBtn;
     QCheckBox* m_wordLineFont;
-    FontButton* m_wordLineFontButton;
+    FontButton* m_wordLineFontBtn;
     QCheckBox* m_wordFont;
-    FontButton* m_wordFontButton;
+    FontButton* m_wordFontBtn;
 };
 
 LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
@@ -92,23 +94,25 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
     , m_rightMargin{new QSpinBox(this)}
     , m_bottomMargin{new QSpinBox(this)}
     , m_bgColour{new QCheckBox(tr("Background colour") + u":", this)}
-    , m_bgColourButton{new ColourButton(this)}
-    , m_unplayedColour{new QCheckBox(tr("Line colour") + u":", this)}
-    , m_unplayedColourButton{new ColourButton(this)}
+    , m_bgColourBtn{new ColourButton(this)}
+    , m_lineColour{new QCheckBox(tr("Line colour") + u":", this)}
+    , m_lineColourBtn{new ColourButton(this)}
+    , m_unplayedColour{new QCheckBox(tr("Unplayed line colour") + u":", this)}
+    , m_unplayedColourBtn{new ColourButton(this)}
     , m_playedColour{new QCheckBox(tr("Played line colour") + u":", this)}
-    , m_playedColourButton{new ColourButton(this)}
-    , m_lineColour{new QCheckBox(tr("Current line colour") + u":", this)}
-    , m_lineColourButton{new ColourButton(this)}
+    , m_playedColourBtn{new ColourButton(this)}
+    , m_syncedLineColour{new QCheckBox(tr("Current line colour") + u":", this)}
+    , m_syncedLineColourBtn{new ColourButton(this)}
     , m_wordLineColour{new QCheckBox(tr("Current line colour") + u":", this)}
-    , m_wordLineColourButton{new ColourButton(this)}
+    , m_wordLineColourBtn{new ColourButton(this)}
     , m_wordColour{new QCheckBox(tr("Current word colour") + u":", this)}
-    , m_wordColourButton{new ColourButton(this)}
+    , m_wordColourBtn{new ColourButton(this)}
     , m_lineFont{new QCheckBox(tr("Current line font") + u":", this)}
-    , m_lineFontButton{new FontButton(this)}
+    , m_lineFontBtn{new FontButton(this)}
     , m_wordLineFont{new QCheckBox(tr("Current line font") + u":", this)}
-    , m_wordLineFontButton{new FontButton(this)}
+    , m_wordLineFontBtn{new FontButton(this)}
     , m_wordFont{new QCheckBox(tr("Current word font") + u":", this)}
-    , m_wordFontButton{new FontButton(this)}
+    , m_wordFontBtn{new FontButton(this)}
 {
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
@@ -160,7 +164,7 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
 
     row = 0;
     syncedFontsLayout->addWidget(m_lineFont, row, 0);
-    syncedFontsLayout->addWidget(m_lineFontButton, row++, 1);
+    syncedFontsLayout->addWidget(m_lineFontBtn, row++, 1);
     syncedFontsLayout->setColumnStretch(1, 1);
 
     auto* syncedWordsFontsGroup  = new QGroupBox(tr("Synced Words"), this);
@@ -168,9 +172,9 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
 
     row = 0;
     syncedWordsFontsLayout->addWidget(m_wordLineFont, row, 0);
-    syncedWordsFontsLayout->addWidget(m_wordLineFontButton, row++, 1);
+    syncedWordsFontsLayout->addWidget(m_wordLineFontBtn, row++, 1);
     syncedWordsFontsLayout->addWidget(m_wordFont, row, 0);
-    syncedWordsFontsLayout->addWidget(m_wordFontButton, row++, 1);
+    syncedWordsFontsLayout->addWidget(m_wordFontBtn, row++, 1);
     syncedWordsFontsLayout->setColumnStretch(1, 1);
 
     row = 0;
@@ -184,10 +188,12 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
     auto* syncedLineLayout = new QGridLayout(syncedLineGroup);
 
     row = 0;
+    syncedLineLayout->addWidget(m_unplayedColour, row, 0);
+    syncedLineLayout->addWidget(m_unplayedColourBtn, row++, 1);
     syncedLineLayout->addWidget(m_playedColour, row, 0);
-    syncedLineLayout->addWidget(m_playedColourButton, row++, 1);
-    syncedLineLayout->addWidget(m_lineColour, row, 0);
-    syncedLineLayout->addWidget(m_lineColourButton, row++, 1);
+    syncedLineLayout->addWidget(m_playedColourBtn, row++, 1);
+    syncedLineLayout->addWidget(m_syncedLineColour, row, 0);
+    syncedLineLayout->addWidget(m_syncedLineColourBtn, row++, 1);
     syncedLineLayout->setColumnStretch(1, 1);
 
     auto* syncedWordGroup  = new QGroupBox(tr("Synced Words"), this);
@@ -195,16 +201,16 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
 
     row = 0;
     syncedWordLayout->addWidget(m_wordLineColour, row, 0);
-    syncedWordLayout->addWidget(m_wordLineColourButton, row++, 1);
+    syncedWordLayout->addWidget(m_wordLineColourBtn, row++, 1);
     syncedWordLayout->addWidget(m_wordColour, row, 0);
-    syncedWordLayout->addWidget(m_wordColourButton, row++, 1);
+    syncedWordLayout->addWidget(m_wordColourBtn, row++, 1);
     syncedWordLayout->setColumnStretch(1, 1);
 
     row = 0;
     coloursGroupLayout->addWidget(m_bgColour, row, 0);
-    coloursGroupLayout->addWidget(m_bgColourButton, row++, 1);
-    coloursGroupLayout->addWidget(m_unplayedColour, row, 0);
-    coloursGroupLayout->addWidget(m_unplayedColourButton, row++, 1);
+    coloursGroupLayout->addWidget(m_bgColourBtn, row++, 1);
+    coloursGroupLayout->addWidget(m_lineColour, row, 0);
+    coloursGroupLayout->addWidget(m_lineColourBtn, row++, 1);
     coloursGroupLayout->addWidget(syncedLineGroup, row++, 0, 1, 2);
     coloursGroupLayout->addWidget(syncedWordGroup, row++, 0, 1, 2);
     coloursGroupLayout->setColumnStretch(1, 1);
@@ -218,16 +224,16 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
     layout->addWidget(coloursGroup, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
 
-    QObject::connect(m_lineFont, &QCheckBox::clicked, m_lineFontButton, &QWidget::setEnabled);
-    QObject::connect(m_wordLineFont, &QCheckBox::clicked, m_wordLineFontButton, &QWidget::setEnabled);
-    QObject::connect(m_wordFont, &QCheckBox::clicked, m_wordFontButton, &QWidget::setEnabled);
+    QObject::connect(m_lineFont, &QCheckBox::clicked, m_lineFontBtn, &QWidget::setEnabled);
+    QObject::connect(m_wordLineFont, &QCheckBox::clicked, m_wordLineFontBtn, &QWidget::setEnabled);
+    QObject::connect(m_wordFont, &QCheckBox::clicked, m_wordFontBtn, &QWidget::setEnabled);
 
-    QObject::connect(m_bgColour, &QCheckBox::clicked, m_bgColourButton, &QWidget::setEnabled);
-    QObject::connect(m_unplayedColour, &QCheckBox::clicked, m_unplayedColourButton, &QWidget::setEnabled);
-    QObject::connect(m_playedColour, &QCheckBox::clicked, m_playedColourButton, &QWidget::setEnabled);
-    QObject::connect(m_lineColour, &QCheckBox::clicked, m_lineColourButton, &QWidget::setEnabled);
-    QObject::connect(m_wordLineColour, &QCheckBox::clicked, m_wordLineColourButton, &QWidget::setEnabled);
-    QObject::connect(m_wordColour, &QCheckBox::clicked, m_wordColourButton, &QWidget::setEnabled);
+    QObject::connect(m_bgColour, &QCheckBox::clicked, m_bgColourBtn, &QWidget::setEnabled);
+    QObject::connect(m_unplayedColour, &QCheckBox::clicked, m_unplayedColourBtn, &QWidget::setEnabled);
+    QObject::connect(m_playedColour, &QCheckBox::clicked, m_playedColourBtn, &QWidget::setEnabled);
+    QObject::connect(m_syncedLineColour, &QCheckBox::clicked, m_syncedLineColourBtn, &QWidget::setEnabled);
+    QObject::connect(m_wordLineColour, &QCheckBox::clicked, m_wordLineColourBtn, &QWidget::setEnabled);
+    QObject::connect(m_wordColour, &QCheckBox::clicked, m_wordColourBtn, &QWidget::setEnabled);
 
     m_settings->subscribe<Settings::Gui::Theme>(this, &SettingsPageWidget::load);
     m_settings->subscribe<Settings::Gui::Style>(this, &SettingsPageWidget::load);
@@ -255,12 +261,13 @@ void LyricsGuiPageWidget::load()
               button->setEnabled(check->isChecked());
           };
 
-    loadColour(m_bgColour, m_bgColourButton, Colours::Type::Background);
-    loadColour(m_unplayedColour, m_unplayedColourButton, Colours::Type::LineUnplayed);
-    loadColour(m_playedColour, m_playedColourButton, Colours::Type::LinePlayed);
-    loadColour(m_lineColour, m_lineColourButton, Colours::Type::LineSynced);
-    loadColour(m_wordLineColour, m_wordLineColourButton, Colours::Type::WordLineSynced);
-    loadColour(m_wordColour, m_wordColourButton, Colours::Type::WordSynced);
+    loadColour(m_bgColour, m_bgColourBtn, Colours::Type::Background);
+    loadColour(m_lineColour, m_lineColourBtn, Colours::Type::LineUnsynced);
+    loadColour(m_unplayedColour, m_unplayedColourBtn, Colours::Type::LineUnplayed);
+    loadColour(m_playedColour, m_playedColourBtn, Colours::Type::LinePlayed);
+    loadColour(m_syncedLineColour, m_syncedLineColourBtn, Colours::Type::LineSynced);
+    loadColour(m_wordLineColour, m_wordLineColourBtn, Colours::Type::WordLineSynced);
+    loadColour(m_wordColour, m_wordColourBtn, Colours::Type::WordSynced);
 
     const auto loadFont = [](QCheckBox* check, FontButton* button, const QString& fontStr, const QFont& defaultFont) {
         QFont currentFont{defaultFont};
@@ -272,12 +279,10 @@ void LyricsGuiPageWidget::load()
         button->setEnabled(check->isChecked());
     };
 
-    loadFont(m_lineFont, m_lineFontButton, m_settings->value<Settings::Lyrics::LineFont>(),
-             LyricsArea::defaultLineFont());
-    loadFont(m_wordLineFont, m_wordLineFontButton, m_settings->value<Settings::Lyrics::WordLineFont>(),
+    loadFont(m_lineFont, m_lineFontBtn, m_settings->value<Settings::Lyrics::LineFont>(), LyricsArea::defaultLineFont());
+    loadFont(m_wordLineFont, m_wordLineFontBtn, m_settings->value<Settings::Lyrics::WordLineFont>(),
              LyricsArea::defaultWordLineFont());
-    loadFont(m_wordFont, m_wordFontButton, m_settings->value<Settings::Lyrics::WordFont>(),
-             LyricsArea::defaultWordFont());
+    loadFont(m_wordFont, m_wordFontBtn, m_settings->value<Settings::Lyrics::WordFont>(), LyricsArea::defaultWordFont());
 }
 
 void LyricsGuiPageWidget::apply()
@@ -294,21 +299,21 @@ void LyricsGuiPageWidget::apply()
         QMargins{m_leftMargin->value(), m_topMargin->value(), m_rightMargin->value(), m_bottomMargin->value()}));
 
     if(m_lineFont->isChecked()) {
-        m_settings->set<Settings::Lyrics::LineFont>(m_lineFontButton->buttonFont().toString());
+        m_settings->set<Settings::Lyrics::LineFont>(m_lineFontBtn->buttonFont().toString());
     }
     else {
         m_settings->reset<Settings::Lyrics::LineFont>();
     }
 
     if(m_wordLineFont->isChecked()) {
-        m_settings->set<Settings::Lyrics::WordLineFont>(m_wordLineFontButton->buttonFont().toString());
+        m_settings->set<Settings::Lyrics::WordLineFont>(m_wordLineFontBtn->buttonFont().toString());
     }
     else {
         m_settings->reset<Settings::Lyrics::WordLineFont>();
     }
 
     if(m_wordFont->isChecked()) {
-        m_settings->set<Settings::Lyrics::WordFont>(m_wordFontButton->buttonFont().toString());
+        m_settings->set<Settings::Lyrics::WordFont>(m_wordFontBtn->buttonFont().toString());
     }
     else {
         m_settings->reset<Settings::Lyrics::WordFont>();
@@ -322,12 +327,13 @@ void LyricsGuiPageWidget::apply()
         }
     };
 
-    applyColour(m_bgColour, m_bgColourButton, Colours::Type::Background);
-    applyColour(m_unplayedColour, m_unplayedColourButton, Colours::Type::LineUnplayed);
-    applyColour(m_playedColour, m_playedColourButton, Colours::Type::LinePlayed);
-    applyColour(m_lineColour, m_lineColourButton, Colours::Type::LineSynced);
-    applyColour(m_wordLineColour, m_wordLineColourButton, Colours::Type::WordLineSynced);
-    applyColour(m_wordColour, m_wordColourButton, Colours::Type::WordSynced);
+    applyColour(m_bgColour, m_bgColourBtn, Colours::Type::Background);
+    applyColour(m_lineColour, m_lineColourBtn, Colours::Type::LineUnsynced);
+    applyColour(m_unplayedColour, m_unplayedColourBtn, Colours::Type::LineUnplayed);
+    applyColour(m_playedColour, m_playedColourBtn, Colours::Type::LinePlayed);
+    applyColour(m_syncedLineColour, m_syncedLineColourBtn, Colours::Type::LineSynced);
+    applyColour(m_wordLineColour, m_wordLineColourBtn, Colours::Type::WordLineSynced);
+    applyColour(m_wordColour, m_wordColourBtn, Colours::Type::WordSynced);
 
     if(colours != Colours{}) {
         m_settings->set<Settings::Lyrics::Colours>(QVariant::fromValue(colours));
