@@ -139,8 +139,6 @@ void LyricsFinder::loadDefaults()
 
 void LyricsFinder::startLyricsSearch(const Track& track)
 {
-    m_lyrics.clear();
-
     for(const auto& source : m_sources) {
         QObject::disconnect(source, nullptr, this, nullptr);
     }
@@ -165,10 +163,6 @@ void LyricsFinder::finishOrStartNextSource(bool forceFinish)
         QObject::connect(m_currentSource, &LyricSource::searchResult, this, &LyricsFinder::onSearchResult,
                          Qt::SingleShotConnection);
         m_currentSource->search(m_params);
-    }
-    else {
-        emit lyricsFound(m_lyrics);
-        m_lyrics.clear();
     }
 }
 
@@ -215,8 +209,9 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
             lyrics.metadata.artist = lyricData.artists.join(u", ");
         }
 
-        m_lyrics.push_back(lyrics);
+        emit lyricsFound(lyrics);
     }
+
 
     const bool foundLocal    = m_currentSource->isLocal();
     const bool skipExternal  = m_settings->value<Settings::Lyrics::SkipExternal>();
