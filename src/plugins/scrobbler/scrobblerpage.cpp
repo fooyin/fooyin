@@ -258,7 +258,9 @@ void ScrobblerPageWidget::updateServiceState(const QString& name)
     else {
         button->setText(tr("Sign In"));
         label->setText(tr("Not signed in"));
-        tokenInput->setReadOnly(false);
+        if(tokenInput) {
+            tokenInput->setReadOnly(false);
+        }
         icon->hide();
     }
 
