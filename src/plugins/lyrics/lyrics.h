@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QString>
+#include <QStringList>
 
 namespace Fooyin::Lyrics {
 struct Metadata
@@ -85,6 +86,13 @@ struct ParsedLine
     [[nodiscard]] constexpr uint64_t endTimestamp() const
     {
         return timestamp + duration;
+    }
+
+    [[nodiscard]] QString joinedWords() const
+    {
+        QStringList joined;
+        std::ranges::transform(words, std::back_inserter(joined), [](const auto& entry) { return entry.word; });
+        return joined.join(QString{});
     }
 };
 

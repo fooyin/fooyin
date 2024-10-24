@@ -82,5 +82,6 @@ LyricsSettings::LyricsSettings(SettingsManager* settingsManager)
     m_settings->createSetting<SkipRemaining>(true, QStringLiteral("Lyrics/SkipRemaining"));
     m_settings->createSetting<SkipExternal>(true, QStringLiteral("Lyrics/SkipExternal"));
     m_settings->createSetting<AutoSearch>(true, QStringLiteral("Lyrics/AutoSearch"));
+    m_settings->createSetting<CollapseDuplicates>(true, QStringLiteral("Lyrics/CollapseDuplicateLines"));
 }
 } // namespace Fooyin::Lyrics
