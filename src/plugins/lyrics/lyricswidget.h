@@ -62,8 +62,8 @@ protected:
 
 private:
     void updateLyrics(const Track& track);
-    void loadLyrics(const std::vector<Lyrics>& lyrics);
-    void loadLyric(const Lyrics& lyric);
+    void loadLyrics(const Lyrics& lyrics);
+    void changeLyrics(const Lyrics& lyrics);
 
     void scrollToCurrentLine(int scrollValue);
     void updateScrollMode(ScrollMode mode);

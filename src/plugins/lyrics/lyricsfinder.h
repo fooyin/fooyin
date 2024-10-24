@@ -48,7 +48,7 @@ public:
     void reset();
 
 signals:
-    void lyricsFound(const std::vector<Fooyin::Lyrics::Lyrics>& lyrics);
+    void lyricsFound(const Fooyin::Lyrics::Lyrics& lyrics);
 
 private:
     void loadDefaults();
@@ -63,8 +63,6 @@ private:
     std::vector<LyricSource*> m_sources;
 
     ScriptParser m_parser;
-    std::vector<Lyrics> m_lyrics;
-
     SearchParams m_params;
     bool m_localOnly;
     int m_currentSourceIndex;

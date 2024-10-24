@@ -166,7 +166,7 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
             const auto actionTitle
                 = QStringLiteral("%1 - %2 (%3)").arg(lyric.metadata.artist, lyric.metadata.title, lyric.source);
             auto* lyricAction = new QAction(actionTitle, changeLyric);
-            QObject::connect(lyricAction, &QAction::triggered, this, [this, lyric]() { loadLyric(lyric); });
+            QObject::connect(lyricAction, &QAction::triggered, this, [this, lyric]() { changeLyrics(lyric); });
             changeLyric->addAction(lyricAction);
         }
         menu->addMenu(changeLyric);
@@ -242,6 +242,8 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void LyricsWidget::updateLyrics(const Track& track)
 {
+    m_lyrics.clear();
+
     QObject::disconnect(m_finderConnection);
 
     if(m_scrollAnim) {
@@ -270,25 +272,24 @@ void LyricsWidget::updateLyrics(const Track& track)
     }
 }
 
-void LyricsWidget::loadLyrics(const std::vector<Lyrics>& lyrics)
+void LyricsWidget::loadLyrics(const Lyrics& lyrics)
 {
-    m_lyrics = lyrics;
+    const bool first = m_lyrics.empty();
+    m_lyrics.push_back(lyrics);
 
-    if(m_lyrics.empty()) {
-        return;
+    if(first) {
+        changeLyrics(lyrics);
     }
-
-    loadLyric(m_lyrics.front());
 }
 
-void LyricsWidget::loadLyric(const Lyrics& lyric)
+void LyricsWidget::changeLyrics(const Lyrics& lyrics)
 {
-    m_lyricsArea->setLyrics(lyric);
-    m_type = m_lyrics.front().type;
+    m_lyricsArea->setLyrics(lyrics);
+    m_type = lyrics.type;
     checkStartAutoScroll(0);
 
-    if(!lyric.isLocal) {
-        m_lyricsSaver->autoSaveLyrics(lyric, m_currentTrack);
+    if(!lyrics.isLocal) {
+        m_lyricsSaver->autoSaveLyrics(lyrics, m_currentTrack);
     }
 }
 
