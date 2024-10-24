@@ -31,6 +31,7 @@
 
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/stringutils.h>
 
 constexpr auto SourceState = "Lyrics/SourceState";
 
@@ -133,7 +134,7 @@ void LyricsFinder::loadDefaults()
     m_sources = {new LocalLyrics(m_networkManager.get(), m_settings, 0, true, this),
                  new TagLyrics(m_networkManager.get(), m_settings, 1, true, this),
                  new LrcLibLyrics(m_networkManager.get(), m_settings, 2, true, this),
-                 // new NeteaseLyrics(m_networkManager.get(), m_settings, 3, true, this),
+                 new NeteaseLyrics(m_networkManager.get(), m_settings, 3, true, this),
                  new QQLyrics(m_networkManager.get(), m_settings, 4, true, this)};
 }
 
@@ -191,6 +192,16 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
     }
 
     for(const auto& lyricData : data) {
+        if(Utils::similarityRatio(lyricData.title, m_params.title, Qt::CaseInsensitive) < 75) {
+            continue;
+        }
+        if(Utils::similarityRatio(lyricData.artists.join(QString{}), m_params.artist, Qt::CaseInsensitive) < 75) {
+            continue;
+        }
+        if(Utils::similarityRatio(lyricData.album, m_params.album, Qt::CaseInsensitive) < 75) {
+            continue;
+        }
+
         Lyrics lyrics = parse(lyricData.data);
         if(!lyrics.isValid()) {
             continue;

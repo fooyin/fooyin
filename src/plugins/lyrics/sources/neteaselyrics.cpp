@@ -29,8 +29,11 @@
 #include <QUrl>
 #include <QUrlQuery>
 
-constexpr auto SearchUrl = "https://music.163.com/api/search/get";
-constexpr auto LyricUrl  = "https://music.163.com/api/song/lyric";
+// TODO: Use offical API once we resolve issues with random search results
+// constexpr auto SearchUrl = "https://music.163.com/api/search/get";
+constexpr auto SearchUrl = "https://music.xianqiao.wang/neteaseapiv2/search";
+// constexpr auto LyricUrl  = "https://music.163.com/api/song/lyric";
+constexpr auto LyricUrl = "https://music.xianqiao.wang/neteaseapiv2/lyric";
 
 namespace {
 QNetworkRequest setupRequest(const char* url)
@@ -38,14 +41,7 @@ QNetworkRequest setupRequest(const char* url)
     QNetworkRequest req{QString::fromLatin1(url)};
 
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    req.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
-    req.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like "
-                                   "Gecko) Chrome/115.0.0.0 Safari/537.36");
-    req.setRawHeader("Cookie", "appver=2.0.2");
-    req.setRawHeader("Referer", "https://music.163.com");
-    req.setRawHeader("charset", "utf-8");
-    req.setRawHeader("X-Real-IP", "202.99.0.0");
 
     return req;
 }
@@ -63,17 +59,18 @@ void NeteaseLyrics::search(const SearchParams& params)
     m_data.clear();
 
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(QStringLiteral("s"), QStringLiteral("%1+%2").arg(params.artist, params.title));
+    urlQuery.addQueryItem(QStringLiteral("keywords"), QStringLiteral("%1+%2").arg(params.artist, params.title));
     urlQuery.addQueryItem(QStringLiteral("type"), QStringLiteral("1"));
     urlQuery.addQueryItem(QStringLiteral("offset"), QStringLiteral("0"));
     urlQuery.addQueryItem(QStringLiteral("sub"), QStringLiteral("false"));
     urlQuery.addQueryItem(QStringLiteral("limit"), QStringLiteral("3"));
+    urlQuery.addQueryItem(QStringLiteral("total"), QStringLiteral("true"));
 
     const QNetworkRequest req = setupRequest(SearchUrl);
 
     qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{SearchUrl}).arg(urlQuery.toString());
 
-    m_reply = network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8());
+    m_reply = network()->post(req, urlQuery.toString().toUtf8());
     QObject::connect(m_reply, &QNetworkReply::finished, this, &NeteaseLyrics::handleSearchReply);
 }
 
@@ -136,9 +133,9 @@ void NeteaseLyrics::makeLyricRequest()
 {
     QUrlQuery urlQuery;
     urlQuery.addQueryItem(QStringLiteral("id"), encode(m_currentData->id));
-    urlQuery.addQueryItem(encode(QStringLiteral("lv")), encode(QStringLiteral("0")));
-    urlQuery.addQueryItem(encode(QStringLiteral("kv")), encode(QStringLiteral("0")));
-    urlQuery.addQueryItem(encode(QStringLiteral("tv")), encode(QStringLiteral("0")));
+    urlQuery.addQueryItem(encode(QStringLiteral("lv")), encode(QStringLiteral("-1")));
+    urlQuery.addQueryItem(encode(QStringLiteral("kv")), encode(QStringLiteral("-1")));
+    urlQuery.addQueryItem(encode(QStringLiteral("tv")), encode(QStringLiteral("-1")));
     urlQuery.addQueryItem(encode(QStringLiteral("os")), encode(QStringLiteral("pc")));
 
     const QNetworkRequest req = setupRequest(LyricUrl);
