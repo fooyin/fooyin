@@ -44,4 +44,86 @@ QString readMultiLineString(const QJsonValue& value)
     }
     return lines.join(u'\n');
 }
+
+int levenshteinDistance(const QString& first, const QString& second, Qt::CaseSensitivity cs)
+{
+    // Modified from https://qgis.org/api/qgsstringutils_8cpp_source.html
+
+    int firstLength  = static_cast<int>(first.length());
+    int secondLength = static_cast<int>(second.length());
+
+    if(first.isEmpty()) {
+        return secondLength;
+    }
+    if(second.isEmpty()) {
+        return firstLength;
+    }
+
+    QString a = (cs == Qt::CaseInsensitive ? first : first.toLower());
+    QString b = (cs == Qt::CaseInsensitive ? second : second.toLower());
+
+    const QChar* aChar = a.constData();
+    const QChar* bChar = b.constData();
+
+    int commonPrefixLen{0};
+    while(firstLength > 0 && secondLength > 0 && *aChar == *bChar) {
+        ++commonPrefixLen;
+        --firstLength;
+        --secondLength;
+        ++aChar;
+        ++bChar;
+    }
+
+    while(firstLength > 0 && secondLength > 0
+          && (a.at(commonPrefixLen + firstLength - 1) == b.at(commonPrefixLen + secondLength - 1))) {
+        firstLength--;
+        secondLength--;
+    }
+
+    if(firstLength == 0) {
+        return secondLength;
+    }
+    if(secondLength == 0) {
+        return firstLength;
+    }
+
+    if(firstLength > secondLength) {
+        std::swap(a, b);
+        std::swap(firstLength, secondLength);
+    }
+
+    std::vector<int> col(secondLength + 1, 0);
+    std::vector<int> prevCol(secondLength + 1);
+    std::iota(prevCol.begin(), prevCol.end(), 0);
+
+    const QChar* bStart{bChar};
+    for(int i{0}; i < firstLength; ++i) {
+        col[0] = i + 1;
+        bChar  = bStart;
+        for(int j{0}; j < secondLength; ++j) {
+            col[j + 1]
+                = std::min(std::min(1 + col.at(j), 1 + prevCol.at(1 + j)), prevCol[j] + ((*aChar == *bChar) ? 0 : 1));
+            ++bChar;
+        }
+        col.swap(prevCol);
+        ++aChar;
+    }
+
+    return prevCol.at(secondLength);
+}
+
+int similarityRatio(const QString& first, const QString& second, Qt::CaseSensitivity cs)
+{
+    const auto maxLength = std::max(first.length(), second.length());
+
+    if(maxLength == 0) {
+        return 100;
+    }
+
+    const int distance = levenshteinDistance(first, second, cs);
+
+    const double similarity = (1.0 - static_cast<double>(distance) / static_cast<double>(maxLength)) * 100;
+    return static_cast<int>(similarity);
+}
+
 } // namespace Fooyin::Utils

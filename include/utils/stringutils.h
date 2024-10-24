@@ -27,4 +27,6 @@ class QJsonValue;
 
 namespace Fooyin::Utils {
 FYUTILS_EXPORT QString readMultiLineString(const QJsonValue& value);
-}
+FYUTILS_EXPORT int levenshteinDistance(const QString& first, const QString& second, Qt::CaseSensitivity cs);
+FYUTILS_EXPORT int similarityRatio(const QString& first, const QString& second, Qt::CaseSensitivity cs);
+} // namespace Fooyin::Utils
