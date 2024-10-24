@@ -361,7 +361,7 @@ void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
                 timestamps.emplace(token.timestamp);
             }
             else {
-                // Word-by-word: [01:47.18]每[01:48.09][01:48.09]当[01:48.44][01:48.44]
+                // Word-by-word: [01:47.18]每[01:48.09][01:48.09]当[01:48.44]
                 lyrics.type = Fooyin::Lyrics::Lyrics::Type::SyncedWords;
 
                 if(!timestamps.empty()) {

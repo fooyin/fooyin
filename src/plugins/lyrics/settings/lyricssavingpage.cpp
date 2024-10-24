@@ -34,6 +34,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QRadioButton>
+#include <QCheckBox>
 
 namespace Fooyin::Lyrics {
 class LyricsSavingPageWidget : public SettingsPageWidget
@@ -67,13 +68,15 @@ private:
     ScriptLineEdit* m_unyncedTag;
     QLineEdit* m_path;
     ScriptLineEdit* m_filename;
+
+    QCheckBox* m_collapse;
 };
 
 LyricsSavingPageWidget::LyricsSavingPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_manual{new QRadioButton(tr("Manual save"), this)}
     , m_autosave{new QRadioButton(tr("Autosave"), this)}
-    , m_autosavePeriod{new QRadioButton(tr("Autosave after playing 60 seconds"), this)}
+    , m_autosavePeriod{new QRadioButton(tr("Autosave after 60 seconds or 1/3 of track duration"), this)}
     , m_tag{new QRadioButton(tr("Save to metadata tag"), this)}
     , m_directory{new QRadioButton(tr("Save to directory"), this)}
     , m_noPreference{new QRadioButton(tr("Save all"), this)}
@@ -83,6 +86,7 @@ LyricsSavingPageWidget::LyricsSavingPageWidget(SettingsManager* settings)
     , m_unyncedTag{new ScriptLineEdit(this)}
     , m_path{new QLineEdit(this)}
     , m_filename{new ScriptLineEdit(this)}
+    , m_collapse{new QCheckBox(tr("Collapse duplicate lines"), this)}
 {
     auto* schemeGroup  = new QGroupBox(tr("Save Scheme"), this);
     auto* schemeLayout = new QGridLayout(schemeGroup);
@@ -125,6 +129,12 @@ LyricsSavingPageWidget::LyricsSavingPageWidget(SettingsManager* settings)
     locationLayout->addWidget(filenameLabel, row, 0);
     locationLayout->addWidget(m_filename, row++, 1);
 
+    auto* formatGroup  = new QGroupBox(tr("Save Format"), this);
+    auto* formatLayout = new QGridLayout(formatGroup);
+
+    row = 0;
+    formatLayout->addWidget(m_collapse, row++, 0);
+
     auto* layout = new QGridLayout(this);
 
     row = 0;
@@ -132,6 +142,7 @@ LyricsSavingPageWidget::LyricsSavingPageWidget(SettingsManager* settings)
     layout->addWidget(preferGroup, row++, 1);
     layout->addWidget(methodGroup, row++, 0, 1, 2);
     layout->addWidget(locationGroup, row++, 0, 1, 2);
+    layout->addWidget(formatGroup, row++, 0, 1, 2);
     layout->setRowStretch(layout->rowCount(), 1);
 
     auto* browseAction = new QAction(Utils::iconFromTheme(::Fooyin::Constants::Icons::Options), {}, this);
@@ -177,6 +188,8 @@ void LyricsSavingPageWidget::load()
 
     m_path->setText(m_settings->value<Settings::Lyrics::SaveDir>());
     m_filename->setText(m_settings->value<Settings::Lyrics::SaveFilename>());
+
+    m_collapse->setChecked(m_settings->value<Settings::Lyrics::CollapseDuplicates>());
 }
 
 void LyricsSavingPageWidget::apply()
@@ -219,6 +232,8 @@ void LyricsSavingPageWidget::apply()
 
     m_settings->set<Settings::Lyrics::SaveDir>(m_path->text());
     m_settings->set<Settings::Lyrics::SaveFilename>(m_filename->text());
+
+    m_settings->set<Settings::Lyrics::CollapseDuplicates>(m_collapse->isChecked());
 }
 
 void LyricsSavingPageWidget::reset()
@@ -230,6 +245,7 @@ void LyricsSavingPageWidget::reset()
     m_settings->reset<Settings::Lyrics::SaveUnsyncedTag>();
     m_settings->reset<Settings::Lyrics::SaveDir>();
     m_settings->reset<Settings::Lyrics::SaveFilename>();
+    m_settings->reset<Settings::Lyrics::CollapseDuplicates>();
 }
 
 void LyricsSavingPageWidget::browseDestination() const

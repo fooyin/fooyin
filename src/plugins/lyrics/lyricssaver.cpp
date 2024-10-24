@@ -47,8 +47,14 @@ QString formatTimestamp(uint64_t timestampMs)
         .arg(hundredths, 2, 10, QLatin1Char{'0'});
 }
 
+struct DuplicateLine
+{
+    QString line;
+    std::vector<uint64_t> timestamps;
+};
+
 template <typename T>
-void lyricsToLrc(const Fooyin::Lyrics::Lyrics& lyrics, T device)
+void lyricsToLrc(const Fooyin::Lyrics::Lyrics& lyrics, T device, bool collapse)
 {
     if(!lyrics.isValid()) {
         return;
@@ -59,24 +65,53 @@ void lyricsToLrc(const Fooyin::Lyrics::Lyrics& lyrics, T device)
 
     QTextStream stream{device};
 
+    if(!synced) {
+        for(const auto& line : lyrics.lines) {
+            const QString words = line.joinedWords();
+            stream << words.trimmed();
+            stream << "\n";
+        }
+        return;
+    }
+
     if(lyrics.offset > 0) {
         stream << "[offset:" << lyrics.offset << "]\n";
     }
 
-    for(const auto& line : lyrics.lines) {
-        if(synced) {
-            stream << QStringLiteral("[%1]").arg(formatTimestamp(line.timestamp)) << " ";
+    if(!syncedWords && collapse) {
+        std::map<QString, std::vector<uint64_t>> duplicateLines;
+        for(const auto& line : lyrics.lines) {
+            duplicateLines[line.joinedWords()].push_back(line.timestamp);
         }
 
+        std::map<uint64_t, DuplicateLine> sortedLines;
+        for(const auto& [line, timestamps] : duplicateLines) {
+            auto& duplicate = sortedLines[timestamps.front()];
+            duplicate.line  = line;
+            std::ranges::copy(timestamps, std::back_inserter(duplicate.timestamps));
+        }
+
+        for(const auto& [line, duplicate] : sortedLines) {
+            for(const auto timestamp : duplicate.timestamps) {
+                stream << QStringLiteral("[%1]").arg(formatTimestamp(timestamp));
+            }
+
+            stream << duplicate.line;
+            stream << "\n";
+        }
+        return;
+    }
+
+    for(const auto& line : lyrics.lines) {
+        stream << QStringLiteral("[%1]").arg(formatTimestamp(line.timestamp));
         if(syncedWords) {
             for(const auto& word : line.words) {
-                stream << QStringLiteral("<%1>").arg(formatTimestamp(word.timestamp)) << " " << word.word;
+                stream << " " << QStringLiteral("<%1>").arg(formatTimestamp(word.timestamp)) << " " << word.word;
             }
         }
         else {
-            QStringList words;
-            std::ranges::transform(line.words, std::back_inserter(words), &Fooyin::Lyrics::ParsedWord::word);
-            stream << words.join(u' ');
+            const QString words = line.joinedWords();
+            stream << words.trimmed();
         }
 
         stream << "\n";
@@ -179,7 +214,7 @@ void LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
         return;
     }
 
-    lyricsToLrc(lyrics, &file);
+    lyricsToLrc(lyrics, &file, m_settings->value<Settings::Lyrics::CollapseDuplicates>());
     file.close();
 }
 
@@ -197,7 +232,7 @@ void LyricsSaver::saveLyricsToTag(const Lyrics& lyrics, const Track& track)
     }
 
     QString lrc;
-    lyricsToLrc(lyrics, &lrc);
+    lyricsToLrc(lyrics, &lrc, m_settings->value<Settings::Lyrics::CollapseDuplicates>());
 
     if(lrc.isEmpty()) {
         return;

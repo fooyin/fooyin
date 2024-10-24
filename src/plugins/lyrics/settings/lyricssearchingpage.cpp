@@ -57,7 +57,7 @@ private:
 
 LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_autoSearch{new QCheckBox(tr("Automatically search for lyrics remotely on starting playback"), this)}
+    , m_autoSearch{new QCheckBox(tr("Automatically search for lyrics on starting playback"), this)}
     , m_skipRemaining{new QCheckBox(tr("Skip remaining sources when lyrics are found"), this)}
     , m_skipExternal{new QCheckBox(tr("Skip external sources if local lyrics are found"), this)}
     , m_titleParam{new QLineEdit(this)}
@@ -74,6 +74,8 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
     paramsLayout->addWidget(m_artistParam, row++, 1);
     paramsLayout->addWidget(new QLabel(tr("Album") + u":", this), row, 0);
     paramsLayout->addWidget(m_albumParam, row++, 1);
+
+    m_autoSearch->setToolTip(tr("Only local lyrics will be used if unchecked"));
 
     auto* layout = new QGridLayout(this);
 
