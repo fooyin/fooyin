@@ -90,9 +90,11 @@ struct ParsedLine
 
     [[nodiscard]] QString joinedWords() const
     {
-        QStringList joined;
-        std::ranges::transform(words, std::back_inserter(joined), [](const auto& entry) { return entry.word; });
-        return joined.join(QString{});
+        QString joined;
+        for(const auto& word : words) {
+            joined.append(word.word);
+        }
+        return joined;
     }
 };
 

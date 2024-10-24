@@ -38,12 +38,24 @@ class LyricsSaver : public QObject
     Q_OBJECT
 
 public:
+    enum SaveOption : uint8_t
+    {
+        None     = 0,
+        Collapse = 1 << 0,
+        Metadata = 1 << 1,
+    };
+    Q_DECLARE_FLAGS(SaveOptions, SaveOption)
+    Q_FLAG(SaveOptions)
+
     explicit LyricsSaver(MusicLibrary* library, SettingsManager* settings, QObject* parent = nullptr);
 
     void autoSaveLyrics(const Lyrics& lyrics, const Track& track);
     void saveLyrics(const Lyrics& lyrics, const Track& track);
     void saveLyricsToFile(const Lyrics& lyrics, const Track& track);
     void saveLyricsToTag(const Lyrics& lyrics, const Track& track);
+
+    static QString lyricsToLrc(const Lyrics& lyrics, const SaveOptions& options);
+    static void lyricsToLrc(const Lyrics& lyrics, QIODevice* device, const SaveOptions& options);
 
 private:
     MusicLibrary* m_library;
@@ -54,3 +66,5 @@ private:
 };
 } // namespace Lyrics
 } // namespace Fooyin
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::Lyrics::LyricsSaver::SaveOptions)

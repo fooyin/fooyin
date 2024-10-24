@@ -339,9 +339,7 @@ void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
 
         if(token.type == TokWordTimestamp) {
             // A2/Enhanced: [00:00.00] <00:00.04> When <00:00.16> the <00:00.82> truth
-            if(lyrics.type == Fooyin::Lyrics::Lyrics::Type::Unknown) {
-                lyrics.type = Fooyin::Lyrics::Lyrics::Type::SyncedWords;
-            }
+            lyrics.type = Fooyin::Lyrics::Lyrics::Type::SyncedWords;
 
             if(!parsedWord.word.isNull()) {
                 if(!timestamps.empty()) {
@@ -434,4 +432,39 @@ Lyrics parse(const QByteArray& text)
     return lyrics;
 }
 
+QString formatTimestamp(uint64_t timestampMs)
+{
+    const uint64_t minutes    = timestampMs / 60000;
+    const uint64_t seconds    = (timestampMs % 60000) / 1000;
+    const uint64_t hundredths = (timestampMs % 1000) / 10;
+
+    return QStringLiteral("%1:%2.%3")
+        .arg(minutes, 2, 10, QLatin1Char{'0'})
+        .arg(seconds, 2, 10, QLatin1Char{'0'})
+        .arg(hundredths, 2, 10, QLatin1Char{'0'});
+}
+
+uint64_t timestampToMs(const QString& timestamp)
+{
+    const QStringList parts = timestamp.split(u':', Qt::SkipEmptyParts);
+    if(parts.size() < 2) {
+        return {};
+    }
+
+    const QStringList secondParts = parts.at(1).split(u'.', Qt::SkipEmptyParts);
+    if(secondParts.size() < 2) {
+        return {};
+    }
+
+    const uint64_t minutes = parts.at(0).toUInt();
+    const uint64_t seconds = secondParts.at(0).toUInt();
+
+    uint64_t milliseconds = secondParts.at(1).toUInt();
+    if(secondParts.at(1).length() < 3) {
+        milliseconds *= 10;
+    }
+
+    uint64_t time = (minutes * 60 + seconds) * 1000 + milliseconds;
+    return time;
+}
 } // namespace Fooyin::Lyrics

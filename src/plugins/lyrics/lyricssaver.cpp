@@ -20,6 +20,7 @@
 #include "lyricssaver.h"
 
 #include "lyrics.h"
+#include "lyricsparser.h"
 #include "settings/lyricssettings.h"
 #include "sources/lyricsource.h"
 
@@ -35,33 +36,24 @@
 constexpr auto AutosaveTimer = 60000;
 
 namespace {
-QString formatTimestamp(uint64_t timestampMs)
-{
-    const uint64_t minutes    = timestampMs / 60000;
-    const uint64_t seconds    = (timestampMs % 60000) / 1000;
-    const uint64_t hundredths = (timestampMs % 1000) / 10;
-
-    return QStringLiteral("%1:%2.%3")
-        .arg(minutes, 2, 10, QLatin1Char{'0'})
-        .arg(seconds, 2, 10, QLatin1Char{'0'})
-        .arg(hundredths, 2, 10, QLatin1Char{'0'});
-}
-
 struct DuplicateLine
 {
     QString line;
     std::vector<uint64_t> timestamps;
 };
 
-template <typename T>
-void lyricsToLrc(const Fooyin::Lyrics::Lyrics& lyrics, T device, bool collapse)
+template <typename Device, typename Format>
+void toLrc(const Fooyin::Lyrics::Lyrics& lyrics, Device device, Format format,
+           const Fooyin::Lyrics::LyricsSaver::SaveOptions& options)
 {
     if(!lyrics.isValid()) {
         return;
     }
 
-    const bool synced      = lyrics.type != Fooyin::Lyrics::Lyrics::Type::Unsynced;
-    const bool syncedWords = lyrics.type == Fooyin::Lyrics::Lyrics::Type::SyncedWords;
+    using namespace Fooyin::Lyrics;
+
+    const bool synced      = lyrics.type != Lyrics::Type::Unsynced;
+    const bool syncedWords = lyrics.type == Lyrics::Type::SyncedWords;
 
     QTextStream stream{device};
 
@@ -74,11 +66,33 @@ void lyricsToLrc(const Fooyin::Lyrics::Lyrics& lyrics, T device, bool collapse)
         return;
     }
 
-    if(lyrics.offset > 0) {
-        stream << "[offset:" << lyrics.offset << "]\n";
+    bool tagAdded{false};
+
+    const auto addTag = [&stream, &tagAdded](const char* tag, const QString& value) {
+        if(!value.isEmpty()) {
+            stream << "[" << tag << ":" << value << "]" << "\n";
+            tagAdded = true;
+        }
+    };
+
+    if(options & LyricsSaver::SaveOption::Metadata) {
+        addTag("ti", lyrics.metadata.title);
+        addTag("ar", lyrics.metadata.artist);
+        addTag("al", lyrics.metadata.album);
+        addTag("au", lyrics.metadata.author);
+        addTag("length", lyrics.metadata.length);
+        addTag("by", lyrics.metadata.lrcAuthor);
+        addTag("tool", lyrics.metadata.tool);
+        addTag("ve", lyrics.metadata.version);
     }
 
-    if(!syncedWords && collapse) {
+    addTag("offset", lyrics.offset > 0 ? QString::number(lyrics.offset) : QString{});
+
+    if(tagAdded) {
+        stream << "\n";
+    }
+
+    if(!syncedWords && options & LyricsSaver::SaveOption::Collapse) {
         std::map<QString, std::vector<uint64_t>> duplicateLines;
         for(const auto& line : lyrics.lines) {
             duplicateLines[line.joinedWords()].push_back(line.timestamp);
@@ -93,7 +107,7 @@ void lyricsToLrc(const Fooyin::Lyrics::Lyrics& lyrics, T device, bool collapse)
 
         for(const auto& [line, duplicate] : sortedLines) {
             for(const auto timestamp : duplicate.timestamps) {
-                stream << QStringLiteral("[%1]").arg(formatTimestamp(timestamp));
+                stream << QStringLiteral("[%1]").arg(format(timestamp));
             }
 
             stream << duplicate.line;
@@ -103,10 +117,10 @@ void lyricsToLrc(const Fooyin::Lyrics::Lyrics& lyrics, T device, bool collapse)
     }
 
     for(const auto& line : lyrics.lines) {
-        stream << QStringLiteral("[%1]").arg(formatTimestamp(line.timestamp));
+        stream << QStringLiteral("[%1]").arg(format(line.timestamp));
         if(syncedWords) {
             for(const auto& word : line.words) {
-                stream << " " << QStringLiteral("<%1>").arg(formatTimestamp(word.timestamp)) << " " << word.word;
+                stream << " " << QStringLiteral("<%1>").arg(format(word.timestamp)) << " " << word.word;
             }
         }
         else {
@@ -214,7 +228,7 @@ void LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
         return;
     }
 
-    lyricsToLrc(lyrics, &file, m_settings->value<Settings::Lyrics::CollapseDuplicates>());
+    lyricsToLrc(lyrics, &file, static_cast<SaveOptions>(m_settings->value<Settings::Lyrics::SaveOptions>()));
     file.close();
 }
 
@@ -231,9 +245,8 @@ void LyricsSaver::saveLyricsToTag(const Lyrics& lyrics, const Track& track)
         return;
     }
 
-    QString lrc;
-    lyricsToLrc(lyrics, &lrc, m_settings->value<Settings::Lyrics::CollapseDuplicates>());
-
+    const QString lrc
+        = lyricsToLrc(lyrics, static_cast<SaveOptions>(m_settings->value<Settings::Lyrics::SaveOptions>()));
     if(lrc.isEmpty()) {
         return;
     }
@@ -241,5 +254,17 @@ void LyricsSaver::saveLyricsToTag(const Lyrics& lyrics, const Track& track)
     Track updatedTrack{track};
     updatedTrack.replaceExtraTag(tag, lrc);
     m_library->writeTrackMetadata({updatedTrack});
+}
+
+QString LyricsSaver::lyricsToLrc(const Lyrics& lyrics, const SaveOptions& options)
+{
+    QString lrc;
+    toLrc(lyrics, &lrc, formatTimestamp, options);
+    return lrc;
+}
+
+void LyricsSaver::lyricsToLrc(const Lyrics& lyrics, QIODevice* device, const SaveOptions& options)
+{
+    toLrc(lyrics, device, formatTimestamp, options);
 }
 } // namespace Fooyin::Lyrics
