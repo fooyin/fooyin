@@ -163,7 +163,7 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     if(!m_lyrics.empty()) {
-        auto* changeLyric = new QMenu(tr("Show lyric"), menu);
+        auto* changeLyric = new QMenu(tr("Select lyrics"), menu);
         for(const auto& lyric : m_lyrics) {
             const auto actionTitle
                 = QStringLiteral("%1 - %2 (%3)").arg(lyric.metadata.artist, lyric.metadata.title, lyric.source);

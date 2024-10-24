@@ -446,7 +446,11 @@ QString formatTimestamp(uint64_t timestampMs)
 
 uint64_t timestampToMs(const QString& timestamp)
 {
-    const QStringList parts = timestamp.split(u':', Qt::SkipEmptyParts);
+    QString fixedTimestamp{timestamp};
+    fixedTimestamp.remove(u'[');
+    fixedTimestamp.remove(u']');
+
+    const QStringList parts = fixedTimestamp.split(u':', Qt::SkipEmptyParts);
     if(parts.size() < 2) {
         return {};
     }
@@ -464,7 +468,7 @@ uint64_t timestampToMs(const QString& timestamp)
         milliseconds *= 10;
     }
 
-    uint64_t time = (minutes * 60 + seconds) * 1000 + milliseconds;
+    const uint64_t time = (minutes * 60 + seconds) * 1000 + milliseconds;
     return time;
 }
 } // namespace Fooyin::Lyrics
