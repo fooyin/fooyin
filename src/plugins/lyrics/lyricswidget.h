@@ -64,6 +64,7 @@ private:
     void updateLyrics(const Track& track);
     void loadLyrics(const Lyrics& lyrics);
     void changeLyrics(const Lyrics& lyrics);
+    void openEditor(const Lyrics& lyrics);
 
     void scrollToCurrentLine(int scrollValue);
     void updateScrollMode(ScrollMode mode);

@@ -21,6 +21,7 @@
 
 #include "lyricsarea.h"
 #include "lyricsconstants.h"
+#include "lyricseditor.h"
 #include "lyricsfinder.h"
 #include "lyricssaver.h"
 
@@ -34,6 +35,7 @@
 #include <QContextMenuEvent>
 #include <QJsonObject>
 #include <QLoggingCategory>
+#include <QMainWindow>
 #include <QMenu>
 #include <QPropertyAnimation>
 #include <QScrollArea>
@@ -160,7 +162,7 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    if(m_lyrics.size() > 1) {
+    if(!m_lyrics.empty()) {
         auto* changeLyric = new QMenu(tr("Show lyric"), menu);
         for(const auto& lyric : m_lyrics) {
             const auto actionTitle
@@ -177,12 +179,17 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
         QObject::disconnect(m_finderConnection);
         m_finderConnection
             = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::loadLyrics);
+        m_lyrics.clear();
         m_lyricsFinder->findLyrics(m_currentTrack);
     });
-
     menu->addAction(searchLyrics);
 
     if(m_lyricsArea->lyrics().isValid()) {
+        auto* editLyrics = new QAction(tr("Edit lyrics"), menu);
+        QObject::connect(editLyrics, &QAction::triggered, this, [this]() { openEditor(m_lyricsArea->lyrics()); });
+        editLyrics->setEnabled(!m_currentTrack.isInArchive());
+        menu->addAction(editLyrics);
+
         auto* saveLyrics = new QAction(tr("Save lyrics"), menu);
         QObject::connect(saveLyrics, &QAction::triggered, this,
                          [this]() { m_lyricsSaver->saveLyrics(m_lyricsArea->lyrics(), m_currentTrack); });
@@ -291,6 +298,14 @@ void LyricsWidget::changeLyrics(const Lyrics& lyrics)
     if(!lyrics.isLocal) {
         m_lyricsSaver->autoSaveLyrics(lyrics, m_currentTrack);
     }
+}
+
+void LyricsWidget::openEditor(const Lyrics& lyrics)
+{
+    auto* editor = new LyricsEditor(lyrics, m_playerController, m_settings, Utils::getMainWindow());
+    editor->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(editor, &LyricsEditor::lyricsEdited, this, &LyricsWidget::changeLyrics);
+    editor->show();
 }
 
 void LyricsWidget::scrollToCurrentLine(int scrollValue)

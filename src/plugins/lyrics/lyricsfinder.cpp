@@ -212,7 +212,6 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
         emit lyricsFound(lyrics);
     }
 
-
     const bool foundLocal    = m_currentSource->isLocal();
     const bool skipExternal  = m_settings->value<Settings::Lyrics::SkipExternal>();
     const bool skipRemaining = m_settings->value<Settings::Lyrics::SkipRemaining>();

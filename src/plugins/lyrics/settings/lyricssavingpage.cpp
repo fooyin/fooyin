@@ -20,6 +20,7 @@
 #include "lyricssavingpage.h"
 
 #include "lyricsconstants.h"
+#include "lyricssaver.h"
 #include "lyricssettings.h"
 
 #include <gui/guiconstants.h>
@@ -28,13 +29,13 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QCheckBox>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QMainWindow>
 #include <QRadioButton>
-#include <QCheckBox>
 
 namespace Fooyin::Lyrics {
 class LyricsSavingPageWidget : public SettingsPageWidget
@@ -70,6 +71,7 @@ private:
     ScriptLineEdit* m_filename;
 
     QCheckBox* m_collapse;
+    QCheckBox* m_metadata;
 };
 
 LyricsSavingPageWidget::LyricsSavingPageWidget(SettingsManager* settings)
@@ -87,6 +89,7 @@ LyricsSavingPageWidget::LyricsSavingPageWidget(SettingsManager* settings)
     , m_path{new QLineEdit(this)}
     , m_filename{new ScriptLineEdit(this)}
     , m_collapse{new QCheckBox(tr("Collapse duplicate lines"), this)}
+    , m_metadata{new QCheckBox(tr("Save metadata"), this)}
 {
     auto* schemeGroup  = new QGroupBox(tr("Save Scheme"), this);
     auto* schemeLayout = new QGridLayout(schemeGroup);
@@ -134,6 +137,7 @@ LyricsSavingPageWidget::LyricsSavingPageWidget(SettingsManager* settings)
 
     row = 0;
     formatLayout->addWidget(m_collapse, row++, 0);
+    formatLayout->addWidget(m_metadata, row++, 0);
 
     auto* layout = new QGridLayout(this);
 
@@ -189,7 +193,9 @@ void LyricsSavingPageWidget::load()
     m_path->setText(m_settings->value<Settings::Lyrics::SaveDir>());
     m_filename->setText(m_settings->value<Settings::Lyrics::SaveFilename>());
 
-    m_collapse->setChecked(m_settings->value<Settings::Lyrics::CollapseDuplicates>());
+    const auto opts = static_cast<LyricsSaver::SaveOptions>(m_settings->value<Settings::Lyrics::SaveOptions>());
+    m_collapse->setChecked(opts & LyricsSaver::Collapse);
+    m_metadata->setChecked(opts & LyricsSaver::Metadata);
 }
 
 void LyricsSavingPageWidget::apply()
@@ -233,7 +239,14 @@ void LyricsSavingPageWidget::apply()
     m_settings->set<Settings::Lyrics::SaveDir>(m_path->text());
     m_settings->set<Settings::Lyrics::SaveFilename>(m_filename->text());
 
-    m_settings->set<Settings::Lyrics::CollapseDuplicates>(m_collapse->isChecked());
+    LyricsSaver::SaveOptions opts;
+    if(m_collapse->isChecked()) {
+        opts |= LyricsSaver::Collapse;
+    }
+    if(m_metadata->isChecked()) {
+        opts |= LyricsSaver::Metadata;
+    }
+    m_settings->set<Settings::Lyrics::SaveOptions>(static_cast<int>(opts));
 }
 
 void LyricsSavingPageWidget::reset()
@@ -245,7 +258,7 @@ void LyricsSavingPageWidget::reset()
     m_settings->reset<Settings::Lyrics::SaveUnsyncedTag>();
     m_settings->reset<Settings::Lyrics::SaveDir>();
     m_settings->reset<Settings::Lyrics::SaveFilename>();
-    m_settings->reset<Settings::Lyrics::CollapseDuplicates>();
+    m_settings->reset<Settings::Lyrics::SaveOptions>();
 }
 
 void LyricsSavingPageWidget::browseDestination() const

@@ -20,6 +20,7 @@
 #include "lyricssettings.h"
 
 #include "lyricscolours.h"
+#include "lyricssaver.h"
 #include "lyricswidget.h"
 
 #include <utils/settings/settingsmanager.h>
@@ -77,11 +78,11 @@ LyricsSettings::LyricsSettings(SettingsManager* settingsManager)
     m_settings->createSetting<SaveUnsyncedTag>(QStringLiteral("UNSYNCED LYRICS"),
                                                QStringLiteral("Lyrics/SaveUnsyncedTag"));
     m_settings->createSetting<SaveDir>(QStringLiteral("%path%"), QStringLiteral("Lyrics/SaveDir"));
-    m_settings->createSetting<SaveFilename>(QStringLiteral("[%artist% - ]%title%"),
-                                            QStringLiteral("Lyrics/SaveFilename"));
+    m_settings->createSetting<SaveFilename>(QStringLiteral("%filename%"), QStringLiteral("Lyrics/SaveFilename"));
     m_settings->createSetting<SkipRemaining>(true, QStringLiteral("Lyrics/SkipRemaining"));
     m_settings->createSetting<SkipExternal>(true, QStringLiteral("Lyrics/SkipExternal"));
     m_settings->createSetting<AutoSearch>(true, QStringLiteral("Lyrics/AutoSearch"));
-    m_settings->createSetting<CollapseDuplicates>(true, QStringLiteral("Lyrics/CollapseDuplicateLines"));
+    m_settings->createSetting<SaveOptions>(static_cast<int>(LyricsSaver::SaveOption::None),
+                                           QStringLiteral("Lyrics/SaveOptions"));
 }
 } // namespace Fooyin::Lyrics

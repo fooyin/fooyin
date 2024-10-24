@@ -5,6 +5,8 @@ create_fooyin_plugin_internal(
             lyricsarea.cpp
             lyricsarea.h
             lyricsconstants.h
+            lyricseditor.cpp
+            lyricseditor.h
             lyricsfinder.cpp
             lyricsfinder.h
             lyricsparser.cpp
