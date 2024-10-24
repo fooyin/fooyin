@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QString>
+#include <QStringList>
 
 namespace Fooyin::Lyrics {
 struct Metadata
@@ -86,6 +87,15 @@ struct ParsedLine
     {
         return timestamp + duration;
     }
+
+    [[nodiscard]] QString joinedWords() const
+    {
+        QString joined;
+        for(const auto& word : words) {
+            joined.append(word.word);
+        }
+        return joined;
+    }
 };
 
 struct Lyrics
@@ -99,9 +109,16 @@ struct Lyrics
     };
 
     Type type{Type::Unknown};
+    QString source;
+    bool isLocal{false};
     Metadata metadata;
     uint64_t offset{0};
     std::vector<ParsedLine> lines;
+
+    [[nodiscard]] bool isValid() const noexcept
+    {
+        return type != Type::Unknown;
+    }
 
     bool operator==(const Lyrics& other) const noexcept
     {

@@ -19,12 +19,29 @@
 
 #pragma once
 
-namespace Fooyin::Lyrics::Constants {
-namespace Page {
-constexpr auto LyricsGeneral   = "Fooyin.Page.Lyrics.General";
-constexpr auto LyricsInterface = "Fooyin.Page.Lyrics.Interface";
-constexpr auto LyricsSources   = "Fooyin.Page.Lyrics.Sources";
-constexpr auto LyricsSearching = "Fooyin.Page.Lyrics.Searching";
-constexpr auto LyricsSaving    = "Fooyin.Page.Lyrics.Saving";
-} // namespace Page
-} // namespace Fooyin::Lyrics::Constants
+#include "lyricsource.h"
+
+#include <QPointer>
+
+namespace Fooyin::Lyrics {
+class NeteaseLyrics : public LyricSource
+{
+    Q_OBJECT
+
+public:
+    using LyricSource::LyricSource;
+
+    [[nodiscard]] QString name() const override;
+    void search(const SearchParams& params) override;
+
+private:
+    void resetReply();
+    void handleSearchReply();
+    void makeLyricRequest();
+    void handleLyricReply();
+
+    std::vector<LyricData> m_data;
+    std::vector<LyricData>::iterator m_currentData;
+    QPointer<QNetworkReply> m_reply;
+};
+} // namespace Fooyin::Lyrics

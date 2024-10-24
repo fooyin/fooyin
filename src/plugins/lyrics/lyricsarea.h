@@ -36,6 +36,8 @@ class LyricsArea : public QWidget
 public:
     explicit LyricsArea(SettingsManager* settings, QWidget* parent = nullptr);
 
+    [[nodiscard]] Lyrics lyrics() const;
+
     void setDisplayString(const QString& string);
     void setLyrics(const Lyrics& lyrics);
     void setCurrentTime(uint64_t time);
