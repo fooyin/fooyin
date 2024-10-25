@@ -193,14 +193,16 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
         return;
     }
 
+    const int matchThreshold = m_settings->value<Settings::Lyrics::MatchThreshold>();
+
     for(const auto& lyricData : data) {
-        if(Utils::similarityRatio(lyricData.title, m_params.title, Qt::CaseInsensitive) < 75) {
+        if(Utils::similarityRatio(lyricData.title, m_params.title, Qt::CaseInsensitive) < matchThreshold) {
             continue;
         }
-        if(Utils::similarityRatio(lyricData.artists.join(QString{}), m_params.artist, Qt::CaseInsensitive) < 75) {
+        if(Utils::similarityRatio(lyricData.artist, m_params.artist, Qt::CaseInsensitive) < matchThreshold) {
             continue;
         }
-        if(Utils::similarityRatio(lyricData.album, m_params.album, Qt::CaseInsensitive) < 75) {
+        if(Utils::similarityRatio(lyricData.album, m_params.album, Qt::CaseInsensitive) < matchThreshold) {
             continue;
         }
 
@@ -219,7 +221,7 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
             lyrics.metadata.album = lyricData.album;
         }
         if(lyrics.metadata.artist.isEmpty()) {
-            lyrics.metadata.artist = lyricData.artists.join(u", ");
+            lyrics.metadata.artist = lyricData.artist;
         }
 
         emit lyricsFound(lyrics);

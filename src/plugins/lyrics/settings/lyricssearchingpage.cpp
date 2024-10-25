@@ -22,6 +22,7 @@
 #include "lyricsconstants.h"
 #include "lyricssettings.h"
 
+#include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -53,6 +54,7 @@ private:
     QLineEdit* m_titleParam;
     QLineEdit* m_artistParam;
     QLineEdit* m_albumParam;
+    SliderEditor* m_matchThreshold;
 };
 
 LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
@@ -63,9 +65,12 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
     , m_titleParam{new QLineEdit(this)}
     , m_artistParam{new QLineEdit(this)}
     , m_albumParam{new QLineEdit(this)}
+    , m_matchThreshold{new SliderEditor(tr("Minimum match threshold"), this)}
 {
     auto* paramsGroup  = new QGroupBox(tr("Search parameters"), this);
     auto* paramsLayout = new QGridLayout(paramsGroup);
+
+    m_matchThreshold->setRange(0, 100);
 
     int row{0};
     paramsLayout->addWidget(new QLabel(tr("Title") + u":", this), row, 0);
@@ -74,6 +79,7 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
     paramsLayout->addWidget(m_artistParam, row++, 1);
     paramsLayout->addWidget(new QLabel(tr("Album") + u":", this), row, 0);
     paramsLayout->addWidget(m_albumParam, row++, 1);
+    paramsLayout->addWidget(m_matchThreshold, row++, 0, 1, 2);
 
     m_autoSearch->setToolTip(tr("Only local lyrics will be used if unchecked"));
 
@@ -95,6 +101,7 @@ void LyricsSearchingPageWidget::load()
     m_titleParam->setText(m_settings->value<Settings::Lyrics::TitleField>());
     m_artistParam->setText(m_settings->value<Settings::Lyrics::ArtistField>());
     m_albumParam->setText(m_settings->value<Settings::Lyrics::AlbumField>());
+    m_matchThreshold->setValue(m_settings->value<Settings::Lyrics::MatchThreshold>());
 }
 
 void LyricsSearchingPageWidget::apply()
@@ -105,6 +112,7 @@ void LyricsSearchingPageWidget::apply()
     m_settings->set<Settings::Lyrics::TitleField>(m_titleParam->text());
     m_settings->set<Settings::Lyrics::ArtistField>(m_artistParam->text());
     m_settings->set<Settings::Lyrics::AlbumField>(m_albumParam->text());
+    m_settings->set<Settings::Lyrics::MatchThreshold>(m_matchThreshold->value());
 }
 
 void LyricsSearchingPageWidget::reset()
@@ -115,6 +123,7 @@ void LyricsSearchingPageWidget::reset()
     m_settings->reset<Settings::Lyrics::TitleField>();
     m_settings->reset<Settings::Lyrics::ArtistField>();
     m_settings->reset<Settings::Lyrics::AlbumField>();
+    m_settings->reset<Settings::Lyrics::MatchThreshold>();
 }
 
 LyricsSearchingPage::LyricsSearchingPage(SettingsManager* settings, QObject* parent)

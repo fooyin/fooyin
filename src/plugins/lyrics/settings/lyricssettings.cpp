@@ -84,5 +84,6 @@ LyricsSettings::LyricsSettings(SettingsManager* settingsManager)
     m_settings->createSetting<AutoSearch>(true, QStringLiteral("Lyrics/AutoSearch"));
     m_settings->createSetting<SaveOptions>(static_cast<int>(LyricsSaver::SaveOption::None),
                                            QStringLiteral("Lyrics/SaveOptions"));
+    m_settings->createSetting<MatchThreshold>(80, QStringLiteral("Lyrics/MatchThreshold"));
 }
 } // namespace Fooyin::Lyrics

@@ -89,12 +89,10 @@ void QQLyrics::handleSearchReply()
         const QJsonObject songItem = song.toObject();
         if(songItem.contains(u"mid")) {
             LyricData songData;
-            songData.id       = songItem.value(u"mid").toString();
-            songData.title    = songItem.value(u"name").toString();
-            const auto artist = songItem.value(u"singer").toString();
-            if(!artist.isEmpty()) {
-                songData.artists.push_back(artist);
-            }
+            songData.id     = songItem.value(u"mid").toString();
+            songData.title  = songItem.value(u"name").toString();
+            songData.artist = songItem.value(u"singer").toString();
+
             m_data.push_back(songData);
         }
     }

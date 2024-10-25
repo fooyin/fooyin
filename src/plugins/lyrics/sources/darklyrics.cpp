@@ -103,7 +103,7 @@ void DarkLyrics::handleLyricReply()
 
         if(!trackFound && reader.isStartElement() && reader.name() == u"h3") {
             reader.readNextStartElement();
-            if(reader.name() == u"a" && reader.attributes().hasAttribute("name")) {
+            if(reader.name() == u"a" && reader.attributes().hasAttribute(QLatin1String{"name"})) {
                 const QString title = cleanTitle(reader.readElementText());
                 if(title == m_params.title) {
                     trackFound = true;
@@ -141,10 +141,10 @@ void DarkLyrics::handleLyricReply()
     }
 
     LyricData lyrics;
-    lyrics.title   = m_params.title;
-    lyrics.album   = m_params.album;
-    lyrics.artists = {m_params.artist};
-    lyrics.data    = lyricsText.toUtf8();
+    lyrics.title  = m_params.title;
+    lyrics.album  = m_params.album;
+    lyrics.artist = m_params.artist;
+    lyrics.data   = lyricsText.toUtf8();
 
     emit searchResult({lyrics});
 }

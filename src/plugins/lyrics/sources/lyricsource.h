@@ -51,7 +51,7 @@ struct LyricData
 
     QString title;
     QString album;
-    QStringList artists;
+    QString artist;
     uint64_t duration{0}; // In seconds
 };
 

@@ -43,10 +43,10 @@ void TagLyrics::search(const SearchParams& params)
         const QStringList lyrics = params.track.extraTag(tag);
         if(!lyrics.empty()) {
             LyricData lyricData;
-            lyricData.title   = params.title;
-            lyricData.album   = params.album;
-            lyricData.artists = {params.artist};
-            lyricData.data    = lyrics.constFirst().toUtf8();
+            lyricData.title  = params.title;
+            lyricData.album  = params.album;
+            lyricData.artist = params.artist;
+            lyricData.data   = lyrics.constFirst().toUtf8();
             data.push_back(lyricData);
         }
     }

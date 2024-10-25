@@ -82,7 +82,7 @@ void LrcLibLyrics::handleLyricReply()
         if(!data.data.isEmpty()) {
             data.title    = obj.value(u"trackName").toString();
             data.album    = obj.value(u"albumName").toString();
-            data.artists  = {obj.value(u"artistName").toString()};
+            data.artist   = obj.value(u"artistName").toString();
             data.duration = obj.value(u"duration").toInteger();
         }
 

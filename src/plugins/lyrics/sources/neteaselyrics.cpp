@@ -101,13 +101,19 @@ void NeteaseLyrics::handleSearchReply()
             songData.title = songItem.value(u"name").toString();
             songData.album = songItem.value(u"album").toObject().value(u"name").toString();
 
+            QStringList trackArtists;
             const auto artists = songItem.value(u"artists").toArray();
             for(const auto& artist : artists) {
                 const QString artistName = artist.toObject().value(u"name").toString();
                 if(!artistName.isEmpty()) {
-                    songData.artists.push_back(artistName);
+                    trackArtists.push_back(artistName);
                 }
             }
+
+            if(!trackArtists.empty()) {
+                songData.artist = trackArtists.join(u", ");
+            }
+
             m_data.push_back(songData);
         }
     }

@@ -59,6 +59,7 @@ enum LyricsSettings : uint32_t
     SkipExternal    = 26 | Type::Bool,
     AutoSearch      = 27 | Type::Bool,
     SaveOptions     = 28 | Type::Int,
+    MatchThreshold  = 29 | Type::Int,
 };
 Q_ENUM_NS(LyricsSettings)
 } // namespace Settings::Lyrics
