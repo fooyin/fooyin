@@ -5152,7 +5152,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="57"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation>Calculer les valeurs de crêtes en mode &quot;crête inter-échantillon&quot; (Sample Peak)</translation>
+        <translation>Calculer les valeurs de crêtes en mode &quot;crête d&apos;échantillon&quot; (Sample Peak)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="58"/>
