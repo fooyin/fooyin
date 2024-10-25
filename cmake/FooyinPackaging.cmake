@@ -35,6 +35,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
         libqt6sql6 (>= 6.2.0),
         libqt6sql6-sqlite (>= 6.2.0),
         libqt6svg6 (>= 6.2.0),
+        qt6-image-formats-plugins (>= 6.2.0),
         qt6-qpa-plugins,
         libasound2,
         libtag1v5,
@@ -50,6 +51,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
 
 set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
 set(CPACK_RPM_PACKAGE_GROUP "Applications/Multimedia")
+SET(CPACK_RPM_PACKAGE_REQUIRES_POST "qt6-qtimageformats")
 
 set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/cmake/FooyinPackageConfig.cmake" )
 
