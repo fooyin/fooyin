@@ -150,6 +150,7 @@ public:
 
     void checkBatchFinished();
     void readFileProperties(Track& track);
+    void removeMissingTrack(const Track& track);
 
     [[nodiscard]] TrackList readTracks(const QString& filepath);
     [[nodiscard]] TrackList readArchiveTracks(const QString& filepath);
@@ -191,7 +192,7 @@ public:
 
     std::unordered_map<QString, TrackList> m_trackPaths;
     std::unordered_map<QString, TrackList> m_existingArchives;
-    std::unordered_map<QString, Track> m_missingFiles;
+    std::unordered_map<QString, TrackList> m_missingFiles;
     std::unordered_map<QString, Track> m_missingHashes;
     std::unordered_map<QString, TrackList> m_existingCueTracks;
     std::unordered_map<QString, TrackList> m_missingCueTracks;
@@ -263,8 +264,12 @@ Track LibraryScannerPrivate::matchMissingTrack(const Track& track)
     const QString filename = track.filename();
     const QString hash     = track.hash();
 
-    if(m_missingFiles.contains(filename) && m_missingFiles.at(filename).duration() == track.duration()) {
-        return m_missingFiles.at(filename);
+    if(m_missingFiles.contains(filename)) {
+        for(const auto& file : m_missingFiles.at(filename)) {
+            if(file.hash() == hash) {
+                return file;
+            }
+        }
     }
 
     if(m_missingHashes.contains(hash) && m_missingHashes.at(hash).duration() == track.duration()) {
@@ -302,6 +307,18 @@ void LibraryScannerPrivate::readFileProperties(Track& track)
     }
     if(track.fileSize() == 0) {
         track.setFileSize(fileInfo.size());
+    }
+}
+
+void LibraryScannerPrivate::removeMissingTrack(const Track& track)
+{
+    if(m_missingFiles.contains(track.filename())) {
+        auto& missingTracks = m_missingFiles.at(track.filename());
+        std::erase_if(missingTracks,
+                      [&track](const Track& missingTrack) { return missingTrack.hash() == track.hash(); });
+        if(missingTracks.empty()) {
+            m_missingFiles.erase(track.filename());
+        }
     }
 }
 
@@ -614,7 +631,7 @@ void LibraryScannerPrivate::setTrackProps(Track& track, const QString& file)
 void LibraryScannerPrivate::updateExistingTrack(Track& track, const QString& file)
 {
     setTrackProps(track, file);
-    m_missingFiles.erase(track.filename());
+    removeMissingTrack(track);
 
     if(track.id() < 0) {
         const int id = m_trackDatabase.idForTrack(track);
@@ -662,7 +679,7 @@ void LibraryScannerPrivate::readNewTrack(const QString& file)
         Track refoundTrack = matchMissingTrack(track);
         if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
             m_missingHashes.erase(refoundTrack.hash());
-            m_missingFiles.erase(refoundTrack.filename());
+            removeMissingTrack(refoundTrack);
 
             setTrackProps(refoundTrack, file);
             m_tracksToUpdate.push_back(refoundTrack);
@@ -755,13 +772,13 @@ void LibraryScannerPrivate::populateExistingTracks(const TrackList& tracks, bool
 
             if(!track.isInArchive()) {
                 if(!QFileInfo::exists(track.filepath())) {
-                    m_missingFiles.emplace(track.filename(), track);
+                    m_missingFiles[track.filename()].push_back(track);
                     m_missingHashes.emplace(track.hash(), track);
                 }
             }
             else {
                 if(!QFileInfo::exists(track.archivePath())) {
-                    m_missingFiles.emplace(track.filename(), track);
+                    m_missingFiles[track.filename()].push_back(track);
                     m_missingHashes.emplace(track.hash(), track);
                 }
             }
@@ -807,11 +824,14 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QStringList& paths, const 
         checkBatchFinished();
     }
 
-    for(auto& track : m_missingFiles | std::views::values) {
-        if(track.isInLibrary() || track.isEnabled()) {
-            track.setLibraryId(-1);
-            track.setIsEnabled(false);
-            m_tracksToUpdate.push_back(track);
+    for(const auto& missingTracks : m_missingFiles | std::views::values) {
+        for(const auto& missingTrack : missingTracks) {
+            if(missingTrack.isInLibrary() || missingTrack.isEnabled()) {
+                Track disabledTrack{missingTrack};
+                disabledTrack.setLibraryId(-1);
+                disabledTrack.setIsEnabled(false);
+                m_tracksToUpdate.push_back(disabledTrack);
+            }
         }
     }
 
