@@ -195,14 +195,21 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
 
     const int matchThreshold = m_settings->value<Settings::Lyrics::MatchThreshold>();
 
+    const auto isSimilar = [matchThreshold](const QString& param, const QString& lyricParam) {
+        if(param.isEmpty() || lyricParam.isEmpty()) {
+            return true;
+        }
+        return Utils::similarityRatio(param, lyricParam, Qt::CaseInsensitive) >= matchThreshold;
+    };
+
     for(const auto& lyricData : data) {
-        if(Utils::similarityRatio(lyricData.title, m_params.title, Qt::CaseInsensitive) < matchThreshold) {
+        if(!isSimilar(m_params.title, lyricData.title)) {
             continue;
         }
-        if(Utils::similarityRatio(lyricData.artist, m_params.artist, Qt::CaseInsensitive) < matchThreshold) {
+        if(!isSimilar(m_params.artist, lyricData.artist)) {
             continue;
         }
-        if(Utils::similarityRatio(lyricData.album, m_params.album, Qt::CaseInsensitive) < matchThreshold) {
+        if(!isSimilar(m_params.album, lyricData.album)) {
             continue;
         }
 
