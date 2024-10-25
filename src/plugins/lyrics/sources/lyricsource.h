@@ -23,6 +23,7 @@
 
 #include <QLoggingCategory>
 #include <QObject>
+#include <QPointer>
 #include <QString>
 
 Q_DECLARE_LOGGING_CATEGORY(LYRICS)
@@ -85,11 +86,16 @@ protected:
     bool getJsonFromReply(QNetworkReply* reply, QJsonObject* obj);
     bool extractJsonObj(const QByteArray& data, QJsonObject* obj);
 
+    [[nodiscard]] QNetworkReply* reply() const;
+    void setReply(QNetworkReply* reply);
+    void resetReply();
+
 private:
     NetworkAccessManager* m_network;
     SettingsManager* m_settings;
     int m_index;
     bool m_enabled;
+    QPointer<QNetworkReply> m_reply;
 };
 } // namespace Lyrics
 } // namespace Fooyin

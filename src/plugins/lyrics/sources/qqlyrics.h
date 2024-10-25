@@ -21,8 +21,6 @@
 
 #include "lyricsource.h"
 
-#include <QPointer>
-
 namespace Fooyin::Lyrics {
 class QQLyrics : public LyricSource
 {
@@ -35,13 +33,11 @@ public:
     void search(const SearchParams& params) override;
 
 private:
-    void resetReply();
     void handleSearchReply();
     void makeLyricRequest();
     void handleLyricReply();
 
     std::vector<LyricData> m_data;
     std::vector<LyricData>::iterator m_currentData;
-    QPointer<QNetworkReply> m_reply;
 };
 } // namespace Fooyin::Lyrics

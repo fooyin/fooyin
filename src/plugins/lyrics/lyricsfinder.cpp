@@ -22,6 +22,7 @@
 #include "lyrics.h"
 #include "lyricsparser.h"
 #include "settings/lyricssettings.h"
+#include "sources/darklyrics.h"
 #include "sources/locallyrics.h"
 #include "sources/lrcliblyrics.h"
 #include "sources/lyricsource.h"
@@ -135,7 +136,8 @@ void LyricsFinder::loadDefaults()
                  new TagLyrics(m_networkManager.get(), m_settings, 1, true, this),
                  new LrcLibLyrics(m_networkManager.get(), m_settings, 2, true, this),
                  new NeteaseLyrics(m_networkManager.get(), m_settings, 3, true, this),
-                 new QQLyrics(m_networkManager.get(), m_settings, 4, true, this)};
+                 new QQLyrics(m_networkManager.get(), m_settings, 4, true, this),
+                 new DarkLyrics(m_networkManager.get(), m_settings, 5, false, this)};
 }
 
 void LyricsFinder::startLyricsSearch(const Track& track)

@@ -57,22 +57,14 @@ void LrcLibLyrics::search(const SearchParams& params)
 
     qCDebug(LYRICS) << "Sending request" << url.toString();
 
-    m_reply = network()->get(req);
-    QObject::connect(m_reply, &QNetworkReply::finished, this, &LrcLibLyrics::handleLyricReply);
-}
-
-void LrcLibLyrics::resetReply()
-{
-    if(m_reply) {
-        QObject::disconnect(m_reply, nullptr, this, nullptr);
-        m_reply->deleteLater();
-    }
+    setReply(network()->get(req));
+    QObject::connect(reply(), &QNetworkReply::finished, this, &LrcLibLyrics::handleLyricReply);
 }
 
 void LrcLibLyrics::handleLyricReply()
 {
     QJsonObject obj;
-    if(getJsonFromReply(m_reply, &obj)) {
+    if(getJsonFromReply(reply(), &obj)) {
         resetReply();
 
         LyricData data;

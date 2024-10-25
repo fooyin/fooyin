@@ -70,22 +70,14 @@ void NeteaseLyrics::search(const SearchParams& params)
 
     qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{SearchUrl}).arg(urlQuery.toString());
 
-    m_reply = network()->post(req, urlQuery.toString().toUtf8());
-    QObject::connect(m_reply, &QNetworkReply::finished, this, &NeteaseLyrics::handleSearchReply);
-}
-
-void NeteaseLyrics::resetReply()
-{
-    if(m_reply) {
-        QObject::disconnect(m_reply);
-        m_reply->deleteLater();
-    }
+    setReply(network()->post(req, urlQuery.toString().toUtf8()));
+    QObject::connect(reply(), &QNetworkReply::finished, this, &NeteaseLyrics::handleSearchReply);
 }
 
 void NeteaseLyrics::handleSearchReply()
 {
     QJsonObject obj;
-    if(!getJsonFromReply(m_reply, &obj)) {
+    if(!getJsonFromReply(reply(), &obj)) {
         emit searchResult({});
         resetReply();
         return;
@@ -142,14 +134,14 @@ void NeteaseLyrics::makeLyricRequest()
 
     qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{LyricUrl}).arg(urlQuery.toString());
 
-    m_reply = network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8());
-    QObject::connect(m_reply, &QNetworkReply::finished, this, &NeteaseLyrics::handleLyricReply);
+    setReply(network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8()));
+    QObject::connect(reply(), &QNetworkReply::finished, this, &NeteaseLyrics::handleLyricReply);
 }
 
 void NeteaseLyrics::handleLyricReply()
 {
     QJsonObject obj;
-    if(getJsonFromReply(m_reply, &obj)) {
+    if(getJsonFromReply(reply(), &obj)) {
         resetReply();
 
         const QJsonObject lrc = obj.value(u"lrc").toObject();

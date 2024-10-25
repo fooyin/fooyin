@@ -17,6 +17,8 @@ create_fooyin_plugin_internal(
             lyricssaver.h
             lyricswidget.cpp
             lyricswidget.h
+            sources/darklyrics.cpp
+            sources/darklyrics.h
             sources/locallyrics.cpp
             sources/locallyrics.h
             sources/lrcliblyrics.cpp

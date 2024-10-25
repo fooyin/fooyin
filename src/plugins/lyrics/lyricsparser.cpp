@@ -325,6 +325,11 @@ void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
     }
 
     if(tokens.empty()) {
+        // Most likely unsynced lyrics
+        tokens.emplace_back(TokText);
+    }
+
+    if(tokens.empty()) {
         return;
     }
 

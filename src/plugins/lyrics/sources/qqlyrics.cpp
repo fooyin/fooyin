@@ -61,22 +61,14 @@ void QQLyrics::search(const SearchParams& params)
 
     qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{SearchUrl}).arg(urlQuery.toString());
 
-    m_reply = network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8());
-    QObject::connect(m_reply, &QNetworkReply::finished, this, &QQLyrics::handleSearchReply);
-}
-
-void QQLyrics::resetReply()
-{
-    if(m_reply) {
-        QObject::disconnect(m_reply, nullptr, this, nullptr);
-        m_reply->deleteLater();
-    }
+    setReply(network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8()));
+    QObject::connect(reply(), &QNetworkReply::finished, this, &QQLyrics::handleSearchReply);
 }
 
 void QQLyrics::handleSearchReply()
 {
     QJsonObject obj;
-    if(!getJsonFromReply(m_reply, &obj)) {
+    if(!getJsonFromReply(reply(), &obj)) {
         emit searchResult({});
         resetReply();
         return;
@@ -130,14 +122,14 @@ void QQLyrics::makeLyricRequest()
 
     qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{LyricUrl}).arg(urlQuery.toString());
 
-    m_reply = network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8());
-    QObject::connect(m_reply, &QNetworkReply::finished, this, &QQLyrics::handleLyricReply);
+    setReply(network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8()));
+    QObject::connect(reply(), &QNetworkReply::finished, this, &QQLyrics::handleLyricReply);
 }
 
 void QQLyrics::handleLyricReply()
 {
     QJsonObject obj;
-    if(getJsonFromReply(m_reply, &obj)) {
+    if(getJsonFromReply(reply(), &obj)) {
         resetReply();
 
         const QString lyrics = obj.value(u"lyric").toString();

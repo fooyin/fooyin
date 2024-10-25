@@ -161,4 +161,22 @@ bool LyricSource::extractJsonObj(const QByteArray& data, QJsonObject* obj)
 
     return true;
 }
+
+QNetworkReply* LyricSource::reply() const
+{
+    return m_reply;
+}
+
+void LyricSource::setReply(QNetworkReply* reply)
+{
+    m_reply = reply;
+}
+
+void LyricSource::resetReply()
+{
+    if(m_reply) {
+        QObject::disconnect(m_reply);
+        m_reply->deleteLater();
+    }
+}
 } // namespace Fooyin::Lyrics

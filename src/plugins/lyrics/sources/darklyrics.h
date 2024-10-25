@@ -22,7 +22,7 @@
 #include "lyricsource.h"
 
 namespace Fooyin::Lyrics {
-class LrcLibLyrics : public LyricSource
+class DarkLyrics : public LyricSource
 {
     Q_OBJECT
 
@@ -34,5 +34,7 @@ public:
 
 private:
     void handleLyricReply();
+
+    SearchParams m_params;
 };
 } // namespace Fooyin::Lyrics
