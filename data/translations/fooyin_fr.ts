@@ -3176,7 +3176,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="48"/>
         <source>Reset Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser les modifications</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="49"/>
@@ -3191,12 +3191,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="51"/>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation>Tout supprimer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="57"/>
         <source>Lyrics Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Éditeur de paroles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="61"/>
@@ -3211,7 +3211,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="139"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="143"/>
@@ -3338,12 +3338,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="100"/>
         <source>Unplayed line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur de la ligne non jouée</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="102"/>
         <source>Played line colour</source>
-        <translation>Couleur de la ligne lue</translation>
+        <translation>Couleur de la ligne jouée</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="104"/>
@@ -3472,32 +3472,32 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="79"/>
         <source>Manual save</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarde manuelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="80"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarde automatique</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="81"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarde automatique après 60 secondes ou 1/3 de la durée de la piste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="82"/>
         <source>Save to metadata tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer dans les métadonnées</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="83"/>
         <source>Save to directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer dans un répertoire</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="84"/>
         <source>Save all</source>
-        <translation type="unfinished"></translation>
+        <translation>Tout enregistrer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="85"/>
@@ -3512,7 +3512,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="91"/>
         <source>Collapse duplicate lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Masquer les lignes identiques</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="92"/>
@@ -3532,22 +3532,22 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="109"/>
         <source>Autosave Preference</source>
-        <translation type="unfinished"></translation>
+        <translation>Préférences de Sauvegarde Automatique</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="117"/>
         <source>Save Location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Emplacement de sauvegarde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="120"/>
         <source>Synced lyric tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Étiquette de paroles synchronisées</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="121"/>
         <source>Unsynced lyric tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Étiquette de paroles non synchronisées</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="122"/>
@@ -3562,7 +3562,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="135"/>
         <source>Save Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Format de la sauvegarde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="267"/>
@@ -3588,27 +3588,27 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="62"/>
         <source>Automatically search for lyrics on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche automatique des paroles au lancement de la lecture</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="63"/>
         <source>Skip remaining sources when lyrics are found</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorer les autres sources lorsque des paroles sont trouvées</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="64"/>
         <source>Skip external sources if local lyrics are found</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorer les sources externes si des paroles sont trouvées localement</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="68"/>
         <source>Minimum match threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Seuil de correspondance minimal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="70"/>
         <source>Search parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètres de recherche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="76"/>
@@ -3628,7 +3628,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="84"/>
         <source>Only local lyrics will be used if unchecked</source>
-        <translation type="unfinished"></translation>
+        <translation>Seules les paroles présentes localement seront utilisées si la case n&apos;est pas cochée</translation>
     </message>
 </context>
 <context>
@@ -3636,7 +3636,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="139"/>
         <source>Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Sources</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="140"/>
@@ -3649,22 +3649,22 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="80"/>
         <source>Lyrics sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Sources des paroles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="82"/>
         <source>Lyrics will be searched for in the above order.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Les paroles seront recherchées dans l&apos;ordre indiqué ci-dessus.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="84"/>
         <source>Metadata tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étiquettes de métadonnées</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="86"/>
         <source>Local files</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichiers locaux</translation>
     </message>
 </context>
 <context>
@@ -3697,32 +3697,32 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="177"/>
         <source>Search for lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechercher des paroles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="178"/>
         <source>Search for lyrics for the current track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechercher des paroles pour la piste actuelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="189"/>
         <source>Edit lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Éditer les paroles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="190"/>
         <source>Open editor for the current lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir l&apos;éditeur pour les paroles actuelles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="195"/>
         <source>Save lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder les paroles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="196"/>
         <source>Save lyrics using current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder les paroles en utilisant les paramètres actuels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="205"/>
@@ -7785,7 +7785,7 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1158"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1197"/>
         <source>Expected end of script</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fin du script attendue</translation>
     </message>
 </context>
 </TS>
