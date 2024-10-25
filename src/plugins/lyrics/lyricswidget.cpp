@@ -163,18 +163,19 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     if(!m_lyrics.empty()) {
-        auto* changeLyric = new QMenu(tr("Select lyrics"), menu);
+        auto* selectLyrics = new QMenu(tr("Select lyrics"), menu);
         for(const auto& lyric : m_lyrics) {
             const auto actionTitle
                 = QStringLiteral("%1 - %2 (%3)").arg(lyric.metadata.artist, lyric.metadata.title, lyric.source);
-            auto* lyricAction = new QAction(actionTitle, changeLyric);
+            auto* lyricAction = new QAction(actionTitle, selectLyrics);
             QObject::connect(lyricAction, &QAction::triggered, this, [this, lyric]() { changeLyrics(lyric); });
-            changeLyric->addAction(lyricAction);
+            selectLyrics->addAction(lyricAction);
         }
-        menu->addMenu(changeLyric);
+        menu->addMenu(selectLyrics);
     }
 
     auto* searchLyrics = new QAction(tr("Search for lyrics"), menu);
+    searchLyrics->setStatusTip(tr("Search for lyrics for the current track"));
     QObject::connect(searchLyrics, &QAction::triggered, this, [this]() {
         QObject::disconnect(m_finderConnection);
         m_finderConnection
@@ -186,11 +187,13 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
 
     if(m_lyricsArea->lyrics().isValid()) {
         auto* editLyrics = new QAction(tr("Edit lyrics"), menu);
+        editLyrics->setStatusTip(tr("Open editor for the current lyrics"));
         QObject::connect(editLyrics, &QAction::triggered, this, [this]() { openEditor(m_lyricsArea->lyrics()); });
         editLyrics->setEnabled(!m_currentTrack.isInArchive());
         menu->addAction(editLyrics);
 
         auto* saveLyrics = new QAction(tr("Save lyrics"), menu);
+        saveLyrics->setStatusTip(tr("Save lyrics using current settings"));
         QObject::connect(saveLyrics, &QAction::triggered, this,
                          [this]() { m_lyricsSaver->saveLyrics(m_lyricsArea->lyrics(), m_currentTrack); });
         saveLyrics->setEnabled(!m_currentTrack.isInArchive());
