@@ -54,9 +54,9 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
     , m_model{new QueueViewerModel(std::move(audioLoader), settings, this)}
     , m_context{new WidgetContext(this, Context{Id{"Context.QueueViewer."}.append(Utils::generateUniqueHash())}, this)}
     , m_remove{new QAction(tr("Remove"), this)}
-    , m_removeCmd{actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}
+    , m_removeCmd{nullptr}
     , m_clear{new QAction(tr("&Clear"), this)}
-    , m_clearCmd{actionManager->registerAction(m_clear, Constants::Actions::Clear, m_context->context())}
+    , m_clearCmd{nullptr}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});
@@ -89,10 +89,12 @@ void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    if(m_view->selectionModel()->hasSelection()) {
+    if(m_removeCmd && m_view->selectionModel()->hasSelection()) {
         menu->addAction(m_removeCmd->action());
     }
-    menu->addAction(m_clearCmd->action());
+    if(m_clearCmd) {
+        menu->addAction(m_clearCmd->action());
+    }
 
     menu->popup(event->globalPos());
 }
@@ -102,6 +104,7 @@ void QueueViewer::setupActions()
     m_actionManager->addContextObject(m_context);
 
     m_remove->setStatusTip(tr("Remove the selected tracks from the playback queue"));
+    m_removeCmd = m_actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context());
     m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
     QObject::connect(m_remove, &QAction::triggered, this, &QueueViewer::removeSelectedTracks);
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
@@ -111,6 +114,7 @@ void QueueViewer::setupActions()
     auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
     m_clear->setStatusTip(tr("Remove all tracks in the playback queue"));
+    m_clearCmd = m_actionManager->registerAction(m_clear, Constants::Actions::Clear, m_context->context());
     editMenu->addAction(m_clearCmd);
     QObject::connect(m_clear, &QAction::triggered, m_playerController, &PlayerController::clearQueue);
     m_clear->setEnabled(m_model->rowCount({}) > 0);

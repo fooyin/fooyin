@@ -64,31 +64,31 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this,
                      [this](Playlist::PlayModes mode) { updatePlayMode(mode); });
 
+    m_stop->setStatusTip(tr("Stop playback"));
     auto* stopCmd = actionManager->registerAction(m_stop, Constants::Actions::Stop);
     stopCmd->setCategories(playbackCategory);
     stopCmd->setAttribute(ProxyAction::UpdateText);
-    m_stop->setStatusTip(tr("Stop playback"));
     playbackMenu->addAction(stopCmd);
 
+    m_playPause->setStatusTip(tr("Pause or unpause playback"));
     auto* playPauseCmd = actionManager->registerAction(m_playPause, Constants::Actions::PlayPause);
     playPauseCmd->setCategories(playbackCategory);
-    m_playPause->setStatusTip(tr("Pause or unpause playback"));
     playPauseCmd->setDescription(tr("Play/Pause"));
     playPauseCmd->setDefaultShortcut(Qt::Key_Space);
     playPauseCmd->setAttribute(ProxyAction::UpdateText);
     playPauseCmd->setAttribute(ProxyAction::UpdateIcon);
     playbackMenu->addAction(playPauseCmd);
 
+    m_next->setStatusTip(tr("Start playing the next track in the current playlist"));
     auto* nextCmd = actionManager->registerAction(m_next, Constants::Actions::Next);
     nextCmd->setCategories(playbackCategory);
     nextCmd->setAttribute(ProxyAction::UpdateText);
-    m_next->setStatusTip(tr("Start playing the next track in the current playlist"));
     playbackMenu->addAction(nextCmd);
 
+    m_previous->setStatusTip(tr("Start playing the previous track in the current playlist"));
     auto* prevCmd = actionManager->registerAction(m_previous, Constants::Actions::Previous);
     prevCmd->setCategories(playbackCategory);
     prevCmd->setAttribute(ProxyAction::UpdateText);
-    m_previous->setStatusTip(tr("Start playing the previous track in the current playlist"));
     playbackMenu->addAction(prevCmd);
 
     QObject::connect(m_stop, &QAction::triggered, playerController, &PlayerController::stop);
@@ -113,46 +113,46 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     m_shuffleAlbums->setCheckable(true);
     m_random->setCheckable(true);
 
+    m_defaultPlayback->setStatusTip(tr("Set playback order to default"));
     auto* defaultCmd = actionManager->registerAction(m_defaultPlayback, Constants::Actions::PlaybackDefault);
     defaultCmd->setCategories(orderCategory);
     defaultCmd->setAttribute(ProxyAction::UpdateText);
-    m_defaultPlayback->setStatusTip(tr("Set playback order to default"));
     orderMenu->addAction(defaultCmd);
 
+    m_repeatTrack->setStatusTip(tr("Set playback order to shuffle tracks in the current playlist"));
     auto* repeatTrackCmd = actionManager->registerAction(m_repeatTrack, Constants::Actions::RepeatTrack);
     repeatTrackCmd->setCategories(orderCategory);
     repeatTrackCmd->setAttribute(ProxyAction::UpdateText);
-    m_repeatTrack->setStatusTip(tr("Set playback order to shuffle tracks in the current playlist"));
     orderMenu->addAction(repeatTrackCmd);
 
+    m_repeatAlbum->setStatusTip(tr("Set playback order to repeat the current album"));
     auto* repeatAlbumCmd = actionManager->registerAction(m_repeatAlbum, Constants::Actions::RepeatAlbum);
     repeatAlbumCmd->setCategories(orderCategory);
     repeatAlbumCmd->setAttribute(ProxyAction::UpdateText);
-    m_repeatAlbum->setStatusTip(tr("Set playback order to repeat the current album"));
     orderMenu->addAction(repeatAlbumCmd);
 
+    m_repeatPlaylist->setStatusTip(tr("Set playback order to repeat the current playlist"));
     auto* repeatPlaylistCmd = actionManager->registerAction(m_repeatPlaylist, Constants::Actions::RepeatPlaylist);
     repeatPlaylistCmd->setCategories(orderCategory);
     repeatPlaylistCmd->setAttribute(ProxyAction::UpdateText);
-    m_repeatPlaylist->setStatusTip(tr("Set playback order to repeat the current playlist"));
     orderMenu->addAction(repeatPlaylistCmd);
 
+    m_shuffleAlbums->setStatusTip(tr("Set playback order to shuffle albums in the current playlist"));
     auto* shuffleAlbumsCmd = actionManager->registerAction(m_shuffleAlbums, Constants::Actions::ShuffleAlbums);
     shuffleAlbumsCmd->setCategories(orderCategory);
     shuffleAlbumsCmd->setAttribute(ProxyAction::UpdateText);
-    m_shuffleTracks->setStatusTip(tr("Set playback order to shuffle albums in the current playlist"));
     orderMenu->addAction(shuffleAlbumsCmd);
 
+    m_shuffleTracks->setStatusTip(tr("Set playback order to shuffle tracks in the current playlist"));
     auto* shuffleCmd = actionManager->registerAction(m_shuffleTracks, Constants::Actions::ShuffleTracks);
     shuffleCmd->setCategories(orderCategory);
     shuffleCmd->setAttribute(ProxyAction::UpdateText);
-    m_shuffleTracks->setStatusTip(tr("Set playback order to shuffle tracks in the current playlist"));
     orderMenu->addAction(shuffleCmd);
 
+    m_random->setStatusTip(tr("Set playback order to play a random track in the current playlist"));
     auto* randomCmd = actionManager->registerAction(m_random, Constants::Actions::Random);
     randomCmd->setCategories(orderCategory);
     randomCmd->setAttribute(ProxyAction::UpdateText);
-    m_random->setStatusTip(tr("Set playback order to play a random track in the current playlist"));
     orderMenu->addAction(randomCmd);
 
     QObject::connect(m_defaultPlayback, &QAction::triggered, this, [this]() { setPlayMode(Playlist::Default); });
@@ -173,10 +173,10 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     auto* followCursor = new QAction(tr("Playback follows &cursor"), this);
     followCursor->setStatusTip(tr("Start playback of the currently selected track on next"));
 
+    m_stopAfterCurrent->setStatusTip(tr("Stop playback at the end of the current track"));
     auto* stopCurrentCmd = actionManager->registerAction(m_stopAfterCurrent, Constants::Actions::StopAfterCurrent);
     stopCurrentCmd->setCategories(playbackCategory);
     stopCurrentCmd->setAttribute(ProxyAction::UpdateText);
-    m_stopAfterCurrent->setStatusTip(tr("Stop playback at the end of the current track"));
 
     m_stopAfterCurrent->setCheckable(true);
     followPlayback->setCheckable(true);

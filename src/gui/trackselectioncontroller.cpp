@@ -139,21 +139,21 @@ void TrackSelectionControllerPrivate::setupMenu()
 
     const QStringList tracksCategory = {tr("Tracks")};
 
+    m_addCurrent->setStatusTip(tr("Append selected tracks to the current playlist"));
     auto* addCurrentCmd = m_actionManager->registerAction(m_addCurrent, Constants::Actions::AddToCurrent);
     addCurrentCmd->setCategories(tracksCategory);
-    m_addCurrent->setStatusTip(tr("Append selected tracks to the current playlist"));
     QObject::connect(m_addCurrent, &QAction::triggered, m_tracksPlaylistMenu, [this]() { addToCurrentPlaylist(); });
     m_tracksPlaylistMenu->addAction(addCurrentCmd);
 
+    m_addActive->setStatusTip(tr("Append selected tracks to the active playlist"));
     auto* addActiveCmd = m_actionManager->registerAction(m_addActive, Constants::Actions::AddToActive);
     addActiveCmd->setCategories(tracksCategory);
-    m_addActive->setStatusTip(tr("Append selected tracks to the active playlist"));
     QObject::connect(m_addActive, &QAction::triggered, m_tracksPlaylistMenu, [this]() { addToActivePlaylist(); });
     m_tracksPlaylistMenu->addAction(addActiveCmd);
 
+    m_sendCurrent->setStatusTip(tr("Replace contents of the current playlist with the selected tracks"));
     auto* sendCurrentCmd = m_actionManager->registerAction(m_sendCurrent, Constants::Actions::SendToCurrent);
     sendCurrentCmd->setCategories(tracksCategory);
-    m_sendCurrent->setStatusTip(tr("Replace contents of the current playlist with the selected tracks"));
     QObject::connect(m_sendCurrent, &QAction::triggered, m_tracksPlaylistMenu, [this]() {
         if(hasContextTracks()) {
             const auto& selection = m_contextSelection.at(m_activeContext);
@@ -162,9 +162,9 @@ void TrackSelectionControllerPrivate::setupMenu()
     });
     m_tracksPlaylistMenu->addAction(sendCurrentCmd);
 
+    m_sendNew->setStatusTip(tr("Create a new playlist containing the selected tracks"));
     auto* sendNewCmd = m_actionManager->registerAction(m_sendNew, Constants::Actions::SendToNew);
     sendNewCmd->setCategories(tracksCategory);
-    m_sendNew->setStatusTip(tr("Create a new playlist containing the selected tracks"));
     QObject::connect(m_sendNew, &QAction::triggered, m_tracksPlaylistMenu, [this]() {
         if(hasContextTracks()) {
             const auto& selection = m_contextSelection.at(m_activeContext);
@@ -179,9 +179,9 @@ void TrackSelectionControllerPrivate::setupMenu()
 
     // Tracks menu
 
+    m_addToQueue->setStatusTip(tr("Add the selected tracks to the playback queue"));
     auto* addQueueCmd = m_actionManager->registerAction(m_addToQueue, Constants::Actions::AddToQueue);
     addQueueCmd->setCategories(tracksCategory);
-    m_addToQueue->setStatusTip(tr("Add the selected tracks to the playback queue"));
     QObject::connect(m_addToQueue, &QAction::triggered, m_tracksQueueMenu, [this]() {
         if(hasTracks()) {
             const auto selection = m_self->selectedTracks();
@@ -191,9 +191,9 @@ void TrackSelectionControllerPrivate::setupMenu()
     });
     m_tracksQueueMenu->addAction(addQueueCmd);
 
+    m_removeFromQueue->setStatusTip(tr("Remove the selected tracks from the playback queue"));
     auto* removeQueueCmd = m_actionManager->registerAction(m_removeFromQueue, Constants::Actions::RemoveFromQueue);
     removeQueueCmd->setCategories(tracksCategory);
-    m_removeFromQueue->setStatusTip(tr("Remove the selected tracks from the playback queue"));
     QObject::connect(m_removeFromQueue, &QAction::triggered, m_tracksQueueMenu, [this]() {
         if(hasTracks()) {
             const auto selection = m_self->selectedTracks();
@@ -203,9 +203,9 @@ void TrackSelectionControllerPrivate::setupMenu()
     });
     m_tracksQueueMenu->addAction(removeQueueCmd);
 
+    m_openFolder->setStatusTip(tr("Open the directory containing the selected tracks"));
     auto* openFolderCmd = m_actionManager->registerAction(m_openFolder, Constants::Actions::OpenFolder);
     openFolderCmd->setCategories(tracksCategory);
-    m_openFolder->setStatusTip(tr("Open the directory containing the selected tracks"));
     QObject::connect(m_openFolder, &QAction::triggered, m_tracksMenu, [this]() {
         if(hasTracks()) {
             const auto selection = m_self->selectedTracks();
@@ -222,9 +222,9 @@ void TrackSelectionControllerPrivate::setupMenu()
 
     m_tracksMenu->addSeparator(Actions::Groups::Three);
 
+    m_openProperties->setStatusTip(tr("Open the properties dialog"));
     auto* openPropsCmd = m_actionManager->registerAction(m_openProperties, Constants::Actions::OpenProperties);
     openPropsCmd->setCategories(tracksCategory);
-    m_openProperties->setStatusTip(tr("Open the properties dialog"));
     QObject::connect(m_openProperties, &QAction::triggered, m_self, [this]() {
         QMetaObject::invokeMethod(m_self, &TrackSelectionController::requestPropertiesDialog);
     });

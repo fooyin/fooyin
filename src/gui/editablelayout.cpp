@@ -548,20 +548,24 @@ void EditableLayout::initialise()
 
     const QStringList editCategory{tr("Edit")};
 
-    auto* undo    = new QAction(tr("&Undo"), this);
+    auto* undo = new QAction(tr("&Undo"), this);
+    undo->setStatusTip(tr("Undo the previous layout edit"));
     auto* undoCmd = p->m_actionManager->registerAction(undo, Constants::Actions::Undo, p->m_editingContext->context());
     undoCmd->setCategories(editCategory);
     undoCmd->setDefaultShortcut(QKeySequence::Undo);
+    undoCmd->setAttribute(ProxyAction::UpdateText);
     editMenu->addAction(undoCmd);
     QObject::connect(undo, &QAction::triggered, this, [this]() { p->m_layoutHistory->undo(); });
     QObject::connect(p->m_layoutHistory, &QUndoStack::canUndoChanged, this,
                      [undo](bool canUndo) { undo->setEnabled(canUndo); });
     undo->setEnabled(p->m_layoutHistory->canUndo());
 
-    auto* redo    = new QAction(tr("&Redo"), this);
+    auto* redo = new QAction(tr("&Redo"), this);
+    undo->setStatusTip(tr("Redo the previous layout edit"));
     auto* redoCmd = p->m_actionManager->registerAction(redo, Constants::Actions::Redo, p->m_editingContext->context());
     redoCmd->setCategories(editCategory);
     redoCmd->setDefaultShortcut(QKeySequence::Redo);
+    redoCmd->setAttribute(ProxyAction::UpdateText);
     editMenu->addAction(redoCmd);
     QObject::connect(redo, &QAction::triggered, this, [this]() { p->m_layoutHistory->redo(); });
     QObject::connect(p->m_layoutHistory, &QUndoStack::canRedoChanged, this,

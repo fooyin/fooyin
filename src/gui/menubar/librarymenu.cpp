@@ -55,34 +55,34 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
 
     auto* refreshLibrary
         = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Scan for changes"), this);
+    refreshLibrary->setStatusTip(tr("Update tracks in libraries which have been modified on disk"));
     auto* refreshLibraryCmd = actionManager->registerAction(refreshLibrary, Constants::Actions::Refresh);
     refreshLibraryCmd->setCategories(libraryCategory);
-    refreshLibrary->setStatusTip(tr("Update tracks in libraries which have been modified on disk"));
     QObject::connect(refreshLibrary, &QAction::triggered, core->library(), &MusicLibrary::refreshAll);
 
     auto* rescanLibrary
         = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Reload tracks"), this);
+    rescanLibrary->setStatusTip(tr("Reload metadata from files for all tracks in libraries"));
     auto* rescanLibraryCmd = actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan);
     rescanLibraryCmd->setCategories(libraryCategory);
-    rescanLibrary->setStatusTip(tr("Reload metadata from files for all tracks in libraries"));
     QObject::connect(rescanLibrary, &QAction::triggered, core->library(), &MusicLibrary::rescanAll);
 
-    auto* search    = new QAction(tr("S&earch"), this);
+    auto* search = new QAction(tr("S&earch"), this);
+    search->setStatusTip(tr("Search all libraries"));
     auto* searchCmd = actionManager->registerAction(search, Constants::Actions::SearchLibrary);
     searchCmd->setCategories(libraryCategory);
-    search->setStatusTip(tr("Search all libraries"));
     QObject::connect(search, &QAction::triggered, this, &LibraryMenu::requestSearch);
 
-    auto* quickSearch    = new QAction(tr("&Quick Search"), this);
+    auto* quickSearch = new QAction(tr("&Quick Search"), this);
+    quickSearch->setStatusTip(tr("Show quick search popup"));
     auto* quickSearchCmd = actionManager->registerAction(quickSearch, Constants::Actions::QuickSearch);
     quickSearchCmd->setCategories(libraryCategory);
-    quickSearch->setStatusTip(tr("Show quick search popup"));
     QObject::connect(quickSearch, &QAction::triggered, this, &LibraryMenu::requestQuickSearch);
 
-    auto* openSettings    = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Configure"), this);
+    auto* openSettings = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Configure"), this);
+    openSettings->setStatusTip(tr("Open the library page in the settings dialog"));
     auto* openSettingsCmd = actionManager->registerAction(openSettings, "Library.Configure");
     openSettingsCmd->setCategories(libraryCategory);
-    openSettings->setStatusTip(tr("Open the library page in the settings dialog"));
     QObject::connect(openSettings, &QAction::triggered, this, [core]() {
         core->settingsManager()->settingsDialog()->openAtPage(Constants::Page::LibraryGeneral);
     });

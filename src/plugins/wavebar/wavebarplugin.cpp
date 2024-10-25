@@ -101,17 +101,19 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
     utilitiesMenu->menu()->setTitle(tr("Utilities"));
     selectionMenu->addMenu(utilitiesMenu);
 
-    auto* regenerate = new QAction(tr("Regenerate waveform data"), this);
+    auto* window = Utils::getMainWindow();
+
+    auto* regenerate = new QAction(tr("Regenerate waveform data"), window);
     regenerate->setStatusTip(tr("Regenerate waveform data for the selected tracks"));
     QObject::connect(regenerate, &QAction::triggered, this, [this]() { regenerateSelection(); });
     utilitiesMenu->addAction(regenerate);
 
-    auto* regenerateMissing = new QAction(tr("Generate missing waveform data"), this);
+    auto* regenerateMissing = new QAction(tr("Generate missing waveform data"), window);
     regenerateMissing->setStatusTip(tr("Generate waveform data for the selected tracks if missing"));
     QObject::connect(regenerateMissing, &QAction::triggered, this, [this]() { regenerateSelection(true); });
     utilitiesMenu->addAction(regenerateMissing);
 
-    auto* removeData = new QAction(tr("Remove waveform data"), this);
+    auto* removeData = new QAction(tr("Remove waveform data"), window);
     removeData->setStatusTip(tr("Remove any existing waveform data for the selected tracks"));
     QObject::connect(removeData, &QAction::triggered, this, &WaveBarPlugin::removeSelection);
     utilitiesMenu->addAction(removeData);
