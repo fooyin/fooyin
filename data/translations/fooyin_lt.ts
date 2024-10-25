@@ -318,7 +318,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="294"/>
         <source>Undo a Go-&gt;Back action</source>
-        <translation type="unfinished"></translation>
+        <translation>Anuliuoti Eiti-&gt;Atgal veiksmą</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="304"/>
@@ -410,7 +410,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="74"/>
         <source>Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Medis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="75"/>
@@ -525,7 +525,7 @@
         <location filename="../../src/gui/widgets/dummy.cpp" line="65"/>
         <source>Dummy</source>
         <extracomment>Represents a dummy/placeholder widget</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Laikinas maketas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="97"/>
@@ -553,7 +553,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="42"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Paieška</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
@@ -711,7 +711,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="52"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepaisyti aukščio</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="67"/>
@@ -845,7 +845,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="70"/>
         <source>&amp;Load playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Įkelti grojaraštį…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="77"/>
@@ -943,17 +943,17 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="459"/>
         <source>Pending operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Laukiančios operacijos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="467"/>
         <source>Select Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Pasirinkti lokaciją</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="484"/>
         <source>File Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Failo operacija</translation>
     </message>
 </context>
 <context>
@@ -961,54 +961,54 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="155"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Operacija</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="157"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Galinis tikslas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="158"/>
         <source>Filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Failo pavadinimas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="160"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Išankstiniai nustatymai</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="175"/>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="433"/>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="449"/>
         <source>&amp;Run</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Paleisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="237"/>
         <source>Copy entire source folder contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopijuoti visus failus šaltinio aplanke</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="238"/>
         <source>Move entire source folder contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Perkelti visus failus šaltinio aplanke</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="271"/>
         <source>Preset already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Išankstinis nustatymas jau egzistuoja</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="272"/>
         <source>Preset %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Išankstinis nustatymas &amp;1 jau egzistuoja. Perrašyti?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="437"/>
         <source>&amp;Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nutraukti</translation>
     </message>
 </context>
 <context>
@@ -1016,17 +1016,17 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="91"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Operacija</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="93"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Šaltinis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="95"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Galinis tikslas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="172"/>
@@ -1046,7 +1046,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="178"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Sukurti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
@@ -1056,7 +1056,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Nežinomas</translation>
     </message>
 </context>
 <context>
@@ -1064,22 +1064,22 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="46"/>
         <source>&amp;File operations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Failų operacijos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="49"/>
         <source>&amp;Copy to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kopijuoti į…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="50"/>
         <source>&amp;Move to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Perkelti į…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="51"/>
         <source>&amp;Rename to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pervadinti į…</translation>
     </message>
 </context>
 <context>
@@ -1087,12 +1087,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="37"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Žanras</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="38"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumo kurėjas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
@@ -1102,12 +1102,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="41"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Data</translation>
     </message>
 </context>
 <context>
@@ -1115,7 +1115,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="529"/>
         <source>Filter Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtro rezultatai</translation>
     </message>
 </context>
 <context>
@@ -1123,13 +1123,13 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="108"/>
         <source>Clear Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Išvalyti grupę</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="118"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="313"/>
         <source>Clear Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Išvalyti grupes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
@@ -1140,7 +1140,7 @@
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="251"/>
         <source>Ungrouped</source>
-        <translation type="unfinished"></translation>
+        <translation>Nesugrupuoti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="185"/>
@@ -1150,17 +1150,17 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="304"/>
         <source>Add New Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti naują grupę</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="332"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Atgal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="349"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Užbaigti</translation>
     </message>
 </context>
 <context>
@@ -1168,12 +1168,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="206"/>
         <source>All (%1 %2s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Visi (%1 %2s)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="420"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtras</translation>
     </message>
 </context>
 <context>
@@ -1187,27 +1187,27 @@
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="589"/>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="684"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Stulpeliai</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="590"/>
         <source>Artwork (bottom labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Viršelis (apatinės etiketės)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="591"/>
         <source>Artwork (right labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Viršelis (dešinės etiketės)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="592"/>
         <source>Artwork (no labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Viršelis (be etiketės)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="635"/>
         <source>Summary item</source>
-        <translation type="unfinished"></translation>
+        <translation>Santraukos elementas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="642"/>
@@ -1222,12 +1222,12 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="726"/>
         <source>Multiple columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Daug stulpelių</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="749"/>
         <source>Manage groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Tvarkyti grupes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="644"/>
@@ -1237,7 +1237,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="734"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Daugiau…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="259"/>
@@ -1250,7 +1250,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="161"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Indeksas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="163"/>
@@ -1260,7 +1260,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="165"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation>Laukas</translation>
     </message>
 </context>
 <context>
@@ -1268,7 +1268,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="133"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Stulpeliai</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="134"/>
@@ -1278,7 +1278,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="134"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrai</translation>
     </message>
 </context>
 <context>
@@ -1286,7 +1286,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="78"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriptu redaguotojas</translation>
     </message>
 </context>
 <context>
@@ -1294,7 +1294,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="190"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Bendras</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="191"/>
@@ -1304,7 +1304,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="191"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrai</translation>
     </message>
 </context>
 <context>
@@ -1317,17 +1317,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="67"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Įjungta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="68"/>
         <source>Switch when changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Apkeisti kai pakeista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="69"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>Palikti gyvą</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="72"/>
@@ -1337,7 +1337,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="85"/>
         <source>Filter Selection Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtruoti pasirinktą grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="75"/>
@@ -1357,7 +1357,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="90"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Jei tai yra aktyvus grojaraštis, palikti jį gyvą kai keičiamas pasirinkimas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="126"/>
@@ -1407,7 +1407,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="165"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Išvaizda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="166"/>
@@ -1417,7 +1417,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="166"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrai</translation>
     </message>
 </context>
 <context>
@@ -1425,47 +1425,47 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="63"/>
         <source>Show headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti antraštes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="64"/>
         <source>Show scrollbars</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti slinkties juostą</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="65"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Pakaitinės eilių spalvos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="66"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepaisyti eilės aukščio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="71"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Išvaizda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="76"/>
         <source>Artwork Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Viršelio režimas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="79"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Plotis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="80"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Aukštis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="93"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dydis taip pat gali būti pakeistas naudojant %1 valdiklyje.</translation>
     </message>
 </context>
 <context>
@@ -1478,7 +1478,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="53"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrai</translation>
     </message>
 </context>
 <context>
@@ -1495,7 +1495,7 @@
         <location filename="../../src/gui/settings/generalpage.cpp" line="220"/>
         <location filename="../../src/gui/settings/generalpage.cpp" line="221"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Bendras</translation>
     </message>
 </context>
 <context>
@@ -1503,67 +1503,67 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="87"/>
         <source>Wait for tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Laukti dainų</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="88"/>
         <source>Show system tray icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti ikoną sistemos dėkle</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="89"/>
         <source>Minimise to tray on close</source>
-        <translation type="unfinished"></translation>
+        <translation>Sumažinti į sistemos dėklą ant uždarymo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Elgesys</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="94"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Palaukti kol visos dainos bus užkrautos prieš atidarant fooyin</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="96"/>
         <source>Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleidimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="105"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalba</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="122"/>
         <source>Start maximised</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleisti padidintame lange</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="123"/>
         <source>Start hidden to tray</source>
-        <translation type="unfinished"></translation>
+        <translation>Iįjungti paslėpus sistemos dėkle</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
         <source>Remember from last run</source>
-        <translation type="unfinished"></translation>
+        <translation>Prisiminti iš praeito paleidimo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="150"/>
         <source>Language changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalba pakeista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="151"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Reikia restartuoti kad patvirtinti pakeitimus. Restartuoti dabar?</translation>
     </message>
 </context>
 <context>
@@ -1576,42 +1576,42 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="51"/>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Ilgis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="54"/>
         <source>Maximum length</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksimalus ilgis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="58"/>
         <source>minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>minutes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="65"/>
         <source>times</source>
-        <translation type="unfinished"></translation>
+        <translation>kartai</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="71"/>
         <source>ms</source>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="60"/>
         <source>Loop count</source>
-        <translation type="unfinished"></translation>
+        <translation>Ciklo skaičius</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="61"/>
         <source>(0 = infinite)</source>
-        <translation type="unfinished"></translation>
+        <translation>(0 = begalinis)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="67"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Blukimo ilgis</translation>
     </message>
 </context>
 <context>
@@ -1619,49 +1619,51 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="361"/>
         <source>Plugins not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Įskiepiai nerasti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="362"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kai kurie įskiepiai yra reikalingi pilnam funkcionalumui.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="363"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Įskiepių ieškojimo lokacijos:
+
+</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="367"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Išeiti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="443"/>
         <source>Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>Garsas</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="445"/>
         <source>Volume up</source>
-        <translation type="unfinished"></translation>
+        <translation>Pagarsinti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="452"/>
         <source>Volume down</source>
-        <translation type="unfinished"></translation>
+        <translation>Patildyti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="459"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Išjungti garsą</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="482"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pašalinti grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="484"/>
@@ -1671,114 +1673,114 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuskaitomos dainos…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutraukti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>Dabartinis failas</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="528"/>
         <location filename="../../src/gui/guiapplication.cpp" line="558"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Žymėjimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="531"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Perkrauti žymas iš failų</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="532"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished"></translation>
+        <translation>Perkrauti žymas iš modifikuotų failų</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="534"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished"></translation>
+        <translation>Pakeisti žymas pasirinktose dainose su žymomis iš failų</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="536"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Pakeisti žymas pasirinktose dainose su žymomis iš failų, jei modifikuota</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="561"/>
         <source>Rate 0</source>
-        <translation type="unfinished"></translation>
+        <translation>Įvertinimas 0</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="562"/>
         <source>Rate 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Įvertinimas 1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="563"/>
         <source>Rate 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Įvertinimas 2</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="564"/>
         <source>Rate 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Įvertinimas 3</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Rate 4</source>
-        <translation type="unfinished"></translation>
+        <translation>Įvertinimas 4</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="566"/>
         <source>Rate 5</source>
-        <translation type="unfinished"></translation>
+        <translation>Įvertinimas 5</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="568"/>
         <location filename="../../src/gui/guiapplication.cpp" line="601"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Įvertinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="776"/>
         <source>Reload Required</source>
-        <translation type="unfinished"></translation>
+        <translation>Reikalingas perkrovimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="777"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dėl pakeitimų duomenų bazėje. dainos turėtu būti perkrautos iš disko kad atnaujinti jų išsaugotus metaduomenis.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="782"/>
         <source>Reload Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Perkrauti dabar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="784"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="841"/>
         <source>Playback Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Grojimo klaida</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="894"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Daina nerasta</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="866"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Tęsti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="618"/>
@@ -1788,52 +1790,52 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="868"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Sustabdyti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="872"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Visada testi grojimą jei daina yra nepasiekiama</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="899"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished"></translation>
+        <translation>Nėra galimo dekoderio</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="908"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Visi palaikomi media failai (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="909"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio failai (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="921"/>
         <source>Add Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti failus</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="935"/>
         <source>Add Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėti aplankus</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="962"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Visi palaikomi grojaraščiai (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="972"/>
         <source>Load Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Įkelti grojaraštį</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1004"/>
         <source>Save Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Išsaugoti grojaraštį</translation>
     </message>
 </context>
 <context>
@@ -1856,162 +1858,162 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistemos numatytas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Tema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="110"/>
         <source>Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="111"/>
         <source>Foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Pirmasis planas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="112"/>
         <source>Foreground (Bright)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pirmasis planas (Ryšku)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="113"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekstas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="114"/>
         <source>Placeholder text</source>
-        <translation type="unfinished"></translation>
+        <translation>Laikinas tekstas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="115"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Bazė</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
         <source>Base (Alternate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bazė (Alternatyva)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="117"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Paryškinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="118"/>
         <source>Highlighted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Paryškintas tekstas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="119"/>
         <source>Button (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mygtukas (Fonas)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="120"/>
         <source>Button (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mygtukas (Pirmasis planas)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="128"/>
         <source>Foreground (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pirmasis planas (Išjungtas)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="129"/>
         <source>Highlight (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Paryškinimas (Išjungta)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="130"/>
         <source>Highlighted Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Paryškintas tekstas (Išjungta)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="131"/>
         <source>Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekstas (Išjungta)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="132"/>
         <source>Button Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mygtuko tekstas (Išjungta)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="133"/>
         <source>ToolTip (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Patarimas (Fonas)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="134"/>
         <source>ToolTip (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Patarimas (Pirmasis planas)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="135"/>
         <source>Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuoroda</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="136"/>
         <source>Link (Visited)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuoroda (Aplankyta)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="137"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Ryšku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="138"/>
         <source>Midlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidurinis ryškumas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="139"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamsu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="140"/>
         <source>Mid</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidurys</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="141"/>
         <source>Shadow</source>
-        <translation type="unfinished"></translation>
+        <translation>Šešėlis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="163"/>
         <source>Basic Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Paprastos spalvos</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="164"/>
         <source>Advanced Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Pažengusios spalvos</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="165"/>
         <source>Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Fontai</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="315"/>
         <source>Theme already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Tema jau egzistuoja</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="316"/>
         <source>Theme %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Tema %1 jau egzistuoja. Pakeisti ją?</translation>
     </message>
 </context>
 <context>
@@ -2019,7 +2021,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="407"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Bendras</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="408"/>
@@ -2032,52 +2034,52 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="105"/>
         <source>Auto-detect theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatiškai aptikti temą</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="106"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Ryšku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="107"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamsu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="108"/>
         <source>Use system icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Naudoti sistemos ikonas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="111"/>
         <source>Show splitter handles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti skirstytuvo rankenas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="109"/>
         <source>Override root margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Perrašyti šaknies skirtumą</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="112"/>
         <source>Lock splitters</source>
-        <translation type="unfinished"></translation>
+        <translation>Užrakinti skirtstytuvą</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="113"/>
         <source>Override splitter handle size</source>
-        <translation type="unfinished"></translation>
+        <translation>Perrašyti skirstytuvo rankenos dydį</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="115"/>
         <source>Raise</source>
-        <translation type="unfinished"></translation>
+        <translation>Pakelti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="116"/>
         <source>Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>Ištempti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="118"/>
@@ -2092,17 +2094,17 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="124"/>
         <source>Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Įkurimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="126"/>
         <source>Quick Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Greitas įkurimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="127"/>
         <source>Import Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuoti išdėstymą</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="128"/>
@@ -2112,67 +2114,67 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
         <source>Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Tema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="137"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Stilius</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="139"/>
         <source>Icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Ikonos</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="152"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Išdėstymas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="172"/>
         <source>Tool Buttons</source>
-        <translation type="unfinished"></translation>
+        <translation>Įrankių mygtukai</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="178"/>
         <source>Playback Scripts</source>
-        <translation type="unfinished"></translation>
+        <translation>Grojimo skriptai</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="181"/>
         <source>Window title</source>
-        <translation type="unfinished"></translation>
+        <translation>Lango pavadinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="186"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Pasirinkimo info</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Valdymas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="199"/>
         <source>Seek step</source>
-        <translation type="unfinished"></translation>
+        <translation>Ieškoti žingsnio</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="200"/>
         <source>Volume step</source>
-        <translation type="unfinished"></translation>
+        <translation>Garso žingsnis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="214"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Įvertinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="217"/>
         <source>Star size</source>
-        <translation type="unfinished"></translation>
+        <translation>Žvaigždės dydis</translation>
     </message>
 </context>
 <context>
@@ -2180,7 +2182,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="383"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Temos</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
@@ -2190,7 +2192,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Colours &amp; Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Spalvos ir fontai</translation>
     </message>
 </context>
 <context>
@@ -2198,52 +2200,52 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="50"/>
         <source>&amp;Quick start</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Greitas startas</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="51"/>
         <source>Open the quick start guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Atidaryti greito paleidimo gidą</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="56"/>
         <source>&amp;Scripting help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Skriptavimo pagalba</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="57"/>
         <source>Open the scripting documentation</source>
-        <translation type="unfinished"></translation>
+        <translation>Atidaryti skriptavimo dokumentaciją</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="62"/>
         <source>S&amp;earching help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Paieškos pagalba</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
         <source>Open the search documentation</source>
-        <translation type="unfinished"></translation>
+        <translation>Atidaryti paieškos dokumentaciją</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="68"/>
         <source>&amp;Frequently asked questions</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dažnai klausiami klausimai</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
         <source>Open the FAQ</source>
-        <translation type="unfinished"></translation>
+        <translation>Atidaryti dažnai klausiamus klausimus</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="73"/>
         <source>&amp;About</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Apie</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
         <source>Open the about dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Atidaryti &quot;apie&quot; dialogą</translation>
     </message>
 </context>
 <context>
@@ -2251,17 +2253,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="118"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metaduomenys</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="121"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Vieta</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="124"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Bendras</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="127"/>
@@ -2271,7 +2273,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="130"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Kiti</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="142"/>
@@ -2281,82 +2283,82 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="143"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Pavadinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="144"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="145"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Data</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="146"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Žanras</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="147"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumo kurėjas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="151"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Dainos skaičius</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="167"/>
         <source>File Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Failų pavadinimai</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="167"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Failo pavadinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="170"/>
         <source>Folder Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplanko pavadinimai</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="170"/>
         <source>Folder Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplanko pavadinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="174"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Failo vieta</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="177"/>
         <source>Subsong Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Podainio indeksas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="183"/>
         <source>Total Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Bendras dydis</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="183"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Failo dydis</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="187"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Paskutinį karta pakeistas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="191"/>
         <source>Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridėta</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="199"/>
@@ -2366,27 +2368,27 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="203"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Trukmė</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="207"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanalai</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="209"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitų gylis</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="213"/>
         <source>Avg. Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitų spartos vidurkis</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="213"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitų sparta</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="219"/>
@@ -2396,22 +2398,22 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="221"/>
         <source>Codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodekas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="223"/>
         <source>Codec Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodeko profilis</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="225"/>
         <source>Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Įrankis</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="227"/>
         <source>Tag Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Žymos tipai</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="241"/>
@@ -2444,7 +2446,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infoview.cpp" line="45"/>
         <source>No Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Nėra pasirinkimo</translation>
     </message>
 </context>
 <context>
@@ -2452,42 +2454,42 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="140"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Pasirinkimo info</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="182"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti antraštę</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="188"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodyti slinkimo juostą</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="195"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Kintančios eilių spalvos</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="203"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metaduomenys</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="211"/>
         <source>Extended metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Išplėsti metaduomenys</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="219"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Vieta</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="227"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Bendras</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="235"/>
@@ -2497,7 +2499,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="243"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Kita</translation>
     </message>
 </context>
 <context>
@@ -2506,17 +2508,17 @@
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="55"/>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Išdėstymas</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="58"/>
         <source>&amp;Editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Redagavimo režimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="59"/>
         <source>Toggle layout editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Perjungti išdėstymo redagavimo režimą</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="70"/>
