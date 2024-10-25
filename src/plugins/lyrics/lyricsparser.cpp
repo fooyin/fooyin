@@ -325,6 +325,11 @@ void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
     }
 
     if(tokens.empty()) {
+        // Most likely unsynced lyrics
+        tokens.emplace_back(TokText);
+    }
+
+    if(tokens.empty()) {
         return;
     }
 
@@ -339,9 +344,7 @@ void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
 
         if(token.type == TokWordTimestamp) {
             // A2/Enhanced: [00:00.00] <00:00.04> When <00:00.16> the <00:00.82> truth
-            if(lyrics.type == Fooyin::Lyrics::Lyrics::Type::Unknown) {
-                lyrics.type = Fooyin::Lyrics::Lyrics::Type::SyncedWords;
-            }
+            lyrics.type = Fooyin::Lyrics::Lyrics::Type::SyncedWords;
 
             if(!parsedWord.word.isNull()) {
                 if(!timestamps.empty()) {
@@ -361,7 +364,7 @@ void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
                 timestamps.emplace(token.timestamp);
             }
             else {
-                // Word-by-word: [01:47.18]每[01:48.09][01:48.09]当[01:48.44][01:48.44]
+                // Word-by-word: [01:47.18]每[01:48.09][01:48.09]当[01:48.44]
                 lyrics.type = Fooyin::Lyrics::Lyrics::Type::SyncedWords;
 
                 if(!timestamps.empty()) {
@@ -396,12 +399,20 @@ void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
 namespace Fooyin::Lyrics {
 Lyrics parse(const QString& text)
 {
+    if(text.isEmpty()) {
+        return {};
+    }
+
     const QByteArray bytes{text.toUtf8()};
     return parse(bytes);
 }
 
 Lyrics parse(const QByteArray& text)
 {
+    if(text.isEmpty()) {
+        return {};
+    }
+
     Lyrics lyrics;
 
     QByteArray data{text};
@@ -412,7 +423,8 @@ Lyrics parse(const QByteArray& text)
     }
 
     while(!buffer.atEnd()) {
-        const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
+        QString line = QString::fromUtf8(buffer.readLine()).trimmed();
+        line.replace(QLatin1String{"&apos;"}, QLatin1String{"'"});
         parseLine(lyrics, line);
     }
 
@@ -425,4 +437,43 @@ Lyrics parse(const QByteArray& text)
     return lyrics;
 }
 
+QString formatTimestamp(uint64_t timestampMs)
+{
+    const uint64_t minutes    = timestampMs / 60000;
+    const uint64_t seconds    = (timestampMs % 60000) / 1000;
+    const uint64_t hundredths = (timestampMs % 1000) / 10;
+
+    return QStringLiteral("%1:%2.%3")
+        .arg(minutes, 2, 10, QLatin1Char{'0'})
+        .arg(seconds, 2, 10, QLatin1Char{'0'})
+        .arg(hundredths, 2, 10, QLatin1Char{'0'});
+}
+
+uint64_t timestampToMs(const QString& timestamp)
+{
+    QString fixedTimestamp{timestamp};
+    fixedTimestamp.remove(u'[');
+    fixedTimestamp.remove(u']');
+
+    const QStringList parts = fixedTimestamp.split(u':', Qt::SkipEmptyParts);
+    if(parts.size() < 2) {
+        return {};
+    }
+
+    const QStringList secondParts = parts.at(1).split(u'.', Qt::SkipEmptyParts);
+    if(secondParts.size() < 2) {
+        return {};
+    }
+
+    const uint64_t minutes = parts.at(0).toUInt();
+    const uint64_t seconds = secondParts.at(0).toUInt();
+
+    uint64_t milliseconds = secondParts.at(1).toUInt();
+    if(secondParts.at(1).length() < 3) {
+        milliseconds *= 10;
+    }
+
+    const uint64_t time = (minutes * 60 + seconds) * 1000 + milliseconds;
+    return time;
+}
 } // namespace Fooyin::Lyrics

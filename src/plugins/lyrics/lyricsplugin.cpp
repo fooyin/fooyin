@@ -19,10 +19,15 @@
 
 #include "lyricsplugin.h"
 
+#include "lyricsfinder.h"
+#include "lyricssaver.h"
 #include "lyricswidget.h"
 #include "settings/lyricsgeneralpage.h"
 #include "settings/lyricsguipage.h"
+#include "settings/lyricssavingpage.h"
+#include "settings/lyricssearchingpage.h"
 #include "settings/lyricssettings.h"
+#include "settings/lyricssourcespage.h"
 
 #include <core/player/playercontroller.h>
 #include <gui/theme/themeregistry.h>
@@ -35,6 +40,10 @@ void LyricsPlugin::initialise(const CorePluginContext& context)
     m_settings         = context.settingsManager;
 
     m_lyricsSettings = std::make_unique<LyricsSettings>(m_settings);
+    m_lyricsFinder   = new LyricsFinder(context.networkAccess, m_settings, this);
+    m_lyricsSaver    = new LyricsSaver(context.library, m_settings, this);
+
+    m_lyricsFinder->restoreState();
 }
 
 void LyricsPlugin::initialise(const GuiPluginContext& context)
@@ -43,11 +52,21 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider = context.widgetProvider;
 
     m_widgetProvider->registerWidget(
-        QStringLiteral("Lyrics"), [this]() { return new LyricsWidget(m_playerController, m_settings); }, tr("Lyrics"));
+        QStringLiteral("Lyrics"),
+        [this]() { return new LyricsWidget(m_playerController, m_lyricsFinder, m_lyricsSaver, m_settings); },
+        tr("Lyrics"));
     context.themeRegistry->registerFontEntry(tr("Lyrics"), QStringLiteral("Fooyin::Lyrics::LyricsArea"));
 
     new LyricsGeneralPage(m_settings, this);
     new LyricsGuiPage(m_settings, this);
+    new LyricsSearchingPage(m_settings, this);
+    new LyricsSourcesPage(m_lyricsFinder, m_settings, this);
+    new LyricsSavingPage(m_settings, this);
+}
+
+void LyricsPlugin::shutdown()
+{
+    m_lyricsFinder->saveState();
 }
 } // namespace Fooyin::Lyrics
 

@@ -19,40 +19,55 @@
 
 #pragma once
 
-#include <core/plugins/coreplugin.h>
-#include <core/plugins/plugin.h>
-#include <gui/plugins/guiplugin.h>
+#include "lyrics.h"
+
+#include <QDialog>
+
+class QTextEdit;
 
 namespace Fooyin {
-class FyWidget;
+class PlayerController;
+class SettingsManager;
 
 namespace Lyrics {
-class LyricsFinder;
-class LyricsSaver;
-class LyricsSettings;
-
-class LyricsPlugin : public QObject,
-                     public Plugin,
-                     public CorePlugin,
-                     public GuiPlugin
+class LyricsEditor : public QDialog
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "lyrics.json")
-    Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
-    void initialise(const CorePluginContext& context) override;
-    void initialise(const GuiPluginContext& context) override;
-    void shutdown() override;
+    explicit LyricsEditor(Lyrics lyrics, PlayerController* playerController, SettingsManager* settings,
+                          QWidget* parent = nullptr);
+
+    void accept() override;
+
+    [[nodiscard]] QSize sizeHint() const override;
+
+signals:
+    void lyricsEdited(const Fooyin::Lyrics::Lyrics& lyrics);
 
 private:
-    ActionManager* m_actionManager;
+    void reset();
+    void seek();
+    void updateButtons();
+    void highlightCurrentLine();
+    void insertOrUpdateTimestamp();
+    void removeTimestamp();
+    void removeAllTimestamps();
+
     PlayerController* m_playerController;
-    WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
-    std::unique_ptr<LyricsSettings> m_lyricsSettings;
-    LyricsFinder* m_lyricsFinder;
-    LyricsSaver* m_lyricsSaver;
+    Lyrics m_lyrics;
+
+    QPushButton* m_playPause;
+    QPushButton* m_seek;
+    QPushButton* m_reset;
+
+    QPushButton* m_insert;
+    QPushButton* m_remove;
+    QPushButton* m_removeAll;
+
+    QTextEdit* m_lyricsText;
+    QColor m_currentLineColour;
 };
 } // namespace Lyrics
 } // namespace Fooyin

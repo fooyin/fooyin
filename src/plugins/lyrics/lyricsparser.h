@@ -21,7 +21,12 @@
 
 #include "lyrics.h"
 
+class QIODevice;
+
 namespace Fooyin::Lyrics {
 Lyrics parse(const QString& text);
 Lyrics parse(const QByteArray& text);
+
+QString formatTimestamp(uint64_t timestampMs);
+uint64_t timestampToMs(const QString& timestamp);
 } // namespace Fooyin::Lyrics

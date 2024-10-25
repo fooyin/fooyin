@@ -21,7 +21,9 @@
 
 #include "lyricsarea.h"
 #include "lyricsconstants.h"
-#include "lyricsparser.h"
+#include "lyricseditor.h"
+#include "lyricsfinder.h"
+#include "lyricssaver.h"
 
 #include <core/player/playercontroller.h>
 #include <core/scripting/scriptparser.h>
@@ -31,11 +33,9 @@
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
-#include <QDir>
-#include <QFile>
-#include <QFileInfo>
 #include <QJsonObject>
 #include <QLoggingCategory>
+#include <QMainWindow>
 #include <QMenu>
 #include <QPropertyAnimation>
 #include <QScrollArea>
@@ -53,76 +53,6 @@ constexpr auto ScrollTimeout = 100ms;
 #else
 constexpr auto ScrollTimeout = 100;
 #endif
-
-namespace {
-QByteArray toUtf8(QIODevice* file)
-{
-    const QByteArray data = file->readAll();
-    if(data.isEmpty()) {
-        return {};
-    }
-
-    QStringDecoder toUtf16;
-
-    auto encoding = QStringConverter::encodingForData(data);
-    if(encoding) {
-        toUtf16 = QStringDecoder{encoding.value()};
-    }
-    else {
-        const auto encodingName = Fooyin::Utils::detectEncoding(data);
-        if(encodingName.isEmpty()) {
-            return {};
-        }
-
-        encoding = QStringConverter::encodingForName(encodingName.constData());
-        if(encoding) {
-            toUtf16 = QStringDecoder{encoding.value()};
-        }
-        else {
-            toUtf16 = QStringDecoder{encodingName.constData()};
-        }
-    }
-
-    if(!toUtf16.isValid()) {
-        toUtf16 = QStringDecoder{QStringConverter::Utf8};
-    }
-
-    QString string = toUtf16(data);
-    string.replace(QLatin1String{"\n\n"}, QLatin1String{"\n"});
-    string.replace(u'\r', u'\n');
-
-    return string.toUtf8();
-}
-
-using LyricPaths = QStringList;
-QString findDirectoryLyrics(const LyricPaths& paths, const Fooyin::Track& track)
-{
-    if(!track.isValid()) {
-        return {};
-    }
-
-    Fooyin::ScriptParser parser;
-
-    QStringList filters;
-
-    for(const QString& path : paths) {
-        filters.emplace_back(parser.evaluate(path.trimmed(), track));
-    }
-
-    for(const auto& filter : filters) {
-        const QFileInfo fileInfo{QDir::cleanPath(filter)};
-        const QDir filePath{fileInfo.path()};
-        const QString filePattern  = fileInfo.fileName();
-        const QStringList fileList = filePath.entryList({filePattern}, QDir::Files);
-
-        if(!fileList.isEmpty()) {
-            return filePath.absoluteFilePath(fileList.constFirst());
-        }
-    }
-
-    return {};
-}
-} // namespace
 
 namespace Fooyin::Lyrics {
 class LyricsScrollArea : public QScrollArea
@@ -143,12 +73,15 @@ protected:
     }
 };
 
-LyricsWidget::LyricsWidget(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
+LyricsWidget::LyricsWidget(PlayerController* playerController, LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver,
+                           SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_settings{settings}
     , m_scrollArea{new LyricsScrollArea(this)}
     , m_lyricsArea{new LyricsArea(m_settings, this)}
+    , m_lyricsFinder{lyricsFinder}
+    , m_lyricsSaver{lyricsSaver}
     , m_scrollMode{static_cast<ScrollMode>(m_settings->value<Settings::Lyrics::ScrollMode>())}
     , m_isUserScrolling{false}
 {
@@ -229,6 +162,43 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
+    if(!m_lyrics.empty()) {
+        auto* changeLyric = new QMenu(tr("Select lyrics"), menu);
+        for(const auto& lyric : m_lyrics) {
+            const auto actionTitle
+                = QStringLiteral("%1 - %2 (%3)").arg(lyric.metadata.artist, lyric.metadata.title, lyric.source);
+            auto* lyricAction = new QAction(actionTitle, changeLyric);
+            QObject::connect(lyricAction, &QAction::triggered, this, [this, lyric]() { changeLyrics(lyric); });
+            changeLyric->addAction(lyricAction);
+        }
+        menu->addMenu(changeLyric);
+    }
+
+    auto* searchLyrics = new QAction(tr("Search for lyrics"), menu);
+    QObject::connect(searchLyrics, &QAction::triggered, this, [this]() {
+        QObject::disconnect(m_finderConnection);
+        m_finderConnection
+            = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::loadLyrics);
+        m_lyrics.clear();
+        m_lyricsFinder->findLyrics(m_currentTrack);
+    });
+    menu->addAction(searchLyrics);
+
+    if(m_lyricsArea->lyrics().isValid()) {
+        auto* editLyrics = new QAction(tr("Edit lyrics"), menu);
+        QObject::connect(editLyrics, &QAction::triggered, this, [this]() { openEditor(m_lyricsArea->lyrics()); });
+        editLyrics->setEnabled(!m_currentTrack.isInArchive());
+        menu->addAction(editLyrics);
+
+        auto* saveLyrics = new QAction(tr("Save lyrics"), menu);
+        QObject::connect(saveLyrics, &QAction::triggered, this,
+                         [this]() { m_lyricsSaver->saveLyrics(m_lyricsArea->lyrics(), m_currentTrack); });
+        saveLyrics->setEnabled(!m_currentTrack.isInArchive());
+        menu->addAction(saveLyrics);
+    }
+
+    menu->addSeparator();
+
     auto* showScrollbar = new QAction(tr("Show scrollbar"), menu);
     showScrollbar->setCheckable(true);
     showScrollbar->setChecked(m_settings->value<Settings::Lyrics::ShowScrollbar>());
@@ -279,57 +249,63 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void LyricsWidget::updateLyrics(const Track& track)
 {
+    m_lyrics.clear();
+
+    QObject::disconnect(m_finderConnection);
+
     if(m_scrollAnim) {
         m_scrollAnim->stop();
     }
     m_scrollArea->verticalScrollBar()->setValue(0);
 
+    if(std::exchange(m_currentTrack, track) == track) {
+        return;
+    }
+
     if(!track.isValid()) {
         return;
     }
 
-    const auto showNoLyrics = [this, &track]() {
-        const auto script = m_settings->value<Settings::Lyrics::NoLyricsScript>();
-        m_lyricsArea->setDisplayString(m_parser.evaluate(script, track));
-    };
+    const auto script = m_settings->value<Settings::Lyrics::NoLyricsScript>();
+    m_lyricsArea->setDisplayString(m_parser.evaluate(script, track));
 
-    const auto searchTags = m_settings->value<Settings::Lyrics::SearchTags>();
-    for(const QString& tag : searchTags) {
-        if(track.hasExtraTag(tag)) {
-            const QString lyricsStr = track.extraTag(tag).constFirst();
-            if(!lyricsStr.isEmpty()) {
-                const Lyrics lyrics = parse(lyricsStr);
-                m_lyricsArea->setLyrics(lyrics);
-                m_type = lyrics.type;
-                checkStartAutoScroll(0);
-                return;
-            }
-        }
-    }
+    m_finderConnection = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::loadLyrics);
 
-    const QString dirLrc = findDirectoryLyrics(m_settings->value<Settings::Lyrics::Paths>(), track);
-    if(dirLrc.isEmpty()) {
-        showNoLyrics();
-        return;
-    }
-
-    QFile lrcFile{dirLrc};
-    if(!lrcFile.open(QIODevice::ReadOnly)) {
-        qCInfo(LYRICS_WIDGET) << "Could not open file" << dirLrc << "for reading:" << lrcFile.errorString();
-        showNoLyrics();
-        return;
-    }
-
-    const QByteArray lrc = toUtf8(&lrcFile);
-    if(!lrc.isEmpty()) {
-        const Lyrics lyrics = parse(lrc);
-        m_lyricsArea->setLyrics(lyrics);
-        m_type = lyrics.type;
-        checkStartAutoScroll(0);
+    if(m_settings->value<Settings::Lyrics::AutoSearch>()) {
+        m_lyricsFinder->findLyrics(track);
     }
     else {
-        showNoLyrics();
+        m_lyricsFinder->findLocalLyrics(track);
     }
+}
+
+void LyricsWidget::loadLyrics(const Lyrics& lyrics)
+{
+    const bool first = m_lyrics.empty();
+    m_lyrics.push_back(lyrics);
+
+    if(first) {
+        changeLyrics(lyrics);
+    }
+}
+
+void LyricsWidget::changeLyrics(const Lyrics& lyrics)
+{
+    m_lyricsArea->setLyrics(lyrics);
+    m_type = lyrics.type;
+    checkStartAutoScroll(0);
+
+    if(!lyrics.isLocal) {
+        m_lyricsSaver->autoSaveLyrics(lyrics, m_currentTrack);
+    }
+}
+
+void LyricsWidget::openEditor(const Lyrics& lyrics)
+{
+    auto* editor = new LyricsEditor(lyrics, m_playerController, m_settings, Utils::getMainWindow());
+    editor->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(editor, &LyricsEditor::lyricsEdited, this, &LyricsWidget::changeLyrics);
+    editor->show();
 }
 
 void LyricsWidget::scrollToCurrentLine(int scrollValue)

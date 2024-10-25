@@ -32,8 +32,6 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QLineEdit>
-#include <QPlainTextEdit>
 #include <QRadioButton>
 
 namespace Fooyin::Lyrics {
@@ -61,9 +59,6 @@ private:
     QRadioButton* m_scrollManual;
     QRadioButton* m_scrollSynced;
     QRadioButton* m_scrollAutomatic;
-
-    QLineEdit* m_lyricTags;
-    QPlainTextEdit* m_lyricPaths;
 };
 
 LyricsGeneralPageWidget::LyricsGeneralPageWidget(SettingsManager* settings)
@@ -74,8 +69,6 @@ LyricsGeneralPageWidget::LyricsGeneralPageWidget(SettingsManager* settings)
     , m_scrollManual{new QRadioButton(tr("Manual"), this)}
     , m_scrollSynced{new QRadioButton(tr("Synced"), this)}
     , m_scrollAutomatic{new QRadioButton(tr("Automatic"), this)}
-    , m_lyricTags{new QLineEdit(this)}
-    , m_lyricPaths{new QPlainTextEdit(this)}
 {
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
@@ -113,21 +106,11 @@ LyricsGeneralPageWidget::LyricsGeneralPageWidget(SettingsManager* settings)
     scrollingLayout->addWidget(m_scrollDuration, row++, 0);
     scrollingLayout->addWidget(scrollModeGroup, row++, 0);
 
-    auto* searchingGroup  = new QGroupBox(tr("Searching"), this);
-    auto* searchingLayout = new QGridLayout(searchingGroup);
-
-    row = 0;
-    searchingLayout->addWidget(new QLabel(tr("Tags") + u":", this), row++, 0);
-    searchingLayout->addWidget(m_lyricTags, row++, 0);
-    searchingLayout->addWidget(new QLabel(tr("Local paths") + u":", this), row++, 0);
-    searchingLayout->addWidget(m_lyricPaths, row++, 0);
-
     auto* layout = new QGridLayout(this);
 
     row = 0;
     layout->addWidget(generalGroup, row++, 0);
     layout->addWidget(scrollingGroup, row++, 0);
-    layout->addWidget(searchingGroup, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
 }
 
@@ -137,9 +120,6 @@ void LyricsGeneralPageWidget::load()
     m_scrollDuration->setValue(m_settings->value<Settings::Lyrics::ScrollDuration>());
     setScrollMode(static_cast<ScrollMode>(m_settings->value<Settings::Lyrics::ScrollMode>()));
     m_noLyricsScript->setText(m_settings->value<Settings::Lyrics::NoLyricsScript>());
-    m_lyricTags->setText(m_settings->value<Settings::Lyrics::SearchTags>().join(u';'));
-    const auto paths = m_settings->value<Settings::Lyrics::Paths>();
-    m_lyricPaths->setPlainText(paths.join(QStringLiteral("\n")));
 }
 
 void LyricsGeneralPageWidget::apply()
@@ -148,8 +128,6 @@ void LyricsGeneralPageWidget::apply()
     m_settings->set<Settings::Lyrics::ScrollDuration>(m_scrollDuration->value());
     m_settings->set<Settings::Lyrics::ScrollMode>(static_cast<int>(getScrollMode()));
     m_settings->set<Settings::Lyrics::NoLyricsScript>(m_noLyricsScript->text());
-    m_settings->set<Settings::Lyrics::SearchTags>(m_lyricTags->text().split(u';', Qt::SkipEmptyParts));
-    m_settings->set<Settings::Lyrics::Paths>(m_lyricPaths->toPlainText().split(u'\n', Qt::SkipEmptyParts));
 }
 
 void LyricsGeneralPageWidget::reset()
@@ -158,8 +136,6 @@ void LyricsGeneralPageWidget::reset()
     m_settings->reset<Settings::Lyrics::ScrollDuration>();
     m_settings->reset<Settings::Lyrics::ScrollMode>();
     m_settings->reset<Settings::Lyrics::NoLyricsScript>();
-    m_settings->reset<Settings::Lyrics::SearchTags>();
-    m_settings->reset<Settings::Lyrics::Paths>();
 }
 
 ScrollMode LyricsGeneralPageWidget::getScrollMode() const
@@ -185,7 +161,7 @@ LyricsGeneralPage::LyricsGeneralPage(SettingsManager* settings, QObject* parent)
 {
     setId(Constants::Page::LyricsGeneral);
     setName(tr("General"));
-    setCategory({tr("Widgets"), tr("Lyrics")});
+    setCategory({tr("Lyrics")});
     setWidgetCreator([settings] { return new LyricsGeneralPageWidget(settings); });
 }
 } // namespace Fooyin::Lyrics

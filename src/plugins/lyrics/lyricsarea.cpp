@@ -106,6 +106,11 @@ LyricsArea::LyricsArea(SettingsManager* settings, QWidget* parent)
     loadSettings();
 }
 
+Lyrics LyricsArea::lyrics() const
+{
+    return m_lyrics;
+}
+
 void LyricsArea::setDisplayString(const QString& string)
 {
     m_lyrics        = {};
@@ -303,6 +308,8 @@ void LyricsArea::paintEvent(QPaintEvent* event)
                     break;
                 }
                 case(Lyrics::Type::Unsynced):
+                    painter.setPen(m_colours.colour(Colours::Type::LineUnsynced));
+                    break;
                 case(Lyrics::Type::Unknown):
                     break;
             }
