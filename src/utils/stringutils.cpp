@@ -59,8 +59,8 @@ int levenshteinDistance(const QString& first, const QString& second, Qt::CaseSen
         return firstLength;
     }
 
-    QString a = (cs == Qt::CaseInsensitive ? first : first.toLower());
-    QString b = (cs == Qt::CaseInsensitive ? second : second.toLower());
+    QString a = (cs == Qt::CaseSensitive ? first : first.toLower());
+    QString b = (cs == Qt::CaseSensitive ? second : second.toLower());
 
     const QChar* aChar = a.constData();
     const QChar* bChar = b.constData();
