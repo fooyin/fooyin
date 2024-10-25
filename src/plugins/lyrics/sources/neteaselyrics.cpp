@@ -70,7 +70,7 @@ void NeteaseLyrics::search(const SearchParams& params)
 
     qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{SearchUrl}).arg(urlQuery.toString());
 
-    setReply(network()->post(req, urlQuery.toString().toUtf8()));
+    setReply(network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8()));
     QObject::connect(reply(), &QNetworkReply::finished, this, &NeteaseLyrics::handleSearchReply);
 }
 
@@ -130,11 +130,11 @@ void NeteaseLyrics::handleSearchReply()
 void NeteaseLyrics::makeLyricRequest()
 {
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(QStringLiteral("id"), encode(m_currentData->id));
-    urlQuery.addQueryItem(encode(QStringLiteral("lv")), encode(QStringLiteral("-1")));
-    urlQuery.addQueryItem(encode(QStringLiteral("kv")), encode(QStringLiteral("-1")));
-    urlQuery.addQueryItem(encode(QStringLiteral("tv")), encode(QStringLiteral("-1")));
-    urlQuery.addQueryItem(encode(QStringLiteral("os")), encode(QStringLiteral("pc")));
+    urlQuery.addQueryItem(QStringLiteral("id"), m_currentData->id);
+    urlQuery.addQueryItem(QStringLiteral("lv"), QStringLiteral("-1"));
+    urlQuery.addQueryItem(QStringLiteral("kv"), QStringLiteral("-1"));
+    urlQuery.addQueryItem(QStringLiteral("tv"), QStringLiteral("-1"));
+    urlQuery.addQueryItem(QStringLiteral("os"), QStringLiteral("pc"));
 
     const QNetworkRequest req = setupRequest(LyricUrl);
 

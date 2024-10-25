@@ -52,10 +52,9 @@ void QQLyrics::search(const SearchParams& params)
     m_data.clear();
 
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(encode(QStringLiteral("key")),
-                          encode(QStringLiteral("%1+%2").arg(params.artist, params.title)));
-    urlQuery.addQueryItem(encode(QStringLiteral("inCharset")), encode(QStringLiteral("utf-8")));
-    urlQuery.addQueryItem(encode(QStringLiteral("outCharset")), encode(QStringLiteral("utf-8")));
+    urlQuery.addQueryItem(QStringLiteral("key"), QStringLiteral("%1+%2").arg(params.artist, params.title));
+    urlQuery.addQueryItem(QStringLiteral("inCharset"), QStringLiteral("utf-8"));
+    urlQuery.addQueryItem(QStringLiteral("outCharset"), QStringLiteral("utf-8"));
 
     const QNetworkRequest req = setupRequest(SearchUrl);
 
@@ -109,12 +108,12 @@ void QQLyrics::handleSearchReply()
 void QQLyrics::makeLyricRequest()
 {
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(QStringLiteral("songmid"), encode(m_currentData->id));
-    urlQuery.addQueryItem(encode(QStringLiteral("inCharset")), encode(QStringLiteral("utf-8")));
-    urlQuery.addQueryItem(encode(QStringLiteral("outCharset")), encode(QStringLiteral("utf-8")));
-    urlQuery.addQueryItem(encode(QStringLiteral("format")), encode(QStringLiteral("json")));
-    urlQuery.addQueryItem(encode(QStringLiteral("nobase64")), encode(QStringLiteral("1")));
-    urlQuery.addQueryItem(encode(QStringLiteral("g_tk")), encode(QStringLiteral("5381")));
+    urlQuery.addQueryItem(QStringLiteral("songmid"), m_currentData->id);
+    urlQuery.addQueryItem(QStringLiteral("inCharset"), QStringLiteral("utf-8"));
+    urlQuery.addQueryItem(QStringLiteral("outCharset"), QStringLiteral("utf-8"));
+    urlQuery.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
+    urlQuery.addQueryItem(QStringLiteral("nobase64"), QStringLiteral("1"));
+    urlQuery.addQueryItem(QStringLiteral("g_tk"), QStringLiteral("5381"));
 
     const QNetworkRequest req = setupRequest(LyricUrl);
 
