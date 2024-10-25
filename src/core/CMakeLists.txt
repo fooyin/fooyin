@@ -37,8 +37,8 @@ set(SOURCES
     internalcoresettings.cpp
     internalcoresettings.h
     track.cpp
-    translations.cpp
-    translations.h
+    translationloader.cpp
+    translationloader.h
     database/database.cpp
     database/database.h
     database/dbschema.cpp

@@ -34,7 +34,7 @@
 #include "playlist/parsers/m3uparser.h"
 #include "playlist/playlistloader.h"
 #include "plugins/pluginmanager.h"
-#include "translations.h"
+#include "translationloader.h"
 #include "version.h"
 
 #include <core/coresettings.h>
@@ -108,7 +108,7 @@ public:
 
     SettingsManager* m_settings;
     CoreSettings m_coreSettings;
-    Translations m_translations;
+    TranslationLoader m_translations;
     Database* m_database;
     std::shared_ptr<AudioLoader> m_audioLoader;
     PlayerController* m_playerController;
@@ -132,7 +132,7 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     : m_self{self_}
     , m_settings{new SettingsManager(Core::settingsPath(), m_self)}
     , m_coreSettings{m_settings}
-    , m_translations{m_settings}
+    , m_translations{}
     , m_database{new Database(m_self)}
     , m_audioLoader{std::make_shared<AudioLoader>()}
     , m_playerController{new PlayerController(m_settings, m_self)}
@@ -149,6 +149,7 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_corePluginContext{&m_engine,  m_playerController, m_libraryManager,  m_library,       m_playlistHandler,
                           m_settings, m_audioLoader,      m_sortingRegistry, m_networkManager}
 {
+    m_translations.initialiseTranslations(m_settings->value<Settings::Core::Language>());
     loadDatabaseSettings();
 }
 

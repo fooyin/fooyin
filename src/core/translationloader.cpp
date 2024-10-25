@@ -17,12 +17,9 @@
  *
  */
 
-#include "translations.h"
+#include "translationloader.h"
 
 #include "corepaths.h"
-
-#include <core/coresettings.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <QCoreApplication>
 #include <QLibraryInfo>
@@ -32,16 +29,12 @@
 Q_LOGGING_CATEGORY(TRANSLATIONS, "fy.translations")
 
 namespace Fooyin {
-Translations::Translations(SettingsManager* settings)
-    : QObject{settings}
-    , m_settings{settings}
-{
-    initialiseTranslations();
-}
+TranslationLoader::TranslationLoader(QObject* parent)
+    : QObject{parent}
+{ }
 
-void Translations::initialiseTranslations()
+void TranslationLoader::initialiseTranslations(const QString& customLanguage)
 {
-    const QString customLanguage = m_settings->value<Settings::Core::Language>();
     QLocale locale;
 
     if(!customLanguage.isEmpty()) {
@@ -70,7 +63,7 @@ void Translations::initialiseTranslations()
     installTranslations(locale, QStringLiteral("fooyin"), translationsPath, true);
 }
 
-bool Translations::installTranslations(const QLocale& locale, const QString& translation, const QString& path,
+bool TranslationLoader::installTranslations(const QLocale& locale, const QString& translation, const QString& path,
                                        bool warn)
 {
     auto* translator = new QTranslator(this);
@@ -87,5 +80,4 @@ bool Translations::installTranslations(const QLocale& locale, const QString& tra
 
     return QCoreApplication::installTranslator(translator);
 }
-
 } // namespace Fooyin

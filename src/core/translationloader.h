@@ -22,20 +22,14 @@
 #include <QObject>
 
 namespace Fooyin {
-class SettingsManager;
-
-class Translations : public QObject
+class TranslationLoader : public QObject
 {
-    Q_OBJECT
-
 public:
-    explicit Translations(SettingsManager* settings);
+    explicit TranslationLoader(QObject* parent = nullptr);
 
-    void initialiseTranslations();
+    void initialiseTranslations(const QString& customLanguage);
 
 private:
     bool installTranslations(const QLocale& locale, const QString& translation, const QString& path, bool warn);
-
-    SettingsManager* m_settings;
 };
 } // namespace Fooyin
