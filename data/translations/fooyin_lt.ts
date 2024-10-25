@@ -235,17 +235,17 @@
 <context>
     <name>Fooyin::DecoderPage</name>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="166"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="162"/>
         <source>General</source>
         <translation>Bendra</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="167"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="163"/>
         <source>Playback</source>
         <translation>Grojimas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="167"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="163"/>
         <source>Decoding</source>
         <translation>dekodavimas</translation>
     </message>
@@ -253,17 +253,17 @@
 <context>
     <name>Fooyin::DecoderPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="93"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="89"/>
         <source>Enable all supported extensions</source>
         <translation>Įjungti visus palaikomus išplėtimus</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="104"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="100"/>
         <source>Decoders</source>
         <translation>Dekoderiai</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="105"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="101"/>
         <source>Tag readers</source>
         <translation>Žymų skaitytojai</translation>
     </message>
@@ -1617,17 +1617,17 @@
 <context>
     <name>Fooyin::GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="361"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="364"/>
         <source>Plugins not found</source>
         <translation>Įskiepiai nerasti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="362"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="365"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>Kai kurie įskiepiai yra reikalingi pilnam funkcionalumui.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="363"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="366"/>
         <source>Plugin search locations:
 
 </source>
@@ -1636,204 +1636,204 @@
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="367"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="370"/>
         <source>Quit</source>
         <translation>Išeiti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="443"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="446"/>
         <source>Volume</source>
         <translation>Garsas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="445"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="448"/>
         <source>Volume up</source>
         <translation>Pagarsinti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="452"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="455"/>
         <source>Volume down</source>
         <translation>Patildyti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="459"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="462"/>
         <source>Mute</source>
         <translation>Išjungti garsą</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="482"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="485"/>
         <source>Remove Playlist</source>
         <translation>Pašalinti grojaraštį</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="484"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="487"/>
         <source>File</source>
         <translation type="unfinished">Failas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="495"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="498"/>
         <source>Reading tracks…</source>
         <translation>Nuskaitomos dainos…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="495"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="498"/>
         <source>Abort</source>
         <translation>Nutraukti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="519"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="522"/>
         <source>Current file</source>
         <translation>Dabartinis failas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="528"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="558"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="531"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="561"/>
         <source>Tagging</source>
         <translation>Žymėjimas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="531"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="534"/>
         <source>Reload tags from files</source>
         <translation>Perkrauti žymas iš failų</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="532"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="535"/>
         <source>Reload tags from modified files</source>
         <translation>Perkrauti žymas iš modifikuotų failų</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="534"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="537"/>
         <source>Replace tags in selected tracks with tags from the files</source>
         <translation>Pakeisti žymas pasirinktose dainose su žymomis iš failų</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="536"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="539"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
         <translation>Pakeisti žymas pasirinktose dainose su žymomis iš failų, jei modifikuota</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="561"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="564"/>
         <source>Rate 0</source>
         <translation>Įvertinimas 0</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="562"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Rate 1</source>
         <translation>Įvertinimas 1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="563"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="566"/>
         <source>Rate 2</source>
         <translation>Įvertinimas 2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="564"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="567"/>
         <source>Rate 3</source>
         <translation>Įvertinimas 3</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="565"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="568"/>
         <source>Rate 4</source>
         <translation>Įvertinimas 4</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="566"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="569"/>
         <source>Rate 5</source>
         <translation>Įvertinimas 5</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="568"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="601"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="571"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="604"/>
         <source>Rating</source>
         <translation>Įvertinimas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="776"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="779"/>
         <source>Reload Required</source>
         <translation>Reikalingas perkrovimas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="777"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="780"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>Dėl pakeitimų duomenų bazėje. dainos turėtu būti perkrautos iš disko kad atnaujinti jų išsaugotus metaduomenis.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="782"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="785"/>
         <source>Reload Now</source>
         <translation>Perkrauti dabar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="784"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="787"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="841"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="844"/>
         <source>Playback Error</source>
         <translation>Grojimo klaida</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="894"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="897"/>
         <source>Track Not Found</source>
         <translation>Daina nerasta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="866"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="869"/>
         <source>Continue</source>
         <translation>Tęsti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="618"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="621"/>
         <source>Utilities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="868"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="871"/>
         <source>Stop</source>
         <translation>Sustabdyti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="872"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="875"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>Visada testi grojimą jei daina yra nepasiekiama</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="899"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="902"/>
         <source>No Decoder Available</source>
         <translation>Nėra galimo dekoderio</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="908"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="911"/>
         <source>All Supported Media Files (%1)</source>
         <translation>Visi palaikomi media failai (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="909"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="912"/>
         <source>Audio Files (%1)</source>
         <translation>Audio failai (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="921"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="924"/>
         <source>Add Files</source>
         <translation>Pridėti failus</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="935"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="938"/>
         <source>Add Folders</source>
         <translation>Pridėti aplankus</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="962"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="965"/>
         <source>All Supported Playlists (%1)</source>
         <translation>Visi palaikomi grojaraščiai (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="972"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="975"/>
         <source>Load Playlist</source>
         <translation>Įkelti grojaraštį</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1004"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1007"/>
         <source>Save Playlist</source>
         <translation>Išsaugoti grojaraštį</translation>
     </message>
@@ -2720,7 +2720,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="70"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Paieška</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="73"/>
@@ -2800,7 +2800,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="83"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Skriptu redaguotojas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="86"/>
@@ -2834,7 +2834,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="163"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Indeksas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="165"/>
@@ -2870,7 +2870,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="77"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Skriptu redaguotojas</translation>
     </message>
 </context>
 <context>
@@ -2883,7 +2883,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="42"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Albumas</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="45"/>
@@ -2922,17 +2922,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="79"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Įjungta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="80"/>
         <source>Switch when changed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Apkeisti kai pakeista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="86"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rodyti slinkimo juostą</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="87"/>
@@ -2962,7 +2962,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="81"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Palikti gyvą</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="83"/>
@@ -2977,12 +2977,12 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="85"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rodyti antraštę</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="88"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nepaisyti eilės aukščio</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="97"/>
@@ -2997,7 +2997,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="111"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jei tai yra aktyvus grojaraštis, palikti jį gyvą kai keičiamas pasirinkimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="120"/>
@@ -3007,7 +3007,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="125"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Išvaizda</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="128"/>
@@ -3017,17 +3017,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="131"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plotis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="132"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aukštis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="145"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dydis taip pat gali būti pakeistas naudojant %1 valdiklyje.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="200"/>
@@ -3167,19 +3167,67 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::Lyrics::LyricsEditor</name>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="47"/>
+        <source>Seek</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="48"/>
+        <source>Reset Changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="49"/>
+        <source>Insert/Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="50"/>
+        <source>Remove</source>
+        <translation type="unfinished">Pašalinti</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="51"/>
+        <source>Remove All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="57"/>
+        <source>Lyrics Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="61"/>
+        <source>Operation</source>
+        <translation type="unfinished">Operacija</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="68"/>
+        <source>Timestamps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="139"/>
+        <source>Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="143"/>
+        <source>Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Lyrics::LyricsGeneralPage</name>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="187"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="163"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="188"/>
-        <source>Widgets</source>
-        <translation type="unfinished">Validikliai</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="188"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="164"/>
         <source>Lyrics</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3187,105 +3235,85 @@
 <context>
     <name>Fooyin::Lyrics::LyricsGeneralPageWidget</name>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="66"/>
         <source>Seek on click</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="68"/>
         <source>Synced scroll duration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="74"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="69"/>
         <source>Manual</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="75"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="70"/>
         <source>Synced</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="76"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
         <source>Automatic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="80"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="83"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="76"/>
         <source>This will only function with synced lyrics.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="85"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="78"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="90"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="83"/>
         <source>No lyrics script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="94"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="87"/>
         <source>Scrolling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="100"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="93"/>
         <source>Scroll Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="103"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="96"/>
         <source>No automatic scrolling will take place</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="104"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="97"/>
         <source>Synced lyrics will be scrolled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="105"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="98"/>
         <source>All lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="116"/>
-        <source>Searching</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="120"/>
-        <source>Tags</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="122"/>
-        <source>Local paths</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Fooyin::Lyrics::LyricsGuiPage</name>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="358"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="364"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Išvaizda</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="359"/>
-        <source>Widgets</source>
-        <translation type="unfinished">Validikliai</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="359"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="365"/>
         <source>Lyrics</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3293,121 +3321,126 @@
 <context>
     <name>Fooyin::Lyrics::LyricsGuiPageWidget</name>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="87"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="89"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rodyti slinkimo juostą</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="94"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="96"/>
         <source>Background colour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="96"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
         <source>Line colour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="100"/>
+        <source>Unplayed line colour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="102"/>
         <source>Played line colour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="100"/>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="102"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="104"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="106"/>
         <source>Current line colour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="104"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="108"/>
         <source>Current word colour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="106"/>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="108"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="110"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="112"/>
         <source>Current line font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="110"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="114"/>
         <source>Current word font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="113"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="117"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="116"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="120"/>
         <source>Align to centre</source>
         <translation type="unfinished">Sulyginti centre</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="117"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="121"/>
         <source>Align to left</source>
         <translation type="unfinished">Sulyginti kairėje</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="118"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="122"/>
         <source>Align to right</source>
         <translation type="unfinished">Sulyginti dešinėje</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="125"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="129"/>
         <source>Line spacing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="127"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="131"/>
         <source>Alignment</source>
         <translation type="unfinished">Sulyginimas</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="131"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="135"/>
         <source>Margins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="145"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="149"/>
         <source>Left</source>
         <translation type="unfinished">Kairė</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="147"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="151"/>
         <source>Right</source>
         <translation type="unfinished">Dešinė</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="149"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="153"/>
         <source>Top</source>
         <translation type="unfinished">Viršus</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="151"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="155"/>
         <source>Bottom</source>
         <translation type="unfinished">Žemiau</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="155"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="159"/>
         <source>Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fontai</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="158"/>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="183"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="162"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="187"/>
         <source>Synced</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="166"/>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="193"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="170"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="199"/>
         <source>Synced Words</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="180"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="184"/>
         <source>Colours</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3415,46 +3448,309 @@
 <context>
     <name>Fooyin::Lyrics::LyricsPlugin</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="46"/>
-        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="47"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="57"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="58"/>
         <source>Lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Lyrics::LyricsSavingPage</name>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="277"/>
+        <source>Saving</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="278"/>
+        <source>Lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Lyrics::LyricsSavingPageWidget</name>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="79"/>
+        <source>Manual save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="80"/>
+        <source>Autosave</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="81"/>
+        <source>Autosave after 60 seconds or 1/3 of track duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="82"/>
+        <source>Save to metadata tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="83"/>
+        <source>Save to directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="84"/>
+        <source>Save all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="85"/>
+        <source>Synced only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="86"/>
+        <source>Unsynced only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="91"/>
+        <source>Collapse duplicate lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="92"/>
+        <source>Save metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="94"/>
+        <source>Save Scheme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="102"/>
+        <source>Save Method</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="109"/>
+        <source>Autosave Preference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="117"/>
+        <source>Save Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="120"/>
+        <source>Synced lyric tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="121"/>
+        <source>Unsynced lyric tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="122"/>
+        <source>Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="123"/>
+        <source>Filename</source>
+        <translation type="unfinished">Failo pavadinimas</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="135"/>
+        <source>Save Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="267"/>
+        <source>Select Directory</source>
+        <translation type="unfinished">Pasirinkti lokaciją</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Lyrics::LyricsSearchingPage</name>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="133"/>
+        <source>Searching</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="134"/>
+        <source>Lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Lyrics::LyricsSearchingPageWidget</name>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="62"/>
+        <source>Automatically search for lyrics on starting playback</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="63"/>
+        <source>Skip remaining sources when lyrics are found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="64"/>
+        <source>Skip external sources if local lyrics are found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="68"/>
+        <source>Minimum match threshold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="70"/>
+        <source>Search parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="76"/>
+        <source>Title</source>
+        <translation type="unfinished">Pavadinimas</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="78"/>
+        <source>Artist</source>
+        <translation type="unfinished">Dainininkas</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="80"/>
+        <source>Album</source>
+        <translation type="unfinished">Albumas</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="84"/>
+        <source>Only local lyrics will be used if unchecked</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Lyrics::LyricsSourcesPage</name>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="139"/>
+        <source>Sources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="140"/>
+        <source>Lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Lyrics::LyricsSourcesPageWidget</name>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="80"/>
+        <source>Lyrics sources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="82"/>
+        <source>Lyrics will be searched for in the above order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="84"/>
+        <source>Metadata tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="86"/>
+        <source>Local files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Fooyin::Lyrics::LyricsWidget</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="203"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
+        <source>Artist</source>
+        <translation type="unfinished">Dainininkas</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
+        <source>Album</source>
+        <translation type="unfinished">Albumas</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
+        <source>Title</source>
+        <translation type="unfinished">Pavadinimas</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="142"/>
         <source>Lyrics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="226"/>
-        <source>Show scrollbar</source>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="166"/>
+        <source>Select lyrics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="232"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="177"/>
+        <source>Search for lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="178"/>
+        <source>Search for lyrics for the current track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="189"/>
+        <source>Edit lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="190"/>
+        <source>Open editor for the current lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="195"/>
+        <source>Save lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="196"/>
+        <source>Save lyrics using current settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="205"/>
+        <source>Show scrollbar</source>
+        <translation type="unfinished">Rodyti slinkimo juostą</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="211"/>
         <source>Text-align</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="236"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="215"/>
         <source>Align to centre</source>
         <translation type="unfinished">Sulyginti centre</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="237"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="216"/>
         <source>Align to left</source>
         <translation type="unfinished">Sulyginti kairėje</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="238"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="217"/>
         <source>Align to right</source>
         <translation type="unfinished">Sulyginti dešinėje</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="262"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="241"/>
         <source>Settings…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3942,12 +4238,12 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="63"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rodyti antraštę</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="64"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rodyti slinkimo juostą</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="65"/>
@@ -3977,22 +4273,22 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="81"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Išvaizda</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="88"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plotis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="89"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aukštis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="102"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dydis taip pat gali būti pakeistas naudojant %1 valdiklyje.</translation>
     </message>
 </context>
 <context>
@@ -4016,7 +4312,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="164"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Indeksas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="166"/>
@@ -4026,7 +4322,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="168"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laukas</translation>
     </message>
 </context>
 <context>
@@ -4035,7 +4331,7 @@
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="130"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="131"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stulpeliai</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="131"/>
@@ -4048,7 +4344,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="75"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Skriptu redaguotojas</translation>
     </message>
 </context>
 <context>
@@ -4061,7 +4357,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="42"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pavadinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="43"/>
@@ -4076,12 +4372,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Albumo kurėjas</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Albumas</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="57"/>
@@ -4091,7 +4387,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trukmė</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
@@ -4101,7 +4397,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
         <source>Codec</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kodekas</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="50"/>
@@ -4111,7 +4407,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="51"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bitų sparta</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="52"/>
@@ -4121,22 +4417,22 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="53"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kanalai</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="54"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bitų gylis</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="55"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Paskutinį karta pakeistas</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="58"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Įvertinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="59"/>
@@ -4225,7 +4521,7 @@
 <context>
     <name>Fooyin::PlaylistController</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="457"/>
+        <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="458"/>
         <source>Playlists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4248,12 +4544,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rodyti slinkimo juostą</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="88"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rodyti antraštę</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="90"/>
@@ -4318,7 +4614,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="132"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vieta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="134"/>
@@ -4348,7 +4644,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="300"/>
         <source>Select Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pasirinkti lokaciją</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="150"/>
@@ -4373,7 +4669,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="163"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Išvaizda</translation>
     </message>
 </context>
 <context>
@@ -4381,19 +4677,19 @@
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="43"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nuskaitomos dainos…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="44"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="85"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nutraukti</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="67"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="108"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dabartinis failas</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="84"/>
@@ -4476,7 +4772,7 @@
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="521"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="522"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Išankstiniai nustatymai</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="522"/>
@@ -4514,7 +4810,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="247"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pavadinimas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="248"/>
@@ -4545,7 +4841,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="219"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nepaisyti aukščio</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="225"/>
@@ -4650,17 +4946,17 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1409"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1452"/>
         <source>Sort</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1440"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1483"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Išankstiniai nustatymai</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1570"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1613"/>
         <source>Playlist</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4668,179 +4964,179 @@
 <context>
     <name>Fooyin::PlaylistWidgetPrivate</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="302"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="309"/>
         <source>Start playback of the selected track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="310"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="317"/>
         <source>Remove all tracks from the playlist except for the selected tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="313"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="320"/>
         <source>Stop playback at the end of the selected track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="319"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="326"/>
         <source>Undo the previous playlist change</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="185"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>Cu&amp;t</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="186"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="192"/>
         <source>&amp;Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="187"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="193"/>
         <source>&amp;Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="188"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="194"/>
         <source>C&amp;lear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="189"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="195"/>
         <source>&amp;Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="190"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="196"/>
         <source>Add to playback &amp;queue</source>
         <translation type="unfinished">Pridėti į grojimo eilę</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="192"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="198"/>
         <source>Remove from playback q&amp;ueue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="307"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="314"/>
         <source>Edit</source>
         <translation type="unfinished">Redaguoti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="318"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="325"/>
         <source>&amp;Undo</source>
         <translation type="unfinished">&amp;Sugražinti atgal</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="331"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="338"/>
         <source>&amp;Redo</source>
         <translation type="unfinished">&amp;Sugražinti į priekį</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="332"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="339"/>
         <source>Redo the previous playlist change</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="346"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="353"/>
         <source>Cut the selected tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="357"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="364"/>
         <source>Copy the selected tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="368"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="375"/>
         <source>Paste the selected tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="381"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="388"/>
         <source>Remove all tracks from the current playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="391"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="398"/>
         <source>Select &amp;all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="392"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="399"/>
         <source>Select all tracks in the current playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="401"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="408"/>
         <source>Remove the selected tracks from the current playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="410"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="417"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation type="unfinished">Pridėti pasirinktas dainas į grojimo eilę</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="416"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="423"/>
         <source>Remove the selected tracks from the playback queue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="428"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="435"/>
         <source>Playlist empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="429"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="436"/>
         <source>Loading playlist…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="432"/>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="436"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="439"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="443"/>
         <source>No results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="433"/>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="437"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="440"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="444"/>
         <source>Searching…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1464"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1507"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stulpeliai</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1502"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1545"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Daugiau…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1211"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1245"/>
         <source>Reset columns to default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="182"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="188"/>
         <source>&amp;Play</source>
         <translation type="unfinished">Paleisti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="183"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="189"/>
         <source>&amp;Crop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="184"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="190"/>
         <source>&amp;Stop after this</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1220"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1254"/>
         <source>Single-column mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4942,7 +5238,7 @@
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="170"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="230"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reikia restartuoti kad patvirtinti pakeitimus. Restartuoti dabar?</translation>
     </message>
 </context>
 <context>
@@ -5070,12 +5366,12 @@
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="36"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="39"/>
         <source>Quick Setup</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Greitas įkurimas</translation>
     </message>
 </context>
 <context>
@@ -5196,7 +5492,7 @@
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="68"/>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="193"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nutraukti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="71"/>
@@ -5206,7 +5502,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="92"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dabartinis failas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="114"/>
@@ -5466,7 +5762,7 @@
     <message>
         <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
         <source>Select Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pasirinkti lokaciją</translation>
     </message>
 </context>
 <context>
@@ -5474,7 +5770,7 @@
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="269"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Skriptu redaguotojas</translation>
     </message>
 </context>
 <context>
@@ -5514,17 +5810,17 @@
 <context>
     <name>Fooyin::Scrobbler::ScrobblerPage</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="272"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="284"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="273"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="285"/>
         <source>Networking</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="273"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="285"/>
         <source>Scrobbling</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5572,32 +5868,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="248"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="253"/>
         <source>Sign Out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="250"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="255"/>
         <source>Signed in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="254"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="259"/>
         <source>Sign In</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="250"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="255"/>
         <source>Signed in as %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="187"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="189"/>
         <source>You can find your user token here</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="255"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="260"/>
         <source>Not signed in</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5622,7 +5918,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="60"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valdymas</translation>
     </message>
 </context>
 <context>
@@ -5659,31 +5955,35 @@
 <context>
     <name>Fooyin::SearchController</name>
     <message>
-        <location filename="../../src/gui/search/searchcontroller.cpp" line="113"/>
-        <location filename="../../src/gui/search/searchcontroller.cpp" line="141"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="182"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="190"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="226"/>
         <source>Connect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchcontroller.cpp" line="118"/>
-        <location filename="../../src/gui/search/searchcontroller.cpp" line="141"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="182"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="194"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="226"/>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchcontroller.cpp" line="136"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="167"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="175"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="222"/>
         <source>Unavailable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchcontroller.cpp" line="162"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="245"/>
         <source>Clear All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchcontroller.cpp" line="172"/>
+        <location filename="../../src/gui/search/searchcontroller.cpp" line="255"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Užbaigti</translation>
     </message>
 </context>
 <context>
@@ -5838,18 +6138,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="88"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="492"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="90"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="491"/>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="105"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="107"/>
         <source>Search Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="110"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="112"/>
         <source>Search Bar</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5875,72 +6175,62 @@
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="436"/>
-        <source>Force inline playlist search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
         <source>Force new results playlist using the current playlist as the source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="438"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
         <source>Force new results playlist using all playlists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="438"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
         <source>Delete a word in the search box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="495"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="494"/>
         <source>Autosearch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="502"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="501"/>
         <source>Search in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="504"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="503"/>
         <source>Library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="510"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="509"/>
         <source>Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="516"/>
-        <source>Playlist (Inline)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="523"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="515"/>
         <source>All Playlists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="534"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="526"/>
         <source>Change placeholder text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="544"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="536"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="120"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="538"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="122"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="530"/>
         <source>Manage connections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="821"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="824"/>
         <source>Quick Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6093,7 +6383,7 @@
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="161"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Indeksas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="163"/>
@@ -6111,7 +6401,7 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="37"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Albumas</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="39"/>
@@ -6121,12 +6411,12 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="40"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pavadinimas</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="41"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dainos skaičius</translation>
     </message>
 </context>
 <context>
@@ -6315,12 +6605,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="46"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Data</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="47"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Žanras</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="48"/>
@@ -6335,12 +6625,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="50"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Albumo kurėjas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dainos skaičius</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
@@ -6365,7 +6655,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="57"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Įvertinimas</translation>
     </message>
 </context>
 <context>
@@ -6373,7 +6663,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="178"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Indeksas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="180"/>
@@ -6383,7 +6673,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="182"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laukas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="184"/>
@@ -6569,22 +6859,22 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="51"/>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ilgis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="54"/>
         <source>Loop count</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ciklo skaičius</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="55"/>
         <source>(0 = infinite)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">(0 = begalinis)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="61"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blukimo ilgis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="44"/>
@@ -6594,13 +6884,13 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="59"/>
         <source>times</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kartai</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="65"/>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="71"/>
         <source>ms</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ms</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="67"/>
@@ -6895,7 +7185,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="99"/>
         <source>Background</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fonas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="100"/>
@@ -6943,7 +7233,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="97"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valdymas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="101"/>
@@ -6988,7 +7278,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="156"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nutraukti</translation>
     </message>
 </context>
 <context>
@@ -7203,7 +7493,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="101"/>
         <source>Dummy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laikinas maketas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="107"/>
@@ -7265,7 +7555,7 @@ cost of using more disk space in the cache.</source>
         <location filename="../../src/gui/widgets.cpp" line="178"/>
         <location filename="../../src/gui/widgets.cpp" line="183"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valdymas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="172"/>
@@ -7285,7 +7575,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="188"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pasirinkimo info</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="196"/>
@@ -7447,51 +7737,51 @@ cost of using more disk space in the cache.</source>
         <translation>Failai kurie bus atidaryti</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="408"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="409"/>
         <source>Expected %1 to close quote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="423"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="424"/>
         <source>Expected %1 to close variable list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="434"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="435"/>
         <source>Expected %1 to close variable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="454"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="455"/>
         <source>Expected %1 after function name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="464"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="465"/>
         <source>Expected %1 at end of function</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="498"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="499"/>
         <source>Expected %1 to close conditional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="526"/>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="532"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="527"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="533"/>
         <source>Expected %1 to close group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="758"/>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="763"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="759"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="764"/>
         <source>Expected %1 after %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="772"/>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="1157"/>
-        <location filename="../../src/core/scripting/scriptparser.cpp" line="1196"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="773"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="1158"/>
+        <location filename="../../src/core/scripting/scriptparser.cpp" line="1197"/>
         <source>Expected end of script</source>
         <translation type="unfinished"></translation>
     </message>
