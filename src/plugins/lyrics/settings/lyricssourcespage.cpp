@@ -77,7 +77,7 @@ LyricsSourcesPageWidget::LyricsSourcesPageWidget(LyricsFinder* lyricsFinder, Set
     auto* layout = new QGridLayout(this);
 
     int row{0};
-    layout->addWidget(new QLabel(tr("Lyric sources") + u":", this), row++, 0);
+    layout->addWidget(new QLabel(tr("Lyrics sources") + u":", this), row++, 0);
     layout->addWidget(m_sourceList, row++, 0);
     layout->addWidget(new QLabel(QStringLiteral("🛈 ") + tr("Lyrics will be searched for in the above order."), this),
                       row++, 0);
