@@ -1140,7 +1140,7 @@
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="251"/>
         <source>Ungrouped</source>
-        <translation type="unfinished"></translation>
+        <translation>Non groupé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="185"/>
@@ -3189,7 +3189,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
         <source>Seek on click</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer la lecture en cliquant</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
@@ -3224,12 +3224,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="85"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation type="unfinished">Ce message s&apos;affiche si les paroles de la piste en cours sont introuvables.</translation>
+        <translation>Ce message s&apos;affichera si les paroles de la piste en cours sont introuvables.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="90"/>
         <source>No lyrics script</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Message en l&apos;absence de paroles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="94"/>
@@ -3269,7 +3269,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="122"/>
         <source>Local paths</source>
-        <translation type="unfinished"></translation>
+        <translation>Chemins Locaux</translation>
     </message>
 </context>
 <context>
@@ -3310,7 +3310,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
         <source>Played line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur de la ligne lue</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="100"/>
@@ -5134,7 +5134,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="141"/>
         <source>Calculation</source>
-        <translation type="unfinished">Calcul</translation>
+        <translation>Calcul</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="142"/>
@@ -5152,12 +5152,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="57"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation type="unfinished">Calculer les valeurs de crêtes par la méthode de crête d&apos;échantillon (Sample Peak)</translation>
+        <translation>Calculer les valeurs de crêtes en mode &quot;crête inter-échantillon&quot; (Sample Peak)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="58"/>
         <source>Use true peak for calculating peaks</source>
-        <translation type="unfinished">Calculer les valeurs des crêtes par la méthode de la crête vraie (True Peak)</translation>
+        <translation>Calculer les valeurs de crêtes en mode &quot;crête vraie&quot; (True Peak)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="61"/>
