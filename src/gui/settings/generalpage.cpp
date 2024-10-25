@@ -176,7 +176,7 @@ void GeneralPageWidget::loadLanguage()
 
     const QDir translationDir{Core::translationsPath()};
     const QStringList translations = translationDir.entryList(QStringList{} << QStringLiteral("*.qm"));
-    static const QRegularExpression translationExpr(QStringLiteral("^fooyin_(.*).qm$"));
+    static const QRegularExpression translationExpr{QStringLiteral(R"(^fooyin_(?!en\.qm$)(.*)\.qm$)")};
 
     for(const QString& translation : translations) {
         const QRegularExpressionMatch translationMatch = translationExpr.match(translation);
