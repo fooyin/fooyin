@@ -1297,6 +1297,11 @@ void PlaylistWidgetPrivate::followCurrentTrack() const
         modelIndex = modelIndex.siblingAtColumn(modelIndex.column() + 1);
     }
 
+    if(modelIndex.data(PlaylistItem::ItemData).value<PlaylistTrack>().track.id()
+       != m_playerController->currentTrackId()) {
+        return;
+    }
+
     if(!modelIndex.isValid()) {
         return;
     }
