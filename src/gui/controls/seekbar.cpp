@@ -25,7 +25,7 @@
 #include <gui/widgets/seekcontainer.h>
 #include <gui/widgets/tooltip.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>

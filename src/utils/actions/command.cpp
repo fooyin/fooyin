@@ -22,7 +22,7 @@
 #include <utils/actions/proxyaction.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/id.h>
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QKeySequence>
 #include <QLoggingCategory>

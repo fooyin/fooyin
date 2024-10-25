@@ -21,7 +21,7 @@
 
 #include <core/player/playercontroller.h>
 #include <gui/widgets/clickablelabel.h>
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QFontMetrics>
 #include <QHBoxLayout>

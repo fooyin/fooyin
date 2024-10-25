@@ -19,7 +19,7 @@
 
 #include "lyricsource.h"
 
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QIODevice>
 #include <QJsonObject>

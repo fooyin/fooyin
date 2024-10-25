@@ -19,8 +19,8 @@
 
 #include <gui/widgets/elapsedprogressdialog.h>
 
+#include <utils/stringutils.h>
 #include <utils/timer.h>
-#include <utils/utils.h>
 
 #include <QGridLayout>
 #include <QHBoxLayout>

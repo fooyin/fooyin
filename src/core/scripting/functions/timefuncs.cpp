@@ -19,7 +19,7 @@
 
 #include "timefuncs.h"
 
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QStringList>
 

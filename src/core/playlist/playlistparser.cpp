@@ -19,7 +19,7 @@
 
 #include <core/playlist/playlistparser.h>
 
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QStringDecoder>
 #include <QUrl>

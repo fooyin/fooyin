@@ -23,10 +23,25 @@
 
 #include <QString>
 
+#include <chrono>
+
+class QFontMetrics;
 class QJsonValue;
+class QKeySequence;
 
 namespace Fooyin::Utils {
 FYUTILS_EXPORT QString readMultiLineString(const QJsonValue& value);
+FYUTILS_EXPORT QString elideTextWithBreaks(const QString& text, const QFontMetrics& fontMetrics, int maxWidth,
+                                           Qt::TextElideMode mode);
+FYUTILS_EXPORT QString capitalise(const QString& str);
+FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content);
+
+FYUTILS_EXPORT QString msToString(std::chrono::milliseconds ms, bool includeMs);
+FYUTILS_EXPORT QString msToString(uint64_t ms);
+FYUTILS_EXPORT QString formatFileSize(uint64_t bytes, bool includeBytes = false);
+FYUTILS_EXPORT QString addLeadingZero(int number, int leadingCount);
+FYUTILS_EXPORT QString appendShortcut(const QString& str, const QKeySequence& shortcut);
+
 FYUTILS_EXPORT int levenshteinDistance(const QString& first, const QString& second, Qt::CaseSensitivity cs);
 FYUTILS_EXPORT int similarityRatio(const QString& first, const QString& second, Qt::CaseSensitivity cs);
 } // namespace Fooyin::Utils

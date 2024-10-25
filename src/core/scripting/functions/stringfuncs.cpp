@@ -20,7 +20,7 @@
 #include "stringfuncs.h"
 #include "core/constants.h"
 
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QDir>
 #include <QRegularExpression>

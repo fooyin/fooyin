@@ -23,32 +23,19 @@
 
 #include <QDateTime>
 #include <QStringList>
-#include <QUrl>
 
 class QColor;
-class QDir;
-class QFontMetrics;
 class QHeaderView;
 class QIcon;
 class QImage;
-class QKeySequence;
-class QLabel;
 class QMainWindow;
 class QMenu;
 class QPixmap;
 class QSize;
 class QString;
-class QWidget;
 
 namespace Fooyin::Utils {
 FYUTILS_EXPORT int randomNumber(int min, int max);
-FYUTILS_EXPORT QString msToString(std::chrono::milliseconds ms, bool includeMs);
-FYUTILS_EXPORT QString msToString(uint64_t ms);
-FYUTILS_EXPORT QString formatFileSize(uint64_t bytes, bool includeBytes = false);
-FYUTILS_EXPORT QString addLeadingZero(int number, int leadingCount);
-FYUTILS_EXPORT QString appendShortcut(const QString& str, const QKeySequence& shortcut);
-FYUTILS_EXPORT QString elideTextWithBreaks(const QString& text, const QFontMetrics& fontMetrics, int maxWidth,
-                                           Qt::TextElideMode mode);
 
 FYUTILS_EXPORT uint64_t currentDateToInt();
 FYUTILS_EXPORT QString formatTimeMs(uint64_t time);
@@ -57,8 +44,6 @@ FYUTILS_EXPORT QDateTime dateStringToDate(const QString& str);
 FYUTILS_EXPORT std::optional<int64_t> dateStringToMs(const QString& str);
 FYUTILS_EXPORT QString msToDateString(int64_t dateMs);
 
-FYUTILS_EXPORT QString capitalise(const QString& str);
-FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content);
 FYUTILS_EXPORT QStringList extensionsToWildcards(const QStringList& extensions);
 FYUTILS_EXPORT QString extensionsToFilterList(const QStringList& extensions, const QString& name);
 FYUTILS_EXPORT QString extensionFromFilter(const QString& filter);

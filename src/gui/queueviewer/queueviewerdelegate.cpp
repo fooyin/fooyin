@@ -21,7 +21,7 @@
 
 #include "queuevieweritem.h"
 
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QApplication>
 #include <QPainter>

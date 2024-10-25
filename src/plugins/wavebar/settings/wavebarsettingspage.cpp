@@ -23,7 +23,7 @@
 #include "wavebarconstants.h"
 
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QButtonGroup>
 #include <QCheckBox>

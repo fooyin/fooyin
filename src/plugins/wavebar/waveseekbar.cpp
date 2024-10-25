@@ -24,7 +24,7 @@
 #include <core/track.h>
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QMouseEvent>
 #include <QPainter>

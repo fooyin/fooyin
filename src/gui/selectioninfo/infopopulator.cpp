@@ -23,6 +23,7 @@
 
 #include <core/track.h>
 #include <utils/enum.h>
+#include <utils/stringutils.h>
 #include <utils/utils.h>
 
 #include <QFileInfo>

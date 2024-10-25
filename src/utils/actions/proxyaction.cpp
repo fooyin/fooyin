@@ -19,7 +19,7 @@
 
 #include <utils/actions/proxyaction.h>
 
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QPointer>
 

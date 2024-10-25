@@ -20,7 +20,7 @@
 #include "tracklistfuncs.h"
 
 #include <core/track.h>
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <set>
 

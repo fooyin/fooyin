@@ -22,7 +22,7 @@
 #include "rgscanresultsmodel.h"
 
 #include <core/library/musiclibrary.h>
-#include <utils/utils.h>
+#include <utils/stringutils.h>
 
 #include <QDialogButtonBox>
 #include <QGridLayout>

@@ -30,6 +30,7 @@
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <utils/audioutils.h>
+#include <utils/stringutils.h>
 #include <utils/utils.h>
 
 #include <QDateTime>
