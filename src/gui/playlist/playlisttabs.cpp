@@ -19,6 +19,7 @@
 
 #include "playlisttabs.h"
 
+#include "dialog/autoplaylistdialog.h"
 #include "internalguisettings.h"
 #include "playlistcontroller.h"
 
@@ -40,6 +41,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLayout>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMimeData>
 #include <QPointer>
@@ -288,28 +290,53 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
             m_playlistController->changeCurrentPlaylist(playlist);
         }
     });
-    menu->addAction(createPlaylist);
 
-    if(index >= 0) {
-        const auto id = tabBar->tabData(index).value<UId>();
+    auto* createAutoPlaylist = new QAction(tr("Add new autoplaylist"), menu);
+    QObject::connect(createAutoPlaylist, &QAction::triggered, this, [this]() {
+        auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
+        autoDialog->setAttribute(Qt::WA_DeleteOnClose);
+        QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
+                         [this](const QString& name, const QString& query) {
+                             if(auto* playlist = m_playlistHandler->createAutoPlaylist(name, query)) {
+                                 m_playlistController->changeCurrentPlaylist(playlist);
+                             }
+                         });
+        autoDialog->show();
+    });
 
-        auto* renamePlAction = new QAction(tr("Rename playlist"), menu);
-        QObject::connect(renamePlAction, &QAction::triggered, tabBar, &EditableTabBar::showEditor);
+    const auto id  = tabBar->tabData(index).value<UId>();
+    auto* playlist = m_playlistHandler->playlistById(id);
 
-        auto* removePlAction = new QAction(tr("Remove playlist"), menu);
-        QObject::connect(removePlAction, &QAction::triggered, this,
+    if(playlist) {
+        if(playlist->isAutoPlaylist()) {
+            auto* editAutoPlaylist = new QAction(tr("Edit autoplaylist"), menu);
+            QObject::connect(editAutoPlaylist, &QAction::triggered, this, [this, playlist]() {
+                auto* autoDialog = new AutoPlaylistDialog(m_playlistHandler, playlist, Utils::getMainWindow());
+                autoDialog->setAttribute(Qt::WA_DeleteOnClose);
+                autoDialog->show();
+            });
+            menu->addAction(editAutoPlaylist);
+        }
+
+        auto* renameAction
+            = new QAction(playlist->isAutoPlaylist() ? tr("Rename autoplaylist") : tr("Rename playlist"), menu);
+        QObject::connect(renameAction, &QAction::triggered, tabBar, &EditableTabBar::showEditor);
+
+        auto* removeAction
+            = new QAction(playlist->isAutoPlaylist() ? tr("Remove autoplaylist") : tr("Remove playlist"), menu);
+        QObject::connect(removeAction, &QAction::triggered, this,
                          [this, id]() { m_playlistHandler->removePlaylist(id); });
 
-        menu->addAction(renamePlAction);
-        menu->addAction(removePlAction);
+        menu->addAction(renameAction);
+        menu->addAction(removeAction);
+        menu->addSeparator();
     }
 
     menu->addAction(createPlaylist);
+    menu->addAction(createAutoPlaylist);
 
-    if(index >= 0) {
+    if(playlist) {
         menu->addSeparator();
-
-        const auto id = tabBar->tabData(index).value<UId>();
 
         auto* moveLeft = new QAction(tr("Move left"), menu);
         moveLeft->setEnabled(index > 0);
@@ -332,17 +359,15 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
         menu->addSeparator();
 
-        if(const auto* playlist = m_playlistHandler->playlistById(id)) {
-            if(playlist->trackCount() > 0) {
-                m_selectionController->changeSelectedTracks(playlist->tracks());
+        if(playlist->trackCount() > 0) {
+            m_selectionController->changeSelectedTracks(playlist->tracks());
 
-                auto* selectionMenu = new QMenu(tr("%1 contents").arg(playlist->name()), menu);
-                m_selectionController->addTrackContextMenu(selectionMenu);
-                menu->addMenu(selectionMenu);
+            auto* selectionMenu = new QMenu(tr("%1 contents").arg(playlist->name()), menu);
+            m_selectionController->addTrackContextMenu(selectionMenu);
+            menu->addMenu(selectionMenu);
 
-                QObject::connect(menu, &QObject::destroyed, this,
-                                 [this]() { m_selectionController->changeSelectedTracks({}); });
-            }
+            QObject::connect(menu, &QObject::destroyed, this,
+                             [this]() { m_selectionController->changeSelectedTracks({}); });
         }
     }
 
@@ -361,8 +386,21 @@ void PlaylistTabs::dragMoveEvent(QDragMoveEvent* event)
     m_currentHoverIndex = m_tabs->tabBar()->tabAt(event->position().toPoint());
 
     if(m_currentHoverIndex >= 0) {
-        event->setDropAction(Qt::CopyAction);
-        event->accept(m_tabs->tabBar()->tabRect(m_currentHoverIndex));
+        bool isAutoPlaylist{false};
+
+        const auto id = m_tabs->tabBar()->tabData(m_currentHoverIndex).value<UId>();
+        if(auto* playlist = m_playlistHandler->playlistById(id)) {
+            isAutoPlaylist = playlist->isAutoPlaylist();
+        }
+
+        if(isAutoPlaylist) {
+            event->setDropAction(Qt::IgnoreAction);
+            event->ignore();
+        }
+        else {
+            event->setDropAction(Qt::CopyAction);
+            event->accept(m_tabs->tabBar()->tabRect(m_currentHoverIndex));
+        }
 
         if(!m_hoverTimer.isActive()) {
 #if(QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
@@ -404,6 +442,12 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
     const int index    = tabBar->tabAt(tabBar->mapFrom(this, point));
 
     const auto id = tabBar->tabData(index).value<UId>();
+    if(auto* playlist = m_playlistHandler->playlistById(id)) {
+        if(playlist->isAutoPlaylist()) {
+            event->ignore();
+            return;
+        }
+    }
 
     if(event->mimeData()->hasUrls()) {
         emit filesDropped(event->mimeData()->urls(), id);
@@ -527,11 +571,13 @@ void PlaylistTabs::tabMoved(int /*from*/, int to) const
     }
 }
 
-void PlaylistTabs::playlistChanged(Playlist* /*oldPlaylist*/, Playlist* playlist) const
+void PlaylistTabs::playlistChanged(Playlist* /*oldPlaylist*/, Playlist* playlist)
 {
     if(!playlist) {
         return;
     }
+
+    setAcceptDrops(!playlist->isAutoPlaylist());
 
     const int count = m_tabs->tabBar()->count();
     const UId id    = playlist->id();

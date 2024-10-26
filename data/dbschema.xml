@@ -336,4 +336,13 @@
             ALTER TABLE Tracks ADD COLUMN Encoding TEXT;
         </sql>
     </revision>
+    <revision version="14">
+        <description>
+            Add fields to support autoplaylists.
+        </description>
+        <sql>
+            ALTER TABLE Playlists ADD COLUMN IsAutoPlaylist INTEGER DEFAULT 0;
+            ALTER TABLE Playlists ADD COLUMN Query TEXT;
+        </sql>
+    </revision>
 </schema>

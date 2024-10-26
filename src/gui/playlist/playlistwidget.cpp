@@ -356,8 +356,6 @@ void PlaylistWidgetPrivate::setupActions()
         cutCommand->setCategories(editCategory);
         cutCommand->setDefaultShortcut(QKeySequence::Cut);
         editMenu->addAction(cutCommand);
-        QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                         [this]() { m_cutAction->setEnabled(m_playlistView->selectionModel()->hasSelection()); });
         QObject::connect(m_cutAction, &QAction::triggered, this, &PlaylistWidgetPrivate::cutTracks);
         m_cutAction->setEnabled(m_playlistView->selectionModel()->hasSelection());
 
@@ -367,8 +365,6 @@ void PlaylistWidgetPrivate::setupActions()
         copyCommand->setCategories(editCategory);
         copyCommand->setDefaultShortcut(QKeySequence::Copy);
         editMenu->addAction(copyCommand);
-        QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                         [this]() { m_copyAction->setEnabled(m_playlistView->selectionModel()->hasSelection()); });
         QObject::connect(m_copyAction, &QAction::triggered, this, &PlaylistWidgetPrivate::copyTracks);
         m_copyAction->setEnabled(m_playlistView->selectionModel()->hasSelection());
 
@@ -503,7 +499,7 @@ void PlaylistWidgetPrivate::resetTree()
 {
     resetSort();
     restoreState(m_playlistController->currentPlaylist());
-    m_clearAction->setEnabled(m_model->rowCount({}) > 0);
+    m_clearAction->setEnabled(!m_playlistController->currentIsAuto() && m_model->rowCount({}) > 0);
 
     if(m_pendingFocus) {
         m_pendingFocus = false;
@@ -604,19 +600,18 @@ void PlaylistWidgetPrivate::resetModel() const
 {
     m_playlistView->playlistAboutToBeReset();
 
-    const bool isSearching = !m_search.isEmpty();
-    if(m_mode == PlaylistWidget::Mode::Playlist) {
-        m_playlistView->setDragEnabled(!isSearching);
-        m_playlistView->setDragDropMode(!isSearching ? QAbstractItemView::DragDrop : QAbstractItemView::NoDragDrop);
-        m_undoAction->setEnabled(!isSearching);
-        m_redoAction->setEnabled(!isSearching);
-    }
+    Playlist* currentPlaylist = m_playlistController->currentPlaylist();
+
+    const bool isAutoPlaylist = m_playlistController->currentIsAuto();
+    const bool readOnly       = (!m_search.isEmpty() || isAutoPlaylist);
+
+    setReadOnly(readOnly, !isAutoPlaylist);
 
     switch(m_mode) {
         case(PlaylistWidget::Mode::Playlist):
-            if(auto* playlist = m_playlistController->currentPlaylist()) {
-                m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns, playlist,
-                               isSearching ? m_filteredTracks : playlist->playlistTracks());
+            if(currentPlaylist) {
+                m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns, currentPlaylist,
+                               !m_search.isEmpty() ? m_filteredTracks : currentPlaylist->playlistTracks());
             }
             break;
         case(PlaylistWidget::Mode::DetachedPlaylist):
@@ -743,7 +738,13 @@ void PlaylistWidgetPrivate::selectionChanged() const
         }
     }
 
-    m_removeTrackAction->setEnabled(true);
+    if(!m_playlistController->currentIsAuto()) {
+        m_cutAction->setEnabled(true);
+        m_pasteAction->setEnabled(true);
+        m_removeTrackAction->setEnabled(true);
+    }
+
+    m_copyAction->setEnabled(true);
     m_addToQueueAction->setEnabled(true);
 
     const auto queuedTracks
@@ -1067,7 +1068,8 @@ void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes,
     const auto changedTrackCount = static_cast<int>(indexes.size());
     // It's faster to just reset if we're going to be updating more than half the playlist
     // or we're updating a large number of tracks
-    if(changedTrackCount > 500 || changedTrackCount > (m_playlistController->currentPlaylist()->trackCount() / 2)) {
+    if(indexes.empty() || changedTrackCount > 500
+       || changedTrackCount > (m_playlistController->currentPlaylist()->trackCount() / 2)) {
         std::vector<int> selectedIndexes;
 
         if(!allNew) {
@@ -1192,6 +1194,23 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
     }
 
     resetModel();
+}
+
+void PlaylistWidgetPrivate::setReadOnly(bool readOnly, bool allowSorting) const
+{
+    m_header->setSectionsClickable(!readOnly || allowSorting);
+
+    if(m_mode == PlaylistWidget::Mode::Playlist) {
+        m_playlistView->setDragEnabled(!readOnly);
+        m_playlistView->setDragDropMode(!readOnly ? QAbstractItemView::DragDrop : QAbstractItemView::NoDragDrop);
+        m_undoAction->setEnabled(!readOnly);
+        m_redoAction->setEnabled(!readOnly);
+        m_removeTrackAction->setEnabled(!readOnly);
+        m_removeFromQueueAction->setEnabled(!readOnly);
+        m_clearAction->setEnabled(!readOnly);
+        m_cutAction->setEnabled(!readOnly);
+        m_pasteAction->setEnabled(!readOnly);
+    }
 }
 
 void PlaylistWidgetPrivate::updateSpans()
@@ -1773,6 +1792,8 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     const auto selected     = filterSelectedIndexes(p->m_playlistView);
     const bool hasSelection = !selected.empty();
 
+    const bool isAutoPlaylist = p->m_playlistController->currentIsAuto();
+
     if(hasSelection) {
         menu->addAction(p->m_playAction);
 
@@ -1785,7 +1806,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
 
         menu->addSeparator();
 
-        if(p->m_mode == Mode::Playlist) {
+        if(!isAutoPlaylist && p->m_mode == Mode::Playlist) {
             if(auto* removeCmd = p->m_actionManager->command(Constants::Actions::Remove)) {
                 menu->addAction(removeCmd->action());
             }
@@ -1797,7 +1818,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
         }
     }
 
-    if(p->m_mode == Mode::Playlist) {
+    if(!isAutoPlaylist && p->m_mode == Mode::Playlist) {
         p->addClipboardMenu(menu, hasSelection);
         menu->addSeparator();
     }

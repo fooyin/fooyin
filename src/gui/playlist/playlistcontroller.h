@@ -30,6 +30,7 @@ class QMenu;
 class QUndoCommand;
 
 namespace Fooyin {
+class Application;
 class PlayerController;
 class Playlist;
 class PlaylistColumnRegistry;
@@ -37,7 +38,6 @@ class PlaylistControllerPrivate;
 class PlaylistHandler;
 struct PlaylistTrack;
 class PresetRegistry;
-class SettingsManager;
 enum class TrackAction;
 class TrackSelectionController;
 
@@ -52,9 +52,7 @@ class PlaylistController : public QObject
     Q_OBJECT
 
 public:
-    PlaylistController(PlaylistHandler* handler, PlayerController* playerController,
-                       TrackSelectionController* selectionController, SettingsManager* settings,
-                       QObject* parent = nullptr);
+    PlaylistController(Application* app, TrackSelectionController* selectionController, QObject* parent = nullptr);
     ~PlaylistController() override;
 
     [[nodiscard]] PlayerController* playerController() const;
@@ -79,6 +77,7 @@ public:
     void focusPlaylist();
 
     [[nodiscard]] bool currentIsActive() const;
+    [[nodiscard]] bool currentIsAuto() const;
     [[nodiscard]] Playlist* currentPlaylist() const;
     [[nodiscard]] UId currentPlaylistId() const;
 

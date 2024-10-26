@@ -132,7 +132,6 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     : m_self{self_}
     , m_settings{new SettingsManager(Core::settingsPath(), m_self)}
     , m_coreSettings{m_settings}
-    , m_translations{}
     , m_database{new Database(m_self)}
     , m_audioLoader{std::make_shared<AudioLoader>()}
     , m_playerController{new PlayerController(m_settings, m_self)}
@@ -141,8 +140,8 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_playlistLoader{std::make_shared<PlaylistLoader>()}
     , m_library{new UnifiedMusicLibrary(m_libraryManager, m_database->connectionPool(), m_playlistLoader, m_audioLoader,
                                         m_settings, m_self)}
-    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_playerController, m_settings,
-                                            m_self)}
+    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_playerController, m_library,
+                                            m_settings, m_self)}
     , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
     , m_networkManager{new NetworkAccessManager(m_settings, m_self)}
     , m_pluginManager{m_settings}
@@ -429,14 +428,8 @@ Application::Application(QObject* parent)
 
     QObject::connect(p->m_playerController, &PlayerController::trackPlayed, p->m_library,
                      &UnifiedMusicLibrary::trackWasPlayed);
-    QObject::connect(p->m_library, &MusicLibrary::tracksLoaded, p->m_playlistHandler,
-                     &PlaylistHandler::populatePlaylists);
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
-    QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, p->m_playlistHandler,
-                     &PlaylistHandler::handleTracksChanged);
-    QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, p->m_playlistHandler,
-                     &PlaylistHandler::handleTracksUpdated);
     QObject::connect(&p->m_engine, &EngineHandler::trackAboutToFinish, this, [this]() {
         p->m_playlistHandler->trackAboutToFinish();
         p->m_engine.prepareNextTrack(p->m_playerController->upcomingTrack());

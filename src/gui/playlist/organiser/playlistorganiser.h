@@ -28,6 +28,7 @@ namespace Fooyin {
 class ActionManager;
 class Command;
 class PlayerController;
+class PlaylistHandler;
 class PlaylistInteractor;
 class PlaylistOrganiserModel;
 class SettingsManager;
@@ -52,7 +53,8 @@ private:
     void selectionChanged();
     void selectCurrentPlaylist();
     void createGroup(const QModelIndex& index) const;
-    void createPlaylist(const QModelIndex& index);
+    void createPlaylist(const QModelIndex& index, bool autoPlaylist);
+    void editAutoPlaylist(const QModelIndex& index);
 
     void filesToPlaylist(const QList<QUrl>& urls, const UId& id);
     void filesToGroup(const QList<QUrl>& urls, const QString& group, int index);
@@ -77,6 +79,10 @@ private:
     Command* m_newGroupCmd;
     QAction* m_newPlaylist;
     Command* m_newPlaylistCmd;
+    QAction* m_newAutoPlaylist;
+    Command* m_newAutoPlaylistCmd;
+    QAction* m_editAutoPlaylist;
+    Command* m_editAutoPlaylistCmd;
 
     UId m_currentPlaylistId;
     bool m_creatingPlaylist{false};

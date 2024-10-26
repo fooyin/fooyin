@@ -19,6 +19,7 @@
 
 #include "guiapplication.h"
 
+#include "dialog/autoplaylistdialog.h"
 #include "dialog/saveplaylistsdialog.h"
 #include "dialog/searchdialog.h"
 #include "internalguisettings.h"
@@ -130,6 +131,7 @@ public:
     void checkTracksNeedUpdate() const;
     void showNeedReloadMessage() const;
 
+    void showScriptEditor();
     void showSearchPlaylistDialog();
     void showSearchLibraryDialog();
     void showQuickSearch() const;
@@ -138,6 +140,9 @@ public:
     void showMessage(const QString& title, const Track& track) const;
     void showTrackNotFoundMessage(const Track& track) const;
     void showTrackUnreableMessage(const Track& track) const;
+
+    void createNewPlaylist() const;
+    void createNewAutoPlaylist();
 
     void addFiles() const;
     void addFolders() const;
@@ -202,8 +207,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_menubar{std::make_unique<MainMenuBar>(m_actionManager, m_settings)}
     , m_mainWindow{std::make_unique<MainWindow>(m_actionManager, m_menubar.get(), m_settings)}
     , m_mainContext{new WidgetContext(m_mainWindow.get(), Context{"Fooyin.MainWindow"}, m_self)}
-    , m_playlistController{std::make_unique<PlaylistController>(m_core->playlistHandler(), m_playerController,
-                                                                &m_selectionController, m_settings)}
+    , m_playlistController{std::make_unique<PlaylistController>(m_core, &m_selectionController)}
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library}
     , m_selectionController{m_actionManager, m_settings, m_playlistController.get()}
     , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
@@ -286,11 +290,8 @@ void GuiApplicationPrivate::setupConnections()
                      &PlaylistController::handleTrackSelectionAction);
     QObject::connect(&m_selectionController, &TrackSelectionController::requestPropertiesDialog, m_self,
                      [this]() { showPropertiesDialog(); });
-    QObject::connect(m_fileMenu, &FileMenu::requestNewPlaylist, m_self, [this]() {
-        if(auto* playlist = m_playlistHandler->createEmptyPlaylist()) {
-            m_playlistController->changeCurrentPlaylist(playlist);
-        }
-    });
+    QObject::connect(m_fileMenu, &FileMenu::requestNewPlaylist, m_self, [this]() { createNewPlaylist(); });
+    QObject::connect(m_fileMenu, &FileMenu::requestNewAutoPlaylist, m_self, [this]() { createNewAutoPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestExit, m_self, [this]() { close(); });
     QObject::connect(m_fileMenu, &FileMenu::requestAddFiles, m_self, [this]() { addFiles(); });
     QObject::connect(m_fileMenu, &FileMenu::requestAddFolders, m_self, [this]() { addFolders(); });
@@ -302,12 +303,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_libraryMenu, &LibraryMenu::requestQuickSearch, m_self, [this]() { showQuickSearch(); });
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
-    QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, m_self, [this]() {
-        auto* scriptEditor
-            = new ScriptEditor(m_core->libraryManager(), m_selectionController.selectedTrack(), m_mainWindow.get());
-        scriptEditor->setAttribute(Qt::WA_DeleteOnClose);
-        scriptEditor->show();
-    });
+    QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, m_self, [this]() { showScriptEditor(); });
     QObject::connect(m_viewMenu, &ViewMenu::showNowPlaying, m_self, [this]() {
         if(auto* activePlaylist = m_playlistHandler->activePlaylist()) {
             m_playlistController->showNowPlaying();
@@ -795,6 +791,14 @@ void GuiApplicationPrivate::showNeedReloadMessage() const
     }
 }
 
+void GuiApplicationPrivate::showScriptEditor()
+{
+    auto* scriptEditor
+        = new ScriptEditor(m_core->libraryManager(), m_selectionController.selectedTrack(), m_mainWindow.get());
+    scriptEditor->setAttribute(Qt::WA_DeleteOnClose);
+    scriptEditor->show();
+}
+
 void GuiApplicationPrivate::showSearchPlaylistDialog()
 {
     auto* coverProvider = new CoverProvider(m_core->audioLoader(), m_settings, m_self);
@@ -900,6 +904,26 @@ void GuiApplicationPrivate::showTrackNotFoundMessage(const Track& track) const
 void GuiApplicationPrivate::showTrackUnreableMessage(const Track& track) const
 {
     showMessage(GuiApplication::tr("No Decoder Available"), track);
+}
+
+void GuiApplicationPrivate::createNewPlaylist() const
+{
+    if(auto* playlist = m_playlistHandler->createEmptyPlaylist()) {
+        m_playlistController->changeCurrentPlaylist(playlist);
+    }
+}
+
+void GuiApplicationPrivate::createNewAutoPlaylist()
+{
+    auto* autoDialog = new AutoPlaylistDialog(m_mainWindow.get());
+    autoDialog->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
+                     [this](const QString& name, const QString& query) {
+                         if(auto* playlist = m_playlistHandler->createAutoPlaylist(name, query)) {
+                             m_playlistController->changeCurrentPlaylist(playlist);
+                         }
+                     });
+    autoDialog->show();
 }
 
 void GuiApplicationPrivate::addFiles() const
