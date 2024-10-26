@@ -217,6 +217,7 @@ public:
     ScriptResult evalPresent(const Expression& exp, const auto& tracks) const;
     ScriptResult evalEquals(const Expression& exp, const auto& tracks) const;
     ScriptResult evalContains(const Expression& exp, const auto& tracks) const;
+    ScriptResult evalContains(const Expression& exp, const Track& track) const;
     ScriptResult evalLimit(const Expression& exp) const;
 
     ParsedScript parse(const QString& input);
@@ -1147,8 +1148,38 @@ ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const auto
     }
 
     ScriptResult result;
-    if(first.value.contains(second.value, Qt::CaseInsensitive)) {
-        result.cond = true;
+    result.cond = first.value.contains(second.value, Qt::CaseInsensitive);
+
+    return result;
+}
+
+ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const Track& track) const
+{
+    const auto args = std::get<ExpressionList>(exp.value);
+    if(args.size() < 2) {
+        return {};
+    }
+
+    const Expression& field = args.at(0);
+    const Expression& value = args.at(1);
+
+    const ScriptResult first = evalExpression(field, track);
+    if(!first.cond) {
+        return {};
+    }
+
+    const ScriptResult second = evalExpression(value, track);
+    if(!second.cond) {
+        return {};
+    }
+
+    ScriptResult result;
+
+    if(field.type == Expr::All) {
+        result.cond = matchSearch(track, second.value, value.type == Expr::QuotedLiteral);
+    }
+    else {
+        result.cond = first.value.contains(second.value, Qt::CaseInsensitive);
     }
 
     return result;
