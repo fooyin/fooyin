@@ -492,7 +492,7 @@ WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
 void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks)
 {
     p->m_tracksPendingUpdate.insert(p->m_tracksPendingUpdate.end(), tracks.cbegin(), tracks.cend());
-    p->m_writeTimer.start(UpdateInterval, this);
+    p->m_updateTimer.start(UpdateInterval, this);
 }
 
 void LibraryThreadHandler::cleanupTracks()
