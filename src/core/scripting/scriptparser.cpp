@@ -200,25 +200,26 @@ public:
     Expression sort();
     Expression limit();
 
-    ScriptResult evalExpression(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalLiteral(const Expression& exp) const;
-    ScriptResult evalVariable(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalVariableList(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalVariableRaw(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalFunction(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalFunctionArg(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalConditional(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalNot(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalGroup(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalAnd(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalOr(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalXOr(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalMissing(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalPresent(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalEquals(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalContains(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalContains(const Expression& exp, const Track& track) const;
-    ScriptResult evalLimit(const Expression& exp) const;
+    ScriptResult evalExpression(const Expression& exp, const auto& tracks);
+    ScriptResult evalLiteral(const Expression& exp);
+    ScriptResult evalVariable(const Expression& exp, const auto& tracks);
+    ScriptResult evalVariableList(const Expression& exp, const auto& tracks);
+    ScriptResult evalVariableRaw(const Expression& exp, const auto& tracks);
+    ScriptResult evalFunction(const Expression& exp, const auto& tracks);
+    ScriptResult evalFunctionArg(const Expression& exp, const auto& tracks);
+    ScriptResult evalConditional(const Expression& exp, const auto& tracks);
+    ScriptResult evalNot(const Expression& exp, const auto& tracks);
+    ScriptResult evalGroup(const Expression& exp, const auto& tracks);
+    ScriptResult evalAnd(const Expression& exp, const auto& tracks);
+    ScriptResult evalOr(const Expression& exp, const auto& tracks);
+    ScriptResult evalXOr(const Expression& exp, const auto& tracks);
+    ScriptResult evalMissing(const Expression& exp, const auto& tracks);
+    ScriptResult evalPresent(const Expression& exp, const auto& tracks);
+    ScriptResult evalEquals(const Expression& exp, const auto& tracks);
+    ScriptResult evalContains(const Expression& exp, const auto& tracks);
+    ScriptResult evalContains(const Expression& exp, const Track& track);
+    ScriptResult evalLimit(const Expression& exp);
+    ScriptResult evalSort(const Expression& exp);
 
     ParsedScript parse(const QString& input);
     ParsedScript parseQuery(const QString& input);
@@ -227,9 +228,9 @@ public:
     template <typename TrackListType>
     TrackListType evaluateQuery(const ParsedScript& input, const TrackListType& tracks);
 
-    ScriptResult compareValues(const Expression& exp, const auto& tracks, const auto& comparator) const;
-    ScriptResult compareDates(const Expression& exp, const auto& tracks, const auto& comparator) const;
-    ScriptResult compareDateRange(const Expression& exp, const auto& tracks) const;
+    ScriptResult compareValues(const Expression& exp, const auto& tracks, const auto& comparator);
+    ScriptResult compareDates(const Expression& exp, const auto& tracks, const auto& comparator);
+    ScriptResult compareDateRange(const Expression& exp, const auto& tracks);
     Expression checkOperator(const Expression& expr);
 
     void reset();
@@ -248,8 +249,9 @@ public:
     ScriptCache m_cache;
     QStringList m_currentResult;
 
-    // Only set once per query on evaluating first track
-    mutable int m_limit{0};
+    QString m_sortScript;
+    Qt::SortOrder m_sortOrder{Qt::AscendingOrder};
+    int m_limit{0};
     int m_filteredCount{0};
 };
 
@@ -778,13 +780,12 @@ Expression ScriptParserPrivate::sort()
         consume(TokenType::TokBy, QObject::tr("Expected %1 after %2").arg(u"'BY'", u"'DESCENDING'"));
     }
 
-    while(!currentToken(TokenType::TokEos)) {
+    while(!currentToken(TokenType::TokLimit) && !currentToken(TokenType::TokEos)) {
         advance();
         val.append(m_previous.value);
     }
 
     expr.value = val;
-    consume(TokenType::TokEos, QObject::tr("Expected end of script"));
     return expr;
 }
 
@@ -800,7 +801,7 @@ Expression ScriptParserPrivate::limit()
     return expr;
 }
 
-ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const auto& tracks)
 {
     switch(exp.type) {
         case(Expr::Literal):
@@ -854,9 +855,10 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
             return compareDateRange(exp, tracks);
         case(Expr::Limit):
             return evalLimit(exp);
-        case(Expr::All):
         case(Expr::SortAscending):
         case(Expr::SortDescending):
+            return evalSort(exp);
+        case(Expr::All):
             return ScriptResult{.value = {}, .cond = true};
         case(Expr::Null):
         default:
@@ -864,7 +866,7 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
     }
 }
 
-ScriptResult ScriptParserPrivate::evalLiteral(const Expression& exp) const
+ScriptResult ScriptParserPrivate::evalLiteral(const Expression& exp)
 {
     ScriptResult result;
     result.value = std::get<QString>(exp.value);
@@ -872,7 +874,7 @@ ScriptResult ScriptParserPrivate::evalLiteral(const Expression& exp) const
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalVariable(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalVariable(const Expression& exp, const auto& tracks)
 {
     const QString var   = std::get<QString>(exp.value);
     ScriptResult result = m_registry->value(var.toLower(), tracks);
@@ -888,13 +890,13 @@ ScriptResult ScriptParserPrivate::evalVariable(const Expression& exp, const auto
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalVariableList(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalVariableList(const Expression& exp, const auto& tracks)
 {
     const QString var = std::get<QString>(exp.value);
     return m_registry->value(var.toLower(), tracks);
 }
 
-ScriptResult ScriptParserPrivate::evalVariableRaw(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalVariableRaw(const Expression& exp, const auto& tracks)
 {
     const QString var = std::get<QString>(exp.value);
 
@@ -918,7 +920,7 @@ ScriptResult ScriptParserPrivate::evalVariableRaw(const Expression& exp, const a
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalFunction(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalFunction(const Expression& exp, const auto& tracks)
 {
     auto func = std::get<FuncValue>(exp.value);
     ScriptValueList args;
@@ -927,7 +929,7 @@ ScriptResult ScriptParserPrivate::evalFunction(const Expression& exp, const auto
     return m_registry->function(func.name, args, tracks);
 }
 
-ScriptResult ScriptParserPrivate::evalFunctionArg(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalFunctionArg(const Expression& exp, const auto& tracks)
 {
     ScriptResult result;
     bool allPassed{true};
@@ -953,7 +955,7 @@ ScriptResult ScriptParserPrivate::evalFunctionArg(const Expression& exp, const a
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalConditional(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalConditional(const Expression& exp, const auto& tracks)
 {
     ScriptResult result;
     QStringList exprResult;
@@ -997,7 +999,7 @@ ScriptResult ScriptParserPrivate::evalConditional(const Expression& exp, const a
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalNot(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalNot(const Expression& exp, const auto& tracks)
 {
     auto args = std::get<ExpressionList>(exp.value);
 
@@ -1013,7 +1015,7 @@ ScriptResult ScriptParserPrivate::evalNot(const Expression& exp, const auto& tra
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalGroup(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalGroup(const Expression& exp, const auto& tracks)
 {
     auto args = std::get<ExpressionList>(exp.value);
 
@@ -1031,7 +1033,7 @@ ScriptResult ScriptParserPrivate::evalGroup(const Expression& exp, const auto& t
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalAnd(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalAnd(const Expression& exp, const auto& tracks)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1050,7 +1052,7 @@ ScriptResult ScriptParserPrivate::evalAnd(const Expression& exp, const auto& tra
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalOr(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalOr(const Expression& exp, const auto& tracks)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1065,7 +1067,7 @@ ScriptResult ScriptParserPrivate::evalOr(const Expression& exp, const auto& trac
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalXOr(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalXOr(const Expression& exp, const auto& tracks)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1080,7 +1082,7 @@ ScriptResult ScriptParserPrivate::evalXOr(const Expression& exp, const auto& tra
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalMissing(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalMissing(const Expression& exp, const auto& tracks)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() != 1) {
@@ -1093,7 +1095,7 @@ ScriptResult ScriptParserPrivate::evalMissing(const Expression& exp, const auto&
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalPresent(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalPresent(const Expression& exp, const auto& tracks)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() != 1) {
@@ -1105,7 +1107,7 @@ ScriptResult ScriptParserPrivate::evalPresent(const Expression& exp, const auto&
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalEquals(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalEquals(const Expression& exp, const auto& tracks)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1130,7 +1132,7 @@ ScriptResult ScriptParserPrivate::evalEquals(const Expression& exp, const auto& 
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const auto& tracks)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1153,7 +1155,7 @@ ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const auto
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const Track& track) const
+ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const Track& track)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1185,7 +1187,7 @@ ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const Trac
     return result;
 }
 
-ScriptResult ScriptParserPrivate::evalLimit(const Expression& exp) const
+ScriptResult ScriptParserPrivate::evalLimit(const Expression& exp)
 {
     ScriptResult result;
     result.cond = true;
@@ -1196,6 +1198,21 @@ ScriptResult ScriptParserPrivate::evalLimit(const Expression& exp) const
 
     const QString limit = std::get<QString>(exp.value);
     m_limit             = limit.toInt();
+
+    return result;
+}
+
+ScriptResult ScriptParserPrivate::evalSort(const Expression& exp)
+{
+    ScriptResult result;
+    result.cond = true;
+
+    if(!m_sortScript.isEmpty()) {
+        return result;
+    }
+
+    m_sortScript = std::get<QString>(exp.value);
+    m_sortOrder  = exp.type == Expr::SortAscending ? Qt::AscendingOrder : Qt::DescendingOrder;
 
     return result;
 }
@@ -1369,27 +1386,21 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
         }
     }
 
-    const Expression& lastExpr = input.expressions.back();
-    if(lastExpr.type == Expr::SortAscending || lastExpr.type == Expr::SortDescending) {
+    if(!m_sortScript.isEmpty()) {
         TrackSorter m_sorter;
-
         if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
-            filteredTracks = m_sorter.calcSortTracks(std::get<QString>(lastExpr.value), filteredTracks,
-                                                     PlaylistTrack::extractor, PlaylistTrack::extractorConst,
-                                                     lastExpr.type == Expr::SortAscending ? Qt::AscendingOrder
-                                                                                          : Qt::DescendingOrder);
+            filteredTracks = m_sorter.calcSortTracks(m_sortScript, filteredTracks, PlaylistTrack::extractor,
+                                                     PlaylistTrack::extractorConst, m_sortOrder);
         }
         else {
-            filteredTracks = m_sorter.calcSortTracks(std::get<QString>(lastExpr.value), filteredTracks,
-                                                     lastExpr.type == Expr::SortAscending ? Qt::AscendingOrder
-                                                                                          : Qt::DescendingOrder);
+            filteredTracks = m_sorter.calcSortTracks(m_sortScript, filteredTracks, m_sortOrder);
         }
     }
 
     return filteredTracks;
 }
 
-ScriptResult ScriptParserPrivate::compareValues(const Expression& exp, const auto& tracks, const auto& comparator) const
+ScriptResult ScriptParserPrivate::compareValues(const Expression& exp, const auto& tracks, const auto& comparator)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1422,7 +1433,7 @@ ScriptResult ScriptParserPrivate::compareValues(const Expression& exp, const aut
     return result;
 }
 
-ScriptResult ScriptParserPrivate::compareDates(const Expression& exp, const auto& tracks, const auto& comparator) const
+ScriptResult ScriptParserPrivate::compareDates(const Expression& exp, const auto& tracks, const auto& comparator)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1451,7 +1462,7 @@ ScriptResult ScriptParserPrivate::compareDates(const Expression& exp, const auto
     return result;
 }
 
-ScriptResult ScriptParserPrivate::compareDateRange(const Expression& exp, const auto& tracks) const
+ScriptResult ScriptParserPrivate::compareDateRange(const Expression& exp, const auto& tracks)
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 3) {
@@ -1528,6 +1539,8 @@ void ScriptParserPrivate::reset()
     m_currentResult.clear();
     m_filteredCount = 0;
     m_limit         = 0;
+    m_sortScript.clear();
+    m_sortOrder = Qt::AscendingOrder;
 }
 
 ScriptParser::ScriptParser()
