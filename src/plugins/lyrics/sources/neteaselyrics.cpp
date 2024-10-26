@@ -153,7 +153,7 @@ void NeteaseLyrics::handleLyricReply()
         const QJsonObject lrc = obj.value(u"lrc").toObject();
         const QString lyrics  = lrc.value(u"lyric").toString().trimmed();
         if(!lyrics.isEmpty()) {
-            m_currentData->data = lyrics.toUtf8();
+            m_currentData->data = lyrics;
         }
     }
 

@@ -218,6 +218,7 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
             continue;
         }
 
+        lyrics.data    = lyricData.data;
         lyrics.source  = m_currentSource->name();
         lyrics.isLocal = m_currentSource->isLocal();
 

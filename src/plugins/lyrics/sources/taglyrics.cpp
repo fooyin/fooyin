@@ -46,7 +46,7 @@ void TagLyrics::search(const SearchParams& params)
             lyricData.title  = params.title;
             lyricData.album  = params.album;
             lyricData.artist = params.artist;
-            lyricData.data   = lyrics.constFirst().toUtf8();
+            lyricData.data   = lyrics.constFirst();
             data.push_back(lyricData);
         }
     }

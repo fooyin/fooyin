@@ -144,7 +144,7 @@ void DarkLyrics::handleLyricReply()
     lyrics.title  = m_params.title;
     lyrics.album  = m_params.album;
     lyrics.artist = m_params.artist;
-    lyrics.data   = lyricsText.toUtf8();
+    lyrics.data   = lyricsText;
 
     emit searchResult({lyrics});
 }

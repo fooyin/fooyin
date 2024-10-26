@@ -70,12 +70,12 @@ void LrcLibLyrics::handleLyricReply()
         LyricData data;
         QString lyrics = obj.value(u"syncedLyrics").toString();
         if(!lyrics.isEmpty()) {
-            data.data = lyrics.toUtf8();
+            data.data = lyrics;
         }
         else {
             lyrics = obj.value(u"plainLyrics").toString();
             if(!lyrics.isEmpty()) {
-                data.data = lyrics.toUtf8();
+                data.data = lyrics;
             }
         }
 

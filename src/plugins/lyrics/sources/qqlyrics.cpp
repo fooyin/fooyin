@@ -131,7 +131,7 @@ void QQLyrics::handleLyricReply()
 
         const QString lyrics = obj.value(u"lyric").toString();
         if(!lyrics.isEmpty()) {
-            m_currentData->data = lyrics.toUtf8();
+            m_currentData->data = lyrics;
         }
     }
 

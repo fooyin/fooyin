@@ -39,6 +39,7 @@ public:
                           QWidget* parent = nullptr);
 
     void accept() override;
+    void apply();
 
     [[nodiscard]] QSize sizeHint() const override;
 

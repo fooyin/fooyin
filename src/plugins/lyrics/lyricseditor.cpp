@@ -74,6 +74,7 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Se
 
     auto* buttonBox
         = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, this);
+    QObject::connect(buttonBox->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this, &LyricsEditor::apply);
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
@@ -100,9 +101,16 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Se
 
 void LyricsEditor::accept()
 {
-    m_lyrics = parse(m_lyricsText->toPlainText());
-    emit lyricsEdited(m_lyrics);
+    apply();
     QDialog::accept();
+}
+
+void LyricsEditor::apply()
+{
+    const QString text = m_lyricsText->toPlainText();
+    m_lyrics           = parse(text);
+    m_lyrics.data      = text;
+    emit lyricsEdited(m_lyrics);
 }
 
 QSize LyricsEditor::sizeHint() const
@@ -112,8 +120,7 @@ QSize LyricsEditor::sizeHint() const
 
 void LyricsEditor::reset()
 {
-    const QString lrc = LyricsSaver::lyricsToLrc(m_lyrics, {});
-    m_lyricsText->setPlainText(lrc);
+    m_lyricsText->setPlainText(m_lyrics.data);
 }
 
 void LyricsEditor::seek()

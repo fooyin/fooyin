@@ -74,7 +74,7 @@ SettingsManager* LyricSource::settings() const
     return m_settings;
 }
 
-QByteArray LyricSource::toUtf8(QIODevice* file)
+QString LyricSource::toUtf8(QIODevice* file)
 {
     const QByteArray data = file->readAll();
     if(data.isEmpty()) {
@@ -110,7 +110,7 @@ QByteArray LyricSource::toUtf8(QIODevice* file)
     string.replace(QLatin1String{"\n\n"}, QLatin1String{"\n"});
     string.replace(u'\r', u'\n');
 
-    return string.toUtf8();
+    return string;
 }
 
 QString LyricSource::encode(const QString& str)

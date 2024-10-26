@@ -47,7 +47,7 @@ struct LyricData
 {
     QString id;   // Used by some services to query lyrics after searching
     QString path; // Only useful for local sources
-    QByteArray data;
+    QString data;
 
     QString title;
     QString album;
@@ -80,7 +80,7 @@ protected:
     [[nodiscard]] NetworkAccessManager* network() const;
     [[nodiscard]] SettingsManager* settings() const;
 
-    static QByteArray toUtf8(QIODevice* file);
+    static QString toUtf8(QIODevice* file);
     static QString encode(const QString& str);
 
     bool getJsonFromReply(QNetworkReply* reply, QJsonObject* obj);

@@ -109,6 +109,7 @@ struct Lyrics
     };
 
     Type type{Type::Unknown};
+    QString data;
     QString source;
     bool isLocal{false};
     Metadata metadata;
