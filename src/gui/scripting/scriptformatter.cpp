@@ -160,6 +160,7 @@ void ScriptFormatterPrivate::expression()
         case(ScriptScanner::TokWeek):
         case(ScriptScanner::TokAscending):
         case(ScriptScanner::TokDescending):
+        case(ScriptScanner::TokLimit):
             m_currentBlock.text += m_previous.value;
             break;
         case(ScriptScanner::TokEscape):

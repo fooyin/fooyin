@@ -291,6 +291,8 @@ ScriptScanner::Token ScriptScanner::keyword()
                         return checkKeyword(2, u"ST", TokLast);
                     case(u'E'):
                         return checkKeyword(2, u"SS", TokLeftAngle);
+                    case(u'I'):
+                        return checkKeyword(2, u"MIT", TokLimit);
                     default:
                         break;
                 }

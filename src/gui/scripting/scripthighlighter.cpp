@@ -99,6 +99,7 @@ void ScriptHighlighter::expression()
         case(ScriptScanner::TokHour):
         case(ScriptScanner::TokDay):
         case(ScriptScanner::TokWeek):
+        case(ScriptScanner::TokLimit):
             break;
     }
 }

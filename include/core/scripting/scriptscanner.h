@@ -67,6 +67,7 @@ public:
         TokWeek        = 35,
         TokMissing     = 36,
         TokPresent     = 37,
+        TokLimit       = 38,
     };
 
     struct Token

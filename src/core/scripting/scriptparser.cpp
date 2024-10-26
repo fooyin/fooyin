@@ -149,6 +149,7 @@ bool isQueryExpression(Fooyin::Expr::Type type)
         case(Type::Since):
         case(Type::During):
         case(Type::Date):
+        case(Type::Limit):
             return true;
         case(Type::Null):
         case(Type::Literal):
@@ -159,6 +160,7 @@ bool isQueryExpression(Fooyin::Expr::Type type)
         case(Type::FunctionArg):
         case(Type::Conditional):
         case(Type::QuotedLiteral):
+            break;
             break;
     }
 
@@ -182,7 +184,7 @@ public:
     void error(const QString& message);
 
     Expression expression();
-    Expression literal();
+    Expression literal() const;
     Expression quote();
     Expression variable();
     Expression function();
@@ -196,6 +198,7 @@ public:
     Expression timeKeyword(const Expression& key, Expr::Type type);
     Expression duringKeyword(const Expression& key);
     Expression sort();
+    Expression limit();
 
     ScriptResult evalExpression(const Expression& exp, const auto& tracks) const;
     ScriptResult evalLiteral(const Expression& exp) const;
@@ -214,17 +217,21 @@ public:
     ScriptResult evalPresent(const Expression& exp, const auto& tracks) const;
     ScriptResult evalEquals(const Expression& exp, const auto& tracks) const;
     ScriptResult evalContains(const Expression& exp, const auto& tracks) const;
+    ScriptResult evalLimit(const Expression& exp) const;
 
     ParsedScript parse(const QString& input);
     ParsedScript parseQuery(const QString& input);
     QString evaluate(const ParsedScript& input, const auto& tracks);
-    TrackList evaluateQuery(const ParsedScript& input, const TrackList& tracks);
-    PlaylistTrackList evaluateQuery(const ParsedScript& input, const PlaylistTrackList& tracks);
+
+    template <typename TrackListType>
+    TrackListType evaluateQuery(const ParsedScript& input, const TrackListType& tracks);
 
     ScriptResult compareValues(const Expression& exp, const auto& tracks, const auto& comparator) const;
     ScriptResult compareDates(const Expression& exp, const auto& tracks, const auto& comparator) const;
     ScriptResult compareDateRange(const Expression& exp, const auto& tracks) const;
     Expression checkOperator(const Expression& expr);
+
+    void reset();
 
     ScriptParser* m_self;
 
@@ -239,6 +246,10 @@ public:
     ParsedScript m_currentScript;
     ScriptCache m_cache;
     QStringList m_currentResult;
+
+    // Only set once per query on evaluating first track
+    mutable int m_limit{0};
+    int m_filteredCount{0};
 };
 
 ScriptParserPrivate::ScriptParserPrivate(ScriptParser* self, ScriptRegistry* registry)
@@ -340,6 +351,8 @@ Expression ScriptParserPrivate::expression()
             return m_isQuery ? Expression{Expr::All} : literal();
         case(TokenType::TokSort):
             return m_isQuery ? sort() : literal();
+        case(TokenType::TokLimit):
+            return limit();
         case(TokenType::TokAnd):
         case(TokenType::TokOr):
         case(TokenType::TokXOr):
@@ -376,7 +389,7 @@ Expression ScriptParserPrivate::expression()
     return {Expr::Null};
 }
 
-Expression ScriptParserPrivate::literal()
+Expression ScriptParserPrivate::literal() const
 {
     QString value = m_previous.value;
 
@@ -774,6 +787,18 @@ Expression ScriptParserPrivate::sort()
     return expr;
 }
 
+Expression ScriptParserPrivate::limit()
+{
+    Expression expr{Expr::Limit};
+
+    if(!currentToken(TokenType::TokEos)) {
+        advance();
+        expr.value = m_previous.value;
+    }
+
+    return expr;
+}
+
 ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const auto& tracks) const
 {
     switch(exp.type) {
@@ -826,6 +851,8 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
             return compareDates(exp, tracks, std::greater_equal<>());
         case(Expr::During):
             return compareDateRange(exp, tracks);
+        case(Expr::Limit):
+            return evalLimit(exp);
         case(Expr::All):
         case(Expr::SortAscending):
         case(Expr::SortDescending):
@@ -1127,6 +1154,21 @@ ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const auto
     return result;
 }
 
+ScriptResult ScriptParserPrivate::evalLimit(const Expression& exp) const
+{
+    ScriptResult result;
+    result.cond = true;
+
+    if(m_limit > 0) {
+        return result;
+    }
+
+    const QString limit = std::get<QString>(exp.value);
+    m_limit             = limit.toInt();
+
+    return result;
+}
+
 ParsedScript ScriptParserPrivate::parse(const QString& input)
 {
     if(input.isEmpty() || !m_registry) {
@@ -1206,7 +1248,7 @@ QString ScriptParserPrivate::evaluate(const ParsedScript& input, const auto& tra
         return {};
     }
 
-    m_currentResult.clear();
+    reset();
 
     const ExpressionList expressions = input.expressions;
     for(const auto& expr : expressions) {
@@ -1246,25 +1288,28 @@ QString ScriptParserPrivate::evaluate(const ParsedScript& input, const auto& tra
     return {};
 }
 
-TrackList ScriptParserPrivate::evaluateQuery(const ParsedScript& input, const TrackList& tracks)
+template <typename TrackListType>
+TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, const TrackListType& tracks)
 {
     if(!input.isValid() || !m_registry) {
         return {};
     }
 
-    m_currentResult.clear();
+    reset();
+    TrackListType filteredTracks;
 
-    TrackList filteredTracks;
-
-    const ExpressionList expressions = input.expressions;
-
-    if(expressions.size() == 1) {
-        const auto& firstExpr = expressions.front();
+    if(input.expressions.size() == 1) {
+        const auto& firstExpr = input.expressions.front();
         if(firstExpr.type == Expr::Literal || firstExpr.type == Expr::QuotedLiteral) {
             // Simple search query - just match all terms in metadata/filepath
-            const QString search = std::get<QString>(expressions.front().value);
-            return Utils::filter(tracks, [&search, &firstExpr](const Track& track) {
-                return matchSearch(track, search, firstExpr.type == Expr::QuotedLiteral);
+            const QString search = std::get<QString>(firstExpr.value);
+            return Utils::filter(tracks, [&search, &firstExpr](const auto& track) {
+                if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+                    return matchSearch(track.track, search, firstExpr.type == Expr::QuotedLiteral);
+                }
+                else {
+                    return matchSearch(track, search, firstExpr.type == Expr::QuotedLiteral);
+                }
             });
         }
         if(!isQueryExpression(firstExpr.type)) {
@@ -1272,63 +1317,42 @@ TrackList ScriptParserPrivate::evaluateQuery(const ParsedScript& input, const Tr
         }
     }
 
-    for(const Track& track : tracks) {
-        if(std::ranges::all_of(expressions,
-                               [this, &track](const auto& expr) { return evalExpression(expr, track).cond; })) {
+    int count{0};
+    for(const auto& track : tracks) {
+        if(m_limit > 0 && count >= m_limit) {
+            break;
+        }
+
+        const bool matches = std::ranges::all_of(input.expressions, [&](const auto& expr) {
+            if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+                return evalExpression(expr, track.track).cond;
+            }
+            else {
+                return evalExpression(expr, track).cond;
+            }
+        });
+
+        if(matches) {
             filteredTracks.emplace_back(track);
+            ++count;
         }
     }
 
-    const Expression& lastExpr = expressions.back();
+    const Expression& lastExpr = input.expressions.back();
     if(lastExpr.type == Expr::SortAscending || lastExpr.type == Expr::SortDescending) {
         TrackSorter m_sorter;
-        filteredTracks
-            = m_sorter.calcSortTracks(std::get<QString>(lastExpr.value), filteredTracks,
-                                      lastExpr.type == Expr::SortAscending ? Qt::AscendingOrder : Qt::DescendingOrder);
-    }
 
-    return filteredTracks;
-}
-
-PlaylistTrackList ScriptParserPrivate::evaluateQuery(const ParsedScript& input, const PlaylistTrackList& tracks)
-{
-    if(!input.isValid() || !m_registry) {
-        return {};
-    }
-
-    m_currentResult.clear();
-
-    PlaylistTrackList filteredTracks;
-
-    const ExpressionList expressions = input.expressions;
-
-    if(expressions.size() == 1) {
-        const auto& firstExpr = expressions.front();
-        if(firstExpr.type == Expr::Literal || firstExpr.type == Expr::QuotedLiteral) {
-            // Simple search query - just match all terms in metadata/filepath
-            const QString search = std::get<QString>(expressions.front().value);
-            return Utils::filter(tracks, [&search, &firstExpr](const PlaylistTrack& track) {
-                return matchSearch(track.track, search, firstExpr.type == Expr::QuotedLiteral);
-            });
+        if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+            filteredTracks = m_sorter.calcSortTracks(std::get<QString>(lastExpr.value), filteredTracks,
+                                                     PlaylistTrack::extractor, PlaylistTrack::extractorConst,
+                                                     lastExpr.type == Expr::SortAscending ? Qt::AscendingOrder
+                                                                                          : Qt::DescendingOrder);
         }
-        if(!isQueryExpression(firstExpr.type)) {
-            return {};
+        else {
+            filteredTracks = m_sorter.calcSortTracks(std::get<QString>(lastExpr.value), filteredTracks,
+                                                     lastExpr.type == Expr::SortAscending ? Qt::AscendingOrder
+                                                                                          : Qt::DescendingOrder);
         }
-    }
-
-    for(const PlaylistTrack& track : tracks) {
-        if(std::ranges::all_of(expressions,
-                               [this, &track](const auto& expr) { return evalExpression(expr, track.track).cond; })) {
-            filteredTracks.emplace_back(track);
-        }
-    }
-
-    const Expression& lastExpr = expressions.back();
-    if(lastExpr.type == Expr::SortAscending || lastExpr.type == Expr::SortDescending) {
-        TrackSorter m_sorter;
-        filteredTracks = m_sorter.calcSortTracks(
-            std::get<QString>(lastExpr.value), filteredTracks, PlaylistTrack::extractor, PlaylistTrack::extractorConst,
-            lastExpr.type == Expr::SortAscending ? Qt::AscendingOrder : Qt::DescendingOrder);
     }
 
     return filteredTracks;
@@ -1466,6 +1490,13 @@ Expression ScriptParserPrivate::checkOperator(const Expression& expr)
     }
 
     return expr;
+}
+
+void ScriptParserPrivate::reset()
+{
+    m_currentResult.clear();
+    m_filteredCount = 0;
+    m_limit         = 0;
 }
 
 ScriptParser::ScriptParser()

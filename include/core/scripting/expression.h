@@ -55,6 +55,7 @@ enum Type : uint8_t
     After          = 27,
     Since          = 28,
     During         = 29,
+    Limit          = 30,
 };
 }
 
