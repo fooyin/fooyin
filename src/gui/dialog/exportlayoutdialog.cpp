@@ -117,10 +117,10 @@ void ExportLayoutDialog::accept()
     const auto currentTheme = m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
     if(currentTheme.isValid()) {
         FyLayout::ThemeOptions themeOptions;
-        if(m_saveColours) {
+        if(m_saveColours->isChecked()) {
             themeOptions |= FyLayout::SaveColours;
         }
-        if(m_saveFonts) {
+        if(m_saveFonts->isChecked()) {
             themeOptions |= FyLayout::SaveFonts;
         }
         layout.saveTheme(currentTheme, themeOptions);
