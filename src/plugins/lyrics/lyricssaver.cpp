@@ -57,6 +57,11 @@ void toLrc(const Fooyin::Lyrics::Lyrics& lyrics, Device device, Format format,
 
     QTextStream stream{device};
 
+    if(options == LyricsSaver::None) {
+        stream << lyrics.data;
+        return;
+    }
+
     if(!synced) {
         for(const auto& line : lyrics.lines) {
             const QString words = line.joinedWords();
