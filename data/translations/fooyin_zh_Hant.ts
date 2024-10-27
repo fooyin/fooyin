@@ -29,7 +29,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation>配置(&amp;Y)</translation>
+        <translation>配置(&amp;y)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
@@ -152,7 +152,7 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="531"/>
         <source>&amp;Centre</source>
-        <translation>置中對齊(&amp;C)</translation>
+        <translation>置中(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="532"/>
@@ -278,12 +278,12 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="243"/>
         <source>Add to &amp;current playlist</source>
-        <translation>加入到目前播放清單(&amp;C)</translation>
+        <translation>加入到目前播放清單(&amp;c)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="244"/>
         <source>Add to &amp;active playlist</source>
-        <translation>加入到現行播放清單(&amp;A)</translation>
+        <translation>加入到現行播放清單(&amp;a)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="245"/>
@@ -293,17 +293,17 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="246"/>
         <source>Send to &amp;new playlist</source>
-        <translation>傳送到新播放清單(&amp;N)</translation>
+        <translation>傳送到新建播放清單(&amp;n)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="247"/>
         <source>Add to playback &amp;queue</source>
-        <translation>加入到播放佇列(&amp;Q)</translation>
+        <translation>加入到播放佇列(&amp;q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="248"/>
         <source>Send to playback q&amp;ueue</source>
-        <translation>傳送到播放佇列(&amp;U)</translation>
+        <translation>傳送到播放佇列(&amp;u)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="280"/>
@@ -348,7 +348,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="336"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation>新增選中的曲目到播放佇列</translation>
+        <translation>將所選曲目加入到播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="343"/>
@@ -553,7 +553,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="42"/>
         <source>S&amp;earch</source>
-        <translation>搜尋(&amp;E)</translation>
+        <translation>搜尋(&amp;e)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
@@ -636,7 +636,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="551"/>
         <source>&amp;Undo</source>
-        <translation>撤銷(&amp;U)</translation>
+        <translation>回復(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="561"/>
@@ -646,7 +646,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="444"/>
         <source>&amp;Replace</source>
-        <translation>替換(&amp;R)</translation>
+        <translation>取代(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="352"/>
@@ -792,7 +792,7 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="139"/>
         <source>Add</source>
-        <translation>新增</translation>
+        <translation>加入</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="140"/>
@@ -815,22 +815,22 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="46"/>
         <source>Add &amp;files…</source>
-        <translation>新增檔案(&amp;F)…</translation>
+        <translation>加入檔案(&amp;f)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="47"/>
         <source>Add the specified files to the current playlist</source>
-        <translation>新增指定檔案到目前播放清單</translation>
+        <translation>將指定檔案加入到目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="53"/>
         <source>Ad&amp;d folders…</source>
-        <translation>新增目錄(&amp;D)…</translation>
+        <translation>加入資料夾(&amp;d)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="54"/>
         <source>Add the contents of the specified directory to the current playlist</source>
-        <translation>新增所選目錄內容到目前播放清單</translation>
+        <translation>將所選指定目錄內容加入到目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="62"/>
@@ -880,7 +880,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="84"/>
         <source>Save &amp;all playlists…</source>
-        <translation>儲存全部播放清單(&amp;A)…</translation>
+        <translation>儲存全部播放清單(&amp;a)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="85"/>
@@ -908,7 +908,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="122"/>
         <source>Remove empty source folders</source>
-        <translation>移除空的原始資料夾</translation>
+        <translation>移除空白來源資料夾</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="124"/>
@@ -988,12 +988,12 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="237"/>
         <source>Copy entire source folder contents</source>
-        <translation>複製整個原始檔夾的內容</translation>
+        <translation>複製整個來源資料夾內容</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="238"/>
         <source>Move entire source folder contents</source>
-        <translation>移動整個原始檔夾的內容</translation>
+        <translation>移動整個來源資料夾內容</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="271"/>
@@ -1021,7 +1021,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="93"/>
         <source>Source</source>
-        <translation>源</translation>
+        <translation>來源</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="95"/>
@@ -1056,7 +1056,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
         <source>Unknown</source>
-        <translation>未知</translation>
+        <translation>不明</translation>
     </message>
 </context>
 <context>
@@ -1079,7 +1079,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="51"/>
         <source>&amp;Rename to…</source>
-        <translation>重新命名為(&amp;R)…</translation>
+        <translation>重新命名(&amp;R)…</translation>
     </message>
 </context>
 <context>
@@ -1145,12 +1145,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="185"/>
         <source>Add</source>
-        <translation>新增</translation>
+        <translation>加入</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="304"/>
         <source>Add New Group</source>
-        <translation>新增新組</translation>
+        <translation>增加新建群組</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="332"/>
@@ -1601,7 +1601,7 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="60"/>
         <source>Loop count</source>
-        <translation>迴圈次數</translation>
+        <translation>循環次數</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="61"/>
@@ -2220,7 +2220,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="62"/>
         <source>S&amp;earching help</source>
-        <translation>搜尋說明</translation>
+        <translation>搜尋說明(&amp;e)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
@@ -2523,7 +2523,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="70"/>
         <source>Loc&amp;k splitters</source>
-        <translation>鎖定分割器(&amp;K)</translation>
+        <translation>鎖定分割器(&amp;k)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="71"/>
@@ -2543,7 +2543,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
         <source>E&amp;xport layout…</source>
-        <translation>匯出配置(&amp;X)…</translation>
+        <translation>匯出配置(&amp;x)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="85"/>
@@ -2720,7 +2720,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="70"/>
         <source>S&amp;earch</source>
-        <translation>搜尋(&amp;E)</translation>
+        <translation>搜尋(&amp;e)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="73"/>
@@ -2740,7 +2740,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="82"/>
         <source>&amp;Configure</source>
-        <translation>調設(&amp;C)</translation>
+        <translation>調整設定(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="85"/>
@@ -2888,7 +2888,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="45"/>
         <source>Folder Structure</source>
-        <translation>目錄結構</translation>
+        <translation>資料夾結構</translation>
     </message>
 </context>
 <context>
@@ -3980,7 +3980,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>P&amp;revious</source>
-        <translation>上一首(&amp;R)</translation>
+        <translation>上一首(&amp;r)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
@@ -3990,17 +3990,17 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
         <source>Repeat &amp;playlist</source>
-        <translation>重覆播放清單(&amp;P)</translation>
+        <translation>重覆播放清單(&amp;p)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="53"/>
         <source>&amp;Shuffle tracks</source>
-        <translation>亂序曲目軌(&amp;S)</translation>
+        <translation>亂序曲目(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="54"/>
         <source>Shu&amp;ffle albums</source>
-        <translation>亂序專輯(&amp;F)</translation>
+        <translation>亂序專輯(&amp;f)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
@@ -4010,7 +4010,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="56"/>
         <source>Stop &amp;after current</source>
-        <translation>播放目前曲目後停止(&amp;A)</translation>
+        <translation>播放目前曲目後停止(&amp;a)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="60"/>
@@ -4081,7 +4081,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="171"/>
         <source>Cursor follows play&amp;back</source>
-        <translation>游標跟隨播放(&amp;B)</translation>
+        <translation>游標跟隨播放(&amp;b)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="172"/>
@@ -4091,7 +4091,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="173"/>
         <source>Playback follows &amp;cursor</source>
-        <translation>播放跟隨游標(&amp;C)</translation>
+        <translation>播放跟隨游標(&amp;c)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="214"/>
@@ -4106,12 +4106,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Repeat &amp;track</source>
-        <translation>重覆單曲(&amp;T)</translation>
+        <translation>重覆曲目(&amp;t)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Repeat &amp;album</source>
-        <translation>重覆專輯(&amp;A)</translation>
+        <translation>重覆專輯(&amp;a)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="76"/>
@@ -4887,7 +4887,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="355"/>
         <source>Add Preset</source>
-        <translation>加入預設</translation>
+        <translation>增加預設</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="376"/>
@@ -4925,7 +4925,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="491"/>
         <source>Add playlist</source>
-        <translation>新增播放清單</translation>
+        <translation>加入播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="499"/>
@@ -4986,7 +4986,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>Cu&amp;t</source>
-        <translation>剪下(&amp;T)</translation>
+        <translation>剪下(&amp;t)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="192"/>
@@ -5001,7 +5001,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="194"/>
         <source>C&amp;lear</source>
-        <translation>清除(&amp;L)</translation>
+        <translation>清除(&amp;l)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="195"/>
@@ -5011,12 +5011,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="196"/>
         <source>Add to playback &amp;queue</source>
-        <translation>加入到播放佇列(&amp;Q)</translation>
+        <translation>加入到播放佇列(&amp;q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="198"/>
         <source>Remove from playback q&amp;ueue</source>
-        <translation>從播放佇列中移除(&amp;U)</translation>
+        <translation>從播放佇列中移除(&amp;u)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="314"/>
@@ -5026,7 +5026,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="325"/>
         <source>&amp;Undo</source>
-        <translation>還原(&amp;U)</translation>
+        <translation>回復(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="338"/>
@@ -5061,7 +5061,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="398"/>
         <source>Select &amp;all</source>
-        <translation>全選(&amp;A)</translation>
+        <translation>全選(&amp;a)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="399"/>
@@ -5133,7 +5133,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="190"/>
         <source>&amp;Stop after this</source>
-        <translation>目前曲目完畢後停止(&amp;S)</translation>
+        <translation>目前曲目後停止(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1254"/>
@@ -6580,7 +6580,7 @@
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="310"/>
         <source>Re&amp;move</source>
-        <translation>刪除(&amp;M)</translation>
+        <translation>刪除(&amp;m)</translation>
     </message>
 </context>
 <context>
@@ -6743,7 +6743,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="58"/>
         <source>Auto &amp;track number</source>
-        <translation>自動曲目編號(&amp;T)</translation>
+        <translation>自動曲目編號(&amp;t)</translation>
     </message>
 </context>
 <context>
@@ -6789,7 +6789,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="129"/>
         <source>Open containing folder</source>
-        <translation>開啟包含目錄</translation>
+        <translation>開啟曲目所在資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="130"/>
@@ -6862,7 +6862,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="54"/>
         <source>Loop count</source>
-        <translation>重覆次數</translation>
+        <translation>循環次數</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="55"/>
@@ -6961,7 +6961,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="64"/>
         <source>Show playing &amp;track</source>
-        <translation>顯示播放中的曲目(&amp;T)</translation>
+        <translation>顯示播放中的曲目(&amp;t)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="67"/>
