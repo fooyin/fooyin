@@ -68,6 +68,8 @@ public:
         TokMissing     = 36,
         TokPresent     = 37,
         TokLimit       = 38,
+        TokPlus        = 39,
+        TokMinus       = 40,
     };
 
     struct Token

@@ -383,6 +383,8 @@ Expression ScriptParserPrivate::expression()
         case(TokenType::TokDescending):
         case(TokenType::TokSlash):
         case(TokenType::TokLiteral):
+        case(TokenType::TokPlus):
+        case(TokenType::TokMinus):
             return literal();
         case(TokenType::TokEos):
         case(TokenType::TokError):
@@ -765,9 +767,13 @@ Expression ScriptParserPrivate::sort()
     Expression expr;
     QString val;
 
-    if(currentToken(TokenType::TokBy)) {
+    if(currentToken(TokenType::TokBy) || currentToken(TokenType::TokPlus)) {
         advance();
         expr.type = Expr::SortAscending;
+    }
+    else if(currentToken(TokenType::TokMinus)) {
+        advance();
+        expr.type = Expr::SortDescending;
     }
     else if(currentToken(TokenType::TokAscending)) {
         advance();

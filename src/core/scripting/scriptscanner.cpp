@@ -38,6 +38,8 @@ bool isLiteral(QChar ch)
         case(u'='):
         case(u'!'):
         case(u'*'):
+        case(u'+'):
+        case(u'-'):
         case(u'\\'):
         case(u'\0'):
             return false;
@@ -188,6 +190,10 @@ ScriptScanner::Token ScriptScanner::scanNext()
             return makeToken(TokNot);
         case(u'*'):
             return makeToken(TokAll);
+        case(u'+'):
+            return makeToken(TokPlus);
+        case(u'-'):
+            return makeToken(TokMinus);
         case(u'\\'):
             return makeToken(TokEscape);
         case(u'\0'):
@@ -338,6 +344,9 @@ ScriptScanner::Token ScriptScanner::keyword()
                     default:
                         break;
                 }
+            }
+            else if(peek() == u'+' || peek() == u'-') {
+                return makeToken(TokSort);
             }
             break;
         case(u'W'):
