@@ -464,6 +464,12 @@ bool PlaylistOrganiserModel::canDropMimeData(const QMimeData* data, Qt::DropActi
         return parent.data(PlaylistOrganiserItem::ItemType).toInt() != PlaylistOrganiserItem::PlaylistItem;
     }
 
+    if(auto* playlist = parent.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
+        if(playlist->isAutoPlaylist()) {
+            return false;
+        }
+    }
+
     if(data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds)) || data->hasUrls()) {
         return true;
     }

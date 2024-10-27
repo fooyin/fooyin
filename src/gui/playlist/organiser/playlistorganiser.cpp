@@ -392,7 +392,7 @@ void PlaylistOrganiser::createPlaylist(const QModelIndex& index, bool autoPlayli
         QObject::connect(autoDialog, &QDialog::finished, this, [this]() { m_creatingPlaylist = false; });
         QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, this,
                          [this, addToModel](const QString& name, const QString& query) {
-                             if(auto* playlist = m_playlistInteractor->handler()->createAutoPlaylist(name, query)) {
+                             if(auto* playlist = m_playlistInteractor->handler()->createNewAutoPlaylist(name, query)) {
                                  addToModel(playlist);
                              }
                          });

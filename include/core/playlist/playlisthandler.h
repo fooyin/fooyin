@@ -80,6 +80,8 @@ public:
     Playlist* createNewTempPlaylist(const QString& name, const TrackList& tracks);
     /** Returns the autoplaylist called @p name if it exists, otherwise creates it. */
     Playlist* createAutoPlaylist(const QString& name, const QString& query);
+    /** Creates and returns the autoplaylist called @p name. If it already exists, the name will be changed. */
+    Playlist* createNewAutoPlaylist(const QString& name, const QString& query);
 
     /** Adds @p tracks to the end of the playlist with @p id if found. */
     void appendToPlaylist(const UId& id, const TrackList& tracks);

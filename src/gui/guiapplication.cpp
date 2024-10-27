@@ -919,7 +919,7 @@ void GuiApplicationPrivate::createNewAutoPlaylist()
     autoDialog->setAttribute(Qt::WA_DeleteOnClose);
     QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
                      [this](const QString& name, const QString& query) {
-                         if(auto* playlist = m_playlistHandler->createAutoPlaylist(name, query)) {
+                         if(auto* playlist = m_playlistHandler->createNewAutoPlaylist(name, query)) {
                              m_playlistController->changeCurrentPlaylist(playlist);
                          }
                      });

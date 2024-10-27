@@ -666,6 +666,18 @@ Playlist* PlaylistHandler::createAutoPlaylist(const QString& name, const QString
     return playlist;
 }
 
+Playlist* PlaylistHandler::createNewAutoPlaylist(const QString& name, const QString& query)
+{
+    const QString newName = p->findUniqueName(name);
+    auto* playlist        = p->addNewAutoPlaylist(newName, query);
+
+    if(playlist) {
+        emit playlistAdded(playlist);
+    }
+
+    return playlist;
+}
+
 void PlaylistHandler::appendToPlaylist(const UId& id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
