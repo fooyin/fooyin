@@ -222,8 +222,13 @@ bool LibArchiveReader::readTracks(ReadEntryCallback readEntry)
     return true;
 }
 
-QByteArray LibArchiveReader::readCover(const Track& track, Track::Cover /*cover*/)
+QByteArray LibArchiveReader::readCover(const Track& track, Track::Cover cover)
 {
+    if(cover != Track::Cover::Front) {
+        // Only read front cover for now
+        return {};
+    }
+
     ArchivePtr archive{archive_read_new()};
 
     if(!setupForReading(archive.get(), m_file)) {

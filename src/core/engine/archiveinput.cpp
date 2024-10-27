@@ -206,15 +206,15 @@ bool GeneralArchiveReader::readTrack(const AudioSource& source, Track& track)
 QByteArray GeneralArchiveReader::readCover(const AudioSource& /*source*/, const Track& track, Track::Cover cover)
 {
     QByteArray coverData;
-    if(m_archiveReader && m_archiveReader->init(track.archivePath())) {
-        coverData = m_archiveReader->readCover(track, cover);
-    }
-    if(coverData.isEmpty() && m_reader) {
+    if(m_reader) {
         AudioSource coverSource;
         coverSource.filepath      = track.filepath();
         coverSource.device        = m_device.get();
         coverSource.archiveReader = m_archiveReader;
         coverData                 = m_reader->readCover(coverSource, track, cover);
+    }
+    if(coverData.isEmpty() && m_archiveReader && m_archiveReader->init(track.archivePath())) {
+        coverData = m_archiveReader->readCover(track, cover);
     }
     return coverData;
 }
