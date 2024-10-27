@@ -345,9 +345,6 @@ ScriptScanner::Token ScriptScanner::keyword()
                         break;
                 }
             }
-            else if(peek() == u'+' || peek() == u'-') {
-                return makeToken(TokSort);
-            }
             break;
         case(u'W'):
             return checkKeyword(1, isPlural(4) ? u"EEKS" : u"EEK", TokWeek);
