@@ -84,7 +84,6 @@ public:
     };
     Q_DECLARE_FLAGS(PlayModes, PlayMode)
 
-    Playlist(PrivateKey, QString name, SettingsManager* settings);
     Playlist(PrivateKey, int dbId, QString name, int index, SettingsManager* settings);
 
     Playlist(const Playlist&)            = delete;
@@ -112,6 +111,13 @@ public:
     [[nodiscard]] bool tracksModified() const;
     /** Returns @c true if this playlist does not persist (saved to db). */
     [[nodiscard]] bool isTemporary() const;
+    /** Returns @c true if this an autoplaylist (generated from a query). */
+    [[nodiscard]] bool isAutoPlaylist() const;
+    /** Returns the query used to generate this autoplaylist, else an empty string. */
+    [[nodiscard]] QString query() const;
+
+    /** Regenerates this autoplaylist using the tracks @p tracks. */
+    bool regenerateTracks(const TrackList& tracks);
 
     /*!
      * Schedules the track to be played after the current track is finished.
@@ -150,9 +156,12 @@ private:
 
     static std::unique_ptr<Playlist> create(const QString& name, SettingsManager* settings);
     static std::unique_ptr<Playlist> create(int dbId, const QString& name, int index, SettingsManager* settings);
+    static std::unique_ptr<Playlist> createAuto(int dbId, const QString& name, int index, const QString& query,
+                                                SettingsManager* settings);
 
     void setName(const QString& name);
     void setIndex(int index);
+    void setQuery(const QString& query);
 
     void setModified(bool modified);
     void setTracksModified(bool modified);

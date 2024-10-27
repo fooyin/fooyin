@@ -22,7 +22,9 @@
 #include "playlistcolumnregistry.h"
 #include "presetregistry.h"
 
+#include <core/application.h>
 #include <core/coresettings.h>
+#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -43,8 +45,8 @@ class PlaylistControllerPrivate : public QObject
     Q_OBJECT
 
 public:
-    PlaylistControllerPrivate(PlaylistController* self, PlaylistHandler* handler, PlayerController* playerController,
-                              TrackSelectionController* selectionController, SettingsManager* settings);
+    PlaylistControllerPrivate(PlaylistController* self, Application* app,
+                              TrackSelectionController* selectionController);
 
     void restoreLastPlaylist();
 
@@ -67,10 +69,11 @@ public:
 
     PlaylistHandler* m_handler;
     PlayerController* m_playerController;
+    MusicLibrary* m_library;
     TrackSelectionController* m_selectionController;
+    SettingsManager* m_settings;
     PresetRegistry* m_presetRegistry;
     PlaylistColumnRegistry* m_columnRegistry;
-    SettingsManager* m_settings;
 
     bool m_loaded{false};
     Playlist* m_currentPlaylist{nullptr};
@@ -82,39 +85,39 @@ public:
     TrackList m_clipboard;
 };
 
-PlaylistControllerPrivate::PlaylistControllerPrivate(PlaylistController* self, PlaylistHandler* handler,
-                                                     PlayerController* playerController,
-                                                     TrackSelectionController* selectionController,
-                                                     SettingsManager* settings)
+PlaylistControllerPrivate::PlaylistControllerPrivate(PlaylistController* self, Application* app,
+                                                     TrackSelectionController* selectionController)
     : m_self{self}
-    , m_handler{handler}
-    , m_playerController{playerController}
+    , m_handler{app->playlistHandler()}
+    , m_playerController{app->playerController()}
+    , m_library{app->library()}
     , m_selectionController{selectionController}
-    , m_presetRegistry{new PresetRegistry(settings, m_self)}
-    , m_columnRegistry{new PlaylistColumnRegistry(settings, m_self)}
-    , m_settings{settings}
+    , m_settings{app->settingsManager()}
+    , m_presetRegistry{new PresetRegistry(m_settings, m_self)}
+    , m_columnRegistry{new PlaylistColumnRegistry(m_settings, m_self)}
 {
-    QObject::connect(handler, &PlaylistHandler::playlistsPopulated, this,
+    QObject::connect(m_handler, &PlaylistHandler::playlistsPopulated, this,
                      &PlaylistControllerPrivate::restoreLastPlaylist);
-    QObject::connect(handler, &PlaylistHandler::playlistAdded, this, &PlaylistControllerPrivate::handlePlaylistAdded);
-    QObject::connect(handler, &PlaylistHandler::tracksChanged, this, &PlaylistControllerPrivate::handlePlaylistUpdated);
-    QObject::connect(handler, &PlaylistHandler::tracksUpdated, this, &PlaylistControllerPrivate::handleTracksUpdated);
-    QObject::connect(handler, &PlaylistHandler::tracksAdded, this,
+    QObject::connect(m_handler, &PlaylistHandler::playlistAdded, this, &PlaylistControllerPrivate::handlePlaylistAdded);
+    QObject::connect(m_handler, &PlaylistHandler::tracksChanged, this,
+                     &PlaylistControllerPrivate::handlePlaylistUpdated);
+    QObject::connect(m_handler, &PlaylistHandler::tracksUpdated, this, &PlaylistControllerPrivate::handleTracksUpdated);
+    QObject::connect(m_handler, &PlaylistHandler::tracksAdded, this,
                      &PlaylistControllerPrivate::handlePlaylistTracksAdded);
-    QObject::connect(handler, &PlaylistHandler::playlistRemoved, this,
+    QObject::connect(m_handler, &PlaylistHandler::playlistRemoved, this,
                      &PlaylistControllerPrivate::handlePlaylistRemoved);
 
-    QObject::connect(playerController, &PlayerController::playlistTrackChanged, m_self,
+    QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, m_self,
                      &PlaylistController::playingTrackChanged);
-    QObject::connect(playerController, &PlayerController::tracksQueued, this,
+    QObject::connect(m_playerController, &PlayerController::tracksQueued, this,
                      &PlaylistControllerPrivate::handleTracksQueued);
-    QObject::connect(playerController, &PlayerController::trackQueueChanged, this,
+    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this,
                      &PlaylistControllerPrivate::handleQueueChanged);
-    QObject::connect(playerController, &PlayerController::tracksDequeued, this,
+    QObject::connect(m_playerController, &PlayerController::tracksDequeued, this,
                      [this](const QueueTracks& tracks) { handleTracksDequeued(tracks); });
-    QObject::connect(playerController, &PlayerController::trackIndexesDequeued, this,
+    QObject::connect(m_playerController, &PlayerController::trackIndexesDequeued, this,
                      [this](const PlaylistIndexes& indexes) { handleTracksDequeued(indexes); });
-    QObject::connect(playerController, &PlayerController::playStateChanged, m_self,
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, m_self,
                      &PlaylistController::playStateChanged);
 }
 
@@ -262,7 +265,7 @@ void PlaylistControllerPrivate::handlePlaylistUpdated(Playlist* playlist, const 
 
     bool allNew{false};
 
-    if(playlist && std::cmp_equal(indexes.size(), playlist->trackCount())) {
+    if(playlist && (indexes.empty() || std::cmp_equal(indexes.size(), playlist->trackCount()))) {
         allNew = true;
         m_histories.erase(playlist);
         m_states.erase(playlist);
@@ -378,11 +381,9 @@ void PlaylistControllerPrivate::restoreStates()
     }
 }
 
-PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerController* playerController,
-                                       TrackSelectionController* selectionController, SettingsManager* settings,
-                                       QObject* parent)
+PlaylistController::PlaylistController(Application* app, TrackSelectionController* selectionController, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<PlaylistControllerPrivate>(this, handler, playerController, selectionController, settings)}
+    , p{std::make_unique<PlaylistControllerPrivate>(this, app, selectionController)}
 {
     p->restoreStates();
 }
@@ -469,6 +470,38 @@ void PlaylistController::addPlaylistMenu(QMenu* menu)
     }
 
     menu->addMenu(playlistMenu);
+}
+
+void PlaylistController::startPlayback() const
+{
+    if(p->m_currentPlaylist) {
+        p->m_handler->startPlayback(p->m_currentPlaylist->id());
+    }
+}
+
+void PlaylistController::showNowPlaying()
+{
+    emit showCurrentTrack();
+}
+
+void PlaylistController::selectTrackIds(const TrackIds& ids)
+{
+    emit selectTracks(ids);
+}
+
+void PlaylistController::focusPlaylist()
+{
+    emit requestPlaylistFocus();
+}
+
+bool PlaylistController::currentIsActive() const
+{
+    return p->m_currentPlaylist == p->m_handler->activePlaylist();
+}
+
+bool PlaylistController::currentIsAuto() const
+{
+    return p->m_currentPlaylist && p->m_currentPlaylist->isAutoPlaylist();
 }
 
 Playlist* PlaylistController::currentPlaylist() const
@@ -661,33 +694,6 @@ void PlaylistController::handleTrackSelectionAction(TrackAction action)
             p->m_states.erase(p->m_currentPlaylist);
         }
     }
-}
-
-void PlaylistController::startPlayback() const
-{
-    if(p->m_currentPlaylist) {
-        p->m_handler->startPlayback(p->m_currentPlaylist->id());
-    }
-}
-
-void PlaylistController::showNowPlaying()
-{
-    emit showCurrentTrack();
-}
-
-void PlaylistController::selectTrackIds(const TrackIds& ids)
-{
-    emit selectTracks(ids);
-}
-
-void PlaylistController::focusPlaylist()
-{
-    emit requestPlaylistFocus();
-}
-
-bool PlaylistController::currentIsActive() const
-{
-    return p->m_currentPlaylist == p->m_handler->activePlaylist();
 }
 } // namespace Fooyin
 

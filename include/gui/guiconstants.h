@@ -118,6 +118,8 @@ namespace Actions {
 constexpr auto AddFiles         = "File.AddFiles";
 constexpr auto AddFolders       = "File.AddFolders";
 constexpr auto NewPlaylist      = "File.NewPlaylist";
+constexpr auto NewAutoPlaylist  = "File.NewAutoPlaylist";
+constexpr auto EditAutoPlaylist = "File.EditAutoPlaylist";
 constexpr auto RemovePlaylist   = "File.RemovePlaylist";
 constexpr auto LoadPlaylist     = "File.LoadPlaylist";
 constexpr auto SavePlaylist     = "File.SavePlaylist";

@@ -67,6 +67,14 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     fileMenu->addAction(newPlaylistCommand, Actions::Groups::Two);
     QObject::connect(newPlaylist, &QAction::triggered, this, &FileMenu::requestNewPlaylist);
 
+    auto* newAutoPlaylist = new QAction(tr("&New autoplaylist"), this);
+    newAutoPlaylist->setStatusTip(tr("Create a new autoplaylist"));
+    auto* newAutoPlaylistCommand
+        = m_actionManager->registerAction(newAutoPlaylist, Constants::Actions::NewAutoPlaylist);
+    newAutoPlaylistCommand->setCategories(fileCategory);
+    fileMenu->addAction(newAutoPlaylistCommand, Actions::Groups::Two);
+    QObject::connect(newAutoPlaylist, &QAction::triggered, this, &FileMenu::requestNewAutoPlaylist);
+
     auto* loadPlaylist = new QAction(tr("&Load playlist…"), this);
     loadPlaylist->setStatusTip(tr("Load the playlist from the specified file"));
     auto* loadPlaylistCommand = m_actionManager->registerAction(loadPlaylist, Constants::Actions::LoadPlaylist);

@@ -29,6 +29,7 @@
 #include <QObject>
 
 namespace Fooyin {
+class MusicLibrary;
 class PlayerController;
 class PlaylistHandlerPrivate;
 class SettingsManager;
@@ -39,7 +40,8 @@ class FYCORE_EXPORT PlaylistHandler : public QObject
 
 public:
     explicit PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
-                             PlayerController* playerController, SettingsManager* settings, QObject* parent = nullptr);
+                             PlayerController* playerController, MusicLibrary* library, SettingsManager* settings,
+                             QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
     /** Returns the playlist with the @p id if it exists, otherwise nullptr. */
@@ -76,6 +78,8 @@ public:
     /** Creates and returns a temporary playlist called @p name with the provided tracks. If it already exists, the name
      * will be changed. */
     Playlist* createNewTempPlaylist(const QString& name, const TrackList& tracks);
+    /** Returns the autoplaylist called @p name if it exists, otherwise creates it. */
+    Playlist* createAutoPlaylist(const QString& name, const QString& query);
 
     /** Adds @p tracks to the end of the playlist with @p id if found. */
     void appendToPlaylist(const UId& id, const TrackList& tracks);
@@ -136,10 +140,6 @@ signals:
     void tracksRemoved(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
 
 public slots:
-    void populatePlaylists(const Fooyin::TrackList& tracks);
-    void handleTracksChanged(const Fooyin::TrackList& tracks);
-    void handleTracksUpdated(const Fooyin::TrackList& tracks);
-    void handleTracksRemoved(const Fooyin::TrackList& tracks);
     void trackAboutToFinish();
 
 private:

@@ -83,6 +83,8 @@ set(SOURCES
     controls/volumecontrol.h
     dialog/aboutdialog.cpp
     dialog/aboutdialog.h
+    dialog/autoplaylistdialog.cpp
+    dialog/autoplaylistdialog.h
     dialog/exportlayoutdialog.cpp
     dialog/exportlayoutdialog.h
     dialog/propertiesdialog.cpp

@@ -29,6 +29,8 @@ struct PlaylistInfo
     int dbId{-1};
     QString name;
     int index{-1};
+    bool isAutoPlaylist{false};
+    QString query;
 };
 
 class PlaylistDatabase : public DbModule
@@ -37,7 +39,7 @@ public:
     std::vector<PlaylistInfo> getAllPlaylists();
     TrackList getPlaylistTracks(const Playlist& playlist, const std::unordered_map<int, Track>& tracks);
 
-    int insertPlaylist(const QString& name, int index);
+    int insertPlaylist(const QString& name, int index, bool isAutoPlaylist, const QString& autoQuery);
 
     bool savePlaylist(Playlist& playlist);
     bool saveModifiedPlaylists(const PlaylistList& playlists);

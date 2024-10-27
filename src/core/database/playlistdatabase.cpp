@@ -25,8 +25,8 @@
 namespace Fooyin {
 std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
 {
-    const QString query
-        = QStringLiteral("SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;");
+    const QString query = QStringLiteral(
+        "SELECT PlaylistID, Name, PlaylistIndex, IsAutoPlaylist, Query FROM Playlists ORDER BY PlaylistIndex;");
 
     DbQuery q{db(), query};
 
@@ -39,9 +39,11 @@ std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
     while(q.next()) {
         PlaylistInfo playlist;
 
-        playlist.dbId  = q.value(0).toInt();
-        playlist.name  = q.value(1).toString();
-        playlist.index = q.value(2).toInt();
+        playlist.dbId           = q.value(0).toInt();
+        playlist.name           = q.value(1).toString();
+        playlist.index          = q.value(2).toInt();
+        playlist.isAutoPlaylist = q.value(3).toBool();
+        playlist.query          = q.value(4).toString();
 
         playlists.emplace_back(playlist);
     }
@@ -54,17 +56,20 @@ TrackList PlaylistDatabase::getPlaylistTracks(const Playlist& playlist, const st
     return populatePlaylistTracks(playlist, tracks);
 }
 
-int PlaylistDatabase::insertPlaylist(const QString& name, int index)
+int PlaylistDatabase::insertPlaylist(const QString& name, int index, bool isAutoPlaylist, const QString& autoQuery)
 {
     if(name.isEmpty() || index < 0) {
         return -1;
     }
 
-    const QString statement = QStringLiteral("INSERT INTO Playlists (Name, PlaylistIndex) VALUES (:name, :index);");
+    const QString statement = QStringLiteral("INSERT INTO Playlists (Name, PlaylistIndex, IsAutoPlaylist, Query) "
+                                             "VALUES (:name, :index, :isAutoPlaylist, :query);");
 
     DbQuery query{db(), statement};
     query.bindValue(QStringLiteral(":name"), name);
     query.bindValue(QStringLiteral(":index"), index);
+    query.bindValue(QStringLiteral(":isAutoPlaylist"), isAutoPlaylist);
+    query.bindValue(QStringLiteral(":query"), autoQuery);
 
     if(!query.exec()) {
         return -1;
@@ -79,18 +84,21 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
 
     if(playlist.modified()) {
         const auto statement
-            = QStringLiteral("UPDATE Playlists SET Name = :name, PlaylistIndex = :index WHERE PlaylistID = :id;");
+            = QStringLiteral("UPDATE Playlists SET Name = :name, PlaylistIndex = :index, IsAutoPlaylist = "
+                             ":isAutoPlaylist, Query = :query WHERE PlaylistID = :id;");
 
         DbQuery query{db(), statement};
 
         query.bindValue(QStringLiteral(":name"), playlist.name());
         query.bindValue(QStringLiteral(":index"), playlist.index());
+        query.bindValue(QStringLiteral(":isAutoPlaylist"), playlist.isAutoPlaylist());
+        query.bindValue(QStringLiteral(":query"), playlist.query());
         query.bindValue(QStringLiteral(":id"), playlist.dbId());
 
         updated = query.exec();
     }
 
-    if(playlist.tracksModified()) {
+    if(!playlist.isAutoPlaylist() && playlist.tracksModified()) {
         updated = insertPlaylistTracks(playlist.dbId(), playlist.tracks());
     }
 

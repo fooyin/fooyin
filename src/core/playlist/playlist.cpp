@@ -103,7 +103,6 @@ struct Playlist::PrivateKey
 class PlaylistPrivate
 {
 public:
-    explicit PlaylistPrivate(QString name, SettingsManager* settings);
     PlaylistPrivate(int dbId, QString name, int index, SettingsManager* settings);
 
     void createShuffleOrder();
@@ -145,13 +144,10 @@ public:
     bool m_isTemporary{false};
     bool m_modified{false};
     bool m_tracksModified{false};
-};
 
-PlaylistPrivate::PlaylistPrivate(QString name, SettingsManager* settings)
-    : PlaylistPrivate{-1, std::move(name), -1, settings}
-{
-    m_isTemporary = true;
-}
+    bool m_isAutoPlaylist{false};
+    QString m_query;
+};
 
 PlaylistPrivate::PlaylistPrivate(int dbId, QString name, int index, SettingsManager* settings)
     : m_id{UId::create()}
@@ -466,10 +462,6 @@ std::optional<Track> PlaylistPrivate::getTrack(int index) const
     return m_tracks.at(index);
 }
 
-Playlist::Playlist(PrivateKey /*key*/, QString name, SettingsManager* settings)
-    : p{std::make_unique<PlaylistPrivate>(std::move(name), settings)}
-{ }
-
 Playlist::Playlist(PrivateKey /*key*/, int dbId, QString name, int index, SettingsManager* settings)
     : p{std::make_unique<PlaylistPrivate>(dbId, std::move(name), index, settings)}
 { }
@@ -561,6 +553,34 @@ bool Playlist::isTemporary() const
     return p->m_isTemporary;
 }
 
+bool Playlist::isAutoPlaylist() const
+{
+    return p->m_isAutoPlaylist;
+}
+
+QString Playlist::query() const
+{
+    return p->m_query;
+}
+
+bool Playlist::regenerateTracks(const TrackList& tracks)
+{
+    if(!isAutoPlaylist()) {
+        return false;
+    }
+
+    // In case current date in previous query is cached
+    p->m_parser.clearCache();
+    const TrackList filteredTracks = p->m_parser.filter(p->m_query, tracks);
+
+    if(filteredTracks != p->m_tracks) {
+        replaceTracks(filteredTracks);
+        return true;
+    }
+
+    return false;
+}
+
 void Playlist::scheduleNextIndex(int index)
 {
     if(index >= 0 && index < trackCount()) {
@@ -628,12 +648,23 @@ QStringList Playlist::supportedPlaylistExtensions()
 
 std::unique_ptr<Playlist> Playlist::create(const QString& name, SettingsManager* settings)
 {
-    return std::make_unique<Playlist>(PrivateKey{}, name, settings);
+    auto playlist              = std::make_unique<Playlist>(PrivateKey{}, -1, name, -1, settings);
+    playlist->p->m_isTemporary = true;
+    return playlist;
 }
 
 std::unique_ptr<Playlist> Playlist::create(int dbId, const QString& name, int index, SettingsManager* settings)
 {
     return std::make_unique<Playlist>(PrivateKey{}, dbId, name, index, settings);
+}
+
+std::unique_ptr<Playlist> Playlist::createAuto(int dbId, const QString& name, int index, const QString& query,
+                                               SettingsManager* settings)
+{
+    auto playlist                 = std::make_unique<Playlist>(PrivateKey{}, dbId, name, index, settings);
+    playlist->p->m_isAutoPlaylist = true;
+    playlist->setQuery(query);
+    return playlist;
 }
 
 void Playlist::setName(const QString& name)
@@ -646,6 +677,13 @@ void Playlist::setName(const QString& name)
 void Playlist::setIndex(int index)
 {
     if(std::exchange(p->m_index, index) != index) {
+        p->m_modified = true;
+    }
+}
+
+void Playlist::setQuery(const QString& query)
+{
+    if(std::exchange(p->m_query, query) != query) {
         p->m_modified = true;
     }
 }

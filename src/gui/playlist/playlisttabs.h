@@ -92,7 +92,7 @@ private:
     void tabChanged(int index) const;
     void tabMoved(int from, int to) const;
 
-    void playlistChanged(Playlist* oldPlaylist, Playlist* playlist) const;
+    void playlistChanged(Playlist* oldPlaylist, Playlist* playlist);
     void activatePlaylistChanged(Playlist* playlist);
     void playlistRenamed(const Playlist* playlist) const;
 

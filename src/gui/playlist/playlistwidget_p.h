@@ -117,6 +117,7 @@ public:
     void filterTracks(const PlaylistTrackList& tracks);
 
     void setSingleMode(bool enabled);
+    void setReadOnly(bool readOnly, bool allowSorting) const;
     void updateSpans();
     void customHeaderMenuRequested(const QPoint& pos);
 

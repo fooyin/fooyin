@@ -19,6 +19,7 @@
 
 #include "playlistorganiser.h"
 
+#include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 #include "playlistorganiserdelegate.h"
@@ -35,6 +36,7 @@
 #include <utils/utils.h>
 
 #include <QContextMenuEvent>
+#include <QMainWindow>
 #include <QMenu>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -126,8 +128,14 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     , m_newGroup{new QAction(tr("New group"), this)}
     , m_newGroupCmd{actionManager->registerAction(m_newGroup, "PlaylistOrganiser.NewGroup", m_context->context())}
     , m_newPlaylist{new QAction(tr("Create playlist"), this)}
-    , m_newPlaylistCmd{
-          actionManager->registerAction(m_newPlaylist, "PlaylistOrganiser.NewPlaylist", m_context->context())}
+    , m_newPlaylistCmd{actionManager->registerAction(m_newPlaylist, Constants::Actions::NewPlaylist,
+                                                     m_context->context())}
+    , m_newAutoPlaylist{new QAction(tr("Create autoplaylist"), this)}
+    , m_newAutoPlaylistCmd{actionManager->registerAction(m_newAutoPlaylist, Constants::Actions::NewAutoPlaylist,
+                                                         m_context->context())}
+    , m_editAutoPlaylist{new QAction(tr("Edit autoplaylist"), this)}
+    , m_editAutoPlaylistCmd{
+          actionManager->registerAction(m_editAutoPlaylist, Constants::Actions::EditAutoPlaylist, m_context->context())}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -164,11 +172,6 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     m_newGroupCmd->setAttribute(ProxyAction::UpdateText);
     m_newGroupCmd->setDefaultShortcut(QKeySequence::AddTab);
 
-    m_newPlaylistCmd->setCategories(organiserCategory);
-    m_newPlaylist->setStatusTip(tr("Create a new empty playlist"));
-    m_newPlaylistCmd->setAttribute(ProxyAction::UpdateText);
-    m_newPlaylistCmd->setDefaultShortcut(QKeySequence::New);
-
     QAction::connect(m_newGroup, &QAction::triggered, this, [this]() {
         const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
         createGroup(indexes.empty() ? QModelIndex{} : indexes.front());
@@ -181,7 +184,15 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     });
     QObject::connect(m_newPlaylist, &QAction::triggered, this, [this]() {
         const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
-        createPlaylist(indexes.empty() ? QModelIndex{} : indexes.front());
+        createPlaylist(indexes.empty() ? QModelIndex{} : indexes.front(), false);
+    });
+    QObject::connect(m_newAutoPlaylist, &QAction::triggered, this, [this]() {
+        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
+        createPlaylist(indexes.empty() ? QModelIndex{} : indexes.front(), true);
+    });
+    QObject::connect(m_editAutoPlaylist, &QAction::triggered, this, [this]() {
+        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
+        editAutoPlaylist(indexes.empty() ? QModelIndex{} : indexes.front());
     });
 
     QObject::connect(m_model, &QAbstractItemModel::rowsMoved, this,
@@ -291,6 +302,7 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     m_renamePlaylist->setEnabled(selected.size() == 1 && index.isValid());
 
     menu->addAction(m_newPlaylistCmd->action());
+    menu->addAction(m_newAutoPlaylistCmd->action());
     menu->addAction(m_newGroupCmd->action());
 
     if(index.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
@@ -301,6 +313,15 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     }
 
     menu->addSeparator();
+
+    if(playlistCount == 1) {
+        if(auto* playlist = index.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
+            if(playlist->isAutoPlaylist()) {
+                menu->addAction(m_editAutoPlaylistCmd->action());
+            }
+        }
+    }
+
     menu->addAction(m_renameCmd->action());
     menu->addAction(m_removeCmd->action());
 
@@ -353,20 +374,54 @@ void PlaylistOrganiser::createGroup(const QModelIndex& index) const
     m_organiserTree->edit(groupIndex);
 }
 
-void PlaylistOrganiser::createPlaylist(const QModelIndex& index)
+void PlaylistOrganiser::createPlaylist(const QModelIndex& index, bool autoPlaylist)
 {
     m_creatingPlaylist = true;
 
-    if(auto* playlist = m_playlistInteractor->handler()->createEmptyPlaylist()) {
+    const auto addToModel = [this, index](Playlist* playlist) {
         QModelIndex parent{index};
         if(parent.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
             parent = parent.parent();
         }
-        const QModelIndex playlistIndex = m_model->createPlaylist(playlist, parent);
+        return m_model->createPlaylist(playlist, parent);
+    };
+
+    if(autoPlaylist) {
+        auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
+        autoDialog->setAttribute(Qt::WA_DeleteOnClose);
+        QObject::connect(autoDialog, &QDialog::finished, this, [this]() { m_creatingPlaylist = false; });
+        QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, this,
+                         [this, addToModel](const QString& name, const QString& query) {
+                             if(auto* playlist = m_playlistInteractor->handler()->createAutoPlaylist(name, query)) {
+                                 addToModel(playlist);
+                             }
+                         });
+        autoDialog->show();
+        return;
+    }
+
+    if(auto* playlist = m_playlistInteractor->handler()->createEmptyPlaylist()) {
+        const QModelIndex playlistIndex = addToModel(playlist);
         m_organiserTree->edit(playlistIndex);
     }
 
     m_creatingPlaylist = false;
+}
+
+void PlaylistOrganiser::editAutoPlaylist(const QModelIndex& index)
+{
+    if(!index.isValid()) {
+        return;
+    }
+
+    if(auto* playlist = index.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
+        if(playlist->isAutoPlaylist()) {
+            auto* autoDialog
+                = new AutoPlaylistDialog(m_playlistInteractor->handler(), playlist, Utils::getMainWindow());
+            autoDialog->setAttribute(Qt::WA_DeleteOnClose);
+            autoDialog->show();
+        }
+    }
 }
 
 void PlaylistOrganiser::filesToPlaylist(const QList<QUrl>& urls, const UId& id)

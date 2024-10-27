@@ -37,6 +37,7 @@ signals:
     void requestAddFiles();
     void requestAddFolders();
     void requestNewPlaylist();
+    void requestNewAutoPlaylist();
     void requestLoadPlaylist();
     void requestSavePlaylist();
     void requestSaveAllPlaylists();

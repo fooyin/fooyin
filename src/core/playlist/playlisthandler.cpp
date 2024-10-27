@@ -19,11 +19,13 @@
 
 #include <core/playlist/playlisthandler.h>
 
+#include "application.h"
 #include "database/playlistdatabase.h"
 #include "internalcoresettings.h"
 #include "library/libraryutils.h"
 
 #include <core/coresettings.h>
+#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
 #include <utils/helpers.h>
@@ -44,10 +46,15 @@ class PlaylistHandlerPrivate
 {
 public:
     PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
-                           PlayerController* playerController, SettingsManager* settings);
+                           PlayerController* playerController, MusicLibrary* library, SettingsManager* settings);
 
     void reloadPlaylists();
+    void populatePlaylists();
+    void regenerateAutoPlaylists();
     bool noConcretePlaylists();
+
+    void handleTracksChanged(const TrackList& tracks);
+    void handleTracksUpdated(const TrackList& tracks);
 
     void startNextTrack(const Track& track, int index) const;
     PlaylistTrack nextTrackChange(int delta);
@@ -66,12 +73,14 @@ public:
 
     void restoreActivePlaylist();
     Playlist* addNewPlaylist(const QString& name, bool isTemporary = false);
+    Playlist* addNewAutoPlaylist(const QString& name, const QString& query);
 
     PlaylistHandler* m_self;
 
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<AudioLoader> m_audioLoader;
     PlayerController* m_playerController;
+    MusicLibrary* m_library;
     SettingsManager* m_settings;
     PlaylistDatabase m_playlistConnector;
 
@@ -84,11 +93,13 @@ public:
 
 PlaylistHandlerPrivate::PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool,
                                                std::shared_ptr<AudioLoader> audioLoader,
-                                               PlayerController* playerController, SettingsManager* settings)
+                                               PlayerController* playerController, MusicLibrary* library,
+                                               SettingsManager* settings)
     : m_self{self}
     , m_dbPool{std::move(dbPool)}
     , m_audioLoader{std::move(audioLoader)}
     , m_playerController{playerController}
+    , m_library{library}
     , m_settings{settings}
 {
     const DbConnectionProvider dbProvider{m_dbPool};
@@ -100,7 +111,46 @@ void PlaylistHandlerPrivate::reloadPlaylists()
     const std::vector<PlaylistInfo> infos = m_playlistConnector.getAllPlaylists();
 
     for(const auto& info : infos) {
-        m_playlists.emplace_back(Playlist::create(info.dbId, info.name, info.index, m_settings));
+        if(info.isAutoPlaylist) {
+            m_playlists.emplace_back(Playlist::createAuto(info.dbId, info.name, info.index, info.query, m_settings));
+        }
+        else {
+            m_playlists.emplace_back(Playlist::create(info.dbId, info.name, info.index, m_settings));
+        }
+    }
+}
+
+void PlaylistHandlerPrivate::populatePlaylists()
+{
+    std::unordered_map<int, Track> idTracks;
+
+    const TrackList tracks = m_library->tracks();
+    for(const Track& track : tracks) {
+        idTracks.emplace(track.id(), track);
+    }
+
+    for(const auto& playlist : m_playlists) {
+        if(playlist->isAutoPlaylist()) {
+            playlist->regenerateTracks(tracks);
+        }
+        else {
+            const TrackList playlistTracks = m_playlistConnector.getPlaylistTracks(*playlist, idTracks);
+            playlist->replaceTracks(playlistTracks);
+        }
+    }
+
+    restoreActivePlaylist();
+
+    emit m_self->playlistsPopulated();
+}
+
+void PlaylistHandlerPrivate::regenerateAutoPlaylists()
+{
+    const TrackList tracks = m_library->tracks();
+    for(auto& playlist : m_playlists) {
+        if(playlist->regenerateTracks(tracks)) {
+            emit m_self->tracksChanged(playlist.get(), {});
+        }
     }
 }
 
@@ -108,6 +158,36 @@ bool PlaylistHandlerPrivate::noConcretePlaylists()
 {
     return m_playlists.empty()
         || std::ranges::all_of(m_playlists, [](const auto& playlist) { return playlist->isTemporary(); });
+}
+
+void PlaylistHandlerPrivate::handleTracksChanged(const TrackList& tracks)
+{
+    for(auto& playlist : m_playlists) {
+        if(playlist->isAutoPlaylist()) {
+            continue;
+        }
+
+        TrackList playlistTracks  = playlist->tracks();
+        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Update);
+
+        if(!updatedIndexes.empty()) {
+            playlist->replaceTracks(playlistTracks);
+            emit m_self->tracksChanged(playlist.get(), updatedIndexes);
+        }
+    }
+}
+
+void PlaylistHandlerPrivate::handleTracksUpdated(const TrackList& tracks)
+{
+    for(auto& playlist : m_playlists) {
+        TrackList playlistTracks  = playlist->tracks();
+        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Update);
+
+        if(!updatedIndexes.empty()) {
+            playlist->replaceTracks(playlistTracks);
+            emit m_self->tracksUpdated(playlist.get(), updatedIndexes);
+        }
+    }
 }
 
 void PlaylistHandlerPrivate::startNextTrack(const Track& track, int index) const
@@ -320,7 +400,7 @@ Playlist* PlaylistHandlerPrivate::addNewPlaylist(const QString& name, bool isTem
     const QString playlistName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("Playlist"));
 
     const int index = nextValidIndex();
-    const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index);
+    const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index, false, {});
 
     if(dbId >= 0) {
         auto* playlist = m_playlists.emplace_back(Playlist::create(dbId, playlistName, index, m_settings)).get();
@@ -330,17 +410,52 @@ Playlist* PlaylistHandlerPrivate::addNewPlaylist(const QString& name, bool isTem
     return nullptr;
 }
 
+Playlist* PlaylistHandlerPrivate::addNewAutoPlaylist(const QString& name, const QString& query)
+{
+    auto existingIndex = indexFromName(name);
+
+    if(existingIndex >= 0) {
+        return m_playlists.at(existingIndex).get();
+    }
+
+    const QString playlistName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("Auto Playlist"));
+
+    const int index = nextValidIndex();
+    const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index, true, query);
+
+    if(dbId >= 0) {
+        auto* playlist
+            = m_playlists.emplace_back(Playlist::createAuto(dbId, playlistName, index, query, m_settings)).get();
+        return playlist;
+    }
+
+    return nullptr;
+}
+
 PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
-                                 PlayerController* playerController, SettingsManager* settings, QObject* parent)
+                                 PlayerController* playerController, MusicLibrary* library, SettingsManager* settings,
+                                 QObject* parent)
     : QObject{parent}
     , p{std::make_unique<PlaylistHandlerPrivate>(this, std::move(dbPool), std::move(audioLoader), playerController,
-                                                 settings)}
+                                                 library, settings)}
 {
     p->reloadPlaylists();
 
     if(p->noConcretePlaylists()) {
         PlaylistHandler::createPlaylist(QStringLiteral("Default"), {});
     }
+
+    QObject::connect(p->m_library, &MusicLibrary::tracksLoaded, this, [this]() { p->populatePlaylists(); });
+    QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this, [this]() { p->regenerateAutoPlaylists(); });
+    QObject::connect(p->m_library, &MusicLibrary::tracksDeleted, this, [this]() { p->regenerateAutoPlaylists(); });
+    QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this, [this](const TrackList& tracks) {
+        p->handleTracksChanged(tracks);
+        p->regenerateAutoPlaylists();
+    });
+    QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, this, [this](const TrackList& tracks) {
+        p->handleTracksUpdated(tracks);
+        p->regenerateAutoPlaylists();
+    });
 
     p->m_settings->subscribe<Settings::Core::ShuffleAlbumsGroupScript>(this, [this]() { p->resetShuffleOrder(); });
     p->m_settings->subscribe<Settings::Core::ShuffleAlbumsSortScript>(this, [this]() { p->resetShuffleOrder(); });
@@ -531,6 +646,26 @@ Playlist* PlaylistHandler::createNewTempPlaylist(const QString& name, const Trac
     return playlist;
 }
 
+Playlist* PlaylistHandler::createAutoPlaylist(const QString& name, const QString& query)
+{
+    const bool isNew = p->indexFromName(name) < 0;
+    auto* playlist   = p->addNewAutoPlaylist(name, query);
+
+    if(playlist) {
+        if(isNew || playlist->query() != query) {
+            playlist->setQuery(query);
+            if(playlist->regenerateTracks(p->m_library->tracks())) {
+                emit tracksChanged(playlist, {});
+            }
+        }
+        if(isNew) {
+            emit playlistAdded(playlist);
+        }
+    }
+
+    return playlist;
+}
+
 void PlaylistHandler::appendToPlaylist(const UId& id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
@@ -543,14 +678,8 @@ void PlaylistHandler::appendToPlaylist(const UId& id, const TrackList& tracks)
 void PlaylistHandler::replacePlaylistTracks(const UId& id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
-        const auto size = tracks.empty() ? playlist->tracks().size() : tracks.size();
-
         playlist->replaceTracks(tracks);
-
-        std::vector<int> changedIndexes(size);
-        std::iota(changedIndexes.begin(), changedIndexes.end(), 0);
-
-        emit tracksChanged(playlist, changedIndexes);
+        emit tracksChanged(playlist, {});
     }
 }
 
@@ -767,63 +896,6 @@ void PlaylistHandler::startPlayback(Playlist* playlist)
         playlist->changeCurrentIndex(0);
     }
     p->startNextTrack(playlist->currentTrack(), playlist->currentTrackIndex());
-}
-
-void PlaylistHandler::populatePlaylists(const TrackList& tracks)
-{
-    std::unordered_map<int, Track> idTracks;
-
-    for(const Track& track : tracks) {
-        idTracks.emplace(track.id(), track);
-    }
-
-    for(const auto& playlist : p->m_playlists) {
-        const TrackList playlistTracks = p->m_playlistConnector.getPlaylistTracks(*playlist, idTracks);
-        playlist->replaceTracks(playlistTracks);
-    }
-
-    p->restoreActivePlaylist();
-
-    emit playlistsPopulated();
-}
-
-void PlaylistHandler::handleTracksChanged(const TrackList& tracks)
-{
-    for(auto& playlist : p->m_playlists) {
-        TrackList playlistTracks  = playlist->tracks();
-        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Update);
-
-        if(!updatedIndexes.empty()) {
-            playlist->replaceTracks(playlistTracks);
-            emit tracksChanged(playlist.get(), updatedIndexes);
-        }
-    }
-}
-
-void PlaylistHandler::handleTracksUpdated(const TrackList& tracks)
-{
-    for(auto& playlist : p->m_playlists) {
-        TrackList playlistTracks  = playlist->tracks();
-        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Update);
-
-        if(!updatedIndexes.empty()) {
-            playlist->replaceTracks(playlistTracks);
-            emit tracksUpdated(playlist.get(), updatedIndexes);
-        }
-    }
-}
-
-void PlaylistHandler::handleTracksRemoved(const TrackList& tracks)
-{
-    for(auto& playlist : p->m_playlists) {
-        TrackList playlistTracks  = playlist->tracks();
-        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Remove);
-
-        if(!updatedIndexes.empty()) {
-            playlist->replaceTracks(playlistTracks);
-            emit tracksChanged(playlist.get(), updatedIndexes);
-        }
-    }
 }
 
 void PlaylistHandler::trackAboutToFinish()
