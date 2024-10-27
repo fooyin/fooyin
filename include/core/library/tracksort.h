@@ -108,8 +108,8 @@ public:
     TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, const std::vector<int>& indexes,
                              Qt::SortOrder order = Qt::AscendingOrder);
 
-    template <typename Container, typename Extractor>
-    Container calcSortFields(const QString& sort, const Container& items, Extractor extractor)
+    template <typename Container, typename SortScript, typename Extractor>
+    Container calcSortFields(const SortScript& sort, const Container& items, Extractor extractor)
     {
         Container calculatedTracks;
         calculatedTracks.reserve(items.size());
@@ -126,8 +126,8 @@ public:
         return calculatedTracks;
     }
 
-    template <typename Container, typename SortExtractor, typename Extractor>
-    Container calcSortTracks(const QString& sort, const Container& items, SortExtractor sortExtractor,
+    template <typename Container, typename SortScript, typename SortExtractor, typename Extractor>
+    Container calcSortTracks(const SortScript& sort, const Container& items, SortExtractor sortExtractor,
                              Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
     {
         Container sortedTracks = calcSortFields(sort, items, sortExtractor);

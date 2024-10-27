@@ -785,7 +785,7 @@ Expression ScriptParserPrivate::sort()
         val.append(m_previous.value);
     }
 
-    expr.value = val;
+    expr.value = val.trimmed();
     return expr;
 }
 
@@ -1388,12 +1388,19 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
 
     if(!m_sortScript.isEmpty()) {
         TrackSorter m_sorter;
+        ParsedScript sort = parse(m_sortScript);
+        if(sort.expressions.size() == 1) {
+            auto& sortExpr = sort.expressions.front();
+            if(sortExpr.type == Expr::Literal) {
+                sortExpr.type = Expr::Variable;
+            }
+        }
         if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
-            filteredTracks = m_sorter.calcSortTracks(m_sortScript, filteredTracks, PlaylistTrack::extractor,
+            filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, PlaylistTrack::extractor,
                                                      PlaylistTrack::extractorConst, m_sortOrder);
         }
         else {
-            filteredTracks = m_sorter.calcSortTracks(m_sortScript, filteredTracks, m_sortOrder);
+            filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, m_sortOrder);
         }
     }
 
