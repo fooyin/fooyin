@@ -1683,7 +1683,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="522"/>
         <source>Current file</source>
-        <translation type="unfinished">Current file</translation>
+        <translation>Current file</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="531"/>
@@ -2220,12 +2220,12 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="62"/>
         <source>S&amp;earching help</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;earching help</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
         <source>Open the search documentation</source>
-        <translation type="unfinished"></translation>
+        <translation>Open the search documentation</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="68"/>
@@ -3012,22 +3012,22 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="128"/>
         <source>Icon</source>
-        <translation type="unfinished">Icon</translation>
+        <translation>Icon</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="131"/>
         <source>Width</source>
-        <translation type="unfinished">Width</translation>
+        <translation>Width</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="132"/>
         <source>Height</source>
-        <translation type="unfinished">Height</translation>
+        <translation>Height</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="145"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished">Size can also be changed using %1 in the widget.</translation>
+        <translation>Size can also be changed using %1 in the widget.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="200"/>
@@ -3171,52 +3171,52 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="47"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Seek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="48"/>
         <source>Reset Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset Changes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="49"/>
         <source>Insert/Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Insert/Update</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="50"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Remove</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="51"/>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove All</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="57"/>
         <source>Lyrics Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Lyrics Editor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="61"/>
         <source>Operation</source>
-        <translation type="unfinished">Operation</translation>
+        <translation>Operation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="68"/>
         <source>Timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>Timestamps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="139"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="143"/>
         <source>Play</source>
-        <translation type="unfinished">Play</translation>
+        <translation>Play</translation>
     </message>
 </context>
 <context>
@@ -3224,12 +3224,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="163"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="164"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lyrics</translation>
+        <translation>Lyrics</translation>
     </message>
 </context>
 <context>
@@ -3237,72 +3237,72 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="66"/>
         <source>Seek on click</source>
-        <translation type="unfinished"></translation>
+        <translation>Seek on click</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="68"/>
         <source>Synced scroll duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced scroll duration</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="69"/>
         <source>Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>Manual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="70"/>
         <source>Synced</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="76"/>
         <source>This will only function with synced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>This will only function with synced lyrics.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="78"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation type="unfinished"></translation>
+        <translation>This will be displayed if lyrics for the current track can&apos;t be found.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="83"/>
         <source>No lyrics script</source>
-        <translation type="unfinished"></translation>
+        <translation>No lyrics script</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="87"/>
         <source>Scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrolling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="93"/>
         <source>Scroll Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Scroll Mode</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="96"/>
         <source>No automatic scrolling will take place</source>
-        <translation type="unfinished"></translation>
+        <translation>No automatic scrolling will take place</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="97"/>
         <source>Synced lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced lyrics will be scrolled</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="98"/>
         <source>All lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>All lyrics will be scrolled</translation>
     </message>
 </context>
 <context>
@@ -3310,12 +3310,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="364"/>
         <source>Appearance</source>
-        <translation type="unfinished">Appearance</translation>
+        <translation>Appearance</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="365"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lyrics</translation>
+        <translation>Lyrics</translation>
     </message>
 </context>
 <context>
@@ -3323,126 +3323,126 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="89"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Show scrollbar</translation>
+        <translation>Show scrollbar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="96"/>
         <source>Background colour</source>
-        <translation type="unfinished">Background colour</translation>
+        <translation>Background colour</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
         <source>Line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Line colour</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="100"/>
         <source>Unplayed line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Unplayed line colour</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="102"/>
         <source>Played line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Played line colour</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="104"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="106"/>
         <source>Current line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Current line colour</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="108"/>
         <source>Current word colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Current word colour</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="110"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="112"/>
         <source>Current line font</source>
-        <translation type="unfinished"></translation>
+        <translation>Current line font</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="114"/>
         <source>Current word font</source>
-        <translation type="unfinished"></translation>
+        <translation>Current word font</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="117"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="120"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Align to centre</translation>
+        <translation>Align to centre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="121"/>
         <source>Align to left</source>
-        <translation type="unfinished">Align to left</translation>
+        <translation>Align to left</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="122"/>
         <source>Align to right</source>
-        <translation type="unfinished">Align to right</translation>
+        <translation>Align to right</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="129"/>
         <source>Line spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Line spacing</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="131"/>
         <source>Alignment</source>
-        <translation type="unfinished">Alignment</translation>
+        <translation>Alignment</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="135"/>
         <source>Margins</source>
-        <translation type="unfinished"></translation>
+        <translation>Margins</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="149"/>
         <source>Left</source>
-        <translation type="unfinished">Left</translation>
+        <translation>Left</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="151"/>
         <source>Right</source>
-        <translation type="unfinished">Right</translation>
+        <translation>Right</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="153"/>
         <source>Top</source>
-        <translation type="unfinished">Top</translation>
+        <translation>Top</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="155"/>
         <source>Bottom</source>
-        <translation type="unfinished">Bottom</translation>
+        <translation>Bottom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="159"/>
         <source>Fonts</source>
-        <translation type="unfinished">Fonts</translation>
+        <translation>Fonts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="162"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="187"/>
         <source>Synced</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="170"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="199"/>
         <source>Synced Words</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced Words</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="184"/>
         <source>Colours</source>
-        <translation type="unfinished">Colours</translation>
+        <translation>Colours</translation>
     </message>
 </context>
 <context>
@@ -3451,7 +3451,7 @@
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="57"/>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="58"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lyrics</translation>
+        <translation>Lyrics</translation>
     </message>
 </context>
 <context>
@@ -3459,12 +3459,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="277"/>
         <source>Saving</source>
-        <translation type="unfinished">Saving</translation>
+        <translation>Saving</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="278"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lyrics</translation>
+        <translation>Lyrics</translation>
     </message>
 </context>
 <context>
@@ -3472,102 +3472,102 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="79"/>
         <source>Manual save</source>
-        <translation type="unfinished"></translation>
+        <translation>Manual save</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="80"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>Autosave</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="81"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Autosave after 60 seconds or 1/3 of track duration</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="82"/>
         <source>Save to metadata tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Save to metadata tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="83"/>
         <source>Save to directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Save to directory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="84"/>
         <source>Save all</source>
-        <translation type="unfinished"></translation>
+        <translation>Save all</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="85"/>
         <source>Synced only</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="86"/>
         <source>Unsynced only</source>
-        <translation type="unfinished"></translation>
+        <translation>Unsynced only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="91"/>
         <source>Collapse duplicate lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Collapse duplicate lines</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="92"/>
         <source>Save metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Save metadata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="94"/>
         <source>Save Scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Scheme</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="102"/>
         <source>Save Method</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Method</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="109"/>
         <source>Autosave Preference</source>
-        <translation type="unfinished"></translation>
+        <translation>Autosave Preference</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="117"/>
         <source>Save Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Location</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="120"/>
         <source>Synced lyric tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Synced lyric tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="121"/>
         <source>Unsynced lyric tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Unsynced lyric tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="122"/>
         <source>Directory</source>
-        <translation type="unfinished">Directory</translation>
+        <translation>Directory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="123"/>
         <source>Filename</source>
-        <translation type="unfinished">Filename</translation>
+        <translation>Filename</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="135"/>
         <source>Save Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Format</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="267"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Select Directory</translation>
+        <translation>Select Directory</translation>
     </message>
 </context>
 <context>
@@ -3575,12 +3575,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="133"/>
         <source>Searching</source>
-        <translation type="unfinished">Searching</translation>
+        <translation>Searching</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="134"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lyrics</translation>
+        <translation>Lyrics</translation>
     </message>
 </context>
 <context>
@@ -3588,47 +3588,47 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="62"/>
         <source>Automatically search for lyrics on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatically search for lyrics on starting playback</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="63"/>
         <source>Skip remaining sources when lyrics are found</source>
-        <translation type="unfinished"></translation>
+        <translation>Skip remaining sources when lyrics are found</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="64"/>
         <source>Skip external sources if local lyrics are found</source>
-        <translation type="unfinished"></translation>
+        <translation>Skip external sources if local lyrics are found</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="68"/>
         <source>Minimum match threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum match threshold</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="70"/>
         <source>Search parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Search parameters</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="76"/>
         <source>Title</source>
-        <translation type="unfinished">Title</translation>
+        <translation>Title</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="78"/>
         <source>Artist</source>
-        <translation type="unfinished">Artist</translation>
+        <translation>Artist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="80"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="84"/>
         <source>Only local lyrics will be used if unchecked</source>
-        <translation type="unfinished"></translation>
+        <translation>Only local lyrics will be used if unchecked</translation>
     </message>
 </context>
 <context>
@@ -3636,12 +3636,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="139"/>
         <source>Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Sources</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="140"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lyrics</translation>
+        <translation>Lyrics</translation>
     </message>
 </context>
 <context>
@@ -3649,22 +3649,22 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="80"/>
         <source>Lyrics sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Lyrics sources</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="82"/>
         <source>Lyrics will be searched for in the above order.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lyrics will be searched for in the above order.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="84"/>
         <source>Metadata tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadata tags</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="86"/>
         <source>Local files</source>
-        <translation type="unfinished"></translation>
+        <translation>Local files</translation>
     </message>
 </context>
 <context>
@@ -3672,87 +3672,87 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
         <source>Artist</source>
-        <translation type="unfinished">Artist</translation>
+        <translation>Artist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
         <source>Title</source>
-        <translation type="unfinished">Title</translation>
+        <translation>Title</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="142"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lyrics</translation>
+        <translation>Lyrics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="166"/>
         <source>Select lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Select lyrics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="177"/>
         <source>Search for lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Search for lyrics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="178"/>
         <source>Search for lyrics for the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Search for lyrics for the current track</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="189"/>
         <source>Edit lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit lyrics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="190"/>
         <source>Open editor for the current lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Open editor for the current lyrics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="195"/>
         <source>Save lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Save lyrics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="196"/>
         <source>Save lyrics using current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Save lyrics using current settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="205"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Show scrollbar</translation>
+        <translation>Show scrollbar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="211"/>
         <source>Text-align</source>
-        <translation type="unfinished"></translation>
+        <translation>Text-align</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="215"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Align to centre</translation>
+        <translation>Align to centre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="216"/>
         <source>Align to left</source>
-        <translation type="unfinished">Align to left</translation>
+        <translation>Align to left</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="217"/>
         <source>Align to right</source>
-        <translation type="unfinished">Align to right</translation>
+        <translation>Align to right</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="241"/>
         <source>Settings…</source>
-        <translation type="unfinished">Settings…</translation>
+        <translation>Settings…</translation>
     </message>
 </context>
 <context>
@@ -4689,7 +4689,7 @@
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="67"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="108"/>
         <source>Current file</source>
-        <translation type="unfinished">Current file</translation>
+        <translation>Current file</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="84"/>
@@ -5389,7 +5389,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="74"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished"></translation>
+        <translation>Writing to file tags…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="42"/>
@@ -5430,17 +5430,17 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="141"/>
         <source>Calculation</source>
-        <translation type="unfinished">Calculation</translation>
+        <translation>Calculation</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="142"/>
         <source>Playback</source>
-        <translation type="unfinished">Playback</translation>
+        <translation>Playback</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="142"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">ReplayGain</translation>
+        <translation>ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -5448,37 +5448,37 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="57"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation type="unfinished">Use sample peak for calculating peaks</translation>
+        <translation>Use sample peak for calculating peaks</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="58"/>
         <source>Use true peak for calculating peaks</source>
-        <translation type="unfinished">Use true peak for calculating peaks</translation>
+        <translation>Use true peak for calculating peaks</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="61"/>
         <source>Scanner</source>
-        <translation type="unfinished"></translation>
+        <translation>Scanner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="73"/>
         <source>Options</source>
-        <translation type="unfinished">Options</translation>
+        <translation>Options</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="80"/>
         <source>Album grouping pattern</source>
-        <translation type="unfinished">Album grouping pattern</translation>
+        <translation>Album grouping pattern</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Used with the %1 action</source>
-        <translation type="unfinished">Used with the %1 action</translation>
+        <translation>Used with the %1 action</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Calculate as albums (by tags)</source>
-        <translation type="unfinished">Calculate as albums (by tags)</translation>
+        <translation>Calculate as albums (by tags)</translation>
     </message>
 </context>
 <context>
@@ -5552,12 +5552,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="186"/>
         <source>Remove ReplayGain Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove ReplayGain Info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="189"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished"></translation>
+        <translation>Writing to file tags…</translation>
     </message>
 </context>
 <context>
@@ -6030,7 +6030,7 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="150"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Help</translation>
     </message>
 </context>
 <context>
@@ -6220,7 +6220,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="536"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Help</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="122"/>
