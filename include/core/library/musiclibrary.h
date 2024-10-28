@@ -147,6 +147,12 @@ public:
     virtual void updateTrackMetadata(const TrackList& tracks) = 0;
     /** Updates the metadata in the database for @p tracks and writes metadata to files.  */
     virtual WriteRequest writeTrackMetadata(const TrackList& tracks) = 0;
+    /*!
+     * Writes the covers specified in @p coverData to all files in @p tracks.
+     * @note if a cover's data is empty/null, it will be removed from the file.
+     * @returns a WriteRequest which can be used to cancel the operation.
+     */
+    virtual WriteRequest writeTrackCovers(const TrackCoverData& coverData) = 0;
 
     /** Updates the statistics (playcount, rating etc) in the database for @p tracks.  */
     virtual void updateTrackStats(const TrackList& tracks) = 0;

@@ -73,6 +73,10 @@ set(SOURCES
     widgets.cpp
     widgets.h
     windowcontroller.cpp
+    artwork/artworkproperties.cpp
+    artwork/artworkproperties.h
+    artwork/artworkrow.cpp
+    artwork/artworkrow.h
     controls/playercontrol.cpp
     controls/playercontrol.h
     controls/playlistcontrol.cpp

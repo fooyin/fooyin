@@ -39,6 +39,11 @@ int AudioDecoder::bitrate() const
 
 void AudioDecoder::start() { }
 
+bool AudioReader::canWriteCover() const
+{
+    return canWriteMetaData();
+}
+
 int AudioReader::subsongCount() const
 {
     return 1;
@@ -55,6 +60,11 @@ QByteArray AudioReader::readCover(const AudioSource& /*source*/, const Track& /*
 }
 
 bool AudioReader::writeTrack(const AudioSource& /*source*/, const Track& /*track*/, WriteOptions /*options*/)
+{
+    return false;
+}
+
+bool AudioReader::writeCover(const AudioSource& /*source*/, const Track& /*track*/, const TrackCovers& /*covers*/)
 {
     return false;
 }

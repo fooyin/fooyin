@@ -24,6 +24,8 @@
 #include <QList>
 #include <QSharedDataPointer>
 
+#include <map>
+
 namespace Fooyin {
 class Track;
 class TrackPrivate;
@@ -52,6 +54,7 @@ public:
         Front = 0,
         Back,
         Artist,
+        Other
     };
 
     using ExtraTags       = QMap<QString, QStringList>;
@@ -258,4 +261,17 @@ private:
     QSharedDataPointer<TrackPrivate> p;
 };
 FYCORE_EXPORT size_t qHash(const Track& track);
+
+struct CoverImage
+{
+    QString mimeType;
+    QByteArray data;
+};
+using TrackCovers = std::map<Track::Cover, CoverImage>;
+
+struct TrackCoverData
+{
+    TrackList tracks;
+    TrackCovers coverData;
+};
 } // namespace Fooyin

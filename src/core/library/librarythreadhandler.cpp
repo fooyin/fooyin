@@ -489,6 +489,19 @@ WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
     return request;
 }
 
+WriteRequest LibraryThreadHandler::writeTrackCovers(const TrackCoverData& tracks)
+{
+    WriteRequest request;
+    request.cancel = [this]() {
+        p->m_trackDatabaseManager.stopThread();
+    };
+
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
+                              [this, tracks]() { p->m_trackDatabaseManager.writeCovers(tracks); });
+
+    return request;
+}
+
 void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks)
 {
     p->m_tracksPendingUpdate.insert(p->m_tracksPendingUpdate.end(), tracks.cbegin(), tracks.cend());
