@@ -30,6 +30,7 @@
 namespace Fooyin {
 struct InfoData;
 class InfoPopulator;
+class LibraryManager;
 
 class InfoModel : public TreeModel<InfoItem>
 {
@@ -47,7 +48,7 @@ public:
     };
     Q_ENUM(ItemParent)
 
-    explicit InfoModel(QObject* parent = nullptr);
+    explicit InfoModel(LibraryManager* libraryManager, QObject* parent = nullptr);
     ~InfoModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

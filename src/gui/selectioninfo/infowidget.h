@@ -27,9 +27,11 @@
 #include <QWidget>
 
 namespace Fooyin {
+class Application;
 class InfoFilterModel;
 class InfoModel;
 class InfoView;
+class LibraryManager;
 class PlayerController;
 class SettingsManager;
 class TrackSelectionController;
@@ -39,9 +41,8 @@ class InfoWidget : public PropertiesTabWidget
     Q_OBJECT
 
 public:
-    explicit InfoWidget(const TrackList& tracks, QWidget* parent = nullptr);
-    InfoWidget(PlayerController* playerController, TrackSelectionController* selectionController,
-               SettingsManager* settings, QWidget* parent = nullptr);
+    InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, QWidget* parent = nullptr);
+    InfoWidget(Application* app, TrackSelectionController* selectionController, QWidget* parent = nullptr);
     ~InfoWidget() override;
 
     [[nodiscard]] QString name() const override;

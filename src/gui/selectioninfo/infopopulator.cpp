@@ -21,6 +21,7 @@
 
 #include "infomodel.h"
 
+#include <core/library/librarymanager.h>
 #include <core/track.h>
 #include <utils/enum.h>
 #include <utils/stringutils.h>
@@ -36,8 +37,9 @@ using ItemParent = InfoModel::ItemParent;
 class InfoPopulatorPrivate
 {
 public:
-    explicit InfoPopulatorPrivate(InfoPopulator* self)
+    explicit InfoPopulatorPrivate(InfoPopulator* self, LibraryManager* libraryManager)
         : m_self{self}
+        , m_libraryManager{libraryManager}
     { }
 
     void reset();
@@ -78,6 +80,8 @@ public:
     void addTrackNodes(InfoItem::Options options, const TrackList& tracks);
 
     InfoPopulator* m_self;
+    LibraryManager* m_libraryManager;
+
     InfoData m_data;
     std::set<float> m_trackGain;
     std::set<float> m_trackPeak;
@@ -187,6 +191,13 @@ void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
         }});
     checkAddEntryNode(QStringLiteral("LastModified"), InfoPopulator::tr("Last Modified"), ItemParent::Location,
                       track.modifiedTime(), InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
+
+    if(track.isInLibrary()) {
+        if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
+            checkAddEntryNode(QStringLiteral("Library"), InfoPopulator::tr("Library"), ItemParent::Location,
+                              library->name);
+        }
+    }
 
     if(total == 1) {
         checkAddEntryNode(QStringLiteral("Added"), InfoPopulator::tr("Added"), ItemParent::Location, track.addedTime(),
@@ -315,9 +326,9 @@ void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackL
     }
 }
 
-InfoPopulator::InfoPopulator(QObject* parent)
+InfoPopulator::InfoPopulator(LibraryManager* libraryManager, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<InfoPopulatorPrivate>(this)}
+    , p{std::make_unique<InfoPopulatorPrivate>(this, libraryManager)}
 { }
 
 InfoPopulator::~InfoPopulator() = default;

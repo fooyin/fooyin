@@ -28,8 +28,9 @@
 constexpr auto HeaderFontDelta = 2;
 
 namespace Fooyin {
-InfoModel::InfoModel(QObject* parent)
+InfoModel::InfoModel(LibraryManager* libraryManager, QObject* parent)
     : TreeModel{parent}
+    , m_populator{libraryManager}
 {
     m_populator.moveToThread(&m_populatorThread);
 

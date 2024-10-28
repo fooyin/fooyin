@@ -26,6 +26,7 @@
 
 namespace Fooyin {
 class InfoPopulatorPrivate;
+class LibraryManager;
 
 struct InfoData
 {
@@ -44,7 +45,7 @@ class InfoPopulator : public Worker
     Q_OBJECT
 
 public:
-    explicit InfoPopulator(QObject* parent = nullptr);
+    explicit InfoPopulator(LibraryManager* libraryManager, QObject* parent = nullptr);
     ~InfoPopulator() override;
 
     void run(InfoItem::Options options, const TrackList& tracks);

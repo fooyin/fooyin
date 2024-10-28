@@ -184,8 +184,7 @@ void Widgets::registerWidgets()
     provider->setSubMenus(QStringLiteral("SeekBar"), {tr("Controls")});
 
     provider->registerWidget(
-        QStringLiteral("SelectionInfo"),
-        [this]() { return new InfoWidget(m_core->playerController(), m_gui->trackSelection(), m_settings, m_window); },
+        QStringLiteral("SelectionInfo"), [this]() { return new InfoWidget(m_core, m_gui->trackSelection(), m_window); },
         tr("Selection Info"));
 
     provider->registerWidget(
@@ -261,8 +260,9 @@ void Widgets::registerPages()
 
 void Widgets::registerPropertiesTabs()
 {
-    m_gui->propertiesDialog()->addTab(tr("Details"),
-                                      [this](const TrackList& tracks) { return new InfoWidget(tracks, m_window); });
+    m_gui->propertiesDialog()->addTab(tr("Details"), [this](const TrackList& tracks) {
+        return new InfoWidget(tracks, m_core->libraryManager(), m_window);
+    });
     m_gui->propertiesDialog()->addTab(tr("ReplayGain"), [this](const TrackList& tracks) {
         const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {
             return !track.hasCue() && !track.isInArchive() && m_core->audioLoader()->canWriteMetadata(track);

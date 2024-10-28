@@ -24,6 +24,7 @@
 #include "infoview.h"
 #include "internalguisettings.h"
 
+#include <core/application.h>
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/trackselectioncontroller.h>
@@ -58,14 +59,14 @@ protected:
     }
 };
 
-InfoWidget::InfoWidget(const TrackList& tracks, QWidget* parent)
+InfoWidget::InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_selectionController{nullptr}
     , m_playerController{nullptr}
     , m_settings{nullptr}
     , m_view{new InfoView(this)}
     , m_proxyModel{new InfoFilterModel(this)}
-    , m_model{new InfoModel(this)}
+    , m_model{new InfoModel(libraryManager, this)}
     , m_displayOption{SelectionDisplay::PreferSelection}
     , m_scrollPos{-1}
 {
@@ -85,15 +86,14 @@ InfoWidget::InfoWidget(const TrackList& tracks, QWidget* parent)
     m_model->resetModel(tracks);
 }
 
-InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionController* selectionController,
-                       SettingsManager* settings, QWidget* parent)
+InfoWidget::InfoWidget(Application* app, TrackSelectionController* selectionController, QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_selectionController{selectionController}
-    , m_playerController{playerController}
-    , m_settings{settings}
+    , m_playerController{app->playerController()}
+    , m_settings{app->settingsManager()}
     , m_view{new InfoView(this)}
     , m_proxyModel{new InfoFilterModel(this)}
-    , m_model{new InfoModel(this)}
+    , m_model{new InfoModel(app->libraryManager(), this)}
     , m_displayOption{static_cast<SelectionDisplay>(m_settings->value<Settings::Gui::Internal::InfoDisplayPrefer>())}
     , m_scrollPos{-1}
 {
@@ -107,10 +107,10 @@ InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionControl
     m_proxyModel->setSourceModel(m_model);
     m_view->setModel(m_proxyModel);
 
-    m_view->setHeaderHidden(!settings->value<Settings::Gui::Internal::InfoHeader>());
+    m_view->setHeaderHidden(!m_settings->value<Settings::Gui::Internal::InfoHeader>());
     m_view->setVerticalScrollBarPolicy(
-        settings->value<Settings::Gui::Internal::InfoScrollBar>() ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-    m_view->setAlternatingRowColors(settings->value<Settings::Gui::Internal::InfoAltColours>());
+        m_settings->value<Settings::Gui::Internal::InfoScrollBar>() ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_view->setAlternatingRowColors(m_settings->value<Settings::Gui::Internal::InfoAltColours>());
 
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { m_resetTimer.start(50, this); });
