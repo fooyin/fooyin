@@ -769,12 +769,12 @@ void LibraryTreeWidgetPrivate::handleTracksUpdated(const TrackList& tracks)
         }
     }
 
-    m_model->updateTracks(tracks);
-
     QObject::connect(
         m_model, &LibraryTreeModel::modelUpdated, m_self,
         [this, expandedTitles, selectedTitles]() { restoreSelection(expandedTitles, selectedTitles); },
         Qt::SingleShotConnection);
+
+    m_model->updateTracks(tracks);
 }
 
 void LibraryTreeWidgetPrivate::restoreSelection(const QStringList& expandedTitles, const QStringList& selectedTitles)
