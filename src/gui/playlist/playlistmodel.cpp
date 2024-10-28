@@ -336,7 +336,7 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     trackIds.reserve(indexes.size());
 
     std::ranges::transform(indexes, std::back_inserter(trackIds), [](const QModelIndex& index) {
-        return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>().id();
+        return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::PlaylistTrack>().track.id();
     });
 
     Fooyin::operator<<(stream, trackIds);
@@ -349,7 +349,7 @@ Fooyin::QueueTracks savePlaylistTracks(const Fooyin::UId& playlistId, const QMod
     Fooyin::QueueTracks tracks;
 
     for(const QModelIndex& index : indexes) {
-        const auto track           = index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>();
+        const auto track = index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::PlaylistTrack>().track;
         const auto indexInPlaylist = index.data(Fooyin::PlaylistItem::Role::Index).toInt();
         tracks.emplace_back(track, playlistId, indexInPlaylist);
 
