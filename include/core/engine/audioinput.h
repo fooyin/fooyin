@@ -149,6 +149,8 @@ public:
     [[nodiscard]] virtual QStringList extensions() const = 0;
     /* Returns @c true if embedded album artwork can be read. */
     [[nodiscard]] virtual bool canReadCover() const = 0;
+    /* Returns @c true if embedded album artwork can be written. */
+    [[nodiscard]] virtual bool canWriteCover() const;
     /* Returns @c true if this reader supports writing metadata/tags to file. */
     [[nodiscard]] virtual bool canWriteMetaData() const = 0;
     /*!
@@ -185,6 +187,12 @@ public:
      * @returns whether the track was written successfully.
      */
     [[nodiscard]] virtual bool writeTrack(const AudioSource& source, const Track& track, WriteOptions options);
+    /*!
+     * Writes the cover for the given Track @p track to file.
+     * Will only be called after a successful @fn init call.
+     * @returns whether the cover was written successfully.
+     */
+    [[nodiscard]] virtual bool writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers);
 };
 using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 

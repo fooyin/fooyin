@@ -62,6 +62,7 @@ public:
     [[nodiscard]] bool readTrackMetadata(Track& track) const;
     [[nodiscard]] QByteArray readTrackCover(const Track& track, Track::Cover cover) const;
     [[nodiscard]] bool writeTrackMetadata(const Track& track, AudioReader::WriteOptions options) const;
+    [[nodiscard]] bool writeTrackCover(const Track& track, const TrackCovers& coverData) const;
 
     void addDecoder(const QString& name, const DecoderCreator& creator, int priority = -1);
     void addReader(const QString& name, const ReaderCreator& creator, int priority = -1);

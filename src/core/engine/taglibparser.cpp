@@ -1096,6 +1096,55 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track, Foo
     }
 }
 
+void writeId3Cover(TagLib::ID3v2::Tag* id3Tags, const Fooyin::TrackCovers& covers)
+{
+    using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
+
+    const auto toCoverType = [](PictureFrame::Type type) {
+        switch(type) {
+            case(PictureFrame::FrontCover):
+                return Fooyin::Track::Cover::Front;
+            case(PictureFrame::BackCover):
+                return Fooyin::Track::Cover::Back;
+            case(PictureFrame::Artist):
+                return Fooyin::Track::Cover::Artist;
+            default:
+                return Fooyin::Track::Cover::Other;
+        }
+    };
+
+    const auto fromCoverType = [](Fooyin::Track::Cover type) {
+        switch(type) {
+            case(Fooyin::Track::Cover::Front):
+                return PictureFrame::FrontCover;
+            case(Fooyin::Track::Cover::Back):
+                return PictureFrame::BackCover;
+            case(Fooyin::Track::Cover::Artist):
+                return PictureFrame::Artist;
+            default:
+                return PictureFrame::Other;
+        }
+    };
+
+    auto frames = id3Tags->frameList("APIC");
+    for(auto* frame : frames) {
+        auto* coverFrame = static_cast<PictureFrame*>(frame);
+        if(coverFrame && covers.contains(toCoverType(coverFrame->type()))) {
+            id3Tags->removeFrame(coverFrame);
+        }
+    }
+
+    for(const auto& [type, cover] : covers) {
+        if(!cover.data.isEmpty()) {
+            auto* newCoverFrame = new PictureFrame();
+            newCoverFrame->setType(fromCoverType(type));
+            newCoverFrame->setMimeType(convertString(cover.mimeType));
+            newCoverFrame->setPicture(TagLib::ByteVector(cover.data.constData(), cover.data.size()));
+            id3Tags->addFrame(newCoverFrame);
+        }
+    }
+}
+
 void readApeTags(const TagLib::APE::Tag* apeTags, Fooyin::Track& track)
 {
     if(apeTags->isEmpty()) {
@@ -1193,6 +1242,37 @@ void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track, Fooyin:
         }
         else {
             apeTags->setItem("FMPS_PLAYCOUNT", {"FMPS_PLAYCOUNT", convertString(QString::number(track.rating()))});
+        }
+    }
+}
+
+void writeApeCover(TagLib::APE::Tag* apeTags, const Fooyin::TrackCovers& covers)
+{
+    const auto fromCoverType = [](Fooyin::Track::Cover type) {
+        switch(type) {
+            case(Fooyin::Track::Cover::Front):
+                return "COVER ART (FRONT)";
+            case(Fooyin::Track::Cover::Back):
+                return "COVER ART (BACK)";
+            case(Fooyin::Track::Cover::Artist):
+                return "COVER ART (ARTIST)";
+            default:
+                return "";
+        }
+    };
+
+    for(const auto& [type, cover] : covers) {
+        const auto* const coverType = fromCoverType(type);
+        apeTags->removeItem(coverType);
+
+        if(!cover.data.isEmpty()) {
+            TagLib::ByteVector coverData;
+            coverData.append(coverType);
+            coverData.append('\0');
+            coverData.append(TagLib::ByteVector(cover.data.constData(), cover.data.size()));
+
+            const TagLib::APE::Item newItem(coverType, coverData, true);
+            apeTags->setItem(coverType, newItem);
         }
     }
 }
@@ -1539,6 +1619,43 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, Fooyin:
     }
 }
 
+void writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const Fooyin::TrackCovers& covers)
+{
+    if(!covers.contains(Fooyin::Track::Cover::Front)) {
+        return;
+    }
+
+    mp4Tags->removeItem("covr");
+
+    using CoverArt = TagLib::MP4::CoverArt;
+
+    for(const auto& [type, cover] : covers) {
+        if(type != Fooyin::Track::Cover::Front) {
+            continue;
+        }
+
+        if(cover.data.isEmpty()) {
+            return;
+        }
+
+        CoverArt::Format format{CoverArt::JPEG};
+        if(cover.mimeType == u"image/jpeg") {
+            format = TagLib::MP4::CoverArt::Format::JPEG;
+        }
+        else if(cover.mimeType == u"image/png") {
+            format = TagLib::MP4::CoverArt::Format::PNG;
+        }
+        else {
+            continue;
+        }
+
+        const CoverArt newCoverArt(format, TagLib::ByteVector(cover.data.constData(), cover.data.size()));
+        TagLib::MP4::CoverArtList coverArtList;
+        coverArtList.append(newCoverArt);
+        mp4Tags->setItem("covr", TagLib::MP4::Item(coverArtList));
+    }
+}
+
 void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& track)
 {
     if(xiphTags->isEmpty()) {
@@ -1676,6 +1793,55 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
     }
 }
 
+void writeXiphCover(auto* file, const Fooyin::TrackCovers& covers)
+{
+    using Picture = TagLib::FLAC::Picture;
+
+    const auto toCoverType = [](Picture::Type type) {
+        switch(type) {
+            case(Picture::FrontCover):
+                return Fooyin::Track::Cover::Front;
+            case(Picture::BackCover):
+                return Fooyin::Track::Cover::Back;
+            case(Picture::Artist):
+                return Fooyin::Track::Cover::Artist;
+            default:
+                return Fooyin::Track::Cover::Other;
+        }
+    };
+
+    const auto fromCoverType = [](Fooyin::Track::Cover type) {
+        switch(type) {
+            case(Fooyin::Track::Cover::Front):
+                return Picture::FrontCover;
+            case(Fooyin::Track::Cover::Back):
+                return Picture::BackCover;
+            case(Fooyin::Track::Cover::Artist):
+                return Picture::Artist;
+            default:
+                return Picture::Other;
+        }
+    };
+
+    const auto pictures = file->pictureList();
+    for(const auto& picture : pictures) {
+        if(covers.contains(toCoverType(picture->type()))) {
+            file->removePicture(picture);
+        }
+    }
+
+    for(const auto& [type, cover] : covers) {
+        if(!cover.data.isEmpty()) {
+            auto* newPicture = new Picture();
+            newPicture->setType(fromCoverType(type));
+            newPicture->setMimeType(convertString(cover.mimeType));
+            newPicture->setData(TagLib::ByteVector(cover.data.constData(), cover.data.size()));
+
+            file->addPicture(newPicture);
+        }
+    }
+}
+
 void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track)
 {
     if(asfTags->isEmpty()) {
@@ -1801,6 +1967,60 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin:
             asfTags->setAttribute("FMPS/Playcount", convertString(QString::number(track.playCount())));
         }
     }
+}
+
+void writeAsfCover(TagLib::ASF::Tag* asfTags, const Fooyin::TrackCovers& covers)
+{
+    using Picture = TagLib::ASF::Picture;
+
+    const auto toCoverType = [](Picture::Type type) {
+        switch(type) {
+            case(Picture::FrontCover):
+                return Fooyin::Track::Cover::Front;
+            case(Picture::BackCover):
+                return Fooyin::Track::Cover::Back;
+            case(Picture::Artist):
+                return Fooyin::Track::Cover::Artist;
+            default:
+                return Fooyin::Track::Cover::Other;
+        }
+    };
+
+    const auto fromCoverType = [](Fooyin::Track::Cover type) {
+        switch(type) {
+            case(Fooyin::Track::Cover::Front):
+                return Picture::FrontCover;
+            case(Fooyin::Track::Cover::Back):
+                return Picture::BackCover;
+            case(Fooyin::Track::Cover::Artist):
+                return Picture::Artist;
+            default:
+                return Picture::Other;
+        }
+    };
+
+    TagLib::ASF::AttributeList pictures = asfTags->attribute("WM/Picture");
+
+    for(auto it = pictures.begin(); it != pictures.end(); ++it) {
+        const Picture pic    = it->toPicture();
+        const auto coverType = toCoverType(pic.type());
+        if(covers.contains(coverType)) {
+            it = pictures.erase(it);
+        }
+    }
+
+    for(const auto& [type, cover] : covers) {
+        if(!cover.data.isEmpty()) {
+            Picture newPicture;
+            newPicture.setType(fromCoverType(type));
+            newPicture.setMimeType(convertString(cover.mimeType));
+            newPicture.setPicture(TagLib::ByteVector(cover.data.constData(), cover.data.size()));
+
+            pictures.append(TagLib::ASF::Attribute{newPicture});
+        }
+    }
+
+    asfTags->setAttribute("WM/Picture", pictures);
 }
 } // namespace
 
@@ -2564,6 +2784,156 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
             writeProperties(file);
             if(file.hasID3v2Tag()) {
                 writeID3v2Tags(file.ID3v2Tag(), track, options);
+            }
+            file.save();
+        }
+    }
+#endif
+    else {
+        qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
+        return false;
+    }
+
+    return true;
+}
+
+bool TagLibReader::writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers)
+{
+    IODeviceStream stream{source.device, track.filepath()};
+    if(!stream.isOpen() || stream.readOnly()) {
+        return false;
+    }
+
+    const QMimeDatabase mimeDb;
+    QString mimeType = mimeDb.mimeTypeForFile(source.filepath).name();
+    const auto style = TagLib::AudioProperties::Average;
+
+    if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
+        // Workaround for opus files with ogg suffix returning incorrect type
+        mimeType = mimeDb.mimeTypeForData(source.device).name();
+    }
+    if(mimeType == u"audio/mpeg" || mimeType == u"audio/mpeg3" || mimeType == u"audio/x-mpeg") {
+#if(TAGLIB_MAJOR_VERSION >= 2)
+        TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
+#else
+        TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
+#endif
+        if(file.isValid()) {
+            if(file.hasID3v2Tag()) {
+                writeId3Cover(file.ID3v2Tag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/x-aiff" || mimeType == u"audio/x-aifc") {
+        TagLib::RIFF::AIFF::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.hasID3v2Tag()) {
+                writeId3Cover(file.tag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/vnd.wave" || mimeType == u"audio/wav" || mimeType == u"audio/x-wav") {
+        TagLib::RIFF::WAV::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.hasID3v2Tag()) {
+                writeId3Cover(file.ID3v2Tag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/x-musepack") {
+        TagLib::MPC::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.hasAPETag()) {
+                writeApeCover(file.APETag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/x-ape") {
+        TagLib::APE::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.hasAPETag()) {
+                writeApeCover(file.APETag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/x-wavpack") {
+        TagLib::WavPack::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.hasAPETag()) {
+                writeApeCover(file.APETag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/mp4") {
+        TagLib::MP4::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.hasMP4Tag()) {
+                writeMp4Cover(file.tag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/flac") {
+#if(TAGLIB_MAJOR_VERSION >= 2)
+        TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
+#else
+        TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
+#endif
+        if(file.isValid()) {
+            if(file.hasXiphComment()) {
+                writeXiphCover(&file, covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg" || mimeType == u"application/ogg") {
+        TagLib::Ogg::Vorbis::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.tag()) {
+                writeXiphCover(file.tag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/opus" || mimeType == u"audio/x-opus+ogg") {
+        TagLib::Ogg::Opus::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.tag()) {
+                writeXiphCover(file.tag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/x-ms-wma" || mimeType == u"video/x-ms-asf" || mimeType == u"application/vnd.ms-asf") {
+        TagLib::ASF::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.tag()) {
+                writeAsfCover(file.tag(), covers);
+            }
+            file.save();
+        }
+    }
+#if(TAGLIB_MAJOR_VERSION >= 2)
+    else if(mimeType == u"audio/x-dsf") {
+        TagLib::DSF::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.tag()) {
+                writeId3Cover(file.tag(), covers);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/x-dff") {
+        TagLib::DSDIFF::File file(&stream, false);
+        if(file.isValid()) {
+            if(file.hasID3v2Tag()) {
+                writeId3Cover(file.ID3v2Tag(), covers);
             }
             file.save();
         }

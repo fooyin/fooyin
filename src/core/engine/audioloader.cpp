@@ -388,6 +388,31 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
     return decoder->writeTrack(source, track, options);
 }
 
+bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverData) const
+{
+    if(track.isInArchive()) {
+        return false;
+    }
+
+    const std::shared_lock lock{p->m_mutex};
+
+    auto* decoder = readerForTrack(track);
+    if(!decoder || !decoder->canWriteCover()) {
+        return false;
+    }
+
+    AudioSource source;
+    source.filepath = track.filepath();
+    QFile file{track.filepath()};
+    if(!file.open(QIODeviceBase::ReadWrite)) {
+        qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
+        return false;
+    }
+    source.device = &file;
+
+    return decoder->writeCover(source, track, coverData);
+}
+
 void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator, int priority)
 {
     if(!creator) {

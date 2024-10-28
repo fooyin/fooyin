@@ -421,6 +421,11 @@ WriteRequest UnifiedMusicLibrary::writeTrackMetadata(const TrackList& tracks)
     return p->m_threadHandler.writeUpdatedTracks(tracks);
 }
 
+WriteRequest UnifiedMusicLibrary::writeTrackCovers(const TrackCoverData& tracks)
+{
+    return p->m_threadHandler.writeTrackCovers(tracks);
+}
+
 void UnifiedMusicLibrary::updateTrackStats(const TrackList& tracks)
 {
     p->m_threadHandler.saveUpdatedTrackStats(tracks);

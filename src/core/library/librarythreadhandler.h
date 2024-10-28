@@ -34,6 +34,7 @@ struct ScanProgress;
 struct ScanResult;
 struct ScanRequest;
 class SettingsManager;
+struct TrackCoverData;
 struct WriteRequest;
 
 class LibraryThreadHandler : public QObject
@@ -59,6 +60,7 @@ public:
 
     void saveUpdatedTracks(const TrackList& tracks);
     WriteRequest writeUpdatedTracks(const TrackList& tracks);
+    WriteRequest writeTrackCovers(const TrackCoverData& tracks);
     void saveUpdatedTrackStats(const TrackList& tracks);
 
     void cleanupTracks();

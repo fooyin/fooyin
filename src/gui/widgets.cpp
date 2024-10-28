@@ -19,6 +19,7 @@
 
 #include "widgets.h"
 
+#include "artwork/artworkproperties.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
 #include "controls/seekbar.h"
@@ -267,6 +268,12 @@ void Widgets::registerPropertiesTabs()
             return !track.hasCue() && !track.isInArchive() && m_core->audioLoader()->canWriteMetadata(track);
         });
         return new ReplayGainWidget(m_core->library(), tracks, !canWrite, m_window);
+    });
+    m_gui->propertiesDialog()->addTab(tr("Artwork"), [this](const TrackList& tracks) {
+        const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {
+            return !track.hasCue() && !track.isInArchive() && m_core->audioLoader()->canWriteMetadata(track);
+        });
+        return new ArtworkProperties(m_core->audioLoader().get(), m_core->library(), tracks, !canWrite, m_window);
     });
 }
 

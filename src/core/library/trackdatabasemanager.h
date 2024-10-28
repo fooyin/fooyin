@@ -28,6 +28,7 @@ namespace Fooyin {
 class Database;
 class AudioLoader;
 class SettingsManager;
+struct TrackCoverData;
 
 class TrackDatabaseManager : public Worker
 {
@@ -48,6 +49,7 @@ public slots:
     void getAllTracks();
     void updateTracks(const Fooyin::TrackList& tracks, bool write);
     void updateTrackStats(const Fooyin::TrackList& track);
+    void writeCovers(const Fooyin::TrackCoverData& tracks);
     void cleanupTracks();
 
 private:

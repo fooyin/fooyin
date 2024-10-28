@@ -24,6 +24,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/library/musiclibrary.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/settings/settingsmanager.h>
@@ -147,6 +148,42 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
 
     if(!tracksUpdated.empty()) {
         emit updatedTracksStats(tracksUpdated);
+    }
+
+    setState(Idle);
+}
+
+void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
+{
+    setState(Running);
+
+    TrackList tracksUpdated;
+
+    for(const auto& track : tracks.tracks) {
+        if(!mayRun()) {
+            break;
+        }
+
+        if(track.isInArchive()) {
+            continue;
+        }
+
+        Track updatedTrack{track};
+        if(m_audioLoader->writeTrackCover(updatedTrack, tracks.coverData)) {
+            const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
+            updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+
+            if(m_trackDatabase.updateTrack(updatedTrack)) {
+                tracksUpdated.emplace_back(updatedTrack);
+            }
+        }
+        else {
+            qCWarning(TRK_DBMAN) << "Failed to update track covers:" << updatedTrack.filepath();
+        }
+    }
+
+    if(!tracksUpdated.empty()) {
+        emit updatedTracks(tracksUpdated);
     }
 
     setState(Idle);
