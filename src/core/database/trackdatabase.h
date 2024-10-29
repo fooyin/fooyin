@@ -19,13 +19,15 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/track.h>
 #include <utils/database/dbmodule.h>
 
 #include <set>
 
 namespace Fooyin {
-class TrackDatabase : public DbModule
+class FYCORE_EXPORT TrackDatabase : public DbModule
 {
 public:
     bool storeTracks(TrackList& tracks);
@@ -55,7 +57,7 @@ private:
     bool insertTrack(Track& track) const;
     bool insertOrUpdateStats(const Track& track) const;
     void removeUnmanagedTracks() const;
-    void markUnusedStatsForDelete() const;
+    void updateLastSeenStats() const;
     void deleteExpiredStats() const;
 };
 } // namespace Fooyin

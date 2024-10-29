@@ -40,6 +40,7 @@ signals:
 
 private:
     void optimiseDatabase();
+    void cleanupDatabase();
 
     DbConnectionPoolPtr m_database;
 };

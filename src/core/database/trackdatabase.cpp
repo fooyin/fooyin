@@ -503,7 +503,7 @@ std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
 void TrackDatabase::cleanupTracks()
 {
     removeUnmanagedTracks();
-    markUnusedStatsForDelete();
+    updateLastSeenStats();
     deleteExpiredStats();
 }
 
@@ -786,17 +786,22 @@ void TrackDatabase::removeUnmanagedTracks() const
     query.exec();
 }
 
-void TrackDatabase::markUnusedStatsForDelete() const
+void TrackDatabase::updateLastSeenStats() const
 {
-    const auto statement
+    const auto markStatement
         = QStringLiteral("UPDATE TrackStats SET LastSeen = :lastSeen WHERE LastSeen IS NULL AND TrackHash NOT IN "
                          "(SELECT TrackHash FROM Tracks);");
 
-    DbQuery query{db(), statement};
+    DbQuery markQuery{db(), markStatement};
+    markQuery.bindValue(QStringLiteral(":lastSeen"), QDateTime::currentMSecsSinceEpoch());
+    markQuery.exec();
 
-    query.bindValue(QStringLiteral(":lastSeen"), QDateTime::currentMSecsSinceEpoch());
+    const auto unmarkStatement
+        = QStringLiteral("UPDATE TrackStats SET LastSeen = NULL WHERE LastSeen IS NOT NULL AND TrackHash IN "
+                         "(SELECT TrackHash FROM Tracks);");
 
-    query.exec();
+    DbQuery unmarkQuery{db(), unmarkStatement};
+    unmarkQuery.exec();
 }
 
 void TrackDatabase::deleteExpiredStats() const

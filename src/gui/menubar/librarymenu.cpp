@@ -22,6 +22,7 @@
 #include "gui/statusevent.h"
 
 #include <core/application.h>
+#include <core/database/trackdatabase.h>
 #include <core/library/musiclibrary.h>
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
@@ -47,6 +48,11 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
 
     auto* dbMenu = actionManager->createMenu(Constants::Menus::Database);
     dbMenu->menu()->setTitle(tr("&Database"));
+
+    auto* cleanDb = new QAction(tr("&Clean"), this);
+    cleanDb->setStatusTip(tr("Remove non-library tracks not in any playlists and expired playback statistics"));
+    dbMenu->addAction(cleanDb);
+    QObject::connect(cleanDb, &QAction::triggered, this, &LibraryMenu::cleanupDatabase);
 
     auto* optimiseDb = new QAction(tr("&Optimise"), this);
     optimiseDb->setStatusTip(tr("Reduce disk usage and improve query performance"));
@@ -110,6 +116,21 @@ void LibraryMenu::optimiseDatabase()
 
         generalDb.optimiseDatabase();
     }).then(this, []() { StatusEvent::post(tr("Database optimised")); });
+}
+
+void LibraryMenu::cleanupDatabase()
+{
+    StatusEvent::post(tr("Cleaning database…"), 0);
+
+    Utils::asyncExec([this]() {
+        const DbConnectionHandler dbHandler{m_database};
+        const DbConnectionProvider dbProvider{m_database};
+
+        TrackDatabase trackDb;
+        trackDb.initialise(dbProvider);
+
+        trackDb.cleanupTracks();
+    }).then(this, []() { StatusEvent::post(tr("Database cleaned")); });
 }
 } // namespace Fooyin
 
