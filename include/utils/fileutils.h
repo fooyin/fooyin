@@ -35,6 +35,7 @@ FYUTILS_EXPORT QString getParentDirectory(const QString& filename);
 
 FYUTILS_EXPORT bool createDirectories(const QString& path);
 FYUTILS_EXPORT void openDirectory(const QString& dir);
+FYUTILS_EXPORT uint64_t directorySize(const QString& dir);
 
 FYUTILS_EXPORT QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getFilesInDirRecursive(const QDir& baseDirectory, const QStringList& fileExtensions = {});

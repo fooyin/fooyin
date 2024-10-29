@@ -21,6 +21,7 @@
 
 #include <QDesktopServices>
 #include <QDir>
+#include <QDirIterator>
 #include <QFile>
 
 namespace Fooyin::Utils::File {
@@ -93,6 +94,22 @@ bool createDirectories(const QString& path)
 void openDirectory(const QString& dir)
 {
     QDesktopServices::openUrl(QUrl::fromLocalFile(dir));
+}
+
+uint64_t directorySize(const QString& dir)
+{
+    qint64 total{0};
+
+    QDirIterator it{dir, QDirIterator::Subdirectories};
+
+    while(it.hasNext()) {
+        it.next();
+        if(it.fileInfo().isFile()) {
+            total += it.fileInfo().size();
+        }
+    }
+
+    return static_cast<uint64_t>(total);
 }
 
 QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExtensions)
