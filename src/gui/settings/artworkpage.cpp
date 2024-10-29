@@ -21,15 +21,19 @@
 
 #include "internalguisettings.h"
 
-#include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
+#include <gui/guipaths.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/stringutils.h>
 
 #include <QButtonGroup>
+#include <QDir>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QPlainTextEdit>
+#include <QPushButton>
 #include <QRadioButton>
 #include <QSpinBox>
 #include <QTabWidget>
@@ -47,6 +51,8 @@ public:
     void reset() override;
 
 private:
+    void updateCacheSize();
+
     SettingsManager* m_settings;
 
     QRadioButton* m_preferPlaying;
@@ -58,6 +64,7 @@ private:
     QPlainTextEdit* m_artistCovers;
 
     QSpinBox* m_pixmapCache;
+    QLabel* m_cacheSizeLabel;
 };
 
 ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings)
@@ -69,6 +76,7 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings)
     , m_backCovers{new QPlainTextEdit(this)}
     , m_artistCovers{new QPlainTextEdit(this)}
     , m_pixmapCache{new QSpinBox(this)}
+    , m_cacheSizeLabel{new QLabel(this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -95,9 +103,17 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings)
     m_pixmapCache->setMaximum(1000);
     m_pixmapCache->setSuffix(QStringLiteral(" MB"));
 
+    auto* clearCacheButton = new QPushButton(tr("Clear Cache"), this);
+    QObject::connect(clearCacheButton, &QPushButton::clicked, this, [this]() {
+        QDir{Gui::coverPath()}.removeRecursively();
+        updateCacheSize();
+    });
+
     int row{0};
     cacheLayout->addWidget(pixmapCacheLabel, row, 0);
     cacheLayout->addWidget(m_pixmapCache, row++, 1);
+    cacheLayout->addWidget(m_cacheSizeLabel, row, 0);
+    cacheLayout->addWidget(clearCacheButton, row++, 1);
     cacheLayout->setColumnStretch(cacheLayout->columnCount(), 1);
 
     layout->addWidget(displayGroupBox, 0, 0);
@@ -124,6 +140,7 @@ void ArtworkPageWidget::load()
     m_artistCovers->setPlainText(paths.artistPaths.join(QStringLiteral("\n")));
 
     m_pixmapCache->setValue(m_settings->value<Settings::Gui::Internal::PixmapCacheSize>());
+    updateCacheSize();
 }
 
 void ArtworkPageWidget::apply()
@@ -148,6 +165,12 @@ void ArtworkPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::TrackCoverDisplayOption>();
     m_settings->reset<Settings::Gui::Internal::TrackCoverPaths>();
     m_settings->reset<Settings::Gui::Internal::PixmapCacheSize>();
+}
+
+void ArtworkPageWidget::updateCacheSize()
+{
+    const QString cacheSize = Utils::formatFileSize(Utils::File::directorySize(Gui::coverPath()));
+    m_cacheSizeLabel->setText(tr("Disk cache usage") + QStringLiteral(": %1").arg(cacheSize));
 }
 
 ArtworkPage::ArtworkPage(SettingsManager* settings, QObject* parent)
