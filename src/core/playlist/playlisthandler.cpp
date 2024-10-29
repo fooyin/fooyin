@@ -672,6 +672,7 @@ Playlist* PlaylistHandler::createNewAutoPlaylist(const QString& name, const QStr
     auto* playlist        = p->addNewAutoPlaylist(newName, query);
 
     if(playlist) {
+        playlist->regenerateTracks(p->m_library->tracks());
         emit playlistAdded(playlist);
     }
 
