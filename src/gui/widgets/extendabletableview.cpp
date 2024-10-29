@@ -259,7 +259,7 @@ void ExtendableTableViewPrivate::handleMoveUp() const
     for(const auto& index : uniqueRows) {
         rows.emplace_back(index);
     }
-    std::ranges::sort(rows);
+    std::sort(rows.begin(), rows.end());
 
     const auto ranges = Utils::getIndexRanges(rows);
 
@@ -283,7 +283,7 @@ void ExtendableTableViewPrivate::handleMoveDown() const
     for(const auto& index : uniqueRows) {
         rows.emplace_back(index);
     }
-    std::ranges::sort(rows);
+    std::sort(rows.begin(), rows.end());
 
     const auto ranges = Utils::getIndexRanges(rows);
 
