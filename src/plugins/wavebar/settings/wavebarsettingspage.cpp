@@ -96,12 +96,6 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
 {
     auto* layout = new QGridLayout(this);
 
-    auto* cursorWidthLabel = new QLabel(tr("Cursor width") + QStringLiteral(":"), this);
-    auto* barWidthLabel    = new QLabel(tr("Bar width") + QStringLiteral(":"), this);
-    auto* barGapLabel      = new QLabel(tr("Bar gap") + QStringLiteral(":"), this);
-    auto* maxScaleLabel    = new QLabel(tr("Max scale") + QStringLiteral(":"), this);
-    auto* centreGapLabel   = new QLabel(tr("Centre gap") + QStringLiteral(":"), this);
-
     m_cursorWidth->setMinimum(1);
     m_cursorWidth->setMaximum(20);
     m_cursorWidth->setSuffix(QStringLiteral(" px"));
@@ -139,8 +133,6 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     modeLayout->addWidget(m_rms);
     modeLayout->addWidget(m_silence);
 
-    auto* channelScaleLabel = new QLabel(tr("Channel scale") + QStringLiteral(":"), this);
-
     auto* downmixGroupBox = new QGroupBox(tr("Downmix"), this);
     auto* downmixGroup    = new QButtonGroup(this);
     auto* downmixLayout   = new QVBoxLayout(downmixGroupBox);
@@ -157,7 +149,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* cursorGroupLayout = new QGridLayout(cursorGroup);
 
     cursorGroupLayout->addWidget(m_showCursor, 0, 0, 1, 2);
-    cursorGroupLayout->addWidget(cursorWidthLabel, 1, 0);
+    cursorGroupLayout->addWidget(new QLabel(tr("Cursor width") + QStringLiteral(":"), this), 1, 0);
     cursorGroupLayout->addWidget(m_cursorWidth, 1, 1);
     cursorGroupLayout->setColumnStretch(2, 1);
 
@@ -165,9 +157,9 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* scaleGroupLayout = new QGridLayout(scaleGroup);
 
     int row{0};
-    scaleGroupLayout->addWidget(channelScaleLabel, row, 0);
+    scaleGroupLayout->addWidget(new QLabel(tr("Channel scale") + QStringLiteral(":"), this), row, 0);
     scaleGroupLayout->addWidget(m_channelScale, row++, 1);
-    scaleGroupLayout->addWidget(maxScaleLabel, row, 0);
+    scaleGroupLayout->addWidget(new QLabel(tr("Max scale") + QStringLiteral(":"), this), row, 0);
     scaleGroupLayout->addWidget(m_maxScale, row++, 1);
     scaleGroupLayout->setColumnStretch(2, 1);
 
@@ -175,11 +167,11 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* dimensionGroupLayout = new QGridLayout(dimensionGroup);
 
     row = 0;
-    dimensionGroupLayout->addWidget(barWidthLabel, row, 0);
+    dimensionGroupLayout->addWidget(new QLabel(tr("Bar width") + QStringLiteral(":"), this), row, 0);
     dimensionGroupLayout->addWidget(m_barWidth, row++, 1);
-    dimensionGroupLayout->addWidget(barGapLabel, row, 0);
+    dimensionGroupLayout->addWidget(new QLabel(tr("Bar gap") + QStringLiteral(":"), this), row, 0);
     dimensionGroupLayout->addWidget(m_barGap, row++, 1);
-    dimensionGroupLayout->addWidget(centreGapLabel, row, 0);
+    dimensionGroupLayout->addWidget(new QLabel(tr("Centre gap") + QStringLiteral(":"), this), row, 0);
     dimensionGroupLayout->addWidget(m_centreGap, row++, 1);
     dimensionGroupLayout->setColumnStretch(2, 1);
 

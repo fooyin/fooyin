@@ -93,44 +93,32 @@ WaveBarGuiSettingsPageWidget::WaveBarGuiSettingsPageWidget(SettingsManager* sett
 
     auto* coloursLayout = new QGridLayout(m_colourGroup);
 
-    auto* unPlayedLabel      = new QLabel(tr("Unplayed"), this);
-    auto* playedLabel        = new QLabel(tr("Played"), this);
-    auto* borderLabel        = new QLabel(tr("Border"), this);
-    auto* bgLabel            = new QLabel(tr("Background"), this);
-    auto* maxLabel           = new QLabel(tr("Max"), this);
-    auto* minLabel           = new QLabel(tr("Min"), this);
-    auto* rmsMaxLabel        = new QLabel(tr("RMS Max"), this);
-    auto* rmsMinLabel        = new QLabel(tr("RMS Min"), this);
-    auto* playingCursorLabel = new QLabel(tr("Playing"), this);
-    auto* seekingCursorLabel = new QLabel(tr("Seeking"), this);
-    auto* cursorLabel        = new QLabel(tr("Cursor"), this);
-
     int row{0};
-    coloursLayout->addWidget(unPlayedLabel, row, 1, Qt::AlignCenter);
-    coloursLayout->addWidget(playedLabel, row, 2, Qt::AlignCenter);
-    coloursLayout->addWidget(borderLabel, row++, 3, Qt::AlignCenter);
-    coloursLayout->addWidget(bgLabel, row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Unplayed"), this), row, 1, Qt::AlignCenter);
+    coloursLayout->addWidget(new QLabel(tr("Played"), this), row, 2, Qt::AlignCenter);
+    coloursLayout->addWidget(new QLabel(tr("Border"), this), row++, 3, Qt::AlignCenter);
+    coloursLayout->addWidget(new QLabel(tr("Background"), this), row, 0);
     coloursLayout->addWidget(m_bgUnplayed, row, 1);
     coloursLayout->addWidget(m_bgPlayed, row++, 2);
-    coloursLayout->addWidget(maxLabel, row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Max"), this), row, 0);
     coloursLayout->addWidget(m_maxUnplayed, row, 1);
     coloursLayout->addWidget(m_maxPlayed, row, 2);
     coloursLayout->addWidget(m_maxBorder, row++, 3);
-    coloursLayout->addWidget(minLabel, row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Min"), this), row, 0);
     coloursLayout->addWidget(m_minUnplayed, row, 1);
     coloursLayout->addWidget(m_minPlayed, row, 2);
     coloursLayout->addWidget(m_minBorder, row++, 3);
-    coloursLayout->addWidget(rmsMaxLabel, row, 0);
+    coloursLayout->addWidget(new QLabel(tr("RMS Max"), this), row, 0);
     coloursLayout->addWidget(m_rmsMaxUnplayed, row, 1);
     coloursLayout->addWidget(m_rmsMaxPlayed, row, 2);
     coloursLayout->addWidget(m_rmsMaxBorder, row++, 3);
-    coloursLayout->addWidget(rmsMinLabel, row, 0);
+    coloursLayout->addWidget(new QLabel(tr("RMS Min"), this), row, 0);
     coloursLayout->addWidget(m_rmsMinUnplayed, row, 1);
     coloursLayout->addWidget(m_rmsMinPlayed, row, 2);
     coloursLayout->addWidget(m_rmsMinBorder, row++, 3);
-    coloursLayout->addWidget(playingCursorLabel, row, 1, Qt::AlignCenter);
-    coloursLayout->addWidget(seekingCursorLabel, row++, 2, Qt::AlignCenter);
-    coloursLayout->addWidget(cursorLabel, row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Playing"), this), row, 1, Qt::AlignCenter);
+    coloursLayout->addWidget(new QLabel(tr("Seeking"), this), row++, 2, Qt::AlignCenter);
+    coloursLayout->addWidget(new QLabel(tr("Cursor"), this), row, 0);
     coloursLayout->addWidget(m_cursorColour, row, 1);
     coloursLayout->addWidget(m_seekingCursorColour, row, 2);
 
