@@ -52,18 +52,9 @@ std::vector<FactoryWidget> sortBySubMenu(const std::map<QString, FactoryWidget>&
     }
 
     std::ranges::sort(sortedWidgets, [](const auto& a, const auto& b) {
-        const QStringList& aSubMenus = a.subMenus;
-        const QStringList& bSubMenus = b.subMenus;
-
-        if(std::ranges::lexicographical_compare(aSubMenus, bSubMenus)) {
-            return true;
-        }
-
-        if(std::ranges::lexicographical_compare(bSubMenus, aSubMenus)) {
-            return false;
-        }
-
-        return a.name < b.name;
+        const QString aFullPath = a.subMenus.join(u'.') + a.name;
+        const QString bFullPath = b.subMenus.join(u'.') + b.name;
+        return QString::localeAwareCompare(aFullPath, bFullPath) < 0;
     });
 
     return sortedWidgets;
