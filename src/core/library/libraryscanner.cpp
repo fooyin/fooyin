@@ -51,10 +51,8 @@ constexpr auto ArchivePath = R"(unpack://%1|%2|file://%3!)";
 namespace {
 void sortFiles(QFileInfoList& files)
 {
-    std::sort(files.begin(), files.end(),
-              [](const QFileInfo& a, const QFileInfo& b) { return a.filePath() < b.filePath(); });
-
-    std::stable_sort(files.begin(), files.end(), [](const QFileInfo& a, const QFileInfo& b) {
+    std::ranges::sort(files, {}, &QFileInfo::filePath);
+    std::ranges::stable_sort(files, [](const QFileInfo& a, const QFileInfo& b) {
         const bool aIsCue = a.suffix().compare(u"cue", Qt::CaseInsensitive) == 0;
         const bool bIsCue = b.suffix().compare(u"cue", Qt::CaseInsensitive) == 0;
         if(aIsCue && !bIsCue) {

@@ -126,7 +126,7 @@ public:
         *itemIt = changedItem;
 
         m_itemsChanged = true;
-        sortByIndex();
+        std::ranges::sort(m_items, {}, &Item::index);
         emit itemChanged(changedItem.id);
         saveItems();
         return true;
@@ -298,16 +298,6 @@ private:
         auto ids         = m_items | std::views::transform([](const auto& regItem) { return regItem.id; });
         const int nextId = *std::ranges::max_element(ids) + 1;
         return nextId;
-    }
-
-    void sortByIndex()
-    {
-        std::ranges::sort(m_items, [](const auto& a, const auto& b) {
-            if(a.index == b.index) {
-                return false;
-            }
-            return a.index < b.index;
-        });
     }
 
     SettingsManager* m_settings;

@@ -2905,7 +2905,7 @@ std::vector<std::pair<int, int>> ExpandedTreeViewPrivate::columnRanges(const QMo
             logicalIndexes.emplace_back(logical);
         }
     }
-    std::sort(logicalIndexes.begin(), logicalIndexes.end());
+    std::ranges::sort(logicalIndexes);
 
     std::vector<std::pair<int, int>> ret;
     std::pair<int, int> current{-2, -2};
