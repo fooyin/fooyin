@@ -83,11 +83,9 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     m_openEditor->setText(tr("Script Editor"));
     m_sortList->addCustomTool(m_openEditor);
 
-    auto* sortScriptLabel = new QLabel(tr("Sort tracks in library by") + u":", this);
-
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_sortList, 0, 0, 1, 2);
-    mainLayout->addWidget(sortScriptLabel, 1, 0);
+    mainLayout->addWidget(new QLabel(tr("Sort tracks in library by") + u":", this), 1, 0);
     mainLayout->addWidget(m_sortScript, 2, 0, 1, 2);
     mainLayout->setRowStretch(0, 1);
 

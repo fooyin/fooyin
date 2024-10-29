@@ -100,10 +100,8 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     auto* resultsGroup       = new QGroupBox(tr("Search Results"), this);
     auto* resultsGroupLayout = new QGridLayout(resultsGroup);
 
-    auto* playlistNameLabel = new QLabel(tr("Playlist name") + u":", this);
-
     row = 0;
-    resultsGroupLayout->addWidget(playlistNameLabel, row, 0);
+    resultsGroupLayout->addWidget(new QLabel(tr("Playlist name") + u":", this), row, 0);
     resultsGroupLayout->addWidget(m_playlistName, row++, 1);
     resultsGroupLayout->addWidget(m_appendSearchString, row++, 0, 1, 2);
     resultsGroupLayout->addWidget(m_focusOnSuccess, row++, 0, 1, 2);

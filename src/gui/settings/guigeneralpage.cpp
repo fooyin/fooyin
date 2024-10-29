@@ -196,31 +196,26 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* controlsGroup  = new QGroupBox(tr("Controls"), this);
     auto* controlsLayout = new QGridLayout(controlsGroup);
 
-    auto* seekStepLabel   = new QLabel(tr("Seek step") + u":", this);
-    auto* volumeStepLabel = new QLabel(tr("Volume step") + u":", this);
-
     m_seekStep->setRange(100, 30000);
     m_seekStep->setSuffix(QStringLiteral(" ms"));
 
     m_volumeStep->setRange(1, 5);
     m_volumeStep->setSuffix(QStringLiteral(" dB"));
 
-    controlsLayout->addWidget(seekStepLabel, 0, 0);
+    controlsLayout->addWidget(new QLabel(tr("Seek step") + u":", this), 0, 0);
     controlsLayout->addWidget(m_seekStep, 0, 1);
-    controlsLayout->addWidget(volumeStepLabel, 1, 0);
+    controlsLayout->addWidget(new QLabel(tr("Volume step") + u":", this), 1, 0);
     controlsLayout->addWidget(m_volumeStep, 1, 1);
     controlsLayout->setColumnStretch(2, 1);
 
     auto* ratingGroupBox    = new QGroupBox(tr("Rating"), this);
     auto* ratingGroupLayout = new QGridLayout(ratingGroupBox);
 
-    auto* starRatingLabel = new QLabel(tr("Star size"), this);
-
     m_starRatingSize->setMinimum(5);
     m_starRatingSize->setMaximum(30);
     m_starRatingSize->setSuffix(QStringLiteral("px"));
 
-    ratingGroupLayout->addWidget(starRatingLabel, 0, 0);
+    ratingGroupLayout->addWidget(new QLabel(tr("Star size"), this), 0, 0);
     ratingGroupLayout->addWidget(m_starRatingSize, 0, 1);
     ratingGroupLayout->setColumnStretch(2, 1);
 
@@ -243,10 +238,8 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     QObject::connect(importLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::importLayout);
     QObject::connect(exportLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::exportLayout);
 
-    QObject::connect(m_overrideMargin, &QCheckBox::toggled, this,
-                     [this](bool checked) { m_editableLayoutMargin->setEnabled(checked); });
-    QObject::connect(m_overrideSplitterHandle, &QCheckBox::toggled, this,
-                     [this](bool checked) { m_splitterHandleGap->setEnabled(checked); });
+    QObject::connect(m_overrideMargin, &QCheckBox::toggled, m_editableLayoutMargin, &QWidget::setEnabled);
+    QObject::connect(m_overrideSplitterHandle, &QCheckBox::toggled, m_splitterHandleGap, &QWidget::setEnabled);
 }
 
 void GuiGeneralPageWidget::load()

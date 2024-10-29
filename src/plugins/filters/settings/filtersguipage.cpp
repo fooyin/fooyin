@@ -76,9 +76,6 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     auto* artworkMode   = new QGroupBox(tr("Artwork Mode"), this);
     auto* artworkLayout = new QGridLayout(artworkMode);
 
-    auto* widthLabel  = new QLabel(tr("Width") + QStringLiteral(":"), this);
-    auto* heightLabel = new QLabel(tr("Height") + QStringLiteral(":"), this);
-
     m_iconWidth->setSuffix(QStringLiteral("px"));
     m_iconHeight->setSuffix(QStringLiteral("px"));
 
@@ -94,9 +91,9 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
         this);
 
     int row{0};
-    artworkLayout->addWidget(widthLabel, row, 0);
+    artworkLayout->addWidget(new QLabel(tr("Width") + QStringLiteral(":"), this), row, 0);
     artworkLayout->addWidget(m_iconWidth, row++, 1);
-    artworkLayout->addWidget(heightLabel, row, 0);
+    artworkLayout->addWidget(new QLabel(tr("Height") + QStringLiteral(":"), this), row, 0);
     artworkLayout->addWidget(m_iconHeight, row++, 1);
     artworkLayout->addWidget(iconSizeHint, row, 0, 1, 3);
     artworkLayout->setColumnStretch(3, 1);
@@ -114,8 +111,7 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     mainLayout->addWidget(artworkMode, 1, 0);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
-    QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, this,
-                     [this](bool checked) { m_rowHeight->setEnabled(checked); });
+    QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
 }
 
 void FiltersGuiPageWidget::load()

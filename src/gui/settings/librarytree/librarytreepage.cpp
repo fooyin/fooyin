@@ -128,9 +128,6 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     auto* iconGroup       = new QGroupBox(tr("Icon"), this);
     auto* iconGroupLayout = new QGridLayout(iconGroup);
 
-    auto* widthLabel  = new QLabel(tr("Width") + QStringLiteral(":"), this);
-    auto* heightLabel = new QLabel(tr("Height") + QStringLiteral(":"), this);
-
     m_iconWidth->setSuffix(QStringLiteral("px"));
     m_iconHeight->setSuffix(QStringLiteral("px"));
 
@@ -146,9 +143,9 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
         this);
 
     int row{0};
-    iconGroupLayout->addWidget(widthLabel, row, 0);
+    iconGroupLayout->addWidget(new QLabel(tr("Width") + QStringLiteral(":"), this), row, 0);
     iconGroupLayout->addWidget(m_iconWidth, row++, 1);
-    iconGroupLayout->addWidget(heightLabel, row, 0);
+    iconGroupLayout->addWidget(new QLabel(tr("Height") + QStringLiteral(":"), this), row, 0);
     iconGroupLayout->addWidget(m_iconHeight, row++, 1);
     iconGroupLayout->addWidget(iconSizeHint, row, 0, 1, 4);
     iconGroupLayout->setColumnStretch(2, 1);
@@ -173,8 +170,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     mainLayout->addWidget(appearanceGroup, 3, 0);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
-    QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, this,
-                     [this](bool checked) { m_rowHeight->setEnabled(checked); });
+    QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
     QObject::connect(m_playlistEnabled, &QCheckBox::clicked, this, [this](bool checked) {
         m_playlistName->setEnabled(checked);
         m_autoSwitch->setEnabled(checked);

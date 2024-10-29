@@ -72,12 +72,9 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    auto* doubleClickLabel = new QLabel(tr("Double-click") + QStringLiteral(":"), this);
-    auto* middleClickLabel = new QLabel(tr("Middle-click") + QStringLiteral(":"), this);
-
-    clickBehaviourLayout->addWidget(doubleClickLabel, 0, 0);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + QStringLiteral(":"), this), 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
-    clickBehaviourLayout->addWidget(middleClickLabel, 1, 0);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + QStringLiteral(":"), this), 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
     clickBehaviourLayout->setColumnStretch(2, 1);
@@ -85,14 +82,12 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    auto* playlistNameLabel = new QLabel(tr("Name") + QStringLiteral(":"), this);
-
     m_keepAlive->setToolTip(tr("If this is the active playlist, keep it alive when changing selection"));
 
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_keepAlive, 2, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(playlistNameLabel, 3, 0, 1, 1);
+    selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + QStringLiteral(":"), this), 3, 0, 1, 1);
     selectionPlaylistLayout->addWidget(m_playlistName, 3, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
 

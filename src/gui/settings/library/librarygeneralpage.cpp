@@ -145,17 +145,12 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     auto* fileTypesGroup  = new QGroupBox(tr("File Types"), this);
     auto* fileTypesLayout = new QGridLayout(fileTypesGroup);
 
-    auto* restrictLabel = new QLabel(tr("Restrict to") + u":", this);
-    auto* excludeLabel  = new QLabel(tr("Exclude") + u":", this);
-
-    auto* fileHint = new QLabel(QStringLiteral("🛈 e.g. \"mp3;m4a\""), this);
-
     int row{0};
-    fileTypesLayout->addWidget(restrictLabel, row, 0);
+    fileTypesLayout->addWidget(new QLabel(tr("Restrict to") + u":", this), row, 0);
     fileTypesLayout->addWidget(m_restrictTypes, row++, 1);
-    fileTypesLayout->addWidget(excludeLabel, row, 0);
+    fileTypesLayout->addWidget(new QLabel(tr("Exclude") + u":", this), row, 0);
     fileTypesLayout->addWidget(m_excludeTypes, row++, 1);
-    fileTypesLayout->addWidget(fileHint, row++, 1);
+    fileTypesLayout->addWidget(new QLabel(QStringLiteral("🛈 e.g. \"mp3;m4a\""), this), row++, 1);
     fileTypesLayout->setColumnStretch(1, 1);
 
     auto* mainLayout = new QGridLayout(this);
@@ -173,10 +168,8 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     mainLayout->setColumnStretch(1, 1);
 
     QObject::connect(m_model, &LibraryModel::requestAddLibrary, this, &LibraryGeneralPageWidget::addLibrary);
-    QObject::connect(m_libraryView, &LibraryTableView::refreshLibrary, this,
-                     [this](const auto& info) { m_library->refresh(info); });
-    QObject::connect(m_libraryView, &LibraryTableView::rescanLibrary, this,
-                     [this](const auto& info) { m_library->rescan(info); });
+    QObject::connect(m_libraryView, &LibraryTableView::refreshLibrary, m_library, &MusicLibrary::refresh);
+    QObject::connect(m_libraryView, &LibraryTableView::rescanLibrary, m_library, &MusicLibrary::rescan);
 }
 
 void LibraryGeneralPageWidget::load()

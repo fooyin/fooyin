@@ -62,9 +62,6 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     , m_playingScript{new ScriptLineEdit(this)}
     , m_selectionScript{new ScriptLineEdit(this)}
 {
-    auto* playingScriptLabel   = new QLabel(tr("Playing track") + QStringLiteral(":"), this);
-    auto* selectionScriptLabel = new QLabel(tr("Track selection") + QStringLiteral(":"), this);
-
     auto* displayGroup  = new QGroupBox(tr("Display"), this);
     auto* displayLayout = new QGridLayout(displayGroup);
 
@@ -75,9 +72,9 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     auto* scriptsGroup  = new QGroupBox(tr("Scripts"), this);
     auto* scriptsLayout = new QGridLayout(scriptsGroup);
 
-    scriptsLayout->addWidget(playingScriptLabel, 0, 0);
+    scriptsLayout->addWidget(new QLabel(tr("Playing track") + QStringLiteral(":"), this), 0, 0);
     scriptsLayout->addWidget(m_playingScript, 1, 0);
-    scriptsLayout->addWidget(selectionScriptLabel, 2, 0);
+    scriptsLayout->addWidget(new QLabel(tr("Track selection") + QStringLiteral(":"), this), 2, 0);
     scriptsLayout->addWidget(m_selectionScript, 3, 0);
 
     auto* layout = new QGridLayout(this);

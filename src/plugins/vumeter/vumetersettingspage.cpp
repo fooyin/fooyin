@@ -84,29 +84,20 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
 
-    auto* peakHoldLabel = new QLabel(tr("Peak hold time") + u":", this);
-    auto* falloffLabel  = new QLabel(tr("Falloff time") + u":", this);
-
     m_peakHold->setRange(0.1, 30);
     m_peakHold->setSuffix(u" " + tr("seconds"));
     m_falloff->setRange(0.1, 96);
     m_falloff->setSuffix(u" " + tr("dB per second"));
 
     int row{0};
-    generalLayout->addWidget(peakHoldLabel, row, 0);
+    generalLayout->addWidget(new QLabel(tr("Peak hold time") + u":", this), row, 0);
     generalLayout->addWidget(m_peakHold, row++, 1);
-    generalLayout->addWidget(falloffLabel, row, 0);
+    generalLayout->addWidget(new QLabel(tr("Falloff time") + u":", this), row, 0);
     generalLayout->addWidget(m_falloff, row++, 1);
     generalLayout->setColumnStretch(2, 1);
 
     auto* dimensionGroup  = new QGroupBox(tr("Dimension"), this);
     auto* dimensionLayout = new QGridLayout(dimensionGroup);
-
-    auto* channelSpacingLabel = new QLabel(tr("Channel spacing") + u":", this);
-    auto* barSizeLabel        = new QLabel(tr("Bar size") + u":", this);
-    auto* barSpacingLabel     = new QLabel(tr("Bar spacing") + u":", this);
-    auto* barSectionsLabel    = new QLabel(tr("Sections") + u":", this);
-    auto* sectionSpacingLabel = new QLabel(tr("Section spacing") + u":", this);
 
     m_channelSpacing->setRange(0, 20);
     m_channelSpacing->setSuffix(QStringLiteral(" px"));
@@ -123,33 +114,29 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
     m_sectionSpacing->setRange(1, 20);
 
     row = 0;
-    dimensionLayout->addWidget(channelSpacingLabel, row, 0);
+    dimensionLayout->addWidget(new QLabel(tr("Channel spacing") + u":", this), row, 0);
     dimensionLayout->addWidget(m_channelSpacing, row++, 1);
-    dimensionLayout->addWidget(barSizeLabel, row, 0);
+    dimensionLayout->addWidget(new QLabel(tr("Bar size") + u":", this), row, 0);
     dimensionLayout->addWidget(m_barSize, row++, 1);
-    dimensionLayout->addWidget(barSpacingLabel, row, 0);
+    dimensionLayout->addWidget(new QLabel(tr("Bar spacing") + u":", this), row, 0);
     dimensionLayout->addWidget(m_barSpacing, row++, 1);
 
     row = 0;
-    dimensionLayout->addWidget(barSectionsLabel, row, 2);
+    dimensionLayout->addWidget(new QLabel(tr("Sections") + u":", this), row, 2);
     dimensionLayout->addWidget(m_barSections, row++, 3);
-    dimensionLayout->addWidget(sectionSpacingLabel, row, 2);
+    dimensionLayout->addWidget(new QLabel(tr("Section spacing") + u":", this), row, 2);
     dimensionLayout->addWidget(m_sectionSpacing, row++, 3);
     dimensionLayout->setColumnStretch(4, 1);
 
     m_colourGroup->setCheckable(true);
     auto* coloursLayout = new QGridLayout(m_colourGroup);
 
-    auto* bgColourLabel   = new QLabel(tr("Background colour") + u":", this);
-    auto* peakColourLabel = new QLabel(tr("Peak colour") + u":", this);
-    auto* leftColourLabel = new QLabel(tr("Bar colours") + u":", this);
-
     row = 0;
-    coloursLayout->addWidget(bgColourLabel, row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Background colour") + u":", this), row, 0);
     coloursLayout->addWidget(m_bgColour, row++, 1);
-    coloursLayout->addWidget(peakColourLabel, row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Peak colour") + u":", this), row, 0);
     coloursLayout->addWidget(m_peakColour, row++, 1);
-    coloursLayout->addWidget(leftColourLabel, row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Bar colours") + u":", this), row, 0);
     coloursLayout->addWidget(m_leftColour, row, 1);
     coloursLayout->addWidget(m_rightColour, row++, 2);
     coloursLayout->setColumnStretch(1, 1);

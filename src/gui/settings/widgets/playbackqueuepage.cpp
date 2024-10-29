@@ -70,12 +70,9 @@ PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
     auto* general       = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(general);
 
-    auto* leftScriptLabel  = new QLabel(tr("Left script") + QStringLiteral(":"), this);
-    auto* rightScriptLabel = new QLabel(tr("Right script") + QStringLiteral(":"), this);
-
-    generalLayout->addWidget(leftScriptLabel, 0, 0);
+    generalLayout->addWidget(new QLabel(tr("Left script") + QStringLiteral(":"), this), 0, 0);
     generalLayout->addWidget(m_titleScript, 0, 1);
-    generalLayout->addWidget(rightScriptLabel, 1, 0);
+    generalLayout->addWidget(new QLabel(tr("Right script") + QStringLiteral(":"), this), 1, 0);
     generalLayout->addWidget(m_subtitleScript, 1, 1);
 
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
@@ -84,9 +81,6 @@ PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
     m_showIcon->setCheckable(true);
 
     auto* iconGroupLayout = new QGridLayout(m_showIcon);
-
-    auto* widthLabel  = new QLabel(tr("Width") + QStringLiteral(":"), this);
-    auto* heightLabel = new QLabel(tr("Height") + QStringLiteral(":"), this);
 
     m_iconWidth->setSuffix(QStringLiteral("px"));
     m_iconHeight->setSuffix(QStringLiteral("px"));
@@ -103,9 +97,9 @@ PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
         this);
 
     int row{0};
-    iconGroupLayout->addWidget(widthLabel, row, 0);
+    iconGroupLayout->addWidget(new QLabel(tr("Width") + QStringLiteral(":"), this), row, 0);
     iconGroupLayout->addWidget(m_iconWidth, row++, 1);
-    iconGroupLayout->addWidget(heightLabel, row, 0);
+    iconGroupLayout->addWidget(new QLabel(tr("Height") + QStringLiteral(":"), this), row, 0);
     iconGroupLayout->addWidget(m_iconHeight, row++, 1);
     iconGroupLayout->addWidget(iconSizeHint, row, 0, 1, 4);
     iconGroupLayout->setColumnStretch(2, 1);

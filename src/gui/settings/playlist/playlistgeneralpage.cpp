@@ -150,13 +150,10 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     auto* padding       = new QGroupBox(tr("Image Padding"), this);
     auto* paddingLayout = new QGridLayout(padding);
 
-    auto* paddingLabel    = new QLabel(tr("Left/Right") + QStringLiteral(":"), this);
-    auto* paddingTopLabel = new QLabel(tr("Top") + QStringLiteral(":"), this);
-
     row = 0;
-    paddingLayout->addWidget(paddingLabel, row, 0);
+    paddingLayout->addWidget(new QLabel(tr("Left/Right") + QStringLiteral(":"), this), row, 0);
     paddingLayout->addWidget(m_imagePadding, row++, 1);
-    paddingLayout->addWidget(paddingTopLabel, row, 0);
+    paddingLayout->addWidget(new QLabel(tr("Top") + QStringLiteral(":"), this), row, 0);
     paddingLayout->addWidget(m_imagePaddingTop, row++, 1);
     paddingLayout->setColumnStretch(2, 1);
 

@@ -79,9 +79,6 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 // , m_fadingSeekIn{new QSpinBox(this)}
 // , m_fadingSeekOut{new QSpinBox(this)}
 {
-    auto* outputLabel = new QLabel(tr("Output") + QStringLiteral(":"), this);
-    auto* deviceLabel = new QLabel(tr("Device") + QStringLiteral(":"), this);
-
     auto* generalBox    = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalBox);
 
@@ -90,25 +87,18 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 
     generalLayout->addWidget(m_gaplessPlayback, 0, 0, 1, 3);
 
-    auto* bufferLabel = new QLabel(tr("Buffer length") + QStringLiteral(":"), this);
-
     m_bufferSize->setSuffix(QStringLiteral(" ms"));
     m_bufferSize->setSingleStep(100);
     m_bufferSize->setMinimum(50);
     m_bufferSize->setMaximum(30000);
 
-    generalLayout->addWidget(bufferLabel, 1, 0);
+    generalLayout->addWidget(new QLabel(tr("Buffer length") + QStringLiteral(":"), this), 1, 0);
     generalLayout->addWidget(m_bufferSize, 1, 1);
 
     generalLayout->setColumnStretch(2, 1);
 
     m_fadingBox->setCheckable(true);
     auto* fadingLayout = new QGridLayout(m_fadingBox);
-
-    auto* fadingInLabel  = new QLabel(tr("Fade In"), this);
-    auto* fadingOutLabel = new QLabel(tr("Fade Out"), this);
-    auto* stopPauseLabel = new QLabel(tr("Pause/Stop"), this);
-    // auto* seekLabel      = new QLabel(tr("Seek"), this);
 
     m_fadingStopIn->setSuffix(QStringLiteral("ms"));
     m_fadingStopOut->setSuffix(QStringLiteral("ms"));
@@ -125,10 +115,10 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     // m_fadingSeekIn->setSingleStep(100);
     // m_fadingSeekOut->setSingleStep(100);
 
-    fadingLayout->addWidget(fadingInLabel, 0, 1);
-    fadingLayout->addWidget(fadingOutLabel, 0, 2);
-    fadingLayout->addWidget(stopPauseLabel, 1, 0);
-    // fadingLayout->addWidget(seekLabel, 2, 0);
+    fadingLayout->addWidget(new QLabel(tr("Fade In"), this), 0, 1);
+    fadingLayout->addWidget(new QLabel(tr("Fade Out"), this), 0, 2);
+    fadingLayout->addWidget(new QLabel(tr("Pause/Stop"), this), 1, 0);
+    // fadingLayout->addWidget(new QLabel(tr("Seek"), this), 2, 0);
     fadingLayout->addWidget(m_fadingStopIn, 1, 1);
     fadingLayout->addWidget(m_fadingStopOut, 1, 2);
     // fadingLayout->addWidget(m_fadingSeekIn, 2, 1);
@@ -136,9 +126,9 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     fadingLayout->setColumnStretch(3, 1);
 
     auto* mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(outputLabel, 0, 0);
+    mainLayout->addWidget(new QLabel(tr("Output") + QStringLiteral(":"), this), 0, 0);
     mainLayout->addWidget(m_outputBox, 0, 1);
-    mainLayout->addWidget(deviceLabel, 1, 0);
+    mainLayout->addWidget(new QLabel(tr("Device") + QStringLiteral(":"), this), 1, 0);
     mainLayout->addWidget(m_deviceBox, 1, 1);
     mainLayout->addWidget(generalBox, 2, 0, 1, 2);
     mainLayout->addWidget(m_fadingBox, 3, 0, 1, 2);

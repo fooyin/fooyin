@@ -97,9 +97,6 @@ DecoderPageWidget::DecoderPageWidget(AudioLoader* audioLoader, SettingsManager* 
         view->setDropIndicatorShown(true);
     };
 
-    auto* decoderLabel = new QLabel(tr("Decoders") + u":", this);
-    auto* readerLabel  = new QLabel(tr("Tag readers") + u":", this);
-
     m_decoderList->setModel(m_decoderModel);
     m_readerList->setModel(m_readerModel);
     setupModel(m_decoderList);
@@ -111,9 +108,9 @@ DecoderPageWidget::DecoderPageWidget(AudioLoader* audioLoader, SettingsManager* 
     ffmpegGroupLayout->addWidget(m_ffmpegAllExts);
 
     auto* layout = new QGridLayout(this);
-    layout->addWidget(decoderLabel, 0, 0);
+    layout->addWidget(new QLabel(tr("Decoders") + u":", this), 0, 0);
     layout->addWidget(m_decoderList, 1, 0);
-    layout->addWidget(readerLabel, 0, 1);
+    layout->addWidget(new QLabel(tr("Tag readers") + u":", this), 0, 1);
     layout->addWidget(m_readerList, 1, 1);
     layout->addWidget(ffmpegGroup, 2, 0, 1, 2);
 

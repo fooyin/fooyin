@@ -244,11 +244,6 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     auto* headerWidget = new QWidget();
     auto* headerLayout = new QGridLayout(headerWidget);
 
-    auto* headerTitle    = new QLabel(tr("Title") + QStringLiteral(":"), this);
-    auto* headerSubtitle = new QLabel(tr("Subtitle") + QStringLiteral(":"), this);
-    auto* headerSide     = new QLabel(tr("Side") + QStringLiteral(":"), this);
-    auto* headerInfo     = new QLabel(tr("Info") + QStringLiteral(":"), this);
-
     m_headerRowHeight->setMinimum(50);
     m_headerRowHeight->setMaximum(300);
 
@@ -257,13 +252,13 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     headerLayout->addWidget(m_showCover, row++, 0, 1, 2);
     headerLayout->addWidget(m_overrideHeaderHeight, row, 0);
     headerLayout->addWidget(m_headerRowHeight, row++, 1);
-    headerLayout->addWidget(headerTitle, row++, 0, 1, 5);
+    headerLayout->addWidget(new QLabel(tr("Title") + QStringLiteral(":"), this), row++, 0, 1, 5);
     headerLayout->addWidget(m_headerTitle, row++, 0, 1, 5);
-    headerLayout->addWidget(headerSubtitle, row++, 0, 1, 5);
+    headerLayout->addWidget(new QLabel(tr("Subtitle") + QStringLiteral(":"), this), row++, 0, 1, 5);
     headerLayout->addWidget(m_headerSubtitle, row++, 0, 1, 5);
-    headerLayout->addWidget(headerSide, row++, 0, 1, 5);
+    headerLayout->addWidget(new QLabel(tr("Side") + QStringLiteral(":"), this), row++, 0, 1, 5);
     headerLayout->addWidget(m_headerSideText, row++, 0, 1, 5);
-    headerLayout->addWidget(headerInfo, row++, 0, 1, 5);
+    headerLayout->addWidget(new QLabel(tr("Info") + QStringLiteral(":"), this), row++, 0, 1, 5);
     headerLayout->addWidget(m_headerInfo, row++, 0, 1, 5);
 
     headerLayout->setColumnStretch(4, 1);
@@ -290,17 +285,14 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
 
     subheaderLayout->setRowStretch(subheaderLayout->rowCount(), 1);
 
-    auto* trackLeft  = new QLabel(tr("Left-aligned") + QStringLiteral(":"), this);
-    auto* TrackRight = new QLabel(tr("Right-aligned") + QStringLiteral(":"), this);
-
     m_trackRowHeight->setMinimum(20);
     m_trackRowHeight->setMaximum(150);
 
     trackLayout->addWidget(m_overrideTrackHeight, 0, 0);
     trackLayout->addWidget(m_trackRowHeight, 0, 1);
-    trackLayout->addWidget(trackLeft, 1, 0, 1, 3);
+    trackLayout->addWidget(new QLabel(tr("Left-aligned") + QStringLiteral(":"), this), 1, 0, 1, 3);
     trackLayout->addWidget(m_trackLeftText, 2, 0, 1, 3);
-    trackLayout->addWidget(TrackRight, 3, 0, 1, 3);
+    trackLayout->addWidget(new QLabel(tr("Right-aligned") + QStringLiteral(":"), this), 3, 0, 1, 3);
     trackLayout->addWidget(m_trackRightText, 4, 0, 1, 3);
 
     trackLayout->setColumnStretch(2, 1);

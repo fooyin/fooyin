@@ -64,32 +64,24 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
     auto* fileTypesGroup  = new QGroupBox(tr("File Types"), this);
     auto* fileTypesLayout = new QGridLayout(fileTypesGroup);
 
-    auto* restrictLabel = new QLabel(tr("Restrict to") + u":", this);
-    auto* excludeLabel  = new QLabel(tr("Exclude") + u":", this);
-
-    auto* fileHint = new QLabel(QStringLiteral("🛈 e.g. \"mp3;m4a\""), this);
-
     int row{0};
-    fileTypesLayout->addWidget(restrictLabel, row, 0);
+    fileTypesLayout->addWidget(new QLabel(tr("Restrict to") + u":", this), row, 0);
     fileTypesLayout->addWidget(m_restrictTypes, row++, 1);
-    fileTypesLayout->addWidget(excludeLabel, row, 0);
+    fileTypesLayout->addWidget(new QLabel(tr("Exclude") + u":", this), row, 0);
     fileTypesLayout->addWidget(m_excludeTypes, row++, 1);
-    fileTypesLayout->addWidget(fileHint, row++, 1);
+    fileTypesLayout->addWidget(new QLabel(QStringLiteral("🛈 e.g. \"mp3;m4a\""), this), row++, 1);
     fileTypesLayout->setColumnStretch(1, 1);
 
     auto* playlistGroup       = new QGroupBox(tr("Playlist"), this);
     auto* playlistGroupLayout = new QGridLayout(playlistGroup);
 
-    auto* playlistLabel           = new QLabel(tr("Playlist name") + QStringLiteral(":"), this);
-    auto* sortExternalScriptLabel = new QLabel(tr("Sort incoming tracks by") + u":", this);
-
     m_externalPlaylist->setToolTip(tr("When opening files, always send to playlist, replacing all existing tracks"));
 
     row = 0;
     playlistGroupLayout->addWidget(m_alwaysSend, row++, 0, 1, 2);
-    playlistGroupLayout->addWidget(playlistLabel, row, 0);
+    playlistGroupLayout->addWidget(new QLabel(tr("Playlist name") + QStringLiteral(":"), this), row, 0);
     playlistGroupLayout->addWidget(m_externalPlaylist, row++, 1);
-    playlistGroupLayout->addWidget(sortExternalScriptLabel, row, 0);
+    playlistGroupLayout->addWidget(new QLabel(tr("Sort incoming tracks by") + u":", this), row, 0);
     playlistGroupLayout->addWidget(m_externalSortScript, row++, 1);
     playlistGroupLayout->setRowStretch(row, 1);
     playlistGroupLayout->setColumnStretch(1, 1);
