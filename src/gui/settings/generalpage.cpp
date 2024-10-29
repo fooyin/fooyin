@@ -19,25 +19,28 @@
 
 #include "generalpage.h"
 
-#include "core/application.h"
-#include "core/corepaths.h"
-#include "core/internalcoresettings.h"
 #include "internalguisettings.h"
 #include "mainwindow.h"
 
+#include <core/application.h>
+#include <core/corepaths.h>
 #include <core/coresettings.h>
+#include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <utils/paths.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDesktopServices>
 #include <QDir>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QSystemTrayIcon>
 
 #include <ranges>
@@ -89,27 +92,36 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     , m_minimiseToTray{new QCheckBox(tr("Minimise to tray on close"), this)}
     , m_language{new QComboBox(this)}
 {
-    auto* startupBehaviourLabel = new QLabel(tr("Behaviour") + QStringLiteral(":"), this);
-
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
 
     auto* startupGroup       = new QGroupBox(tr("Startup"), this);
     auto* startupGroupLayout = new QGridLayout(startupGroup);
 
     int row{0};
-    startupGroupLayout->addWidget(startupBehaviourLabel, row, 0);
+    startupGroupLayout->addWidget(new QLabel(tr("Behaviour") + QStringLiteral(":"), this), row, 0);
     startupGroupLayout->addWidget(m_startupBehaviour, row++, 1);
     startupGroupLayout->addWidget(m_waitForTracks, row++, 0, 1, 2);
     startupGroupLayout->setColumnStretch(1, 1);
 
-    auto* languageLabel = new QLabel(tr("Language") + QStringLiteral(":"), this);
+    auto* dirGroup       = new QGroupBox(tr("User Directories"), this);
+    auto* dirGroupLayout = new QGridLayout(dirGroup);
+
+    auto* openConfig = new QPushButton(tr("Open Config Directory"), this);
+    auto* openShare  = new QPushButton(tr("Open Share Directory"), this);
+
+    row = 0;
+    dirGroupLayout->addWidget(openConfig, row, 0);
+    dirGroupLayout->addWidget(openShare, row++, 1);
 
     auto* mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(languageLabel, 0, 0);
-    mainLayout->addWidget(m_language, 0, 1);
-    mainLayout->addWidget(m_showTray, 1, 0, 1, 2);
-    mainLayout->addWidget(m_minimiseToTray, 2, 0, 1, 2);
-    mainLayout->addWidget(startupGroup, 3, 0, 1, 2);
+
+    row = 0;
+    mainLayout->addWidget(new QLabel(tr("Language") + QStringLiteral(":"), this), 0, 0);
+    mainLayout->addWidget(m_language, row++, 1);
+    mainLayout->addWidget(m_showTray, row++, 0, 1, 2);
+    mainLayout->addWidget(m_minimiseToTray, row++, 0, 1, 2);
+    mainLayout->addWidget(startupGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(dirGroup, row++, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -123,8 +135,9 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     addStartupBehaviour(tr("Start hidden to tray"), MainWindow::StartHidden);
     addStartupBehaviour(tr("Remember from last run"), MainWindow::StartPrev);
 
-    QObject::connect(m_showTray, &QCheckBox::toggled, this,
-                     [this](bool checked) { m_minimiseToTray->setEnabled(checked); });
+    QObject::connect(m_showTray, &QCheckBox::toggled, m_minimiseToTray, &QWidget::setEnabled);
+    QObject::connect(openConfig, &QPushButton::clicked, this, []() { QDesktopServices::openUrl(Utils::configPath()); });
+    QObject::connect(openShare, &QPushButton::clicked, this, []() { QDesktopServices::openUrl(Utils::sharePath()); });
 }
 
 void GeneralPageWidget::load()
