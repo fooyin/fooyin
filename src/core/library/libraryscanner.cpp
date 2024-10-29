@@ -827,6 +827,8 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QStringList& paths, const 
     for(const auto& missingTracks : m_missingFiles | std::views::values) {
         for(const auto& missingTrack : missingTracks) {
             if(missingTrack.isInLibrary() || missingTrack.isEnabled()) {
+                qCDebug(LIB_SCANNER) << "Track not found:" << missingTrack.prettyFilepath();
+
                 Track disabledTrack{missingTrack};
                 disabledTrack.setLibraryId(-1);
                 disabledTrack.setIsEnabled(false);
