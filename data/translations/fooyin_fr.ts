@@ -152,17 +152,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="107"/>
         <source>Artwork Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriétés des illustrations</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="156"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Chargement des illustrations…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="160"/>
         <source>Saving artwork to files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer les illustrations dans les fichiers…</translation>
     </message>
 </context>
 <context>
@@ -182,22 +182,22 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="68"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="110"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucune illustration existante</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="86"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ouvrir l&apos;image</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="86"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Images</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="160"/>
         <source>Multiple images</source>
-        <translation type="unfinished"></translation>
+        <translation>Images multiples</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="161"/>
@@ -214,12 +214,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="245"/>
         <source>Replace image</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer l&apos;image</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="245"/>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter une image</translation>
     </message>
 </context>
 <context>
@@ -280,12 +280,12 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
         <source>&amp;Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Rétablir les réglages par défaut</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>Edit Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier la liste de lecture automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
@@ -315,22 +315,22 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="277"/>
         <source>Most Played</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Les plus jouées</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="278"/>
         <source>Recently Added</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajoutées récemment</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="279"/>
         <source>Last Played 2 Weeks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dernières jouées depuis 2 semaines</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="280"/>
         <source>Has Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Possède des paroles</translation>
     </message>
 </context>
 <context>
@@ -814,7 +814,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="552"/>
         <source>Undo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuler la dernière modification de la disposition</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="563"/>
@@ -824,7 +824,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="564"/>
         <source>Redo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Rétablir la dernière modification de la disposition</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="444"/>
@@ -1028,12 +1028,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="70"/>
         <source>&amp;New autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nouvelle liste de lecture automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer une nouvelle liste de lecture automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
@@ -2903,12 +2903,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
         <source>&amp;Clean</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nettoyage</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Supprimer les pistes n&apos;appartenant ni à la bibliothèque, ni à une liste de lecture, et les statistiques de lecture obsolètes</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -2983,12 +2983,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="123"/>
         <source>Cleaning database…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nettoyage de la base de données…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="133"/>
         <source>Database cleaned</source>
-        <translation type="unfinished"></translation>
+        <translation>Base de données nettoyée</translation>
     </message>
 </context>
 <context>
@@ -3750,7 +3750,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="92"/>
         <source>Save metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer les métadonnées</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="94"/>
@@ -4955,12 +4955,12 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="133"/>
         <source>Create autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer une liste de lecture automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="136"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier la liste de lecture automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="160"/>
@@ -5143,12 +5143,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="294"/>
         <source>Add new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter une nouvelle liste de lecture automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="312"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier la liste de lecture automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="322"/>
@@ -5158,7 +5158,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="322"/>
         <source>Rename autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer la liste de lecture automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="326"/>
@@ -5168,7 +5168,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="326"/>
         <source>Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la liste de lecture automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="341"/>
