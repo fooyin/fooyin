@@ -39,11 +39,9 @@ using namespace std::chrono_literals;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto BufferInterval   = 5ms;
 constexpr auto PositionInterval = 50ms;
-constexpr auto BitrateInterval  = 200ms;
 #else
 constexpr auto BufferInterval   = 5;
 constexpr auto PositionInterval = 50;
-constexpr auto BitrateInterval  = 200;
 #endif
 
 constexpr auto MaxDecodeLength = 100;
@@ -80,7 +78,12 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
     QObject::connect(&m_renderer, &AudioRenderer::outputStateChanged, this, &AudioPlaybackEngine::handleOutputState);
     QObject::connect(&m_renderer, &AudioRenderer::error, this, &AudioPlaybackEngine::deviceError);
 
-    m_settings->subscribe<Settings::Core::BufferLength>(this, [this](int length) { m_bufferLength = length; });
+    m_settings->subscribe<Settings::Core::BufferLength>(this, [this](const int length) { m_bufferLength = length; });
+    m_settings->subscribe<Settings::Core::Internal::VBRUpdateInterval>(this, [this]() {
+        if(m_bitrateTimer.isActive()) {
+            startBitrateTimer();
+        }
+    });
     m_settings->subscribe<Settings::Core::Internal::FadingIntervals>(
         this, [this](const QVariant& fading) { m_fadeIntervals = fading.value<FadingIntervals>(); });
 
@@ -292,7 +295,7 @@ void AudioPlaybackEngine::play()
         updateTrackStatus(TrackStatus::Buffered);
 
         m_posTimer.start(PositionInterval, Qt::PreciseTimer, this);
-        m_bitrateTimer.start(BitrateInterval, Qt::PreciseTimer, this);
+        startBitrateTimer();
 
         updateState(PlaybackState::Playing);
     };
@@ -573,6 +576,11 @@ void AudioPlaybackEngine::stopWorkers(bool full)
     }
 
     m_totalBufferTime = 0;
+}
+
+void AudioPlaybackEngine::startBitrateTimer()
+{
+    m_bitrateTimer.start(m_settings->value<Settings::Core::Internal::VBRUpdateInterval>(), Qt::PreciseTimer, this);
 }
 
 void AudioPlaybackEngine::handleOutputState(AudioOutput::State outState)

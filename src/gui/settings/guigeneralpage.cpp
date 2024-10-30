@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 #include "quicksetup/quicksetupdialog.h"
 
+#include <core/internalcoresettings.h>
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -87,6 +88,7 @@ private:
     QCheckBox* m_buttonStretch;
 
     ScriptLineEdit* m_titleScript;
+    QSpinBox* m_vbrInterval;
 
     QRadioButton* m_preferPlaying;
     QRadioButton* m_preferSelection;
@@ -115,6 +117,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_buttonRaise{new QCheckBox(tr("Raise"), this)}
     , m_buttonStretch{new QCheckBox(tr("Stretch"), this)}
     , m_titleScript{new ScriptLineEdit(this)}
+    , m_vbrInterval{new QSpinBox(this)}
     , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
     , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
     , m_seekStep{new QSpinBox(this)}
@@ -134,25 +137,26 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* themeBox       = new QGroupBox(tr("Theme"), this);
     auto* themeBoxLayout = new QGridLayout(themeBox);
 
-    auto* styleLabel = new QLabel(tr("Style") + u":", this);
-
     auto* iconThemeBox       = new QGroupBox(tr("Icons"), themeBox);
     auto* iconThemeBoxLayout = new QGridLayout(iconThemeBox);
-    iconThemeBoxLayout->addWidget(m_detectIconTheme, 0, 0, 1, 2);
-    iconThemeBoxLayout->addWidget(m_lightTheme, 1, 0);
-    iconThemeBoxLayout->addWidget(m_darkTheme, 1, 1);
-    iconThemeBoxLayout->addWidget(m_systemTheme, 2, 0, 1, 2);
+
+    int row{0};
+    iconThemeBoxLayout->addWidget(m_detectIconTheme, row++, 0, 1, 2);
+    iconThemeBoxLayout->addWidget(m_lightTheme, row, 0);
+    iconThemeBoxLayout->addWidget(m_darkTheme, row++, 1);
+    iconThemeBoxLayout->addWidget(m_systemTheme, row++, 0, 1, 2);
     iconThemeBoxLayout->setColumnStretch(2, 1);
 
-    themeBoxLayout->addWidget(styleLabel, 0, 0);
-    themeBoxLayout->addWidget(m_styles, 0, 1);
-    themeBoxLayout->addWidget(iconThemeBox, 1, 0, 1, 3);
+    row = 0;
+    themeBoxLayout->addWidget(new QLabel(tr("Style") + u":", this), row, 0);
+    themeBoxLayout->addWidget(m_styles, row++, 1);
+    themeBoxLayout->addWidget(iconThemeBox, row++, 0, 1, 3);
     themeBoxLayout->setColumnStretch(2, 1);
 
     auto* layoutGroup       = new QGroupBox(tr("Layout"), this);
     auto* layoutGroupLayout = new QGridLayout(layoutGroup);
 
-    int row{0};
+    row = 0;
     layoutGroupLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_overrideSplitterHandle, row, 0);
@@ -161,12 +165,10 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     layoutGroupLayout->addWidget(m_editableLayoutMargin, row++, 1);
     layoutGroupLayout->setColumnStretch(2, 1);
 
-    m_editableLayoutMargin->setMinimum(0);
-    m_editableLayoutMargin->setMaximum(20);
+    m_editableLayoutMargin->setRange(0, 20);
     m_editableLayoutMargin->setSuffix(QStringLiteral("px"));
 
-    m_splitterHandleGap->setMinimum(0);
-    m_splitterHandleGap->setMaximum(20);
+    m_splitterHandleGap->setRange(0, 20);
     m_splitterHandleGap->setSuffix(QStringLiteral("px"));
 
     auto* toolButtonGroup       = new QGroupBox(tr("Tool Buttons"), this);
@@ -175,13 +177,19 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     toolButtonGroupLayout->addWidget(m_buttonRaise);
     toolButtonGroupLayout->addWidget(m_buttonStretch);
 
-    auto* playbackScriptsGroup       = new QGroupBox(tr("Playback Scripts"), this);
-    auto* playbackScriptsGroupLayout = new QGridLayout(playbackScriptsGroup);
+    auto* playbackGroup       = new QGroupBox(tr("Playback"), this);
+    auto* playbackGroupLayout = new QGridLayout(playbackGroup);
 
-    auto* titleLabel = new QLabel(tr("Window title") + QStringLiteral(":"), this);
+    m_vbrInterval->setRange(100, 300000);
+    m_vbrInterval->setSingleStep(250);
+    m_vbrInterval->setSuffix(QStringLiteral(" ms"));
 
-    playbackScriptsGroupLayout->addWidget(titleLabel, 0, 0);
-    playbackScriptsGroupLayout->addWidget(m_titleScript, 0, 1);
+    row = 0;
+    playbackGroupLayout->addWidget(new QLabel(tr("Window title") + QStringLiteral(":"), this), row, 0);
+    playbackGroupLayout->addWidget(m_titleScript, row++, 1, 1, 2);
+    playbackGroupLayout->addWidget(new QLabel(tr("VBR update interval") + QStringLiteral(":"), this), row, 0);
+    playbackGroupLayout->addWidget(m_vbrInterval, row++, 1);
+    playbackGroupLayout->setColumnStretch(2, 1);
 
     auto* selectionGroupBox    = new QGroupBox(tr("Selection Info"), this);
     auto* selectionGroup       = new QButtonGroup(this);
@@ -202,17 +210,17 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     m_volumeStep->setRange(1, 5);
     m_volumeStep->setSuffix(QStringLiteral(" dB"));
 
-    controlsLayout->addWidget(new QLabel(tr("Seek step") + u":", this), 0, 0);
-    controlsLayout->addWidget(m_seekStep, 0, 1);
-    controlsLayout->addWidget(new QLabel(tr("Volume step") + u":", this), 1, 0);
-    controlsLayout->addWidget(m_volumeStep, 1, 1);
+    row = 0;
+    controlsLayout->addWidget(new QLabel(tr("Seek step") + u":", this), row, 0);
+    controlsLayout->addWidget(m_seekStep, row++, 1);
+    controlsLayout->addWidget(new QLabel(tr("Volume step") + u":", this), row, 0);
+    controlsLayout->addWidget(m_volumeStep, row++, 1);
     controlsLayout->setColumnStretch(2, 1);
 
     auto* ratingGroupBox    = new QGroupBox(tr("Rating"), this);
     auto* ratingGroupLayout = new QGridLayout(ratingGroupBox);
 
-    m_starRatingSize->setMinimum(5);
-    m_starRatingSize->setMaximum(30);
+    m_starRatingSize->setRange(5, 30);
     m_starRatingSize->setSuffix(QStringLiteral("px"));
 
     ratingGroupLayout->addWidget(new QLabel(tr("Star size"), this), 0, 0);
@@ -226,7 +234,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     mainLayout->addWidget(themeBox, row++, 0, 1, 2);
     mainLayout->addWidget(layoutGroup, row++, 0, 1, 2);
     mainLayout->addWidget(toolButtonGroup, row++, 0, 1, 2);
-    mainLayout->addWidget(playbackScriptsGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(playbackGroup, row++, 0, 1, 2);
     mainLayout->addWidget(selectionGroupBox, row++, 0, 1, 2);
     mainLayout->addWidget(controlsGroup, row++, 0, 1, 2);
     mainLayout->addWidget(ratingGroupBox, row++, 0, 1, 2);
@@ -292,6 +300,7 @@ void GuiGeneralPageWidget::load()
     m_buttonStretch->setChecked(buttonOptions & Stretch);
 
     m_titleScript->setText(m_settings->value<WindowTitleTrackScript>());
+    m_vbrInterval->setValue(m_settings->value<Settings::Core::Internal::VBRUpdateInterval>());
 
     const auto option = static_cast<SelectionDisplay>(m_settings->value<InfoDisplayPrefer>());
     if(option == SelectionDisplay::PreferPlaying) {
@@ -349,6 +358,7 @@ void GuiGeneralPageWidget::apply()
     m_settings->set<ToolButtonStyle>(static_cast<int>(buttonOptions));
 
     m_settings->set<WindowTitleTrackScript>(m_titleScript->text());
+    m_settings->set<Settings::Core::Internal::VBRUpdateInterval>(m_vbrInterval->value());
 
     const SelectionDisplay option
         = m_preferPlaying->isChecked() ? SelectionDisplay::PreferPlaying : SelectionDisplay::PreferSelection;
@@ -368,6 +378,7 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<EditableLayoutMargin>();
     m_settings->reset<SplitterHandleSize>();
     m_settings->reset<WindowTitleTrackScript>();
+    m_settings->reset<Settings::Core::Internal::VBRUpdateInterval>();
     m_settings->reset<InfoDisplayPrefer>();
     m_settings->reset<SeekStep>();
     m_settings->reset<VolumeStep>();

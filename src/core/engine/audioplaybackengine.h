@@ -65,6 +65,7 @@ private:
     AudioFormat loadPreparedTrack();
     void resetWorkers();
     void stopWorkers(bool full = false);
+    void startBitrateTimer();
 
     void handleOutputState(AudioOutput::State outState);
     void reloadOutput();
