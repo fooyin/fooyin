@@ -124,12 +124,12 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="106"/>
         <source>Clear Cache</source>
-        <translation type="unfinished">清空快取</translation>
+        <translation>清空快取</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="173"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished">磁碟快取用量</translation>
+        <translation>磁碟快取用量</translation>
     </message>
 </context>
 <context>
@@ -137,32 +137,32 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="43"/>
         <source>Front Cover</source>
-        <translation type="unfinished">封面</translation>
+        <translation>正面</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="44"/>
         <source>Back Cover</source>
-        <translation type="unfinished">背面</translation>
+        <translation>背面</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="45"/>
         <source>Artist</source>
-        <translation type="unfinished">藝人</translation>
+        <translation>藝人</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="107"/>
         <source>Artwork Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>封面屬性</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="156"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>載入封面…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="160"/>
         <source>Saving artwork to files…</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存封面至檔案…</translation>
     </message>
 </context>
 <context>
@@ -170,56 +170,58 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="46"/>
         <source>Add</source>
-        <translation type="unfinished">加入</translation>
+        <translation>加入</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="47"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="251"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="68"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="110"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation>無網路出現</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="86"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="86"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="160"/>
         <source>Multiple images</source>
-        <translation type="unfinished"></translation>
+        <translation>多重圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="161"/>
         <source>%1 of %2 files have artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2 檔案擁有封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="193"/>
         <source>%1 KB
 %2
 %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 KB
+%2
+%3</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="245"/>
         <source>Replace image</source>
-        <translation type="unfinished"></translation>
+        <translation>取代圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="245"/>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>加入圖片</translation>
     </message>
 </context>
 <context>
@@ -265,72 +267,72 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="50"/>
         <source>&amp;Load</source>
-        <translation type="unfinished">載入(&amp;L)</translation>
+        <translation>載入(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="51"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">儲存(&amp;S)</translation>
+        <translation>儲存(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="52"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">刪除(&amp;D)</translation>
+        <translation>刪除(&amp;D)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
         <source>&amp;Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>還原預設(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>Edit Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>編輯自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>Create New Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>建立新的自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="85"/>
         <source>Name</source>
-        <translation type="unfinished">名稱</translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>Query</source>
-        <translation type="unfinished"></translation>
+        <translation>詢查</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="158"/>
         <source>Query already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>詢查已有存在</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="159"/>
         <source>Query %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>詢查 %1 已有存在。要覆蓋嗎？</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="277"/>
         <source>Most Played</source>
-        <translation type="unfinished"></translation>
+        <translation>大多已經播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="278"/>
         <source>Recently Added</source>
-        <translation type="unfinished"></translation>
+        <translation>最近加入的</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="279"/>
         <source>Last Played 2 Weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>最近2週播放的</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="280"/>
         <source>Has Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>有歌詞</translation>
     </message>
 </context>
 <context>
@@ -814,7 +816,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="552"/>
         <source>Undo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>回復前次配置編輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="563"/>
@@ -824,7 +826,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="564"/>
         <source>Redo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>重做前次配置編輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="444"/>
@@ -1028,12 +1030,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="70"/>
         <source>&amp;New autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>新建自動播放清單(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>建立新的自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
@@ -1726,17 +1728,17 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
         <source>User Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>使用者目錄</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="109"/>
         <source>Open Config Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟調設目錄</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="110"/>
         <source>Open Share Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟分享目錄</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="119"/>
@@ -2566,7 +2568,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="197"/>
         <source>Library</source>
-        <translation type="unfinished">媒體庫</translation>
+        <translation>媒體庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="203"/>
@@ -2903,12 +2905,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
         <source>&amp;Clean</source>
-        <translation type="unfinished"></translation>
+        <translation>清除(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>移除不在任何播放清單中非媒體庫的曲目，以及過期的播放統計數據</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -2983,12 +2985,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="123"/>
         <source>Cleaning database…</source>
-        <translation type="unfinished"></translation>
+        <translation>清空資料庫…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="133"/>
         <source>Database cleaned</source>
-        <translation type="unfinished"></translation>
+        <translation>資料庫已經清空</translation>
     </message>
 </context>
 <context>
@@ -4955,12 +4957,12 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="133"/>
         <source>Create autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>建立自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="136"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>編輯自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="160"/>
@@ -5143,12 +5145,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="294"/>
         <source>Add new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>加入新建自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="312"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>編輯自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="322"/>
@@ -5158,7 +5160,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="322"/>
         <source>Rename autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>自動播放清單變更名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="326"/>
@@ -5168,7 +5170,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="326"/>
         <source>Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="341"/>
@@ -7880,7 +7882,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="272"/>
         <source>Artwork</source>
-        <translation type="unfinished">封面</translation>
+        <translation>封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="284"/>
