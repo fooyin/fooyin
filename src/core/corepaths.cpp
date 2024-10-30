@@ -59,7 +59,7 @@ QStringList pluginPaths()
 
 QString userPluginsPath()
 {
-    return QDir::cleanPath(Utils::sharePath(QStringLiteral("plugins")));
+    return Utils::createPath(QDir::cleanPath(QStringLiteral("%1/.local/lib/fooyin/plugins/").arg(QDir::homePath())));
 }
 
 QString translationsPath()

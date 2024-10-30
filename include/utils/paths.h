@@ -24,6 +24,7 @@
 #include <QString>
 
 namespace Fooyin::Utils {
+FYUTILS_EXPORT QString createPath(const QString& path, const QString& appendPath = {});
 FYUTILS_EXPORT QString configPath(const QString& appendPath = {});
 FYUTILS_EXPORT QString statePath(const QString& appendPath = {});
 FYUTILS_EXPORT QString sharePath(const QString& appendPath = {});
