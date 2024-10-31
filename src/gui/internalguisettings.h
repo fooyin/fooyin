@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/track.h>
 #include <gui/theme/fytheme.h>
 #include <utils/settings/settingsentry.h>
 
@@ -61,6 +62,43 @@ struct CoverPaths
         return stream;
     }
 };
+
+enum class ArtworkSaveScheme : uint8_t
+{
+    Manual = 0,
+    Autosave,
+    AutosavePeriod
+};
+
+enum class ArtworkSaveMethod : uint8_t
+{
+    Embedded = 0,
+    Directory
+};
+
+struct ArtworkSaveOptions
+{
+    ArtworkSaveMethod method{ArtworkSaveMethod::Embedded};
+    QString dir;
+    QString filename;
+
+    friend QDataStream& operator<<(QDataStream& stream, const ArtworkSaveOptions& options)
+    {
+        stream << options.method;
+        stream << options.dir;
+        stream << options.filename;
+        return stream;
+    }
+
+    friend QDataStream& operator>>(QDataStream& stream, ArtworkSaveOptions& options)
+    {
+        stream >> options.method;
+        stream >> options.dir;
+        stream >> options.filename;
+        return stream;
+    }
+};
+using ArtworkSaveMethods = QMap<Track::Cover, ArtworkSaveOptions>;
 
 namespace Settings::Gui::Internal {
 Q_NAMESPACE
@@ -132,6 +170,12 @@ enum GuiInternalSettings : uint32_t
     SystemPalette             = 60 | Type::Variant,
     DirBrowserShowHorizScroll = 61 | Type::Bool,
     LibTreeIconSize           = 62 | Type::Variant,
+    ArtworkSaveScheme         = 63 | Type::Int,
+    ArtworkSaveMethods        = 64 | Type::Variant,
+    ArtworkAutoSearch         = 65 | Type::Bool,
+    ArtworkAlbumField         = 66 | Type::String,
+    ArtworkArtistField        = 67 | Type::String,
+    ArtworkMatchThreshold     = 68 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
@@ -148,3 +192,4 @@ private:
 
 Q_DECLARE_METATYPE(Fooyin::CoverPaths)
 Q_DECLARE_METATYPE(Fooyin::FyTheme)
+Q_DECLARE_METATYPE(Fooyin::ArtworkSaveMethods)
