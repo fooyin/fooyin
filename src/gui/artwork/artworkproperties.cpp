@@ -68,11 +68,7 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
 
 ArtworkProperties::~ArtworkProperties()
 {
-    if(m_writeRequest) {
-        m_writeRequest->cancel();
-    }
     if(m_watcher) {
-        m_watcher->cancel();
         m_watcher->waitForFinished();
     }
 }
@@ -123,6 +119,10 @@ void ArtworkProperties::apply()
             coverData.coverData.emplace(row->type(), CoverImage{row->mimeType(), row->image()});
             row->reset();
         }
+    }
+
+    if(coverData.coverData.empty()) {
+        return;
     }
 
     QObject::connect(

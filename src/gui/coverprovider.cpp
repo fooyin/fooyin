@@ -52,6 +52,7 @@ constexpr auto MaxSize = 1024;
 
 // Used to keep track of tracks without artwork so we don't query the filesystem more than necessary
 std::set<QString> Fooyin::CoverProvider::m_noCoverKeys;
+std::map<QString, QPixmap> Fooyin::CoverProvider::m_overrides;
 
 namespace {
 using Fooyin::CoverProvider;
@@ -394,6 +395,10 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
     }
 
     const QString coverKey = generateTrackCoverKey(track, type);
+    if(m_overrides.contains(coverKey)) {
+        return m_overrides.at(coverKey);
+    }
+
     if(!p->m_pendingCovers.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey);
         if(!cover.isNull()) {
@@ -414,6 +419,10 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, ThumbnailSize siz
     }
 
     const QString coverKey = generateAlbumCoverKey(track, type);
+    if(m_overrides.contains(coverKey)) {
+        return m_overrides.at(coverKey);
+    }
+
     if(!p->m_pendingCovers.contains(coverKey) && !m_noCoverKeys.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey, size);
         if(!cover.isNull()) {
@@ -459,6 +468,21 @@ CoverProvider::ThumbnailSize CoverProvider::findThumbnailSize(const QSize& size)
     }
 
     return Full;
+}
+
+void CoverProvider::setOverride(const Track& track, const QPixmap& cover, Track::Cover type)
+{
+    const auto removeOrSetOverride = [&cover](const QString& key) {
+        if(cover.isNull()) {
+            m_overrides.erase(key);
+        }
+        else {
+            m_overrides[key] = cover;
+        }
+    };
+
+    removeOrSetOverride(generateAlbumCoverKey(track, type));
+    removeOrSetOverride(generateTrackCoverKey(track, type));
 }
 
 void CoverProvider::clearCache()
