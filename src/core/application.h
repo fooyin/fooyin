@@ -34,6 +34,7 @@ class Database;
 class EngineController;
 class LibraryManager;
 class MusicLibrary;
+class NetworkAccessManager;
 class PlayerController;
 class PlaylistHandler;
 class PluginManager;
@@ -64,6 +65,7 @@ public:
     [[nodiscard]] EngineController* engine() const;
     [[nodiscard]] std::shared_ptr<PlaylistLoader> playlistLoader() const;
     [[nodiscard]] std::shared_ptr<AudioLoader> audioLoader() const;
+    [[nodiscard]] std::shared_ptr<NetworkAccessManager> networkManager() const;
     [[nodiscard]] SortingRegistry* sortingRegistry() const;
 
 protected:

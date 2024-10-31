@@ -560,6 +560,11 @@ std::shared_ptr<AudioLoader> Application::audioLoader() const
     return p->m_audioLoader;
 }
 
+std::shared_ptr<NetworkAccessManager> Application::networkManager() const
+{
+    return p->m_networkManager;
+}
+
 SortingRegistry* Application::sortingRegistry() const
 {
     return p->m_sortingRegistry;
