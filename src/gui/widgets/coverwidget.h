@@ -49,6 +49,9 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
+signals:
+    void requestArtworkSearch(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type);
+
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -70,6 +73,7 @@ private:
     bool m_keepAspectRatio;
     QBasicTimer m_resizeTimer;
 
+    Track m_track;
     QPixmap m_cover;
     QPixmap m_scaledCover;
 };
