@@ -17,7 +17,7 @@
  *
  */
 
-#include "artworkpage.h"
+#include "artworkgeneralpage.h"
 
 #include "internalguisettings.h"
 
@@ -175,15 +175,15 @@ void ArtworkPageWidget::updateCacheSize()
     m_cacheSizeLabel->setText(tr("Disk cache usage") + u": %1"_s.arg(cacheSize));
 }
 
-ArtworkPage::ArtworkPage(SettingsManager* settings, QObject* parent)
+ArtworkGeneralPage::ArtworkGeneralPage(SettingsManager* settings, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
-    setId(Constants::Page::Artwork);
-    setName(tr("Artwork"));
+    setId(Constants::Page::ArtworkGeneral);
+    setName(tr("General"));
     setCategory({tr("Interface"), tr("Artwork")});
     setWidgetCreator([settings] { return new ArtworkPageWidget(settings); });
 }
 } // namespace Fooyin
 
-#include "artworkpage.moc"
-#include "moc_artworkpage.cpp"
+#include "artworkgeneralpage.moc"
+#include "moc_artworkgeneralpage.cpp"

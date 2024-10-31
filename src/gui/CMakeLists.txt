@@ -73,10 +73,26 @@ set(SOURCES
     widgets.cpp
     widgets.h
     windowcontroller.cpp
+    artwork/artworkdelegate.cpp
+    artwork/artworkdelegate.h
+    artwork/artworkdialog.cpp
+    artwork/artworkdialog.h
+    artwork/artworkfinder.cpp
+    artwork/artworkfinder.h
+    artwork/artworkitem.cpp
+    artwork/artworkitem.h
+    artwork/artworkmodel.cpp
+    artwork/artworkmodel.h
     artwork/artworkproperties.cpp
     artwork/artworkproperties.h
     artwork/artworkrow.cpp
     artwork/artworkrow.h
+    artwork/sources/artworksource.cpp
+    artwork/sources/artworksource.h
+    artwork/sources/artworksource.cpp
+    artwork/sources/artworksource.cpp
+    artwork/sources/musicbrainzartwork.cpp
+    artwork/sources/musicbrainzartwork.h
     controls/playercontrol.cpp
     controls/playercontrol.h
     controls/playlistcontrol.cpp
@@ -230,8 +246,6 @@ set(SOURCES
     search/searchcontroller.h
     search/searchwidget.cpp
     search/searchwidget.h
-    settings/artworkpage.cpp
-    settings/artworkpage.h
     settings/generalpage.cpp
     settings/generalpage.h
     settings/guigeneralpage.cpp
@@ -244,6 +258,10 @@ set(SOURCES
     settings/searchpage.h
     settings/shellintegrationpage.cpp
     settings/shellintegrationpage.h
+    settings/artwork/artworkdownloadpage.cpp
+    settings/artwork/artworkdownloadpage.h
+    settings/artwork/artworkgeneralpage.cpp
+    settings/artwork/artworkgeneralpage.h
     settings/dirbrowser/dirbrowserpage.cpp
     settings/dirbrowser/dirbrowserpage.h
     settings/library/librarygeneralpage.cpp

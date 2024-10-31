@@ -87,6 +87,7 @@ constexpr auto TracksPlaylist = "Fooyin.Menu.Tracks.Playlist";
 constexpr auto Playlist       = "Fooyin.Menu.Playlist";
 constexpr auto PlaylistAddTo  = "Fooyin.Menu.Playlist.AddTo";
 constexpr auto ReplayGain     = "Fooyin.Menu.ReplayGain";
+constexpr auto Artwork        = "Fooyin.Menu.Artwork";
 constexpr auto Tagging        = "Fooyin.Menu.Tagging";
 constexpr auto Utilities      = "Fooyin.Menu.Utilities";
 } // namespace Context
@@ -178,6 +179,7 @@ constexpr auto QueueNext        = "Tracks.QueueNext";
 constexpr auto SendToQueue      = "Tracks.SendToQueue";
 constexpr auto RemoveFromQueue  = "Tracks.RemoveFromQueue";
 constexpr auto OpenFolder       = "Tracks.OpenFolder";
+constexpr auto SearchArtwork    = "Tracks.SearchArtwork";
 constexpr auto OpenProperties   = "Tracks.OpenProperties";
 } // namespace Actions
 
@@ -195,7 +197,8 @@ constexpr auto Decoding           = "Fooyin.Page.Playback.Decoding";
 constexpr auto ReplayGain         = "Fooyin.Page.Playback.ReplayGain";
 constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
 constexpr auto InterfaceTheme     = "Fooyin.Page.Interface.Theme";
-constexpr auto Artwork            = "Fooyin.Page.Interface.Artwork";
+constexpr auto ArtworkGeneral     = "Fooyin.Page.Interface.Artwork.General";
+constexpr auto ArtworkDownload    = "Fooyin.Page.Interface.Artwork.Download";
 constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
 constexpr auto LibrarySearching   = "Fooyin.Page.Library.Searching";
 constexpr auto LibrarySorting     = "Fooyin.Page.Library.Sorting";

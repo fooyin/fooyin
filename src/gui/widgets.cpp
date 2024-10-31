@@ -19,6 +19,7 @@
 
 #include "widgets.h"
 
+#include "artwork/artworkdialog.h"
 #include "artwork/artworkproperties.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
@@ -39,7 +40,8 @@
 #include "replaygain/replaygainwidget.h"
 #include "search/searchwidget.h"
 #include "selectioninfo/infowidget.h"
-#include "settings/artworkpage.h"
+#include "settings/artwork/artworkdownloadpage.h"
+#include "settings/artwork/artworkgeneralpage.h"
 #include "settings/dirbrowser/dirbrowserpage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
@@ -192,8 +194,10 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"ArtworkPanel"_s,
         [this]() {
-            return new CoverWidget(m_core->playerController(), m_gui->trackSelection(), m_core->audioLoader(),
-                                   m_settings, m_window);
+            auto* coverWidget = new CoverWidget(m_core->playerController(), m_gui->trackSelection(),
+                                                m_core->audioLoader(), m_settings, m_window);
+            QObject::connect(coverWidget, &CoverWidget::requestArtworkSearch, this, &Widgets::showArtworkDialog);
+            return coverWidget;
         },
         tr("Artwork Panel"));
 
@@ -236,7 +240,8 @@ void Widgets::registerPages()
     new GeneralPage(m_settings, this);
     new GuiGeneralPage(m_gui->layoutProvider(), m_gui->editableLayout(), m_settings, this);
     new GuiThemesPage(m_gui->themeRegistry(), m_settings, this);
-    new ArtworkPage(m_settings, this);
+    new ArtworkGeneralPage(m_settings, this);
+    new ArtworkDownloadPage(m_settings, this);
     new LibraryGeneralPage(m_gui->actionManager(), m_core->libraryManager(), m_core->library(), m_settings, this);
     new LibrarySortingPage(m_gui->actionManager(), m_core->sortingRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);
@@ -287,6 +292,13 @@ void Widgets::registerFontEntries() const
     themeReg->registerFontEntry(tr("Playlist"), u"Fooyin::PlaylistView"_s);
     themeReg->registerFontEntry(tr("Status bar"), u"Fooyin::StatusLabel"_s);
     themeReg->registerFontEntry(tr("Tabs"), u"Fooyin::EditableTabBar"_s);
+}
+
+void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type)
+{
+    auto* search = new ArtworkDialog(m_core->networkManager(), m_core->library(), m_settings, tracks, type, m_window);
+    search->setAttribute(Qt::WA_DeleteOnClose);
+    search->show();
 }
 
 FyWidget* Widgets::createDirBrowser()

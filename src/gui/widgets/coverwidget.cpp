@@ -75,6 +75,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     m_settings->subscribe<Settings::Gui::IconTheme>(this, &CoverWidget::reloadCover);
     m_settings->subscribe<Settings::Gui::Theme>(this, &CoverWidget::reloadCover);
     m_settings->subscribe<Settings::Gui::Style>(this, &CoverWidget::reloadCover);
+    m_settings->subscribe<Settings::Gui::RefreshCovers>(this, &CoverWidget::reloadCover);
 
     reloadCover();
 }
@@ -123,7 +124,7 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* keepAspectRatio = new QAction(tr("Keep aspect ratio"), this);
+    auto* keepAspectRatio = new QAction(tr("Keep aspect ratio"), menu);
 
     keepAspectRatio->setCheckable(true);
     keepAspectRatio->setChecked(m_keepAspectRatio);
@@ -190,6 +191,14 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(backCover);
     menu->addAction(artistCover);
 
+    if(m_track.isValid()) {
+        auto* search = new QAction(tr("Search for artwork…"), menu);
+        QObject::connect(search, &QAction::triggered, this,
+                         [this]() { emit requestArtworkSearch({m_track}, m_coverType); });
+        menu->addSeparator();
+        menu->addAction(search);
+    }
+
     menu->popup(event->globalPos());
 }
 
@@ -222,16 +231,16 @@ void CoverWidget::rescaleCover()
 
 void CoverWidget::reloadCover()
 {
-    Track track;
+    m_track = {};
 
     if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasTracks()) {
-        track = m_trackSelection->selectedTrack();
+        m_track = m_trackSelection->selectedTrack();
     }
     else {
-        track = m_playerController->currentTrack();
+        m_track = m_playerController->currentTrack();
     }
 
-    m_cover = m_coverProvider->trackCover(track, m_coverType);
+    m_cover = m_coverProvider->trackCover(m_track, m_coverType);
     // Delay showing cover so we don't display the placeholder if still loading
     // TODO: Implement fading between cover changes
     QTimer::singleShot(200, this, &CoverWidget::rescaleCover);

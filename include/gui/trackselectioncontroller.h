@@ -29,6 +29,7 @@ class QMenu;
 
 namespace Fooyin {
 class ActionManager;
+class AudioLoader;
 class SettingsManager;
 class PlaylistController;
 class TrackSelectionControllerPrivate;
@@ -64,7 +65,7 @@ class FYGUI_EXPORT TrackSelectionController : public QObject
     Q_OBJECT
 
 public:
-    TrackSelectionController(ActionManager* actionManager, SettingsManager* settings,
+    TrackSelectionController(ActionManager* actionManager, AudioLoader* audioLoader, SettingsManager* settings,
                              PlaylistController* playlistController, QObject* parent = nullptr);
     ~TrackSelectionController() override;
 
@@ -88,6 +89,7 @@ signals:
     void actionExecuted(TrackAction action);
     void selectionChanged();
     void requestPropertiesDialog();
+    void requestArtworkSearch(const Fooyin::TrackList& tracks);
 
 public slots:
     void tracksUpdated(const Fooyin::TrackList& tracks);

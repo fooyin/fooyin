@@ -107,6 +107,8 @@ public:
 
     /** Returns an equivalent thumbnail size for the given @p size */
     static ThumbnailSize findThumbnailSize(const QSize& size);
+    /** Sets the cover of @p type to be used for the @p track. This will override any embedded and directory artwork. */
+    static void setOverride(const Track& track, const QPixmap& cover, Track::Cover type = Track::Cover::Front);
     /** Clears the QPixmapCache as well as the on-disk cache. */
     static void clearCache();
     /** Removes all covers of the @p track from the cache. */
@@ -120,5 +122,6 @@ private:
     class CoverProviderPrivate;
     std::unique_ptr<CoverProviderPrivate> p;
     static std::set<QString> m_noCoverKeys;
+    static std::map<QString, QPixmap> m_overrides;
 };
 } // namespace Fooyin
