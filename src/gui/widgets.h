@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <core/track.h>
+
 #include <QObject>
 
 namespace Fooyin {
@@ -48,6 +50,8 @@ public:
     void registerPages();
     void registerPropertiesTabs();
     void registerFontEntries() const;
+
+    void showArtworkDialog(const TrackList& tracks, Track::Cover type);
 
 private:
     FyWidget* createDirBrowser();

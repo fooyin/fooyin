@@ -47,6 +47,17 @@ Fooyin::CoverPaths defaultCoverPaths()
 
     return paths;
 }
+
+Fooyin::ArtworkSaveMethods defaultArtworkSaveMethods()
+{
+    Fooyin::ArtworkSaveMethods methods;
+
+    methods[Fooyin::Track::Cover::Front]  = {Fooyin::ArtworkSaveMethod::Embedded, u"%path%"_s, u"cover"_s};
+    methods[Fooyin::Track::Cover::Back]   = {Fooyin::ArtworkSaveMethod::Embedded, u"%path%"_s, u"back"_s};
+    methods[Fooyin::Track::Cover::Artist] = {Fooyin::ArtworkSaveMethod::Embedded, u"%path%"_s, u"artist"_s};
+
+    return methods;
+}
 } // namespace
 
 namespace Fooyin {
@@ -57,6 +68,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
 
     qRegisterMetaType<CoverPaths>("CoverPaths");
     qRegisterMetaType<FyTheme>("FyTheme");
+    qRegisterMetaType<ArtworkSaveMethods>("ArtworkSaveMethods");
 
     m_settings->createTempSetting<LayoutEditing>(false);
     m_settings->createSetting<StartupBehaviour>(3, u"Interface/StartupBehaviour"_s);
@@ -84,6 +96,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<SearchErrorFg>(QVariant{}, u"Searching/ErrorFgColour"_s);
     m_settings->createSetting<SearchSuccessClose>(true, u"Searching/CloseOnSuccess"_s);
     m_settings->createSetting<ShowMenuBar>(true, u"Interface/ShowMenuBar"_s);
+    m_settings->createTempSetting<RefreshCovers>(false);
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
     m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);
@@ -151,5 +164,13 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<Internal::SystemPalette>(QApplication::palette());
     m_settings->createSetting<Internal::DirBrowserShowHorizScroll>(true, u"DirectoryBrowser/ShowHorizontalScrollbar"_s);
     m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, u"LibraryTree/IconSize"_s);
+    m_settings->createSetting<Internal::ArtworkSaveScheme>(static_cast<int>(ArtworkSaveScheme::Manual),
+                                                           u"Artwork/SaveScheme"_s);
+    m_settings->createSetting<Internal::ArtworkSaveMethods>(QVariant::fromValue(defaultArtworkSaveMethods()),
+                                                            u"Artwork/SaveMethods"_s);
+    m_settings->createSetting<Internal::ArtworkAutoSearch>(true, u"Artwork/AutoSearch"_s);
+    m_settings->createSetting<Internal::ArtworkAlbumField>(u"%album%"_s, u"Artwork/AlbumField"_s);
+    m_settings->createSetting<Internal::ArtworkArtistField>(u"%albumartist%"_s, u"Artwork/ArtistField"_s);
+    m_settings->createSetting<Internal::ArtworkMatchThreshold>(85, u"Artwork/MatchThreshold"_s);
 }
 } // namespace Fooyin
