@@ -55,6 +55,7 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
         QStringLiteral("Lyrics"),
         [this]() { return new LyricsWidget(m_playerController, m_lyricsFinder, m_lyricsSaver, m_settings); },
         tr("Lyrics"));
+    m_widgetProvider->setLimit(QStringLiteral("Lyrics"), 1);
     context.themeRegistry->registerFontEntry(tr("Lyrics"), QStringLiteral("Fooyin::Lyrics::LyricsArea"));
 
     new LyricsGeneralPage(m_settings, this);
