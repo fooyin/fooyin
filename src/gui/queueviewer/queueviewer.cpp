@@ -135,7 +135,7 @@ void QueueViewer::setupConnections()
                      &QueueViewer::handlePlaylistTracksDropped);
     QObject::connect(m_model, &QueueViewerModel::queueChanged, this, &QueueViewer::handleQueueChanged);
     QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this, &QueueViewer::resetModel);
-    QObject::connect(m_playerController, &PlayerController::tracksQueued, m_model, &QueueViewerModel::addTracks);
+    QObject::connect(m_playerController, &PlayerController::tracksQueued, m_model, &QueueViewerModel::insertTracks);
     QObject::connect(m_playerController, &PlayerController::tracksDequeued, m_model, &QueueViewerModel::removeTracks);
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &QueueViewer::handleRowsChanged);
     QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, &QueueViewer::handleRowsChanged);
@@ -195,13 +195,13 @@ void QueueViewer::handleTracksDropped(int row, const QByteArray& mimeData) const
         queueTracks.emplace_back(track);
     }
 
-    m_model->insertTracks(row, queueTracks);
+    m_model->insertTracks(queueTracks, row);
 }
 
 void QueueViewer::handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const
 {
     const QueueTracks tracks = Gui::queueTracksFromMimeData(m_playlistInteractor->library(), mimeData);
-    m_model->insertTracks(row, tracks);
+    m_model->insertTracks(tracks, row);
 }
 
 void QueueViewer::handleQueueChanged()

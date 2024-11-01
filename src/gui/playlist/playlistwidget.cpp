@@ -194,6 +194,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_clearAction{new QAction(tr("C&lear"), m_self)}
     , m_removeTrackAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("&Remove"), m_self)}
     , m_addToQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Add to playback &queue"), m_self)}
+    , m_queueNextAction{new QAction(tr("&Queue to play next"), m_self)}
     , m_removeFromQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove),
                                           tr("Remove from playback q&ueue"), m_self)}
     , m_sorting{false}
@@ -414,7 +415,12 @@ void PlaylistWidgetPrivate::setupActions()
         m_addToQueueAction->setEnabled(false);
         m_actionManager->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue,
                                         m_playlistContext->context());
-        QObject::connect(m_addToQueueAction, &QAction::triggered, this, [this]() { queueSelectedTracks(); });
+        QObject::connect(m_addToQueueAction, &QAction::triggered, this, [this]() { queueSelectedTracks(false); });
+
+        m_queueNextAction->setStatusTip(tr("Add the selected tracks to the start of the playback queue"));
+        m_queueNextAction->setEnabled(false);
+        m_actionManager->registerAction(m_queueNextAction, Constants::Actions::QueueNext, m_playlistContext->context());
+        QObject::connect(m_queueNextAction, &QAction::triggered, this, [this]() { queueSelectedTracks(true); });
 
         m_removeFromQueueAction->setStatusTip(tr("Remove the selected tracks from the playback queue"));
         m_removeFromQueueAction->setVisible(false);
@@ -722,6 +728,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
     if(tracks.empty()) {
         m_removeTrackAction->setEnabled(false);
         m_addToQueueAction->setEnabled(false);
+        m_queueNextAction->setEnabled(false);
         m_removeFromQueueAction->setVisible(false);
         return;
     }
@@ -746,6 +753,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
 
     m_copyAction->setEnabled(true);
     m_addToQueueAction->setEnabled(true);
+    m_queueNextAction->setEnabled(true);
 
     const auto queuedTracks
         = m_playerController->playbackQueue().indexesForPlaylist(m_playlistController->currentPlaylist()->id());
@@ -816,7 +824,7 @@ void PlaylistWidgetPrivate::playSelectedTracks() const
     m_self->startPlayback();
 }
 
-void PlaylistWidgetPrivate::queueSelectedTracks(bool send) const
+void PlaylistWidgetPrivate::queueSelectedTracks(bool next, bool send) const
 {
     if(!m_playlistController->currentPlaylist()) {
         return;
@@ -837,6 +845,9 @@ void PlaylistWidgetPrivate::queueSelectedTracks(bool send) const
 
     if(send) {
         m_playerController->replaceTracks(tracks);
+    }
+    else if(next) {
+        m_playerController->queueTracksNext(tracks);
     }
     else {
         m_playerController->queueTracks(tracks);
@@ -1831,7 +1842,9 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
             if(auto* addQueueCmd = p->m_actionManager->command(Constants::Actions::AddToQueue)) {
                 menu->addAction(addQueueCmd->action());
             }
-
+            if(auto* addQueueNextCmd = p->m_actionManager->command(Constants::Actions::QueueNext)) {
+                menu->addAction(addQueueNextCmd->action());
+            }
             if(auto* removeQueueCmd = p->m_actionManager->command(Constants::Actions::RemoveFromQueue)) {
                 menu->addAction(removeQueueCmd->action());
             }

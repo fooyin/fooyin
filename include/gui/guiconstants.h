@@ -173,6 +173,7 @@ constexpr auto AddToActive      = "Tracks.AddToActive";
 constexpr auto SendToCurrent    = "Tracks.SendToCurrent";
 constexpr auto SendToNew        = "Tracks.SendToNew";
 constexpr auto AddToQueue       = "Tracks.AddToQueue";
+constexpr auto QueueNext        = "Tracks.QueueNext";
 constexpr auto SendToQueue      = "Tracks.SendToQueue";
 constexpr auto RemoveFromQueue  = "Tracks.RemoveFromQueue";
 constexpr auto OpenFolder       = "Tracks.OpenFolder";

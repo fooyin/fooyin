@@ -76,6 +76,7 @@ public:
     void addToActivePlaylist() const;
     void startPlayback(PlaylistAction::ActionOptions options);
     void addToQueue() const;
+    void queueNext() const;
     void sendToQueue() const;
 
     void updateActionState();
@@ -102,6 +103,7 @@ public:
     QAction* m_sendCurrent;
     QAction* m_sendNew;
     QAction* m_addToQueue;
+    QAction* m_queueNext;
     QAction* m_removeFromQueue;
     QAction* m_openFolder;
     QAction* m_openProperties;
@@ -125,6 +127,7 @@ TrackSelectionControllerPrivate::TrackSelectionControllerPrivate(TrackSelectionC
     , m_sendCurrent{new QAction(tr("Send to current playlist"), m_tracksPlaylistMenu)}
     , m_sendNew{new QAction(tr("Send to new playlist"), m_tracksPlaylistMenu)}
     , m_addToQueue{new QAction(tr("Add to playback queue"), m_tracksMenu)}
+    , m_queueNext{new QAction(tr("Queue to play next"), m_tracksMenu)}
     , m_removeFromQueue{new QAction(tr("Remove from playback queue"), m_tracksMenu)}
     , m_openFolder{new QAction(tr("Open containing folder"), m_tracksMenu)}
     , m_openProperties{new QAction(tr("Properties"), m_tracksMenu)}
@@ -186,6 +189,18 @@ void TrackSelectionControllerPrivate::setupMenu()
         if(hasTracks()) {
             const auto selection = m_self->selectedTracks();
             m_playlistController->playerController()->queueTracks(selection);
+            updateActionState();
+        }
+    });
+    m_tracksQueueMenu->addAction(addQueueCmd);
+
+    m_queueNext->setStatusTip(tr("Add the selected tracks to the front of the playback queue"));
+    auto* queueNextCmd = m_actionManager->registerAction(m_queueNext, Constants::Actions::QueueNext);
+    queueNextCmd->setCategories(tracksCategory);
+    QObject::connect(m_queueNext, &QAction::triggered, m_tracksQueueMenu, [this]() {
+        if(hasTracks()) {
+            const auto selection = m_self->selectedTracks();
+            m_playlistController->playerController()->queueTracksNext(selection);
             updateActionState();
         }
     });
@@ -442,6 +457,17 @@ void TrackSelectionControllerPrivate::addToQueue() const
     emit m_self->actionExecuted(TrackAction::AddToQueue);
 }
 
+void TrackSelectionControllerPrivate::queueNext() const
+{
+    if(!hasTracks()) {
+        return;
+    }
+
+    const auto& selection = m_contextSelection.at(m_activeContext);
+    m_playlistController->playerController()->queueTracksNext(selection.tracks);
+    emit m_self->actionExecuted(TrackAction::QueueNext);
+}
+
 void TrackSelectionControllerPrivate::sendToQueue() const
 {
     if(!hasTracks()) {
@@ -486,6 +512,7 @@ void TrackSelectionControllerPrivate::updateActionState()
     m_openFolder->setEnabled(haveTracks && allTracksInSameFolder());
     m_openProperties->setEnabled(haveTracks);
     m_addToQueue->setEnabled(haveTracks);
+    m_queueNext->setEnabled(haveTracks);
     m_removeFromQueue->setVisible(haveTracks && canDequeue());
 }
 
@@ -618,6 +645,9 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
             p->startPlayback(options);
             break;
         case(TrackAction::AddToQueue):
+            p->addToQueue();
+            break;
+        case(TrackAction::QueueNext):
             p->addToQueue();
             break;
         case(TrackAction::SendToQueue):

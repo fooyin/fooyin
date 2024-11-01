@@ -50,7 +50,7 @@ public:
     [[nodiscard]] PlaylistTrack nextTrack() const;
     PlaylistTrack nextTrackChange();
 
-    void addTracks(const QueueTracks& tracks);
+    void addTracks(const QueueTracks& tracks, int index = -1);
     void replaceTracks(const QueueTracks& tracks);
     QueueTracks removeTracks(const QueueTracks& tracks);
     QueueTracks removePlaylistTracks(const UId& playlistId);

@@ -217,6 +217,7 @@ public:
     QAction* m_sendCurrent;
     QAction* m_sendNew;
     QAction* m_addQueue;
+    QAction* m_queueNext;
     QAction* m_sendQueue;
 };
 
@@ -245,6 +246,7 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     , m_sendCurrent{new QAction(DirBrowser::tr("&Send to current playlist"), m_self)}
     , m_sendNew{new QAction(DirBrowser::tr("Send to &new playlist"), m_self)}
     , m_addQueue{new QAction(DirBrowser::tr("Add to playback &queue"), m_self)}
+    , m_queueNext{new QAction(DirBrowser::tr("Queue to play next"), m_self)}
     , m_sendQueue{new QAction(DirBrowser::tr("Send to playback q&ueue"), m_self)}
 {
     auto* layout = new QVBoxLayout(m_self);
@@ -339,6 +341,13 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     addQueueCmd->setCategories(tracksCategory);
     QObject::connect(m_addQueue, &QAction::triggered, m_self,
                      [this]() { handleAction(TrackAction::AddToQueue, true); });
+
+    m_queueNext->setStatusTip(DirBrowser::tr("Add the selected tracks to the front of the playback queue"));
+    auto* queueNextCmd
+        = m_actionManager->registerAction(m_queueNext, Constants::Actions::QueueNext, m_context->context());
+    queueNextCmd->setCategories(tracksCategory);
+    QObject::connect(m_queueNext, &QAction::triggered, m_self,
+                     [this]() { handleAction(TrackAction::QueueNext, true); });
 
     m_sendQueue->setStatusTip(DirBrowser::tr("Replace the playback queue with the selected tracks"));
     auto* sendQueue
@@ -461,6 +470,11 @@ void DirBrowserPrivate::handleAction(TrackAction action, bool onlySelection)
         case(TrackAction::AddToQueue):
             m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
                 m_playlistInteractor->playerController()->queueTracks(loadQueueTracks(tracks));
+            });
+            break;
+        case(TrackAction::QueueNext):
+            m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
+                m_playlistInteractor->playerController()->queueTracksNext(loadQueueTracks(tracks));
             });
             break;
         case(TrackAction::SendToQueue):
@@ -777,6 +791,7 @@ void DirBrowser::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(p->m_sendNew);
     menu->addSeparator();
     menu->addAction(p->m_addQueue);
+    menu->addAction(p->m_queueNext);
     menu->addAction(p->m_sendQueue);
     menu->addSeparator();
 

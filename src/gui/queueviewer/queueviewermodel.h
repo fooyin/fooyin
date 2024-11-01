@@ -51,8 +51,7 @@ public:
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
 
-    void insertTracks(int row, const QueueTracks& tracks);
-    void addTracks(const QueueTracks& tracks);
+    void insertTracks(const QueueTracks& tracks, int row);
     void removeTracks(const QueueTracks& tracks);
     void removeIndexes(const std::vector<int>& indexes);
 

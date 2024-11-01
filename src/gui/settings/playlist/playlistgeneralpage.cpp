@@ -206,6 +206,7 @@ void PlaylistGeneralPageWidget::load()
 
     addTrackAction(m_middleClick, tr("None"), TrackAction::None, middleActions);
     addTrackAction(m_middleClick, tr("Add to playback queue"), TrackAction::AddToQueue, middleActions);
+    addTrackAction(m_middleClick, tr("Add to front of playback queue"), TrackAction::QueueNext, middleActions);
     addTrackAction(m_middleClick, tr("Send to playback queue"), TrackAction::SendToQueue, middleActions);
 
     auto middleAction = m_settings->value<Settings::Gui::Internal::PlaylistMiddleClick>();

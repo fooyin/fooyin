@@ -98,9 +98,14 @@ PlaylistTrack PlaybackQueue::nextTrackChange()
     return track;
 }
 
-void PlaybackQueue::addTracks(const QueueTracks& tracks)
+void PlaybackQueue::addTracks(const QueueTracks& tracks, int index)
 {
-    m_tracks.insert(m_tracks.end(), tracks.cbegin(), tracks.cend());
+    if(index >= 0) {
+        m_tracks.insert(m_tracks.begin() + index, tracks.cbegin(), tracks.cend());
+    }
+    else {
+        m_tracks.insert(m_tracks.end(), tracks.cbegin(), tracks.cend());
+    }
 }
 
 void PlaybackQueue::replaceTracks(const QueueTracks& tracks)

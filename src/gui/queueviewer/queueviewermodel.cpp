@@ -224,7 +224,7 @@ bool QueueViewerModel::dropMimeData(const QMimeData* data, Qt::DropAction action
     return true;
 }
 
-void QueueViewerModel::insertTracks(int row, const QueueTracks& tracks)
+void QueueViewerModel::insertTracks(const QueueTracks& tracks, int row)
 {
     const auto titleScript    = m_settings->value<Settings::Gui::Internal::QueueViewerLeftScript>();
     const auto subtitleScript = m_settings->value<Settings::Gui::Internal::QueueViewerRightScript>();
@@ -243,26 +243,6 @@ void QueueViewerModel::insertTracks(int row, const QueueTracks& tracks)
         m_trackParents[track.track.albumHash()].emplace_back(item);
 
         ++first;
-    }
-
-    endInsertRows();
-}
-
-void QueueViewerModel::addTracks(const QueueTracks& tracks)
-{
-    const auto titleScript    = m_settings->value<Settings::Gui::Internal::QueueViewerLeftScript>();
-    const auto subtitleScript = m_settings->value<Settings::Gui::Internal::QueueViewerRightScript>();
-
-    const int first = rowCount({});
-    const int last  = first + static_cast<int>(tracks.size()) - 1;
-
-    beginInsertRows({}, first, last);
-
-    for(const auto& track : tracks) {
-        auto* item = m_trackItems.emplace_back(std::make_unique<QueueViewerItem>(track)).get();
-        item->generateTitle(&m_scriptParser, titleScript, subtitleScript);
-        rootItem()->appendChild(item);
-        m_trackParents[track.track.albumHash()].emplace_back(item);
     }
 
     endInsertRows();

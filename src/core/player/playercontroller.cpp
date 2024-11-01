@@ -377,8 +377,51 @@ void PlayerController::queueTracks(const QueueTracks& tracks)
         tracksToAdd = {tracks.begin(), tracks.begin() + freeTracks};
     }
 
+    const int index = p->m_queue.trackCount();
+
     p->m_queue.addTracks(tracksToAdd);
-    emit tracksQueued(tracksToAdd);
+    emit tracksQueued(tracksToAdd, index);
+}
+
+void PlayerController::queueTrackNext(const Track& track)
+{
+    queueTrackNext(PlaylistTrack{track, {}});
+}
+
+void PlayerController::queueTrackNext(const PlaylistTrack& track)
+{
+    queueTracksNext({track});
+}
+
+void PlayerController::queueTracksNext(const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    QueueTracks tracksToQueue;
+    for(const Track& track : tracks) {
+        tracksToQueue.emplace_back(track);
+    }
+
+    queueTracksNext(tracksToQueue);
+}
+
+void PlayerController::queueTracksNext(const QueueTracks& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    QueueTracks tracksToAdd{tracks};
+
+    const int freeTracks = p->m_queue.freeSpace();
+    if(std::cmp_greater_equal(tracks.size(), freeTracks)) {
+        tracksToAdd = {tracks.begin(), tracks.begin() + freeTracks};
+    }
+
+    p->m_queue.addTracks(tracksToAdd, 0);
+    emit trackQueueChanged({}, p->m_queue.tracks());
 }
 
 void PlayerController::dequeueTrack(const Track& track)

@@ -96,7 +96,7 @@ public:
     void trackIndexesChanged(int playingIndex);
     void stopAfterTrack();
     void playSelectedTracks() const;
-    void queueSelectedTracks(bool send = false) const;
+    void queueSelectedTracks(bool next, bool send = false) const;
     void dequeueSelectedTracks() const;
 
     void scanDroppedTracks(const QList<QUrl>& urls, int index);
@@ -182,6 +182,7 @@ public:
     QAction* m_clearAction;
     QAction* m_removeTrackAction;
     QAction* m_addToQueueAction;
+    QAction* m_queueNextAction;
     QAction* m_removeFromQueueAction;
 
     bool m_sorting;

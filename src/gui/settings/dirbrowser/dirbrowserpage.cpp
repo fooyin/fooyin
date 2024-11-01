@@ -134,6 +134,7 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     addTrackAction(m_doubleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, doubleActions);
     addTrackAction(m_doubleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, doubleActions);
     addTrackAction(m_doubleClick, tr("Add to playback queue"), TrackAction::AddToQueue, doubleActions);
+    addTrackAction(m_doubleClick, tr("Add to front of playback queue"), TrackAction::QueueNext, doubleActions);
     addTrackAction(m_doubleClick, tr("Send to playback queue"), TrackAction::SendToQueue, doubleActions);
 
     addTrackAction(m_middleClick, tr("None"), TrackAction::None, middleActions);
@@ -141,7 +142,7 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     addTrackAction(m_middleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist, middleActions);
     addTrackAction(m_middleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, middleActions);
     addTrackAction(m_middleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, middleActions);
-    addTrackAction(m_middleClick, tr("Add to playback queue"), TrackAction::AddToQueue, middleActions);
+    addTrackAction(m_middleClick, tr("Add to front of playback queue"), TrackAction::QueueNext, middleActions);
     addTrackAction(m_middleClick, tr("Send to playback queue"), TrackAction::SendToQueue, middleActions);
 
     auto doubleAction = m_settings->value<Settings::Gui::Internal::DirBrowserDoubleClick>();

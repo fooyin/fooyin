@@ -105,6 +105,10 @@ public:
     void queueTrack(const PlaylistTrack& track);
     void queueTracks(const TrackList& tracks);
     void queueTracks(const QueueTracks& tracks);
+    void queueTrackNext(const Track& track);
+    void queueTrackNext(const PlaylistTrack& track);
+    void queueTracksNext(const TrackList& tracks);
+    void queueTracksNext(const QueueTracks& tracks);
 
     void dequeueTrack(const Track& track);
     void dequeueTrack(const PlaylistTrack& track);
@@ -130,7 +134,7 @@ signals:
     void playlistTrackChanged(const Fooyin::PlaylistTrack& track);
     void trackPlayed(const Fooyin::Track& track);
 
-    void tracksQueued(const Fooyin::QueueTracks& tracks);
+    void tracksQueued(const Fooyin::QueueTracks& tracks, int index);
     void tracksDequeued(const Fooyin::QueueTracks& tracks);
     void trackIndexesDequeued(const Fooyin::PlaylistIndexes& indexes);
     void trackQueueChanged(const Fooyin::QueueTracks& removed, const Fooyin::QueueTracks& added);
