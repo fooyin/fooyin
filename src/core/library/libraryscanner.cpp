@@ -122,6 +122,22 @@ QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExte
 
     return files;
 }
+
+void readFileProperties(Fooyin::Track& track)
+{
+    const QFileInfo fileInfo{track.filepath()};
+
+    if(track.addedTime() == 0) {
+        track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+    }
+    if(track.modifiedTime() == 0) {
+        const QDateTime modifiedTime = fileInfo.lastModified();
+        track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+    }
+    if(track.fileSize() == 0) {
+        track.setFileSize(fileInfo.size());
+    }
+}
 } // namespace
 
 namespace Fooyin {
@@ -147,7 +163,6 @@ public:
     Track matchMissingTrack(const Track& track);
 
     void checkBatchFinished();
-    void readFileProperties(Track& track);
     void removeMissingTrack(const Track& track);
 
     [[nodiscard]] TrackList readTracks(const QString& filepath);
@@ -289,22 +304,6 @@ void LibraryScannerPrivate::checkBatchFinished()
         emit m_self->scanUpdate({.addedTracks = m_tracksToStore, .updatedTracks = m_tracksToUpdate});
         m_tracksToStore.clear();
         m_tracksToUpdate.clear();
-    }
-}
-
-void LibraryScannerPrivate::readFileProperties(Track& track)
-{
-    const QFileInfo fileInfo{track.filepath()};
-
-    if(track.addedTime() == 0) {
-        track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
-    }
-    if(track.modifiedTime() == 0) {
-        const QDateTime modifiedTime = fileInfo.lastModified();
-        track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
-    }
-    if(track.fileSize() == 0) {
-        track.setFileSize(fileInfo.size());
     }
 }
 
@@ -480,12 +479,12 @@ TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool ad
         }
 
         Track readTrack{playlistTrack};
+        readFileProperties(readTrack);
 
         if(!m_audioLoader->readTrackMetadata(readTrack)) {
             return playlistTrack;
         }
 
-        readFileProperties(readTrack);
         readTrack.generateHash();
 
         ++m_totalFiles;
@@ -999,7 +998,7 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
             updatedTrack.setId(track.id());
             updatedTrack.setLibraryId(track.libraryId());
             updatedTrack.setAddedTime(track.addedTime());
-            p->readFileProperties(updatedTrack);
+            readFileProperties(updatedTrack);
             updatedTrack.generateHash();
 
             tracksToUpdate.push_back(updatedTrack);
@@ -1084,7 +1083,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                         continue;
                     }
                     for(Track& track : tracks) {
-                        p->readFileProperties(track);
+                        readFileProperties(track);
                         track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
 
                         if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
