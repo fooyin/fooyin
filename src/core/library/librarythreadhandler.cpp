@@ -36,11 +36,11 @@
 using namespace std::chrono_literals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-constexpr auto WriteInterval  = 2s;
-constexpr auto UpdateInterval = 2s;
+constexpr auto WriteInterval  = 1s;
+constexpr auto UpdateInterval = 1s;
 #else
-constexpr auto WriteInterval  = 2000;
-constexpr auto UpdateInterval = 2000;
+constexpr auto WriteInterval  = 1000;
+constexpr auto UpdateInterval = 1000;
 #endif
 
 namespace {
