@@ -213,7 +213,7 @@ void AudioPlaybackEngine::prepareNextTrack(const Track& track)
 {
     resetNextTrack();
 
-    if(track.isValid()) {
+    if(!track.isValid()) {
         return;
     }
 
