@@ -433,7 +433,7 @@ void UnifiedMusicLibrary::updateTrackStats(const TrackList& tracks)
 
 void UnifiedMusicLibrary::updateTrackStats(const Track& track)
 {
-    p->m_threadHandler.saveUpdatedTrackStats({track});
+    updateTrackStats(TrackList{track});
 }
 
 void UnifiedMusicLibrary::trackWasPlayed(const Track& track)

@@ -100,7 +100,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
         }
 
         const Track activeTrack = extractTrackById(tracksToUpdate, m_settings->value<Settings::Core::ActiveTrackId>());
-        if(activeTrack.isValid()) {
+        if(activeTrack.isValid() && m_audioLoader->canWriteMetadata(activeTrack)) {
             m_pendingUpdate = activeTrack;
         }
     }
@@ -124,8 +124,12 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
         }
 
         if(m_trackDatabase.updateTrack(updatedTrack) && m_trackDatabase.updateTrackStats(updatedTrack)) {
-            tracksUpdated.emplace_back(updatedTrack);
+            tracksUpdated.push_back(updatedTrack);
         }
+    }
+
+    if(m_pendingUpdate.isValid()) {
+        tracksUpdated.push_back(m_pendingUpdate);
     }
 
     if(!tracksUpdated.empty()) {
@@ -154,7 +158,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
 
     if(writeToFile) {
         const Track activeTrack = extractTrackById(tracksToUpdate, m_settings->value<Settings::Core::ActiveTrackId>());
-        if(activeTrack.isValid()) {
+        if(activeTrack.isValid() && m_audioLoader->canWriteMetadata(activeTrack)) {
             m_pendingStatUpdate = activeTrack;
         }
     }
@@ -172,11 +176,15 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
         if(success && m_trackDatabase.updateTrackStats(updatedTrack)) {
             const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
             updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
-            tracksUpdated.emplace_back(updatedTrack);
+            tracksUpdated.push_back(updatedTrack);
         }
         else {
             qCWarning(TRK_DBMAN) << "Failed to update track playback statistics:" << updatedTrack.filepath();
         }
+    }
+
+    if(m_pendingStatUpdate.isValid()) {
+        tracksUpdated.push_back(m_pendingStatUpdate);
     }
 
     if(!tracksUpdated.empty()) {
@@ -194,7 +202,7 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
     TrackList tracksUpdated;
 
     const Track activeTrack = extractTrackById(tracksToUpdate, m_settings->value<Settings::Core::ActiveTrackId>());
-    if(activeTrack.isValid()) {
+    if(activeTrack.isValid() && m_audioLoader->canWriteMetadata(activeTrack)) {
         m_pendingCoverUpdate = {{activeTrack}, tracks.coverData};
     }
 
@@ -213,12 +221,16 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
             updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
 
             if(m_trackDatabase.updateTrack(updatedTrack)) {
-                tracksUpdated.emplace_back(updatedTrack);
+                tracksUpdated.push_back(updatedTrack);
             }
         }
         else {
             qCWarning(TRK_DBMAN) << "Failed to update track covers:" << updatedTrack.filepath();
         }
+    }
+
+    if(!m_pendingCoverUpdate.tracks.empty()) {
+        tracksUpdated.push_back(m_pendingCoverUpdate.tracks.front());
     }
 
     if(!tracksUpdated.empty()) {
