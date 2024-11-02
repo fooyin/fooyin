@@ -1430,7 +1430,7 @@ void PlaylistWidgetPrivate::sortTracks(const QString& script)
         std::ranges::sort(indexesToSort);
 
         Utils::asyncExec([this, currentTracks, script, indexesToSort]() {
-            return m_sorter.calcSortTracks(script, currentTracks, PlaylistTrack::extractor,
+            return m_sorter.calcSortTracks(script, currentTracks, indexesToSort, PlaylistTrack::extractor,
                                            PlaylistTrack::extractorConst);
         }).then(m_self, handleSortedTracks);
     }

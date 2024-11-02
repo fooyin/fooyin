@@ -131,11 +131,45 @@ public:
                              Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
     {
         Container sortedTracks = calcSortFields(sort, items, sortExtractor);
+        sortTracks(sortedTracks, extractor, order);
+        return sortedTracks;
+    }
 
+    template <typename Container, typename SortScript, typename SortExtractor, typename Extractor>
+    Container calcSortTracks(const SortScript& sortScript, const Container& items, const std::vector<int>& indexes,
+                             SortExtractor sortExtractor, Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
+    {
+        Container sortedTracks{items};
+        Container tracksToSort;
+
+        auto validIndexes = indexes | std::views::filter([&items](int index) {
+                                return (index >= 0 && index < static_cast<int>(items.size()));
+                            });
+
+        for(const int index : validIndexes) {
+            tracksToSort.push_back(items.at(index));
+        }
+
+        Container sortedSubTracks = calcSortFields(sortScript, tracksToSort, sortExtractor);
+        sortTracks(sortedSubTracks, extractor, order);
+
+        for(auto i{0}; const int index : validIndexes) {
+            sortedTracks[index] = sortedSubTracks.at(i++);
+        }
+
+        return sortedTracks;
+    }
+
+private:
+    ParsedScript parseScript(const QString& sort);
+
+    template <typename Container, typename Extractor>
+    static void sortTracks(Container& tracks, Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
+    {
         QCollator collator;
         collator.setNumericMode(true);
 
-        std::ranges::stable_sort(sortedTracks, [order, collator, extractor](const auto& lhs, const auto& rhs) {
+        std::ranges::stable_sort(tracks, [order, collator, extractor](const auto& lhs, const auto& rhs) {
             const Track& leftTrack  = extractor(lhs);
             const Track& rightTrack = extractor(rhs);
 
@@ -150,12 +184,7 @@ public:
             }
             return cmp > 0;
         });
-
-        return sortedTracks;
     }
-
-private:
-    ParsedScript parseScript(const QString& sort);
 
     ScriptParser m_parser;
     std::mutex m_parserGuard;

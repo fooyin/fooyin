@@ -49,21 +49,7 @@ TrackList TrackSorter::calcSortFields(const ParsedScript& sortScript, const Trac
 TrackList TrackSorter::sortTracks(const TrackList& tracks, Qt::SortOrder order)
 {
     TrackList sortedTracks{tracks};
-
-    QCollator collator;
-    collator.setNumericMode(true);
-
-    std::ranges::stable_sort(sortedTracks, [order, collator](const Track& lhs, const Track& rhs) {
-        const auto cmp = collator.compare(lhs.sort(), rhs.sort());
-
-        if(cmp == 0) {
-            return false;
-        }
-        if(order == Qt::AscendingOrder) {
-            return cmp < 0;
-        }
-        return cmp > 0;
-    });
+    sortTracks(sortedTracks, std::identity{}, order);
     return sortedTracks;
 }
 
