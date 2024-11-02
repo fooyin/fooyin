@@ -527,7 +527,7 @@ void AudioRenderer::writeNext()
     }
 
     const int bps         = m_outputFormat.bytesPerFrame();
-    const int freeSamples = m_audioOutput->currentState().freeSamples / bps * bps;
+    const int freeSamples = (m_audioOutput->currentState().freeSamples / bps) * bps;
 
     const bool hasPrevWrite = (freeSamples == 0 && m_samplePos > 0);
     const bool bufferFilled = (freeSamples > 0 && renderAudio(freeSamples) == freeSamples);

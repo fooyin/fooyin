@@ -750,11 +750,11 @@ void AudioPlaybackEngine::onRendererFinished()
         }
     }
 
-    m_decoder = nullptr;
-
     if(m_currentTrack.hasCue()) {
         return;
     }
+
+    m_decoder = nullptr;
 
     m_clock.setPaused(true);
     m_clock.sync(m_duration);
