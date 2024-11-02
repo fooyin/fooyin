@@ -227,6 +227,9 @@ void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
 
     p->changeTrack(track);
 
+    p->m_settings->set<Settings::Core::ActiveTrack>(QVariant::fromValue(p->m_currentTrack.track));
+    p->m_settings->set<Settings::Core::ActiveTrackId>(p->m_currentTrack.track.id());
+
     emit currentTrackChanged(p->m_currentTrack.track);
     emit playlistTrackChanged(p->m_currentTrack);
 }

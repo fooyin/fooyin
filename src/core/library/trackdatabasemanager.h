@@ -53,11 +53,17 @@ public slots:
     void cleanupTracks();
 
 private:
+    void writePending();
+
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
 
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
     TrackDatabase m_trackDatabase;
+
+    Track m_pendingUpdate;
+    Track m_pendingStatUpdate;
+    TrackCoverData m_pendingCoverUpdate;
 };
 } // namespace Fooyin

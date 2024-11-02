@@ -73,6 +73,8 @@ enum CoreSettings : uint32_t
     UseVariousForCompilations = 26 | Type::Bool,
     ShuffleAlbumsGroupScript  = 27 | Type::String,
     ShuffleAlbumsSortScript   = 28 | Type::String,
+    ActiveTrack               = 29 | Type::Variant,
+    ActiveTrackId             = 30 | Type::Int,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core
