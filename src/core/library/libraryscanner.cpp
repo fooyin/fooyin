@@ -94,6 +94,10 @@ QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExte
     for(const QString& path : paths) {
         const QFileInfo file{path};
 
+        if(files.contains(file)) {
+            continue;
+        }
+
         if(file.isDir()) {
             QDirIterator dirIt{file.absoluteFilePath(), Fooyin::Utils::extensionsToWildcards(nameFilters), QDir::Files,
                                QDirIterator::Subdirectories};
