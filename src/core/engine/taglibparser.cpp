@@ -2368,7 +2368,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
         }
     }
-    else if(mimeType == u"audio/mp4" || mimeType == u"audio/vnd.audible.aax") {
+    else if(mimeType == u"audio/mp4" || mimeType == u"video/mp4" || mimeType == u"audio/vnd.audible.aax") {
         const TagLib::MP4::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
@@ -2574,7 +2574,7 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             return readApeCover(file.APETag(), cover);
         }
     }
-    else if(mimeType == u"audio/mp4" || mimeType == u"audio/vnd.audible.aax") {
+    else if(mimeType == u"audio/mp4" || mimeType == u"video/mp4" || mimeType == u"audio/vnd.audible.aax") {
         const TagLib::MP4::File file(&stream, true);
         if(file.isValid() && file.tag()) {
             return readMp4Cover(file.tag(), cover);
@@ -2715,7 +2715,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
             file.save();
         }
     }
-    else if(mimeType == u"audio/mp4") {
+    else if(mimeType == u"audio/mp4" || mimeType == u"video/mp4" || mimeType == u"audio/vnd.audible.aax") {
         TagLib::MP4::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, true);
@@ -2870,7 +2870,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             file.save();
         }
     }
-    else if(mimeType == u"audio/mp4") {
+    else if(mimeType == u"audio/mp4" || mimeType == u"video/mp4" || mimeType == u"audio/vnd.audible.aax") {
         TagLib::MP4::File file(&stream, false);
         if(file.isValid()) {
             if(file.hasMP4Tag()) {
