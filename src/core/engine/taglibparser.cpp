@@ -2507,7 +2507,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
     }
 #endif
     else {
-        qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
+        qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
         return false;
     }
 
@@ -2623,7 +2623,7 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
     }
 #endif
     else {
-        qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
+        qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
         return {};
     }
 
@@ -2790,7 +2790,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
     }
 #endif
     else {
-        qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
+        qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
         return false;
     }
 
@@ -2940,7 +2940,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
     }
 #endif
     else {
-        qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
+        qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
         return false;
     }
 
