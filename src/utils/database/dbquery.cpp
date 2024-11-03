@@ -20,6 +20,7 @@
 #include <utils/database/dbquery.h>
 
 #include <QLoggingCategory>
+#include <QRegularExpression>
 #include <QSqlError>
 
 Q_LOGGING_CATEGORY(DB_QRY, "fy.db")
@@ -34,6 +35,31 @@ bool prepareQuery(QSqlQuery& query, const QString& statement)
     query.setForwardOnly(true);
 
     return query.prepare(statement);
+}
+
+QString lastExecutedQuery(const QSqlQuery& query)
+{
+    QString sql            = query.executedQuery();
+    const auto boundValues = query.boundValues();
+
+    static const QRegularExpression placeholderPattern{QStringLiteral("(:\\w+)")};
+    QRegularExpressionMatchIterator it = placeholderPattern.globalMatch(sql);
+
+    int valueIndex{0};
+    while(it.hasNext() && valueIndex < boundValues.size()) {
+        const QRegularExpressionMatch match = it.next();
+        const QString placeholder           = match.captured(1);
+        const QString value                 = boundValues.at(valueIndex).toString();
+
+        if(!value.isEmpty()) {
+            const QRegularExpression exactPlaceholderPattern{QRegularExpression::escape(placeholder) + u"\\b"};
+            sql.replace(exactPlaceholderPattern, value);
+        }
+
+        ++valueIndex;
+    }
+
+    return sql;
 }
 } // namespace
 
@@ -88,7 +114,7 @@ bool DbQuery::exec()
         return true;
     }
 
-    qCWarning(DB_QRY) << "Failed to execute" << m_query.lastQuery() << ":" << lastError();
+    qCWarning(DB_QRY) << "Failed to execute" << lastExecutedQuery(m_query) << ":" << lastError();
     m_status = Status::Error;
     return false;
 }
