@@ -706,7 +706,9 @@ void AudioPlaybackEngine::readNextBuffer()
         QMetaObject::invokeMethod(&m_renderer, [this, buffer]() { m_renderer.queueBuffer(buffer); });
     }
 
-    if(!buffer.isValid() || (m_currentTrack.hasCue() && buffer.endTime() >= m_endPosition)) {
+    const bool endOfCueTrack = (m_currentTrack.hasCue() && buffer.endTime() >= m_endPosition);
+
+    if(!buffer.isValid() || endOfCueTrack) {
         m_bufferTimer.stop();
         QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.queueBuffer({}); });
         m_ending = true;
@@ -748,10 +750,6 @@ void AudioPlaybackEngine::onRendererFinished()
         if(playbackState() == PlaybackState::FadingOut) {
             return;
         }
-    }
-
-    if(m_currentTrack.hasCue()) {
-        return;
     }
 
     m_decoder = nullptr;
