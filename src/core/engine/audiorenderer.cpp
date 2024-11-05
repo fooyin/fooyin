@@ -523,7 +523,7 @@ void AudioRenderer::pauseOutput()
 void AudioRenderer::writeNext()
 {
     if(!canWrite()) {
-        qCDebug(RENDERER) << "Unable to write next buffer: Not running";
+        qCWarning(RENDERER) << "Unable to write next buffer: Not running";
         return;
     }
 
