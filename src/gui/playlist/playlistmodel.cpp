@@ -655,38 +655,6 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
-void PlaylistModel::fetchMore(const QModelIndex& parent)
-{
-    auto* parentItem = itemForIndex(parent);
-    if(!m_pendingNodes.contains(parentItem->key())) {
-        return;
-    }
-
-    auto& rows = m_pendingNodes.at(parentItem->key());
-
-    const int row      = parentItem->childCount();
-    const int rowCount = static_cast<int>(rows.size());
-
-    const auto rowsToInsert = std::views::take(rows, rowCount);
-
-    beginInsertRows(parent, row, row + rowCount - 1);
-    for(const auto& pendingRow : rowsToInsert) {
-        PlaylistItem& child = m_nodes.at(pendingRow);
-        fetchChildren(parentItem, &child);
-    }
-    endInsertRows();
-
-    rows.erase(rows.begin(), rows.begin() + rowCount);
-
-    updateTrackIndexes(false);
-}
-
-bool PlaylistModel::canFetchMore(const QModelIndex& parent) const
-{
-    auto* item = itemForIndex(parent);
-    return m_pendingNodes.contains(item->key()) && !m_pendingNodes.at(item->key()).empty();
-}
-
 bool PlaylistModel::hasChildren(const QModelIndex& parent) const
 {
     if(!parent.isValid()) {
@@ -965,19 +933,13 @@ void PlaylistModel::stopAfterTrack(const QModelIndex& index)
     }
 }
 
-TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
+TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index)
 {
     if(m_trackIndexes.empty()) {
         return {};
     }
 
     if(index >= 0) {
-        if(fetch) {
-            while(!m_trackIndexes.contains(index) && canFetchMore({})) {
-                fetchMore({});
-            }
-        }
-
         if(m_trackIndexes.contains(index)) {
             const auto key = m_trackIndexes.at(index);
             if(m_nodes.contains(key)) {
@@ -998,9 +960,9 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
     return {};
 }
 
-QModelIndex PlaylistModel::indexAtPlaylistIndex(int index, bool fetch, bool includeEnd)
+QModelIndex PlaylistModel::indexAtPlaylistIndex(int index, bool includeEnd)
 {
-    const auto result = trackIndexAtPlaylistIndex(index, fetch);
+    const auto result = trackIndexAtPlaylistIndex(index);
     return !includeEnd && result.endOfPlaylist ? QModelIndex{} : result.index;
 }
 
@@ -1019,11 +981,7 @@ QModelIndexList PlaylistModel::indexesOfTrackId(int id)
             auto* parentItem = &m_nodes.at(parentKey);
 
             if(parentItem->type() == PlaylistItem::Track) {
-                QModelIndex nodeIndex = indexOfItem(parentItem);
-                while(!nodeIndex.isValid() && canFetchMore({})) {
-                    fetchMore({});
-                    nodeIndex = indexOfItem(parentItem);
-                }
+                const QModelIndex nodeIndex = indexOfItem(parentItem);
                 if(nodeIndex.isValid()) {
                     indexes.emplace_back(nodeIndex);
                 }
@@ -1058,7 +1016,7 @@ void PlaylistModel::updateTracks(const std::vector<int>& indexes)
         const int first = *startOfSequence;
 
         for(auto it = startOfSequence; it != endOfSequence; ++it) {
-            const auto& [index, end] = trackIndexAtPlaylistIndex(*it, true);
+            const auto& [index, end] = trackIndexAtPlaylistIndex(*it);
             if(!end) {
                 m_indexesPendingRemoval.push_back(index);
                 if(const auto track = m_currentPlaylist->playlistTrack(*it)) {
@@ -1078,7 +1036,7 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
     TrackItemMap items;
 
     for(const int index : indexes) {
-        const auto& [modelIndex, end] = trackIndexAtPlaylistIndex(index, true);
+        const auto& [modelIndex, end] = trackIndexAtPlaylistIndex(index);
         if(!end) {
             if(const auto track = m_currentPlaylist->playlistTrack(index)) {
                 items.emplace(track.value(), *itemForIndex(modelIndex));
@@ -1123,7 +1081,7 @@ void PlaylistModel::removeTracks(const TrackGroups& groups)
         const int total = index + static_cast<int>(tracks.size()) - 1;
 
         while(currIndex <= total) {
-            auto [trackIndex, _] = trackIndexAtPlaylistIndex(currIndex, true);
+            auto [trackIndex, _] = trackIndexAtPlaylistIndex(currIndex);
             rows.push_back(trackIndex);
             currIndex++;
         }
@@ -1239,31 +1197,38 @@ void PlaylistModel::populateModel(PendingData& data)
         beginResetModel();
         resetRoot();
         m_nodes.clear();
-        m_pendingNodes.clear();
         m_trackParents.clear();
     }
 
     m_nodes.merge(data.items);
     mergeTrackParents(data.trackParents);
 
-    if(m_resetting) {
-        for(const auto& [parentKey, rows] : data.nodes) {
-            auto* parent = parentKey.isNull() ? itemForIndex({}) : &m_nodes.at(parentKey);
+    for(const auto& [parentKey, children] : data.nodes) {
+        auto* parent = parentKey.isNull() ? itemForIndex({}) : &m_nodes.at(parentKey);
 
-            for(const auto& row : rows) {
-                PlaylistItem* child = &m_nodes.at(row);
-                parent->appendChild(child);
-                child->setPending(false);
-            }
+        const int row      = parent->childCount();
+        const int rowCount = static_cast<int>(children.size());
+
+        if(!m_resetting) {
+            beginInsertRows(indexOfItem(parent), row, row + rowCount - 1);
         }
-        updateTrackIndexes(false);
+
+        for(const auto& childRow : children) {
+            PlaylistItem* child = &m_nodes.at(childRow);
+            parent->appendChild(child);
+            child->setPending(false);
+        }
+
+        if(!m_resetting) {
+            endInsertRows();
+        }
+    }
+
+    updateTrackIndexes(false);
+
+    if(m_resetting) {
         endResetModel();
         m_resetting = false;
-    }
-    else {
-        for(auto& [parentKey, rows] : data.nodes) {
-            std::ranges::copy(rows, std::back_inserter(m_pendingNodes[parentKey]));
-        }
     }
 }
 
@@ -1842,7 +1807,7 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
                 continue;
             }
 
-            const auto [beforeIndex, end] = trackIndexAtPlaylistIndex(index, true);
+            const auto [beforeIndex, end] = trackIndexAtPlaylistIndex(index);
             QModelIndex targetParent{beforeIndex.parent()};
             int row = beforeIndex.row() + (end ? 1 : 0);
 
@@ -2068,23 +2033,6 @@ bool PlaylistModel::removePlaylistRows(int row, int count, PlaylistItem* parent)
     endRemoveRows();
 
     return true;
-}
-
-void PlaylistModel::fetchChildren(PlaylistItem* parent, PlaylistItem* child)
-{
-    const auto key = child->key();
-
-    if(m_pendingNodes.contains(key)) {
-        auto& childRows = m_pendingNodes.at(key);
-
-        for(const auto& childRow : childRows) {
-            PlaylistItem& childItem = m_nodes.at(childRow);
-            fetchChildren(child, &childItem);
-        }
-        m_pendingNodes.erase(key);
-    }
-
-    parent->appendChild(child);
 }
 
 void PlaylistModel::cleanupHeaders()
@@ -2365,10 +2313,6 @@ PlaylistModel::MoveOperationMap PlaylistModel::determineMoveOperationGroups(cons
 
 PlaylistModel::TrackItemResult PlaylistModel::itemForTrackIndex(int index)
 {
-    while(!m_trackIndexes.contains(index) && canFetchMore({})) {
-        fetchMore({});
-    }
-
     if(m_trackIndexes.contains(index)) {
         const auto& key = m_trackIndexes.at(index);
         if(m_nodes.contains(key)) {

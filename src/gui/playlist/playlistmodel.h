@@ -89,8 +89,6 @@ public:
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     bool setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role) override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
-    void fetchMore(const QModelIndex& parent) override;
-    bool canFetchMore(const QModelIndex& parent) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
@@ -125,8 +123,8 @@ public:
 
     [[nodiscard]] PlaylistTrack playingTrack() const;
     void stopAfterTrack(const QModelIndex& index);
-    TrackIndexResult trackIndexAtPlaylistIndex(int index, bool fetch = false);
-    QModelIndex indexAtPlaylistIndex(int index, bool fetch, bool includeEnd = false);
+    TrackIndexResult trackIndexAtPlaylistIndex(int index);
+    QModelIndex indexAtPlaylistIndex(int index, bool includeEnd = false);
     [[nodiscard]] QModelIndexList indexesOfTrackId(int id);
 
     void insertTracks(const TrackGroups& tracks);
@@ -202,8 +200,6 @@ private:
     bool removePlaylistRows(int row, int count, const QModelIndex& parent);
     bool removePlaylistRows(int row, int count, PlaylistItem* parent);
 
-    void fetchChildren(PlaylistItem* parentItem, PlaylistItem* child);
-
     void cleanupHeaders();
     void removeEmptyHeaders();
     void mergeHeaders();
@@ -251,7 +247,6 @@ private:
     PlaylistPopulator m_populator;
 
     bool m_playlistLoaded;
-    NodeKeyMap m_pendingNodes;
     ItemKeyMap m_nodes;
     TrackIdNodeMap m_trackParents;
     std::map<int, UId> m_trackIndexes;

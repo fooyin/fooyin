@@ -94,10 +94,6 @@ Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList&
         const QModelIndex currentIndex = indexStack.top();
         indexStack.pop();
 
-        while(model->canFetchMore(currentIndex)) {
-            model->fetchMore(currentIndex);
-        }
-
         const int rowCount = model->rowCount(currentIndex);
         if(rowCount == 0
            && currentIndex.data(Fooyin::PlaylistItem::Role::Type).toInt() == Fooyin::PlaylistItem::Track) {
@@ -118,10 +114,6 @@ Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList&
 
 void getAllTrackIndexes(QAbstractItemModel* model, const QModelIndex& parent, QModelIndexList& indexList)
 {
-    while(model->canFetchMore(parent)) {
-        model->fetchMore(parent);
-    }
-
     const int rowCount = model->rowCount(parent);
     for(int row{0}; row < rowCount; ++row) {
         const QModelIndex index = model->index(row, 0, parent);
@@ -274,7 +266,7 @@ void PlaylistWidgetPrivate::setupConnections()
         QObject::connect(m_playlistController, &PlaylistController::requestPlaylistFocus, m_model, [this]() {
             if(m_playlistView->playlistLoaded() && !m_resetThrottler->isActive()) {
                 m_playlistView->setFocus(Qt::ActiveWindowFocusReason);
-                m_playlistView->setCurrentIndex(m_model->indexAtPlaylistIndex(0, false, false));
+                m_playlistView->setCurrentIndex(m_model->indexAtPlaylistIndex(0, false));
             } else {
                 m_pendingFocus = true;
             }
@@ -510,7 +502,7 @@ void PlaylistWidgetPrivate::resetTree()
     if(m_pendingFocus) {
         m_pendingFocus = false;
         m_playlistView->setFocus(Qt::ActiveWindowFocusReason);
-        m_playlistView->setCurrentIndex(m_model->indexAtPlaylistIndex(0, false, false));
+        m_playlistView->setCurrentIndex(m_model->indexAtPlaylistIndex(0, false));
     }
 }
 
@@ -578,8 +570,8 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist)
         return;
     }
 
-    auto loadState = [this, state](bool fetch) {
-        const auto index = m_model->indexAtPlaylistIndex(state->topIndex, fetch, false);
+    auto loadState = [this, state]() {
+        const auto index = m_model->indexAtPlaylistIndex(state->topIndex, false);
 
         if(!index.isValid()) {
             return false;
@@ -595,10 +587,9 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist)
         return true;
     };
 
-    if(!loadState(false)) {
+    if(!loadState()) {
         m_delayedStateLoad = QObject::connect(
-            m_model, &PlaylistModel::playlistLoaded, this, [loadState]() { loadState(true); },
-            Qt::SingleShotConnection);
+            m_model, &PlaylistModel::playlistLoaded, this, [loadState]() { loadState(); }, Qt::SingleShotConnection);
     }
 }
 
@@ -689,10 +680,6 @@ void PlaylistWidgetPrivate::setScrollbarHidden(bool showScrollBar) const
 
 void PlaylistWidgetPrivate::selectAll() const
 {
-    while(m_model->canFetchMore({})) {
-        m_model->fetchMore({});
-    }
-
     QMetaObject::invokeMethod(m_playlistView, [this]() { m_playlistView->selectAll(); }, Qt::QueuedConnection);
 }
 
