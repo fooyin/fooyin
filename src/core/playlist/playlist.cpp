@@ -67,6 +67,17 @@ TrackList PlaylistTrack::toTracks(const PlaylistTrackList& playlistTracks)
     return tracks;
 }
 
+PlaylistTrackList PlaylistTrack::updateIndexes(const PlaylistTrackList& playlistTracks)
+{
+    PlaylistTrackList tracks{playlistTracks};
+
+    for(int i{0}; PlaylistTrack & track : tracks) {
+        track.indexInPlaylist = i++;
+    }
+
+    return tracks;
+}
+
 Track& PlaylistTrack::extractor(PlaylistTrack& item)
 {
     return item.track;

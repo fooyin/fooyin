@@ -44,6 +44,7 @@ struct FYCORE_EXPORT PlaylistTrack
 
     static PlaylistTrackList fromTracks(const TrackList& tracks, const UId& playlistId);
     static TrackList toTracks(const PlaylistTrackList& playlistTracks);
+    static PlaylistTrackList updateIndexes(const PlaylistTrackList& playlistTracks);
 
     static Track& extractor(PlaylistTrack& item);
     static const Track& extractorConst(const PlaylistTrack& item);
