@@ -32,10 +32,13 @@
 
 #include <QBasicTimer>
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QTimer>
 #include <QTimerEvent>
 
 #include <utility>
+
+Q_LOGGING_CATEGORY(RENDERER, "fy.renderer")
 
 using namespace std::chrono_literals;
 
@@ -111,10 +114,7 @@ void AudioRenderer::init(const Track& track, const AudioFormat& format)
 
 void AudioRenderer::start()
 {
-    if(std::exchange(m_isRunning, true)) {
-        return;
-    }
-
+    m_isRunning = true;
     m_writeTimer.start(m_writeInterval, Qt::PreciseTimer, this);
 }
 
@@ -522,7 +522,13 @@ void AudioRenderer::pauseOutput()
 
 void AudioRenderer::writeNext()
 {
-    if(!canWrite() || m_bufferQueue.empty()) {
+    if(!canWrite()) {
+        qCDebug(RENDERER) << "Unable to write next buffer: Not running";
+        return;
+    }
+
+    if(m_bufferQueue.empty()) {
+        qCDebug(RENDERER) << "Unable to write next buffer: Empty buffer queue";
         return;
     }
 

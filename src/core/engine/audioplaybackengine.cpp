@@ -281,7 +281,6 @@ void AudioPlaybackEngine::play()
         }
 
         m_bufferTimer.start(BufferInterval, this);
-        QMetaObject::invokeMethod(&m_renderer, &AudioRenderer::start);
 
         if(playbackState() == PlaybackState::Stopped && m_currentTrack.offset() > 0) {
             m_decoder->seek(m_currentTrack.offset());
@@ -724,6 +723,7 @@ void AudioPlaybackEngine::updatePosition()
     }
 
     if(m_currentTrack.hasCue() && m_lastPosition >= m_endPosition) {
+        m_decoder = nullptr;
         m_clock.setPaused(true);
         m_clock.sync(m_duration);
         updateTrackStatus(TrackStatus::End);
