@@ -218,6 +218,7 @@ void TabStackWidget::removeWidget(int index)
     }
 
     m_tabs->removeTab(index);
+    m_widgets.at(index)->deleteLater();
     m_widgets.erase(m_widgets.begin() + index);
 }
 
