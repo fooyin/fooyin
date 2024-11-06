@@ -665,7 +665,8 @@ bool PlaylistModel::hasChildren(const QModelIndex& parent) const
         return false;
     }
 
-    return parent.data(PlaylistItem::Type).toInt() != PlaylistItem::ItemType::Track;
+    const auto* item = itemForIndex(parent);
+    return item && item->type() != PlaylistItem::ItemType::Track;
 }
 
 QHash<int, QByteArray> PlaylistModel::roleNames() const

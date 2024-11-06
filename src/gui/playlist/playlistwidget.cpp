@@ -537,6 +537,10 @@ void PlaylistWidgetPrivate::saveState(Playlist* playlist) const
         return;
     }
 
+    if(!m_self->isVisible()) {
+        return;
+    }
+
     const auto state = getState(playlist);
     // Don't save state if still populating model
     if(playlist->trackCount() == 0 || (playlist->trackCount() > 0 && state.topIndex >= 0)) {
