@@ -2067,7 +2067,8 @@ QSize IconView::indexSizeHint(const QModelIndex& index) const
         }
 
         if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom) {
-            size.rwidth() = std::clamp(size.width(), hint.width(), iconSize().width() + (2 * MinItemSpacing));
+            size.rwidth() = std::clamp(size.width(), hint.width(),
+                                       std::max(hint.width(), iconSize().width() + (2 * MinItemSpacing)));
         }
         else if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right) {
             size.rwidth() = iconSize().width() + (2 * MinItemSpacing) + RightCaptionWidth;
@@ -2351,7 +2352,8 @@ int IconView::itemAtCoordinate(QPoint coordinate, bool includePadding) const
     }
 
     coordinate += {0, verticalScrollBar()->value()};
-    coordinate.ry() = std::clamp(coordinate.y(), m_rowSpacing, m_contentsSize.height() - m_rowSpacing - 1);
+    coordinate.ry()
+        = std::clamp(coordinate.y(), m_rowSpacing, std::max(m_rowSpacing, m_contentsSize.height() - m_rowSpacing - 1));
 
     for(int i{0}; i < count; ++i) {
         const auto& rect = includePadding ? viewItem(i).rect() : mapToViewport(viewItem(i).rect());
