@@ -70,7 +70,7 @@ void WaveformRescaler::rescale()
     WaveformData<float> data{m_data};
     data.channelData.clear();
 
-    if(m_downMix == DownmixOption::Stereo) {
+    if(m_downMix == DownmixOption::Stereo && data.channels > 2) {
         data.channels = 2;
     }
     else if(m_downMix == DownmixOption::Mono) {
