@@ -136,7 +136,7 @@ public:
 
     FilterColumnList m_columns;
     bool m_showDecoration{false};
-    QSize m_decorationSize;
+    CoverProvider::ThumbnailSize m_decorationSize;
     bool m_showLabels{true};
     Track::Cover m_coverType{Track::Cover::Front};
     std::vector<int> m_columnOrder;
@@ -156,7 +156,8 @@ FilterModelPrivate::FilterModelPrivate(FilterModel* self, LibraryManager* librar
     , m_settings{settings}
     , m_populator{libraryManager}
     , m_coverProvider{coverProvider}
-    , m_decorationSize{m_settings->value<Settings::Filters::FilterIconSize>().toSize()}
+    , m_decorationSize{
+          CoverProvider::findThumbnailSize(m_settings->value<Settings::Filters::FilterIconSize>().toSize())}
 {
     m_populator.moveToThread(&m_populatorThread);
 
@@ -164,7 +165,7 @@ FilterModelPrivate::FilterModelPrivate(FilterModel* self, LibraryManager* librar
                      [this](const Track& track) { coverUpdated(track); });
 
     m_settings->subscribe<Settings::Filters::FilterIconSize>(
-        m_self, [this](const auto& size) { m_decorationSize = size.toSize(); });
+        m_self, [this](const auto& size) { m_decorationSize = CoverProvider::findThumbnailSize(size.toSize()); });
 }
 
 void FilterModelPrivate::beginReset()

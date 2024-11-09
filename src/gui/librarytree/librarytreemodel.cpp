@@ -164,7 +164,7 @@ public:
     QString m_playingPath;
     int m_rowHeight{0};
     QColor m_playingColour{QApplication::palette().highlight().color()};
-    QSize m_iconSize;
+    CoverProvider::ThumbnailSize m_iconSize;
 };
 
 LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager,
@@ -174,7 +174,8 @@ LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, Library
     , m_settings{settings}
     , m_coverProvider{m_audioLoader, m_settings}
     , m_populator{libraryManager}
-    , m_iconSize{m_settings->value<Settings::Gui::Internal::LibTreeIconSize>().toSize()}
+    , m_iconSize{
+          CoverProvider::findThumbnailSize(m_settings->value<Settings::Gui::Internal::LibTreeIconSize>().toSize())}
 {
     m_playingColour.setAlpha(90);
 
@@ -431,7 +432,7 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
     });
 
     p->m_settings->subscribe<Settings::Gui::Internal::LibTreeIconSize>(this, [this](const auto& size) {
-        p->m_iconSize = size.toSize();
+        p->m_iconSize = CoverProvider::findThumbnailSize(size.toSize());
         emit dataChanged({}, {}, {Qt::DecorationRole});
     });
 }

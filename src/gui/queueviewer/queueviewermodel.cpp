@@ -70,7 +70,8 @@ QueueViewerModel::QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, Set
     , m_settings{settings}
     , m_coverProvider{std::move(audioLoader), settings}
     , m_showIcon{m_settings->value<Settings::Gui::Internal::QueueViewerShowIcon>()}
-    , m_iconSize{m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize()}
+    , m_iconSize{
+          CoverProvider::findThumbnailSize(m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize())}
 {
     QObject::connect(&m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
         if(m_trackParents.contains(track.albumHash())) {
@@ -89,7 +90,7 @@ QueueViewerModel::QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, Set
         emit dataChanged({}, {}, {Qt::DecorationRole});
     });
     m_settings->subscribe<Settings::Gui::Internal::QueueViewerIconSize>(this, [this](const auto& size) {
-        m_iconSize = size.toSize();
+        m_iconSize = CoverProvider::findThumbnailSize(size.toSize());
         emit dataChanged({}, {}, {Qt::DecorationRole});
     });
 }

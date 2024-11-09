@@ -74,6 +74,6 @@ private:
     std::vector<std::unique_ptr<QueueViewerItem>> m_trackItems;
     std::unordered_map<QString, std::vector<QueueViewerItem*>> m_trackParents;
     bool m_showIcon;
-    QSize m_iconSize;
+    CoverProvider::ThumbnailSize m_iconSize;
 };
 } // namespace Fooyin
