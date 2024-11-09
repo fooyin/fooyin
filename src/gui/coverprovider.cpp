@@ -432,28 +432,28 @@ CoverProvider::ThumbnailSize CoverProvider::findThumbnailSize(const QSize& size)
     const int maxSize = std::max(size.width(), size.height());
 
     if(maxSize <= 32) {
-        return Tiny;
-    }
-    if(maxSize <= 64) {
         return Small;
     }
-    if(maxSize <= 96) {
+    if(maxSize <= 64) {
         return MediumSmall;
     }
-    if(maxSize <= 128) {
+    if(maxSize <= 96) {
         return Medium;
     }
-    if(maxSize <= 192) {
+    if(maxSize <= 128) {
         return Large;
     }
-    if(maxSize <= 256) {
+    if(maxSize <= 192) {
         return VeryLarge;
     }
-    if(maxSize <= 512) {
+    if(maxSize <= 256) {
         return ExtraLarge;
     }
+    if(maxSize <= 512) {
+        return Huge;
+    }
 
-    return Huge;
+    return Full;
 }
 
 void CoverProvider::clearCache()

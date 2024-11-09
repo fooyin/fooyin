@@ -54,7 +54,8 @@ public:
         Large       = 192,
         VeryLarge   = 256,
         ExtraLarge  = 512,
-        Huge        = 1024
+        Huge        = 768,
+        Full        = 1024
     };
 
     explicit CoverProvider(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
@@ -104,7 +105,7 @@ public:
     [[nodiscard]] QPixmap trackCoverThumbnail(const Track& track, const QSize& size,
                                               Track::Cover type = Track::Cover::Front) const;
 
-    /** Returns an equivlant thubmnail size for the given @p size */
+    /** Returns an equivalent thumbnail size for the given @p size */
     static ThumbnailSize findThumbnailSize(const QSize& size);
     /** Clears the QPixmapCache as well as the on-disk cache. */
     static void clearCache();
