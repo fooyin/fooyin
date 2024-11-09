@@ -721,13 +721,6 @@ void AudioPlaybackEngine::updatePosition()
     if(std::exchange(m_lastPosition, currentPosition) != m_lastPosition) {
         emit positionChanged(m_currentTrack, m_lastPosition - m_startPosition);
     }
-
-    if(m_currentTrack.hasCue() && m_lastPosition >= m_endPosition) {
-        m_decoder = nullptr;
-        m_clock.setPaused(true);
-        m_clock.sync(m_duration);
-        updateTrackStatus(TrackStatus::End);
-    }
 }
 
 void AudioPlaybackEngine::updateBitrate()
