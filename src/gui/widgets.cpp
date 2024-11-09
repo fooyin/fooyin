@@ -64,6 +64,7 @@
 #include "settings/widgets/statuswidgetpage.h"
 #include "splitters/splitterwidget.h"
 #include "splitters/tabstackwidget.h"
+#include "statusevent.h"
 #include "widgets/coverwidget.h"
 #include "widgets/dummy.h"
 #include "widgets/spacer.h"
@@ -75,7 +76,6 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugincontext.h>
 #include <gui/coverprovider.h>
-#include <gui/plugins/guiplugincontext.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
 
@@ -91,8 +91,9 @@ Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, Pla
     , m_playlistInteractor{playlistInteractor}
     , m_playlistController{playlistInteractor->playlistController()}
     , m_libraryTreeController{new LibraryTreeController(m_settings, this)}
-    , m_statusWidget{nullptr}
-{ }
+{
+    QObject::connect(m_core->library(), &MusicLibrary::scanProgress, this, &Widgets::showScanProgress);
+}
 
 void Widgets::registerWidgets()
 {
@@ -209,11 +210,10 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         QStringLiteral("StatusBar"),
         [this]() {
-            m_statusWidget
+            auto* statusWidget
                 = new StatusWidget(m_core->playerController(), m_gui->trackSelection(), m_settings, m_window);
-            m_window->installStatusWidget(m_statusWidget);
-            QObject::connect(m_core->library(), &MusicLibrary::scanProgress, this, &Widgets::showScanProgress);
-            return m_statusWidget;
+            m_window->installStatusWidget(statusWidget);
+            return statusWidget;
         },
         tr("Status Bar"));
     provider->setLimit(QStringLiteral("StatusBar"), 1);
@@ -308,9 +308,9 @@ FyWidget* Widgets::createDirBrowser()
     return browser;
 }
 
-void Widgets::showScanProgress(const ScanProgress& progress) const
+void Widgets::showScanProgress(const ScanProgress& progress)
 {
-    if(!m_statusWidget || progress.id < 0) {
+    if(progress.id < 0) {
         return;
     }
 
@@ -330,7 +330,7 @@ void Widgets::showScanProgress(const ScanProgress& progress) const
             break;
     }
 
-    scanText += QStringLiteral(": %1%").arg(progress.percentage());
-    m_statusWidget->showTempMessage(scanText);
+    scanText = QStringLiteral("%1: %2%").arg(scanText).arg(progress.percentage());
+    StatusEvent::post(scanText);
 }
 } // namespace Fooyin

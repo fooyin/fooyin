@@ -51,7 +51,7 @@ public:
 
 private:
     FyWidget* createDirBrowser();
-    void showScanProgress(const ScanProgress& progress) const;
+    static void showScanProgress(const ScanProgress& progress);
 
     Application* m_core;
     GuiApplication* m_gui;
@@ -63,6 +63,5 @@ private:
     PlaylistInteractor* m_playlistInteractor;
     PlaylistController* m_playlistController;
     LibraryTreeController* m_libraryTreeController;
-    StatusWidget* m_statusWidget;
 };
 } // namespace Fooyin
