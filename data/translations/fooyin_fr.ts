@@ -124,12 +124,12 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="106"/>
         <source>Clear Cache</source>
-        <translation type="unfinished">Vider le cache</translation>
+        <translation>Vider le cache</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="173"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished">Taille du cache</translation>
+        <translation>Taille du cache</translation>
     </message>
 </context>
 <context>
@@ -137,17 +137,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="43"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Pochette Avant</translation>
+        <translation>Pochette Avant</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="44"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Pochette Arrière</translation>
+        <translation>Pochette Arrière</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="45"/>
         <source>Artist</source>
-        <translation type="unfinished">Artiste</translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="107"/>
@@ -170,13 +170,13 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="46"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Ajouter</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="47"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="251"/>
         <source>Remove</source>
-        <translation type="unfinished">Supprimer</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="68"/>
@@ -265,17 +265,17 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="50"/>
         <source>&amp;Load</source>
-        <translation type="unfinished">&amp;Charger</translation>
+        <translation>&amp;Charger</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="51"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Enregistrer</translation>
+        <translation>&amp;Enregistrer</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="52"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Supprimer</translation>
+        <translation>&amp;Supprimer</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
@@ -295,7 +295,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="85"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
@@ -2566,7 +2566,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="197"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliothèque</translation>
+        <translation>Bibliothèque</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="203"/>
@@ -3419,7 +3419,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="50"/>
         <source>Remove</source>
-        <translation type="unfinished">Supprimer</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="51"/>
@@ -3434,7 +3434,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="61"/>
         <source>Operation</source>
-        <translation type="unfinished">Action</translation>
+        <translation>Action</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="68"/>
@@ -3449,7 +3449,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="150"/>
         <source>Play</source>
-        <translation type="unfinished">Lire</translation>
+        <translation>Lire</translation>
     </message>
 </context>
 <context>
@@ -3692,12 +3692,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="277"/>
         <source>Saving</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="278"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Paroles</translation>
+        <translation>Paroles</translation>
     </message>
 </context>
 <context>
@@ -3785,12 +3785,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="122"/>
         <source>Directory</source>
-        <translation type="unfinished">Répertoire</translation>
+        <translation>Répertoire</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="123"/>
         <source>Filename</source>
-        <translation type="unfinished">Nom du fichier</translation>
+        <translation>Nom du fichier</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="135"/>
@@ -3800,7 +3800,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="267"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Sélectionner un répertoire</translation>
+        <translation>Sélectionner un répertoire</translation>
     </message>
 </context>
 <context>
@@ -3808,12 +3808,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="133"/>
         <source>Searching</source>
-        <translation type="unfinished">Recherche</translation>
+        <translation>Recherche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="134"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Paroles</translation>
+        <translation>Paroles</translation>
     </message>
 </context>
 <context>
@@ -3846,17 +3846,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="76"/>
         <source>Title</source>
-        <translation type="unfinished">Titre</translation>
+        <translation>Titre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="78"/>
         <source>Artist</source>
-        <translation type="unfinished">Artiste</translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="80"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="84"/>
@@ -3874,7 +3874,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="140"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Paroles</translation>
+        <translation>Paroles</translation>
     </message>
 </context>
 <context>
@@ -3905,17 +3905,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
         <source>Artist</source>
-        <translation type="unfinished">Artiste</translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
         <source>Title</source>
-        <translation type="unfinished">Titre</translation>
+        <translation>Titre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="142"/>
@@ -3930,12 +3930,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="177"/>
         <source>Search for lyrics</source>
-        <translation type="unfinished">Rechercher des paroles</translation>
+        <translation>Rechercher des paroles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="178"/>
         <source>Search for lyrics for the current track</source>
-        <translation type="unfinished">Rechercher des paroles pour la piste actuelle</translation>
+        <translation>Rechercher des paroles pour la piste actuelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="189"/>
@@ -7881,7 +7881,7 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="272"/>
         <source>Artwork</source>
-        <translation type="unfinished">Illustration</translation>
+        <translation>Illustration</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="284"/>
