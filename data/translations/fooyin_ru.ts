@@ -2183,7 +2183,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="138"/>
         <source>Midlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Полусвет</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="139"/>
@@ -2193,7 +2193,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="140"/>
         <source>Mid</source>
-        <translation type="unfinished"></translation>
+        <translation>Средний</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="141"/>
@@ -2478,7 +2478,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="132"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализация ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="135"/>
@@ -2548,7 +2548,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="182"/>
         <source>Subsong Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Индекс субпесни</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="188"/>
@@ -2709,7 +2709,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="235"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализация ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="243"/>
@@ -3487,7 +3487,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="70"/>
         <source>Synced</source>
-        <translation type="unfinished">Синхронно</translation>
+        <translation>Синхронно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
@@ -3672,7 +3672,7 @@
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="170"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="199"/>
         <source>Synced Words</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронные слова</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="184"/>
@@ -3737,12 +3737,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="85"/>
         <source>Synced only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только синхронно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="86"/>
         <source>Unsynced only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только несинхронно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="91"/>
@@ -3777,12 +3777,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="120"/>
         <source>Synced lyric tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Метка синхронного текста песни</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="121"/>
         <source>Unsynced lyric tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Метка несинхронного текста песни</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="122"/>
@@ -4120,12 +4120,12 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="72"/>
         <source>Cubic</source>
-        <translation type="unfinished"></translation>
+        <translation>Кубический</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="73"/>
         <source>Sinc</source>
-        <translation type="unfinished"></translation>
+        <translation>Кардинальный синус</translation>
     </message>
 </context>
 <context>
@@ -5534,7 +5534,7 @@
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="39"/>
         <source>Track Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Таблица дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="47"/>
@@ -5700,7 +5700,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="142"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализация ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -5708,12 +5708,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="57"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать пик сэмпла для расчёта пиков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="58"/>
         <source>Use true peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать истинный пик для расчёта пиков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="61"/>
@@ -5733,7 +5733,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Used with the %1 action</source>
-        <translation type="unfinished"></translation>
+        <translation>Используется с действием %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
@@ -5767,7 +5767,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="114"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализация ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="119"/>
@@ -5868,7 +5868,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="207"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализация ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -6054,7 +6054,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="108"/>
         <source>Malformed login callback.</source>
-        <translation type="unfinished">Неправильный коллбэк логина.</translation>
+        <translation>Искажённый обратный вызов входа в систему.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="114"/>
@@ -6347,7 +6347,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="75"/>
         <source>Error foreground</source>
-        <translation type="unfinished">Цвет ошибки</translation>
+        <translation>Ошибка переднего плана</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="78"/>
@@ -7278,7 +7278,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="231"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровнемер</translation>
     </message>
 </context>
 <context>
@@ -7364,12 +7364,12 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="626"/>
         <source>Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>Измеритель пиков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="626"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровнемер</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="803"/>
@@ -7879,7 +7879,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="266"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализация ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="272"/>
@@ -8007,50 +8007,50 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="427"/>
         <source>Expected %1 to close quote</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидается, что %1 закроет кавычки</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="442"/>
         <source>Expected %1 to close variable list</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидается, что %1 закроет список переменных</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="453"/>
         <source>Expected %1 to close variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидается, что %1 закроет переменную</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="473"/>
         <source>Expected %1 after function name</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидается %1 после имени функции</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="483"/>
         <source>Expected %1 at end of function</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидается %1 в конце функции</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="517"/>
         <source>Expected %1 to close conditional</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидается, что %1 закроет условие</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="545"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="551"/>
         <source>Expected %1 to close group</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидается, что %1 закроет группу</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="781"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="786"/>
         <source>Expected %1 after %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидается %1 после %2</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1254"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1293"/>
         <source>Expected end of script</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидаемый конец скрипта</translation>
     </message>
 </context>
 </TS>
