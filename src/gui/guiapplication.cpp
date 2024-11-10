@@ -218,7 +218,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_playbackMenu{new PlaybackMenu(m_actionManager, m_playerController, m_settings, m_self)}
     , m_libraryMenu{new LibraryMenu(m_core, m_actionManager, m_self)}
     , m_helpMenu{new HelpMenu(m_actionManager, m_self)}
-    , m_propertiesDialog{new PropertiesDialog(m_settings, m_self)}
+    , m_propertiesDialog{new PropertiesDialog(m_self)}
     , m_windowController{new WindowController(m_mainWindow.get())}
     , m_themeRegistry{new ThemeRegistry(m_settings, m_self)}
     , m_guiPluginContext{m_actionManager,        &m_layoutProvider,  &m_selectionController,

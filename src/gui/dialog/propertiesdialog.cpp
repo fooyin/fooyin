@@ -258,9 +258,8 @@ void PropertiesDialogWidget::currentTabChanged(int index)
     m_toolsButton->hide();
 }
 
-PropertiesDialog::PropertiesDialog(SettingsManager* settings, QObject* parent)
+PropertiesDialog::PropertiesDialog(QObject* parent)
     : QObject{parent}
-    , m_settings{settings}
 { }
 
 PropertiesDialog::~PropertiesDialog()

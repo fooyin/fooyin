@@ -79,7 +79,7 @@ class FYGUI_EXPORT PropertiesDialog : public QObject
 public:
     using TabList = std::vector<PropertiesTab>;
 
-    explicit PropertiesDialog(SettingsManager* settings, QObject* parent = nullptr);
+    explicit PropertiesDialog(QObject* parent = nullptr);
     ~PropertiesDialog() override;
 
     void addTab(const QString& title, const WidgetBuilder& widgetBuilder);
@@ -89,8 +89,6 @@ public:
     void show(const TrackList& tracks);
 
 private:
-    SettingsManager* m_settings;
-
     TabList m_tabs;
 };
 } // namespace Fooyin
