@@ -389,7 +389,7 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
     }
 
     const QString coverKey = generateCoverKey(track, type);
-    if(!p->m_pendingCovers.contains(coverKey) && !m_noCoverKeys.contains(coverKey)) {
+    if(!p->m_pendingCovers.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey);
         if(!cover.isNull()) {
             return cover;
