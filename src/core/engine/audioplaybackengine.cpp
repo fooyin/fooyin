@@ -122,6 +122,8 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
         m_clock.setPaused(true);
         m_clock.sync();
 
+        updateTrackStatus(TrackStatus::Loading);
+
         format = loadPreparedTrack();
     }
     else {
