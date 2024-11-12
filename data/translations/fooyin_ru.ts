@@ -595,7 +595,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="76"/>
         <source>Show icons</source>
-        <translation>Показать иконки</translation>
+        <translation>Показать значки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="77"/>
@@ -640,7 +640,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="98"/>
         <source>Browser Mode</source>
-        <translation>Режим Просмотра</translation>
+        <translation>Режим просмотра</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="109"/>
@@ -901,7 +901,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="67"/>
         <source>Left-aligned</source>
-        <translation>Выравнение слева</translation>
+        <translation>Выравнивание слева</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="68"/>
@@ -1143,7 +1143,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="467"/>
         <source>Select Directory</source>
-        <translation>Выбор папки</translation>
+        <translation>Выбор каталога</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="484"/>
@@ -1432,7 +1432,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="734"/>
         <source>More…</source>
-        <translation>Еще…</translation>
+        <translation>Ещё…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="259"/>
@@ -1703,7 +1703,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="91"/>
         <source>Show system tray icon</source>
-        <translation>Показывать иконку в трее</translation>
+        <translation>Показывать значок в трее</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
@@ -1753,12 +1753,12 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="134"/>
         <source>Start maximised</source>
-        <translation>Запускать развернутым</translation>
+        <translation>Запускать развёрнутым</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="135"/>
         <source>Start hidden to tray</source>
-        <translation>Запускать свернутым в трей</translation>
+        <translation>Запускать свёрнутым в трей</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="136"/>
@@ -1768,7 +1768,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="163"/>
         <source>Language changed</source>
-        <translation>Язык изменен</translation>
+        <translation>Язык изменён</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="164"/>
@@ -1909,7 +1909,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="531"/>
         <source>Reload tags from modified files</source>
-        <translation>Перезагрузить теги из измененных файлов</translation>
+        <translation>Перезагрузить теги из изменённых файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="533"/>
@@ -1965,7 +1965,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="776"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation>Из-за изменения базы данных треки необходимо перезагрузить с диска, чтобы обновить сохраненные метаданные.</translation>
+        <translation>Из-за изменения базы данных треки необходимо перезагрузить с диска, чтобы обновить сохранённые метаданные.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="781"/>
@@ -2183,12 +2183,12 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="138"/>
         <source>Midlight</source>
-        <translation>Полусвет</translation>
+        <translation>Полусветлая</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="139"/>
         <source>Dark</source>
-        <translation>Темная</translation>
+        <translation>Тёмная</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="140"/>
@@ -2208,7 +2208,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="164"/>
         <source>Advanced Colours</source>
-        <translation>Дополнительные Цвета</translation>
+        <translation>Дополнительные цвета</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="165"/>
@@ -2254,12 +2254,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="107"/>
         <source>Dark</source>
-        <translation>Темная</translation>
+        <translation>Тёмная</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="108"/>
         <source>Use system icons</source>
-        <translation>Использовать системные иконки</translation>
+        <translation>Использовать системные значки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="111"/>
@@ -2628,7 +2628,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="239"/>
         <source>Tag Types</source>
-        <translation>Типы тэгов</translation>
+        <translation>Типы тегов</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="253"/>
@@ -2748,7 +2748,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="81"/>
         <source>&amp;Import layout…</source>
-        <translation>&amp;Импортировать оформление …</translation>
+        <translation>&amp;Импортировать оформление…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="82"/>
@@ -2758,7 +2758,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
         <source>E&amp;xport layout…</source>
-        <translation>&amp;Экспортировать оформление …</translation>
+        <translation>&amp;Экспортировать оформление…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="85"/>
@@ -2857,7 +2857,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="131"/>
         <source>Save playcount to file metadata</source>
-        <translation>Сохранять количество проигрываний в метаданные файла</translation>
+        <translation>Сохранять число прослушиваний в метаданные файла</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="142"/>
@@ -2975,12 +2975,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="108"/>
         <source>Optimising database…</source>
-        <translation>Оптимизация базы данных …</translation>
+        <translation>Оптимизация базы данных…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="118"/>
         <source>Database optimised</source>
-        <translation>База данных отимизирована</translation>
+        <translation>База данных оптимизирована</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="123"/>
@@ -3247,7 +3247,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="128"/>
         <source>Icon</source>
-        <translation>Иконка</translation>
+        <translation>Значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="131"/>
@@ -3802,7 +3802,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="267"/>
         <source>Select Directory</source>
-        <translation>Выбор папки</translation>
+        <translation>Выбор каталога</translation>
     </message>
 </context>
 <context>
@@ -4617,7 +4617,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="57"/>
         <source>Playcount</source>
-        <translation>Количество проигрываний</translation>
+        <translation>Число прослушиваний</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
@@ -4627,7 +4627,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
         <source>Playing</source>
-        <translation>Иконка проигрывания</translation>
+        <translation>Значок проигрывания</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
@@ -4879,7 +4879,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="300"/>
         <source>Select Directory</source>
-        <translation>Выбор папки</translation>
+        <translation>Выбор каталога</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="150"/>
@@ -5373,7 +5373,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1564"/>
         <source>More…</source>
-        <translation>Еще…</translation>
+        <translation>Ещё…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1264"/>
@@ -5644,12 +5644,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="57"/>
         <source>&amp;Update File Tags</source>
-        <translation>&amp;Обновить тэги файла</translation>
+        <translation>&amp;Обновить теги файла</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="74"/>
         <source>Writing to file tags…</source>
-        <translation>Сохранение тэгов в файле…</translation>
+        <translation>Сохранение тегов в файле…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="42"/>
@@ -5738,7 +5738,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Calculate as albums (by tags)</source>
-        <translation>Считать как альбомы (по тэгам)</translation>
+        <translation>Считать как альбомы (по тегам)</translation>
     </message>
 </context>
 <context>
@@ -5817,7 +5817,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="191"/>
         <source>Writing to file tags…</source>
-        <translation>Сохранение тэгов в файле…</translation>
+        <translation>Сохранение тегов в файле…</translation>
     </message>
 </context>
 <context>
@@ -6022,7 +6022,7 @@
     <message>
         <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
         <source>Select Directory</source>
-        <translation>Выбор папки</translation>
+        <translation>Выбор каталога</translation>
     </message>
 </context>
 <context>
@@ -6720,7 +6720,7 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="347"/>
         <source>Show icon</source>
-        <translation>Показывать иконку</translation>
+        <translation>Показывать значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="353"/>
@@ -6756,7 +6756,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="59"/>
         <source>Show icon</source>
-        <translation>Показывать иконку</translation>
+        <translation>Показывать значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="60"/>
@@ -7241,7 +7241,7 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="318"/>
         <source>Icon</source>
-        <translation>Иконка</translation>
+        <translation>Значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="319"/>
