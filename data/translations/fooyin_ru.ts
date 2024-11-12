@@ -19,7 +19,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Изменить</translation>
+        <translation>&amp;Правка</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
@@ -29,7 +29,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation>&amp;Скин</translation>
+        <translation>&amp;Макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
@@ -39,12 +39,12 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Library</source>
-        <translation>&amp;Библиотека</translation>
+        <translation>&amp;Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="71"/>
         <source>&amp;Help</source>
-        <translation>&amp;Помощь</translation>
+        <translation>&amp;Справка</translation>
     </message>
 </context>
 <context>
@@ -710,7 +710,7 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="100"/>
         <source>Right-click to add a new widget</source>
-        <translation>Кликните правой кнопкой для добавления нового виджета</translation>
+        <translation>Щёлкните правой кнопкой для добавления нового виджета</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="103"/>
@@ -1000,7 +1000,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="46"/>
         <source>Add &amp;files…</source>
-        <translation>Добавить &amp;файлы …</translation>
+        <translation>Доб&amp;авить файлы…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="47"/>
@@ -1010,7 +1010,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="53"/>
         <source>Ad&amp;d folders…</source>
-        <translation>Добавить &amp;папки …</translation>
+        <translation>Доба&amp;вить папки…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="54"/>
@@ -1040,12 +1040,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
         <source>&amp;Load playlist…</source>
-        <translation>&amp;Загрузить плейлист …</translation>
+        <translation>&amp;Загрузить плейлист…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="85"/>
         <source>&amp;Save playlist…</source>
-        <translation>&amp;Сохранить плейлист …</translation>
+        <translation>&amp;Сохранить плейлист…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="101"/>
@@ -1070,12 +1070,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="86"/>
         <source>Save the current playlist to the specified file</source>
-        <translation>Сохранить плейлист в указанный файл</translation>
+        <translation>Сохранить текущий плейлист в указанный файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="92"/>
         <source>Save &amp;all playlists…</source>
-        <translation>Сохранить &amp;все плейлисты …</translation>
+        <translation>Сохранить &amp;все плейлисты…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
@@ -1437,7 +1437,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="259"/>
         <source>Library Filter</source>
-        <translation>Фильтр библиотеки</translation>
+        <translation>Фильтр фонотеки</translation>
     </message>
 </context>
 <context>
@@ -1668,7 +1668,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="52"/>
         <source>Library Filter</source>
-        <translation>Фильтр библиотеки</translation>
+        <translation>Фильтр фонотеки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="53"/>
@@ -1868,7 +1868,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="458"/>
         <source>Mute</source>
-        <translation>Выключить звук</translation>
+        <translation>Приглушить звук</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="481"/>
@@ -2359,7 +2359,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="186"/>
         <source>Selection Info</source>
-        <translation>Информация о выделенном треке</translation>
+        <translation>Сведения о выделенном</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
@@ -2402,7 +2402,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Colours &amp; Fonts</source>
-        <translation>Цвета &amp; Шрифты</translation>
+        <translation>Цвета и шрифты</translation>
     </message>
 </context>
 <context>
@@ -2568,7 +2568,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="197"/>
         <source>Library</source>
-        <translation>Библиотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="203"/>
@@ -2669,7 +2669,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="140"/>
         <source>Selection Info</source>
-        <translation>Информация о выделенном треке</translation>
+        <translation>Сведения о выделенном</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="182"/>
@@ -2819,7 +2819,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="259"/>
         <source>Library</source>
-        <translation>Библиотека</translation>
+        <translation>Фонотека</translation>
     </message>
 </context>
 <context>
@@ -2827,12 +2827,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="125"/>
         <source>Auto refresh on startup</source>
-        <translation>Обновлять при запуске</translation>
+        <translation>Автоматически обновлять при запуске</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="126"/>
         <source>Monitor libraries</source>
-        <translation>Отслеживание изменений в библиотеках</translation>
+        <translation>Отслеживать изменения в фонотеках</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="127"/>
@@ -2862,12 +2862,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="142"/>
         <source>Scan libraries for changes on startup</source>
-        <translation>Поиск изменений в библиотеках при запуске</translation>
+        <translation>Проверять изменения в фонотеках при запуске</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="143"/>
         <source>Monitor libraries for external changes</source>
-        <translation>Отслеживать изменения в библиотеках</translation>
+        <translation>Отслеживать внешние изменения в фонотеках</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
@@ -2895,7 +2895,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="47"/>
         <source>Library</source>
-        <translation>Библиотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="50"/>
@@ -2910,7 +2910,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation>Удалить отсутствующие в библиотеке треки, не входящие ни в один плейлист, и просроченную статистику воспроизведения</translation>
+        <translation>Удалить отсутствующие в фонотеке треки, не входящие ни в один плейлист, и просроченную статистику проигрывания</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -2930,7 +2930,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
         <source>Update tracks in libraries which have been modified on disk</source>
-        <translation>Обновить треки, содержащиеся в библиотеке, которые могли быть изменены на диске</translation>
+        <translation>Обновить треки, содержащиеся в фонотеках, которые были изменены на диске</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="70"/>
@@ -2940,7 +2940,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
         <source>Reload metadata from files for all tracks in libraries</source>
-        <translation>Пересканировать метаданные для всех трэков в библиотеке</translation>
+        <translation>Пересканировать метаданные для всех треков в фонотеках</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="76"/>
@@ -2950,7 +2950,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="77"/>
         <source>Search all libraries</source>
-        <translation>Поиск по всем библиотекам</translation>
+        <translation>Поиск по всем фонотекам</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="82"/>
@@ -2970,7 +2970,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="89"/>
         <source>Open the library page in the settings dialog</source>
-        <translation>Открыть окно настроек библиотеки</translation>
+        <translation>Открыть страницу фонотеки в окне настроек</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="108"/>
@@ -3027,7 +3027,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="147"/>
         <source>Library</source>
-        <translation>Библиотека</translation>
+        <translation>Фонотека</translation>
     </message>
 </context>
 <context>
@@ -3040,7 +3040,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="86"/>
         <source>Sort tracks in library by</source>
-        <translation>Сортировка треков в библиотеке</translation>
+        <translation>Сортировка треков в фонотеке</translation>
     </message>
 </context>
 <context>
@@ -3061,7 +3061,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreecontroller.cpp" line="37"/>
         <source>Library Selection</source>
-        <translation>Выбор библиотеки</translation>
+        <translation>Выбор фонотеки</translation>
     </message>
 </context>
 <context>
@@ -3097,7 +3097,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="134"/>
         <source>Library Tree</source>
-        <translation>Библиотека</translation>
+        <translation>Дерево фонотеки</translation>
     </message>
 </context>
 <context>
@@ -3131,7 +3131,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="493"/>
         <source>Library Tree</source>
-        <translation>Библиотека</translation>
+        <translation>Дерево фонотеки</translation>
     </message>
 </context>
 <context>
@@ -3149,7 +3149,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="303"/>
         <source>Library Tree</source>
-        <translation>Библиотека</translation>
+        <translation>Дерево фонотеки</translation>
     </message>
 </context>
 <context>
@@ -3182,7 +3182,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="106"/>
         <source>Library Selection Playlist</source>
-        <translation>Плейлист из библиотеки</translation>
+        <translation>Плейлист с выбором фонотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="96"/>
@@ -3317,7 +3317,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="103"/>
         <source>Loading Library…</source>
-        <translation>Загрузка библиотеки…</translation>
+        <translation>Загружается фонотека…</translation>
     </message>
 </context>
 <context>
@@ -3355,7 +3355,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="915"/>
         <source>Library Tree</source>
-        <translation>Библиотека</translation>
+        <translation>Дерево фонотеки</translation>
     </message>
 </context>
 <context>
@@ -4100,7 +4100,7 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="65"/>
         <source>Off</source>
-        <translation>Выключено</translation>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="67"/>
@@ -5251,7 +5251,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="192"/>
         <source>&amp;Copy</source>
-        <translation>Копировать</translation>
+        <translation>&amp;Копировать</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="193"/>
@@ -5306,7 +5306,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="362"/>
         <source>Copy the selected tracks</source>
-        <translation>Копировать трек</translation>
+        <translation>Копировать выбранные треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="371"/>
@@ -5941,12 +5941,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="110"/>
         <source>With RG info</source>
-        <translation>С RG инфо</translation>
+        <translation>С данными о RG</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="111"/>
         <source>Without RG info</source>
-        <translation>Без RG инфо</translation>
+        <translation>Без данных о RG</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="121"/>
@@ -6201,7 +6201,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="110"/>
         <source>Copy URL</source>
-        <translation>Копировать URL</translation>
+        <translation>Копировать URL-адрес</translation>
     </message>
 </context>
 <context>
@@ -6262,7 +6262,7 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="121"/>
         <source>Search Library</source>
-        <translation>Поиск в библиотеке</translation>
+        <translation>Поиск в фонотеке</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="124"/>
@@ -6304,7 +6304,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Library</source>
-        <translation>Библиотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
@@ -6395,7 +6395,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="59"/>
         <source>Search library…</source>
-        <translation>Поиск в библиотеке…</translation>
+        <translation>Поиск в фонотеке…</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="90"/>
@@ -6461,7 +6461,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="503"/>
         <source>Library</source>
-        <translation>Библиотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="509"/>
@@ -6476,7 +6476,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="526"/>
         <source>Change placeholder text</source>
-        <translation>Изменить текст подсказки</translation>
+        <translation>Изменить текст местозаполнителя</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="536"/>
@@ -7569,7 +7569,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
         <source>Off</source>
-        <translation>Выключено</translation>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="85"/>
@@ -7733,7 +7733,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="211"/>
         <source>Off</source>
-        <translation>Выключено</translation>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="212"/>
@@ -7805,7 +7805,7 @@ cost of using more disk space in the cache.</source>
         <location filename="../../src/gui/widgets.cpp" line="160"/>
         <location filename="../../src/gui/widgets.cpp" line="286"/>
         <source>Library Tree</source>
-        <translation>Библиотечное дерево</translation>
+        <translation>Дерево фонотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="167"/>
