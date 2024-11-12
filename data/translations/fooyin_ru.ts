@@ -6120,7 +6120,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="108"/>
         <source>Services</source>
-        <translation>Сервисы</translation>
+        <translation>Службы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="179"/>
@@ -6155,7 +6155,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="260"/>
         <source>Not signed in</source>
-        <translation>Не подключен</translation>
+        <translation>Не подключён</translation>
     </message>
 </context>
 <context>
@@ -6684,7 +6684,7 @@
     <message>
         <location filename="../../src/gui/widgets/spacer.cpp" line="32"/>
         <source>Spacer</source>
-        <translation>Пространство</translation>
+        <translation>Пробел</translation>
     </message>
 </context>
 <context>
@@ -6959,7 +6959,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="81"/>
         <source>Multiple values can be specified in the editor using %1</source>
-        <translation>Несколько значений могут быть указаны в редакторе используя % 1</translation>
+        <translation>Множество значений можно указать в редакторе с помощью %1</translation>
     </message>
 </context>
 <context>
@@ -7096,7 +7096,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="206"/>
         <source>Open the directory containing the selected tracks</source>
-        <translation>Открыть папку, содержащую выбранные треки</translation>
+        <translation>Открыть каталог с выбранными треками</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="225"/>
@@ -7165,12 +7165,12 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="87"/>
         <source>ROM location</source>
-        <translation>Расположение ROM</translation>
+        <translation>Расположение ПЗУ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
         <source>Certain files %1 require their system&apos;s ROM to play %2. Provide a directory where these can be found here.</source>
-        <translation>Для воспроизведения некоторых файлов% 1 требуется системные ROM% 2. Укажите каталог, в котором они могут быть найдены.</translation>
+        <translation>Для воспроизведения некоторых файлов %1 требуется ПЗУ системы %2. Укажите каталог, где их можно найти.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="95"/>
@@ -7639,7 +7639,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="136"/>
         <source>Downmix</source>
-        <translation>Даунмикс</translation>
+        <translation>Понижающее микширование</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="148"/>
@@ -7728,7 +7728,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="208"/>
         <source>Downmix</source>
-        <translation>Даунмикс</translation>
+        <translation>Понижающее микширование</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="211"/>
@@ -7774,7 +7774,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="114"/>
         <source>Splitter (Left/Right)</source>
-        <translation>Разделитель (Лево/Право)</translation>
+        <translation>Разделитель (лево/право)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="119"/>
@@ -7854,7 +7854,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="207"/>
         <source>Spacer</source>
-        <translation>Разделитель</translation>
+        <translation>Пробел</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="218"/>
