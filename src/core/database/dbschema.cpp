@@ -120,7 +120,7 @@ DbSchema::UpgradeResult DbSchema::upgradeDatabase(int targetVersion, const QStri
     }
 
     if(targetVersion < currentVer && targetVersion < minCompatVersion()) {
-        qCWarning(DB_SCHEMA) << "Current DB schema" << currentVer << "is not backwards compatable with version"
+        qCWarning(DB_SCHEMA) << "Current DB schema" << currentVer << "is not backwards compatible with version"
                              << targetVersion;
         return UpgradeResult::Incompatible;
     }
