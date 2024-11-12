@@ -59,7 +59,7 @@ public:
 
     /*!
      * Sets the submenus the widget at @p key appears at in add/replace menus when layout editing.
-     * The widget must already be registerd using @fn registerWidget with the same @p key.
+     * The widget must already be registered using @fn registerWidget with the same @p key.
      */
     void setSubMenus(const QString& key, const QStringList& subMenus);
 
