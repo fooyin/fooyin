@@ -52,7 +52,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="33"/>
         <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Einstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="40"/>
@@ -124,12 +124,12 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="106"/>
         <source>Clear Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwischenspeicher leeren</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="173"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Festplattennutzung</translation>
     </message>
 </context>
 <context>
