@@ -190,7 +190,7 @@ void ArtworkRow::finalise(int trackCount)
             const QString format     = mimeType.comment();
             const qint64 sizeInKB    = m_imageData.size() / 1024;
             const QString resolution = QStringLiteral("%1x%2").arg(size.width()).arg(size.height());
-            m_details->setText(tr("%1 KB\n%2\n%3").arg(sizeInKB).arg(resolution, format));
+            m_details->setText(QStringLiteral("%1 KB\n%2\n%3").arg(sizeInKB).arg(resolution, format));
         }
         else {
             m_image->hide();
