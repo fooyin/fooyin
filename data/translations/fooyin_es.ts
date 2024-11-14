@@ -4955,53 +4955,53 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="133"/>
         <source>Create autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear lista de reproducción automática</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="136"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar lista de reproducción automática</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="160"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="291"/>
         <source>Remove the selected playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar las listas de reproducción seleccionadas</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="294"/>
         <source>Rename the selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el nombre del grupo seleccionado</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="295"/>
         <source>Remove the selected groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar los grupos seleccionados</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="298"/>
         <source>Remove the selected playlists and groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar las listas de reproducción y los grupos seleccionados</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="290"/>
         <source>Rename the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el nombre de la lista de reproducción seleccionada</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="171"/>
         <source>Create a new empty group</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear un nuevo grupo vacío</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="161"/>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="255"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation>Administrador de listas de reproducción</translation>
     </message>
 </context>
 <context>
@@ -5010,12 +5010,12 @@
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="521"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="522"/>
         <source>Presets</source>
-        <translation type="unfinished">Ajustes preestablecidos</translation>
+        <translation>Ajustes preestablecidos</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="522"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lista de reproducción</translation>
     </message>
 </context>
 <context>
@@ -5023,58 +5023,58 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="227"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nueva</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
         <source>Rename</source>
-        <translation type="unfinished">Renombrar</translation>
+        <translation>Renombrar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="229"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="230"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualizar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="231"/>
         <source>Clone</source>
-        <translation type="unfinished"></translation>
+        <translation>Clonar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="247"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Título</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="248"/>
         <source>Subtitle</source>
-        <translation type="unfinished"></translation>
+        <translation>Subtitular</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="250"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Información</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="355"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="376"/>
         <source>Preset Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre predeterminado</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="442"/>
         <source>Copy of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia de %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="272"/>
         <source>Header</source>
-        <translation type="unfinished"></translation>
+        <translation>Encabezamiento</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="219"/>
@@ -7878,47 +7878,47 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="272"/>
         <source>Artwork</source>
-        <translation type="unfinished">Ilustraciones</translation>
+        <translation>Ilustraciones</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="284"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Por defecto</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="289"/>
         <source>Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Pestañas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="285"/>
         <source>Lists</source>
-        <translation type="unfinished"></translation>
+        <translation>Listas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="288"/>
         <source>Status bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de estado</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="320"/>
         <source>Scanning files</source>
-        <translation type="unfinished"></translation>
+        <translation>Escaneando archivos</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="323"/>
         <source>Scanning tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Escaneando pistas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="326"/>
         <source>Scanning %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Escaneando %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="329"/>
         <source>Loading playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando lista de reproducción</translation>
     </message>
 </context>
 <context>
@@ -7926,72 +7926,72 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="73"/>
         <source>Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Uso</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="73"/>
         <source>options</source>
-        <translation type="unfinished"></translation>
+        <translation>opciones</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="73"/>
         <source>urls</source>
-        <translation type="unfinished"></translation>
+        <translation>Url</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="73"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="74"/>
         <source>Display help on command line options</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar ayuda sobre las opciones de la línea de comandos</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="74"/>
         <source>Display version information</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar información de la versión</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>Player options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones del reproductor</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>Toggle playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar reproducción</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>Start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciar reproducción</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Pause playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Pausar reproducción</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Stop playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Detener reproducción</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Skip to next track</source>
-        <translation type="unfinished"></translation>
+        <translation>Ir a la siguiente pista</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Skip to previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Ir a la pista anterior</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Argumentos</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
@@ -8001,27 +8001,27 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="427"/>
         <source>Expected %1 to close quote</source>
-        <translation type="unfinished"></translation>
+        <translation>Se espera que %1 cierre la cita</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="442"/>
         <source>Expected %1 to close variable list</source>
-        <translation type="unfinished"></translation>
+        <translation>Esperando que %1 cierre la lista de variables</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="453"/>
         <source>Expected %1 to close variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Esperando que %1 cierre la variable</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="473"/>
         <source>Expected %1 after function name</source>
-        <translation type="unfinished"></translation>
+        <translation>Esperando %1 después del nombre de la función</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="483"/>
         <source>Expected %1 at end of function</source>
-        <translation type="unfinished"></translation>
+        <translation>Se esperaba %1 al final de la función</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="517"/>

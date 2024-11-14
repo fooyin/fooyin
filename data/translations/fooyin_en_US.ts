@@ -124,12 +124,12 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="106"/>
         <source>Clear Cache</source>
-        <translation type="unfinished">Clear Cache</translation>
+        <translation>Clear Cache</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="173"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished">Disk cache usage</translation>
+        <translation>Disk cache usage</translation>
     </message>
 </context>
 <context>
@@ -137,32 +137,32 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="43"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Front Cover</translation>
+        <translation>Front Cover</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="44"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Back Cover</translation>
+        <translation>Back Cover</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="45"/>
         <source>Artist</source>
-        <translation type="unfinished">Artist</translation>
+        <translation>Artist</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="107"/>
         <source>Artwork Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork Properties</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="156"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Loading artwork…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="160"/>
         <source>Saving artwork to files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Saving artwork to files…</translation>
     </message>
 </context>
 <context>
@@ -170,56 +170,58 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="46"/>
         <source>Add</source>
-        <translation type="unfinished">Add</translation>
+        <translation>Add</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="47"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="251"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Remove</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="68"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="110"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation>No artwork present</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="86"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Open Image</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="86"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Images</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="160"/>
         <source>Multiple images</source>
-        <translation type="unfinished"></translation>
+        <translation>Multiple images</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="161"/>
         <source>%1 of %2 files have artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 of %2 files have artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="193"/>
         <source>%1 KB
 %2
 %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 KB
+%2
+%3</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="245"/>
         <source>Replace image</source>
-        <translation type="unfinished"></translation>
+        <translation>Replace image</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="245"/>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>Add image</translation>
     </message>
 </context>
 <context>
@@ -265,72 +267,72 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="50"/>
         <source>&amp;Load</source>
-        <translation type="unfinished">&amp;Load</translation>
+        <translation>&amp;Load</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="51"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Save</translation>
+        <translation>&amp;Save</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="52"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Delete</translation>
+        <translation>&amp;Delete</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
         <source>&amp;Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Restore Defaults</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>Edit Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit Autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>Create New Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Create New Autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="85"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>Query</source>
-        <translation type="unfinished"></translation>
+        <translation>Query</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="158"/>
         <source>Query already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Query already exists</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="159"/>
         <source>Query %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Query %1 already exists. Overwrite?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="277"/>
         <source>Most Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Most Played</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="278"/>
         <source>Recently Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Recently Added</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="279"/>
         <source>Last Played 2 Weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>Last Played 2 Weeks</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="280"/>
         <source>Has Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Has Lyrics</translation>
     </message>
 </context>
 <context>
@@ -840,7 +842,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="552"/>
         <source>Undo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Undo the previous layout edit</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="563"/>
@@ -850,7 +852,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="564"/>
         <source>Redo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Redo the previous layout edit</translation>
     </message>
 </context>
 <context>
@@ -1028,12 +1030,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="70"/>
         <source>&amp;New autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;New autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Create a new autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
@@ -1726,17 +1728,17 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
         <source>User Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>User Directories</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="109"/>
         <source>Open Config Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Open Config Directory</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="110"/>
         <source>Open Share Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Open Share Directory</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="119"/>
@@ -2566,7 +2568,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="197"/>
         <source>Library</source>
-        <translation type="unfinished">Library</translation>
+        <translation>Library</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="203"/>
@@ -2903,12 +2905,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
         <source>&amp;Clean</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Clean</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove non-library tracks not in any playlists and expired playback statistics</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -2983,12 +2985,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="123"/>
         <source>Cleaning database…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cleaning database…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="133"/>
         <source>Database cleaned</source>
-        <translation type="unfinished"></translation>
+        <translation>Database cleaned</translation>
     </message>
 </context>
 <context>
@@ -4955,12 +4957,12 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="133"/>
         <source>Create autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Create autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="136"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="160"/>
@@ -5143,12 +5145,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="294"/>
         <source>Add new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add new autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="312"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="322"/>
@@ -5158,7 +5160,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="322"/>
         <source>Rename autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="326"/>
@@ -5168,7 +5170,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="326"/>
         <source>Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="341"/>
@@ -7881,7 +7883,7 @@ cost of using more disk space in the cache.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="272"/>
         <source>Artwork</source>
-        <translation type="unfinished">Artwork</translation>
+        <translation>Artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="284"/>
