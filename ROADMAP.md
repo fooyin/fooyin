@@ -4,7 +4,7 @@ This document outlines the upcoming features for fooyin.
 
 ### Next Release
 
-**0.9.0** - 18/11/2024
+**0.9.0** - 29/11/2024
 
 ## New Features
 
@@ -19,9 +19,9 @@ This document outlines the upcoming features for fooyin.
 | ReplayGain support                            | ✅ 0.7.0  |
 | Calculating ReplayGain                        | ✅ 0.8.0  |
 | Query-based language for advanced searching   | ✅ 0.8.0  |
-| Smart playlists                               | 🔄 0.9.0 |
+| Smart playlists                               | ✅ 0.9.0  |
 | Album artwork downloading/saving              | 🔄 0.9.0 |
-| Synchronised lyric support                    | 🔄 0.9.0 |
+| Synchronised lyric support                    | ✅ 0.9.0  |
 | Audio conversion                              | ❓ TBD    |
 | Metadata lookup                               | ❓ TBD    |
 | Internet radio support                        | ❓ TBD    |
