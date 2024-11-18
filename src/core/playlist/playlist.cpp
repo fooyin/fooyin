@@ -228,6 +228,11 @@ std::vector<AlbumTracks>::iterator PlaylistPrivate::findAlbumContainingTrack(int
 
 AlbumTracks PlaylistPrivate::getAlbumTracks(int currentIndex)
 {
+    if(m_albumShuffleOrder.empty()) {
+        createAlbumShuffleOrder();
+        m_albumShuffleIndex = 0;
+    }
+
     if(currentIndex < 0 || std::cmp_greater_equal(currentIndex, m_tracks.size())) {
         return {};
     }
@@ -244,12 +249,17 @@ AlbumTracks PlaylistPrivate::getAlbumTracks(int currentIndex)
 
 void PlaylistPrivate::sortAlbumTracks(AlbumTracks& album, const QString& sortScript)
 {
-    const PlaylistTrackList trackIndexes = PlaylistTrack::fromTracks(m_tracks, m_id);
-    const auto sortedIndexes
-        = m_sorter.calcSortTracks(sortScript, trackIndexes, PlaylistTrack::extractor, PlaylistTrack::extractorConst);
+    PlaylistTrackList trackIndexes;
+    trackIndexes.reserve(album.size());
+
+    for(const int trackIndex : album) {
+        trackIndexes.emplace_back(m_tracks.at(trackIndex), m_id, trackIndex);
+    }
+
+    m_sorter.calcSortTracks(sortScript, trackIndexes, PlaylistTrack::extractor, PlaylistTrack::extractorConst);
 
     album.clear();
-    for(const auto& track : sortedIndexes) {
+    for(const auto& track : trackIndexes) {
         album.emplace_back(track.indexInPlaylist);
     }
 }
