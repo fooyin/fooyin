@@ -256,7 +256,8 @@ void PlaylistPrivate::sortAlbumTracks(AlbumTracks& album, const QString& sortScr
         trackIndexes.emplace_back(m_tracks.at(trackIndex), m_id, trackIndex);
     }
 
-    m_sorter.calcSortTracks(sortScript, trackIndexes, PlaylistTrack::extractor, PlaylistTrack::extractorConst);
+    trackIndexes
+        = m_sorter.calcSortTracks(sortScript, trackIndexes, PlaylistTrack::extractor, PlaylistTrack::extractorConst);
 
     album.clear();
     for(const auto& track : trackIndexes) {
