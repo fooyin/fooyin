@@ -99,7 +99,7 @@ private:
     [[nodiscard]] QChar peek() const;
     [[nodiscard]] int currentLength() const;
 
-    QStringView m_input;
+    QString m_input;
     const QChar* m_start;
     const QChar* m_current;
 
