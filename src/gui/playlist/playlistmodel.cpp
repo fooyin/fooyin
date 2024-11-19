@@ -1034,6 +1034,10 @@ void PlaylistModel::updateTracks(const std::vector<int>& indexes)
 
 void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
 {
+    if(!m_currentPlaylist) {
+        return;
+    }
+
     TrackItemMap items;
 
     for(const int index : indexes) {
@@ -1045,12 +1049,10 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
         }
     }
 
-    if(m_currentPlaylist) {
-        QMetaObject::invokeMethod(&m_populator, [this, items] {
-            m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-            m_populator.updateTracks(m_currentPlaylist->id(), m_currentPreset, m_columns, items);
-        });
-    }
+    QMetaObject::invokeMethod(&m_populator, [this, items] {
+        m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
+        m_populator.updateTracks(m_currentPlaylist->id(), m_currentPreset, m_columns, items);
+    });
 }
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)
