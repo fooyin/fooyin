@@ -50,6 +50,11 @@ TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* 
 
     m_tabs->editableTabBar()->setEditTitle(tr("Playlist"));
 
+    QObject::connect(m_tabs, &EditableTabWidget::tabBarClicked, this, [this](int index) {
+        if(index != m_tabs->editableTabBar()->currentIndex()) {
+            m_tabs->editableTabBar()->closeEditor();
+        }
+    });
     QObject::connect(m_tabs->tabBar(), &QTabBar::tabMoved, this, [this](int from, int to) {
         if(from >= 0 && from < static_cast<int>(m_widgets.size())) {
             auto* widget = m_widgets.at(from);

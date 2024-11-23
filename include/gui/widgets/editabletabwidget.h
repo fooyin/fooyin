@@ -35,6 +35,12 @@ public:
 
     [[nodiscard]] EditableTabBar* editableTabBar() const;
 
+signals:
+    void middleClicked(int index);
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
+
 private:
     EditableTabBar* m_tabBar;
 };

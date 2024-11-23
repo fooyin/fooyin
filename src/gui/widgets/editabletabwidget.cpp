@@ -21,17 +21,37 @@
 
 #include <gui/widgets/editabletabbar.h>
 
+#include <QMouseEvent>
+
 namespace Fooyin {
 EditableTabWidget::EditableTabWidget(QWidget* parent)
     : QTabWidget{parent}
     , m_tabBar{new EditableTabBar(this)}
 {
     setTabBar(m_tabBar);
+
+    QObject::connect(m_tabBar, &EditableTabBar::tabBarClicked, this, &EditableTabWidget::tabBarClicked);
+    QObject::connect(m_tabBar, &EditableTabBar::middleClicked, this, &EditableTabWidget::middleClicked);
 }
 
 EditableTabBar* EditableTabWidget::editableTabBar() const
 {
     return m_tabBar;
+}
+
+void EditableTabWidget::mousePressEvent(QMouseEvent* event)
+{
+    const QPoint pos = event->position().toPoint();
+    const int index  = m_tabBar->tabAt(pos);
+
+    if(event->button() & Qt::MiddleButton) {
+        emit middleClicked(index);
+    }
+    else {
+        emit tabBarClicked(index);
+    }
+
+    QTabWidget::mousePressEvent(event);
 }
 } // namespace Fooyin
 
