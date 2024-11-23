@@ -130,7 +130,7 @@ public:
     Qt::Orientation m_orientation{Qt::Horizontal};
     bool m_showPeaks{false};
     float m_channelSpacing;
-    bool m_showLegend;
+    bool m_showLegend{false};
     float m_barSize;
     float m_barSpacing;
     int m_barSections;
