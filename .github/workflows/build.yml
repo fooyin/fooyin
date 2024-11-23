@@ -112,7 +112,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ubuntu_version: [ 'jammy', 'mantic', 'noble', 'oracular' ]
+        ubuntu_version: [ 'noble', 'oracular', 'plucky' ]
     container:
       image: ubuntu:${{matrix.ubuntu_version}}
     steps:
