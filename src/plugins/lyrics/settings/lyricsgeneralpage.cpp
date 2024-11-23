@@ -34,6 +34,8 @@
 #include <QLabel>
 #include <QRadioButton>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Lyrics {
 class LyricsGeneralPageWidget : public SettingsPageWidget
 {
@@ -73,14 +75,14 @@ LyricsGeneralPageWidget::LyricsGeneralPageWidget(SettingsManager* settings)
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
 
-    auto* seekHint     = new QLabel(QStringLiteral("🛈 ") + tr("This will only function with synced lyrics."), this);
-    auto* noLyricsHint = new QLabel(
-        QStringLiteral("🛈 ") + tr("This will be displayed if lyrics for the current track can't be found."), this);
+    auto* seekHint = new QLabel(u"🛈 "_s + tr("This will only function with synced lyrics."), this);
+    auto* noLyricsHint
+        = new QLabel(u"🛈 "_s + tr("This will be displayed if lyrics for the current track can't be found."), this);
 
     int row{0};
     generalLayout->addWidget(m_seekOnClick, row++, 0, 1, 2);
     generalLayout->addWidget(seekHint, row++, 0, 1, 2);
-    generalLayout->addWidget(new QLabel(tr("No lyrics script") + u":", this), row, 0);
+    generalLayout->addWidget(new QLabel(tr("No lyrics script") + ":"_L1, this), row, 0);
     generalLayout->addWidget(m_noLyricsScript, row++, 1);
     generalLayout->addWidget(noLyricsHint, row++, 0, 1, 2);
 
@@ -88,7 +90,7 @@ LyricsGeneralPageWidget::LyricsGeneralPageWidget(SettingsManager* settings)
     auto* scrollingLayout = new QGridLayout(scrollingGroup);
 
     m_scrollDuration->setRange(0, 2000);
-    m_scrollDuration->setSuffix(QStringLiteral(" ms"));
+    m_scrollDuration->setSuffix(u" ms"_s);
 
     auto* scrollModeGroup  = new QGroupBox(tr("Scroll Mode"), this);
     auto* scrollModeLayout = new QGridLayout(scrollModeGroup);

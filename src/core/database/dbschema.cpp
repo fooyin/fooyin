@@ -28,6 +28,8 @@
 
 Q_LOGGING_CATEGORY(DB_SCHEMA, "fy.db")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto InitialVersion = 0;
 
 constexpr auto VersionKey          = "SchemaVersion";
@@ -195,9 +197,9 @@ bool DbSchema::readSchema(const QString& schemaFilename)
     m_xmlReader.setDevice(&file);
 
     if(m_xmlReader.readNextStartElement()) {
-        if(m_xmlReader.name() == u"schema") {
+        if(m_xmlReader.name() == "schema"_L1) {
             while(m_xmlReader.readNextStartElement()) {
-                if(m_xmlReader.name() == u"revision") {
+                if(m_xmlReader.name() == "revision"_L1) {
                     Revision revision = readRevision();
                     m_revisions.emplace(revision.version, revision);
                 }
@@ -207,7 +209,7 @@ bool DbSchema::readSchema(const QString& schemaFilename)
             }
         }
         else {
-            m_xmlReader.raiseError(QStringLiteral("Incorrect DB schema file"));
+            m_xmlReader.raiseError(u"Incorrect DB schema file"_s);
         }
     }
 
@@ -228,10 +230,10 @@ DbSchema::Revision DbSchema::readRevision()
     revision.foreignKeys      = m_xmlReader.attributes().value(QLatin1String{"foreignKeys"}).toInt();
 
     while(m_xmlReader.readNextStartElement()) {
-        if(m_xmlReader.name() == u"description") {
+        if(m_xmlReader.name() == "description"_L1) {
             revision.description = m_xmlReader.readElementText().trimmed();
         }
-        else if(m_xmlReader.name() == u"sql") {
+        else if(m_xmlReader.name() == "sql"_L1) {
             revision.sql = m_xmlReader.readElementText().trimmed();
         }
         else {
@@ -264,7 +266,7 @@ DbSchema::UpgradeResult DbSchema::applyRevision(int currentRevision, int revisio
 
     DbTransaction transaction{db()};
 
-    const QStringList statements = revision.sql.split(QStringLiteral(";"));
+    const QStringList statements = revision.sql.split(u";"_s);
 
     bool result{false};
 
@@ -317,6 +319,6 @@ DbSchema::UpgradeResult DbSchema::applyRevision(int currentRevision, int revisio
 bool DbSchema::setForeignKeys(bool enabled)
 {
     QSqlQuery foreignKeys{db()};
-    return foreignKeys.exec(QStringLiteral("PRAGMA foreign_keys = %1;").arg(enabled));
+    return foreignKeys.exec(u"PRAGMA foreign_keys = %1;"_s.arg(enabled));
 }
 } // namespace Fooyin

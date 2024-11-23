@@ -32,6 +32,8 @@
 #include <QPushButton>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::VgmInput {
 VgmInputSettings::VgmInputSettings(QWidget* parent)
     : QDialog{parent}
@@ -41,7 +43,7 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     , m_guessTrack{new QCheckBox(tr("Guess track number from filename"), this)}
     , m_romLocation{new QLineEdit(this)}
 {
-    setWindowTitle(tr("%1 Settings").arg(QStringLiteral("VGM Input")));
+    setWindowTitle(tr("%1 Settings").arg(u"VGM Input"_s));
     setModal(true);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -51,24 +53,24 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     auto* lengthGroup  = new QGroupBox(tr("Length"), this);
     auto* lengthLayout = new QGridLayout(lengthGroup);
 
-    auto* loopLabel     = new QLabel(tr("Loop count") + QStringLiteral(":"), this);
+    auto* loopLabel     = new QLabel(tr("Loop count") + u":"_s, this);
     auto* loopHintLabel = new QLabel(tr("(0 = infinite)"), this);
 
     m_loopCount->setRange(0, 16);
     m_loopCount->setSingleStep(1);
-    m_loopCount->setSuffix(QStringLiteral(" ") + tr("times"));
+    m_loopCount->setSuffix(u" "_s + tr("times"));
 
-    auto* fadeLabel = new QLabel(tr("Fade length") + QStringLiteral(":"), this);
+    auto* fadeLabel = new QLabel(tr("Fade length") + u":"_s, this);
 
     m_fadeLength->setRange(0, 10000);
     m_fadeLength->setSingleStep(500);
-    m_fadeLength->setSuffix(QStringLiteral(" ") + tr("ms"));
+    m_fadeLength->setSuffix(u" "_s + tr("ms"));
 
-    auto* silenceLabel = new QLabel(tr("End silence length") + QStringLiteral(":"), this);
+    auto* silenceLabel = new QLabel(tr("End silence length") + u":"_s, this);
 
     m_silenceLength->setRange(0, 10000);
     m_silenceLength->setSingleStep(500);
-    m_silenceLength->setSuffix(QStringLiteral(" ") + tr("ms"));
+    m_silenceLength->setSuffix(u" "_s + tr("ms"));
 
     int row{0};
     lengthLayout->addWidget(loopLabel, row, 0);
@@ -84,11 +86,11 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
 
-    auto* romPathLabel = new QLabel(tr("ROM location") + QStringLiteral(":"), this);
-    auto* romHintLabel = new QLabel(QStringLiteral("🛈 ")
+    auto* romPathLabel = new QLabel(tr("ROM location") + u":"_s, this);
+    auto* romHintLabel = new QLabel(u"🛈 "_s
                                         + tr("Certain files %1 require their system's ROM to play %2. "
                                              "Provide a directory where these can be found here.")
-                                              .arg(QStringLiteral("(OPL-4 VGM)"), QStringLiteral("(yrw801.rom)")),
+                                              .arg(u"(OPL-4 VGM)"_s, u"(yrw801.rom)"_s),
                                     this);
     romHintLabel->setWordWrap(true);
 
@@ -115,20 +117,20 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     layout->addWidget(buttons, row++, 0, 1, 4, Qt::AlignBottom);
     layout->setColumnStretch(2, 1);
 
-    m_loopCount->setValue(m_settings.value(QLatin1String{LoopCountSetting}, DefaultLoopCount).toInt());
-    m_fadeLength->setValue(m_settings.value(QLatin1String{FadeLengthSetting}, DefaultFadeLength).toInt());
-    m_silenceLength->setValue(m_settings.value(QLatin1String{SilenceLengthSetting}, DefaultSilenceLength).toInt());
-    m_guessTrack->setChecked(m_settings.value(QLatin1String{GuessTrackSetting}, DefaultGuessTrack).toBool());
-    m_romLocation->setText(m_settings.value(QLatin1String{RomPathSetting}).toString());
+    m_loopCount->setValue(m_settings.value(LoopCountSetting, DefaultLoopCount).toInt());
+    m_fadeLength->setValue(m_settings.value(FadeLengthSetting, DefaultFadeLength).toInt());
+    m_silenceLength->setValue(m_settings.value(SilenceLengthSetting, DefaultSilenceLength).toInt());
+    m_guessTrack->setChecked(m_settings.value(GuessTrackSetting, DefaultGuessTrack).toBool());
+    m_romLocation->setText(m_settings.value(RomPathSetting).toString());
 }
 
 void VgmInputSettings::accept()
 {
-    m_settings.setValue(QLatin1String{LoopCountSetting}, m_loopCount->value());
-    m_settings.setValue(QLatin1String{FadeLengthSetting}, m_fadeLength->value());
-    m_settings.setValue(QLatin1String{SilenceLengthSetting}, m_silenceLength->value());
-    m_settings.setValue(QLatin1String{GuessTrackSetting}, m_guessTrack->isChecked());
-    m_settings.setValue(QLatin1String{RomPathSetting}, m_romLocation->text());
+    m_settings.setValue(LoopCountSetting, m_loopCount->value());
+    m_settings.setValue(FadeLengthSetting, m_fadeLength->value());
+    m_settings.setValue(SilenceLengthSetting, m_silenceLength->value());
+    m_settings.setValue(GuessTrackSetting, m_guessTrack->isChecked());
+    m_settings.setValue(RomPathSetting, m_romLocation->text());
 
     done(Accepted);
 }

@@ -95,6 +95,7 @@
 Q_LOGGING_CATEGORY(GUI_APP, "fy.gui")
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 class GuiApplicationPrivate
@@ -359,8 +360,7 @@ void GuiApplicationPrivate::showPluginsNotFoundMessage()
     message.setIcon(QMessageBox::Warning);
     message.setText(GuiApplication::tr("Plugins not found"));
     message.setInformativeText(GuiApplication::tr("Some plugins are required for full functionality."));
-    message.setDetailedText(GuiApplication::tr("Plugin search locations:\n\n")
-                            + Core::pluginPaths().join(QStringLiteral("\n")));
+    message.setDetailedText(GuiApplication::tr("Plugin search locations:\n\n") + Core::pluginPaths().join(u"\n"_s));
 
     message.addButton(QMessageBox::Ok);
     QPushButton* quitButton = message.addButton(GuiApplication::tr("Quit"), QMessageBox::ActionRole);
@@ -515,7 +515,7 @@ void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModif
 
                          scanDialog->setValue(progress.percentage());
                          if(!progress.file.isEmpty()) {
-                             scanDialog->setText(GuiApplication::tr("Current file") + u":\n" + progress.file);
+                             scanDialog->setText(GuiApplication::tr("Current file") + ":\n"_L1 + progress.file);
                          }
                      });
 }
@@ -929,8 +929,8 @@ void GuiApplicationPrivate::createNewAutoPlaylist()
 void GuiApplicationPrivate::addFiles() const
 {
     const QString audioExtensions
-        = Utils::extensionsToWildcards(m_core->audioLoader()->supportedFileExtensions()).join(u" ");
-    const QString allExtensions = QStringLiteral("%1 %2").arg(audioExtensions, QStringLiteral("*.cue"));
+        = Utils::extensionsToWildcards(m_core->audioLoader()->supportedFileExtensions()).join(" "_L1);
+    const QString allExtensions = u"%1 %2"_s.arg(audioExtensions, u"*.cue"_s);
 
     const QString allFilter   = GuiApplication::tr("All Supported Media Files (%1)").arg(allExtensions);
     const QString filesFilter = GuiApplication::tr("Audio Files (%1)").arg(audioExtensions);
@@ -939,19 +939,19 @@ void GuiApplicationPrivate::addFiles() const
     FyStateSettings stateSettings;
 
     QUrl dir = QUrl::fromLocalFile(QDir::homePath());
-    if(const auto lastPath = stateSettings.value(QLatin1String{Settings::Gui::Internal::LastFilePath}).toString();
+    if(const auto lastPath = stateSettings.value(Settings::Gui::Internal::LastFilePath).toString();
        !lastPath.isEmpty()) {
         dir = lastPath;
     }
 
     const auto files
-        = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Add Files"), dir, filters.join(u";;"));
+        = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Add Files"), dir, filters.join(";;"_L1));
 
     if(files.empty()) {
         return;
     }
 
-    stateSettings.setValue(QLatin1String{Settings::Gui::Internal::LastFilePath}, files.front());
+    stateSettings.setValue(Settings::Gui::Internal::LastFilePath, files.front());
 
     m_playlistInteractor.filesToCurrentPlaylist(files);
 }
@@ -982,9 +982,9 @@ void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls) const
 void GuiApplicationPrivate::loadPlaylist() const
 {
     const QString allExtensions
-        = Utils::extensionsToWildcards(m_core->playlistLoader()->supportedExtensions()).join(u" ");
+        = Utils::extensionsToWildcards(m_core->playlistLoader()->supportedExtensions()).join(" "_L1);
     const auto playlistFilter
-        = Utils::extensionsToFilterList(m_core->playlistLoader()->supportedExtensions(), QStringLiteral("playlists"));
+        = Utils::extensionsToFilterList(m_core->playlistLoader()->supportedExtensions(), u"playlists"_s);
 
     const QString allFilter = GuiApplication::tr("All Supported Playlists (%1)").arg(allExtensions);
 
@@ -997,7 +997,7 @@ void GuiApplicationPrivate::loadPlaylist() const
     }
 
     const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Load Playlist"), dir,
-                                                    filters.join(u";;"));
+                                                    filters.join(";;"_L1));
 
     if(files.empty()) {
         return;
@@ -1018,7 +1018,7 @@ void GuiApplicationPrivate::savePlaylist() const
     }
 
     const QString playlistFilter
-        = Utils::extensionsToFilterList(m_core->playlistLoader()->supportedSaveExtensions(), QStringLiteral("files"));
+        = Utils::extensionsToFilterList(m_core->playlistLoader()->supportedSaveExtensions(), u"files"_s);
 
     QDir dir{QDir::homePath()};
     if(const auto lastPath = m_settings->fileValue(Settings::Gui::Internal::LastFilePath).toString();
@@ -1035,7 +1035,7 @@ void GuiApplicationPrivate::savePlaylist() const
     }
 
     FyStateSettings stateSettings;
-    stateSettings.setValue(QLatin1String{Settings::Gui::Internal::LastFilePath}, file);
+    stateSettings.setValue(Settings::Gui::Internal::LastFilePath, file);
 
     const QString extension = Utils::extensionFromFilter(selectedFilter);
     if(extension.isEmpty()) {
@@ -1044,7 +1044,7 @@ void GuiApplicationPrivate::savePlaylist() const
 
     const QFileInfo info{file};
     if(info.suffix() != extension) {
-        file.append(u"." + extension);
+        file.append("."_L1 + extension);
     }
 
     if(auto* parser = m_core->playlistLoader()->parserForExtension(extension)) {

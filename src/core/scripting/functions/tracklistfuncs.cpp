@@ -24,6 +24,8 @@
 
 #include <set>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Scripting {
 int trackCount(const TrackList& tracks)
 {
@@ -50,6 +52,6 @@ QString genres(const TrackList& tracks)
 
     const QStringList genreList{uniqueGenres.cbegin(), uniqueGenres.cend()};
 
-    return genreList.join(u" / ");
+    return genreList.join(" / "_L1);
 }
 } // namespace Fooyin::Scripting

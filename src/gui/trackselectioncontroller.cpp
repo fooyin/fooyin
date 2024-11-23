@@ -41,6 +41,8 @@
 
 #include <ranges>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto TempSelectionPlaylist = "␟TempSelectionPlaylist␟";
 
 namespace Fooyin {
@@ -361,7 +363,7 @@ void TrackSelectionControllerPrivate::sendToNewPlaylist(PlaylistAction::ActionOp
             handleActions(playlist, options);
             return;
         }
-        const QString keepActiveName = newName + QStringLiteral(" (") + tr("Playback") + QStringLiteral(")");
+        const QString keepActiveName = newName + u" ("_s + tr("Playback") + u")"_s;
 
         if(auto* keepActivePlaylist = m_playlistHandler->playlistByName(keepActiveName)) {
             m_playlistHandler->movePlaylistTracks(activePlaylist->id(), keepActivePlaylist->id());

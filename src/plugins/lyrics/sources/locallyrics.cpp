@@ -27,10 +27,12 @@
 #include <QFile>
 #include <QFileInfo>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Lyrics {
 QString LocalLyrics::name() const
 {
-    return QStringLiteral("Local Files");
+    return u"Local Files"_s;
 }
 
 bool LocalLyrics::isLocal() const

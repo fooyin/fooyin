@@ -32,6 +32,8 @@
 #include <QLineEdit>
 #include <QPlainTextEdit>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Lyrics {
 class LyricsSearchingPageWidget : public SettingsPageWidget
 {
@@ -73,11 +75,11 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
     m_matchThreshold->setRange(0, 100);
 
     int row{0};
-    paramsLayout->addWidget(new QLabel(tr("Title") + u":", this), row, 0);
+    paramsLayout->addWidget(new QLabel(tr("Title") + ":"_L1, this), row, 0);
     paramsLayout->addWidget(m_titleParam, row++, 1);
-    paramsLayout->addWidget(new QLabel(tr("Artist") + u":", this), row, 0);
+    paramsLayout->addWidget(new QLabel(tr("Artist") + ":"_L1, this), row, 0);
     paramsLayout->addWidget(m_artistParam, row++, 1);
-    paramsLayout->addWidget(new QLabel(tr("Album") + u":", this), row, 0);
+    paramsLayout->addWidget(new QLabel(tr("Album") + ":"_L1, this), row, 0);
     paramsLayout->addWidget(m_albumParam, row++, 1);
     paramsLayout->addWidget(m_matchThreshold, row++, 0, 1, 2);
 

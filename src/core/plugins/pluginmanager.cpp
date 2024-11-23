@@ -28,6 +28,8 @@
 #include <QDir>
 #include <QLibrary>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PluginManager::PluginManager(SettingsManager* settings)
     : m_settings{settings}
@@ -64,7 +66,7 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
 
             const QPluginLoader pluginLoader{filepath};
             auto metaData = pluginLoader.metaData();
-            if (metaData.empty() || !metaData.contains(u"MetaData")) {
+            if(metaData.empty() || !metaData.contains("MetaData"_L1)) {
                 continue;
             }
 
@@ -92,7 +94,7 @@ bool PluginManager::installPlugin(const QString& filepath)
     QFile pluginFile{filepath};
     const QFileInfo fileInfo{filepath};
 
-    const QString newPlugin = Core::userPluginsPath() + QStringLiteral("/") + fileInfo.fileName();
+    const QString newPlugin = Core::userPluginsPath() + u"/"_s + fileInfo.fileName();
     return pluginFile.copy(newPlugin);
 }
 

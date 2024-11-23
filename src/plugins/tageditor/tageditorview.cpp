@@ -37,6 +37,8 @@
 #include <QKeyEvent>
 #include <QMenu>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::TagEditor {
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{actionManager, parent}
@@ -90,9 +92,9 @@ void TagEditorView::setupActions()
 
     m_pasteFields->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_V);
     QObject::connect(QApplication::clipboard(), &QClipboard::changed, this,
-                     [this]() { m_pasteFields->setEnabled(QApplication::clipboard()->text().contains(u" : ")); });
+                     [this]() { m_pasteFields->setEnabled(QApplication::clipboard()->text().contains(" : "_L1)); });
     QObject::connect(m_pasteFields, &QAction::triggered, this, [this]() { pasteSelection(true); });
-    m_pasteFields->setEnabled(QApplication::clipboard()->text().contains(u" : "));
+    m_pasteFields->setEnabled(QApplication::clipboard()->text().contains(" : "_L1));
 }
 
 void TagEditorView::setRatingRow(int row)
@@ -212,10 +214,10 @@ void TagEditorView::copySelection()
     for(const auto& index : selected) {
         const QString value = index.siblingAtColumn(1).data(TagEditorItem::Title).toString();
         const QString field = index.siblingAtColumn(0).data(TagEditorItem::Title).toString();
-        fields.emplace_back(field + u" : " + value);
+        fields.emplace_back(field + " : "_L1 + value);
     }
 
-    QApplication::clipboard()->setText(fields.join(u"\n\r"));
+    QApplication::clipboard()->setText(fields.join("\n\r"_L1));
 }
 
 void TagEditorView::pasteSelection(bool match)
@@ -228,8 +230,8 @@ void TagEditorView::pasteSelection(bool match)
     std::map<QString, QString> values;
 
     const QString text      = QApplication::clipboard()->text();
-    const QStringList pairs = text.split(QStringLiteral("\n\r"), Qt::SkipEmptyParts);
-    const QString delimiter = QStringLiteral(" : ");
+    const QStringList pairs = text.split(u"\n\r"_s, Qt::SkipEmptyParts);
+    const QString delimiter = u" : "_s;
 
     for(int i{0}; const QString& pair : pairs) {
         if(pair.contains(delimiter)) {

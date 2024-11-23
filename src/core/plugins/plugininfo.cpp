@@ -24,18 +24,20 @@
 
 #include <QPluginLoader>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PluginInfo::PluginInfo(QString filepath, const QJsonObject& allMetadata)
     : m_filepath{std::move(filepath)}
-    , m_metadata{allMetadata.value(u"MetaData").toObject()}
-    , m_name{m_metadata.value(u"Name").toString()}
-    , m_version{m_metadata.value(u"Version").toString()}
-    , m_author{m_metadata.value(u"Author").toString()}
-    , m_copyright{m_metadata.value(u"Copyright").toString()}
-    , m_license{Utils::readMultiLineString(m_metadata.value(u"License"))}
-    , m_category{m_metadata.value(u"Category").toString().split(u'.', Qt::SkipEmptyParts)}
-    , m_description{m_metadata.value(u"Description").toString()}
-    , m_url{m_metadata.value(u"Url").toString()}
+    , m_metadata{allMetadata.value("MetaData"_L1).toObject()}
+    , m_name{m_metadata.value("Name"_L1).toString()}
+    , m_version{m_metadata.value("Version"_L1).toString()}
+    , m_author{m_metadata.value("Author"_L1).toString()}
+    , m_copyright{m_metadata.value("Copyright"_L1).toString()}
+    , m_license{Utils::readMultiLineString(m_metadata.value("License"_L1))}
+    , m_category{m_metadata.value("Category"_L1).toString().split(u'.', Qt::SkipEmptyParts)}
+    , m_description{m_metadata.value("Description"_L1).toString()}
+    , m_url{m_metadata.value("Url"_L1).toString()}
     , m_status{Status::Read}
     , m_isDisabled{false}
     , m_root{nullptr}
@@ -47,7 +49,7 @@ PluginInfo::PluginInfo(QString filepath, const QJsonObject& allMetadata)
 void PluginInfo::load()
 {
     if(!m_loader.load()) {
-        m_error  = QStringLiteral("Plugin (%1) couldn't be loaded: %2").arg(m_name, m_error);
+        m_error  = u"Plugin (%1) couldn't be loaded: %2"_s.arg(m_name, m_error);
         m_status = Status::Invalid;
         return;
     }
@@ -56,7 +58,7 @@ void PluginInfo::load()
     m_plugin = qobject_cast<Plugin*>(m_root);
 
     if(!m_plugin) {
-        m_error  = QStringLiteral("Plugin (%1) does not subclass 'Fooyin::Plugin'").arg(m_name);
+        m_error  = u"Plugin (%1) does not subclass 'Fooyin::Plugin'"_s.arg(m_name);
         m_status = Status::Invalid;
         return;
     }
@@ -121,7 +123,7 @@ QString PluginInfo::author() const
 
 QString PluginInfo::identifier() const
 {
-    return QString{m_author + u"." + m_name}.simplified().replace(QLatin1String(" "), QString{}).toLower();
+    return QString{m_author + "."_L1 + m_name}.simplified().replace(QLatin1String(" "), QString{}).toLower();
 }
 
 QStringList PluginInfo::category() const

@@ -22,10 +22,12 @@
 #include "gmeinput.h"
 #include "gmesettings.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Gme {
 QString GmePlugin::inputName() const
 {
-    return QStringLiteral("Game Music Emu");
+    return u"Game Music Emu"_s;
 }
 
 InputCreator GmePlugin::inputCreator() const

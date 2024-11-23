@@ -31,6 +31,8 @@
 #include <chrono>
 #include <ranges>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto MaxStarCount   = 10;
 constexpr auto YearRegex      = R"lit(\b\d{4}\b)lit";
 constexpr auto YearMonthRegex = R"lit(\b(\d{4})-(\d{2})\b)lit";
@@ -149,14 +151,14 @@ public:
 
 void TrackPrivate::splitArchiveUrl()
 {
-    QString path = filepath.mid(filepath.indexOf(u"://") + 3);
+    QString path = filepath.mid(filepath.indexOf("://"_L1) + 3);
     path         = path.mid(path.indexOf(u'|') + 1);
 
     const auto lengthEndIndex   = path.indexOf(u'|');
     const int archivePathLength = path.left(lengthEndIndex).toInt();
     path                        = path.mid(lengthEndIndex + 1);
 
-    const QString filePrefix = QStringLiteral("file://");
+    const QString filePrefix = u"file://"_s;
     path                     = path.sliced(filePrefix.length());
 
     archivePath           = path.left(archivePathLength);
@@ -166,7 +168,7 @@ void TrackPrivate::splitArchiveUrl()
     filename  = info.completeBaseName();
     extension = info.suffix().toLower();
     directory = info.dir().dirName();
-    if(directory == u".") {
+    if(directory == "."_L1) {
         directory = QFileInfo{archivePath}.fileName();
     }
 }
@@ -213,7 +215,7 @@ QString Track::generateHash()
         title = p->directory + p->filename;
     }
 
-    p->hash = Utils::generateHash(p->artists.join(QStringLiteral(",")), p->album, p->discNumber, p->trackNumber, title,
+    p->hash = Utils::generateHash(p->artists.join(","_L1), p->album, p->discNumber, p->trackNumber, title,
                                   QString::number(p->subsong));
     return p->hash;
 }
@@ -305,10 +307,10 @@ QString Track::albumHash() const
         hash.append(p->date);
     }
     if(!p->albumArtists.isEmpty()) {
-        hash.append(p->albumArtists.join(QStringLiteral(",")));
+        hash.append(p->albumArtists.join(","_L1));
     }
     if(!p->artists.isEmpty()) {
-        hash.append(p->artists.join(QStringLiteral(",")));
+        hash.append(p->artists.join(","_L1));
     }
 
     if(!p->album.isEmpty()) {
@@ -318,7 +320,7 @@ QString Track::albumHash() const
         hash.append(p->directory);
     }
 
-    return hash.join(QStringLiteral("|"));
+    return hash.join("|"_L1);
 }
 
 QString Track::filepath() const
@@ -340,7 +342,7 @@ QString Track::uniqueFilepath() const
 QString Track::prettyFilepath() const
 {
     if(isInArchive()) {
-        return archivePath() + u"/" + pathInArchive();
+        return archivePath() + "/"_L1 + pathInArchive();
     }
 
     return p->filepath;
@@ -446,10 +448,10 @@ QString Track::effectiveAlbumArtist(bool useVarious) const
     if(!albumArtists().empty()) {
         return albumArtist();
     }
-    if(useVarious && hasExtraTag(QStringLiteral("COMPILATION"))) {
-        const auto compilation = extraTag(QStringLiteral("COMPILATION"));
+    if(useVarious && hasExtraTag(u"COMPILATION"_s)) {
+        const auto compilation = extraTag(u"COMPILATION"_s);
         if(!compilation.empty() && compilation.front().toInt() == 1) {
-            return QStringLiteral("Various Artists");
+            return u"Various Artists"_s;
         }
     }
     if(!artists().empty()) {
@@ -593,7 +595,7 @@ QString Track::cuePath() const
 
 bool Track::isArchivePath(const QString& path)
 {
-    return path.startsWith(u"unpack://");
+    return path.startsWith("unpack://"_L1);
 }
 
 bool Track::isMultiValueTag(const QString& tag)
@@ -670,7 +672,7 @@ QMap<QString, QString> Track::metadata() const
         }
         if constexpr(std::is_same_v<T, QStringList>) {
             if(!field.isEmpty()) {
-                map[title] = field.join(u"; ");
+                map[title] = field.join("; "_L1);
             }
         }
     };
@@ -1169,7 +1171,7 @@ QString Track::techInfo(const QString& name) const
         {QString::fromLatin1(Codec),        [](const Track& track) { return track.codec(); }},
         {QString::fromLatin1(CodecProfile), [](const Track& track) { return track.codecProfile(); }},
         {QString::fromLatin1(Tool),         [](const Track& track) { return track.tool(); }},
-        {QString::fromLatin1(Encoding),     [](const Track& track) { return track.tagType(QStringLiteral(",")); }},
+        {QString::fromLatin1(Encoding),     [](const Track& track) { return track.tagType(u","_s); }},
         {QString::fromLatin1(TagType),      [](const Track& track) { return track.encoding(); }},
         {QString::fromLatin1(SampleRate),   [validNum](const Track& track) { return validNum(track.sampleRate()); }},
         {QString::fromLatin1(Bitrate),      [validNum](const Track& track) { return validNum(track.bitrate()); }},
@@ -1454,12 +1456,12 @@ QString Track::findCommonField(const TrackList& tracks)
     const bool sameAlbum = hasSameField(primaryAlbum, &Track::album);
 
     if(sameArtist) {
-        primaryArtist.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
+        primaryArtist.replace(QLatin1String{Constants::UnitSeparator}, ", "_L1);
     }
 
     if(sameAlbum) {
         if(sameArtist) {
-            return QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
+            return u"%1 - %2"_s.arg(primaryArtist, primaryAlbum);
         }
         return primaryAlbum;
     }
@@ -1470,7 +1472,7 @@ QString Track::findCommonField(const TrackList& tracks)
 
     const bool sameGenre = hasSameField(primaryGenre, &Track::genre);
     if(sameGenre) {
-        primaryGenre.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
+        primaryGenre.replace(QLatin1String{Constants::UnitSeparator}, ", "_L1);
         return primaryGenre;
     }
 
@@ -1493,30 +1495,15 @@ TrackIds Track::trackIdsForTracks(const TrackList& tracks)
 
 QStringList Track::supportedMimeTypes()
 {
-    static const QStringList supportedTypes = {QStringLiteral("audio/ogg"),
-                                               QStringLiteral("audio/x-vorbis+ogg"),
-                                               QStringLiteral("audio/mpeg"),
-                                               QStringLiteral("audio/mpeg3"),
-                                               QStringLiteral("audio/x-mpeg"),
-                                               QStringLiteral("audio/x-aiff"),
-                                               QStringLiteral("audio/x-aifc"),
-                                               QStringLiteral("audio/vnd.wave"),
-                                               QStringLiteral("audio/wav"),
-                                               QStringLiteral("audio/x-wav"),
-                                               QStringLiteral("audio/x-musepack"),
-                                               QStringLiteral("audio/x-ape"),
-                                               QStringLiteral("audio/x-wavpack"),
-                                               QStringLiteral("audio/mp4"),
-                                               QStringLiteral("audio/vnd.audible.aax"),
-                                               QStringLiteral("audio/flac"),
-                                               QStringLiteral("audio/ogg"),
-                                               QStringLiteral("audio/x-vorbis+ogg"),
-                                               QStringLiteral("application/ogg"),
-                                               QStringLiteral("audio/opus"),
-                                               QStringLiteral("audio/x-opus+ogg"),
-                                               QStringLiteral("audio/x-ms-wma"),
-                                               QStringLiteral("video/x-ms-asf"),
-                                               QStringLiteral("application/vnd.ms-asf")};
+    static const QStringList supportedTypes
+        = {u"audio/ogg"_s,       u"audio/x-vorbis+ogg"_s, u"audio/mpeg"_s,
+           u"audio/mpeg3"_s,     u"audio/x-mpeg"_s,       u"audio/x-aiff"_s,
+           u"audio/x-aifc"_s,    u"audio/vnd.wave"_s,     u"audio/wav"_s,
+           u"audio/x-wav"_s,     u"audio/x-musepack"_s,   u"audio/x-ape"_s,
+           u"audio/x-wavpack"_s, u"audio/mp4"_s,          u"audio/vnd.audible.aax"_s,
+           u"audio/flac"_s,      u"audio/ogg"_s,          u"audio/x-vorbis+ogg"_s,
+           u"application/ogg"_s, u"audio/opus"_s,         u"audio/x-opus+ogg"_s,
+           u"audio/x-ms-wma"_s,  u"video/x-ms-asf"_s,     u"application/vnd.ms-asf"_s};
     return supportedTypes;
 }
 

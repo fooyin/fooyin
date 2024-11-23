@@ -35,6 +35,8 @@
 
 #include <QMenu>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::TagEditor {
 void TagEditorPlugin::initialise(const CorePluginContext& context)
 {
@@ -55,10 +57,9 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
     m_fieldsPage = new TagEditorFieldsPage(m_registry, m_actionManager, m_settings, this);
 
     // m_widgetProvider->registerWidget(
-    //     QStringLiteral("TagEditor"), [this]() { return createEditor(); }, QStringLiteral("Tag Editor"));
+    //     u"TagEditor"_s, [this]() { return createEditor(); }, u"Tag Editor"_s);
 
-    m_propertiesDialog->insertTab(0, QStringLiteral("Metadata"),
-                                  [this](const TrackList& tracks) { return createEditor(tracks); });
+    m_propertiesDialog->insertTab(0, u"Metadata"_s, [this](const TrackList& tracks) { return createEditor(tracks); });
 }
 
 void TagEditorPlugin::shutdown()

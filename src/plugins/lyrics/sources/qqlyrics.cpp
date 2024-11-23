@@ -28,6 +28,8 @@
 #include <QUrl>
 #include <QUrlQuery>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto SearchUrl = "https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg";
 constexpr auto LyricUrl  = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg";
 
@@ -43,7 +45,7 @@ QNetworkRequest setupRequest(const char* url)
 namespace Fooyin::Lyrics {
 QString QQLyrics::name() const
 {
-    return QStringLiteral("QQ Music");
+    return u"QQ Music"_s;
 }
 
 void QQLyrics::search(const SearchParams& params)
@@ -52,13 +54,13 @@ void QQLyrics::search(const SearchParams& params)
     m_data.clear();
 
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(QStringLiteral("key"), QStringLiteral("%1+%2").arg(params.artist, params.title));
-    urlQuery.addQueryItem(QStringLiteral("inCharset"), QStringLiteral("utf-8"));
-    urlQuery.addQueryItem(QStringLiteral("outCharset"), QStringLiteral("utf-8"));
+    urlQuery.addQueryItem(u"key"_s, u"%1+%2"_s.arg(params.artist, params.title));
+    urlQuery.addQueryItem(u"inCharset"_s, u"utf-8"_s);
+    urlQuery.addQueryItem(u"outCharset"_s, u"utf-8"_s);
 
     const QNetworkRequest req = setupRequest(SearchUrl);
 
-    qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{SearchUrl}).arg(urlQuery.toString());
+    qCDebug(LYRICS) << u"Sending request: %1?%2"_s.arg(QLatin1String{SearchUrl}).arg(urlQuery.toString());
 
     setReply(network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8()));
     QObject::connect(reply(), &QNetworkReply::finished, this, &QQLyrics::handleSearchReply);
@@ -75,9 +77,9 @@ void QQLyrics::handleSearchReply()
 
     resetReply();
 
-    const QJsonObject dataObj  = obj.value(u"data").toObject();
-    const QJsonObject songObj  = dataObj.value(u"song").toObject();
-    const QJsonArray songArray = songObj.value(u"itemlist").toArray();
+    const QJsonObject dataObj  = obj.value("data"_L1).toObject();
+    const QJsonObject songObj  = dataObj.value("song"_L1).toObject();
+    const QJsonArray songArray = songObj.value("itemlist"_L1).toArray();
 
     if(songArray.isEmpty()) {
         emit searchResult({});
@@ -86,11 +88,11 @@ void QQLyrics::handleSearchReply()
 
     for(const auto& song : songArray) {
         const QJsonObject songItem = song.toObject();
-        if(songItem.contains(u"mid")) {
+        if(songItem.contains("mid"_L1)) {
             LyricData songData;
-            songData.id     = songItem.value(u"mid").toString();
-            songData.title  = songItem.value(u"name").toString();
-            songData.artist = songItem.value(u"singer").toString();
+            songData.id     = songItem.value("mid"_L1).toString();
+            songData.title  = songItem.value("name"_L1).toString();
+            songData.artist = songItem.value("singer"_L1).toString();
 
             m_data.push_back(songData);
         }
@@ -108,16 +110,16 @@ void QQLyrics::handleSearchReply()
 void QQLyrics::makeLyricRequest()
 {
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(QStringLiteral("songmid"), m_currentData->id);
-    urlQuery.addQueryItem(QStringLiteral("inCharset"), QStringLiteral("utf-8"));
-    urlQuery.addQueryItem(QStringLiteral("outCharset"), QStringLiteral("utf-8"));
-    urlQuery.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
-    urlQuery.addQueryItem(QStringLiteral("nobase64"), QStringLiteral("1"));
-    urlQuery.addQueryItem(QStringLiteral("g_tk"), QStringLiteral("5381"));
+    urlQuery.addQueryItem(u"songmid"_s, m_currentData->id);
+    urlQuery.addQueryItem(u"inCharset"_s, u"utf-8"_s);
+    urlQuery.addQueryItem(u"outCharset"_s, u"utf-8"_s);
+    urlQuery.addQueryItem(u"format"_s, u"json"_s);
+    urlQuery.addQueryItem(u"nobase64"_s, u"1"_s);
+    urlQuery.addQueryItem(u"g_tk"_s, u"5381"_s);
 
     const QNetworkRequest req = setupRequest(LyricUrl);
 
-    qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{LyricUrl}).arg(urlQuery.toString());
+    qCDebug(LYRICS) << u"Sending request: %1?%2"_s.arg(QLatin1String{LyricUrl}).arg(urlQuery.toString());
 
     setReply(network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8()));
     QObject::connect(reply(), &QNetworkReply::finished, this, &QQLyrics::handleLyricReply);
@@ -129,7 +131,7 @@ void QQLyrics::handleLyricReply()
     if(getJsonFromReply(reply(), &obj)) {
         resetReply();
 
-        const QString lyrics = obj.value(u"lyric").toString();
+        const QString lyrics = obj.value("lyric"_L1).toString();
         if(!lyrics.isEmpty()) {
             m_currentData->data = lyrics;
         }

@@ -40,6 +40,8 @@
 #include <QRadioButton>
 #include <QTableView>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class DirBrowserPageWidget : public SettingsPageWidget
 {
@@ -85,9 +87,9 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + QStringLiteral(":"), this), 0, 0);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + ":"_L1, this), 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + QStringLiteral(":"), this), 1, 0);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + ":"_L1, this), 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
     clickBehaviourLayout->setColumnStretch(2, 1);

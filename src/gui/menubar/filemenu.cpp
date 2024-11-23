@@ -32,8 +32,9 @@
 #include <QAction>
 #include <QApplication>
 
-namespace Fooyin {
+using namespace Qt::StringLiterals;
 
+namespace Fooyin {
 FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
@@ -99,7 +100,7 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     fileMenu->addSeparator();
 
     auto* quit = new QAction(Utils::iconFromTheme(Constants::Icons::Quit), tr("&Quit"), this);
-    quit->setStatusTip(tr("Quit %1").arg(QStringLiteral("fooyin")));
+    quit->setStatusTip(tr("Quit %1").arg(u"fooyin"_s));
     auto* quitCommand = m_actionManager->registerAction(quit, Constants::Actions::Exit);
     quitCommand->setCategories(fileCategory);
     quitCommand->setDefaultShortcut(QKeySequence::Quit);

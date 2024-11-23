@@ -28,25 +28,27 @@
 
 Q_LOGGING_CATEGORY(FILTERS, "fy.filters")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Filters {
 FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
     using namespace Settings::Filters;
 
-    m_settings->createSetting<FilterAltColours>(false, QStringLiteral("Filters/AlternatingColours"));
-    m_settings->createSetting<FilterHeader>(true, QStringLiteral("Filters/Header"));
-    m_settings->createSetting<FilterScrollBar>(true, QStringLiteral("Filters/Scrollbar"));
-    m_settings->createSetting<FilterDoubleClick>(1, QStringLiteral("Filters/DoubleClickBehaviour"));
-    m_settings->createSetting<FilterMiddleClick>(0, QStringLiteral("Filters/MiddleClickBehaviour"));
-    m_settings->createSetting<FilterPlaylistEnabled>(true, QStringLiteral("Filters/SelectionPlaylistEnabled"));
-    m_settings->createSetting<FilterAutoSwitch>(true, QStringLiteral("Filters/AutoSwitchSelectionPlaylist"));
+    m_settings->createSetting<FilterAltColours>(false, u"Filters/AlternatingColours"_s);
+    m_settings->createSetting<FilterHeader>(true, u"Filters/Header"_s);
+    m_settings->createSetting<FilterScrollBar>(true, u"Filters/Scrollbar"_s);
+    m_settings->createSetting<FilterDoubleClick>(1, u"Filters/DoubleClickBehaviour"_s);
+    m_settings->createSetting<FilterMiddleClick>(0, u"Filters/MiddleClickBehaviour"_s);
+    m_settings->createSetting<FilterPlaylistEnabled>(true, u"Filters/SelectionPlaylistEnabled"_s);
+    m_settings->createSetting<FilterAutoSwitch>(true, u"Filters/AutoSwitchSelectionPlaylist"_s);
     m_settings->createSetting<FilterAutoPlaylist>(FilterController::defaultPlaylistName(),
-                                                  QStringLiteral("Filters/SelectionPlaylistName"));
-    m_settings->createSetting<FilterRowHeight>(0, QStringLiteral("Filters/RowHeight"));
-    m_settings->createSetting<FilterSendPlayback>(true, QStringLiteral("Filters/StartPlaybackOnSend"));
-    m_settings->createSetting<FilterKeepAlive>(false, QStringLiteral("Filters/KeepAlive"));
-    m_settings->createSetting<FilterIconSize>(QSize{100, 100}, QStringLiteral("Filters/IconSize"));
+                                                  u"Filters/SelectionPlaylistName"_s);
+    m_settings->createSetting<FilterRowHeight>(0, u"Filters/RowHeight"_s);
+    m_settings->createSetting<FilterSendPlayback>(true, u"Filters/StartPlaybackOnSend"_s);
+    m_settings->createSetting<FilterKeepAlive>(false, u"Filters/KeepAlive"_s);
+    m_settings->createSetting<FilterIconSize>(QSize{100, 100}, u"Filters/IconSize"_s);
 }
 } // namespace Fooyin::Filters
 

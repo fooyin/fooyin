@@ -26,6 +26,8 @@
 #include <QRegularExpression>
 #include <QStyle>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto MessageSplit = R"lit(([^:]+): (.+))lit";
 
 namespace {
@@ -94,15 +96,15 @@ QString LogModel::typeToString(QtMsgType type)
 {
     switch(type) {
         case(QtDebugMsg):
-            return QStringLiteral("Debug");
+            return u"Debug"_s;
         case(QtInfoMsg):
-            return QStringLiteral("Info");
+            return u"Info"_s;
         case(QtWarningMsg):
-            return QStringLiteral("Warning");
+            return u"Warning"_s;
         case(QtCriticalMsg):
-            return QStringLiteral("Critical");
+            return u"Critical"_s;
         case(QtFatalMsg):
-            return QStringLiteral("Fatal");
+            return u"Fatal"_s;
         default:
             return {};
     }

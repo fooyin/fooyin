@@ -32,6 +32,8 @@
 #include <QNetworkRequest>
 #include <QUrlQuery>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto ApiUrl    = "https://ws.audioscrobbler.com/2.0/";
 constexpr auto ApiKey    = "YjJkNTdjOTc4YTIyYmUyNzljYzNiZTZkNjc2MjdmZWE=";
 constexpr auto ApiSecret = "ODYzZDBiNWI0M2I2NmQ1MmVkOTU4NGFiOWJiZTc3MDY=";
@@ -82,12 +84,12 @@ LastFmService::LastFmService(NetworkAccessManager* network, SettingsManager* set
 
 QString LastFmService::name() const
 {
-    return QStringLiteral("LastFM");
+    return u"LastFM"_s;
 }
 
 QUrl LastFmService::authUrl() const
 {
-    return QStringLiteral("https://www.last.fm/api/auth/");
+    return u"https://www.last.fm/api/auth/"_s;
 }
 
 QString LastFmService::username() const
@@ -104,8 +106,8 @@ void LastFmService::loadSession()
 {
     FySettings settings;
     settings.beginGroup(name());
-    m_username   = settings.value(QLatin1String{"Username"}).toString();
-    m_sessionKey = settings.value(QLatin1String{"SessionKey"}).toString();
+    m_username   = settings.value("Username").toString();
+    m_sessionKey = settings.value("SessionKey").toString();
     settings.endGroup();
 }
 
@@ -116,8 +118,8 @@ void LastFmService::logout()
 
     FySettings settings;
     settings.beginGroup(name());
-    settings.remove(QLatin1String{"Username"});
-    settings.remove(QLatin1String{"SessionKey"});
+    settings.remove("Username");
+    settings.remove("SessionKey");
     settings.endGroup();
 }
 
@@ -127,18 +129,18 @@ void LastFmService::updateNowPlaying()
 
     const Track track = currentTrack();
 
-    std::map<QString, QString> params = {{QStringLiteral("method"), QStringLiteral("track.updateNowPlaying")},
-                                         {QStringLiteral("artist"), preferAlbumArtist && !track.albumArtists().empty()
-                                                                        ? track.albumArtists().join(u", ")
-                                                                        : track.artists().join(u", ")},
-                                         {QStringLiteral("track"), track.title()}};
+    std::map<QString, QString> params
+        = {{u"method"_s, u"track.updateNowPlaying"_s},
+           {u"artist"_s, preferAlbumArtist && !track.albumArtists().empty() ? track.albumArtists().join(", "_L1)
+                                                                            : track.artists().join(", "_L1)},
+           {u"track"_s, track.title()}};
 
     if(!track.album().isEmpty()) {
-        params.emplace(QStringLiteral("album"), track.album());
+        params.emplace(u"album"_s, track.album());
     }
 
     if(!preferAlbumArtist && !track.albumArtist().isEmpty()) {
-        params.emplace(QStringLiteral("albumArtist"), track.albumArtists().join(u','));
+        params.emplace(u"albumArtist"_s, track.albumArtists().join(u','));
     }
 
     QNetworkReply* reply = createRequest(params);
@@ -151,9 +153,9 @@ void LastFmService::submit()
         return;
     }
 
-    qCDebug(SCROBBLER) << QLatin1String{"Submitting scrobbles (%1)"}.arg(name());
+    qCDebug(SCROBBLER) << "Submitting scrobbles (%1)"_L1.arg(name());
 
-    std::map<QString, QString> params{{QStringLiteral("method"), QStringLiteral("track.scrobble")}};
+    std::map<QString, QString> params{{u"method"_s, u"track.scrobble"_s}};
 
     const bool preferAlbumArtist = settings()->value<Settings::Scrobbler::PreferAlbumArtist>();
     const CacheItemList items    = cache()->items();
@@ -170,19 +172,19 @@ void LastFmService::submit()
 
         const auto artist = preferAlbumArtist && !md.albumArtist.isEmpty() ? md.albumArtist : item->metadata.artist;
 
-        params.emplace(QStringLiteral("track[%1]").arg(i), md.title);
-        params.emplace(QStringLiteral("artist[%1]").arg(i), artist);
-        params.emplace(QStringLiteral("duration[%1]").arg(i), QString::number(md.duration));
-        params.emplace(QStringLiteral("timestamp[%1]").arg(i), QString::number(item->timestamp));
+        params.emplace(u"track[%1]"_s.arg(i), md.title);
+        params.emplace(u"artist[%1]"_s.arg(i), artist);
+        params.emplace(u"duration[%1]"_s.arg(i), QString::number(md.duration));
+        params.emplace(u"timestamp[%1]"_s.arg(i), QString::number(item->timestamp));
 
         if(!md.album.isEmpty()) {
-            params.emplace(QStringLiteral("album[%1]").arg(i), md.album);
+            params.emplace(u"album[%1]"_s.arg(i), md.album);
         }
         if(!preferAlbumArtist && !md.albumArtist.isEmpty()) {
-            params.emplace(QStringLiteral("albumArtist[%1]").arg(i), md.albumArtist);
+            params.emplace(u"albumArtist[%1]"_s.arg(i), md.albumArtist);
         }
         if(!md.trackNum.isEmpty()) {
-            params.emplace(QStringLiteral("trackNumber[%1]").arg(i), md.trackNum);
+            params.emplace(u"trackNumber[%1]"_s.arg(i), md.trackNum);
         }
         if(sentItems.size() >= MaxScrobblesPerRequest) {
             break;
@@ -203,8 +205,8 @@ void LastFmService::submit()
 
 void LastFmService::setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query)
 {
-    query.addQueryItem(QStringLiteral("api_key"), m_apiKey);
-    query.addQueryItem(QStringLiteral("cb"), session->callbackUrl());
+    query.addQueryItem(u"api_key"_s, m_apiKey);
+    query.addQueryItem(u"cb"_s, session->callbackUrl());
 }
 
 void LastFmService::requestAuth(const QString& token)
@@ -212,9 +214,9 @@ void LastFmService::requestAuth(const QString& token)
     QUrl url{QString::fromLatin1(ApiUrl)};
 
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(QStringLiteral("api_key"), m_apiKey);
-    urlQuery.addQueryItem(QStringLiteral("method"), QStringLiteral("auth.getSession"));
-    urlQuery.addQueryItem(QStringLiteral("token"), token);
+    urlQuery.addQueryItem(u"api_key"_s, m_apiKey);
+    urlQuery.addQueryItem(u"method"_s, u"auth.getSession"_s);
+    urlQuery.addQueryItem(u"token"_s, token);
 
     QString data;
     const auto items = urlQuery.queryItems();
@@ -226,9 +228,9 @@ void LastFmService::requestAuth(const QString& token)
     const QByteArray digest = QCryptographicHash::hash(data.toUtf8(), QCryptographicHash::Md5);
     const QString signature = QString::fromLatin1(digest.toHex()).rightJustified(32, u'0').toLower();
 
-    urlQuery.addQueryItem(QStringLiteral("api_sig"), signature);
-    urlQuery.addQueryItem(QString::fromLatin1(QUrl::toPercentEncoding(QStringLiteral("format"))),
-                          QString::fromLatin1(QUrl::toPercentEncoding(QStringLiteral("json"))));
+    urlQuery.addQueryItem(u"api_sig"_s, signature);
+    urlQuery.addQueryItem(QString::fromLatin1(QUrl::toPercentEncoding(u"format"_s)),
+                          QString::fromLatin1(QUrl::toPercentEncoding(u"json"_s)));
     url.setQuery(urlQuery);
 
     QNetworkRequest req{url};
@@ -250,12 +252,12 @@ void LastFmService::authFinished(QNetworkReply* reply)
         return;
     }
 
-    if(!obj.contains(u"session")) {
+    if(!obj.contains("session"_L1)) {
         handleAuthError("Json reply from server is missing session");
         return;
     }
 
-    const QJsonValue session = obj.value(u"session");
+    const QJsonValue session = obj.value("session"_L1);
     if(!session.isObject()) {
         handleAuthError("Json session is not an object");
         return;
@@ -267,18 +269,18 @@ void LastFmService::authFinished(QNetworkReply* reply)
         return;
     }
 
-    if(!obj.contains(u"name") || !obj.contains(u"key")) {
+    if(!obj.contains("name"_L1) || !obj.contains("key"_L1)) {
         handleAuthError("Json session object is missing values");
         return;
     }
 
-    m_username   = obj.value(u"name").toString();
-    m_sessionKey = obj.value(u"key").toString();
+    m_username   = obj.value("name"_L1).toString();
+    m_sessionKey = obj.value("key"_L1).toString();
 
     FySettings settings;
     settings.beginGroup(name());
-    settings.setValue(QLatin1String{"Username"}, m_username);
-    settings.setValue(QLatin1String{"SessionKey"}, m_sessionKey);
+    settings.setValue("Username", m_username);
+    settings.setValue("SessionKey", m_sessionKey);
     settings.endGroup();
 
     emit authenticationFinished(true);
@@ -295,22 +297,22 @@ ScrobblerService::ReplyResult LastFmService::getJsonFromReply(QNetworkReply* rep
             replyResult = ReplyResult::Success;
         }
         else {
-            *errorDesc = QStringLiteral("Received HTTP code %1")
-                             .arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+            *errorDesc
+                = u"Received HTTP code %1"_s.arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
         }
     }
     else {
-        *errorDesc = QStringLiteral("%1 (%2)").arg(reply->errorString()).arg(reply->error());
+        *errorDesc = u"%1 (%2)"_s.arg(reply->errorString()).arg(reply->error());
     }
 
     if(reply->error() == QNetworkReply::NoError || reply->error() >= 200) {
         const QByteArray data = reply->readAll();
         int errorCode{0};
 
-        if(!data.isEmpty() && extractJsonObj(data, obj, errorDesc) && obj->contains(u"error")
-           && obj->contains(u"message")) {
-            errorCode   = obj->value(u"error").toInt();
-            *errorDesc  = QStringLiteral("%1 (%2)").arg(obj->value(u"message").toString()).arg(errorCode);
+        if(!data.isEmpty() && extractJsonObj(data, obj, errorDesc) && obj->contains("error"_L1)
+           && obj->contains("message"_L1)) {
+            errorCode   = obj->value("error"_L1).toInt();
+            *errorDesc  = u"%1 (%2)"_s.arg(obj->value("message"_L1).toString()).arg(errorCode);
             replyResult = ReplyResult::ApiError;
         }
 
@@ -327,9 +329,8 @@ ScrobblerService::ReplyResult LastFmService::getJsonFromReply(QNetworkReply* rep
 
 QNetworkReply* LastFmService::createRequest(const std::map<QString, QString>& params)
 {
-    std::map<QString, QString> queryParams{{QStringLiteral("api_key"), m_apiKey},
-                                           {QStringLiteral("sk"), m_sessionKey},
-                                           {QStringLiteral("lang"), QLocale{}.name().left(2).toLower()}};
+    std::map<QString, QString> queryParams{
+        {u"api_key"_s, m_apiKey}, {u"sk"_s, m_sessionKey}, {u"lang"_s, QLocale{}.name().left(2).toLower()}};
     queryParams.insert(params.cbegin(), params.cend());
 
     QUrlQuery queryUrl;
@@ -345,13 +346,13 @@ QNetworkReply* LastFmService::createRequest(const std::map<QString, QString>& pa
     const QByteArray digest = QCryptographicHash::hash(data.toUtf8(), QCryptographicHash::Md5);
     const QString signature = QString::fromLatin1(digest.toHex()).rightJustified(32, u'0').toLower();
 
-    queryUrl.addQueryItem(QStringLiteral("api_sig"), QString::fromLatin1(QUrl::toPercentEncoding(signature)));
-    queryUrl.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
+    queryUrl.addQueryItem(u"api_sig"_s, QString::fromLatin1(QUrl::toPercentEncoding(signature)));
+    queryUrl.addQueryItem(u"format"_s, u"json"_s);
 
     const QUrl url{QString::fromLatin1(ApiUrl)};
     QNetworkRequest req(url);
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
+    req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
 
     const QByteArray query = queryUrl.toString(QUrl::FullyEncoded).toUtf8();
 
@@ -374,7 +375,7 @@ void LastFmService::updateNowPlayingFinished(QNetworkReply* reply)
         return;
     }
 
-    if(!obj.contains(u"nowplaying")) {
+    if(!obj.contains("nowplaying"_L1)) {
         qCWarning(SCROBBLER) << "Json reply from server is missing nowplaying";
         return;
     }
@@ -407,12 +408,12 @@ void LastFmService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& 
         }
     };
 
-    if(!obj.contains(u"scrobbles")) {
+    if(!obj.contains("scrobbles"_L1)) {
         handleError("Reply from server is missing scrobbles", true);
         return;
     }
 
-    const QJsonValue scrobblesVal = obj.value(u"scrobbles");
+    const QJsonValue scrobblesVal = obj.value("scrobbles"_L1);
     if(!scrobblesVal.isObject()) {
         handleError("Scrobbles is not an object", true);
         return;
@@ -424,12 +425,12 @@ void LastFmService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& 
         return;
     }
 
-    if(!obj.contains(u"@attr") || !obj.contains(u"scrobble")) {
+    if(!obj.contains("@attr"_L1) || !obj.contains("scrobble"_L1)) {
         handleError("Scrobbles object is missing values", true);
         return;
     }
 
-    const QJsonValue attr = obj.value(u"@attr");
+    const QJsonValue attr = obj.value("@attr"_L1);
     if(!attr.isObject()) {
         handleError("Scrobbles attr is not an object", true);
         return;
@@ -441,20 +442,20 @@ void LastFmService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& 
         return;
     }
 
-    if(!attrObj.contains(u"accepted") || !attrObj.contains(u"ignored")) {
+    if(!attrObj.contains("accepted"_L1) || !attrObj.contains("ignored"_L1)) {
         handleError("Scrobbles attr is missing values", true);
         return;
     }
 
-    const int accepted = attrObj.value(u"accepted").toInt();
-    const int ignored  = attrObj.value(u"ignored").toInt();
+    const int accepted = attrObj.value("accepted"_L1).toInt();
+    const int ignored  = attrObj.value("ignored"_L1).toInt();
 
     qCDebug(SCROBBLER) << "Scrobbles accepted:" << accepted;
     qCDebug(SCROBBLER) << "Scrobbles ignored:" << ignored;
 
     QJsonArray array;
 
-    const QJsonValue scrobbleVal = obj.value(u"scrobble");
+    const QJsonValue scrobbleVal = obj.value("scrobble"_L1);
     if(scrobbleVal.isObject()) {
         const QJsonObject scrobbleObj = scrobbleVal.toObject();
         if(scrobbleObj.isEmpty()) {
@@ -486,17 +487,17 @@ void LastFmService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& 
             continue;
         }
 
-        if(!trackJson.contains(u"artist") || !trackJson.contains(u"album") || !trackJson.contains(u"albumArtist")
-           || !trackJson.contains(u"track") || !trackJson.contains(u"timestamp")
-           || !trackJson.contains(u"ignoredMessage")) {
+        if(!trackJson.contains("artist"_L1) || !trackJson.contains("album"_L1) || !trackJson.contains("albumArtist"_L1)
+           || !trackJson.contains("track"_L1) || !trackJson.contains("timestamp"_L1)
+           || !trackJson.contains("ignoredMessage"_L1)) {
             handleError("Scrobble is missing values");
             continue;
         }
 
-        const QJsonValue artist     = trackJson.value(u"artist");
-        const QJsonValue album      = trackJson.value(u"album");
-        const QJsonValue track      = trackJson.value(u"track");
-        const QJsonValue ignoredMsg = trackJson.value(u"ignoredMessage");
+        const QJsonValue artist     = trackJson.value("artist"_L1);
+        const QJsonValue album      = trackJson.value("album"_L1);
+        const QJsonValue track      = trackJson.value("track"_L1);
+        const QJsonValue ignoredMsg = trackJson.value("ignoredMessage"_L1);
 
         if(!artist.isObject() || !album.isObject() || !track.isObject() || !ignoredMsg.isObject()) {
             handleError("Scrobble values are not objects");
@@ -513,15 +514,15 @@ void LastFmService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& 
             continue;
         }
 
-        if(!artistObj.contains(u"#text") || !albumObj.contains(u"#text") || !trackObj.contains(u"#text")) {
+        if(!artistObj.contains("#text"_L1) || !albumObj.contains("#text"_L1) || !trackObj.contains("#text"_L1)) {
             continue;
         }
 
-        const QString trackText = trackObj.value(u"#text").toString();
+        const QString trackText = trackObj.value("#text"_L1).toString();
 
-        if(ignoreMsgObj.value(u"code").toBool()) {
-            const QString ignoredMsgText = QStringLiteral(R"(Scrobble for "%1" ignored: %2)")
-                                               .arg(trackText, ignoreMsgObj.value(u"#text").toString());
+        if(ignoreMsgObj.value("code"_L1).toBool()) {
+            const QString ignoredMsgText
+                = uR"(Scrobble for "%1" ignored: %2)"_s.arg(trackText, ignoreMsgObj.value("#text"_L1).toString());
             handleError(ignoredMsgText.toUtf8().constData());
         }
         else {

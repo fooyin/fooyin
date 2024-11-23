@@ -23,6 +23,8 @@
 
 #include <utils/settings/settingsmanager.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::WaveBar {
 WaveBarSettings::WaveBarSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
@@ -31,16 +33,16 @@ WaveBarSettings::WaveBarSettings(SettingsManager* settingsManager)
 
     qRegisterMetaType<Fooyin::WaveBar::Colours>("Fooyin::WaveBar::Colours");
 
-    m_settings->createSetting<Downmix>(0, QStringLiteral("WaveBar/Downmix"));
-    m_settings->createSetting<ShowCursor>(true, QStringLiteral("WaveBar/ShowCursor"));
-    m_settings->createSetting<CursorWidth>(3, QStringLiteral("WaveBar/CursorWidth"));
-    m_settings->createSetting<ColourOptions>(QVariant{}, QStringLiteral("WaveBar/Colours"));
-    m_settings->createSetting<Mode>(static_cast<int>(Default), QStringLiteral("WaveBar/Mode"));
-    m_settings->createSetting<BarWidth>(1, QStringLiteral("WaveBar/BarWidth"));
-    m_settings->createSetting<BarGap>(0, QStringLiteral("WaveBar/BarGap"));
-    m_settings->createSetting<MaxScale>(1.0, QStringLiteral("WaveBar/MaxScale"));
-    m_settings->createSetting<CentreGap>(0, QStringLiteral("WaveBar/CentreGap"));
-    m_settings->createSetting<ChannelScale>(0.9, QStringLiteral("WaveBar/ChannelScale"));
-    m_settings->createSetting<NumSamples>(2048, QStringLiteral("WaveBar/NumSamples"));
+    m_settings->createSetting<Downmix>(0, u"WaveBar/Downmix"_s);
+    m_settings->createSetting<ShowCursor>(true, u"WaveBar/ShowCursor"_s);
+    m_settings->createSetting<CursorWidth>(3, u"WaveBar/CursorWidth"_s);
+    m_settings->createSetting<ColourOptions>(QVariant{}, u"WaveBar/Colours"_s);
+    m_settings->createSetting<Mode>(static_cast<int>(Default), u"WaveBar/Mode"_s);
+    m_settings->createSetting<BarWidth>(1, u"WaveBar/BarWidth"_s);
+    m_settings->createSetting<BarGap>(0, u"WaveBar/BarGap"_s);
+    m_settings->createSetting<MaxScale>(1.0, u"WaveBar/MaxScale"_s);
+    m_settings->createSetting<CentreGap>(0, u"WaveBar/CentreGap"_s);
+    m_settings->createSetting<ChannelScale>(0.9, u"WaveBar/ChannelScale"_s);
+    m_settings->createSetting<NumSamples>(2048, u"WaveBar/NumSamples"_s);
 }
 } // namespace Fooyin::WaveBar

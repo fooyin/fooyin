@@ -39,6 +39,8 @@
 #pragma clang diagnostic ignored "-Wold-style-cast"
 #endif
 
+using namespace Qt::StringLiterals;
+
 constexpr AVRational TimeBaseAv = {1, AV_TIME_BASE};
 constexpr AVRational TimeBaseMs = {1, 1000};
 
@@ -47,12 +49,9 @@ using namespace std::chrono_literals;
 namespace {
 QStringList fileExtensions(bool allSupported)
 {
-    QStringList extensions{
-        QStringLiteral("mp3"), QStringLiteral("ogg"),  QStringLiteral("opus"), QStringLiteral("oga"),
-        QStringLiteral("m4a"), QStringLiteral("wav"),  QStringLiteral("wv"),   QStringLiteral("flac"),
-        QStringLiteral("wma"), QStringLiteral("asf"),  QStringLiteral("mpc"),  QStringLiteral("aiff"),
-        QStringLiteral("ape"), QStringLiteral("webm"), QStringLiteral("mp4"),  QStringLiteral("mka"),
-        QStringLiteral("dsf"), QStringLiteral("dff"),  QStringLiteral("wv")};
+    QStringList extensions{u"mp3"_s,  u"ogg"_s, u"opus"_s, u"oga"_s, u"m4a"_s,  u"wav"_s, u"wv"_s,
+                           u"flac"_s, u"wma"_s, u"asf"_s,  u"mpc"_s, u"aiff"_s, u"ape"_s, u"webm"_s,
+                           u"mp4"_s,  u"mka"_s, u"dsf"_s,  u"dff"_s, u"wv"_s};
 
     if(!allSupported) {
         return extensions;
@@ -89,23 +88,23 @@ QString getCodec(AVCodecID codec)
 {
     switch(codec) {
         case(AV_CODEC_ID_AAC):
-            return QStringLiteral("AAC");
+            return u"AAC"_s;
         case(AV_CODEC_ID_ALAC):
-            return QStringLiteral("ALAC");
+            return u"ALAC"_s;
         case(AV_CODEC_ID_MP3):
-            return QStringLiteral("MP3");
+            return u"MP3"_s;
         case(AV_CODEC_ID_WAVPACK):
-            return QStringLiteral("WavPack");
+            return u"WavPack"_s;
         case(AV_CODEC_ID_FLAC):
-            return QStringLiteral("FLAC");
+            return u"FLAC"_s;
         case(AV_CODEC_ID_OPUS):
-            return QStringLiteral("Opus");
+            return u"Opus"_s;
         case(AV_CODEC_ID_VORBIS):
-            return QStringLiteral("Vorbis");
+            return u"Vorbis"_s;
         case(AV_CODEC_ID_WMAV2):
-            return QStringLiteral("WMA");
+            return u"WMA"_s;
         case(AV_CODEC_ID_DTS):
-            return QStringLiteral("DTS");
+            return u"DTS"_s;
         default:
             return {};
     }
@@ -201,23 +200,23 @@ void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
         track.setRating(convertString(tag->value).toFloat());
     }
     else if(strcasecmp(tag->key, "TFLT") == 0) {
-        track.addExtraTag(QStringLiteral("FILETYPE"), convertString(tag->value));
+        track.addExtraTag(u"FILETYPE"_s, convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "TOLY") == 0) {
-        track.addExtraTag(QStringLiteral("ORIGINALLYRICIST"), convertString(tag->value));
+        track.addExtraTag(u"ORIGINALLYRICIST"_s, convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "TLEN") == 0) {
-        track.addExtraTag(QStringLiteral("LENGTH"), convertString(tag->value));
+        track.addExtraTag(u"LENGTH"_s, convertString(tag->value));
         track.setDuration(convertString(tag->value).toULongLong());
     }
     else if(strcasecmp(tag->key, "TGID") == 0) {
-        track.addExtraTag(QStringLiteral("PODCASTDID"), convertString(tag->value));
+        track.addExtraTag(u"PODCASTDID"_s, convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "TDES") == 0) {
-        track.addExtraTag(QStringLiteral("PODCASTDESC"), convertString(tag->value));
+        track.addExtraTag(u"PODCASTDESC"_s, convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "TCAT") == 0) {
-        track.addExtraTag(QStringLiteral("PODCASTCATEGORY"), convertString(tag->value));
+        track.addExtraTag(u"PODCASTCATEGORY"_s, convertString(tag->value));
     }
     else if(strncasecmp(tag->key, "ID3V2_PRIV", 10) == 0) { }
     else {
@@ -349,15 +348,15 @@ QByteArray findCover(AVFormatContext* context, Fooyin::Track::Cover type)
             AVDictionaryEntry* tag{nullptr};
             QString coverType;
             while((tag = av_dict_get(avStream->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-                if(convertString(tag->key) == u"comment") {
+                if(convertString(tag->key) == "comment"_L1) {
                     coverType = convertString(tag->value).toLower();
                     break;
                 }
             }
 
-            if((type == Cover::Front && (coverType.isEmpty() || coverType.contains(u"front")))
-               || (type == Cover::Back && coverType.contains(u"back"))
-               || (type == Cover::Artist && coverType.contains(u"artist"))) {
+            if((type == Cover::Front && (coverType.isEmpty() || coverType.contains("front"_L1)))
+               || (type == Cover::Back && coverType.contains("back"_L1))
+               || (type == Cover::Artist && coverType.contains("artist"_L1))) {
                 const AVPacket pkt = avStream->attached_pic;
                 return {reinterpret_cast<const char*>(pkt.data), pkt.size};
             }
@@ -464,7 +463,7 @@ bool FFmpegInputPrivate::setup(QIODevice* source)
 void FFmpegInputPrivate::checkIsVbr(const Track& track)
 {
     const auto codec = m_codec.context()->codec_id;
-    m_isVbr          = track.codecProfile().contains(u"VBR") || track.codecProfile().contains(u"ABR")
+    m_isVbr          = track.codecProfile().contains("VBR"_L1) || track.codecProfile().contains("ABR"_L1)
            || codec == AV_CODEC_ID_OPUS || codec == AV_CODEC_ID_VORBIS;
 }
 
@@ -476,14 +475,14 @@ bool FFmpegInputPrivate::createCodec(AVStream* avStream)
 
     const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
     if(!avCodec) {
-        Utils::printError(QStringLiteral("Could not find a decoder for stream"));
+        Utils::printError(u"Could not find a decoder for stream"_s);
         m_error = true;
         return false;
     }
 
     CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
     if(!avCodecContext) {
-        Utils::printError(QStringLiteral("Could not allocate context"));
+        Utils::printError(u"Could not allocate context"_s);
         m_error = true;
         return false;
     }
@@ -493,7 +492,7 @@ bool FFmpegInputPrivate::createCodec(AVStream* avStream)
     }
 
     if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
-        Utils::printError(QStringLiteral("Could not obtain codec parameters"));
+        Utils::printError(u"Could not obtain codec parameters"_s);
         m_error = true;
         return {};
     }
@@ -501,7 +500,7 @@ bool FFmpegInputPrivate::createCodec(AVStream* avStream)
     avCodecContext.get()->pkt_timebase = m_timeBase;
 
     if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
-        Utils::printError(QStringLiteral("Could not initialise codec context"));
+        Utils::printError(u"Could not initialise codec context"_s);
         m_error = true;
         return {};
     }
@@ -524,7 +523,7 @@ void FFmpegInputPrivate::decodeAudio(const PacketPtr& packet)
         result = sendAVPacket(packet);
 
         if(result != AVERROR(EAGAIN)) {
-            Utils::printError(QStringLiteral("Unexpected decoder behavior"));
+            Utils::printError(u"Unexpected decoder behavior"_s);
         }
     }
 
@@ -701,7 +700,7 @@ FFmpegDecoder::~FFmpegDecoder() = default;
 QStringList FFmpegDecoder::extensions() const
 {
     const FySettings settings;
-    return fileExtensions(settings.value(QLatin1String{Settings::Core::Internal::FFmpegAllExtensions}).toBool());
+    return fileExtensions(settings.value(Settings::Core::Internal::FFmpegAllExtensions).toBool());
 }
 
 int FFmpegDecoder::bitrate() const
@@ -799,7 +798,7 @@ AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
 QStringList FFmpegReader::extensions() const
 {
     const FySettings settings;
-    return fileExtensions(settings.value(QLatin1String{Settings::Core::Internal::FFmpegAllExtensions}).toBool());
+    return fileExtensions(settings.value(Settings::Core::Internal::FFmpegAllExtensions).toBool());
 }
 
 bool FFmpegReader::canReadCover() const
@@ -832,7 +831,7 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     track.setSampleRate(format.sampleRate());
     track.setChannels(format.channelCount());
     track.setBitDepth(format.bitsPerSample());
-    track.setEncoding(isLossless(codec->codec_id) ? QStringLiteral("Lossless") : QStringLiteral("Lossy"));
+    track.setEncoding(isLossless(codec->codec_id) ? u"Lossless"_s : u"Lossy"_s);
 
     if(track.duration() == 0) {
         AVRational timeBase = avStream->time_base;

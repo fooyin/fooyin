@@ -33,6 +33,8 @@
 
 Q_LOGGING_CATEGORY(ENG_HANDLER, "fy.engine")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class EngineHandlerPrivate
 {
@@ -165,7 +167,7 @@ void EngineHandlerPrivate::playStateChanged(Player::PlayState state) const
 void EngineHandlerPrivate::changeOutput(const QString& output)
 {
     auto loadDefault = [this]() {
-        m_currentOutput = {m_outputs.cbegin()->first, QStringLiteral("default")};
+        m_currentOutput = {m_outputs.cbegin()->first, u"default"_s};
         emit m_self->outputChanged(m_currentOutput.name, m_currentOutput.device);
     };
 
@@ -176,7 +178,7 @@ void EngineHandlerPrivate::changeOutput(const QString& output)
         loadDefault();
     }
 
-    const QStringList newOutput = output.split(QStringLiteral("|"));
+    const QStringList newOutput = output.split(u"|"_s);
 
     if(newOutput.empty() || newOutput.size() < 2) {
         return;

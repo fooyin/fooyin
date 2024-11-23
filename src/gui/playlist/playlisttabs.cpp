@@ -53,6 +53,7 @@
 #endif
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
@@ -152,7 +153,7 @@ QString PlaylistTabs::name() const
 
 QString PlaylistTabs::layoutName() const
 {
-    return QStringLiteral("PlaylistTabs");
+    return u"PlaylistTabs"_s;
 }
 
 void PlaylistTabs::saveLayoutData(QJsonObject& layout)
@@ -164,13 +165,13 @@ void PlaylistTabs::saveLayoutData(QJsonObject& layout)
     QJsonArray children;
     m_tabsWidget->saveLayout(children);
 
-    layout[u"Widgets"] = children;
+    layout["Widgets"_L1] = children;
 }
 
 void PlaylistTabs::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"Widgets")) {
-        const auto children = layout[u"Widgets"].toArray();
+    if(layout.contains("Widgets"_L1)) {
+        const auto children = layout["Widgets"_L1].toArray();
         WidgetContainer::loadWidgets(children);
     }
 }

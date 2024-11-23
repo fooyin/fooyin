@@ -21,10 +21,12 @@
 
 #include "sndfileinput.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Snd {
 QString SndFilePlugin::inputName() const
 {
-    return QStringLiteral("Sndfile");
+    return u"Sndfile"_s;
 }
 
 InputCreator SndFilePlugin::inputCreator() const

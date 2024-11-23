@@ -28,6 +28,8 @@
 
 Q_LOGGING_CATEGORY(PL_COLMOD, "fy.playlistcolmodel")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ColumnItem::ColumnItem()
     : ColumnItem{{}, nullptr}
@@ -195,11 +197,11 @@ QVariant PlaylistColumnModel::data(const QModelIndex& index, int role) const
                 return item->column().index;
             case(1): {
                 const QString& name = item->column().name;
-                return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
+                return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
             case(2): {
                 const QString& field = item->column().field;
-                return !field.isEmpty() ? field : QStringLiteral("<enter field here>");
+                return !field.isEmpty() ? field : u"<enter field here>"_s;
             }
             default:
                 break;
@@ -220,7 +222,7 @@ bool PlaylistColumnModel::setData(const QModelIndex& index, const QVariant& valu
 
     switch(index.column()) {
         case(1): {
-            if(value.toString() == QStringLiteral("<enter name here>") || column.name == value.toString()) {
+            if(value.toString() == u"<enter name here>"_s || column.name == value.toString()) {
                 if(item->status() == ColumnItem::Added) {
                     emit pendingRowCancelled();
                 }

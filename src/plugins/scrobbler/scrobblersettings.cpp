@@ -21,13 +21,15 @@
 
 #include <utils/settings/settingsmanager.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Scrobbler {
 ScrobblerSettings::ScrobblerSettings(SettingsManager* settings)
 {
     using namespace Settings::Scrobbler;
 
-    settings->createSetting<ScrobblingEnabled>(false, QStringLiteral("Scrobbling/Enabled"));
-    settings->createSetting<ScrobblingDelay>(0, QStringLiteral("Scrobbling/Delay"));
-    settings->createSetting<PreferAlbumArtist>(false, QStringLiteral("Scrobbling/PreferAlbumArtist"));
+    settings->createSetting<ScrobblingEnabled>(false, u"Scrobbling/Enabled"_s);
+    settings->createSetting<ScrobblingDelay>(0, u"Scrobbling/Delay"_s);
+    settings->createSetting<PreferAlbumArtist>(false, u"Scrobbling/PreferAlbumArtist"_s);
 }
 } // namespace Fooyin::Scrobbler

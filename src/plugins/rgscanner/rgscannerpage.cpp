@@ -31,6 +31,8 @@
 #include <QLabel>
 #include <QRadioButton>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::RGScanner {
 class RGScannerPageWidget : public SettingsPageWidget
 {
@@ -77,9 +79,10 @@ RGScannerPageWidget::RGScannerPageWidget(SettingsManager* settings)
     peakGroup->addButton(m_samplePeak);
     peakGroup->addButton(m_truePeak);
 
-    auto* albumGroupLabel = new QLabel(tr("Album grouping pattern") + u":", this);
+    auto* albumGroupLabel = new QLabel(tr("Album grouping pattern") + ":"_L1, this);
 
-    const auto albumGroupToolTip = tr("Used with the %1 action").arg(u"'" + tr("Calculate as albums (by tags)") + u"'");
+    const auto albumGroupToolTip
+        = tr("Used with the %1 action").arg("'"_L1 + tr("Calculate as albums (by tags)") + "'"_L1);
     albumGroupLabel->setToolTip(albumGroupToolTip);
     m_albumGroupScript->setToolTip(albumGroupToolTip);
 
@@ -100,7 +103,7 @@ RGScannerPageWidget::RGScannerPageWidget(SettingsManager* settings)
 
 void RGScannerPageWidget::load()
 {
-    const auto scanner = m_settings->fileValue(QLatin1String{ScannerOption}, QStringLiteral("libebur128")).toString();
+    const auto scanner = m_settings->fileValue(ScannerOption, u"libebur128"_s).toString();
     if(m_scanners.contains(scanner)) {
         m_scanners.at(scanner)->setChecked(true);
     }
@@ -108,11 +111,10 @@ void RGScannerPageWidget::load()
         m_scanners.cbegin()->second->setChecked(true);
     }
 
-    m_truePeak->setChecked(m_settings->fileValue(QLatin1String{TruePeakSetting}, false).toBool());
+    m_truePeak->setChecked(m_settings->fileValue(TruePeakSetting, false).toBool());
     m_samplePeak->setChecked(!m_truePeak->isChecked());
     m_albumGroupScript->setText(
-        m_settings->fileValue(QLatin1String{AlbumGroupScriptSetting}, QString::fromLatin1(DefaultAlbumGroupScript))
-            .toString());
+        m_settings->fileValue(AlbumGroupScriptSetting, QString::fromLatin1(DefaultAlbumGroupScript)).toString());
 }
 
 void RGScannerPageWidget::apply()
@@ -123,15 +125,15 @@ void RGScannerPageWidget::apply()
         }
     }
 
-    m_settings->fileSet(QLatin1String{TruePeakSetting}, m_truePeak->isChecked());
-    m_settings->fileSet(QLatin1String{AlbumGroupScriptSetting}, m_albumGroupScript->text());
+    m_settings->fileSet(TruePeakSetting, m_truePeak->isChecked());
+    m_settings->fileSet(AlbumGroupScriptSetting, m_albumGroupScript->text());
 }
 
 void RGScannerPageWidget::reset()
 {
-    m_settings->fileRemove(QLatin1String{ScannerOption});
-    m_settings->fileRemove(QLatin1String{TruePeakSetting});
-    m_settings->fileRemove(QLatin1String{AlbumGroupScriptSetting});
+    m_settings->fileRemove(ScannerOption);
+    m_settings->fileRemove(TruePeakSetting);
+    m_settings->fileRemove(AlbumGroupScriptSetting);
 }
 
 RGScannerPage::RGScannerPage(SettingsManager* settings, QObject* parent)

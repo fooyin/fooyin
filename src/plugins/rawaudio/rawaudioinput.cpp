@@ -24,13 +24,15 @@
 
 Q_LOGGING_CATEGORY(RAW_AUD, "fy.rawaudio")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto SampleRate = 44100;
 constexpr auto Channels   = 2;
 
 namespace {
 QStringList fileExtensions()
 {
-    static const QStringList extensions = {QStringLiteral("bin")};
+    static const QStringList extensions = {u"bin"_s};
     return extensions;
 }
 
@@ -145,8 +147,8 @@ bool RawAudioReader::readTrack(const AudioSource& source, Track& track)
     track.setChannels(Channels);
     track.setBitrate(static_cast<int>(track.fileSize() * 8 / track.duration()));
     track.setBitDepth(16);
-    track.setCodec(QStringLiteral("PCM"));
-    track.setEncoding(QStringLiteral("Lossless"));
+    track.setCodec(u"PCM"_s);
+    track.setEncoding(u"Lossless"_s);
 
     return true;
 }

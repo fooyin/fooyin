@@ -31,6 +31,8 @@
 #include <QAction>
 #include <QMenu>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvider, SettingsManager* settings,
                        QObject* parent)
@@ -107,7 +109,7 @@ void LayoutMenu::addLayout(const FyLayout& layout)
 
     auto* layoutAction = new QAction(name, m_layoutMenu->menu());
     layoutAction->setStatusTip(tr("Replace the current layout"));
-    auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{QStringLiteral("Layout.Switch.%1").arg(name)});
+    auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{u"Layout.Switch.%1"_s.arg(name)});
     layoutCmd->setCategories({tr("Layout"), tr("Switch")});
 
     QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {

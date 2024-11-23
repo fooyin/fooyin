@@ -24,6 +24,8 @@
 
 Q_LOGGING_CATEGORY(SND_FILE, "fy.sndfile")
 
+using namespace Qt::StringLiterals;
+
 // SF_FORMAT_MP3 was changed to SF_FORMAT_MPEG in v1.1.0
 // Use this for compatibility with older versions
 constexpr auto SndFileFormatMpeg = 0x230000;
@@ -32,9 +34,7 @@ namespace {
 QStringList fileExtensions()
 {
     static const QStringList extensions
-        = {QStringLiteral("aif"), QStringLiteral("aiff"), QStringLiteral("au"),  QStringLiteral("snd"),
-           QStringLiteral("sph"), QStringLiteral("voc"),  QStringLiteral("wav"), QStringLiteral("wavex"),
-           QStringLiteral("w64"), QStringLiteral("wve")};
+        = {u"aif"_s, u"aiff"_s, u"a"_s, u"_L1snd"_s, u"sph"_s, u"voc"_s, u"wav"_s, u"wavex"_s, u"w64"_s, u"wve"_s};
     return extensions;
 }
 
@@ -95,18 +95,18 @@ sf_count_t sndTell(void* data)
 QString codecForFormat(int format)
 {
     if(format == SF_FORMAT_FLAC) {
-        return QStringLiteral("FLAC");
+        return u"FLAC"_s;
     }
     if(format == SF_FORMAT_VORBIS) {
-        return QStringLiteral("Vorbis");
+        return u"Vorbis"_s;
     }
     if(format == SF_FORMAT_OPUS) {
-        return QStringLiteral("Opus");
+        return u"Opus"_s;
     }
     if(format >= SF_FORMAT_ALAC_16 && format <= SF_FORMAT_ALAC_32) {
-        return QStringLiteral("ALAC");
+        return u"ALAC"_s;
     }
-    return QStringLiteral("PCM");
+    return u"PCM"_s;
 }
 } // namespace
 
@@ -263,7 +263,7 @@ bool SndFileReader::readTrack(const AudioSource& source, Track& track)
             break;
     }
 
-    track.setEncoding(lossless ? QStringLiteral("Lossless") : QStringLiteral("Lossy"));
+    track.setEncoding(lossless ? u"Lossless"_s : u"Lossy"_s);
 
     if(const char* title = sf_get_string(sndFile, SF_STR_TITLE)) {
         track.setTitle(QString::fromUtf8(title));
@@ -287,10 +287,10 @@ bool SndFileReader::readTrack(const AudioSource& source, Track& track)
         track.setGenres({QString::fromUtf8(genre)});
     }
     if(const char* copyright = sf_get_string(sndFile, SF_STR_COPYRIGHT)) {
-        track.addExtraTag(QStringLiteral("COPYRIGHT"), QString::fromUtf8(copyright));
+        track.addExtraTag(u"COPYRIGHT"_s, QString::fromUtf8(copyright));
     }
     if(const char* license = sf_get_string(sndFile, SF_STR_LICENSE)) {
-        track.addExtraTag(QStringLiteral("LICENSE"), QString::fromUtf8(license));
+        track.addExtraTag(u"LICENSE"_s, QString::fromUtf8(license));
     }
 
     return true;

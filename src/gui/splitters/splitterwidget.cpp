@@ -35,6 +35,8 @@
 #include <QMouseEvent>
 #include <QSplitter>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class SplitterHandle : public QSplitterHandle
 {
@@ -155,7 +157,7 @@ public:
         : QSplitter{type, parent}
         , m_settings{settings}
     {
-        setObjectName(QStringLiteral("Splitter"));
+        setObjectName(u"Splitter"_s);
         setChildrenCollapsible(false);
     }
 
@@ -371,7 +373,7 @@ QString SplitterWidget::name() const
 
 QString SplitterWidget::layoutName() const
 {
-    return QStringLiteral("Splitter") + Utils::Enum::toString(m_splitter->orientation());
+    return u"Splitter"_s + Utils::Enum::toString(m_splitter->orientation());
 }
 
 void SplitterWidget::layoutEditingMenu(QMenu* menu)
@@ -379,33 +381,33 @@ void SplitterWidget::layoutEditingMenu(QMenu* menu)
     auto* changeSplitter = new QAction(tr("Switch orientation"), this);
     QObject::connect(changeSplitter, &QAction::triggered, this, [this] {
         setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
-        setObjectName(Utils::Enum::toString(m_splitter->orientation()) + u" " + tr("Splitter"));
+        setObjectName(Utils::Enum::toString(m_splitter->orientation()) + " "_L1 + tr("Splitter"));
     });
     menu->addAction(changeSplitter);
 }
 
 void SplitterWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"State"] = QString::fromUtf8(saveState().toBase64());
+    layout["State"_L1] = QString::fromUtf8(saveState().toBase64());
 
     if(!m_widgets.empty()) {
         QJsonArray children;
         for(const auto& widget : m_widgets) {
             widget->saveLayout(children);
         }
-        layout[u"Widgets"] = children;
+        layout["Widgets"_L1] = children;
     }
 }
 
 void SplitterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"Widgets")) {
-        const auto children = layout.value(u"Widgets").toArray();
+    if(layout.contains("Widgets"_L1)) {
+        const auto children = layout.value("Widgets"_L1).toArray();
         WidgetContainer::loadWidgets(children);
     }
 
-    if(layout.contains(u"State")) {
-        restoreState(QByteArray::fromBase64(layout.value(u"State").toString().toUtf8()));
+    if(layout.contains("State"_L1)) {
+        restoreState(QByteArray::fromBase64(layout.value("State"_L1).toString().toUtf8()));
     }
 }
 

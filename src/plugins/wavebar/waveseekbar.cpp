@@ -30,6 +30,8 @@
 #include <QPainter>
 #include <QStyle>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto ToolTipDelay = 5;
 
 namespace {
@@ -498,8 +500,7 @@ void WaveSeekBar::drawSeekTip()
     const uint64_t seekDelta = std::max(m_position, seekPos) - std::min(m_position, seekPos);
 
     m_seekTip->setText(Utils::msToString(seekPos));
-    m_seekTip->setSubtext((seekPos > m_position ? QStringLiteral("+") : QStringLiteral("-"))
-                          + Utils::msToString(seekDelta));
+    m_seekTip->setSubtext((seekPos > m_position ? u"+"_s : u"-"_s) + Utils::msToString(seekDelta));
 
     QPoint seekTipPos{m_seekPos};
 

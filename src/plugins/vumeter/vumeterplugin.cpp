@@ -29,6 +29,8 @@
 
 #include <QMenu>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::VuMeter {
 void VuMeterPlugin::initialise(const CorePluginContext& context)
 {
@@ -45,24 +47,24 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
     new VuMeterSettingsPage(m_settings, this);
 
     m_widgetProvider->registerWidget(
-        QStringLiteral("VUMeter"),
+        u"VUMeter"_s,
         [this]() {
             auto* meter = new VuMeterWidget(VuMeterWidget::Type::Rms, m_playerController, m_settings);
             QObject::connect(m_engine, &EngineController::bufferPlayed, meter, &VuMeterWidget::renderBuffer);
             return meter;
         },
-        QStringLiteral("VU Meter"));
-    m_widgetProvider->setSubMenus(QStringLiteral("VUMeter"), {tr("Visualisations")});
+        u"VU Meter"_s);
+    m_widgetProvider->setSubMenus(u"VUMeter"_s, {tr("Visualisations")});
 
     m_widgetProvider->registerWidget(
-        QStringLiteral("PeakMeter"),
+        u"PeakMeter"_s,
         [this]() {
             auto* meter = new VuMeterWidget(VuMeterWidget::Type::Peak, m_playerController, m_settings);
             QObject::connect(m_engine, &EngineController::bufferPlayed, meter, &VuMeterWidget::renderBuffer);
             return meter;
         },
-        QStringLiteral("Peak Meter"));
-    m_widgetProvider->setSubMenus(QStringLiteral("PeakMeter"), {tr("Visualisations")});
+        u"Peak Meter"_s);
+    m_widgetProvider->setSubMenus(u"PeakMeter"_s, {tr("Visualisations")});
 }
 } // namespace Fooyin::VuMeter
 

@@ -41,6 +41,8 @@
 #include <QSortFilterProxyModel>
 #include <QTreeView>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class CheckSortProxyModel : public QSortFilterProxyModel
 {
@@ -219,7 +221,7 @@ void PluginPageWidget::configurePlugin()
 void PluginPageWidget::installPlugin()
 {
     const QString filepath = QFileDialog::getOpenFileName(this, tr("Install Plugin"), QString{},
-                                                          tr("%1 Plugin").arg(u"fooyin") + u" (*.fyl)");
+                                                          tr("%1 Plugin").arg("fooyin"_L1) + " (*.fyl)"_L1);
 
     if(filepath.isEmpty()) {
         return;

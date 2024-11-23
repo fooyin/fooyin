@@ -35,6 +35,8 @@
 #include <QSlider>
 #include <QStyleOptionSlider>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto ToolTipDelay = 5;
 
 namespace Fooyin {
@@ -264,10 +266,10 @@ void TrackSlider::updateToolTip()
     QString deltaText;
 
     if(seekPos > m_currentPos) {
-        deltaText = QStringLiteral("+") + Utils::msToString(seekDelta);
+        deltaText = u"+"_s + Utils::msToString(seekDelta);
     }
     else {
-        deltaText = QStringLiteral("-") + Utils::msToString(seekDelta);
+        deltaText = u"-"_s + Utils::msToString(seekDelta);
     }
 
     m_toolTip->setText(Utils::msToString(seekPos));
@@ -311,23 +313,23 @@ QString SeekBar::name() const
 
 QString SeekBar::layoutName() const
 {
-    return QStringLiteral("SeekBar");
+    return u"SeekBar"_s;
 }
 
 void SeekBar::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"ShowLabels"]   = m_container->labelsEnabled();
-    layout[u"ElapsedTotal"] = m_container->elapsedTotal();
+    layout["ShowLabels"_L1]   = m_container->labelsEnabled();
+    layout["ElapsedTotal"_L1] = m_container->elapsedTotal();
 }
 
 void SeekBar::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"ShowLabels")) {
-        const bool showLabels = layout.value(u"ShowLabels").toBool();
+    if(layout.contains("ShowLabels"_L1)) {
+        const bool showLabels = layout.value("ShowLabels"_L1).toBool();
         m_container->setLabelsEnabled(showLabels);
     }
-    if(layout.contains(u"ElapsedTotal")) {
-        const bool elapsedTotal = layout.value(u"ElapsedTotal").toBool();
+    if(layout.contains("ElapsedTotal"_L1)) {
+        const bool elapsedTotal = layout.value("ElapsedTotal"_L1).toBool();
         m_container->setElapsedTotal(elapsedTotal);
     }
 }

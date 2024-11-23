@@ -34,6 +34,8 @@
 #include <QRadioButton>
 #include <QSlider>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class ReplayGainPageWidget : public SettingsPageWidget
 {
@@ -107,16 +109,16 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     auto* preAmpGroup  = new QGroupBox(tr("Pre-amplification"), this);
     auto* preAmpLayout = new QGridLayout(preAmpGroup);
 
-    auto* rgPreAmpLabel = new QLabel(tr("With RG info") + u":", this);
-    auto* preAmpLabel   = new QLabel(tr("Without RG info") + u":", this);
+    auto* rgPreAmpLabel = new QLabel(tr("With RG info") + ":"_L1, this);
+    auto* preAmpLabel   = new QLabel(tr("Without RG info") + ":"_L1, this);
 
     m_rgPreAmp->setRange(-20, 20);
     m_rgPreAmp->setSingleStep(0.5);
-    m_rgPreAmp->setSuffix(QStringLiteral(" dB"));
+    m_rgPreAmp->setSuffix(u" dB"_s);
 
     m_preAmp->setRange(-20, 20);
     m_preAmp->setSingleStep(0.5);
-    m_preAmp->setSuffix(QStringLiteral(" dB"));
+    m_preAmp->setSuffix(u" dB"_s);
 
     const auto rgPreAmpToolTip = tr("Amount of gain to apply in combination with ReplayGain");
     m_rgPreAmp->setToolTip(rgPreAmpToolTip);

@@ -28,6 +28,8 @@
 
 Q_LOGGING_CATEGORY(TRANSLATIONS, "fy.translations")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 TranslationLoader::TranslationLoader(QObject* parent)
     : QObject{parent}
@@ -39,7 +41,7 @@ void TranslationLoader::initialiseTranslations(const QString& customLanguage)
 
     if(!customLanguage.isEmpty()) {
         locale = QLocale{customLanguage};
-        if(customLanguage.compare(u"C", Qt::CaseInsensitive) != 0 && locale.language() == QLocale::C) {
+        if(customLanguage.compare("C"_L1, Qt::CaseInsensitive) != 0 && locale.language() == QLocale::C) {
             qCWarning(TRANSLATIONS) << "Custom locale (" << customLanguage << ") not found, using 'C' locale";
         }
         QLocale::setDefault(locale);
@@ -53,21 +55,21 @@ void TranslationLoader::initialiseTranslations(const QString& customLanguage)
         return;
     }
 
-    installTranslations(locale, QStringLiteral("qt"), QLibraryInfo::path(QLibraryInfo::TranslationsPath), false);
+    installTranslations(locale, u"qt"_s, QLibraryInfo::path(QLibraryInfo::TranslationsPath), false);
 
     const QString translationsPath = Core::translationsPath();
     if(translationsPath.isEmpty()) {
         return;
     }
 
-    installTranslations(locale, QStringLiteral("fooyin"), translationsPath, true);
+    installTranslations(locale, u"fooyin"_s, translationsPath, true);
 }
 
 bool TranslationLoader::installTranslations(const QLocale& locale, const QString& translation, const QString& path,
-                                       bool warn)
+                                            bool warn)
 {
     auto* translator = new QTranslator(this);
-    if(!translator->load(locale, translation, QStringLiteral("_"), path)) {
+    if(!translator->load(locale, translation, u"_"_s, path)) {
         if(warn) {
             qCWarning(TRANSLATIONS) << "Failed to load" << translation << "translations for locale" << locale.name()
                                     << "from" << path;

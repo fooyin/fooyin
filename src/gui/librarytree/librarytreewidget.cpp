@@ -58,6 +58,8 @@
 
 #include <stack>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto LibTreePlaylist = "␟LibTreePlaylist␟";
 
 namespace {
@@ -472,7 +474,7 @@ void LibraryTreeWidgetPrivate::addOpenMenu(QMenu* menu) const
         index = index.parent();
     }
 
-    dir += u"/" + parentDirs.join(u'/');
+    dir += "/"_L1 + parentDirs.join(u'/');
     const QFileInfo info{dir};
     if(info.exists() && info.isDir()) {
         auto* openFolder = new QAction(LibraryTreeWidget::tr("Open folder"), m_self);
@@ -925,27 +927,27 @@ QString LibraryTreeWidget::name() const
 
 QString LibraryTreeWidget::layoutName() const
 {
-    return QStringLiteral("LibraryTree");
+    return u"LibraryTree"_s;
 }
 
 void LibraryTreeWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"Grouping"] = p->m_grouping.id;
-    layout[u"State"]    = QString::fromUtf8(p->saveState().toBase64());
+    layout["Grouping"_L1] = p->m_grouping.id;
+    layout["State"_L1]    = QString::fromUtf8(p->saveState().toBase64());
 }
 
 void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"Grouping")) {
-        if(const auto grouping = p->m_groupsRegistry->itemById(layout.value(u"Grouping").toInt())) {
+    if(layout.contains("Grouping"_L1)) {
+        if(const auto grouping = p->m_groupsRegistry->itemById(layout.value("Grouping"_L1).toInt())) {
             if(grouping->isValid()) {
                 p->changeGrouping(grouping.value());
             }
         }
     }
 
-    if(layout.contains(u"State")) {
-        p->m_pendingState = QByteArray::fromBase64(layout.value(u"State").toString().toUtf8());
+    if(layout.contains("State"_L1)) {
+        p->m_pendingState = QByteArray::fromBase64(layout.value("State"_L1).toString().toUtf8());
         if(!p->m_pendingState.isEmpty() && p->m_settings->value<LibTreeRestoreState>()) {
             p->m_libraryTree->setLoading(true);
         }

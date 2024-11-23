@@ -28,6 +28,8 @@
 
 Q_LOGGING_CATEGORY(LAYOUT, "fy.layout")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 struct ReadResult
 {
@@ -45,11 +47,11 @@ ReadResult readLayout(const QByteArray& json)
 
     const auto layoutObject = doc.object();
 
-    if(layoutObject.empty() || !layoutObject.contains(QStringLiteral("Name"))) {
+    if(layoutObject.empty() || !layoutObject.contains(u"Name"_s)) {
         return {};
     }
 
-    const QString name = layoutObject.value(QStringLiteral("Name")).toString();
+    const QString name = layoutObject.value(u"Name"_s).toString();
 
     if(name.isEmpty()) {
         return {};
@@ -97,14 +99,14 @@ void FyLayout::saveWindowSize()
 
     const auto size = window->size();
     QJsonObject jsonSize;
-    jsonSize[u"Width"]    = size.width();
-    jsonSize[u"Height"]   = size.height();
-    m_json[u"WindowSize"] = jsonSize;
+    jsonSize["Width"_L1]    = size.width();
+    jsonSize["Height"_L1]   = size.height();
+    m_json["WindowSize"_L1] = jsonSize;
 }
 
 void FyLayout::loadWindowSize() const
 {
-    if(!m_json.contains(u"WindowSize")) {
+    if(!m_json.contains("WindowSize"_L1)) {
         return;
     }
 
@@ -113,7 +115,7 @@ void FyLayout::loadWindowSize() const
         return;
     }
 
-    const auto sizeVal = m_json.value(u"WindowSize");
+    const auto sizeVal = m_json.value("WindowSize"_L1);
     if(!sizeVal.isObject()) {
         qCWarning(LAYOUT) << "Invalid WindowSize value";
         return;
@@ -122,11 +124,11 @@ void FyLayout::loadWindowSize() const
     const auto sizeObj = sizeVal.toObject();
 
     QSize size;
-    if(sizeObj.contains(u"Width")) {
-        size.setWidth(sizeObj.value(u"Width").toInt());
+    if(sizeObj.contains("Width"_L1)) {
+        size.setWidth(sizeObj.value("Width"_L1).toInt());
     }
-    if(sizeObj.contains(u"Height")) {
-        size.setHeight(sizeObj.value(u"Height").toInt());
+    if(sizeObj.contains("Height"_L1)) {
+        size.setHeight(sizeObj.value("Height"_L1).toInt());
     }
 
     if(size.isValid()) {
@@ -154,18 +156,18 @@ void FyLayout::saveTheme(const FyTheme& theme, ThemeOptions options)
     stream.setVersion(QDataStream::Qt_6_0);
 
     stream << theme;
-    m_json[u"Theme"] = QString::fromUtf8(currTheme.toBase64());
+    m_json["Theme"_L1] = QString::fromUtf8(currTheme.toBase64());
 }
 
 FyTheme FyLayout::loadTheme() const
 {
-    if(!m_json.contains(u"Theme")) {
+    if(!m_json.contains("Theme"_L1)) {
         return {};
     }
 
     FyTheme theme;
 
-    auto data = QByteArray::fromBase64(m_json.value(u"Theme").toString().toUtf8());
+    auto data = QByteArray::fromBase64(m_json.value("Theme"_L1).toString().toUtf8());
     QDataStream stream{&data, QDataStream::ReadOnly};
     stream.setVersion(QDataStream::Qt_6_0);
 

@@ -25,6 +25,8 @@
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 
+using namespace Qt::StringLiterals;
+
 constexpr int InitialBatchSize = 3000;
 constexpr int BatchSize        = 4000;
 
@@ -85,7 +87,7 @@ void LibraryTreePopulatorPrivate::iterateTrack(const Track& track)
         }
 
         LibraryTreeItem* parent = &m_root;
-        const QStringList items = value.split(QStringLiteral("||"));
+        const QStringList items = value.split(u"||"_s);
 
         for(int level{0}; const QString& item : items) {
             const QString title = item.trimmed();

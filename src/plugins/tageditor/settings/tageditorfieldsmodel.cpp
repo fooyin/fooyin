@@ -27,6 +27,8 @@
 
 Q_LOGGING_CATEGORY(TAGEDITOR_MODEL, "fy.tageditor")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::TagEditor {
 TagEditorFieldItem::TagEditorFieldItem()
     : TagEditorFieldItem{{}, nullptr}
@@ -241,11 +243,11 @@ QVariant TagEditorFieldsModel::data(const QModelIndex& index, int role) const
                 return item->field().index;
             case(1): {
                 const QString& name = item->field().name;
-                return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
+                return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
             case(2): {
                 const QString& field = item->field().scriptField;
-                return !field.isEmpty() ? field : QStringLiteral("<enter field here>");
+                return !field.isEmpty() ? field : u"<enter field here>"_s;
             }
             default:
                 break;
@@ -274,7 +276,7 @@ bool TagEditorFieldsModel::setData(const QModelIndex& index, const QVariant& val
 
     switch(index.column()) {
         case(1): {
-            if(value.toString() == QStringLiteral("<enter name here>") || field.name == value.toString()) {
+            if(value.toString() == u"<enter name here>"_s || field.name == value.toString()) {
                 if(item->status() == TagEditorFieldItem::Added) {
                     emit pendingRowCancelled();
                 }
@@ -286,7 +288,7 @@ bool TagEditorFieldsModel::setData(const QModelIndex& index, const QVariant& val
         case(2): {
             QString setValue = value.toString().trimmed();
             setValue.remove(u'%');
-            setValue = setValue.split(QStringLiteral(" ")).front();
+            setValue = setValue.split(u" "_s).front();
 
             if(field.scriptField == setValue) {
                 return false;

@@ -50,6 +50,8 @@
 
 #include <stack>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto LayoutVersion = 1;
 
 namespace {
@@ -100,7 +102,7 @@ public:
 
     [[nodiscard]] QString name() const override
     {
-        return QStringLiteral("Root");
+        return u"Root"_s;
     }
 
     [[nodiscard]] QString layoutName() const override
@@ -432,7 +434,7 @@ void EditableLayoutPrivate::setupContextMenu(FyWidget* widget, QMenu* menu)
     while(level > 0 && currentWidget && currentWidget != m_root) {
         const bool isDummy = qobject_cast<Dummy*>(currentWidget);
 
-        menu->addAction(new MenuHeaderAction(isDummy ? QStringLiteral("Widget") : currentWidget->name(), menu));
+        menu->addAction(new MenuHeaderAction(isDummy ? u"Widget"_s : currentWidget->name(), menu));
 
         currentWidget->layoutEditingMenu(menu);
 
@@ -534,7 +536,7 @@ EditableLayout::EditableLayout(ActionManager* actionManager, WidgetProvider* wid
     : QWidget{parent}
     , p{std::make_unique<EditableLayoutPrivate>(this, actionManager, widgetProvider, layoutProvider, settings)}
 {
-    setObjectName(QStringLiteral("EditableLayout"));
+    setObjectName(u"EditableLayout"_s);
 }
 
 EditableLayout::~EditableLayout()
@@ -589,12 +591,12 @@ FyLayout EditableLayout::saveCurrentToLayout(const QString& name)
 
     QString layoutName{name};
     if(layoutName.isEmpty()) {
-        layoutName = QStringLiteral("Layout %1").arg(p->m_layoutProvider->layouts().size());
+        layoutName = u"Layout %1"_s.arg(p->m_layoutProvider->layouts().size());
     }
 
-    root[u"Name"]    = layoutName;
-    root[u"Version"] = LayoutVersion;
-    root[u"Widgets"] = array;
+    root["Name"_L1]    = layoutName;
+    root["Version"_L1] = LayoutVersion;
+    root["Widgets"_L1] = array;
 
     const QByteArray json = QJsonDocument(root).toJson();
 
@@ -678,7 +680,7 @@ void EditableLayout::changeLayout(const FyLayout& layout)
 
 void EditableLayout::saveLayout()
 {
-    const auto layout = saveCurrentToLayout(QStringLiteral("Default"));
+    const auto layout = saveCurrentToLayout(u"Default"_s);
     if(layout.isValid()) {
         p->m_layoutProvider->changeLayout(layout);
         p->m_layoutProvider->saveCurrentLayout();
@@ -696,15 +698,15 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
     p->m_layoutHistory->clear();
     layout.loadWindowSize();
 
-    if(!json.contains(u"Widgets")) {
+    if(!json.contains("Widgets"_L1)) {
         return false;
     }
 
-    if(!json.value(u"Widgets").isArray()) {
+    if(!json.value("Widgets"_L1).isArray()) {
         return false;
     }
 
-    const auto rootWidgets = json.value(u"Widgets").toArray();
+    const auto rootWidgets = json.value("Widgets"_L1).toArray();
 
     if(rootWidgets.empty() || !rootWidgets.cbegin()->isObject()) {
         return false;

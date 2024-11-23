@@ -21,6 +21,8 @@
 
 #include <core/constants.h>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 QString frontCover()
 {
@@ -56,13 +58,13 @@ public:
     using PlaylistVar  = std::function<QString()>;
     using PlaylistVars = std::unordered_map<QString, PlaylistVar>;
     // clang-format off
-    PlaylistVars m_vars{{QStringLiteral("depth"), [this]() { return depth(); }},
-                        {QStringLiteral("queueindex"), [this]() { return queueIndex(); }},
-                        {QStringLiteral("queueindexes"), [this]() { return queueIndexes(); }},
-                        {QStringLiteral("playingicon"), [this]() { return playingQueue(); }},
-                        {QStringLiteral("frontcover"), frontCover},
-                        {QStringLiteral("backcover"), backCover},
-                        {QStringLiteral("artistpicture"), artistPicture}};
+    PlaylistVars m_vars{{u"depth"_s, [this]() { return depth(); }},
+                        {u"queueindex"_s, [this]() { return queueIndex(); }},
+                        {u"queueindexes"_s, [this]() { return queueIndexes(); }},
+                        {u"playingicon"_s, [this]() { return playingQueue(); }},
+                        {u"frontcover"_s, frontCover},
+                        {u"backcover"_s, backCover},
+                        {u"artistpicture"_s, artistPicture}};
     // clang-format on
 };
 
@@ -95,13 +97,13 @@ QString PlaylistScriptRegistryPrivate::queueIndexes() const
         str.append(QString::number(index + 1));
     }
 
-    return str.join(QStringLiteral(", "));
+    return str.join(u", "_s);
 }
 
 QString PlaylistScriptRegistryPrivate::playingQueue() const
 {
     const QString indexes = queueIndexes();
-    return indexes.isEmpty() ? QString{} : QStringLiteral("[%1]").arg(indexes);
+    return indexes.isEmpty() ? QString{} : u"[%1]"_s.arg(indexes);
 }
 
 PlaylistScriptRegistry::PlaylistScriptRegistry()
@@ -136,7 +138,7 @@ bool PlaylistScriptRegistry::isVariable(const QString& var, const Track& track) 
 ScriptResult PlaylistScriptRegistry::value(const QString& var, const Track& track) const
 {
     if(isListVariable(var)) {
-        return {.value = QStringLiteral("|Loading|"), .cond = true};
+        return {.value = u"|Loading|"_s, .cond = true};
     }
 
     if(p->m_vars.contains(var)) {
@@ -152,7 +154,7 @@ ScriptResult PlaylistScriptRegistry::value(const QString& var, const Track& trac
 ScriptResult PlaylistScriptRegistry::calculateResult(FuncRet funcRet) const
 {
     ScriptResult result = ScriptRegistry::calculateResult(funcRet);
-    result.value.replace(u'<', QStringLiteral("\\<"));
+    result.value.replace(u'<', u"\\<"_s);
     return result;
 }
 } // namespace Fooyin

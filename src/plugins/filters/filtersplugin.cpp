@@ -34,6 +34,8 @@
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Filters {
 void FiltersPlugin::initialise(const CorePluginContext& context)
 {
@@ -49,8 +51,8 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
         = new FilterController(*m_core, context.trackSelection, context.editableLayout, m_core->settingsManager, this);
 
     context.widgetProvider->registerWidget(
-        QStringLiteral("LibraryFilter"), [this]() { return m_filterController->createFilter(); }, tr("Library Filter"));
-    context.themeRegistry->registerFontEntry(tr("Filters"), QStringLiteral("Fooyin::Filters::FilterView"));
+        u"LibraryFilter"_s, [this]() { return m_filterController->createFilter(); }, tr("Library Filter"));
+    context.themeRegistry->registerFontEntry(tr("Filters"), u"Fooyin::Filters::FilterView"_s);
 
     m_generalPage = new FiltersGeneralPage(m_core->settingsManager, this);
     m_guiPage     = new FiltersGuiPage(m_core->settingsManager, this);

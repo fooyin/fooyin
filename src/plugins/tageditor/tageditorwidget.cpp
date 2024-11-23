@@ -41,6 +41,8 @@
 #include <QMessageBox>
 #include <QToolButton>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto DontAskAgain = "TagEditor/DontAskAgain";
 constexpr auto State        = "TagEditor/State";
 
@@ -146,12 +148,12 @@ void TagEditorWidget::setReadOnly(bool readOnly)
 
 QString TagEditorWidget::name() const
 {
-    return QStringLiteral("Tag Editor");
+    return u"Tag Editor"_s;
 }
 
 QString TagEditorWidget::layoutName() const
 {
-    return QStringLiteral("TagEditor");
+    return u"TagEditor"_s;
 }
 
 bool TagEditorWidget::hasTools() const

@@ -25,6 +25,8 @@
 
 Q_LOGGING_CATEGORY(DB_QRY, "fy.db")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 bool prepareQuery(QSqlQuery& query, const QString& statement)
 {
@@ -42,7 +44,7 @@ QString lastExecutedQuery(const QSqlQuery& query)
     QString sql            = query.executedQuery();
     const auto boundValues = query.boundValues();
 
-    static const QRegularExpression placeholderPattern{QStringLiteral("(:\\w+)")};
+    static const QRegularExpression placeholderPattern{u"(:\\w+)"_s};
     QRegularExpressionMatchIterator it = placeholderPattern.globalMatch(sql);
 
     int valueIndex{0};
@@ -52,7 +54,7 @@ QString lastExecutedQuery(const QSqlQuery& query)
         const QString value                 = boundValues.at(valueIndex).toString();
 
         if(!value.isEmpty()) {
-            const QRegularExpression exactPlaceholderPattern{QRegularExpression::escape(placeholder) + u"\\b"};
+            const QRegularExpression exactPlaceholderPattern{QRegularExpression::escape(placeholder) + "\\b"_L1};
             sql.replace(exactPlaceholderPattern, value);
         }
 
@@ -76,7 +78,7 @@ DbQuery::DbQuery(const QSqlDatabase& database, const QString& statement)
         m_status = Status::Prepared;
     }
     else if(lastError().isValid() && lastError().type() != QSqlError::NoError) {
-        if(lastError().databaseText().startsWith(QStringLiteral("duplicate column name: "))) {
+        if(lastError().databaseText().startsWith(u"duplicate column name: "_s)) {
             // Re-applying previous migration
             m_status = Status::Ignored;
         }

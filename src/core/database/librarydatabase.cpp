@@ -21,10 +21,12 @@
 
 #include <utils/database/dbquery.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 bool LibraryDatabase::getAllLibraries(LibraryInfoMap& libraries)
 {
-    const QString statement = QStringLiteral("SELECT LibraryID, Name, Path FROM Libraries;");
+    const QString statement = u"SELECT LibraryID, Name, Path FROM Libraries;"_s;
 
     DbQuery query{db(), statement};
 
@@ -49,12 +51,12 @@ int LibraryDatabase::insertLibrary(const QString& path, const QString& name)
         return -1;
     }
 
-    const QString statement = QStringLiteral("INSERT INTO Libraries (Name, Path) VALUES (:name, :path);");
+    const QString statement = u"INSERT INTO Libraries (Name, Path) VALUES (:name, :path);"_s;
 
     DbQuery query{db(), statement};
 
-    query.bindValue(QStringLiteral(":name"), name);
-    query.bindValue(QStringLiteral(":path"), path);
+    query.bindValue(u":name"_s, name);
+    query.bindValue(u":path"_s, path);
 
     if(!query.exec()) {
         return -1;
@@ -69,11 +71,11 @@ bool LibraryDatabase::removeLibrary(int id)
         return false;
     }
 
-    const QString statement = QStringLiteral("DELETE FROM Libraries WHERE LibraryID = :id;");
+    const QString statement = u"DELETE FROM Libraries WHERE LibraryID = :id;"_s;
 
     DbQuery query{db(), statement};
 
-    query.bindValue(QStringLiteral(":id"), id);
+    query.bindValue(u":id"_s, id);
 
     return query.exec();
 }
@@ -84,12 +86,12 @@ bool LibraryDatabase::renameLibrary(int id, const QString& name)
         return false;
     }
 
-    const QString statement = QStringLiteral("UPDATE Libraries SET Name = :name WHERE LibraryId = :id;");
+    const QString statement = u"UPDATE Libraries SET Name = :name WHERE LibraryId = :id;"_s;
 
     DbQuery query{db(), statement};
 
-    query.bindValue(QStringLiteral(":name"), name);
-    query.bindValue(QStringLiteral(":id"), id);
+    query.bindValue(u":name"_s, name);
+    query.bindValue(u":id"_s, id);
 
     return query.exec();
 }

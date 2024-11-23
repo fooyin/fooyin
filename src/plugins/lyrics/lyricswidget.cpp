@@ -47,6 +47,7 @@
 Q_LOGGING_CATEGORY(LYRICS_WIDGET, "fy.lyrics")
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto ScrollTimeout = 100ms;
@@ -133,8 +134,7 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, LyricsFinder* lyr
 
 QString LyricsWidget::defaultNoLyricsScript()
 {
-    return QStringLiteral("[%1: %artist%$crlf(2)][%2: %album%$crlf(2)]%3: %title%")
-        .arg(tr("Artist"), tr("Album"), tr("Title"));
+    return u"[%1: %artist%$crlf(2)][%2: %album%$crlf(2)]%3: %title%"_s.arg(tr("Artist"), tr("Album"), tr("Title"));
 }
 
 QString LyricsWidget::name() const
@@ -144,7 +144,7 @@ QString LyricsWidget::name() const
 
 QString LyricsWidget::layoutName() const
 {
-    return QStringLiteral("Lyrics");
+    return u"Lyrics"_s;
 }
 
 void LyricsWidget::timerEvent(QTimerEvent* event)
@@ -165,9 +165,8 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     if(!m_lyrics.empty()) {
         auto* selectLyrics = new QMenu(tr("Select lyrics"), menu);
         for(const auto& lyric : m_lyrics) {
-            const auto actionTitle
-                = QStringLiteral("%1 - %2 (%3)").arg(lyric.metadata.artist, lyric.metadata.title, lyric.source);
-            auto* lyricAction = new QAction(actionTitle, selectLyrics);
+            const auto actionTitle = u"%1 - %2 (%3)"_s.arg(lyric.metadata.artist, lyric.metadata.title, lyric.source);
+            auto* lyricAction      = new QAction(actionTitle, selectLyrics);
             QObject::connect(lyricAction, &QAction::triggered, this, [this, lyric]() { changeLyrics(lyric); });
             selectLyrics->addAction(lyricAction);
         }

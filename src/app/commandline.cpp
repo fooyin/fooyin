@@ -28,6 +28,8 @@
 #include <getopt.h>
 #include <iostream>
 
+using namespace Qt::StringLiterals;
+
 CommandLine::CommandLine(int argc, char** argv)
     : m_argc{argc}
     , m_argv{argv}
@@ -44,22 +46,22 @@ bool CommandLine::parse()
            {"stop", no_argument, nullptr, 's'},        {"next", no_argument, nullptr, 'f'},
            {"previous", no_argument, nullptr, 'r'},    {nullptr, 0, nullptr, 0}};
 
-    static const auto help = QStringLiteral("%1: fooyin [%2] [%3]\n"
-                                            "\n"
-                                            "%4:\n"
-                                            "  -h, --help      %5\n"
-                                            "  -v, --version   %6\n"
-                                            "\n"
-                                            "%7:\n"
-                                            "  -t, --play-pause  %8\n"
-                                            "  -p, --play        %9\n"
-                                            "  -u, --pause       %10\n"
-                                            "  -s, --stop        %11\n"
-                                            "  -f, --next        %12\n"
-                                            "  -r, --previous    %13\n"
-                                            "\n"
-                                            "%14:\n"
-                                            "  urls            %15\n");
+    static const auto help = u"%1: fooyin [%2] [%3]\n"
+                             "\n"
+                             "%4:\n"
+                             "  -h, --help      %5\n"
+                             "  -v, --version   %6\n"
+                             "\n"
+                             "%7:\n"
+                             "  -t, --play-pause  %8\n"
+                             "  -p, --play        %9\n"
+                             "  -u, --pause       %10\n"
+                             "  -s, --stop        %11\n"
+                             "  -f, --next        %12\n"
+                             "  -r, --previous    %13\n"
+                             "\n"
+                             "%14:\n"
+                             "  urls            %15\n"_s;
 
     for(;;) {
         const int c = getopt_long(m_argc, m_argv, "hvxtpusfr", cmdOptions, nullptr);
@@ -79,7 +81,7 @@ bool CommandLine::parse()
                 return false;
             }
             case('v'): {
-                const auto version = QStringLiteral("%1 %2").arg(QStringLiteral("fooyin"), QLatin1String(VERSION));
+                const auto version = u"%1 %2"_s.arg(u"fooyin"_s, QLatin1String(VERSION));
                 std::cout << version.toLocal8Bit().constData() << '\n';
                 std::exit(0);
             }

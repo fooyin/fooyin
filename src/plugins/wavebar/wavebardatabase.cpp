@@ -24,6 +24,8 @@
 #include <utils/database/dbquery.h>
 #include <utils/datastream.h>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 using Fooyin::WaveBar::WaveformData;
 
@@ -85,9 +87,9 @@ void deserialiseData(const QByteArray& cacheData, WaveformData<int16_t>& data)
 namespace Fooyin::WaveBar {
 void WaveBarDatabase::initialiseDatabase() const
 {
-    const auto statement = QStringLiteral("CREATE TABLE IF NOT EXISTS WaveCache ("
-                                          "TrackKey TEXT PRIMARY KEY, "
-                                          "Data BLOB);");
+    const auto statement = u"CREATE TABLE IF NOT EXISTS WaveCache ("
+                           "TrackKey TEXT PRIMARY KEY, "
+                           "Data BLOB);"_s;
 
     DbQuery query{db(), statement};
     query.exec();
@@ -95,11 +97,11 @@ void WaveBarDatabase::initialiseDatabase() const
 
 bool WaveBarDatabase::existsInCache(const QString& key) const
 {
-    const auto statement = QStringLiteral("SELECT COUNT(*) FROM WaveCache WHERE TrackKey = :trackKey;");
+    const auto statement = u"SELECT COUNT(*) FROM WaveCache WHERE TrackKey = :trackKey;"_s;
 
     DbQuery query{db(), statement};
 
-    query.bindValue(QStringLiteral(":trackKey"), key);
+    query.bindValue(u":trackKey"_s, key);
 
     if(query.exec() && query.next()) {
         return query.value(0).toInt() > 0;
@@ -110,11 +112,11 @@ bool WaveBarDatabase::existsInCache(const QString& key) const
 
 bool WaveBarDatabase::loadCachedData(const QString& key, WaveformData<int16_t>& data) const
 {
-    const auto statement = QStringLiteral("SELECT Data FROM WaveCache WHERE TrackKey = :trackKey;");
+    const auto statement = u"SELECT Data FROM WaveCache WHERE TrackKey = :trackKey;"_s;
 
     DbQuery query{db(), statement};
 
-    query.bindValue(QStringLiteral(":trackKey"), key);
+    query.bindValue(u":trackKey"_s, key);
 
     if(query.exec() && query.next()) {
         const QByteArray cacheData = query.value(0).toByteArray();
@@ -127,43 +129,42 @@ bool WaveBarDatabase::loadCachedData(const QString& key, WaveformData<int16_t>& 
 
 bool WaveBarDatabase::storeInCache(const QString& key, const WaveformData<int16_t>& data) const
 {
-    const auto statement
-        = QStringLiteral("INSERT OR REPLACE INTO WaveCache (TrackKey, Data) VALUES (:trackKey, :data);");
+    const auto statement = u"INSERT OR REPLACE INTO WaveCache (TrackKey, Data) VALUES (:trackKey, :data);"_s;
 
     DbQuery query{db(), statement};
 
-    query.bindValue(QStringLiteral(":trackKey"), key);
-    query.bindValue(QStringLiteral(":data"), serialiseData(data));
+    query.bindValue(u":trackKey"_s, key);
+    query.bindValue(u":data"_s, serialiseData(data));
 
     return query.exec();
 }
 
 bool WaveBarDatabase::removeFromCache(const QString& key) const
 {
-    const auto statement = QStringLiteral("DELETE FROM WaveCache WHERE TrackKey = :trackKey;");
+    const auto statement = u"DELETE FROM WaveCache WHERE TrackKey = :trackKey;"_s;
 
     DbQuery query{db(), statement};
-    query.bindValue(QStringLiteral(":trackKey"), key);
+    query.bindValue(u":trackKey"_s, key);
 
     return query.exec();
 }
 
 bool WaveBarDatabase::removeFromCache(const QStringList& keys) const
 {
-    const QString statement = QStringLiteral("DELETE FROM WaveCache WHERE TrackKey IN (:keys);");
+    const QString statement = u"DELETE FROM WaveCache WHERE TrackKey IN (:keys);"_s;
 
     DbQuery query{db(), statement};
-    query.bindValue(QStringLiteral(":keys"), keys);
+    query.bindValue(u":keys"_s, keys);
 
     return query.exec();
 }
 
 bool WaveBarDatabase::clearCache() const
 {
-    const auto statement = QStringLiteral("DELETE FROM WaveCache;");
+    const auto statement = u"DELETE FROM WaveCache;"_s;
 
     DbQuery query{db(), statement};
-    DbQuery cleanQuery{db(), QStringLiteral("VACUUM")};
+    DbQuery cleanQuery{db(), u"VACUUM"_s};
 
     return query.exec() && cleanQuery.exec();
 }

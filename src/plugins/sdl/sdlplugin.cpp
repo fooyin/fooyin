@@ -21,10 +21,12 @@
 
 #include "sdloutput.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Sdl {
 QString SdlPlugin::name() const
 {
-    return QStringLiteral("SDL2");
+    return u"SDL2"_s;
 }
 
 OutputCreator SdlPlugin::creator() const

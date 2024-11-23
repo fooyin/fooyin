@@ -37,6 +37,8 @@
 #include <QMainWindow>
 #include <QRadioButton>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Lyrics {
 class LyricsSavingPageWidget : public SettingsPageWidget
 {
@@ -117,10 +119,10 @@ LyricsSavingPageWidget::LyricsSavingPageWidget(SettingsManager* settings)
     auto* locationGroup  = new QGroupBox(tr("Save Location"), this);
     auto* locationLayout = new QGridLayout(locationGroup);
 
-    auto* syncedLabel   = new QLabel(tr("Synced lyric tag") + u":", this);
-    auto* unsyncedLabel = new QLabel(tr("Unsynced lyric tag") + u":", this);
-    auto* dirLabel      = new QLabel(tr("Directory") + u":", this);
-    auto* filenameLabel = new QLabel(tr("Filename") + u":", this);
+    auto* syncedLabel   = new QLabel(tr("Synced lyric tag") + ":"_L1, this);
+    auto* unsyncedLabel = new QLabel(tr("Unsynced lyric tag") + ":"_L1, this);
+    auto* dirLabel      = new QLabel(tr("Directory") + ":"_L1, this);
+    auto* filenameLabel = new QLabel(tr("Filename") + ":"_L1, this);
 
     row = 0;
     locationLayout->addWidget(syncedLabel, row, 0);

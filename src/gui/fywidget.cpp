@@ -25,6 +25,8 @@
 #include <QJsonObject>
 #include <QMenu>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
@@ -85,7 +87,7 @@ void FyWidget::saveLayout(QJsonArray& layout)
     QJsonObject widgetData;
 
     if(m_features & PersistId || m_features & (Search | ExclusiveSearch)) {
-        widgetData[u"ID"] = m_id.name();
+        widgetData["ID"_L1] = m_id.name();
     }
 
     saveLayoutData(widgetData);
@@ -110,8 +112,8 @@ void FyWidget::saveBaseLayout(QJsonArray& layout)
 
 void FyWidget::loadLayout(const QJsonObject& layout)
 {
-    if(layout.contains(u"ID")) {
-        m_id = Id{layout[u"ID"].toString()};
+    if(layout.contains("ID"_L1)) {
+        m_id = Id{layout["ID"_L1].toString()};
     }
 
     loadLayoutData(layout);

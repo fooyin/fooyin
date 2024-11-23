@@ -30,6 +30,8 @@
 
 Q_LOGGING_CATEGORY(M3U, "fy.m3u")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 enum class Type
 {
@@ -59,7 +61,7 @@ bool processMetadata(const QString& line, Metadata& metadata)
     metadata.duration = static_cast<uint64_t>(duration) * 1000;
 
     const QString trackSection = info.section(u',', 1);
-    const QStringList list     = trackSection.split(QStringLiteral(" - "));
+    const QStringList list     = trackSection.split(" - "_L1);
 
     if(list.size() <= 1) {
         metadata.title = trackSection;
@@ -74,7 +76,7 @@ bool processMetadata(const QString& line, Metadata& metadata)
 
 int endingSubsong(QString* filepath)
 {
-    static const QRegularExpression regex{QStringLiteral(R"(#(\d+)$)")};
+    static const QRegularExpression regex{uR"(#(\d+)$)"_s};
     const QRegularExpressionMatch match = regex.match(*filepath);
     if(match.hasMatch()) {
         const int subsong = match.captured(1).toInt();
@@ -88,12 +90,12 @@ int endingSubsong(QString* filepath)
 namespace Fooyin {
 QString M3uParser::name() const
 {
-    return QStringLiteral("M3U");
+    return u"M3U"_s;
 }
 
 QStringList M3uParser::supportedExtensions() const
 {
-    static const QStringList extensions{QStringLiteral("m3u"), QStringLiteral("m3u8")};
+    static const QStringList extensions{u"m3"_s, u"_L1m3u8"_s};
     return extensions;
 }
 
@@ -119,13 +121,13 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
     while(!buffer.atEnd() && !readEntry.cancel) {
         const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
 
-        if(line.startsWith(u"#EXTM3U")) {
+        if(line.startsWith("#EXTM3U"_L1)) {
             type = Type::Extended;
             continue;
         }
 
         if(line.startsWith(u'#')) {
-            if(type == Type::Extended && line.startsWith(u"#EXT")) {
+            if(type == Type::Extended && line.startsWith("#EXT"_L1)) {
                 if(!processMetadata(line, metadata)) {
                     qCWarning(M3U) << "Failed to process metadata:" << line;
                 }
@@ -178,7 +180,7 @@ void M3uParser::savePlaylist(QIODevice* device, const QString& extension, const 
                              PathType type, bool writeMetdata)
 {
     QTextStream stream{device};
-    if(extension == u"m3u") {
+    if(extension == "m3u"_L1) {
         stream.setEncoding(QStringConverter::System);
     }
 
@@ -188,13 +190,11 @@ void M3uParser::savePlaylist(QIODevice* device, const QString& extension, const 
 
     for(const Track& track : tracks) {
         if(writeMetdata) {
-            stream << QStringLiteral("#EXTINF:%1,%2 - %3\n")
-                          .arg(track.duration() / 1000)
-                          .arg(track.artist(), track.title());
+            stream << u"#EXTINF:%1,%2 - %3\n"_s.arg(track.duration() / 1000).arg(track.artist(), track.title());
         }
         QString path = track.filepath();
         if(track.subsong() > 0) {
-            path += QStringLiteral("#%1").arg(track.subsong());
+            path += u"#%1"_s.arg(track.subsong());
         }
         stream << PlaylistParser::determineTrackPath(QUrl::fromLocalFile(path), dir, type) << "\n";
     }

@@ -21,12 +21,14 @@
 
 #include <utils/database/dbquery.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 void GeneralDatabase::optimiseDatabase()
 {
-    DbQuery vacuumQuery{db(), QStringLiteral("VACUUM;")};
+    DbQuery vacuumQuery{db(), u"VACUUM;"_s};
     if(vacuumQuery.exec()) {
-        DbQuery analyzeQuery{db(), QStringLiteral("ANALYZE;")};
+        DbQuery analyzeQuery{db(), u"ANALYZE;"_s};
         analyzeQuery.exec();
     }
 }

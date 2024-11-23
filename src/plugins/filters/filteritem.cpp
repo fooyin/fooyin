@@ -22,6 +22,8 @@
 #include <core/library/tracksort.h>
 #include <core/track.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Filters {
 FilterItem::FilterItem(Md5Hash key, QStringList columns, FilterItem* parent)
     : TreeItem{parent}
@@ -31,7 +33,7 @@ FilterItem::FilterItem(Md5Hash key, QStringList columns, FilterItem* parent)
 {
     for(QString& str : m_columns) {
         if(str.isEmpty()) {
-            str = QStringLiteral("?");
+            str = u"?"_s;
         }
     }
 }

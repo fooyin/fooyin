@@ -21,10 +21,12 @@
 
 #include "rawaudioinput.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::RawAudio {
 QString RawAudioPlugin::inputName() const
 {
-    return QStringLiteral("RawAudio");
+    return u"RawAudio"_s;
 }
 
 InputCreator RawAudioPlugin::inputCreator() const

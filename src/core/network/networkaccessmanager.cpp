@@ -29,6 +29,8 @@
 
 Q_LOGGING_CATEGORY(NETWORK, "fy.network")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class NetworkCache : public QNetworkDiskCache
 {
@@ -38,7 +40,7 @@ public:
     explicit NetworkCache(QObject* parent = nullptr)
         : QNetworkDiskCache{parent}
     {
-        setCacheDirectory(Utils::cachePath(QStringLiteral("networkcache")));
+        setCacheDirectory(Utils::cachePath(u"networkcache"_s));
         setMaximumCacheSize(50 * 1024 * 1024);
     }
 };
@@ -89,7 +91,7 @@ public:
                     proxy.setUser(m_url.userName());
                     proxy.setPassword(m_url.password());
 
-                    if(m_url.scheme().startsWith(u"http")) {
+                    if(m_url.scheme().startsWith("http"_L1)) {
                         proxy.setType(QNetworkProxy::HttpProxy);
                     }
                     else {

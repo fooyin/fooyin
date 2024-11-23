@@ -41,6 +41,8 @@
 #include <QMenu>
 #include <QPushButton>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class LibraryTableView : public ExtendableTableView
 {
@@ -146,11 +148,11 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     auto* fileTypesLayout = new QGridLayout(fileTypesGroup);
 
     int row{0};
-    fileTypesLayout->addWidget(new QLabel(tr("Restrict to") + u":", this), row, 0);
+    fileTypesLayout->addWidget(new QLabel(tr("Restrict to") + ":"_L1, this), row, 0);
     fileTypesLayout->addWidget(m_restrictTypes, row++, 1);
-    fileTypesLayout->addWidget(new QLabel(tr("Exclude") + u":", this), row, 0);
+    fileTypesLayout->addWidget(new QLabel(tr("Exclude") + ":"_L1, this), row, 0);
     fileTypesLayout->addWidget(m_excludeTypes, row++, 1);
-    fileTypesLayout->addWidget(new QLabel(QStringLiteral("🛈 e.g. \"mp3;m4a\""), this), row++, 1);
+    fileTypesLayout->addWidget(new QLabel(u"🛈 e.g. \"mp3;m4a\""_s, this), row++, 1);
     fileTypesLayout->setColumnStretch(1, 1);
 
     auto* mainLayout = new QGridLayout(this);
@@ -179,8 +181,7 @@ void LibraryGeneralPageWidget::load()
     const QStringList restrictExtensions
         = m_settings->fileValue(Settings::Core::Internal::LibraryRestrictTypes).toStringList();
     const QStringList excludeExtensions
-        = m_settings->fileValue(Settings::Core::Internal::LibraryExcludeTypes, QStringList{QStringLiteral("cue")})
-              .toStringList();
+        = m_settings->fileValue(Settings::Core::Internal::LibraryExcludeTypes, QStringList{u"cue"_s}).toStringList();
 
     m_restrictTypes->setText(restrictExtensions.join(u';'));
     m_excludeTypes->setText(excludeExtensions.join(u';'));

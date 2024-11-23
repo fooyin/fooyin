@@ -29,6 +29,8 @@
 #include <QUrl>
 #include <QUrlQuery>
 
+using namespace Qt::StringLiterals;
+
 // TODO: Use offical API once we resolve issues with random search results
 // constexpr auto SearchUrl = "https://music.163.com/api/search/get";
 constexpr auto SearchUrl = "https://music.xianqiao.wang/neteaseapiv2/search";
@@ -41,7 +43,7 @@ QNetworkRequest setupRequest(const char* url)
     QNetworkRequest req{QString::fromLatin1(url)};
 
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
+    req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
 
     return req;
 }
@@ -50,7 +52,7 @@ QNetworkRequest setupRequest(const char* url)
 namespace Fooyin::Lyrics {
 QString NeteaseLyrics::name() const
 {
-    return QStringLiteral("NetEase Cloud Music");
+    return u"NetEase Cloud Music"_s;
 }
 
 void NeteaseLyrics::search(const SearchParams& params)
@@ -59,16 +61,16 @@ void NeteaseLyrics::search(const SearchParams& params)
     m_data.clear();
 
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(QStringLiteral("keywords"), QStringLiteral("%1+%2").arg(params.artist, params.title));
-    urlQuery.addQueryItem(QStringLiteral("type"), QStringLiteral("1"));
-    urlQuery.addQueryItem(QStringLiteral("offset"), QStringLiteral("0"));
-    urlQuery.addQueryItem(QStringLiteral("sub"), QStringLiteral("false"));
-    urlQuery.addQueryItem(QStringLiteral("limit"), QStringLiteral("3"));
-    urlQuery.addQueryItem(QStringLiteral("total"), QStringLiteral("true"));
+    urlQuery.addQueryItem(u"keywords"_s, u"%1+%2"_s.arg(params.artist, params.title));
+    urlQuery.addQueryItem(u"type"_s, u"1"_s);
+    urlQuery.addQueryItem(u"offset"_s, u"0"_s);
+    urlQuery.addQueryItem(u"sub"_s, u"false"_s);
+    urlQuery.addQueryItem(u"limit"_s, u"3"_s);
+    urlQuery.addQueryItem(u"total"_s, u"true"_s);
 
     const QNetworkRequest req = setupRequest(SearchUrl);
 
-    qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{SearchUrl}).arg(urlQuery.toString());
+    qCDebug(LYRICS) << u"Sending request: %1?%2"_s.arg(QLatin1String{SearchUrl}).arg(urlQuery.toString());
 
     setReply(network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8()));
     QObject::connect(reply(), &QNetworkReply::finished, this, &NeteaseLyrics::handleSearchReply);
@@ -85,8 +87,8 @@ void NeteaseLyrics::handleSearchReply()
 
     resetReply();
 
-    const QJsonObject result = obj.value(u"result").toObject();
-    const QJsonArray songs   = result.value(u"songs").toArray();
+    const QJsonObject result = obj.value("result"_L1).toObject();
+    const QJsonArray songs   = result.value("songs"_L1).toArray();
 
     if(songs.isEmpty()) {
         emit searchResult({});
@@ -95,23 +97,23 @@ void NeteaseLyrics::handleSearchReply()
 
     for(const auto& song : songs) {
         const QJsonObject songItem = song.toObject();
-        if(songItem.contains(u"id")) {
+        if(songItem.contains("id"_L1)) {
             LyricData songData;
-            songData.id    = QString::number(songItem.value(u"id").toInteger());
-            songData.title = songItem.value(u"name").toString();
-            songData.album = songItem.value(u"album").toObject().value(u"name").toString();
+            songData.id    = QString::number(songItem.value("id"_L1).toInteger());
+            songData.title = songItem.value("name"_L1).toString();
+            songData.album = songItem.value("album"_L1).toObject().value("name"_L1).toString();
 
             QStringList trackArtists;
-            const auto artists = songItem.value(u"artists").toArray();
+            const auto artists = songItem.value("artists"_L1).toArray();
             for(const auto& artist : artists) {
-                const QString artistName = artist.toObject().value(u"name").toString();
+                const QString artistName = artist.toObject().value("name"_L1).toString();
                 if(!artistName.isEmpty()) {
                     trackArtists.push_back(artistName);
                 }
             }
 
             if(!trackArtists.empty()) {
-                songData.artist = trackArtists.join(u", ");
+                songData.artist = trackArtists.join(", "_L1);
             }
 
             m_data.push_back(songData);
@@ -130,15 +132,15 @@ void NeteaseLyrics::handleSearchReply()
 void NeteaseLyrics::makeLyricRequest()
 {
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(QStringLiteral("id"), m_currentData->id);
-    urlQuery.addQueryItem(QStringLiteral("lv"), QStringLiteral("-1"));
-    urlQuery.addQueryItem(QStringLiteral("kv"), QStringLiteral("-1"));
-    urlQuery.addQueryItem(QStringLiteral("tv"), QStringLiteral("-1"));
-    urlQuery.addQueryItem(QStringLiteral("os"), QStringLiteral("pc"));
+    urlQuery.addQueryItem(u"id"_s, m_currentData->id);
+    urlQuery.addQueryItem(u"lv"_s, u"-1"_s);
+    urlQuery.addQueryItem(u"kv"_s, u"-1"_s);
+    urlQuery.addQueryItem(u"tv"_s, u"-1"_s);
+    urlQuery.addQueryItem(u"os"_s, u"pc"_s);
 
     const QNetworkRequest req = setupRequest(LyricUrl);
 
-    qCDebug(LYRICS) << QStringLiteral("Sending request: %1?%2").arg(QLatin1String{LyricUrl}).arg(urlQuery.toString());
+    qCDebug(LYRICS) << u"Sending request: %1?%2"_s.arg(QLatin1String{LyricUrl}).arg(urlQuery.toString());
 
     setReply(network()->post(req, urlQuery.toString(QUrl::FullyEncoded).toUtf8()));
     QObject::connect(reply(), &QNetworkReply::finished, this, &NeteaseLyrics::handleLyricReply);
@@ -150,8 +152,8 @@ void NeteaseLyrics::handleLyricReply()
     if(getJsonFromReply(reply(), &obj)) {
         resetReply();
 
-        const QJsonObject lrc = obj.value(u"lrc").toObject();
-        const QString lyrics  = lrc.value(u"lyric").toString().trimmed();
+        const QJsonObject lrc = obj.value("lrc"_L1).toObject();
+        const QString lyrics  = lrc.value("lyric"_L1).toString().trimmed();
         if(!lyrics.isEmpty()) {
             m_currentData->data = lyrics;
         }

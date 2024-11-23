@@ -29,6 +29,8 @@
 
 #include <utility>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 bool checkNewPath(const QString& path, const LibraryInfoMap& libraries, int libraryId = -1)
 {
@@ -64,7 +66,7 @@ public:
 
     [[nodiscard]] QString findUniqueName(const QString& name) const
     {
-        const QString uniqueName{name.isEmpty() ? QStringLiteral("New Library") : name};
+        const QString uniqueName{name.isEmpty() ? u"New Library"_s : name};
         return Utils::findUniqueString(uniqueName, m_libraries, [](const auto& item) { return item.second.name; });
     }
 

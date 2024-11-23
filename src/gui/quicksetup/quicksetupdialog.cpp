@@ -28,6 +28,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent)
     : QDialog{parent}
@@ -35,7 +37,7 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* pare
     , m_model{new QuickSetupModel(layoutProvider, parent)}
     , m_accept{new QPushButton(tr("OK"), this)}
 {
-    setObjectName(QStringLiteral("Quick Setup"));
+    setObjectName(u"Quick Setup"_s);
     setWindowTitle(tr("Quick Setup"));
     setModal(true);
 

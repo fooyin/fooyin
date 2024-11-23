@@ -36,6 +36,8 @@
 #include <QTabBar>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, settings, parent}
@@ -71,7 +73,7 @@ QString TabStackWidget::name() const
 
 QString TabStackWidget::layoutName() const
 {
-    return QStringLiteral("TabStack");
+    return u"TabStack"_s;
 }
 
 void TabStackWidget::saveLayoutData(QJsonObject& layout)
@@ -89,24 +91,24 @@ void TabStackWidget::saveLayoutData(QJsonObject& layout)
         state.append(m_tabs->tabText(i));
     }
 
-    layout[u"Position"] = Utils::Enum::toString(m_tabs->tabPosition());
-    layout[u"State"]    = state;
-    layout[u"Widgets"]  = widgets;
+    layout["Position"_L1] = Utils::Enum::toString(m_tabs->tabPosition());
+    layout["State"_L1]    = state;
+    layout["Widgets"_L1]  = widgets;
 }
 
 void TabStackWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(const auto position = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value(u"Position").toString())) {
+    if(const auto position = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value("Position"_L1).toString())) {
         changeTabPosition(position.value());
     }
 
-    if(layout.contains(u"Widgets")) {
-        const auto widgets = layout.value(u"Widgets").toArray();
+    if(layout.contains("Widgets"_L1)) {
+        const auto widgets = layout.value("Widgets"_L1).toArray();
         WidgetContainer::loadWidgets(widgets);
     }
 
-    if(layout.contains(u"State")) {
-        const auto state         = layout.value(u"State").toString();
+    if(layout.contains("State"_L1)) {
+        const auto state         = layout.value("State"_L1).toString();
         const QStringList titles = state.split(QLatin1String{Constants::UnitSeparator});
 
         for(int i{0}; const QString& title : titles) {

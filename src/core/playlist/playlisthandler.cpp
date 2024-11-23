@@ -38,6 +38,8 @@
 
 Q_LOGGING_CATEGORY(PL_HANDLER, "fy.playlisthandler")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto ActiveId    = "Playlist/ActiveId";
 constexpr auto ActiveIndex = "Playlist/ActiveTrackIndex";
 
@@ -292,15 +294,15 @@ void PlaylistHandlerPrivate::savePlaylists()
         stateSettings.remove(QLatin1String{ActiveId});
     }
     else {
-        stateSettings.setValue(QLatin1String{ActiveId}, m_activePlaylist->dbId());
+        stateSettings.setValue(ActiveId, m_activePlaylist->dbId());
     }
 
     if(!m_activePlaylist->isTemporary()
        && m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
-        stateSettings.setValue(QLatin1String{ActiveIndex}, m_activePlaylist->currentTrackIndex());
+        stateSettings.setValue(ActiveIndex, m_activePlaylist->currentTrackIndex());
     }
     else {
-        stateSettings.remove(QLatin1String{ActiveIndex});
+        stateSettings.remove(ActiveIndex);
     }
 }
 
@@ -362,7 +364,7 @@ void PlaylistHandlerPrivate::restoreActivePlaylist()
 {
     const FyStateSettings stateSettings;
 
-    const int lastId = stateSettings.value(QLatin1String{ActiveId}).toInt();
+    const int lastId = stateSettings.value(ActiveId).toInt();
     if(lastId < 0) {
         return;
     }
@@ -377,7 +379,7 @@ void PlaylistHandlerPrivate::restoreActivePlaylist()
     emit m_self->activePlaylistChanged(m_activePlaylist);
 
     if(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState).toBool()) {
-        const int lastIndex = stateSettings.value(QLatin1String{ActiveIndex}).toInt();
+        const int lastIndex = stateSettings.value(ActiveIndex).toInt();
         m_activePlaylist->changeCurrentIndex(lastIndex);
         m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
     }
@@ -392,12 +394,12 @@ Playlist* PlaylistHandlerPrivate::addNewPlaylist(const QString& name, bool isTem
     }
 
     if(isTemporary) {
-        const QString tempName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("TempPlaylist"));
+        const QString tempName = !name.isEmpty() ? name : findUniqueName(u"TempPlaylist"_s);
         auto* playlist         = m_playlists.emplace_back(Playlist::create(tempName, m_settings)).get();
         return playlist;
     }
 
-    const QString playlistName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("Playlist"));
+    const QString playlistName = !name.isEmpty() ? name : findUniqueName(u"Playlist"_s);
 
     const int index = nextValidIndex();
     const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index, false, {});
@@ -418,7 +420,7 @@ Playlist* PlaylistHandlerPrivate::addNewAutoPlaylist(const QString& name, const 
         return m_playlists.at(existingIndex).get();
     }
 
-    const QString playlistName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("Auto Playlist"));
+    const QString playlistName = !name.isEmpty() ? name : findUniqueName(u"Auto Playlist"_s);
 
     const int index = nextValidIndex();
     const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index, true, query);
@@ -442,7 +444,7 @@ PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<Aud
     p->reloadPlaylists();
 
     if(p->noConcretePlaylists()) {
-        PlaylistHandler::createPlaylist(QStringLiteral("Default"), {});
+        PlaylistHandler::createPlaylist(u"Default"_s, {});
     }
 
     QObject::connect(p->m_library, &MusicLibrary::tracksLoaded, this, [this]() { p->populatePlaylists(); });
@@ -546,13 +548,13 @@ PlaylistList PlaylistHandler::removedPlaylists() const
 
 Playlist* PlaylistHandler::createEmptyPlaylist()
 {
-    const QString name = p->findUniqueName(QStringLiteral("Playlist"));
+    const QString name = p->findUniqueName(u"Playlist"_s);
     return createPlaylist(name);
 }
 
 Playlist* PlaylistHandler::createTempEmptyPlaylist()
 {
-    const QString name = p->findUniqueName(QStringLiteral("TempPlaylist"));
+    const QString name = p->findUniqueName(u"TempPlaylist"_s);
     return createTempPlaylist(name);
 }
 
@@ -812,7 +814,7 @@ void PlaylistHandler::renamePlaylist(const UId& id, const QString& name)
         return;
     }
 
-    const QString newName = p->findUniqueName(name.isEmpty() ? QStringLiteral("Playlist") : name);
+    const QString newName = p->findUniqueName(name.isEmpty() ? u"Playlist"_s : name);
 
     if(!playlist->isTemporary() && !p->m_playlistConnector.renamePlaylist(playlist->dbId(), newName)) {
         qCDebug(PL_HANDLER) << "Playlist could not be renamed to" << name;
@@ -833,7 +835,7 @@ void PlaylistHandler::removePlaylist(const UId& id)
 
     auto createDefaultIfEmpty = [this]() {
         if(p->noConcretePlaylists()) {
-            createPlaylist(QStringLiteral("Default"), {});
+            createPlaylist(u"Default"_s, {});
         }
     };
 

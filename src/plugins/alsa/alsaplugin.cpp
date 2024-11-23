@@ -22,10 +22,12 @@
 #include "alsaoutput.h"
 #include "alsasettings.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Alsa {
 QString AlsaPlugin::name() const
 {
-    return QStringLiteral("ALSA");
+    return u"ALSA"_s;
 }
 
 OutputCreator AlsaPlugin::creator() const

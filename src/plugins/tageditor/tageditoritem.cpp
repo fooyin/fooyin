@@ -21,6 +21,8 @@
 
 #include <QCollator>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto CharLimit = 2000;
 
 namespace {
@@ -72,11 +74,11 @@ QString TagEditorItem::displayValue() const
     if(m_value.isEmpty()) {
         QStringList nonEmptyValues{m_values};
         nonEmptyValues.removeAll(QString{});
-        m_value = nonEmptyValues.join(u"; ");
+        m_value = nonEmptyValues.join("; "_L1);
     }
 
     if(m_trackCount > 1 && m_multipleValues) {
-        return QStringLiteral("<<multiple values>> ") + value();
+        return u"<<multiple values>> "_s + value();
     }
 
     return m_value;
@@ -87,7 +89,7 @@ QString TagEditorItem::value() const
     if(m_value.isEmpty()) {
         QStringList nonEmptyValues{m_values};
         nonEmptyValues.removeAll(QString{});
-        m_value = nonEmptyValues.join(u"; ");
+        m_value = nonEmptyValues.join("; "_L1);
     }
 
     return m_value;
@@ -96,7 +98,7 @@ QString TagEditorItem::value() const
 QString TagEditorItem::changedDisplayValue() const
 {
     if(m_trackCount > 1 && m_multipleValues) {
-        return QStringLiteral("<<multiple values>> ") + changedValue();
+        return u"<<multiple values>> "_s + changedValue();
     }
 
     return changedValue();
@@ -107,7 +109,7 @@ QString TagEditorItem::changedValue() const
     if(m_changedValue.isEmpty()) {
         QStringList nonEmptyValues{m_changedValues};
         nonEmptyValues.removeAll(QString{});
-        m_changedValue = nonEmptyValues.join(u"; ");
+        m_changedValue = nonEmptyValues.join("; "_L1);
     }
 
     return m_changedValue;
@@ -188,7 +190,7 @@ bool TagEditorItem::setValue(int newValue)
 
 bool TagEditorItem::setValue(const QString& newValue)
 {
-    QStringList values = newValue.split(QStringLiteral(";"), Qt::SkipEmptyParts);
+    QStringList values = newValue.split(u";"_s, Qt::SkipEmptyParts);
     std::ranges::transform(values, values.begin(), [](const auto& val) { return val.trimmed(); });
 
     if(value() == newValue) {

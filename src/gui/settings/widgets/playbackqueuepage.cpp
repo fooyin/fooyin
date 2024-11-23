@@ -31,6 +31,8 @@
 #include <QLabel>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class PlaybackQueuePageWidget : public SettingsPageWidget
 {
@@ -70,9 +72,9 @@ PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
     auto* general       = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(general);
 
-    generalLayout->addWidget(new QLabel(tr("Left script") + QStringLiteral(":"), this), 0, 0);
+    generalLayout->addWidget(new QLabel(tr("Left script") + u":"_s, this), 0, 0);
     generalLayout->addWidget(m_titleScript, 0, 1);
-    generalLayout->addWidget(new QLabel(tr("Right script") + QStringLiteral(":"), this), 1, 0);
+    generalLayout->addWidget(new QLabel(tr("Right script") + u":"_s, this), 1, 0);
     generalLayout->addWidget(m_subtitleScript, 1, 1);
 
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
@@ -82,8 +84,8 @@ PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
 
     auto* iconGroupLayout = new QGridLayout(m_showIcon);
 
-    m_iconWidth->setSuffix(QStringLiteral("px"));
-    m_iconHeight->setSuffix(QStringLiteral("px"));
+    m_iconWidth->setSuffix(u"px"_s);
+    m_iconHeight->setSuffix(u"px"_s);
 
     m_iconWidth->setMaximum(512);
     m_iconHeight->setMaximum(512);
@@ -92,14 +94,12 @@ PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
     m_iconHeight->setSingleStep(5);
 
     auto* iconSizeHint = new QLabel(
-        QStringLiteral("🛈 ")
-            + tr("Size can also be changed using %1 in the widget.").arg(QStringLiteral("<b>Ctrl+Scroll</b>")),
-        this);
+        u"🛈 "_s + tr("Size can also be changed using %1 in the widget.").arg(u"<b>Ctrl+Scroll</b>"_s), this);
 
     int row{0};
-    iconGroupLayout->addWidget(new QLabel(tr("Width") + QStringLiteral(":"), this), row, 0);
+    iconGroupLayout->addWidget(new QLabel(tr("Width") + u":"_s, this), row, 0);
     iconGroupLayout->addWidget(m_iconWidth, row++, 1);
-    iconGroupLayout->addWidget(new QLabel(tr("Height") + QStringLiteral(":"), this), row, 0);
+    iconGroupLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
     iconGroupLayout->addWidget(m_iconHeight, row++, 1);
     iconGroupLayout->addWidget(iconSizeHint, row, 0, 1, 4);
     iconGroupLayout->setColumnStretch(2, 1);

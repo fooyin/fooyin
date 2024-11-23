@@ -25,6 +25,8 @@
 #include <QFont>
 #include <QThread>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto HeaderFontDelta = 2;
 
 namespace Fooyin {
@@ -73,9 +75,9 @@ QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int rol
 
     switch(section) {
         case(0):
-            return QStringLiteral("Name");
+            return u"Name"_s;
         case(1):
-            return QStringLiteral("Value");
+            return u"Value"_s;
         default:
             break;
     }
@@ -172,7 +174,7 @@ void InfoModel::populate(const InfoData& data)
     for(const auto& [parentKey, children] : data.parents) {
         InfoItem* parent{nullptr};
 
-        if(parentKey == u"Root") {
+        if(parentKey == "Root"_L1) {
             parent = rootItem();
         }
         else if(m_nodes.contains(parentKey)) {

@@ -23,19 +23,21 @@
 
 #include <QString>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Gui {
 QString layoutsPath()
 {
-    return Utils::configPath(QStringLiteral("layouts")).append(QStringLiteral("/"));
+    return Utils::configPath(u"layouts"_s).append(u"/"_s);
 }
 
 QString activeLayoutPath()
 {
-    return Utils::configPath().append(QStringLiteral("/layout.fyl"));
+    return Utils::configPath().append(u"/layout.fyl"_s);
 }
 
 QString coverPath()
 {
-    return Utils::cachePath(QStringLiteral("covers")).append(QStringLiteral("/"));
+    return Utils::cachePath(u"covers"_s).append(u"/"_s);
 }
 } // namespace Fooyin::Gui

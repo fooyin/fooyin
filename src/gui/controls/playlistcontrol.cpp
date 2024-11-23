@@ -33,6 +33,8 @@
 #include <QJsonObject>
 #include <QMenu>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
@@ -79,7 +81,7 @@ QString PlaylistControl::name() const
 
 QString PlaylistControl::layoutName() const
 {
-    return QStringLiteral("PlaylistControls");
+    return u"PlaylistControls"_s;
 }
 
 void PlaylistControl::updateButtonStyle() const

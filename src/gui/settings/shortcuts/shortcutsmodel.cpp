@@ -22,6 +22,8 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 Fooyin::ShortcutList removeEmptyKeys(const Fooyin::ShortcutList& shortcuts)
 {
@@ -33,7 +35,7 @@ QString shortcutsToString(const Fooyin::ShortcutList& sequence)
     QStringList keys;
     std::ranges::transform(removeEmptyKeys(sequence), std::back_inserter(keys),
                            [](const QKeySequence& k) { return k.toString(QKeySequence::NativeText); });
-    return keys.join(u" | ");
+    return keys.join(" | "_L1);
 }
 } // namespace
 

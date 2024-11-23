@@ -22,6 +22,8 @@
 #include <QCollator>
 #include <utility>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 double getTotalFloat(const QStringList& values)
 {
@@ -108,10 +110,10 @@ QString formatPercentage(const QStringList& values)
     QStringList formattedList;
     for(const auto& [key, ratio] : ratios) {
         if(!key.isEmpty()) {
-            formattedList.append(QStringLiteral("%1 (%2%)").arg(key, QString::number(ratio, 'f', 1)));
+            formattedList.append(u"%1 (%2%)"_s.arg(key, QString::number(ratio, 'f', 1)));
         }
     }
-    return formattedList.join(u"; ");
+    return formattedList.join("; "_L1);
 }
 
 QString joinValues(const QStringList& values)
@@ -122,7 +124,7 @@ QString joinValues(const QStringList& values)
             list.append(value);
         }
     }
-    return list.join(u"; ");
+    return list.join("; "_L1);
 }
 
 QString calculateAverage(const QStringList& values, const Fooyin::InfoItem::FormatFunc& format, bool isFloat)

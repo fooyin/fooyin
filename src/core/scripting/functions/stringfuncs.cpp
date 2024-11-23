@@ -25,6 +25,8 @@
 #include <QDir>
 #include <QRegularExpression>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Scripting {
 QString num(const QStringList& vec)
 {
@@ -318,33 +320,33 @@ QString sep()
 QString crlf(const QStringList& vec)
 {
     if(vec.empty()) {
-        return QStringLiteral("\n");
+        return u"\n"_s;
     }
 
     bool numSuccess{false};
     const int num = vec.front().toInt(&numSuccess);
 
     if(numSuccess) {
-        return QStringLiteral("\n").repeated(num);
+        return u"\n"_s.repeated(num);
     }
 
-    return QStringLiteral("\n");
+    return u"\n"_s;
 }
 
 QString tab(const QStringList& vec)
 {
     if(vec.empty()) {
-        return QStringLiteral("\t");
+        return u"\t"_s;
     }
 
     bool numSuccess{false};
     const int num = vec.front().toInt(&numSuccess);
 
     if(numSuccess) {
-        return QStringLiteral("\t").repeated(num);
+        return u"\t"_s.repeated(num);
     }
 
-    return QStringLiteral("\t");
+    return u"\t"_s;
 }
 
 QString swapPrefix(const QStringList& vec)
@@ -354,11 +356,11 @@ QString swapPrefix(const QStringList& vec)
     }
 
     QStringList result;
-    const QStringList prefixes = vec.size() > 1 ? vec.mid(1) : QStringList{QStringLiteral("A"), QStringLiteral("The")};
+    const QStringList prefixes = vec.size() > 1 ? vec.mid(1) : QStringList{u"A"_s, u"The"_s};
     const QStringList strings  = vec.first().split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
 
     for(const QString& str : strings) {
-        QStringList words = str.split(QStringLiteral(" "), Qt::SkipEmptyParts);
+        QStringList words = str.split(" "_L1, Qt::SkipEmptyParts);
         if(words.isEmpty()) {
             result.append(str);
             continue;
@@ -367,11 +369,11 @@ QString swapPrefix(const QStringList& vec)
         const QString firstWord = words.first();
         if(prefixes.contains(firstWord, Qt::CaseInsensitive)) {
             words.removeFirst();
-            words.last().append(QStringLiteral(","));
+            words.last().append(","_L1);
             words.append(firstWord);
         }
 
-        result.append(words.join(QStringLiteral(" ")).trimmed());
+        result.append(words.join(" "_L1).trimmed());
     }
 
     return result.join(QLatin1String{Constants::UnitSeparator});
@@ -384,11 +386,11 @@ QString stripPrefix(const QStringList& vec)
     }
 
     QStringList result;
-    const QStringList prefixes = vec.size() > 1 ? vec.mid(1) : QStringList{QStringLiteral("A"), QStringLiteral("The")};
+    const QStringList prefixes = vec.size() > 1 ? vec.mid(1) : QStringList{u"A"_s, u"The"_s};
     const QStringList strings  = vec.first().split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
 
     for(const QString& str : strings) {
-        QStringList words = str.split(QStringLiteral(" "), Qt::SkipEmptyParts);
+        QStringList words = str.split(u" "_s, Qt::SkipEmptyParts);
         if(words.isEmpty()) {
             result.append(str);
             continue;
@@ -397,7 +399,7 @@ QString stripPrefix(const QStringList& vec)
         if(prefixes.contains(words.first(), Qt::CaseInsensitive)) {
             words.removeFirst();
         }
-        result.append(words.join(QStringLiteral(" ")).trimmed());
+        result.append(words.join(u" "_s).trimmed());
     }
 
     return result.join(QLatin1String{Constants::UnitSeparator});
@@ -516,11 +518,10 @@ QString abbr(const QStringList& vec)
     }
 
     QString str{vec.front()};
-    static const QRegularExpression stripRegex{QStringLiteral("[()]")};
-    str.replace(stripRegex, QStringLiteral(" "));
+    static const QRegularExpression stripRegex{u"[()]"_s};
+    str.replace(stripRegex, " "_L1);
 
-    static const QRegularExpression regex{QStringLiteral(R"((?<!\S)[^\s])"),
-                                          QRegularExpression::UseUnicodePropertiesOption};
+    static const QRegularExpression regex{uR"((?<!\S)[^\s])"_s, QRegularExpression::UseUnicodePropertiesOption};
     const auto matches = regex.globalMatch(str);
 
     QString abbreviated;

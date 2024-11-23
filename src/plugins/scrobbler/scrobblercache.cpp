@@ -29,6 +29,7 @@
 Q_LOGGING_CATEGORY(SCROBBLER_CACHE, "fy.scrobbler")
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto WriteInterval = 5min;
@@ -45,8 +46,8 @@ Metadata::Metadata(const Track& track)
     , trackNum{track.trackNumber()}
     , duration{track.duration() / 1000}
 {
-    if(track.hasExtraTag(QStringLiteral("MUSICBRAINZ_TRACKID"))) {
-        const auto values = track.extraTag(QStringLiteral("MUSICBRAINZ_TRACKID"));
+    if(track.hasExtraTag(u"MUSICBRAINZ_TRACKID"_s)) {
+        const auto values = track.extraTag(u"MUSICBRAINZ_TRACKID"_s);
         if(!values.empty()) {
             musicBrainzId = values.front();
         }
@@ -105,12 +106,12 @@ void ScrobblerCache::readCache()
         return;
     }
 
-    if(!obj.contains(u"Tracks")) {
+    if(!obj.contains("Tracks"_L1)) {
         qCWarning(SCROBBLER_CACHE) << "No tracks in json";
         return;
     }
 
-    const QJsonValue tracks = obj.value(u"Tracks");
+    const QJsonValue tracks = obj.value("Tracks"_L1);
     if(!tracks.isArray()) {
         qCWarning(SCROBBLER_CACHE) << "Tracks is not an array";
         return;
@@ -130,14 +131,14 @@ void ScrobblerCache::readCache()
         const QJsonObject trackObj = value.toObject();
 
         Metadata metadata;
-        metadata.title          = trackObj.value(u"Title").toString();
-        metadata.album          = trackObj.value(u"Album").toString();
-        metadata.artist         = trackObj.value(u"Artist").toString();
-        metadata.albumArtist    = trackObj.value(u"AlbumArtist").toString();
-        metadata.trackNum       = trackObj.value(u"Track").toString();
-        metadata.duration       = trackObj.value(u"Duration").toVariant().toULongLong();
-        metadata.musicBrainzId  = trackObj.value(u"MusicbrainzTrackId").toString();
-        const quint64 timestamp = trackObj.value(u"Timestamp").toVariant().toULongLong();
+        metadata.title          = trackObj.value("Title"_L1).toString();
+        metadata.album          = trackObj.value("Album"_L1).toString();
+        metadata.artist         = trackObj.value("Artist"_L1).toString();
+        metadata.albumArtist    = trackObj.value("AlbumArtist"_L1).toString();
+        metadata.trackNum       = trackObj.value("Track"_L1).toString();
+        metadata.duration       = trackObj.value("Duration"_L1).toVariant().toULongLong();
+        metadata.musicBrainzId  = trackObj.value("MusicbrainzTrackId"_L1).toString();
+        const quint64 timestamp = trackObj.value("Timestamp"_L1).toVariant().toULongLong();
 
         if(!metadata.isValid()) {
             qCWarning(SCROBBLER_CACHE) << "Metadata in cache data isn't valid";
@@ -206,20 +207,20 @@ void ScrobblerCache::writeCache()
 
     for(const auto& item : std::as_const(m_items)) {
         QJsonObject object;
-        object[u"Title"]              = item->metadata.title;
-        object[u"Album"]              = item->metadata.album;
-        object[u"Artist"]             = item->metadata.artist;
-        object[u"AlbumArtist"]        = item->metadata.albumArtist;
-        object[u"Track"]              = item->metadata.trackNum;
-        object[u"Duration"]           = QJsonValue::fromVariant(static_cast<quint64>(item->metadata.duration));
-        object[u"MusicbrainzTrackId"] = item->metadata.musicBrainzId;
-        object[u"Timestamp"]          = QJsonValue::fromVariant(static_cast<quint64>(item->timestamp));
+        object["Title"_L1]              = item->metadata.title;
+        object["Album"_L1]              = item->metadata.album;
+        object["Artist"_L1]             = item->metadata.artist;
+        object["AlbumArtist"_L1]        = item->metadata.albumArtist;
+        object["Track"_L1]              = item->metadata.trackNum;
+        object["Duration"_L1]           = QJsonValue::fromVariant(static_cast<quint64>(item->metadata.duration));
+        object["MusicbrainzTrackId"_L1] = item->metadata.musicBrainzId;
+        object["Timestamp"_L1]          = QJsonValue::fromVariant(static_cast<quint64>(item->timestamp));
 
         array.append(object);
     }
 
     QJsonObject object;
-    object[u"Tracks"] = array;
+    object["Tracks"_L1] = array;
     const QJsonDocument doc{object};
 
     QFile file{m_filepath};

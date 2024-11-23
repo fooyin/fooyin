@@ -34,6 +34,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ExportLayoutDialog::ExportLayoutDialog(EditableLayout* editableLayout, LayoutProvider* layoutProvider,
                                        SettingsManager* settings, QWidget* parent)
@@ -57,8 +59,8 @@ ExportLayoutDialog::ExportLayoutDialog(EditableLayout* editableLayout, LayoutPro
 
     auto* layout = new QGridLayout(this);
 
-    auto* nameLabel = new QLabel(tr("Name") + QStringLiteral(":"), this);
-    auto* pathLabel = new QLabel(tr("Path") + QStringLiteral(":"), this);
+    auto* nameLabel = new QLabel(tr("Name") + u":"_s, this);
+    auto* pathLabel = new QLabel(tr("Path") + u":"_s, this);
 
     auto* browseButton = new QPushButton(tr("&Browse…"), this);
     QObject::connect(browseButton, &QPushButton::pressed, this, &ExportLayoutDialog::exportLayout);
@@ -138,8 +140,8 @@ void ExportLayoutDialog::accept()
 void ExportLayoutDialog::exportLayout()
 {
     const QString path = !m_pathEdit->text().isEmpty() ? m_pathEdit->text() : Gui::layoutsPath() + m_nameEdit->text();
-    const QString saveFile
-        = QFileDialog::getSaveFileName(this, tr("Save Layout"), path, tr("%1 Layout %2").arg(u"fooyin", u"(*.fyl)"));
+    const QString saveFile = QFileDialog::getSaveFileName(this, tr("Save Layout"), path,
+                                                          tr("%1 Layout %2").arg("fooyin"_L1, "(*.fyl)"_L1));
     if(saveFile.isEmpty()) {
         return;
     }

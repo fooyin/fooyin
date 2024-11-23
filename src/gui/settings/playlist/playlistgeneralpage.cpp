@@ -40,6 +40,8 @@
 #include <QLineEdit>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class PlaylistGeneralPageWidget : public SettingsPageWidget
 {
@@ -103,7 +105,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    auto* middleClickLabel = new QLabel(tr("Middle-click") + u":", this);
+    auto* middleClickLabel = new QLabel(tr("Middle-click") + ":"_L1, this);
 
     clickBehaviourLayout->addWidget(middleClickLabel, 0, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 0, 1);
@@ -111,16 +113,16 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
 
     m_imagePadding->setMinimum(0);
     m_imagePadding->setMaximum(100);
-    m_imagePadding->setSuffix(QStringLiteral("px"));
+    m_imagePadding->setSuffix(u"px"_s);
 
     m_imagePaddingTop->setMinimum(0);
     m_imagePaddingTop->setMaximum(100);
-    m_imagePaddingTop->setSuffix(QStringLiteral("px"));
+    m_imagePaddingTop->setSuffix(u"px"_s);
 
     auto* saving       = new QGroupBox(tr("Saving"), this);
     auto* savingLayout = new QGridLayout(saving);
 
-    auto* pathTypeLabel = new QLabel(tr("Path type") + u":", this);
+    auto* pathTypeLabel = new QLabel(tr("Path type") + ":"_L1, this);
 
     int row{0};
     savingLayout->addWidget(pathTypeLabel, row, 0);
@@ -128,8 +130,8 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     savingLayout->addWidget(m_exportMetadata, row++, 0, 1, 2);
     savingLayout->setColumnStretch(2, 1);
 
-    auto* autoTypeLabel = new QLabel(tr("Format") + u":", this);
-    auto* autoPathLabel = new QLabel(tr("Location") + u":", this);
+    auto* autoTypeLabel = new QLabel(tr("Format") + ":"_L1, this);
+    auto* autoPathLabel = new QLabel(tr("Location") + ":"_L1, this);
 
     m_autoExporting->setToolTip(tr("Export and synchronise playlists in the specified format and location"));
 
@@ -151,9 +153,9 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     auto* paddingLayout = new QGridLayout(padding);
 
     row = 0;
-    paddingLayout->addWidget(new QLabel(tr("Left/Right") + QStringLiteral(":"), this), row, 0);
+    paddingLayout->addWidget(new QLabel(tr("Left/Right") + u":"_s, this), row, 0);
     paddingLayout->addWidget(m_imagePadding, row++, 1);
-    paddingLayout->addWidget(new QLabel(tr("Top") + QStringLiteral(":"), this), row, 0);
+    paddingLayout->addWidget(new QLabel(tr("Top") + u":"_s, this), row, 0);
     paddingLayout->addWidget(m_imagePaddingTop, row++, 1);
     paddingLayout->setColumnStretch(2, 1);
 
@@ -188,9 +190,9 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     mainLayout->addWidget(tabsGroup, row++, 0);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
-    m_exportPathType->addItem(QStringLiteral("Auto"));
-    m_exportPathType->addItem(QStringLiteral("Absolute"));
-    m_exportPathType->addItem(QStringLiteral("Relative"));
+    m_exportPathType->addItem(u"Auto"_s);
+    m_exportPathType->addItem(u"Absolute"_s);
+    m_exportPathType->addItem(u"Relative"_s);
 }
 
 void PlaylistGeneralPageWidget::load()
@@ -224,7 +226,7 @@ void PlaylistGeneralPageWidget::load()
 
     m_autoExporting->setChecked(m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists, false).toBool());
     m_autoExportType->setCurrentText(
-        m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylistsType, QStringLiteral("m3u8")).toString());
+        m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylistsType, u"m3u8"_s).toString());
     m_autoExportPath->setText(
         m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylistsPath, Core::playlistsPath()).toString());
 

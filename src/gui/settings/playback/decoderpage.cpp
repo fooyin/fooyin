@@ -32,6 +32,8 @@
 #include <QLabel>
 #include <QListView>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 template <typename T>
 void applyChanges(std::vector<T> existing, std::vector<T> loaders,
@@ -102,15 +104,15 @@ DecoderPageWidget::DecoderPageWidget(AudioLoader* audioLoader, SettingsManager* 
     setupModel(m_decoderList);
     setupModel(m_readerList);
 
-    auto* ffmpegGroup       = new QGroupBox(QStringLiteral("FFmpeg"), this);
+    auto* ffmpegGroup       = new QGroupBox(u"FFmpeg"_s, this);
     auto* ffmpegGroupLayout = new QGridLayout(ffmpegGroup);
 
     ffmpegGroupLayout->addWidget(m_ffmpegAllExts);
 
     auto* layout = new QGridLayout(this);
-    layout->addWidget(new QLabel(tr("Decoders") + u":", this), 0, 0);
+    layout->addWidget(new QLabel(tr("Decoders") + ":"_L1, this), 0, 0);
     layout->addWidget(m_decoderList, 1, 0);
-    layout->addWidget(new QLabel(tr("Tag readers") + u":", this), 0, 1);
+    layout->addWidget(new QLabel(tr("Tag readers") + ":"_L1, this), 0, 1);
     layout->addWidget(m_readerList, 1, 1);
     layout->addWidget(ffmpegGroup, 2, 0, 1, 2);
 
@@ -139,8 +141,8 @@ void DecoderPageWidget::apply()
         [this](const QString& name, bool enabled) { m_audioLoader->setReaderEnabled(name, enabled); });
 
     if(m_settings->fileSet(Settings::Core::Internal::FFmpegAllExtensions, m_ffmpegAllExts->isChecked())) {
-        m_audioLoader->reloadDecoderExtensions(QStringLiteral("FFmpeg"));
-        m_audioLoader->reloadReaderExtensions(QStringLiteral("FFmpeg"));
+        m_audioLoader->reloadDecoderExtensions(u"FFmpeg"_s);
+        m_audioLoader->reloadReaderExtensions(u"FFmpeg"_s);
     }
 
     load();

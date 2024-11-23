@@ -34,6 +34,8 @@
 #include <QSpinBox>
 #include <QStyle>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Scrobbler {
 class ScrobblerPageWidget : public SettingsPageWidget
 {
@@ -87,7 +89,7 @@ ScrobblerPageWidget::ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* 
     auto* genralGroup   = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(genralGroup);
 
-    auto* delayLabel = new QLabel(tr("Scrobble delay") + u":", this);
+    auto* delayLabel = new QLabel(tr("Scrobble delay") + ":"_L1, this);
 
     const QString delayTip = tr("Time to wait before submitting scrobbles");
 
@@ -95,7 +97,7 @@ ScrobblerPageWidget::ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* 
     m_scrobbleDelay->setToolTip(delayTip);
 
     m_scrobbleDelay->setRange(0, 600);
-    m_scrobbleDelay->setSuffix(u" " + tr("seconds"));
+    m_scrobbleDelay->setSuffix(" "_L1 + tr("seconds"));
 
     int row{0};
     generalLayout->addWidget(m_scrobblingEnabled, row++, 0, 1, 2);
@@ -155,7 +157,7 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
     int row{0};
 
     for(ScrobblerService* service : services) {
-        auto* serviceName   = new QLabel(QStringLiteral("<b>%1</b>").arg(service->name()), this);
+        auto* serviceName   = new QLabel(u"<b>%1</b>"_s.arg(service->name()), this);
         auto* serviceStatus = new QLabel(this);
         auto* loginBtn      = new QPushButton(this);
 
@@ -176,7 +178,7 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
         const QString token = service->tokenSetting();
         if(!token.isEmpty()) {
             auto* tokenLayout = new QGridLayout();
-            auto* tokenLabel  = new QLabel(tr("User token") + u":", this);
+            auto* tokenLabel  = new QLabel(tr("User token") + ":"_L1, this);
             auto* tokenInput  = new QLineEdit(this);
 
             tokenInput->setReadOnly(service->isAuthenticated());
@@ -186,8 +188,8 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
 
             const QUrl tokenUrl = service->tokenUrl();
             if(tokenUrl.isValid()) {
-                auto* urlLabel = new QLabel(QStringLiteral("🛈 ") + tr("You can find your user token here") + u": "
-                                                + QStringLiteral("<a href=\"%1\">%1</a>").arg(tokenUrl.toString()),
+                auto* urlLabel = new QLabel(u"🛈 "_s + tr("You can find your user token here") + ": "_L1
+                                                + u"<a href=\"%1\">%1</a>"_s.arg(tokenUrl.toString()),
                                             this);
                 urlLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
                 urlLabel->setOpenExternalLinks(true);

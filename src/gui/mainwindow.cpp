@@ -41,6 +41,8 @@
 #include <QTimer>
 #include <QWindow>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto MainWindowGeometry  = "Interface/Geometry";
 constexpr auto MainWindowPrevState = "Interface/PrevState";
 
@@ -62,7 +64,7 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
     const FyStateSettings stateSettings;
     m_settings->settingsDialog()->restoreState(stateSettings);
 
-    if(auto prevState = stateSettings.value(QLatin1String{MainWindowPrevState}).toString(); !prevState.isEmpty()) {
+    if(auto prevState = stateSettings.value(MainWindowPrevState).toString(); !prevState.isEmpty()) {
         if(auto state = Utils::Enum::fromString<WindowState>(prevState)) {
             m_prevState = state.value();
         }
@@ -145,8 +147,8 @@ void MainWindow::exit()
         FyStateSettings stateSettings;
         m_settings->settingsDialog()->saveState(stateSettings);
 
-        stateSettings.setValue(QLatin1String{MainWindowGeometry}, saveGeometry());
-        stateSettings.setValue(QLatin1String{MainWindowPrevState}, Utils::Enum::toString(currentState()));
+        stateSettings.setValue(MainWindowGeometry, saveGeometry());
+        stateSettings.setValue(MainWindowPrevState, Utils::Enum::toString(currentState()));
 
         m_settings->set<Settings::Core::Shutdown>(true);
     }
@@ -156,14 +158,14 @@ void MainWindow::setTitle(const QString& title)
 {
     QString windowTitle{title};
     if(m_settings->value<Settings::Gui::LayoutEditing>()) {
-        windowTitle.append(QStringLiteral(" - ") + tr("Layout Editing Mode"));
+        windowTitle.append(u" - "_s + tr("Layout Editing Mode"));
     }
     setWindowTitle(windowTitle);
 }
 
 void MainWindow::resetTitle()
 {
-    setTitle(QStringLiteral("fooyin"));
+    setTitle(u"fooyin"_s);
 }
 
 void MainWindow::installStatusWidget(StatusWidget* statusWidget)
@@ -238,13 +240,13 @@ MainWindow::WindowState MainWindow::currentState()
 void MainWindow::saveWindowGeometry()
 {
     FyStateSettings stateSettings;
-    stateSettings.setValue(QLatin1String{MainWindowGeometry}, saveGeometry());
+    stateSettings.setValue(MainWindowGeometry, saveGeometry());
 }
 
 void MainWindow::restoreWindowGeometry()
 {
     const FyStateSettings stateSettings;
-    restoreGeometry(stateSettings.value(QLatin1String{MainWindowGeometry}).toByteArray());
+    restoreGeometry(stateSettings.value(MainWindowGeometry).toByteArray());
 }
 
 void MainWindow::restoreState(WindowState state)

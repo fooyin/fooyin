@@ -44,6 +44,8 @@
 #include <QStyleFactory>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 using namespace Settings::Gui;
 using namespace Settings::Gui::Internal;
@@ -108,11 +110,11 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_lightTheme{new QRadioButton(tr("Light"), this)}
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
     , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
-    , m_overrideMargin{new QCheckBox(tr("Override root margin") + QStringLiteral(":"), this)}
+    , m_overrideMargin{new QCheckBox(tr("Override root margin") + u":"_s, this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
     , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
     , m_lockSplitters{new QCheckBox(tr("Lock splitters"), this)}
-    , m_overrideSplitterHandle{new QCheckBox(tr("Override splitter handle size") + QStringLiteral(":"), this)}
+    , m_overrideSplitterHandle{new QCheckBox(tr("Override splitter handle size") + u":"_s, this)}
     , m_splitterHandleGap{new QSpinBox(this)}
     , m_buttonRaise{new QCheckBox(tr("Raise"), this)}
     , m_buttonStretch{new QCheckBox(tr("Stretch"), this)}
@@ -148,7 +150,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     iconThemeBoxLayout->setColumnStretch(2, 1);
 
     row = 0;
-    themeBoxLayout->addWidget(new QLabel(tr("Style") + u":", this), row, 0);
+    themeBoxLayout->addWidget(new QLabel(tr("Style") + ":"_L1, this), row, 0);
     themeBoxLayout->addWidget(m_styles, row++, 1);
     themeBoxLayout->addWidget(iconThemeBox, row++, 0, 1, 3);
     themeBoxLayout->setColumnStretch(2, 1);
@@ -166,10 +168,10 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     layoutGroupLayout->setColumnStretch(2, 1);
 
     m_editableLayoutMargin->setRange(0, 20);
-    m_editableLayoutMargin->setSuffix(QStringLiteral("px"));
+    m_editableLayoutMargin->setSuffix(u"px"_s);
 
     m_splitterHandleGap->setRange(0, 20);
-    m_splitterHandleGap->setSuffix(QStringLiteral("px"));
+    m_splitterHandleGap->setSuffix(u"px"_s);
 
     auto* toolButtonGroup       = new QGroupBox(tr("Tool Buttons"), this);
     auto* toolButtonGroupLayout = new QVBoxLayout(toolButtonGroup);
@@ -182,12 +184,12 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     m_vbrInterval->setRange(100, 300000);
     m_vbrInterval->setSingleStep(250);
-    m_vbrInterval->setSuffix(QStringLiteral(" ms"));
+    m_vbrInterval->setSuffix(u" ms"_s);
 
     row = 0;
-    playbackGroupLayout->addWidget(new QLabel(tr("Window title") + QStringLiteral(":"), this), row, 0);
+    playbackGroupLayout->addWidget(new QLabel(tr("Window title") + u":"_s, this), row, 0);
     playbackGroupLayout->addWidget(m_titleScript, row++, 1, 1, 2);
-    playbackGroupLayout->addWidget(new QLabel(tr("VBR update interval") + QStringLiteral(":"), this), row, 0);
+    playbackGroupLayout->addWidget(new QLabel(tr("VBR update interval") + u":"_s, this), row, 0);
     playbackGroupLayout->addWidget(m_vbrInterval, row++, 1);
     playbackGroupLayout->setColumnStretch(2, 1);
 
@@ -205,15 +207,15 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* controlsLayout = new QGridLayout(controlsGroup);
 
     m_seekStep->setRange(100, 30000);
-    m_seekStep->setSuffix(QStringLiteral(" ms"));
+    m_seekStep->setSuffix(u" ms"_s);
 
     m_volumeStep->setRange(1, 5);
-    m_volumeStep->setSuffix(QStringLiteral(" dB"));
+    m_volumeStep->setSuffix(u" dB"_s);
 
     row = 0;
-    controlsLayout->addWidget(new QLabel(tr("Seek step") + u":", this), row, 0);
+    controlsLayout->addWidget(new QLabel(tr("Seek step") + ":"_L1, this), row, 0);
     controlsLayout->addWidget(m_seekStep, row++, 1);
-    controlsLayout->addWidget(new QLabel(tr("Volume step") + u":", this), row, 0);
+    controlsLayout->addWidget(new QLabel(tr("Volume step") + ":"_L1, this), row, 0);
     controlsLayout->addWidget(m_volumeStep, row++, 1);
     controlsLayout->setColumnStretch(2, 1);
 
@@ -221,7 +223,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* ratingGroupLayout = new QGridLayout(ratingGroupBox);
 
     m_starRatingSize->setRange(5, 30);
-    m_starRatingSize->setSuffix(QStringLiteral("px"));
+    m_starRatingSize->setSuffix(u"px"_s);
 
     ratingGroupLayout->addWidget(new QLabel(tr("Star size"), this), 0, 0);
     ratingGroupLayout->addWidget(m_starRatingSize, 0, 1);
@@ -254,7 +256,7 @@ void GuiGeneralPageWidget::load()
 {
     m_styles->clear();
 
-    m_styles->addItem(QStringLiteral("System default"));
+    m_styles->addItem(u"System default"_s);
     const QStringList keys = QStyleFactory::keys();
     for(const QString& key : keys) {
         m_styles->addItem(key);

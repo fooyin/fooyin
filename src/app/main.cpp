@@ -30,6 +30,8 @@
 #include <QApplication>
 #include <QLoggingCategory>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, CommandLine& cmdLine)
 {
@@ -72,9 +74,9 @@ int main(int argc, char** argv)
     Q_INIT_RESOURCE(data);
     Q_INIT_RESOURCE(icons);
 
-    QCoreApplication::setApplicationName(QStringLiteral("fooyin"));
+    QCoreApplication::setApplicationName(u"fooyin"_s);
     QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
-    QGuiApplication::setDesktopFileName(QStringLiteral("org.fooyin.fooyin"));
+    QGuiApplication::setDesktopFileName(u"org.fooyin.fooyin"_s);
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
     CommandLine commandLine{argc, argv};

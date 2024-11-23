@@ -34,6 +34,8 @@
 #include <QLineEdit>
 #include <QSlider>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class PlaybackPageWidget : public SettingsPageWidget
 {
@@ -88,7 +90,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 
     m_playedSlider->setRange(0, 100);
     m_playedSlider->setSingleStep(25);
-    m_playedSlider->setSuffix(QStringLiteral(" %"));
+    m_playedSlider->setSuffix(u" %"_s);
 
     int row{0};
     generalGroupLayout->addWidget(m_restorePlayback, row++, 0, 1, 2);
@@ -101,9 +103,9 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     auto* shuffleGroup       = new QGroupBox(tr("Shuffle"), this);
     auto* shuffleGroupLayout = new QGridLayout(shuffleGroup);
 
-    shuffleGroupLayout->addWidget(new QLabel(tr("Album grouping pattern") + u":", this), 0, 0);
+    shuffleGroupLayout->addWidget(new QLabel(tr("Album grouping pattern") + ":"_L1, this), 0, 0);
     shuffleGroupLayout->addWidget(m_shuffleAlbumsGroup, 0, 1);
-    shuffleGroupLayout->addWidget(new QLabel(tr("Album sorting pattern") + u":", this), 1, 0);
+    shuffleGroupLayout->addWidget(new QLabel(tr("Album sorting pattern") + ":"_L1, this), 1, 0);
     shuffleGroupLayout->addWidget(m_shuffleAlbumsSort, 1, 1);
     shuffleGroupLayout->setColumnStretch(1, 1);
 

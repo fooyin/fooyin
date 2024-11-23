@@ -28,6 +28,8 @@
 #include <QLoggingCategory>
 #include <QPointer>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class CommandPrivate : public QObject
 {
@@ -202,7 +204,7 @@ QString Command::description() const
     }
     if(const QAction* act = action()) {
         QString text = act->text();
-        text.remove(QStringLiteral("&"));
+        text.remove("&"_L1);
 
         if(!text.isEmpty()) {
             return text;

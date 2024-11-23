@@ -26,6 +26,8 @@
 #include <QComboBox>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PlaylistBox::PlaylistBox(PlaylistController* playlistController, QWidget* parent)
     : FyWidget{parent}
@@ -62,7 +64,7 @@ QString PlaylistBox::name() const
 
 QString PlaylistBox::layoutName() const
 {
-    return QStringLiteral("PlaylistSwitcher");
+    return u"PlaylistSwitcher"_s;
 }
 
 void PlaylistBox::setupBox()

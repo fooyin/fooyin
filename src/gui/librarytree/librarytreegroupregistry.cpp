@@ -19,9 +19,11 @@
 
 #include "librarytreegroupregistry.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{QStringLiteral("LibraryTree/LibraryTreeGroups"), settings, parent}
+    : ItemRegistry{u"LibraryTree/LibraryTreeGroups"_s, settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         if(const auto grouping = itemById(id)) {
@@ -34,15 +36,12 @@ LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QO
 
 void LibraryTreeGroupRegistry::loadDefaults()
 {
+    addDefaultItem({.id     = 0,
+                    .name   = tr("Artist/Album"),
+                    .script = u"[%albumartist%]||[%album%][ (%year%)]||[%disc%.][$num(%track%,2). ]%title%"_s});
     addDefaultItem(
-        {.id     = 0,
-         .name   = tr("Artist/Album"),
-         .script = QStringLiteral("[%albumartist%]||[%album%][ (%year%)]||[%disc%.][$num(%track%,2). ]%title%")});
-    addDefaultItem({.id     = 1,
-                    .name   = tr("Album"),
-                    .script = QStringLiteral("[%album%][ (%year%)]||[%disc%.][$num(%track%,2). ]%title%")});
-    addDefaultItem(
-        {.id = 2, .name = tr("Folder Structure"), .script = QStringLiteral("$replace(%relativepath%,/,||)")});
+        {.id = 1, .name = tr("Album"), .script = u"[%album%][ (%year%)]||[%disc%.][$num(%track%,2). ]%title%"_s});
+    addDefaultItem({.id = 2, .name = tr("Folder Structure"), .script = u"$replace(%relativepath%,/,||)"_s});
 }
 } // namespace Fooyin
 

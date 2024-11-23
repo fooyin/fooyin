@@ -23,10 +23,12 @@
 
 #include <utils/settings/settingsmanager.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Lyrics {
 QString TagLyrics::name() const
 {
-    return QStringLiteral("Metadata Tags");
+    return u"Metadata Tags"_s;
 }
 
 bool TagLyrics::isLocal() const

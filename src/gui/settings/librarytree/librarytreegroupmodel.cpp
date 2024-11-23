@@ -27,6 +27,8 @@
 
 Q_LOGGING_CATEGORY(LIBTREE_MOD, "fy.libtreegroupmodel")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 LibraryTreeGroupItem::LibraryTreeGroupItem()
     : LibraryTreeGroupItem{{}, nullptr}
@@ -194,11 +196,11 @@ QVariant LibraryTreeGroupModel::data(const QModelIndex& index, int role) const
                 return item->group().index;
             case(1): {
                 const QString& name = item->group().name;
-                return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
+                return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
             case(2): {
                 const QString& field = item->group().script;
-                return !field.isEmpty() ? field : QStringLiteral("<enter grouping here>");
+                return !field.isEmpty() ? field : u"<enter grouping here>"_s;
             }
             default:
                 break;
@@ -219,7 +221,7 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
 
     switch(index.column()) {
         case(1): {
-            if(value.toString() == QStringLiteral("<enter name here>") || group.name == value.toString()) {
+            if(value.toString() == u"<enter name here>"_s || group.name == value.toString()) {
                 if(item->status() == LibraryTreeGroupItem::Added) {
                     emit pendingRowCancelled();
                 }

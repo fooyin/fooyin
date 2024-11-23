@@ -41,13 +41,14 @@
 #include <QMenu>
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 namespace {
 Fooyin::DbConnection::DbParams dbConnectionParams()
 {
     Fooyin::DbConnection::DbParams params;
-    params.type           = QStringLiteral("QSQLITE");
-    params.connectOptions = QStringLiteral("QSQLITE_OPEN_URI");
+    params.type           = u"QSQLITE"_s;
+    params.connectOptions = u"QSQLITE_OPEN_URI"_s;
     params.filePath       = Fooyin::WaveBar::cachePath();
 
     return params;
@@ -56,7 +57,7 @@ Fooyin::DbConnection::DbParams dbConnectionParams()
 
 namespace Fooyin::WaveBar {
 WaveBarPlugin::WaveBarPlugin()
-    : m_dbPool{DbConnectionPool::create(dbConnectionParams(), QStringLiteral("wavebar"))}
+    : m_dbPool{DbConnectionPool::create(dbConnectionParams(), u"wavebar"_s)}
 { }
 
 WaveBarPlugin::~WaveBarPlugin()
@@ -92,9 +93,8 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 
     QObject::connect(m_waveBarSettingsPage.get(), &WaveBarSettingsPage::clearCache, this, &WaveBarPlugin::clearCache);
 
-    m_widgetProvider->registerWidget(
-        QStringLiteral("WaveBar"), [this]() { return createWavebar(); }, tr("Waveform Seekbar"));
-    m_widgetProvider->setSubMenus(QStringLiteral("WaveBar"), {tr("Controls")});
+    m_widgetProvider->registerWidget(u"WaveBar"_s, [this]() { return createWavebar(); }, tr("Waveform Seekbar"));
+    m_widgetProvider->setSubMenus(u"WaveBar"_s, {tr("Controls")});
 
     auto* selectionMenu = m_actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
     auto* utilitiesMenu = m_actionManager->createMenu(::Fooyin::Constants::Menus::Context::Utilities);

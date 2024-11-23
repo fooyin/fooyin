@@ -29,11 +29,12 @@
 
 Q_LOGGING_CATEGORY(LIBARCH, "fy.libarchive")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 QStringList fileExtensions()
 {
-    static const QStringList extensions = {QStringLiteral("zip"), QStringLiteral("rar"), QStringLiteral("tar"),
-                                           QStringLiteral("gz"),  QStringLiteral("7z"),  QStringLiteral("vgm7z")};
+    static const QStringList extensions = {u"zip"_s, u"rar"_s, u"tar"_s, u"gz"_s, u"7z"_s, u"vgm7z"_s};
     return extensions;
 }
 
@@ -42,7 +43,7 @@ bool isImageFile(const QString& filePath)
     const QMimeDatabase mimeDatabase;
     const QMimeType mimeType = mimeDatabase.mimeTypeForFile(filePath);
 
-    return mimeType.name().startsWith(u"image/");
+    return mimeType.name().startsWith("image/"_L1);
 }
 
 bool setupForReading(archive* archive, const QString& filename)

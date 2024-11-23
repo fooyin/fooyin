@@ -45,6 +45,8 @@
 
 #include <ranges>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto SystemLanguage = "Use System Default";
 
 namespace {
@@ -98,7 +100,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     auto* startupGroupLayout = new QGridLayout(startupGroup);
 
     int row{0};
-    startupGroupLayout->addWidget(new QLabel(tr("Behaviour") + QStringLiteral(":"), this), row, 0);
+    startupGroupLayout->addWidget(new QLabel(tr("Behaviour") + u":"_s, this), row, 0);
     startupGroupLayout->addWidget(m_startupBehaviour, row++, 1);
     startupGroupLayout->addWidget(m_waitForTracks, row++, 0, 1, 2);
     startupGroupLayout->setColumnStretch(1, 1);
@@ -116,7 +118,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     auto* mainLayout = new QGridLayout(this);
 
     row = 0;
-    mainLayout->addWidget(new QLabel(tr("Language") + QStringLiteral(":"), this), 0, 0);
+    mainLayout->addWidget(new QLabel(tr("Language") + u":"_s, this), 0, 0);
     mainLayout->addWidget(m_language, row++, 1);
     mainLayout->addWidget(m_showTray, row++, 0, 1, 2);
     mainLayout->addWidget(m_minimiseToTray, row++, 0, 1, 2);
@@ -188,8 +190,8 @@ void GeneralPageWidget::loadLanguage()
     m_languageMap.clear();
 
     const QDir translationDir{Core::translationsPath()};
-    const QStringList translations = translationDir.entryList(QStringList{} << QStringLiteral("*.qm"));
-    static const QRegularExpression translationExpr{QStringLiteral(R"(^fooyin_(?!en\.qm$)(.*)\.qm$)")};
+    const QStringList translations = translationDir.entryList({u"*.qm"_s});
+    static const QRegularExpression translationExpr{uR"(^fooyin_(?!en\.qm$)(.*)\.qm$)"_s};
 
     for(const QString& translation : translations) {
         const QRegularExpressionMatch translationMatch = translationExpr.match(translation);
@@ -204,7 +206,7 @@ void GeneralPageWidget::loadLanguage()
             language = nativeName;
         }
 
-        const auto name     = QStringLiteral("%1 (%2)").arg(language, code);
+        const auto name     = u"%1 (%2)"_s.arg(language, code);
         m_languageMap[name] = code;
     }
 

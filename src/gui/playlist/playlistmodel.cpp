@@ -53,6 +53,8 @@
 #include <span>
 #include <stack>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto MimeModelId       = "application/x-playlistmodel-id";
 constexpr auto MaxPlaylistTracks = 250;
 
@@ -1096,7 +1098,7 @@ void PlaylistModel::removeTracks(const TrackGroups& groups)
 void PlaylistModel::updateHeader(Playlist* playlist)
 {
     if(playlist) {
-        m_headerText = QStringLiteral("%1: %2 Tracks").arg(playlist->name()).arg(playlist->trackCount());
+        m_headerText = u"%1: %2 Tracks"_s.arg(playlist->name()).arg(playlist->trackCount());
     }
 }
 

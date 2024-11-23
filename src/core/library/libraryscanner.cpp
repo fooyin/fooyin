@@ -45,6 +45,8 @@
 
 Q_LOGGING_CATEGORY(LIB_SCANNER, "fy.scanner")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto BatchSize   = 250;
 constexpr auto ArchivePath = R"(unpack://%1|%2|file://%3!)";
 
@@ -53,8 +55,8 @@ void sortFiles(QFileInfoList& files)
 {
     std::ranges::sort(files, {}, &QFileInfo::filePath);
     std::ranges::stable_sort(files, [](const QFileInfo& a, const QFileInfo& b) {
-        const bool aIsCue = a.suffix().compare(u"cue", Qt::CaseInsensitive) == 0;
-        const bool bIsCue = b.suffix().compare(u"cue", Qt::CaseInsensitive) == 0;
+        const bool aIsCue = a.suffix().compare("cue"_L1, Qt::CaseInsensitive) == 0;
+        const bool bIsCue = b.suffix().compare("cue"_L1, Qt::CaseInsensitive) == 0;
         if(aIsCue && !bIsCue) {
             return true;
         }
@@ -67,7 +69,7 @@ void sortFiles(QFileInfoList& files)
 
 std::optional<QFileInfo> findMatchingCue(const QFileInfo& file)
 {
-    static const QStringList cueExtensions{QStringLiteral("*.cue")};
+    static const QStringList cueExtensions{u"*.cue"_s};
 
     const QDir dir           = file.absoluteDir();
     const QFileInfoList cues = dir.entryInfoList(cueExtensions, QDir::Files);
@@ -506,7 +508,7 @@ TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool ad
 
 TrackList LibraryScannerPrivate::readEmbeddedPlaylistTracks(const Track& track)
 {
-    const auto cues = track.extraTag(QStringLiteral("CUESHEET"));
+    const auto cues = track.extraTag(u"CUESHEET"_s);
     QByteArray bytes{cues.front().toUtf8()};
     QBuffer buffer(&bytes);
     if(!buffer.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -536,7 +538,7 @@ TrackList LibraryScannerPrivate::readEmbeddedPlaylistTracks(const Track& track)
         return readTrack;
     };
 
-    if(auto* parser = m_playlistLoader->parserForExtension(QStringLiteral("cue"))) {
+    if(auto* parser = m_playlistLoader->parserForExtension(u"cue"_s)) {
         TrackList tracks = parser->readPlaylist(&buffer, track.filepath(), {}, readEntry, false);
         for(auto& plTrack : tracks) {
             plTrack.generateHash();
@@ -644,7 +646,7 @@ void LibraryScannerPrivate::updateExistingTrack(Track& track, const QString& fil
         }
     }
 
-    if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+    if(track.hasExtraTag(u"CUESHEET"_s)) {
         std::unordered_map<QString, Track> existingTrackPaths;
         if(m_existingCueTracks.contains(track.filepath())) {
             const auto& tracks = m_existingCueTracks.at(track.filepath());
@@ -689,7 +691,7 @@ void LibraryScannerPrivate::readNewTrack(const QString& file)
             setTrackProps(track);
             track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
 
-            if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+            if(track.hasExtraTag(u"CUESHEET"_s)) {
                 TrackList cueTracks = readEmbeddedPlaylistTracks(track);
                 for(Track& cueTrack : cueTracks) {
                     setTrackProps(cueTrack, file);
@@ -764,7 +766,7 @@ void LibraryScannerPrivate::populateExistingTracks(const TrackList& tracks, bool
 
         if(includeMissing) {
             if(track.hasCue()) {
-                const auto cuePath = track.cuePath() == u"Embedded" ? track.filepath() : track.cuePath();
+                const auto cuePath = track.cuePath() == "Embedded"_L1 ? track.filepath() : track.cuePath();
                 m_existingCueTracks[cuePath].emplace_back(track);
                 if(!QFileInfo::exists(cuePath)) {
                     m_missingCueTracks[cuePath].emplace_back(track);
@@ -793,13 +795,12 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QStringList& paths, const 
 
     using namespace Settings::Core::Internal;
 
-    QStringList restrictExtensions = m_settings.value(QLatin1String{LibraryRestrictTypes}).toStringList();
-    const QStringList excludeExtensions
-        = m_settings.value(QLatin1String{LibraryExcludeTypes}, QStringList{QStringLiteral("cue")}).toStringList();
+    QStringList restrictExtensions      = m_settings.value(LibraryRestrictTypes).toStringList();
+    const QStringList excludeExtensions = m_settings.value(LibraryExcludeTypes, QStringList{u"cue"_s}).toStringList();
 
     if(restrictExtensions.empty()) {
         restrictExtensions = m_audioLoader->supportedFileExtensions();
-        restrictExtensions.append(QStringLiteral("cue"));
+        restrictExtensions.append(u"cue"_s);
     }
 
     const auto files = getFiles(paths, restrictExtensions, excludeExtensions, {});
@@ -814,7 +815,7 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QStringList& paths, const 
 
         const QString filepath = file.absoluteFilePath();
 
-        if(file.suffix() == u"cue") {
+        if(file.suffix() == "cue"_L1) {
             readCue(filepath, onlyModified);
         }
         else {
@@ -1037,12 +1038,12 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     using namespace Settings::Core::Internal;
 
     const QStringList playlistExtensions = Playlist::supportedPlaylistExtensions();
-    QStringList restrictExtensions       = p->m_settings.value(QLatin1String{ExternalRestrictTypes}).toStringList();
-    const QStringList excludeExtensions  = p->m_settings.value(QLatin1String{ExternalExcludeTypes}).toStringList();
+    QStringList restrictExtensions       = p->m_settings.value(ExternalRestrictTypes).toStringList();
+    const QStringList excludeExtensions  = p->m_settings.value(ExternalExcludeTypes).toStringList();
 
     if(restrictExtensions.empty()) {
         restrictExtensions = p->m_audioLoader->supportedFileExtensions();
-        restrictExtensions.append(QStringLiteral("cue"));
+        restrictExtensions.append(u"cue"_s);
     }
 
     QStringList paths;
@@ -1090,7 +1091,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                         readFileProperties(track);
                         track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
 
-                        if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                        if(track.hasExtraTag(u"CUESHEET"_s)) {
                             const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
                             std::ranges::copy(cueTracks, std::back_inserter(tracksScanned));
                         }

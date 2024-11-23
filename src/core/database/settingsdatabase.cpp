@@ -22,10 +22,12 @@
 #include <QLoggingCategory>
 #include <QSqlQuery>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 QString SettingsDatabase::value(const QString& name, QString defaultValue) const
 {
-    const auto statement = QStringLiteral("SELECT Value FROM Settings WHERE Name = :name");
+    const auto statement = u"SELECT Value FROM Settings WHERE Name = :name"_s;
 
     QSqlQuery query{db()};
 
@@ -33,7 +35,7 @@ QString SettingsDatabase::value(const QString& name, QString defaultValue) const
         return defaultValue;
     }
 
-    query.bindValue(QStringLiteral(":name"), name);
+    query.bindValue(u":name"_s, name);
 
     if(query.exec() && query.next()) {
         const QVariant value = query.value(0);
@@ -55,7 +57,7 @@ bool SettingsDatabase::set(const QString& name, const QVariant& value) const
         return false;
     }
 
-    const auto statement = QStringLiteral("INSERT OR REPLACE INTO Settings (Name, Value) VALUES (:name, :value)");
+    const auto statement = u"INSERT OR REPLACE INTO Settings (Name, Value) VALUES (:name, :value)"_s;
 
     QSqlQuery query{db()};
 
@@ -63,8 +65,8 @@ bool SettingsDatabase::set(const QString& name, const QVariant& value) const
         return false;
     }
 
-    query.bindValue(QStringLiteral(":name"), name);
-    query.bindValue(QStringLiteral(":value"), value.toString());
+    query.bindValue(u":name"_s, name);
+    query.bindValue(u":value"_s, value.toString());
 
     return query.exec();
 }

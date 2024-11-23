@@ -31,6 +31,8 @@
 
 Q_LOGGING_CATEGORY(CUE, "fy.cue")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto CueLineRegex    = R"lit((\S+)\s+(?:"([^"]+)"|(\S+))\s*(?:"([^"]+)"|(\S+))?)lit";
 constexpr auto TrackIndexRegex = R"lit((\d{1,3}):(\d{2}):(\d{2}))lit";
 
@@ -63,7 +65,7 @@ struct CueSheet
 namespace {
 float parseGain(const QString& gainStr)
 {
-    static const QRegularExpression regex{QStringLiteral(R"([+-]?\d+(\.\d+))")};
+    static const QRegularExpression regex{uR"([+-]?\d+(\.\d+))"_s};
     const QRegularExpressionMatch match = regex.match(gainStr);
 
     if(match.hasMatch()) {
@@ -152,28 +154,28 @@ void readRemLine(CueSheet& sheet, Fooyin::Track& track, const QStringList& lineP
     const QString& field = lineParts.at(0);
     const QString& value = lineParts.at(1);
 
-    if(field.compare(u"DATE", Qt::CaseInsensitive) == 0) {
+    if(field.compare("DATE"_L1, Qt::CaseInsensitive) == 0) {
         sheet.date = value;
     }
-    else if(field.compare(u"DISCNUMBER", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("DISCNUMBER"_L1, Qt::CaseInsensitive) == 0) {
         sheet.disc = value;
     }
-    else if(field.compare(u"GENRE", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("GENRE"_L1, Qt::CaseInsensitive) == 0) {
         sheet.genre = value;
     }
-    else if(field.compare(u"COMMENT", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("COMMENT"_L1, Qt::CaseInsensitive) == 0) {
         sheet.comment = value;
     }
-    else if(field.compare(u"REPLAYGAIN_ALBUM_GAIN", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("REPLAYGAIN_ALBUM_GAIN"_L1, Qt::CaseInsensitive) == 0) {
         sheet.rgAlbumGain = parseGain(value);
     }
-    else if(field.compare(u"REPLAYGAIN_ALBUM_PEAK", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("REPLAYGAIN_ALBUM_PEAK"_L1, Qt::CaseInsensitive) == 0) {
         sheet.rgAlbumPeak = parsePeak(value);
     }
-    else if(field.compare(u"REPLAYGAIN_TRACK_GAIN", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("REPLAYGAIN_TRACK_GAIN"_L1, Qt::CaseInsensitive) == 0) {
         track.setRGTrackGain(parseGain(value));
     }
-    else if(field.compare(u"REPLAYGAIN_TRACK_PEAK", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("REPLAYGAIN_TRACK_PEAK"_L1, Qt::CaseInsensitive) == 0) {
         track.setRGTrackPeak(parsePeak(value));
     }
 }
@@ -225,12 +227,12 @@ void finaliseDurations(Fooyin::TrackList& tracks)
 namespace Fooyin {
 QString CueParser::name() const
 {
-    return QStringLiteral("CUE");
+    return u"CUE"_s;
 }
 
 QStringList CueParser::supportedExtensions() const
 {
-    static const QStringList extensions{QStringLiteral("cue")};
+    static const QStringList extensions{u"cue"_s};
     return extensions;
 }
 
@@ -243,7 +245,7 @@ bool CueParser::saveIsSupported() const
 TrackList CueParser::readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,
                                   const ReadPlaylistEntry& readEntry, bool skipNotFound)
 {
-    if(dir.path() == u".") {
+    if(dir.path() == "."_L1) {
         return readEmbeddedCueTracks(device, filepath, readEntry);
     }
 
@@ -296,7 +298,7 @@ Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QStr
     Fooyin::TrackList tracks;
 
     CueSheet sheet;
-    sheet.cuePath      = QStringLiteral("Embedded");
+    sheet.cuePath      = u"Embedded"_s;
     sheet.skipNotFound = false;
     sheet.skipFile     = true;
 
@@ -335,7 +337,7 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
     const QString& field = parts.at(0);
     const QString& value = parts.at(1);
 
-    if(field.compare(u"PERFORMER", Qt::CaseInsensitive) == 0) {
+    if(field.compare("PERFORMER"_L1, Qt::CaseInsensitive) == 0) {
         if(track.isValid()) {
             track.setArtists({value});
         }
@@ -343,7 +345,7 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
             sheet.albumArtist = value;
         }
     }
-    else if(field.compare(u"TITLE", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("TITLE"_L1, Qt::CaseInsensitive) == 0) {
         if(track.isValid()) {
             track.setTitle(value);
         }
@@ -351,8 +353,8 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
             sheet.album = value;
         }
     }
-    else if(field.compare(u"COMPOSER", Qt::CaseInsensitive) == 0
-            || field.compare(u"SONGWRITER", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("COMPOSER"_L1, Qt::CaseInsensitive) == 0
+            || field.compare("SONGWRITER"_L1, Qt::CaseInsensitive) == 0) {
         if(track.isValid()) {
             track.setComposers({value});
         }
@@ -360,7 +362,7 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
             sheet.composer = value;
         }
     }
-    else if(field.compare(u"FILE", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("FILE"_L1, Qt::CaseInsensitive) == 0) {
         if(!sheet.skipFile && dir.exists()) {
             if(QDir::isAbsolutePath(value)) {
                 trackPath = QDir::cleanPath(value);
@@ -394,10 +396,10 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
             }
         }
     }
-    else if(field.compare(u"REM", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("REM"_L1, Qt::CaseInsensitive) == 0) {
         readRemLine(sheet, track, parts.sliced(1));
     }
-    else if(field.compare(u"TRACK", Qt::CaseInsensitive) == 0) {
+    else if(field.compare("TRACK"_L1, Qt::CaseInsensitive) == 0) {
         if(QFile::exists(trackPath) || !sheet.skipNotFound) {
             if(track.isValid() && !sheet.addedTrack && sheet.hasValidIndex) {
                 finaliseTrack(sheet, track);
@@ -412,10 +414,10 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
             track.setTrackNumber(parts.at(1));
         }
     }
-    else if(field.compare(u"INDEX", Qt::CaseInsensitive) == 0) {
-        if(value == u"01" && parts.size() > 2) {
+    else if(field.compare("INDEX"_L1, Qt::CaseInsensitive) == 0) {
+        if(value == "01"_L1 && parts.size() > 2) {
             if(const auto start = msfToMs(parts.at(2))) {
-                if(track.trackNumber() == u"01" || !sheet.singleTrackFile) {
+                if(track.trackNumber() == "01"_L1 || !sheet.singleTrackFile) {
                     track.setOffset(start.value());
                 }
                 sheet.hasValidIndex = true;

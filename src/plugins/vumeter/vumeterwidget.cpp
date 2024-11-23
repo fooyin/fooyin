@@ -38,6 +38,8 @@
 #include <QPainter>
 #include <QTimerEvent>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto MaxChannels    = 20;
 constexpr auto UpdateInterval = 25;
 constexpr auto MinDb          = -60.0F;
@@ -71,17 +73,14 @@ float dbOnRange(float db)
 QString channelName(int channel)
 {
     static const QStringList channelNames
-        = {QStringLiteral("FL"),  QStringLiteral("FR"),  QStringLiteral("FC"),   QStringLiteral("LFE"),
-           QStringLiteral("SL"),  QStringLiteral("SR"),  QStringLiteral("BL"),   QStringLiteral("BR"),
-           QStringLiteral("BC"),  QStringLiteral("TFL"), QStringLiteral("TFR"),  QStringLiteral("TBC"),
-           QStringLiteral("TML"), QStringLiteral("TMR"), QStringLiteral("TFLR"), QStringLiteral("TFRL"),
-           QStringLiteral("TBR"), QStringLiteral("TBL")};
+        = {u"FL"_s,  u"FR"_s,  u"FC"_s,  u"LFE"_s, u"SL"_s,  u"SR"_s,   u"BL"_s,   u"BR"_s,  u"BC"_s,
+           u"TFL"_s, u"TFR"_s, u"TBC"_s, u"TML"_s, u"TMR"_s, u"TFLR"_s, u"TFRL"_s, u"TBR"_s, u"TBL"_s};
 
     if(channel >= 0 && channel < channelNames.size()) {
         return channelNames.at(channel);
     }
 
-    return QStringLiteral("Unknown");
+    return u"Unknown"_s;
 }
 } // namespace
 
@@ -198,14 +197,14 @@ void VuMeterWidgetPrivate::updateSize()
     m_meterWidth  = width;
 
     const QFontMetrics fm{m_self->fontMetrics()};
-    const auto textRect = fm.boundingRect(QStringLiteral("-60dB"));
+    const auto textRect = fm.boundingRect(u"-60dB"_s);
 
     if(m_showLegend) {
         if(isHorizontal()) {
             if(width > 300 && height > 60) {
                 m_drawLegend  = true;
                 m_legendSize  = static_cast<float>(textRect.height() + LegendPadding);
-                m_labelsSize  = static_cast<float>(fm.horizontalAdvance(QStringLiteral("TFLR")) + 5);
+                m_labelsSize  = static_cast<float>(fm.horizontalAdvance(u"TFLR"_s) + 5);
                 m_meterHeight = height - m_legendSize;
                 m_meterWidth  = width - m_labelsSize;
             }
@@ -417,7 +416,7 @@ void VuMeterWidgetPrivate::drawLegend(QPainter& painter)
     linePen.setColor(lineColour);
 
     const QFontMetrics fm{painter.fontMetrics()};
-    const QString dbText = QStringLiteral("%1dB");
+    const QString dbText = u"%1dB"_s;
 
     for(int db{static_cast<int>(MinDb)}; db <= 0; db += TickInterval) {
         const QString text  = dbText.arg(db);
@@ -628,26 +627,26 @@ QString VuMeterWidget::name() const
 
 QString VuMeterWidget::layoutName() const
 {
-    return p->m_type == Type::Peak ? QStringLiteral("PeakMeter") : QStringLiteral("VUMeter");
+    return p->m_type == Type::Peak ? u"PeakMeter"_s : u"VUMeter"_s;
 }
 
 void VuMeterWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"Orientation"] = p->m_orientation;
-    layout[u"ShowLegend"]  = p->m_showLegend;
-    layout[u"ShowPeaks"]   = p->m_showPeaks;
+    layout["Orientation"_L1] = p->m_orientation;
+    layout["ShowLegend"_L1]  = p->m_showLegend;
+    layout["ShowPeaks"_L1]   = p->m_showPeaks;
 }
 
 void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"Orientation")) {
-        setOrientation(static_cast<Qt::Orientation>(layout.value(u"Orientation").toInt()));
+    if(layout.contains("Orientation"_L1)) {
+        setOrientation(static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt()));
     }
-    if(layout.contains(u"ShowLegend")) {
-        setShowLegend(layout.value(u"ShowLegend").toBool());
+    if(layout.contains("ShowLegend"_L1)) {
+        setShowLegend(layout.value("ShowLegend"_L1).toBool());
     }
-    if(layout.contains(u"ShowPeaks")) {
-        p->m_showPeaks = layout.value(u"ShowPeaks").toBool();
+    if(layout.contains("ShowPeaks"_L1)) {
+        p->m_showPeaks = layout.value("ShowPeaks"_L1).toBool();
     }
 }
 

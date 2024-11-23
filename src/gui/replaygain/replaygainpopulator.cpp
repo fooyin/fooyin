@@ -26,6 +26,8 @@
 
 #include <set>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class ReplayGainPopulatorPrivate
 {
@@ -96,12 +98,10 @@ void ReplayGainPopulatorPrivate::checkAddParentNode(ReplayGainModel::ItemParent 
 {
     using ItemParent = ReplayGainModel::ItemParent;
     if(parent == ItemParent::Summary) {
-        addNodeIfNew(QStringLiteral("Summary"), ReplayGainPopulator::tr("Summary"), ItemParent::Root,
-                     ReplayGainItem::Header);
+        addNodeIfNew(u"Summary"_s, ReplayGainPopulator::tr("Summary"), ItemParent::Root, ReplayGainItem::Header);
     }
     else if(parent == ItemParent::Details) {
-        addNodeIfNew(QStringLiteral("Details"), ReplayGainPopulator::tr("Details"), ItemParent::Root,
-                     ReplayGainItem::Header);
+        addNodeIfNew(u"Details"_s, ReplayGainPopulator::tr("Details"), ItemParent::Root, ReplayGainItem::Header);
     }
 }
 
@@ -120,18 +120,18 @@ void ReplayGainPopulator::run(const TrackList& tracks)
 
     if(tracks.size() == 1) {
         const Track& track = tracks.front();
-        p->addNodeIfNew(QStringLiteral("TrackGain"), tr("Track Gain"), track.rgTrackGain(),
-                        ReplayGainModel::ItemParent::Root, ReplayGainItem::TrackGain, track);
-        p->addNodeIfNew(QStringLiteral("TrackPeak"), tr("Track Peak"), track.rgTrackPeak(),
-                        ReplayGainModel::ItemParent::Root, ReplayGainItem::TrackPeak, track);
-        p->addNodeIfNew(QStringLiteral("AlbumGain"), tr("Album Gain"), track.rgAlbumGain(),
-                        ReplayGainModel::ItemParent::Root, ReplayGainItem::AlbumGain, track);
-        p->addNodeIfNew(QStringLiteral("AlbumPeak"), tr("Album Peak"), track.rgAlbumPeak(),
-                        ReplayGainModel::ItemParent::Root, ReplayGainItem::AlbumPeak, track);
+        p->addNodeIfNew(u"TrackGain"_s, tr("Track Gain"), track.rgTrackGain(), ReplayGainModel::ItemParent::Root,
+                        ReplayGainItem::TrackGain, track);
+        p->addNodeIfNew(u"TrackPeak"_s, tr("Track Peak"), track.rgTrackPeak(), ReplayGainModel::ItemParent::Root,
+                        ReplayGainItem::TrackPeak, track);
+        p->addNodeIfNew(u"AlbumGain"_s, tr("Album Gain"), track.rgAlbumGain(), ReplayGainModel::ItemParent::Root,
+                        ReplayGainItem::AlbumGain, track);
+        p->addNodeIfNew(u"AlbumPeak"_s, tr("Album Peak"), track.rgAlbumPeak(), ReplayGainModel::ItemParent::Root,
+                        ReplayGainItem::AlbumPeak, track);
     }
     else {
-        if(auto* gain = p->addSummaryNode(QStringLiteral("TrackGain"), tr("Track Gain"), Constants::InvalidGain,
-                                          ReplayGainItem::TrackGain)) {
+        if(auto* gain
+           = p->addSummaryNode(u"TrackGain"_s, tr("Track Gain"), Constants::InvalidGain, ReplayGainItem::TrackGain)) {
             gain->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
                 if(values.contains(ReplayGainItem::TrackGain)) {
                     auto gains = values.at(ReplayGainItem::TrackGain);
@@ -141,8 +141,8 @@ void ReplayGainPopulator::run(const TrackList& tracks)
             });
         }
 
-        if(auto* gain = p->addSummaryNode(QStringLiteral("AlbumGain"), tr("Album Gain"), Constants::InvalidGain,
-                                          ReplayGainItem::AlbumGain)) {
+        if(auto* gain
+           = p->addSummaryNode(u"AlbumGain"_s, tr("Album Gain"), Constants::InvalidGain, ReplayGainItem::AlbumGain)) {
             gain->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
                 if(values.contains(ReplayGainItem::AlbumGain)) {
                     const auto& gains = values.at(ReplayGainItem::AlbumGain);
@@ -152,8 +152,8 @@ void ReplayGainPopulator::run(const TrackList& tracks)
             });
         }
 
-        if(auto* maxPeak = p->addSummaryNode(QStringLiteral("TotalPeak"), QStringLiteral("Total Peak"),
-                                             Constants::InvalidPeak, ReplayGainItem::TrackPeak)) {
+        if(auto* maxPeak
+           = p->addSummaryNode(u"TotalPeak"_s, u"Total Peak"_s, Constants::InvalidPeak, ReplayGainItem::TrackPeak)) {
             maxPeak->setIsEditable(false);
             maxPeak->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
                 if(values.contains(ReplayGainItem::TrackPeak)) {
@@ -164,7 +164,7 @@ void ReplayGainPopulator::run(const TrackList& tracks)
             });
         }
 
-        if(auto* lowestGain = p->addSummaryNode(QStringLiteral("LowestGain"), tr("Lowest Gain (Loudest track)"),
+        if(auto* lowestGain = p->addSummaryNode(u"LowestGain"_s, tr("Lowest Gain (Loudest track)"),
                                                 Constants::InvalidGain, ReplayGainItem::TrackGain)) {
             lowestGain->setIsEditable(false);
             lowestGain->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
@@ -176,7 +176,7 @@ void ReplayGainPopulator::run(const TrackList& tracks)
             });
         }
 
-        if(auto* highestGain = p->addSummaryNode(QStringLiteral("HighestGain"), tr("Highest Gain (Quietest track)"),
+        if(auto* highestGain = p->addSummaryNode(u"HighestGain"_s, tr("Highest Gain (Quietest track)"),
                                                  Constants::InvalidGain, ReplayGainItem::TrackGain)) {
             highestGain->setIsEditable(false);
             highestGain->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
@@ -193,7 +193,7 @@ void ReplayGainPopulator::run(const TrackList& tracks)
                 return;
             }
 
-            const auto key = QStringLiteral("%1|%2").arg(track.id()).arg(track.effectiveTitle());
+            const auto key = u"%1|%2"_s.arg(track.id()).arg(track.effectiveTitle());
             p->addNodeIfNew(key, track.effectiveTitle(), ReplayGainModel::ItemParent::Details, ReplayGainItem::Entry,
                             track);
         }

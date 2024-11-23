@@ -30,6 +30,8 @@
 #include <QTextEdit>
 #include <QTimer>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ElapsedProgressDialog::ElapsedProgressDialog(const QString& labelText, const QString& cancelButtonText, int minimum,
                                              int maximum, QWidget* parent)
@@ -129,13 +131,13 @@ QSize ElapsedProgressDialog::sizeHint() const
 
 void ElapsedProgressDialog::updateStatus()
 {
-    m_elapsedLabel->setText(tr("Time elapsed") + u": " + Utils::msToString(m_elapsedTimer.elapsed(), false));
+    m_elapsedLabel->setText(tr("Time elapsed") + ": "_L1 + Utils::msToString(m_elapsedTimer.elapsed(), false));
 
     const int current = m_progressBar->value();
     const int max     = m_progressBar->maximum();
     const int min     = m_progressBar->minimum();
 
-    const QString remainingText = tr("Estimated") + u": ";
+    const QString remainingText = tr("Estimated") + ": "_L1;
 
     if(current <= min) {
         m_remainingLabel->setText(remainingText + tr("Calculating…"));

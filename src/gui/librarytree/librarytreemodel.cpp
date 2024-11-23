@@ -44,6 +44,8 @@
 #include <set>
 #include <stack>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 bool cmpItemsReverse(Fooyin::LibraryTreeItem* pItem1, Fooyin::LibraryTreeItem* pItem2)
 {
@@ -184,7 +186,7 @@ LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, Library
 
 void LibraryTreeModelPrivate::updateSummary()
 {
-    m_summaryNode.setTitle(QStringLiteral("All Music (%1)").arg(m_self->rootItem()->childCount() - 1));
+    m_summaryNode.setTitle(u"All Music (%1)"_s.arg(m_self->rootItem()->childCount() - 1));
 }
 
 void LibraryTreeModelPrivate::removeTracks(const TrackList& tracks)
@@ -396,7 +398,7 @@ void LibraryTreeModelPrivate::beginReset()
     m_pendingNodes.clear();
     m_addedNodes.clear();
 
-    m_summaryNode = LibraryTreeItem{QStringLiteral("All Music"), m_self->rootItem(), -1};
+    m_summaryNode = LibraryTreeItem{u"All Music"_s, m_self->rootItem(), -1};
     m_self->rootItem()->appendChild(&m_summaryNode);
     updateSummary();
 }
@@ -527,7 +529,7 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
         case(Qt::DisplayRole):
         case(Qt::ToolTipRole): {
             const QString& name = item->title();
-            return !name.isEmpty() ? name : QStringLiteral("?");
+            return !name.isEmpty() ? name : u"?"_s;
         }
         case(LibraryTreeItem::Title):
             return item->title();

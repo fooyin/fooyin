@@ -30,6 +30,8 @@
 #include <QMenu>
 #include <QPushButton>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class CustomisableInputPrivate
 {
@@ -145,7 +147,7 @@ void CustomisableInput::setFont(const QFont& font)
 {
     p->m_font = font;
 
-    p->m_fontButton->setText(QStringLiteral("%1 (%2)").arg(font.family()).arg(font.pointSize()));
+    p->m_fontButton->setText(u"%1 (%2)"_s.arg(font.family()).arg(font.pointSize()));
 }
 
 void CustomisableInput::setColour(const QColor& colour)

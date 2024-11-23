@@ -33,6 +33,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::OpenMpt {
 OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
     : QDialog{parent}
@@ -43,7 +45,7 @@ OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
     , m_amigaResampler{new QCheckBox(tr("Use Amiga resampler"), this)}
     , m_interpolationFilter{new QComboBox(this)}
 {
-    setWindowTitle(tr("%1 Settings").arg(QStringLiteral("OpenMPT")));
+    setWindowTitle(tr("%1 Settings").arg(u"OpenMPT"_s));
     setModal(true);
 
     auto* buttons
@@ -54,17 +56,17 @@ OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
                      &OpenMptSettings::reset);
 
     m_gain->setRange(-12, 12);
-    m_gain->setSuffix(QStringLiteral(" dB"));
+    m_gain->setSuffix(u" dB"_s);
 
     m_separation->setRange(0, 200);
-    m_separation->setSuffix(QStringLiteral("%"));
+    m_separation->setSuffix(u"%"_s);
 
     m_volRamping->setRange(-1, 10);
-    m_volRamping->setSuffix(QStringLiteral(" ms"));
+    m_volRamping->setSuffix(u" ms"_s);
     m_volRamping->addSpecialValue(-1, tr("Default"));
     m_volRamping->addSpecialValue(0, tr("Off"));
 
-    auto* filterLabel = new QLabel(tr("Interpolation") + u":", this);
+    auto* filterLabel = new QLabel(tr("Interpolation") + ":"_L1, this);
 
     m_interpolationFilter->addItem(tr("Default"), 0);
     m_interpolationFilter->addItem(tr("None"), 1);

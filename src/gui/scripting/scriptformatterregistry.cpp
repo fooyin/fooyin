@@ -21,6 +21,8 @@
 
 #include <gui/scripting/scriptformatter.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 using FormatFunc = std::function<void(RichFormatting&, const QString&)>;
 
@@ -91,7 +93,7 @@ void colourRgb(RichFormatting& formatting, const QString& option)
         return;
     }
 
-    const QStringList rgb = option.split(QStringLiteral(","));
+    const QStringList rgb = option.split(","_L1);
 
     if(rgb.size() < 3) {
         return;
@@ -112,10 +114,8 @@ class ScriptFormatterRegistryPrivate
 {
 public:
     std::unordered_map<QString, FormatFunc> funcs{
-        {QStringLiteral("b"), bold},          {QStringLiteral("i"), italic},
-        {QStringLiteral("font"), fontFamily}, {QStringLiteral("size"), fontSize},
-        {QStringLiteral("sized"), fontDelta}, {QStringLiteral("alpha"), colourAlpha},
-        {QStringLiteral("rgb"), colourRgb},
+        {u"b"_s, bold},          {u"i"_s, italic},          {u"font"_s, fontFamily}, {u"size"_s, fontSize},
+        {u"sized"_s, fontDelta}, {u"alpha"_s, colourAlpha}, {u"rgb"_s, colourRgb},
     };
 };
 

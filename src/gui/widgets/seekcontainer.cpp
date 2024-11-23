@@ -26,6 +26,8 @@
 #include <QFontMetrics>
 #include <QHBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class SeekContainerPrivate
 {
@@ -102,7 +104,7 @@ void SeekContainerPrivate::updateLabels(uint64_t time) const
 
     if(m_elapsedTotal) {
         const int remaining = static_cast<int>(m_max - time);
-        m_total->setText(QStringLiteral("-") + Utils::msToString(remaining < 0 ? 0 : remaining));
+        m_total->setText(u"-"_s + Utils::msToString(remaining < 0 ? 0 : remaining));
     }
     else {
         m_total->setText(Utils::msToString(m_max));
@@ -114,7 +116,7 @@ void SeekContainerPrivate::updateLabelSize() const
     const QFontMetrics fm{m_self->fontMetrics()};
     const QString zero = Utils::msToString(0);
     m_elapsed->setFixedWidth(fm.horizontalAdvance(zero));
-    m_total->setFixedWidth(fm.horizontalAdvance((m_elapsedTotal ? QStringLiteral("-") : QString{}) + zero));
+    m_total->setFixedWidth(fm.horizontalAdvance((m_elapsedTotal ? u"-"_s : QString{}) + zero));
 }
 
 SeekContainer::SeekContainer(PlayerController* playerController, QWidget* parent)

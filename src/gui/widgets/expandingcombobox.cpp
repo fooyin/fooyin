@@ -21,6 +21,8 @@
 
 #include <QAbstractItemView>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ExpandingComboBox::ExpandingComboBox(QWidget* parent)
     : QComboBox{parent}
@@ -34,7 +36,7 @@ void ExpandingComboBox::resizeToFitCurrent()
 
     int maxWidth{0};
 
-    const QStringList lines = currentText().split(QStringLiteral("\n"));
+    const QStringList lines = currentText().split("\n"_L1);
 
     for(const QString& line : lines) {
         maxWidth = std::max(maxWidth, fontMetrics.horizontalAdvance(line));
@@ -52,7 +54,7 @@ void ExpandingComboBox::resizeDropDown()
 
     int maxWidth{0};
 
-    for(int i = 0; i < count(); ++i) {
+    for(int i{0}; i < count(); ++i) {
         maxWidth = std::max(maxWidth, fontMetrics.horizontalAdvance(itemText(i)));
     }
 

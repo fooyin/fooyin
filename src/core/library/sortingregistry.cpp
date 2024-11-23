@@ -19,9 +19,11 @@
 
 #include "sortingregistry.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 SortingRegistry::SortingRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{QStringLiteral("Library/LibrarySorting"), settings, parent}
+    : ItemRegistry{u"Library/LibrarySorting"_s, settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         if(const auto sort = itemById(id)) {
@@ -34,11 +36,10 @@ SortingRegistry::SortingRegistry(SettingsManager* settings, QObject* parent)
 
 void SortingRegistry::loadDefaults()
 {
-    addDefaultItem({.name = tr("Album"), .script = QStringLiteral("%album% - $num(%disc%,2) - $num(%track%,2)")});
-    addDefaultItem(
-        {.name = tr("Artist"), .script = QStringLiteral("%artist% - %date% - $num(%disc%,2) - $num(%track%,2)")});
-    addDefaultItem({.name = tr("Title"), .script = QStringLiteral("%title%")});
-    addDefaultItem({.name = tr("Track Number"), .script = QStringLiteral("$num(%disc%,2) - $num(%track%,2)")});
+    addDefaultItem({.name = tr("Album"), .script = u"%album% - $num(%disc%,2) - $num(%track%,2)"_s});
+    addDefaultItem({.name = tr("Artist"), .script = u"%artist% - %date% - $num(%disc%,2) - $num(%track%,2)"_s});
+    addDefaultItem({.name = tr("Title"), .script = u"%title%"_s});
+    addDefaultItem({.name = tr("Track Number"), .script = u"$num(%disc%,2) - $num(%track%,2)"_s});
 }
 } // namespace Fooyin
 

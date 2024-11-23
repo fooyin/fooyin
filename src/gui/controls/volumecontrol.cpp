@@ -45,6 +45,7 @@
 #include <chrono>
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 constexpr double MinVolume = 0.01;
 
@@ -231,10 +232,10 @@ void VolumeControlPrivate::updateToolTip(int value)
     static const auto minLogVolume = std::log10(MinVolume);
     if(value > (minLogVolume * m_volumeSlider->scale())) {
         const auto volumeDb = 20 * (value / m_volumeSlider->scale());
-        m_toolTip->setText(QStringLiteral("%1 dB").arg(volumeDb, 0, 'f', 1));
+        m_toolTip->setText(u"%1 dB"_s.arg(volumeDb, 0, 'f', 1));
     }
     else {
-        m_toolTip->setText(QStringLiteral("-∞ dB"));
+        m_toolTip->setText(u"-∞ dB"_s);
     }
 
     QPoint toolTipPos        = m_volumeSlider->mapFrom(m_volumeSlider->window(), QCursor::pos());
@@ -293,19 +294,19 @@ QString VolumeControl::name() const
 
 QString VolumeControl::layoutName() const
 {
-    return QStringLiteral("VolumeControls");
+    return u"VolumeControls"_s;
 }
 
 void VolumeControl::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"Mode"] = static_cast<int>(p->m_options);
+    layout["Mode"_L1] = static_cast<int>(p->m_options);
 }
 
 void VolumeControl::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"Mode")) {
+    if(layout.contains("Mode"_L1)) {
         // Support old format (0=Icon)
-        auto options = static_cast<Options>(std::max(1, layout.value(u"Mode").toInt()));
+        auto options = static_cast<Options>(std::max(1, layout.value("Mode"_L1).toInt()));
         p->changeDisplay(options);
     }
 }

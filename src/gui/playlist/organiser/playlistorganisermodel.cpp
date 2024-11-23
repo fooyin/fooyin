@@ -32,6 +32,8 @@
 
 #include <stack>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto OrganiserItems = "application/x-fooyin-playlistorganiseritems";
 
 namespace {
@@ -97,13 +99,13 @@ TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& indexes)
 
 QString groupKey(const QString& title)
 {
-    static const QString prefix = QStringLiteral("Group.");
+    static const QString prefix = u"Group."_s;
     return prefix + title;
 }
 
 QString playlistKey(const QString& name)
 {
-    static const QString prefix = QStringLiteral("Playlist.");
+    static const QString prefix = u"Playlist."_s;
     return prefix + name;
 }
 } // namespace
@@ -232,7 +234,7 @@ bool PlaylistOrganiserModel::restoreModel(QByteArray data)
 QModelIndex PlaylistOrganiserModel::createGroup(const QModelIndex& parent)
 {
     auto* parentItem    = itemForIndex(parent);
-    const QString title = findUniqueName(QStringLiteral("New Group"));
+    const QString title = findUniqueName(u"New Group"_s);
     auto* item          = &m_nodes.emplace(groupKey(title), PlaylistOrganiserItem{title, parentItem}).first->second;
 
     const int row = parentItem->childCount();
@@ -385,7 +387,7 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
                 return item->title();
             }
             if(type == PlaylistOrganiserItem::GroupItem) {
-                return QStringLiteral("%1 [%2]").arg(item->title()).arg(item->childCount());
+                return u"%1 [%2]"_s.arg(item->title()).arg(item->childCount());
             }
             break;
         case(Qt::EditRole):

@@ -19,6 +19,8 @@
 
 #include <core/scripting/scriptscanner.h>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 bool isLiteral(QChar ch)
 {
@@ -238,13 +240,13 @@ ScriptScanner::Token ScriptScanner::keyword()
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'F'):
-                        return checkKeyword(2, u"TER", TokAfter);
+                        return checkKeyword(2, "TER"_L1, TokAfter);
                     case(u'N'):
-                        return checkKeyword(2, u"D", TokAnd);
+                        return checkKeyword(2, "D"_L1, TokAnd);
                     case(u'L'):
-                        return checkKeyword(2, u"L", TokAll);
+                        return checkKeyword(2, "L"_L1, TokAll);
                     case(u'S'):
-                        return checkKeyword(2, u"CENDING", TokAscending);
+                        return checkKeyword(2, "CENDING"_L1, TokAscending);
                     default:
                         break;
                 }
@@ -255,53 +257,53 @@ ScriptScanner::Token ScriptScanner::keyword()
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'E'):
-                        return checkKeyword(2, u"FORE", TokBefore);
+                        return checkKeyword(2, "FORE"_L1, TokBefore);
                     default:
                         break;
                 }
             }
-            return checkKeyword(1, u"Y", TokBy);
+            return checkKeyword(1, "Y"_L1, TokBy);
         case(u'D'):
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'A'):
-                        return checkKeyword(2, isPlural(3) ? u"YS" : u"Y", TokDay);
+                        return checkKeyword(2, isPlural(3) ? "YS"_L1 : "Y"_L1, TokDay);
                     case(u'E'):
-                        return checkKeyword(2, u"SCENDING", TokDescending);
+                        return checkKeyword(2, "SCENDING"_L1, TokDescending);
                     case(u'U'):
-                        return checkKeyword(2, u"RING", TokDuring);
+                        return checkKeyword(2, "RING"_L1, TokDuring);
                     default:
                         break;
                 }
             }
             break;
         case(u'E'):
-            return checkKeyword(1, u"QUAL", TokEquals);
+            return checkKeyword(1, "QUAL"_L1, TokEquals);
         case(u'G'):
-            return checkKeyword(1, u"REATER", TokRightAngle);
+            return checkKeyword(1, "REATER"_L1, TokRightAngle);
         case(u'H'):
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'A'):
-                        return checkKeyword(2, u"S", TokColon);
+                        return checkKeyword(2, "S"_L1, TokColon);
                     case(u'O'):
-                        return checkKeyword(2, isPlural(4) ? u"URS" : u"UR", TokHour);
+                        return checkKeyword(2, isPlural(4) ? "URS"_L1 : "UR"_L1, TokHour);
                     default:
                         break;
                 }
             }
             break;
         case(u'I'):
-            return checkKeyword(1, u"S", TokEquals);
+            return checkKeyword(1, "S"_L1, TokEquals);
         case(u'L'):
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'A'):
-                        return checkKeyword(2, u"ST", TokLast);
+                        return checkKeyword(2, "ST"_L1, TokLast);
                     case(u'E'):
-                        return checkKeyword(2, u"SS", TokLeftAngle);
+                        return checkKeyword(2, "SS"_L1, TokLeftAngle);
                     case(u'I'):
-                        return checkKeyword(2, u"MIT", TokLimit);
+                        return checkKeyword(2, "MIT"_L1, TokLimit);
                     default:
                         break;
                 }
@@ -314,9 +316,9 @@ ScriptScanner::Token ScriptScanner::keyword()
                         if(currentLength() > 2) {
                             switch(m_start[2].unicode()) {
                                 case(u'N'):
-                                    return checkKeyword(3, isPlural(6) ? u"UTES" : u"UTE", TokMinute);
+                                    return checkKeyword(3, isPlural(6) ? "UTES"_L1 : "UTE"_L1, TokMinute);
                                 case(u'S'):
-                                    return checkKeyword(3, u"SING", TokMissing);
+                                    return checkKeyword(3, "SING"_L1, TokMissing);
                                 default:
                                     break;
                             }
@@ -327,29 +329,29 @@ ScriptScanner::Token ScriptScanner::keyword()
             }
             break;
         case(u'N'):
-            return checkKeyword(1, u"OT", TokNot);
+            return checkKeyword(1, "OT"_L1, TokNot);
         case(u'O'):
-            return checkKeyword(1, u"R", TokOr);
+            return checkKeyword(1, "R"_L1, TokOr);
         case(u'P'):
-            return checkKeyword(1, u"RESENT", TokPresent);
+            return checkKeyword(1, "RESENT"_L1, TokPresent);
         case(u'S'):
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'E'):
-                        return checkKeyword(2, isPlural(6) ? u"CONDS" : u"COND", TokSecond);
+                        return checkKeyword(2, isPlural(6) ? "CONDS"_L1 : "COND"_L1, TokSecond);
                     case(u'I'):
-                        return checkKeyword(2, u"NCE", TokSince);
+                        return checkKeyword(2, "NCE"_L1, TokSince);
                     case(u'O'):
-                        return checkKeyword(2, u"RT", TokSort);
+                        return checkKeyword(2, "RT"_L1, TokSort);
                     default:
                         break;
                 }
             }
             break;
         case(u'W'):
-            return checkKeyword(1, isPlural(4) ? u"EEKS" : u"EEK", TokWeek);
+            return checkKeyword(1, isPlural(4) ? "EEKS"_L1 : "EEK"_L1, TokWeek);
         case(u'X'):
-            return checkKeyword(1, u"OR", TokXOr);
+            return checkKeyword(1, "OR"_L1, TokXOr);
         default:
             break;
     }

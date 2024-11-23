@@ -41,6 +41,7 @@
 Q_LOGGING_CATEGORY(RENDERER, "fy.renderer")
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 constexpr auto FadeInterval = 10;
 
@@ -74,7 +75,7 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
     , m_volumeChange{0.0}
     , m_fadeVolume{-1}
 {
-    setObjectName(QStringLiteral("Renderer"));
+    setObjectName(u"Renderer"_s);
 
     m_settings->subscribe<Settings::Core::PlayMode>(this, &AudioRenderer::recalculateGain);
     m_settings->subscribe<Settings::Core::RGMode>(this, &AudioRenderer::recalculateGain);

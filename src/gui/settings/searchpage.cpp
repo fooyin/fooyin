@@ -32,6 +32,8 @@
 #include <QLineEdit>
 #include <QStyle>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class SearchPageWidget : public SettingsPageWidget
 {
@@ -70,9 +72,9 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     , m_appendSearchString{new QCheckBox(tr("Append search string to the playlist name"), this)}
     , m_focusOnSuccess{new QCheckBox(tr("Switch focus to playlist on successful search"), this)}
     , m_closeOnSuccess{new QCheckBox(tr("Close quick search when successful"), this)}
-    , m_failBg{new QCheckBox(tr("Error background") + u":", this)}
+    , m_failBg{new QCheckBox(tr("Error background") + ":"_L1, this)}
     , m_failBgColour{new ColourButton(this)}
-    , m_failFg{new QCheckBox(tr("Error foreground") + u":", this)}
+    , m_failFg{new QCheckBox(tr("Error foreground") + ":"_L1, this)}
     , m_failFgColour{new ColourButton(this)}
 {
     auto* searchGroup       = new QGroupBox(tr("Search"), this);
@@ -84,7 +86,7 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     m_autosearchDelay->addSpecialValue(2, tr("Medium"));
     m_autosearchDelay->addSpecialValue(3, tr("Slow"));
 
-    auto* successHint = new QLabel(u"🛈 " + tr("These settings will only apply if autosearch is disabled."), this);
+    auto* successHint = new QLabel("🛈 "_L1 + tr("These settings will only apply if autosearch is disabled."), this);
 
     int row{0};
     searchGroupLayout->addWidget(m_clearOnSuccess, row++, 0, 1, 3);
@@ -101,7 +103,7 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     auto* resultsGroupLayout = new QGridLayout(resultsGroup);
 
     row = 0;
-    resultsGroupLayout->addWidget(new QLabel(tr("Playlist name") + u":", this), row, 0);
+    resultsGroupLayout->addWidget(new QLabel(tr("Playlist name") + ":"_L1, this), row, 0);
     resultsGroupLayout->addWidget(m_playlistName, row++, 1);
     resultsGroupLayout->addWidget(m_appendSearchString, row++, 0, 1, 2);
     resultsGroupLayout->addWidget(m_focusOnSuccess, row++, 0, 1, 2);

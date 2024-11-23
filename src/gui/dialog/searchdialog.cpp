@@ -43,6 +43,7 @@
 #include <QVBoxLayout>
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 constexpr auto AutoSelect    = "Searching/AutoSelect";
 constexpr auto PlaylistState = "Searching/PlaylistState";
@@ -124,7 +125,7 @@ void SearchDialog::updateTitle()
         m_view->view()->setEmptyText(tr("Start typing to search"));
     }
     else {
-        title += u" (" + tr("%Ln result(s)", "", m_view->trackCount()) + u")";
+        title += " ("_L1 + tr("%Ln result(s)", "", m_view->trackCount()) + ")"_L1;
         m_view->view()->setEmptyText(tr("No results"));
     }
 
@@ -148,9 +149,8 @@ void SearchDialog::showOptionsMenu()
     }
 
     auto* searching = new QAction(tr("Help"), this);
-    QObject::connect(searching, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/searching/basics.html"));
-    });
+    QObject::connect(searching, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/searching/basics.html"_s); });
     menu->addAction(searching);
 
     QStyleOptionFrame opt;
@@ -182,7 +182,7 @@ void SearchDialog::saveState()
 {
     QJsonObject layout;
     m_view->saveLayoutData(layout);
-    layout[u"Geometry"] = QString::fromUtf8(saveGeometry().toBase64());
+    layout["Geometry"_L1] = QString::fromUtf8(saveGeometry().toBase64());
 
     const QByteArray state = QJsonDocument{layout}.toJson(QJsonDocument::Compact).toBase64();
 
@@ -210,8 +210,8 @@ void SearchDialog::loadState()
         if(!layout.isEmpty()) {
             m_view->loadLayoutData(layout);
 
-            if(layout.contains(u"Geometry")) {
-                restoreGeometry(QByteArray::fromBase64(layout.value(u"Geometry").toString().toUtf8()));
+            if(layout.contains("Geometry"_L1)) {
+                restoreGeometry(QByteArray::fromBase64(layout.value("Geometry"_L1).toString().toUtf8()));
             }
         }
     }

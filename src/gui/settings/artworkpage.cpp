@@ -38,6 +38,8 @@
 #include <QSpinBox>
 #include <QTabWidget>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class ArtworkPageWidget : public SettingsPageWidget
 {
@@ -97,11 +99,11 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings)
     auto* cacheGroupBox = new QGroupBox(tr("Cache"), this);
     auto* cacheLayout   = new QGridLayout(cacheGroupBox);
 
-    auto* pixmapCacheLabel = new QLabel(tr("Pixmap cache size") + QStringLiteral(":"), this);
+    auto* pixmapCacheLabel = new QLabel(tr("Pixmap cache size") + u":"_s, this);
 
     m_pixmapCache->setMinimum(10);
     m_pixmapCache->setMaximum(1000);
-    m_pixmapCache->setSuffix(QStringLiteral(" MB"));
+    m_pixmapCache->setSuffix(u" MB"_s);
 
     auto* clearCacheButton = new QPushButton(tr("Clear Cache"), this);
     QObject::connect(clearCacheButton, &QPushButton::clicked, this, [this]() {
@@ -135,9 +137,9 @@ void ArtworkPageWidget::load()
 
     const auto paths = m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>();
 
-    m_frontCovers->setPlainText(paths.frontCoverPaths.join(QStringLiteral("\n")));
-    m_backCovers->setPlainText(paths.backCoverPaths.join(QStringLiteral("\n")));
-    m_artistCovers->setPlainText(paths.artistPaths.join(QStringLiteral("\n")));
+    m_frontCovers->setPlainText(paths.frontCoverPaths.join("\n"_L1));
+    m_backCovers->setPlainText(paths.backCoverPaths.join("\n"_L1));
+    m_artistCovers->setPlainText(paths.artistPaths.join("\n"_L1));
 
     m_pixmapCache->setValue(m_settings->value<Settings::Gui::Internal::PixmapCacheSize>());
     updateCacheSize();
@@ -152,9 +154,9 @@ void ArtworkPageWidget::apply()
 
     CoverPaths paths;
 
-    paths.frontCoverPaths = m_frontCovers->toPlainText().split(QStringLiteral("\n"), Qt::SkipEmptyParts);
-    paths.backCoverPaths  = m_backCovers->toPlainText().split(QStringLiteral("\n"), Qt::SkipEmptyParts);
-    paths.artistPaths     = m_artistCovers->toPlainText().split(QStringLiteral("\n"), Qt::SkipEmptyParts);
+    paths.frontCoverPaths = m_frontCovers->toPlainText().split("\n"_L1, Qt::SkipEmptyParts);
+    paths.backCoverPaths  = m_backCovers->toPlainText().split("\n"_L1, Qt::SkipEmptyParts);
+    paths.artistPaths     = m_artistCovers->toPlainText().split("\n"_L1, Qt::SkipEmptyParts);
 
     m_settings->set<Settings::Gui::Internal::TrackCoverPaths>(QVariant::fromValue(paths));
     m_settings->set<Settings::Gui::Internal::PixmapCacheSize>(m_pixmapCache->value());
@@ -170,7 +172,7 @@ void ArtworkPageWidget::reset()
 void ArtworkPageWidget::updateCacheSize()
 {
     const QString cacheSize = Utils::formatFileSize(Utils::File::directorySize(Gui::coverPath()));
-    m_cacheSizeLabel->setText(tr("Disk cache usage") + QStringLiteral(": %1").arg(cacheSize));
+    m_cacheSizeLabel->setText(tr("Disk cache usage") + u": %1"_s.arg(cacheSize));
 }
 
 ArtworkPage::ArtworkPage(SettingsManager* settings, QObject* parent)

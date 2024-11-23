@@ -28,6 +28,8 @@
 
 Q_LOGGING_CATEGORY(AUTO_HEADER, "fy.autoheader")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto MinSectionWidth = 20;
 
 namespace Fooyin {
@@ -494,7 +496,8 @@ void AutoHeaderView::addHeaderContextMenu(QMenu* menu, const QPoint& pos)
         const int logical = logicalIndexAt(mapFromGlobal(pos));
         if(logical >= 0 && logical < sectionCount) {
             auto* hideSection = new QAction(
-                tr("Hide %1").arg(u"\"" + model()->headerData(logical, orientation()).toString() + u"\""), menu);
+                tr("Hide %1").arg(R"(")"_L1 + model()->headerData(logical, orientation()).toString() + R"(")"_L1),
+                menu);
             QObject::connect(hideSection, &QAction::triggered, this, [this, logical]() { hideHeaderSection(logical); });
             hideSection->setEnabled(sectionCount - hiddenCount > 1);
             menu->addAction(hideSection);

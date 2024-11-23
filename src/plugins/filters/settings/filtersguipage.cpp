@@ -33,6 +33,8 @@
 #include <QLabel>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Filters {
 class FiltersGuiPageWidget : public SettingsPageWidget
 {
@@ -63,7 +65,7 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     , m_filterHeaders{new QCheckBox(tr("Show headers"), this)}
     , m_filterScrollBars{new QCheckBox(tr("Show scrollbars"), this)}
     , m_altRowColours{new QCheckBox(tr("Alternating row colours"), this)}
-    , m_overrideRowHeight{new QCheckBox(tr("Override row height") + QStringLiteral(":"), this)}
+    , m_overrideRowHeight{new QCheckBox(tr("Override row height") + u":"_s, this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
@@ -76,8 +78,8 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     auto* artworkMode   = new QGroupBox(tr("Artwork Mode"), this);
     auto* artworkLayout = new QGridLayout(artworkMode);
 
-    m_iconWidth->setSuffix(QStringLiteral("px"));
-    m_iconHeight->setSuffix(QStringLiteral("px"));
+    m_iconWidth->setSuffix(u"px"_s);
+    m_iconHeight->setSuffix(u"px"_s);
 
     m_iconWidth->setMaximum(2048);
     m_iconHeight->setMaximum(2048);
@@ -86,14 +88,12 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     m_iconHeight->setSingleStep(20);
 
     auto* iconSizeHint = new QLabel(
-        QStringLiteral("🛈 ")
-            + tr("Size can also be changed using %1 in the widget.").arg(QStringLiteral("<b>Ctrl+Scroll</b>")),
-        this);
+        u"🛈 "_s + tr("Size can also be changed using %1 in the widget.").arg(u"<b>Ctrl+Scroll</b>"_s), this);
 
     int row{0};
-    artworkLayout->addWidget(new QLabel(tr("Width") + QStringLiteral(":"), this), row, 0);
+    artworkLayout->addWidget(new QLabel(tr("Width") + u":"_s, this), row, 0);
     artworkLayout->addWidget(m_iconWidth, row++, 1);
-    artworkLayout->addWidget(new QLabel(tr("Height") + QStringLiteral(":"), this), row, 0);
+    artworkLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
     artworkLayout->addWidget(m_iconHeight, row++, 1);
     artworkLayout->addWidget(iconSizeHint, row, 0, 1, 3);
     artworkLayout->setColumnStretch(3, 1);

@@ -43,6 +43,8 @@
 #pragma clang diagnostic ignored "-Wc99-extensions"
 #endif
 
+using namespace Qt::StringLiterals;
+
 constexpr auto BufferLength = 200; // ms
 
 namespace {
@@ -183,7 +185,7 @@ OutputDevices PipeWireOutput::getAllDevices(bool isCurrentOutput)
 {
     OutputDevices devices;
 
-    devices.emplace_back(QStringLiteral("default"), QStringLiteral("Default"));
+    devices.emplace_back(u"default"_s, u"Default"_s);
 
     if(!isCurrentOutput) {
         pw_init(nullptr, nullptr);
@@ -313,7 +315,7 @@ bool PipeWireOutput::initStream()
 
     const ThreadLoopGuard guard{m_loop.get()};
 
-    const auto dev = m_device != u"default" ? m_device : QString{};
+    const auto dev = m_device != "default"_L1 ? m_device : QString{};
 
     m_stream = std::make_unique<PipewireStream>(m_core.get(), m_format, dev);
     m_stream->addListener(streamEvents, this);

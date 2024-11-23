@@ -35,6 +35,8 @@
 #include <QLineEdit>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class LibraryTreePageWidget : public SettingsPageWidget
 {
@@ -85,7 +87,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     , m_header{new QCheckBox(tr("Show header"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
-    , m_overrideRowHeight{new QCheckBox(tr("Override row height") + QStringLiteral(":"), this)}
+    , m_overrideRowHeight{new QCheckBox(tr("Override row height") + u":"_s, this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
@@ -93,8 +95,8 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    auto* doubleClickLabel = new QLabel(tr("Double-click") + QStringLiteral(":"), this);
-    auto* middleClickLabel = new QLabel(tr("Middle-click") + QStringLiteral(":"), this);
+    auto* doubleClickLabel = new QLabel(tr("Double-click") + u":"_s, this);
+    auto* middleClickLabel = new QLabel(tr("Middle-click") + u":"_s, this);
 
     clickBehaviourLayout->addWidget(doubleClickLabel, 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
@@ -106,7 +108,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     auto* selectionPlaylist       = new QGroupBox(tr("Library Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    auto* playlistNameLabel = new QLabel(tr("Name") + QStringLiteral(":"), this);
+    auto* playlistNameLabel = new QLabel(tr("Name") + u":"_s, this);
 
     m_keepAlive->setToolTip(tr("If this is the active playlist, keep it alive when changing selection"));
 
@@ -128,8 +130,8 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     auto* iconGroup       = new QGroupBox(tr("Icon"), this);
     auto* iconGroupLayout = new QGridLayout(iconGroup);
 
-    m_iconWidth->setSuffix(QStringLiteral("px"));
-    m_iconHeight->setSuffix(QStringLiteral("px"));
+    m_iconWidth->setSuffix(u"px"_s);
+    m_iconHeight->setSuffix(u"px"_s);
 
     m_iconWidth->setMaximum(512);
     m_iconHeight->setMaximum(512);
@@ -138,14 +140,12 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     m_iconHeight->setSingleStep(5);
 
     auto* iconSizeHint = new QLabel(
-        QStringLiteral("🛈 ")
-            + tr("Size can also be changed using %1 in the widget.").arg(QStringLiteral("<b>Ctrl+Scroll</b>")),
-        this);
+        u"🛈 "_s + tr("Size can also be changed using %1 in the widget.").arg(u"<b>Ctrl+Scroll</b>"_s), this);
 
     int row{0};
-    iconGroupLayout->addWidget(new QLabel(tr("Width") + QStringLiteral(":"), this), row, 0);
+    iconGroupLayout->addWidget(new QLabel(tr("Width") + u":"_s, this), row, 0);
     iconGroupLayout->addWidget(m_iconWidth, row++, 1);
-    iconGroupLayout->addWidget(new QLabel(tr("Height") + QStringLiteral(":"), this), row, 0);
+    iconGroupLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
     iconGroupLayout->addWidget(m_iconHeight, row++, 1);
     iconGroupLayout->addWidget(iconSizeHint, row, 0, 1, 4);
     iconGroupLayout->setColumnStretch(2, 1);
