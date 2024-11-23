@@ -24,26 +24,28 @@
 #include <QLabel>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 AlsaSettings::AlsaSettings(QWidget* parent)
     : QDialog{parent}
     , m_bufferLength{new QSpinBox(this)}
     , m_periodLength{new QSpinBox(this)}
 {
-    setWindowTitle(tr("%1 Settings").arg(QStringLiteral("ALSA")));
+    setWindowTitle(tr("%1 Settings").arg(u"ALSA"_s));
     setModal(true);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     QObject::connect(buttons, &QDialogButtonBox::accepted, this, &AlsaSettings::accept);
     QObject::connect(buttons, &QDialogButtonBox::rejected, this, &AlsaSettings::reject);
 
-    auto* bufferLabel = new QLabel(tr("Buffer length") + u":", this);
-    auto* periodLabel = new QLabel(tr("Period length") + u":", this);
+    auto* bufferLabel = new QLabel(tr("Buffer length") + ":"_L1, this);
+    auto* periodLabel = new QLabel(tr("Period length") + ":"_L1, this);
 
     m_bufferLength->setRange(200, 10000);
-    m_bufferLength->setSuffix(QStringLiteral(" ms"));
+    m_bufferLength->setSuffix(u" ms"_s);
     m_periodLength->setRange(20, 5000);
-    m_periodLength->setSuffix(QStringLiteral(" ms"));
+    m_periodLength->setSuffix(u" ms"_s);
 
     auto* layout = new QGridLayout(this);
     layout->setSizeConstraint(QLayout::SetFixedSize);
@@ -55,14 +57,14 @@ AlsaSettings::AlsaSettings(QWidget* parent)
     layout->addWidget(m_periodLength, row++, 1);
     layout->addWidget(buttons, row++, 0, 1, 2, Qt::AlignBottom);
 
-    m_bufferLength->setValue(m_settings.value(QLatin1String{BufferLengthSetting}, DefaultBufferLength).toInt());
-    m_periodLength->setValue(m_settings.value(QLatin1String{PeriodLengthSetting}, DefaultPeriodLength).toInt());
+    m_bufferLength->setValue(m_settings.value(BufferLengthSetting, DefaultBufferLength).toInt());
+    m_periodLength->setValue(m_settings.value(PeriodLengthSetting, DefaultPeriodLength).toInt());
 }
 
 void AlsaSettings::accept()
 {
-    m_settings.setValue(QLatin1String{BufferLengthSetting}, m_bufferLength->value());
-    m_settings.setValue(QLatin1String{PeriodLengthSetting}, m_periodLength->value());
+    m_settings.setValue(BufferLengthSetting, m_bufferLength->value());
+    m_settings.setValue(PeriodLengthSetting, m_periodLength->value());
 
     done(Accepted);
 }

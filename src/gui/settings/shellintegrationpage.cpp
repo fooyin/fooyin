@@ -31,6 +31,8 @@
 #include <QLabel>
 #include <QLineEdit>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class ShellIntegrationPageWidget : public SettingsPageWidget
 {
@@ -65,11 +67,11 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
     auto* fileTypesLayout = new QGridLayout(fileTypesGroup);
 
     int row{0};
-    fileTypesLayout->addWidget(new QLabel(tr("Restrict to") + u":", this), row, 0);
+    fileTypesLayout->addWidget(new QLabel(tr("Restrict to") + ":"_L1, this), row, 0);
     fileTypesLayout->addWidget(m_restrictTypes, row++, 1);
-    fileTypesLayout->addWidget(new QLabel(tr("Exclude") + u":", this), row, 0);
+    fileTypesLayout->addWidget(new QLabel(tr("Exclude") + ":"_L1, this), row, 0);
     fileTypesLayout->addWidget(m_excludeTypes, row++, 1);
-    fileTypesLayout->addWidget(new QLabel(QStringLiteral("🛈 e.g. \"mp3;m4a\""), this), row++, 1);
+    fileTypesLayout->addWidget(new QLabel(u"🛈 e.g. \"mp3;m4a\""_s, this), row++, 1);
     fileTypesLayout->setColumnStretch(1, 1);
 
     auto* playlistGroup       = new QGroupBox(tr("Playlist"), this);
@@ -79,9 +81,9 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
 
     row = 0;
     playlistGroupLayout->addWidget(m_alwaysSend, row++, 0, 1, 2);
-    playlistGroupLayout->addWidget(new QLabel(tr("Playlist name") + QStringLiteral(":"), this), row, 0);
+    playlistGroupLayout->addWidget(new QLabel(tr("Playlist name") + ":"_L1, this), row, 0);
     playlistGroupLayout->addWidget(m_externalPlaylist, row++, 1);
-    playlistGroupLayout->addWidget(new QLabel(tr("Sort incoming tracks by") + u":", this), row, 0);
+    playlistGroupLayout->addWidget(new QLabel(tr("Sort incoming tracks by") + ":"_L1, this), row, 0);
     playlistGroupLayout->addWidget(m_externalSortScript, row++, 1);
     playlistGroupLayout->setRowStretch(row, 1);
     playlistGroupLayout->setColumnStretch(1, 1);

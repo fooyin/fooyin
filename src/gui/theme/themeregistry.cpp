@@ -19,9 +19,11 @@
 
 #include <gui/theme/themeregistry.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ThemeRegistry::ThemeRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{QStringLiteral("Theme/SavedThemes"), settings, parent}
+    : ItemRegistry{u"Theme/SavedThemes"_s, settings, parent}
 {
     loadItems();
 }

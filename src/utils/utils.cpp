@@ -33,6 +33,8 @@
 #include <QWidget>
 #include <QWindow>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto DefaultIconSize = 20;
 constexpr std::array<const char*, 6> DateFormats{"yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd hh:mm", "yyyy-MM-dd hh",
                                                  "yyyy-MM-dd",          "yyyy-MM",          "yyyy"};
@@ -53,14 +55,14 @@ int randomNumber(int min, int max)
 
 uint64_t currentDateToInt()
 {
-    const auto str = QDateTime::currentDateTimeUtc().toString(QStringLiteral("yyyyMMddHHmmss"));
+    const auto str = QDateTime::currentDateTimeUtc().toString("yyyyMMddHHmmss"_L1);
     return static_cast<uint64_t>(str.toULongLong());
 }
 
 QString formatTimeMs(uint64_t time)
 {
     const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(time));
-    QString formattedDateTime = dateTime.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
+    QString formattedDateTime = dateTime.toString("yyyy-MM-dd HH:mm:ss"_L1);
     return formattedDateTime;
 }
 
@@ -93,7 +95,7 @@ std::optional<int64_t> dateStringToMs(const QString& str)
 QString msToDateString(int64_t dateMs)
 {
     const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(dateMs));
-    QString formattedDateTime = dateTime.toString(u"yyyy-MM-dd HH:mm:ss");
+    QString formattedDateTime = dateTime.toString("yyyy-MM-dd HH:mm:ss"_L1);
     return formattedDateTime;
 }
 
@@ -112,7 +114,7 @@ QStringList extensionsToWildcards(const QStringList& extensions)
 {
     QStringList wildcards;
     std::ranges::transform(extensions, std::back_inserter(wildcards),
-                           [](const QString& extension) { return QStringLiteral("*.%1").arg(extension); });
+                           [](const QString& extension) { return u"*.%1"_s.arg(extension); });
     return wildcards;
 }
 
@@ -121,15 +123,15 @@ QString extensionsToFilterList(const QStringList& extensions, const QString& nam
     QStringList filterList;
 
     for(const QString& ext : extensions) {
-        filterList.append(QStringLiteral("%1 %2 (*.%3)").arg(ext, name, ext));
+        filterList.append(u"%1 %2 (*.%3)"_s.arg(ext, name, ext));
     }
 
-    return filterList.join(u";;");
+    return filterList.join(";;"_L1);
 }
 
 QString extensionFromFilter(const QString& filter)
 {
-    static const QRegularExpression re{QStringLiteral(R"(\*\.(\w+))")};
+    static const QRegularExpression re{uR"(\*\.(\w+))"_s};
     const QRegularExpressionMatch match = re.match(filter);
 
     if(match.hasMatch()) {
@@ -332,7 +334,7 @@ QPixmap pixmapFromTheme(const char* icon)
 
 QPixmap pixmapFromTheme(const char* icon, const QSize& size)
 {
-    const QString key = QStringLiteral("ThemeIcon|%1|%2x%3").arg(QLatin1String{icon}).arg(size.width(), size.height());
+    const QString key = u"ThemeIcon|%1|%2x%3"_s.arg(QLatin1String{icon}).arg(size.width(), size.height());
 
     QPixmap pixmap;
     if(QPixmapCache::find(key, &pixmap)) {

@@ -25,6 +25,8 @@
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Filters {
 FilterPopulator::FilterPopulator(LibraryManager* libraryManager, QObject* parent)
     : Worker{parent}
@@ -41,7 +43,7 @@ void FilterPopulator::run(const QStringList& columns, const TrackList& tracks, b
         registry->setUseVariousArtists(useVarious);
     }
 
-    const QString newColumns = columns.join(u"\036");
+    const QString newColumns = columns.join("\036"_L1);
     if(std::exchange(m_currentColumns, newColumns) != newColumns) {
         m_script = m_parser.parse(m_currentColumns);
     }

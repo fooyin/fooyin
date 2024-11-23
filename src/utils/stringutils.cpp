@@ -26,6 +26,8 @@
 
 #include <unicode/ucsdet.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Utils {
 QString readMultiLineString(const QJsonValue& value)
 {
@@ -112,21 +114,20 @@ QString msToString(std::chrono::milliseconds ms, bool includeMs)
     QString formattedTime;
 
     if(weeks.count() > 0) {
-        formattedTime += QStringLiteral("%1wk ").arg(weeks.count());
+        formattedTime += u"%1wk "_s.arg(weeks.count());
     }
     if(days.count() > 0) {
-        formattedTime += QStringLiteral("%1d ").arg(days.count());
+        formattedTime += u"%1d "_s.arg(days.count());
     }
     if(hours.count() > 0) {
-        formattedTime += QStringLiteral("%1:").arg(hours.count(), 2, 10, QLatin1Char{'0'});
+        formattedTime += u"%1:"_s.arg(hours.count(), 2, 10, QLatin1Char{'0'});
     }
 
-    formattedTime += QStringLiteral("%1:%2")
-                         .arg(minutes.count(), 2, 10, QLatin1Char{'0'})
-                         .arg(seconds.count(), 2, 10, QLatin1Char{'0'});
+    formattedTime
+        += u"%1:%2"_s.arg(minutes.count(), 2, 10, QLatin1Char{'0'}).arg(seconds.count(), 2, 10, QLatin1Char{'0'});
 
     if(includeMs) {
-        formattedTime += QStringLiteral(".%1").arg(milliseconds, 3, 10, QLatin1Char{'0'});
+        formattedTime += u".%1"_s.arg(milliseconds, 3, 10, QLatin1Char{'0'});
     }
 
     return formattedTime;
@@ -139,8 +140,7 @@ QString msToString(uint64_t ms)
 
 QString formatFileSize(uint64_t bytes, bool includeBytes)
 {
-    static const QStringList units = {QStringLiteral("bytes"), QStringLiteral("KB"), QStringLiteral("MB"),
-                                      QStringLiteral("GB"), QStringLiteral("TB")};
+    static const QStringList units = {u"bytes"_s, u"KB"_s, u"MB"_s, u"GB"_s, u"TB"_s};
     auto size                      = static_cast<double>(bytes);
     int unitIndex{0};
 
@@ -153,14 +153,14 @@ QString formatFileSize(uint64_t bytes, bool includeBytes)
         return {};
     }
 
-    QString formattedSize = QStringLiteral("%1 %2").arg(QString::number(size, 'f', 1), units.at(unitIndex));
+    QString formattedSize = u"%1 %2"_s.arg(QString::number(size, 'f', 1), units.at(unitIndex));
 
     if(unitIndex == 0) {
         return formattedSize;
     }
 
     if(includeBytes) {
-        formattedSize.append(QStringLiteral(" (%3 bytes)").arg(bytes));
+        formattedSize.append(u" (%3 bytes)"_s.arg(bytes));
     }
 
     return formattedSize;
@@ -168,7 +168,7 @@ QString formatFileSize(uint64_t bytes, bool includeBytes)
 
 QString addLeadingZero(int number, int leadingCount)
 {
-    return QStringLiteral("%1").arg(number, leadingCount, 10, QLatin1Char{'0'});
+    return u"%1"_s.arg(number, leadingCount, 10, QLatin1Char{'0'});
 }
 
 QString appendShortcut(const QString& str, const QKeySequence& shortcut)

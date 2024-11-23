@@ -34,6 +34,8 @@
 #include <QRadioButton>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class NetworkPageWidget : public SettingsPageWidget
 {
@@ -85,16 +87,16 @@ NetworkPageWidget::NetworkPageWidget(SettingsManager* settings)
     m_proxyActionGroup->addButton(m_useSystemProxy, 1);
     m_proxyActionGroup->addButton(m_manualProxy, 2);
 
-    m_proxyType->addItem(QStringLiteral("HTTP"));
-    m_proxyType->addItem(QStringLiteral("SOCKS5"));
+    m_proxyType->addItem(u"HTTP"_s);
+    m_proxyType->addItem(u"SOCKS5"_s);
 
     m_auth->setCheckable(true);
     auto* authLayout = new QGridLayout(m_auth);
 
     int row{0};
-    authLayout->addWidget(new QLabel(tr("Username") + u":", this), row, 0);
+    authLayout->addWidget(new QLabel(tr("Username") + ":"_L1, this), row, 0);
     authLayout->addWidget(m_username, row++, 1);
-    authLayout->addWidget(new QLabel(tr("Password") + u":", this), row, 0);
+    authLayout->addWidget(new QLabel(tr("Password") + ":"_L1, this), row, 0);
     authLayout->addWidget(m_password, row++, 1);
     proxyLayout->setColumnStretch(1, 1);
 
@@ -104,11 +106,11 @@ NetworkPageWidget::NetworkPageWidget(SettingsManager* settings)
     proxyLayout->addWidget(m_noProxy, row++, 0, 1, 3);
     proxyLayout->addWidget(m_useSystemProxy, row++, 0, 1, 3);
     proxyLayout->addWidget(m_manualProxy, row++, 0, 1, 3);
-    proxyLayout->addWidget(new QLabel(tr("Type") + u":", this), row, 0);
+    proxyLayout->addWidget(new QLabel(tr("Type") + ":"_L1, this), row, 0);
     proxyLayout->addWidget(m_proxyType, row++, 1);
-    proxyLayout->addWidget(new QLabel(tr("Host") + u":", this), row, 0);
+    proxyLayout->addWidget(new QLabel(tr("Host") + ":"_L1, this), row, 0);
     proxyLayout->addWidget(m_host, row, 1, 1, 2);
-    proxyLayout->addWidget(new QLabel(tr("Port") + u":", this), row, 3);
+    proxyLayout->addWidget(new QLabel(tr("Port") + ":"_L1, this), row, 3);
     proxyLayout->addWidget(m_port, row++, 4);
     proxyLayout->addWidget(m_auth, row++, 0, 1, 5);
     proxyLayout->setColumnStretch(2, 1);

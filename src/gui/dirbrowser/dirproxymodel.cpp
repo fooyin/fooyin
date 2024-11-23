@@ -28,6 +28,8 @@
 #include <QPalette>
 #include <QPixmap>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 DirProxyModel::DirProxyModel(QObject* parent)
     : QSortFilterProxyModel{parent}
@@ -134,7 +136,7 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
     if(m_flat) {
         if(canGoUp() && proxyIndex.row() == 0 && proxyIndex.column() == 0) {
             if(role == Qt::DisplayRole) {
-                return QStringLiteral("…");
+                return u"…"_s;
             }
             if(role == QFileSystemModel::FilePathRole) {
                 return {};

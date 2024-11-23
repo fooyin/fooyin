@@ -23,9 +23,11 @@
 
 #include <core/constants.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{QStringLiteral("PlaylistWidget/PlaylistColumns"), settings, parent}
+    : ItemRegistry{u"PlaylistWidget/PlaylistColumns"_s, settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         if(const auto column = itemById(id)) {
@@ -38,29 +40,27 @@ PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObjec
 
 void PlaylistColumnRegistry::loadDefaults()
 {
-    addDefaultItem({.id = 0, .name = tr("Track"), .field = QStringLiteral("[%disc%.]$num(%track%,2)")});
-    addDefaultItem({.id = 1, .name = tr("Title"), .field = QStringLiteral("%title%")});
-    addDefaultItem({.id = 2, .name = tr("Artist"), .field = QStringLiteral("%artist%")});
-    addDefaultItem({.id = 3, .name = tr("Artist/Album"), .field = QStringLiteral("[%albumartist% - ]%album%")});
-    addDefaultItem({.id = 4, .name = tr("Album Artist"), .field = QStringLiteral("%albumartist%")});
-    addDefaultItem({.id = 5, .name = tr("Album"), .field = QStringLiteral("%album%")});
-    addDefaultItem({.id = 7, .name = tr("Duration"), .field = QStringLiteral("%duration%")});
+    addDefaultItem({.id = 0, .name = tr("Track"), .field = u"[%disc%.]$num(%track%,2)"_s});
+    addDefaultItem({.id = 1, .name = tr("Title"), .field = u"%title%"_s});
+    addDefaultItem({.id = 2, .name = tr("Artist"), .field = u"%artist%"_s});
+    addDefaultItem({.id = 3, .name = tr("Artist/Album"), .field = u"[%albumartist% - ]%album%"_s});
+    addDefaultItem({.id = 4, .name = tr("Album Artist"), .field = u"%albumartist%"_s});
+    addDefaultItem({.id = 5, .name = tr("Album"), .field = u"%album%"_s});
+    addDefaultItem({.id = 7, .name = tr("Duration"), .field = u"%duration%"_s});
     addDefaultItem({.id = 8, .name = tr("Playing"), .field = QString::fromLatin1(PlayingIcon)});
-    addDefaultItem({.id = 9, .name = tr("Codec"), .field = QStringLiteral("%codec%[ / %codec_profile%]")});
-    addDefaultItem({.id = 10, .name = tr("Extension"), .field = QStringLiteral("%extension%")});
-    addDefaultItem({.id = 11, .name = tr("Bitrate"), .field = QStringLiteral("%bitrate% kbps")});
-    addDefaultItem({.id = 12, .name = tr("Sample Rate"), .field = QStringLiteral("%samplerate% Hz")});
-    addDefaultItem({.id = 16, .name = tr("Channels"), .field = QStringLiteral("%channels%")});
-    addDefaultItem({.id = 18, .name = tr("Bit Depth"), .field = QStringLiteral("%bitdepth%")});
-    addDefaultItem({.id = 17, .name = tr("Last Modified"), .field = QStringLiteral("%lastmodified%")});
-    addDefaultItem(
-        {.id = 6, .name = tr("Playcount"), .field = QStringLiteral("$ifgreater(%playcount%,0,%playcount%)")});
-    addDefaultItem({.id = 21, .name = tr("Rating"), .field = QStringLiteral("%rating_editor%")});
-    addDefaultItem({.id = 19, .name = tr("First Played"), .field = QStringLiteral("%firstplayed%")});
-    addDefaultItem({.id = 20, .name = tr("Last Played"), .field = QStringLiteral("%lastplayed%")});
-    addDefaultItem({.id = 13, .name = tr("Front Cover"), .field = QStringLiteral("%frontcover%"), .isPixmap = true});
-    addDefaultItem({.id = 14, .name = tr("Back Cover"), .field = QStringLiteral("%backcover%"), .isPixmap = true});
-    addDefaultItem(
-        {.id = 15, .name = tr("Artist Picture"), .field = QStringLiteral("%artistpicture%"), .isPixmap = true});
+    addDefaultItem({.id = 9, .name = tr("Codec"), .field = u"%codec%[ / %codec_profile%]"_s});
+    addDefaultItem({.id = 10, .name = tr("Extension"), .field = u"%extension%"_s});
+    addDefaultItem({.id = 11, .name = tr("Bitrate"), .field = u"%bitrate% kbps"_s});
+    addDefaultItem({.id = 12, .name = tr("Sample Rate"), .field = u"%samplerate% Hz"_s});
+    addDefaultItem({.id = 16, .name = tr("Channels"), .field = u"%channels%"_s});
+    addDefaultItem({.id = 18, .name = tr("Bit Depth"), .field = u"%bitdepth%"_s});
+    addDefaultItem({.id = 17, .name = tr("Last Modified"), .field = u"%lastmodified%"_s});
+    addDefaultItem({.id = 6, .name = tr("Playcount"), .field = u"$ifgreater(%playcount%,0,%playcount%)"_s});
+    addDefaultItem({.id = 21, .name = tr("Rating"), .field = u"%rating_editor%"_s});
+    addDefaultItem({.id = 19, .name = tr("First Played"), .field = u"%firstplayed%"_s});
+    addDefaultItem({.id = 20, .name = tr("Last Played"), .field = u"%lastplayed%"_s});
+    addDefaultItem({.id = 13, .name = tr("Front Cover"), .field = u"%frontcover%"_s, .isPixmap = true});
+    addDefaultItem({.id = 14, .name = tr("Back Cover"), .field = u"%backcover%"_s, .isPixmap = true});
+    addDefaultItem({.id = 15, .name = tr("Artist Picture"), .field = u"%artistpicture%"_s, .isPixmap = true});
 }
 } // namespace Fooyin

@@ -42,6 +42,8 @@
 #include <QScrollBar>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, QWidget* parent)
@@ -81,7 +83,7 @@ QString QueueViewer::name() const
 
 QString QueueViewer::layoutName() const
 {
-    return QStringLiteral("PlaybackQueue");
+    return u"PlaybackQueue"_s;
 }
 
 void QueueViewer::contextMenuEvent(QContextMenuEvent* event)

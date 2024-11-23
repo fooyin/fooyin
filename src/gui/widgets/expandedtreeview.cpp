@@ -34,6 +34,7 @@
 #include <set>
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 constexpr auto MinItemSpacing    = 10;
 constexpr auto IconRowSpacing    = 10;
@@ -3000,7 +3001,7 @@ ExpandedTreeView::ExpandedTreeView(QWidget* parent)
     : QAbstractItemView{parent}
     , p{std::make_unique<ExpandedTreeViewPrivate>(this)}
 {
-    setObjectName(QStringLiteral("ExpandedTreeView"));
+    setObjectName(u"ExpandedTreeView"_s);
 
     p->setHeader(p->m_header);
     setViewMode(ViewMode::Tree);

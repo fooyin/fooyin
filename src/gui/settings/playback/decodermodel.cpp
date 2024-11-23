@@ -24,6 +24,8 @@
 #include <QIODevice>
 #include <QMimeData>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto LoaderItems = "application/x-fooyin-loaderitems";
 
 namespace Fooyin {
@@ -77,7 +79,7 @@ QVariant DecoderModel::data(const QModelIndex& index, int role) const
             case(Qt::DisplayRole):
                 return loader.name;
             case(Qt::ToolTipRole):
-                return QStringLiteral("%1: %2").arg(tr("Supported extensions")).arg(loader.extensions.join(u", "));
+                return u"%1: %2"_s.arg(tr("Supported extensions")).arg(loader.extensions.join(", "_L1));
             case(Qt::CheckStateRole):
                 return loader.enabled ? Qt::Checked : Qt::Unchecked;
             default:

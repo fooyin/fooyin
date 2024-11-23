@@ -33,6 +33,8 @@
 #include <QJsonObject>
 #include <QMenu>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* playerController,
                              SettingsManager* settings, QWidget* parent)
@@ -82,7 +84,7 @@ QString PlayerControl::name() const
 
 QString PlayerControl::layoutName() const
 {
-    return QStringLiteral("PlayerControls");
+    return u"PlayerControls"_s;
 }
 
 void PlayerControl::updateButtonStyle() const

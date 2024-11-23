@@ -56,6 +56,8 @@
 #include <QUndoStack>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto DirPlaylist = "␟DirBrowserPlaylist␟";
 
 namespace {
@@ -734,7 +736,7 @@ QString DirBrowser::name() const
 
 QString DirBrowser::layoutName() const
 {
-    return QStringLiteral("DirectoryBrowser");
+    return u"DirectoryBrowser"_s;
 }
 
 void DirBrowser::updateDir(const QString& dir)

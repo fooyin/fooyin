@@ -21,6 +21,8 @@
 
 #include <QFontDialog>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 FontButton::FontButton(QWidget* parent)
     : FontButton{{}, {}, parent}
@@ -75,6 +77,6 @@ void FontButton::pickFont()
 
 void FontButton::updateText()
 {
-    setText(QStringLiteral("%1 (%2)").arg(m_font.family()).arg(m_font.pointSize()));
+    setText(u"%1 (%2)"_s.arg(m_font.family()).arg(m_font.pointSize()));
 }
 } // namespace Fooyin

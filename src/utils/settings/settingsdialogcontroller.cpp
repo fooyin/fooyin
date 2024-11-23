@@ -104,21 +104,21 @@ void SettingsDialogController::addPage(SettingsPage* page)
 
 void SettingsDialogController::saveState(QSettings& settings) const
 {
-    settings.setValue(QLatin1String{DialogGeometry}, p->geometry);
-    settings.setValue(QLatin1String{LastOpenPage}, p->lastOpenPage.name());
+    settings.setValue(DialogGeometry, p->geometry);
+    settings.setValue(LastOpenPage, p->lastOpenPage.name());
 }
 
 void SettingsDialogController::restoreState(const QSettings& settings)
 {
-    if(settings.contains(QLatin1String{DialogGeometry})) {
-        const auto geometry = settings.value(QLatin1String{DialogGeometry}).toByteArray();
+    if(settings.contains(DialogGeometry)) {
+        const auto geometry = settings.value(DialogGeometry).toByteArray();
         if(!geometry.isEmpty()) {
             p->geometry = geometry;
         }
     }
 
-    if(settings.contains(QLatin1String{LastOpenPage})) {
-        const Id lastPage{settings.value(QLatin1String{LastOpenPage}).toString()};
+    if(settings.contains(LastOpenPage)) {
+        const Id lastPage{settings.value(LastOpenPage).toString()};
         if(lastPage.isValid()) {
             p->lastOpenPage = lastPage;
         }

@@ -36,6 +36,8 @@
 
 Q_LOGGING_CATEGORY(LOG_WIDGET, "fy.log")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
@@ -114,9 +116,8 @@ void LogWidget::saveLog()
 
     const auto entries = m_model->entries();
     for(const auto& entry : entries) {
-        out << QStringLiteral("%1 %2 %3: %4\n")
-                   .arg(entry.time.toString(Qt::ISODateWithMs), LogModel::typeToString(entry.type), entry.category,
-                        entry.message);
+        out << u"%1 %2 %3: %4\n"_s.arg(entry.time.toString(Qt::ISODateWithMs), LogModel::typeToString(entry.type),
+                                       entry.category, entry.message);
     }
 
     logFile.close();

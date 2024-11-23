@@ -22,10 +22,12 @@
 #include "vgminput.h"
 #include "vgminputsettings.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::VgmInput {
 QString VgmInputPlugin::inputName() const
 {
-    return QStringLiteral("VGM Input");
+    return u"VGM Input"_s;
 }
 
 InputCreator VgmInputPlugin::inputCreator() const

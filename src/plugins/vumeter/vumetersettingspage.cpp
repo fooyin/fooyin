@@ -36,6 +36,8 @@
 #include <QRadioButton>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::VuMeter {
 class VuMeterSettingsPageWidget : public SettingsPageWidget
 {
@@ -85,14 +87,14 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
     auto* generalLayout = new QGridLayout(generalGroup);
 
     m_peakHold->setRange(0.1, 30);
-    m_peakHold->setSuffix(u" " + tr("seconds"));
+    m_peakHold->setSuffix(" "_L1 + tr("seconds"));
     m_falloff->setRange(0.1, 96);
-    m_falloff->setSuffix(u" " + tr("dB per second"));
+    m_falloff->setSuffix(" "_L1 + tr("dB per second"));
 
     int row{0};
-    generalLayout->addWidget(new QLabel(tr("Peak hold time") + u":", this), row, 0);
+    generalLayout->addWidget(new QLabel(tr("Peak hold time") + ":"_L1, this), row, 0);
     generalLayout->addWidget(m_peakHold, row++, 1);
-    generalLayout->addWidget(new QLabel(tr("Falloff time") + u":", this), row, 0);
+    generalLayout->addWidget(new QLabel(tr("Falloff time") + ":"_L1, this), row, 0);
     generalLayout->addWidget(m_falloff, row++, 1);
     generalLayout->setColumnStretch(2, 1);
 
@@ -100,31 +102,31 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
     auto* dimensionLayout = new QGridLayout(dimensionGroup);
 
     m_channelSpacing->setRange(0, 20);
-    m_channelSpacing->setSuffix(QStringLiteral(" px"));
+    m_channelSpacing->setSuffix(u" px"_s);
 
     m_barSize->setRange(0, 50);
-    m_barSize->setSuffix(QStringLiteral(" px"));
+    m_barSize->setSuffix(u" px"_s);
 
     m_barSections->setRange(1, 20);
 
-    m_barSpacing->setSuffix(QStringLiteral(" px"));
+    m_barSpacing->setSuffix(u" px"_s);
     m_barSpacing->setRange(1, 20);
 
-    m_sectionSpacing->setSuffix(QStringLiteral(" px"));
+    m_sectionSpacing->setSuffix(u" px"_s);
     m_sectionSpacing->setRange(1, 20);
 
     row = 0;
-    dimensionLayout->addWidget(new QLabel(tr("Channel spacing") + u":", this), row, 0);
+    dimensionLayout->addWidget(new QLabel(tr("Channel spacing") + ":"_L1, this), row, 0);
     dimensionLayout->addWidget(m_channelSpacing, row++, 1);
-    dimensionLayout->addWidget(new QLabel(tr("Bar size") + u":", this), row, 0);
+    dimensionLayout->addWidget(new QLabel(tr("Bar size") + ":"_L1, this), row, 0);
     dimensionLayout->addWidget(m_barSize, row++, 1);
-    dimensionLayout->addWidget(new QLabel(tr("Bar spacing") + u":", this), row, 0);
+    dimensionLayout->addWidget(new QLabel(tr("Bar spacing") + ":"_L1, this), row, 0);
     dimensionLayout->addWidget(m_barSpacing, row++, 1);
 
     row = 0;
-    dimensionLayout->addWidget(new QLabel(tr("Sections") + u":", this), row, 2);
+    dimensionLayout->addWidget(new QLabel(tr("Sections") + ":"_L1, this), row, 2);
     dimensionLayout->addWidget(m_barSections, row++, 3);
-    dimensionLayout->addWidget(new QLabel(tr("Section spacing") + u":", this), row, 2);
+    dimensionLayout->addWidget(new QLabel(tr("Section spacing") + ":"_L1, this), row, 2);
     dimensionLayout->addWidget(m_sectionSpacing, row++, 3);
     dimensionLayout->setColumnStretch(4, 1);
 
@@ -132,11 +134,11 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
     auto* coloursLayout = new QGridLayout(m_colourGroup);
 
     row = 0;
-    coloursLayout->addWidget(new QLabel(tr("Background colour") + u":", this), row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Background colour") + ":"_L1, this), row, 0);
     coloursLayout->addWidget(m_bgColour, row++, 1);
-    coloursLayout->addWidget(new QLabel(tr("Peak colour") + u":", this), row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Peak colour") + ":"_L1, this), row, 0);
     coloursLayout->addWidget(m_peakColour, row++, 1);
-    coloursLayout->addWidget(new QLabel(tr("Bar colours") + u":", this), row, 0);
+    coloursLayout->addWidget(new QLabel(tr("Bar colours") + ":"_L1, this), row, 0);
     coloursLayout->addWidget(m_leftColour, row, 1);
     coloursLayout->addWidget(m_rightColour, row++, 2);
     coloursLayout->setColumnStretch(1, 1);

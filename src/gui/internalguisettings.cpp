@@ -31,6 +31,8 @@
 #include <QPalette>
 #include <QStyle>
 
+using namespace Qt::StringLiterals;
+
 constexpr int PixmapCacheSize = 32;
 
 namespace {
@@ -38,10 +40,10 @@ Fooyin::CoverPaths defaultCoverPaths()
 {
     Fooyin::CoverPaths paths;
 
-    paths.frontCoverPaths = {QStringLiteral("%path%/folder.*"), QStringLiteral("%path%/cover.*"),
-                             QStringLiteral("%path%/front.*"), QStringLiteral("%path%/../Artwork/folder.*")};
-    paths.backCoverPaths  = {QStringLiteral("%path%/back.*")};
-    paths.artistPaths     = {QStringLiteral("%path%/artist.*"), QStringLiteral("%path%/%albumartist%.*")};
+    paths.frontCoverPaths
+        = {u"%path%/folder.*"_s, u"%path%/cover.*"_s, u"%path%/front.*"_s, u"%path%/../Artwork/folder.*"_s};
+    paths.backCoverPaths = {u"%path%/back.*"_s};
+    paths.artistPaths    = {u"%path%/artist.*"_s, u"%path%/%albumartist%.*"_s};
 
     return paths;
 }
@@ -57,111 +59,99 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     qRegisterMetaType<FyTheme>("FyTheme");
 
     m_settings->createTempSetting<LayoutEditing>(false);
-    m_settings->createSetting<StartupBehaviour>(3, QStringLiteral("Interface/StartupBehaviour"));
-    m_settings->createSetting<WaitForTracks>(true, QStringLiteral("Interface/WaitForTracks"));
-    m_settings->createSetting<IconTheme>(0, QStringLiteral("Theme/IconTheme"));
-    m_settings->createSetting<CursorFollowsPlayback>(false, QStringLiteral("Playlist/CursorFollowsPlayback"));
-    m_settings->createSetting<PlaybackFollowsCursor>(false, QStringLiteral("Playlist/PlaybackFollowsCursor"));
-    m_settings->createSetting<ToolButtonStyle>(0, QStringLiteral("Interface/ToolButtonStyle"));
-    m_settings->createSetting<StarRatingSize>(17, QStringLiteral("Interface/StarRatingSize"));
-    m_settings->createSetting<Style>(QString{}, QStringLiteral("Interface/Style"));
+    m_settings->createSetting<StartupBehaviour>(3, u"Interface/StartupBehaviour"_s);
+    m_settings->createSetting<WaitForTracks>(true, u"Interface/WaitForTracks"_s);
+    m_settings->createSetting<IconTheme>(0, u"Theme/IconTheme"_s);
+    m_settings->createSetting<CursorFollowsPlayback>(false, u"Playlist/CursorFollowsPlayback"_s);
+    m_settings->createSetting<PlaybackFollowsCursor>(false, u"Playlist/PlaybackFollowsCursor"_s);
+    m_settings->createSetting<ToolButtonStyle>(0, u"Interface/ToolButtonStyle"_s);
+    m_settings->createSetting<StarRatingSize>(17, u"Interface/StarRatingSize"_s);
+    m_settings->createSetting<Style>(QString{}, u"Interface/Style"_s);
     m_settings->createTempSetting<MainWindowPixelRatio>(1.0);
-    m_settings->createSetting<SeekStep>(4000, QStringLiteral("Interface/SeekIncrement"));
-    m_settings->createSetting<ShowStatusTips>(true, QStringLiteral("Interface/ShowStatusTips"));
+    m_settings->createSetting<SeekStep>(4000, u"Interface/SeekIncrement"_s);
+    m_settings->createSetting<ShowStatusTips>(true, u"Interface/ShowStatusTips"_s);
     m_settings->createTempSetting<Theme>(QVariant{});
-    m_settings->createSetting<ShowSplitterHandles>(false, QStringLiteral("Interface/SplitterHandles"));
-    m_settings->createSetting<LockSplitterHandles>(false, QStringLiteral("Interface/LockSplitterHandles"));
-    m_settings->createSetting<SplitterHandleSize>(-1, QStringLiteral("Interface/SplitterHandleSize"));
-    m_settings->createSetting<VolumeStep>(0.05, QStringLiteral("Controls/VolumeStep"));
-    m_settings->createSetting<SearchSuccessClear>(true, QStringLiteral("Searching/ClearOnSuccess"));
-    m_settings->createSetting<SearchAutoDelay>(1, QStringLiteral("Searching/AutoDelay"));
-    m_settings->createSetting<SearchPlaylistName>(SearchWidget::defaultPlaylistName(),
-                                                  QStringLiteral("Searching/PlaylistName"));
-    m_settings->createSetting<SearchPlaylistAppendSearch>(false, QStringLiteral("Searching/AppendSearchToPlaylist"));
-    m_settings->createSetting<SearchSuccessFocus>(true, QStringLiteral("Searching/FocusOnSuccess"));
-    m_settings->createSetting<SearchErrorBg>(QVariant{}, QStringLiteral("Searching/ErrorBgColour"));
-    m_settings->createSetting<SearchErrorFg>(QVariant{}, QStringLiteral("Searching/ErrorFgColour"));
-    m_settings->createSetting<SearchSuccessClose>(true, QStringLiteral("Searching/CloseOnSuccess"));
+    m_settings->createSetting<ShowSplitterHandles>(false, u"Interface/SplitterHandles"_s);
+    m_settings->createSetting<LockSplitterHandles>(false, u"Interface/LockSplitterHandles"_s);
+    m_settings->createSetting<SplitterHandleSize>(-1, u"Interface/SplitterHandleSize"_s);
+    m_settings->createSetting<VolumeStep>(0.05, u"Controls/VolumeStep"_s);
+    m_settings->createSetting<SearchSuccessClear>(true, u"Searching/ClearOnSuccess"_s);
+    m_settings->createSetting<SearchAutoDelay>(1, u"Searching/AutoDelay"_s);
+    m_settings->createSetting<SearchPlaylistName>(SearchWidget::defaultPlaylistName(), u"Searching/PlaylistName"_s);
+    m_settings->createSetting<SearchPlaylistAppendSearch>(false, u"Searching/AppendSearchToPlaylist"_s);
+    m_settings->createSetting<SearchSuccessFocus>(true, u"Searching/FocusOnSuccess"_s);
+    m_settings->createSetting<SearchErrorBg>(QVariant{}, u"Searching/ErrorBgColour"_s);
+    m_settings->createSetting<SearchErrorFg>(QVariant{}, u"Searching/ErrorFgColour"_s);
+    m_settings->createSetting<SearchSuccessClose>(true, u"Searching/CloseOnSuccess"_s);
 
-    m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
-    m_settings->createSetting<Internal::PlaylistAltColours>(true, QStringLiteral("PlaylistWidget/AlternatingColours"));
-    m_settings->createSetting<Internal::PlaylistHeader>(true, QStringLiteral("PlaylistWidget/Header"));
-    m_settings->createSetting<Internal::PlaylistScrollBar>(true, QStringLiteral("PlaylistWidget/Scrollbar"));
-    m_settings->createSetting<Internal::InfoAltColours>(true, QStringLiteral("InfoPanel/AlternatingColours"));
-    m_settings->createSetting<Internal::InfoHeader>(true, QStringLiteral("InfoPanel/Header"));
-    m_settings->createSetting<Internal::InfoScrollBar>(true, QStringLiteral("InfoPanel/Scrollbar"));
-    m_settings->createSetting<Internal::StatusShowIcon>(false, QStringLiteral("StatusWidget/ShowIcon"));
-    m_settings->createSetting<Internal::StatusShowSelection>(false, QStringLiteral("StatusWidget/ShowSelection"));
+    m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
+    m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);
+    m_settings->createSetting<Internal::PlaylistHeader>(true, u"PlaylistWidget/Header"_s);
+    m_settings->createSetting<Internal::PlaylistScrollBar>(true, u"PlaylistWidget/Scrollbar"_s);
+    m_settings->createSetting<Internal::InfoAltColours>(true, u"InfoPanel/AlternatingColours"_s);
+    m_settings->createSetting<Internal::InfoHeader>(true, u"InfoPanel/Header"_s);
+    m_settings->createSetting<Internal::InfoScrollBar>(true, u"InfoPanel/Scrollbar"_s);
+    m_settings->createSetting<Internal::StatusShowIcon>(false, u"StatusWidget/ShowIcon"_s);
+    m_settings->createSetting<Internal::StatusShowSelection>(false, u"StatusWidget/ShowSelection"_s);
     m_settings->createSetting<Internal::StatusPlayingScript>(StatusWidget::defaultPlayingScript(),
-                                                             QStringLiteral("StatusWidget/PlayingScript"));
+                                                             u"StatusWidget/PlayingScript"_s);
     m_settings->createSetting<Internal::StatusSelectionScript>(StatusWidget::defaultSelectionScript(),
-                                                               QStringLiteral("StatusWidget/SelectionScript"));
+                                                               u"StatusWidget/SelectionScript"_s);
 
-    m_settings->createSetting<Internal::LibTreeDoubleClick>(0, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
-    m_settings->createSetting<Internal::LibTreeMiddleClick>(0, QStringLiteral("LibraryTree/MiddleClickBehaviour"));
-    m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false,
-                                                                QStringLiteral("LibraryTree/SelectionPlaylistEnabled"));
-    m_settings->createSetting<Internal::LibTreeAutoSwitch>(true,
-                                                           QStringLiteral("LibraryTree/SelectionPlaylistAutoSwitch"));
+    m_settings->createSetting<Internal::LibTreeDoubleClick>(0, u"LibraryTree/DoubleClickBehaviour"_s);
+    m_settings->createSetting<Internal::LibTreeMiddleClick>(0, u"LibraryTree/MiddleClickBehaviour"_s);
+    m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false, u"LibraryTree/SelectionPlaylistEnabled"_s);
+    m_settings->createSetting<Internal::LibTreeAutoSwitch>(true, u"LibraryTree/SelectionPlaylistAutoSwitch"_s);
     m_settings->createSetting<Internal::LibTreeAutoPlaylist>(LibraryTreeController::defaultPlaylistName(),
-                                                             QStringLiteral("LibraryTree/SelectionPlaylistName"));
-    m_settings->createSetting<Internal::LibTreeScrollBar>(true, QStringLiteral("LibraryTree/Scrollbar"));
-    m_settings->createSetting<Internal::LibTreeAltColours>(false, QStringLiteral("LibraryTree/AlternatingColours"));
-    m_settings->createSetting<Internal::LibTreeRowHeight>(0, QStringLiteral("LibraryTree/RowHeight"));
+                                                             u"LibraryTree/SelectionPlaylistName"_s);
+    m_settings->createSetting<Internal::LibTreeScrollBar>(true, u"LibraryTree/Scrollbar"_s);
+    m_settings->createSetting<Internal::LibTreeAltColours>(false, u"LibraryTree/AlternatingColours"_s);
+    m_settings->createSetting<Internal::LibTreeRowHeight>(0, u"LibraryTree/RowHeight"_s);
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
-    m_settings->createSetting<Internal::DirBrowserPath>(QString{}, QStringLiteral("DirectoryBrowser/Path"));
-    m_settings->createSetting<Internal::DirBrowserIcons>(true, QStringLiteral("DirectoryBrowser/Icons"));
-    m_settings->createSetting<Internal::DirBrowserDoubleClick>(5,
-                                                               QStringLiteral("DirectoryBrowser/DoubleClickBehaviour"));
-    m_settings->createSetting<Internal::DirBrowserMiddleClick>(0,
-                                                               QStringLiteral("DirectoryBrowser/MiddleClickBehaviour"));
-    m_settings->createSetting<Internal::DirBrowserMode>(1, QStringLiteral("DirectoryBrowser/Mode"));
-    m_settings->createSetting<Internal::DirBrowserListIndent>(true, QStringLiteral("DirectoryBrowser/IndentList"));
-    m_settings->createSetting<Internal::DirBrowserControls>(true, QStringLiteral("DirectoryBrowser/Controls"));
-    m_settings->createSetting<Internal::DirBrowserLocation>(true, QStringLiteral("DirectoryBrowser/LocationBar"));
-    m_settings->createSetting<Internal::WindowTitleTrackScript>(
-        QStringLiteral("[%albumartist% - ]%title% \"[fooyin]\""), QStringLiteral("Interface/WindowTitleTrackScript"));
-    m_settings->createSetting<Internal::TrackCoverPaths>(QVariant::fromValue(defaultCoverPaths()),
-                                                         QStringLiteral("Artwork/Paths"));
-    m_settings->createSetting<Internal::TrackCoverDisplayOption>(0, QStringLiteral("Artwork/DisplayOption"));
-    m_settings->createSetting<Internal::PlaylistImagePadding>(5, QStringLiteral("PlaylistWidget/ImagePadding"));
-    m_settings->createSetting<Internal::PlaylistImagePaddingTop>(0, QStringLiteral("PlaylistWidget/ImagePaddingTop"));
+    m_settings->createSetting<Internal::DirBrowserPath>(QString{}, u"DirectoryBrowser/Path"_s);
+    m_settings->createSetting<Internal::DirBrowserIcons>(true, u"DirectoryBrowser/Icons"_s);
+    m_settings->createSetting<Internal::DirBrowserDoubleClick>(5, u"DirectoryBrowser/DoubleClickBehaviour"_s);
+    m_settings->createSetting<Internal::DirBrowserMiddleClick>(0, u"DirectoryBrowser/MiddleClickBehaviour"_s);
+    m_settings->createSetting<Internal::DirBrowserMode>(1, u"DirectoryBrowser/Mode"_s);
+    m_settings->createSetting<Internal::DirBrowserListIndent>(true, u"DirectoryBrowser/IndentList"_s);
+    m_settings->createSetting<Internal::DirBrowserControls>(true, u"DirectoryBrowser/Controls"_s);
+    m_settings->createSetting<Internal::DirBrowserLocation>(true, u"DirectoryBrowser/LocationBar"_s);
+    m_settings->createSetting<Internal::WindowTitleTrackScript>(u"[%albumartist% - ]%title% \"[fooyin]\""_s,
+                                                                u"Interface/WindowTitleTrackScript"_s);
+    m_settings->createSetting<Internal::TrackCoverPaths>(QVariant::fromValue(defaultCoverPaths()), u"Artwork/Paths"_s);
+    m_settings->createSetting<Internal::TrackCoverDisplayOption>(0, u"Artwork/DisplayOption"_s);
+    m_settings->createSetting<Internal::PlaylistImagePadding>(5, u"PlaylistWidget/ImagePadding"_s);
+    m_settings->createSetting<Internal::PlaylistImagePaddingTop>(0, u"PlaylistWidget/ImagePaddingTop"_s);
     m_settings->createSetting<Internal::PixmapCacheSize>(
-        static_cast<int>(PixmapCacheSize * std::pow(qApp->devicePixelRatio(), 2)),
-        QStringLiteral("Interface/PixmapCacheSize"));
-    m_settings->createSetting<Internal::LibTreeSendPlayback>(true, QStringLiteral("LibraryTree/StartPlaybackOnSend"));
-    m_settings->createSetting<Internal::DirBrowserSendPlayback>(true,
-                                                                QStringLiteral("DirectoryBrowser/StartPlaybackOnSend"));
-    m_settings->createSetting<Internal::EditableLayoutMargin>(-1, QStringLiteral("Interface/EditableLayoutMargin"));
-    m_settings->createSetting<Internal::PlaylistTabsAddButton>(false, QStringLiteral("PlaylistTabs/ShowAddButton"));
-    m_settings->createSetting<Internal::LibTreeRestoreState>(true, QStringLiteral("LibraryTree/RestoreState"));
-    m_settings->createSetting<Internal::ShowTrayIcon>(false, QStringLiteral("Interface/ShowTrayIcon"));
-    m_settings->createSetting<Internal::TrayOnClose>(true, QStringLiteral("Interface/TrayOnClose"));
-    m_settings->createSetting<Internal::LibTreeKeepAlive>(false, QStringLiteral("LibraryTree/KeepAlive"));
-    m_settings->createSetting<Internal::PlaylistTabsCloseButton>(false, QStringLiteral("PlaylistTabs/ShowCloseButton"));
-    m_settings->createSetting<Internal::PlaylistTabsMiddleClose>(false,
-                                                                 QStringLiteral("PlaylistTabs/CloseOnMiddleClick"));
-    m_settings->createSetting<Internal::PlaylistTabsExpand>(false, QStringLiteral("PlaylistTabs/ExpandToFill"));
-    m_settings->createSetting<Internal::LibTreeAnimated>(true, QStringLiteral("LibraryTree/Animated"));
-    m_settings->createSetting<Internal::PlaylistTabsClearButton>(false, QStringLiteral("PlaylistTabs/ShowClearButton"));
-    m_settings->createSetting<Internal::LibTreeHeader>(true, QStringLiteral("LibraryTree/Header"));
-    m_settings->createSetting<Internal::QueueViewerShowIcon>(true, QStringLiteral("PlaybackQueue/ShowIcon"));
-    m_settings->createSetting<Internal::QueueViewerIconSize>(QSize{36, 36}, QStringLiteral("PlaybackQueue/IconSize"));
-    m_settings->createSetting<Internal::QueueViewerHeader>(true, QStringLiteral("PlaybackQueue/Header"));
-    m_settings->createSetting<Internal::QueueViewerScrollBar>(true, QStringLiteral("PlaybackQueue/Scrollbar"));
-    m_settings->createSetting<Internal::QueueViewerAltColours>(false,
-                                                               QStringLiteral("PlaybackQueue/AlternatingColours"));
-    m_settings->createSetting<Internal::QueueViewerLeftScript>(QStringLiteral("%title%$crlf()%album%"),
-                                                               QStringLiteral("PlaybackQueue/LeftScript"));
-    m_settings->createSetting<Internal::QueueViewerRightScript>(QStringLiteral("%duration%"),
-                                                                QStringLiteral("PlaybackQueue/RightScript"));
-    m_settings->createSetting<Internal::PlaylistMiddleClick>(0, QStringLiteral("PlaylistWidget/MiddleClickBehaviour"));
-    m_settings->createSetting<Internal::InfoDisplayPrefer>(0, QStringLiteral("SelectionInfo/PreferDisplay"));
+        static_cast<int>(PixmapCacheSize * std::pow(qApp->devicePixelRatio(), 2)), u"Interface/PixmapCacheSize"_s);
+    m_settings->createSetting<Internal::LibTreeSendPlayback>(true, u"LibraryTree/StartPlaybackOnSend"_s);
+    m_settings->createSetting<Internal::DirBrowserSendPlayback>(true, u"DirectoryBrowser/StartPlaybackOnSend"_s);
+    m_settings->createSetting<Internal::EditableLayoutMargin>(-1, u"Interface/EditableLayoutMargin"_s);
+    m_settings->createSetting<Internal::PlaylistTabsAddButton>(false, u"PlaylistTabs/ShowAddButton"_s);
+    m_settings->createSetting<Internal::LibTreeRestoreState>(true, u"LibraryTree/RestoreState"_s);
+    m_settings->createSetting<Internal::ShowTrayIcon>(false, u"Interface/ShowTrayIcon"_s);
+    m_settings->createSetting<Internal::TrayOnClose>(true, u"Interface/TrayOnClose"_s);
+    m_settings->createSetting<Internal::LibTreeKeepAlive>(false, u"LibraryTree/KeepAlive"_s);
+    m_settings->createSetting<Internal::PlaylistTabsCloseButton>(false, u"PlaylistTabs/ShowCloseButton"_s);
+    m_settings->createSetting<Internal::PlaylistTabsMiddleClose>(false, u"PlaylistTabs/CloseOnMiddleClick"_s);
+    m_settings->createSetting<Internal::PlaylistTabsExpand>(false, u"PlaylistTabs/ExpandToFill"_s);
+    m_settings->createSetting<Internal::LibTreeAnimated>(true, u"LibraryTree/Animated"_s);
+    m_settings->createSetting<Internal::PlaylistTabsClearButton>(false, u"PlaylistTabs/ShowClearButton"_s);
+    m_settings->createSetting<Internal::LibTreeHeader>(true, u"LibraryTree/Header"_s);
+    m_settings->createSetting<Internal::QueueViewerShowIcon>(true, u"PlaybackQueue/ShowIcon"_s);
+    m_settings->createSetting<Internal::QueueViewerIconSize>(QSize{36, 36}, u"PlaybackQueue/IconSize"_s);
+    m_settings->createSetting<Internal::QueueViewerHeader>(true, u"PlaybackQueue/Header"_s);
+    m_settings->createSetting<Internal::QueueViewerScrollBar>(true, u"PlaybackQueue/Scrollbar"_s);
+    m_settings->createSetting<Internal::QueueViewerAltColours>(false, u"PlaybackQueue/AlternatingColours"_s);
+    m_settings->createSetting<Internal::QueueViewerLeftScript>(u"%title%$crlf()%album%"_s,
+                                                               u"PlaybackQueue/LeftScript"_s);
+    m_settings->createSetting<Internal::QueueViewerRightScript>(u"%duration%"_s, u"PlaybackQueue/RightScript"_s);
+    m_settings->createSetting<Internal::PlaylistMiddleClick>(0, u"PlaylistWidget/MiddleClickBehaviour"_s);
+    m_settings->createSetting<Internal::InfoDisplayPrefer>(0, u"SelectionInfo/PreferDisplay"_s);
     m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());
     m_settings->createTempSetting<Internal::SystemFont>(QApplication::font());
     m_settings->createTempSetting<Internal::SystemPalette>(QApplication::palette());
-    m_settings->createSetting<Internal::DirBrowserShowHorizScroll>(
-        true, QStringLiteral("DirectoryBrowser/ShowHorizontalScrollbar"));
-    m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, QStringLiteral("LibraryTree/IconSize"));
+    m_settings->createSetting<Internal::DirBrowserShowHorizScroll>(true, u"DirectoryBrowser/ShowHorizontalScrollbar"_s);
+    m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, u"LibraryTree/IconSize"_s);
 }
 } // namespace Fooyin

@@ -28,6 +28,8 @@
 #include <QMouseEvent>
 #include <QPainter>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PlaylistView::PlaylistView(QWidget* parent)
     : ExpandedTreeView{parent}
@@ -35,7 +37,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     , m_starDelegate{nullptr}
     , m_ratingColumn{-1}
 {
-    setObjectName(QStringLiteral("PlaylistView"));
+    setObjectName(u"PlaylistView"_s);
 
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::ExtendedSelection);

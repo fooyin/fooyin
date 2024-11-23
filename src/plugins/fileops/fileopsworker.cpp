@@ -33,6 +33,8 @@
 
 Q_LOGGING_CATEGORY(FILEOPS, "fy.fileops")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::FileOps {
 FileOpsWorker::FileOpsWorker(MusicLibrary* library, TrackList tracks, SettingsManager* settings, QObject* parent)
     : Worker{parent}
@@ -138,7 +140,7 @@ void FileOpsWorker::run()
 
 void FileOpsWorker::simulateMove()
 {
-    const QString path        = m_preset.dest + u"/" + m_preset.filename + QStringLiteral(".%extension%");
+    const QString path        = m_preset.dest + "/"_L1 + m_preset.filename + u".%extension%"_s;
     const ParsedScript script = m_scriptParser.parse(path);
 
     std::set<QString> sourcePaths;
@@ -176,7 +178,7 @@ void FileOpsWorker::simulateMove()
                 handleEmptyDirs(fileDir, file);
 
                 const QString relativePath = srcDir.relativeFilePath(file);
-                const QString fileDestPath = QDir::cleanPath(destPath + u"/" + relativePath);
+                const QString fileDestPath = QDir::cleanPath(destPath + "/"_L1 + relativePath);
 
                 const QString parentPath = QFileInfo{fileDestPath}.absolutePath();
                 createDir(parentPath);
@@ -208,7 +210,7 @@ void FileOpsWorker::simulateMove()
 
 void FileOpsWorker::simulateCopy()
 {
-    const QString path        = m_preset.dest + u"/" + m_preset.filename + QStringLiteral(".%extension%");
+    const QString path        = m_preset.dest + "/"_L1 + m_preset.filename + u".%extension%"_s;
     const ParsedScript script = m_scriptParser.parse(path);
 
     std::set<QString> sourcePaths;
@@ -241,7 +243,7 @@ void FileOpsWorker::simulateCopy()
             const auto files = Utils::File::getFilesInDirRecursive(srcPath);
             for(const QString& file : files) {
                 const QString relativePath = srcDir.relativeFilePath(file);
-                const QString fileDestPath = QDir::cleanPath(destPath + u"/" + relativePath);
+                const QString fileDestPath = QDir::cleanPath(destPath + "/"_L1 + relativePath);
 
                 const QString parentPath = QFileInfo{fileDestPath}.absolutePath();
                 createDir(parentPath);
@@ -267,7 +269,7 @@ void FileOpsWorker::simulateCopy()
 
 void FileOpsWorker::simulateRename()
 {
-    const QString path        = m_preset.filename + QStringLiteral(".%extension%");
+    const QString path        = m_preset.filename + u".%extension%"_s;
     const ParsedScript script = m_scriptParser.parse(path);
 
     for(const Track& track : m_tracks) {
@@ -288,7 +290,7 @@ void FileOpsWorker::simulateRename()
             continue;
         }
 
-        const QString destFilepath = QDir::cleanPath(track.path() + u"/" + destFilename);
+        const QString destFilepath = QDir::cleanPath(track.path() + "/"_L1 + destFilename);
 
         m_operations.emplace_back(Operation::Rename, track.filenameExt(), track.filepath(), destFilepath);
     }
@@ -320,7 +322,7 @@ void FileOpsWorker::renameFile(const FileOpsItem& item)
                 const QString relativeCuePath = srcDir.relativeFilePath(cuePath);
 
                 track.setFilePath(item.destination);
-                const QString cueDest = QDir::cleanPath(track.path() + u"/" + relativeCuePath);
+                const QString cueDest = QDir::cleanPath(track.path() + "/"_L1 + relativeCuePath);
                 track.setCuePath(cueDest);
             }
             else {

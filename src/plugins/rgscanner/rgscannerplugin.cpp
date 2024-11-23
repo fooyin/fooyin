@@ -39,6 +39,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::RGScanner {
 void RGScannerPlugin::initialise(const CorePluginContext& context)
 {
@@ -89,7 +91,7 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
             return;
         }
         progress->setValue(progress->value() + 1);
-        progress->setText(tr("Current file") + u":\n" + filepath);
+        progress->setText(tr("Current file") + ":\n"_L1 + filepath);
     });
 
     switch(type) {

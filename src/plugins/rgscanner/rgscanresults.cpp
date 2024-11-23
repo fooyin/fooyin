@@ -31,6 +31,8 @@
 #include <QPushButton>
 #include <QTableView>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::RGScanner {
 RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, std::chrono::milliseconds timeTaken,
                              QWidget* parent)
@@ -39,7 +41,7 @@ RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, std::chron
     , m_tracks{std::move(tracks)}
     , m_resultsView{new QTableView(this)}
     , m_resultsModel{new RGScanResultsModel(m_tracks, this)}
-    , m_status{new QLabel(tr("Time taken") + u": " + Utils::msToString(timeTaken, false), this)}
+    , m_status{new QLabel(tr("Time taken") + ": "_L1 + Utils::msToString(timeTaken, false), this)}
     , m_buttonBox{new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this)}
 {
     setWindowTitle(tr("ReplayGain Scan Results"));

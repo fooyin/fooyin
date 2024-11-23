@@ -57,6 +57,7 @@
 Q_LOGGING_CATEGORY(APP, "fy.app")
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 constexpr auto LastPlaybackPosition = "Player/LastPositon";
 constexpr auto LastPlaybackState    = "Player/LastState";
@@ -177,15 +178,13 @@ void ApplicationPrivate::registerPlaylistParsers()
 
 void ApplicationPrivate::registerInputs()
 {
-    m_audioLoader->addDecoder(QStringLiteral("Archive"),
-                              [this]() { return std::make_unique<ArchiveDecoder>(m_audioLoader); });
-    m_audioLoader->addReader(QStringLiteral("Archive"),
-                             [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); });
-    m_audioLoader->addReader(QStringLiteral("TagLib"), {[]() {
+    m_audioLoader->addDecoder(u"Archive"_s, [this]() { return std::make_unique<ArchiveDecoder>(m_audioLoader); });
+    m_audioLoader->addReader(u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); });
+    m_audioLoader->addReader(u"TagLib"_s, {[]() {
                                  return std::make_unique<TagLibReader>();
                              }});
-    m_audioLoader->addDecoder(QStringLiteral("FFmpeg"), []() { return std::make_unique<FFmpegDecoder>(); }, 99);
-    m_audioLoader->addReader(QStringLiteral("FFmpeg"), {[]() {
+    m_audioLoader->addDecoder(u"FFmpeg"_s, []() { return std::make_unique<FFmpegDecoder>(); }, 99);
+    m_audioLoader->addReader(u"FFmpeg"_s, {[]() {
                                  return std::make_unique<FFmpegReader>();
                              }},
                              99);
@@ -325,16 +324,15 @@ void ApplicationPrivate::savePlaybackState() const
 {
     FyStateSettings stateSettings;
 
-    if(m_settings->fileValue(QLatin1String{Settings::Core::Internal::SavePlaybackState}, false).toBool()) {
+    if(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
         const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
 
-        stateSettings.setValue(QLatin1String{LastPlaybackPosition}, lastPos);
-        stateSettings.setValue(QLatin1String{LastPlaybackState},
-                               Utils::Enum::toString(m_playerController->playState()));
+        stateSettings.setValue(LastPlaybackPosition, lastPos);
+        stateSettings.setValue(LastPlaybackState, Utils::Enum::toString(m_playerController->playState()));
     }
     else {
-        stateSettings.remove(QLatin1String{LastPlaybackPosition});
-        stateSettings.remove(QLatin1String{LastPlaybackState});
+        stateSettings.remove(LastPlaybackPosition);
+        stateSettings.remove(LastPlaybackState);
     }
 }
 
@@ -346,11 +344,11 @@ void ApplicationPrivate::loadPlaybackState() const
         return;
     }
 
-    if(!m_settings->fileValue(QLatin1String{Settings::Core::Internal::SavePlaybackState}, false).toBool()) {
+    if(!m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
         return;
     }
 
-    const auto lastPos = stateSettings.value(QLatin1String{LastPlaybackPosition}).value<uint64_t>();
+    const auto lastPos = stateSettings.value(LastPlaybackPosition).value<uint64_t>();
 
     auto seek = [this, lastPos]() {
         if(lastPos > 0) {
@@ -359,7 +357,7 @@ void ApplicationPrivate::loadPlaybackState() const
         }
     };
 
-    const QString savedState = stateSettings.value(QLatin1String{LastPlaybackState}).toString();
+    const QString savedState = stateSettings.value(LastPlaybackState).toString();
     const auto state         = Utils::Enum::fromString<Player::PlayState>(savedState);
     if(!state) {
         return;
@@ -389,7 +387,7 @@ void ApplicationPrivate::loadDatabaseSettings() const
     SettingsDatabase settingsDb;
     settingsDb.initialise(dbProvider);
 
-    const QString version = settingsDb.value(QStringLiteral("Version"), {});
+    const QString version = settingsDb.value(u"Version"_s, {});
     if(!version.isEmpty()) {
         m_settings->set<Settings::Core::Version>(version);
     }
@@ -401,7 +399,7 @@ void ApplicationPrivate::saveDatabaseSettings() const
     SettingsDatabase settingsDb;
     settingsDb.initialise(dbProvider);
 
-    settingsDb.set(QStringLiteral("Version"), QString::fromLatin1(VERSION));
+    settingsDb.set(u"Version"_s, QString::fromLatin1(VERSION));
 }
 
 Application::Application(QObject* parent)
@@ -500,7 +498,7 @@ void Application::restart()
         []() {
             const QString appPath = QCoreApplication::applicationFilePath();
             QCoreApplication::quit();
-            QProcess::startDetached(appPath, {QStringLiteral("--skip-single")});
+            QProcess::startDetached(appPath, {u"--skip-single"_s});
         },
         Qt::QueuedConnection);
 }

@@ -34,6 +34,8 @@
 #include <QListView>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class OutputPageWidget : public SettingsPageWidget
 {
@@ -87,12 +89,12 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 
     generalLayout->addWidget(m_gaplessPlayback, 0, 0, 1, 3);
 
-    m_bufferSize->setSuffix(QStringLiteral(" ms"));
+    m_bufferSize->setSuffix(u" ms"_s);
     m_bufferSize->setSingleStep(100);
     m_bufferSize->setMinimum(50);
     m_bufferSize->setMaximum(30000);
 
-    generalLayout->addWidget(new QLabel(tr("Buffer length") + QStringLiteral(":"), this), 1, 0);
+    generalLayout->addWidget(new QLabel(tr("Buffer length") + u":"_s, this), 1, 0);
     generalLayout->addWidget(m_bufferSize, 1, 1);
 
     generalLayout->setColumnStretch(2, 1);
@@ -100,10 +102,10 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     m_fadingBox->setCheckable(true);
     auto* fadingLayout = new QGridLayout(m_fadingBox);
 
-    m_fadingStopIn->setSuffix(QStringLiteral("ms"));
-    m_fadingStopOut->setSuffix(QStringLiteral("ms"));
-    // m_fadingSeekIn->setSuffix(QStringLiteral("ms"));
-    // m_fadingSeekOut->setSuffix(QStringLiteral("ms"));
+    m_fadingStopIn->setSuffix(u"ms"_s);
+    m_fadingStopOut->setSuffix(u"ms"_s);
+    // m_fadingSeekIn->setSuffix(u"ms"_s);
+    // m_fadingSeekOut->setSuffix(u"ms"_s);
 
     m_fadingStopIn->setMaximum(10000);
     m_fadingStopOut->setMaximum(10000);
@@ -126,9 +128,9 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     fadingLayout->setColumnStretch(3, 1);
 
     auto* mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(new QLabel(tr("Output") + QStringLiteral(":"), this), 0, 0);
+    mainLayout->addWidget(new QLabel(tr("Output") + u":"_s, this), 0, 0);
     mainLayout->addWidget(m_outputBox, 0, 1);
-    mainLayout->addWidget(new QLabel(tr("Device") + QStringLiteral(":"), this), 1, 0);
+    mainLayout->addWidget(new QLabel(tr("Device") + u":"_s, this), 1, 0);
     mainLayout->addWidget(m_deviceBox, 1, 1);
     mainLayout->addWidget(generalBox, 2, 0, 1, 2);
     mainLayout->addWidget(m_fadingBox, 3, 0, 1, 2);
@@ -164,7 +166,7 @@ void OutputPageWidget::load()
 
 void OutputPageWidget::apply()
 {
-    const QString output = m_outputBox->currentText() + QStringLiteral("|") + m_deviceBox->currentData().toString();
+    const QString output = m_outputBox->currentText() + u"|"_s + m_deviceBox->currentData().toString();
     m_settings->set<Settings::Core::AudioOutput>(output);
     m_settings->set<Settings::Core::GaplessPlayback>(m_gaplessPlayback->isChecked());
     m_settings->set<Settings::Core::BufferLength>(m_bufferSize->value());
@@ -190,7 +192,7 @@ void OutputPageWidget::reset()
 
 void OutputPageWidget::setupOutputs()
 {
-    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(QStringLiteral("|"));
+    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(u"|"_s);
 
     const QString outName = !currentOutput.empty() ? currentOutput.at(0) : QString{};
     const auto outputs    = m_engine->getAllOutputs();
@@ -217,7 +219,7 @@ void OutputPageWidget::setupDevices(const QString& output)
 
     m_deviceBox->clear();
 
-    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(QStringLiteral("|"));
+    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(u"|"_s);
 
     if(currentOutput.empty()) {
         return;

@@ -27,6 +27,8 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PluginAboutDialog::PluginAboutDialog(PluginInfo* plugin, QWidget* parent)
     : QDialog{parent}
@@ -34,21 +36,21 @@ PluginAboutDialog::PluginAboutDialog(PluginInfo* plugin, QWidget* parent)
     auto* layout = new QGridLayout(this);
     layout->setHorizontalSpacing(20);
 
-    auto* nameLabel      = new QLabel(tr("Name") + QStringLiteral(":"), this);
-    auto* versionLabel   = new QLabel(tr("Version") + QStringLiteral(":"), this);
-    auto* authorLabel    = new QLabel(tr("Author") + QStringLiteral(":"), this);
-    auto* categoryLabel  = new QLabel(tr("Category") + QStringLiteral(":"), this);
-    auto* descLabel      = new QLabel(tr("Description") + QStringLiteral(":"), this);
-    auto* urlLabel       = new QLabel(tr("URL") + QStringLiteral(":"), this);
-    auto* copyrightLabel = new QLabel(tr("Copyright") + QStringLiteral(":"), this);
-    auto* licenseLabel   = new QLabel(tr("License") + QStringLiteral(":"), this);
+    auto* nameLabel      = new QLabel(tr("Name") + u":"_s, this);
+    auto* versionLabel   = new QLabel(tr("Version") + u":"_s, this);
+    auto* authorLabel    = new QLabel(tr("Author") + u":"_s, this);
+    auto* categoryLabel  = new QLabel(tr("Category") + u":"_s, this);
+    auto* descLabel      = new QLabel(tr("Description") + u":"_s, this);
+    auto* urlLabel       = new QLabel(tr("URL") + u":"_s, this);
+    auto* copyrightLabel = new QLabel(tr("Copyright") + u":"_s, this);
+    auto* licenseLabel   = new QLabel(tr("License") + u":"_s, this);
 
     auto* name      = new QLabel(plugin->name(), this);
     auto* version   = new QLabel(plugin->version(), this);
     auto* author    = new QLabel(plugin->author(), this);
-    auto* category  = new QLabel(plugin->category().join(u", "), this);
+    auto* category  = new QLabel(plugin->category().join(", "_L1), this);
     auto* desc      = new QLabel(plugin->description(), this);
-    auto* url       = new QLabel(QStringLiteral("<a href=\"%1/\">%1</a>").arg(plugin->url()), this);
+    auto* url       = new QLabel(u"<a href=\"%1/\">%1</a>"_s.arg(plugin->url()), this);
     auto* copyright = new QLabel(plugin->copyright(), this);
     auto* license   = new QPlainTextEdit(plugin->license(), this);
 

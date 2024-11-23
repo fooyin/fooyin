@@ -34,6 +34,8 @@
 #include <QMimeDatabase>
 #include <QPushButton>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto ImageSize = 150;
 
 namespace Fooyin {
@@ -58,8 +60,8 @@ ArtworkRow::ArtworkRow(const QString& name, Track::Cover cover, bool readOnly, Q
     m_addButton->setDisabled(m_readOnly);
     m_removeButton->setDisabled(m_readOnly);
 
-    m_name->setMinimumWidth(fontMetrics().horizontalAdvance(QStringLiteral(" Front Cover")));
-    m_details->setMinimumWidth(fontMetrics().horizontalAdvance(QStringLiteral("No artwork present")));
+    m_name->setMinimumWidth(fontMetrics().horizontalAdvance(u" Front Cover"_s));
+    m_details->setMinimumWidth(fontMetrics().horizontalAdvance(u"No artwork present"_s));
     m_image->setAlignment(Qt::AlignCenter);
 
     m_image->hide();
@@ -83,7 +85,7 @@ ArtworkRow::ArtworkRow(const QString& name, Track::Cover cover, bool readOnly, Q
 void ArtworkRow::replaceImage()
 {
     const QString filepath
-        = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Images") + u" (*.png *.jpg)");
+        = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Images") + " (*.png *.jpg)"_L1);
     if(filepath.isEmpty()) {
         return;
     }
@@ -189,8 +191,8 @@ void ArtworkRow::finalise(int trackCount)
             const auto size          = reader.size();
             const QString format     = mimeType.comment();
             const qint64 sizeInKB    = m_imageData.size() / 1024;
-            const QString resolution = QStringLiteral("%1x%2").arg(size.width()).arg(size.height());
-            m_details->setText(QStringLiteral("%1 KB\n%2\n%3").arg(sizeInKB).arg(resolution, format));
+            const QString resolution = u"%1x%2"_s.arg(size.width()).arg(size.height());
+            m_details->setText(u"%1 KB\n%2\n%3"_s.arg(sizeInKB).arg(resolution, format));
         }
         else {
             m_image->hide();

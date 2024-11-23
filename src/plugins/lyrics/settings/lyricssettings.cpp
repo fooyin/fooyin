@@ -25,17 +25,18 @@
 
 #include <utils/settings/settingsmanager.h>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 QStringList defaultPaths()
 {
-    static const QStringList paths{QStringLiteral("%path%/%filename%.lrc")};
+    static const QStringList paths{u"%path%/%filename%.lrc"_s};
     return paths;
 }
 
 QStringList defaultTags()
 {
-    static const QStringList paths{QStringLiteral("LYRICS"), QStringLiteral("SYNCEDLYRICS"),
-                                   QStringLiteral("UNSYNCEDLYRICS"), QStringLiteral("UNSYNCED LYRICS")};
+    static const QStringList paths{u"LYRICS"_s, u"SYNCEDLYRICS"_s, u"UNSYNCEDLYRICS"_s, u"UNSYNCED LYRICS"_s};
     return paths;
 }
 } // namespace
@@ -49,41 +50,36 @@ LyricsSettings::LyricsSettings(SettingsManager* settingsManager)
 
     using namespace Settings::Lyrics;
 
-    m_settings->createSetting<Paths>(defaultPaths(), QStringLiteral("Lyrics/Paths"));
-    m_settings->createSetting<Settings::Lyrics::Colours>(QVariant{}, QStringLiteral("Lyrics/Colours"));
-    m_settings->createSetting<LineFont>(QString{}, QStringLiteral("Lyrics/CurrentLineFont"));
-    m_settings->createSetting<WordLineFont>(QString{}, QStringLiteral("Lyrics/CurrentWordLineFont"));
-    m_settings->createSetting<WordFont>(QString{}, QStringLiteral("Lyrics/CurrentWordFont"));
-    m_settings->createSetting<Alignment>(static_cast<int>(Qt::AlignCenter), QStringLiteral("Lyrics/Alignment"));
-    m_settings->createSetting<ScrollDuration>(500, QStringLiteral("Lyrics/ScrollDuration"));
-    m_settings->createSetting<SearchTags>(defaultTags(), QStringLiteral("Lyrics/SearchTags"));
-    m_settings->createSetting<LineSpacing>(5, QStringLiteral("Lyrics/LineSpacing"));
-    m_settings->createSetting<Margins>(QVariant::fromValue(QMargins{20, 20, 20, 20}), QStringLiteral("Lyrics/Margins"));
-    m_settings->createSetting<NoLyricsScript>(LyricsWidget::defaultNoLyricsScript(),
-                                              QStringLiteral("Lyrics/NoLyricsScript"));
-    m_settings->createSetting<SeekOnClick>(true, QStringLiteral("Lyrics/SeekOnClick"));
-    m_settings->createSetting<ShowScrollbar>(true, QStringLiteral("Lyrics/ShowScrollbar"));
+    m_settings->createSetting<Paths>(defaultPaths(), u"Lyrics/Paths"_s);
+    m_settings->createSetting<Settings::Lyrics::Colours>(QVariant{}, u"Lyrics/Colours"_s);
+    m_settings->createSetting<LineFont>(QString{}, u"Lyrics/CurrentLineFont"_s);
+    m_settings->createSetting<WordLineFont>(QString{}, u"Lyrics/CurrentWordLineFont"_s);
+    m_settings->createSetting<WordFont>(QString{}, u"Lyrics/CurrentWordFont"_s);
+    m_settings->createSetting<Alignment>(static_cast<int>(Qt::AlignCenter), u"Lyrics/Alignment"_s);
+    m_settings->createSetting<ScrollDuration>(500, u"Lyrics/ScrollDuration"_s);
+    m_settings->createSetting<SearchTags>(defaultTags(), u"Lyrics/SearchTags"_s);
+    m_settings->createSetting<LineSpacing>(5, u"Lyrics/LineSpacing"_s);
+    m_settings->createSetting<Margins>(QVariant::fromValue(QMargins{20, 20, 20, 20}), u"Lyrics/Margins"_s);
+    m_settings->createSetting<NoLyricsScript>(LyricsWidget::defaultNoLyricsScript(), u"Lyrics/NoLyricsScript"_s);
+    m_settings->createSetting<SeekOnClick>(true, u"Lyrics/SeekOnClick"_s);
+    m_settings->createSetting<ShowScrollbar>(true, u"Lyrics/ShowScrollbar"_s);
     m_settings->createSetting<Settings::Lyrics::ScrollMode>(static_cast<int>(ScrollMode::Synced),
-                                                            QStringLiteral("Lyrics/ScrollMode"));
-    m_settings->createSetting<TitleField>(QStringLiteral("%title%"), QStringLiteral("Lyrics/TitleField"));
-    m_settings->createSetting<AlbumField>(QStringLiteral("%album%"), QStringLiteral("Lyrics/AlbumField"));
-    m_settings->createSetting<ArtistField>(QStringLiteral("%artist%"), QStringLiteral("Lyrics/ArtistField"));
+                                                            u"Lyrics/ScrollMode"_s);
+    m_settings->createSetting<TitleField>(u"%title%"_s, u"Lyrics/TitleField"_s);
+    m_settings->createSetting<AlbumField>(u"%album%"_s, u"Lyrics/AlbumField"_s);
+    m_settings->createSetting<ArtistField>(u"%artist%"_s, u"Lyrics/ArtistField"_s);
     m_settings->createSetting<Settings::Lyrics::SaveScheme>(static_cast<int>(SaveScheme::Manual),
-                                                            QStringLiteral("Lyrics/SaveScheme"));
-    m_settings->createSetting<Settings::Lyrics::SaveMethod>(static_cast<int>(SaveMethod::Tag),
-                                                            QStringLiteral("Lyrics/SaveMethod"));
-    m_settings->createSetting<Settings::Lyrics::SavePrefer>(static_cast<int>(SavePrefer::None),
-                                                            QStringLiteral("Lyrics/SavePrefer"));
-    m_settings->createSetting<SaveSyncedTag>(QStringLiteral("LYRICS"), QStringLiteral("Lyrics/SaveSyncedTag"));
-    m_settings->createSetting<SaveUnsyncedTag>(QStringLiteral("UNSYNCED LYRICS"),
-                                               QStringLiteral("Lyrics/SaveUnsyncedTag"));
-    m_settings->createSetting<SaveDir>(QStringLiteral("%path%"), QStringLiteral("Lyrics/SaveDir"));
-    m_settings->createSetting<SaveFilename>(QStringLiteral("%filename%"), QStringLiteral("Lyrics/SaveFilename"));
-    m_settings->createSetting<SkipRemaining>(true, QStringLiteral("Lyrics/SkipRemaining"));
-    m_settings->createSetting<SkipExternal>(true, QStringLiteral("Lyrics/SkipExternal"));
-    m_settings->createSetting<AutoSearch>(true, QStringLiteral("Lyrics/AutoSearch"));
-    m_settings->createSetting<SaveOptions>(static_cast<int>(LyricsSaver::SaveOption::None),
-                                           QStringLiteral("Lyrics/SaveOptions"));
-    m_settings->createSetting<MatchThreshold>(80, QStringLiteral("Lyrics/MatchThreshold"));
+                                                            u"Lyrics/SaveScheme"_s);
+    m_settings->createSetting<Settings::Lyrics::SaveMethod>(static_cast<int>(SaveMethod::Tag), u"Lyrics/SaveMethod"_s);
+    m_settings->createSetting<Settings::Lyrics::SavePrefer>(static_cast<int>(SavePrefer::None), u"Lyrics/SavePrefer"_s);
+    m_settings->createSetting<SaveSyncedTag>(u"LYRICS"_s, u"Lyrics/SaveSyncedTag"_s);
+    m_settings->createSetting<SaveUnsyncedTag>(u"UNSYNCED LYRICS"_s, u"Lyrics/SaveUnsyncedTag"_s);
+    m_settings->createSetting<SaveDir>(u"%path%"_s, u"Lyrics/SaveDir"_s);
+    m_settings->createSetting<SaveFilename>(u"%filename%"_s, u"Lyrics/SaveFilename"_s);
+    m_settings->createSetting<SkipRemaining>(true, u"Lyrics/SkipRemaining"_s);
+    m_settings->createSetting<SkipExternal>(true, u"Lyrics/SkipExternal"_s);
+    m_settings->createSetting<AutoSearch>(true, u"Lyrics/AutoSearch"_s);
+    m_settings->createSetting<SaveOptions>(static_cast<int>(LyricsSaver::SaveOption::None), u"Lyrics/SaveOptions"_s);
+    m_settings->createSetting<MatchThreshold>(80, u"Lyrics/MatchThreshold"_s);
 }
 } // namespace Fooyin::Lyrics

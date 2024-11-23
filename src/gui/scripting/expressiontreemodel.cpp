@@ -26,6 +26,8 @@
 #include <QIcon>
 #include <utility>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ExpressionTreeItem::ExpressionTreeItem()
     : ExpressionTreeItem{{}, {}, {}}
@@ -76,8 +78,7 @@ void ExpressionTreeModel::populate(const ExpressionList& expressions)
 
     if(expressions.size() > 1) {
         Expression const fullExpression{Expr::FunctionArg, expressions};
-        parent = insertNode(generateKey(parent->key(), QStringLiteral(" … ")), QStringLiteral(" … "), fullExpression,
-                            parent);
+        parent = insertNode(generateKey(parent->key(), u" … "_s), u" … "_s, fullExpression, parent);
     }
 
     for(const auto& expression : expressions) {
@@ -160,7 +161,7 @@ void ExpressionTreeModel::iterateExpression(const Expression& expression, Expres
 
     else if(const auto* listVal = std::get_if<ExpressionList>(&expression.value)) {
         if(expression.type == Expr::Conditional) {
-            name   = QStringLiteral("[ … ]");
+            name   = u"[ … ]"_s;
             parent = insertNode(generateKey(parent->key(), name), name, expression, parent);
         }
 

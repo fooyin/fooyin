@@ -29,6 +29,8 @@
 #include <QHeaderView>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, bool readOnly, QWidget* parent)
     : PropertiesTabWidget{parent}
@@ -62,7 +64,7 @@ QString ReplayGainWidget::name() const
 
 QString ReplayGainWidget::layoutName() const
 {
-    return QStringLiteral("ReplayGainEditor");
+    return u"ReplayGainEditor"_s;
 }
 
 void ReplayGainWidget::apply()

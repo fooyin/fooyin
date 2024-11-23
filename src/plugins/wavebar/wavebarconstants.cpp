@@ -19,9 +19,11 @@
 
 #include "wavebarconstants.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::WaveBar {
 QString cachePath()
 {
-    return Fooyin::Utils::cachePath() + QStringLiteral("/wavebar.db");
+    return Fooyin::Utils::cachePath() + u"/wavebar.db"_s;
 }
 } // namespace Fooyin::WaveBar

@@ -19,6 +19,8 @@
 
 #include "rgscanresultsmodel.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::RGScanner {
 RGScanResultsModel::RGScanResultsModel(TrackList tracks, QObject* parent)
     : QAbstractTableModel{parent}
@@ -72,11 +74,9 @@ QVariant RGScanResultsModel::data(const QModelIndex& index, int role) const
             case(0):
                 return track.effectiveTitle();
             case(1):
-                return track.hasTrackGain() ? QStringLiteral("%1 dB").arg(QString::number(track.rgTrackGain(), 'f', 2))
-                                            : QString{};
+                return track.hasTrackGain() ? u"%1 dB"_s.arg(QString::number(track.rgTrackGain(), 'f', 2)) : QString{};
             case(2):
-                return track.hasAlbumGain() ? QStringLiteral("%1 dB").arg(QString::number(track.rgAlbumGain(), 'f', 2))
-                                            : QString{};
+                return track.hasAlbumGain() ? u"%1 dB"_s.arg(QString::number(track.rgAlbumGain(), 'f', 2)) : QString{};
             case(3):
                 return track.hasTrackPeak() ? QString::number(track.rgTrackPeak(), 'f', 6) : QString{};
             case(4):

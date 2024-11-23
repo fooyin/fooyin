@@ -21,6 +21,8 @@
 
 #include <tuple>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 AudioFormat::AudioFormat()
     : AudioFormat{SampleFormat::Unknown, 0, 0}
@@ -170,20 +172,20 @@ QString AudioFormat::prettyFormat() const
 {
     switch(m_sampleFormat) {
         case(SampleFormat::U8):
-            return QStringLiteral("8 bit (unsigned)");
+            return u"8 bit (unsigned)"_s;
         case(SampleFormat::S16):
-            return QStringLiteral("16 bit (signed)");
+            return u"16 bit (signed)"_s;
         case(SampleFormat::S24):
-            return QStringLiteral("24 bit (signed)");
+            return u"24 bit (signed)"_s;
         case(SampleFormat::S32):
-            return QStringLiteral("32 bit (signed)");
+            return u"32 bit (signed)"_s;
         case(SampleFormat::F32):
-            return QStringLiteral("32 bit (float)");
+            return u"32 bit (float)"_s;
         case(SampleFormat::F64):
-            return QStringLiteral("64 bit (float)");
+            return u"64 bit (float)"_s;
         case(SampleFormat::Unknown):
         default:
-            return QStringLiteral("Unknown format");
+            return u"Unknown format"_s;
     }
 }
 } // namespace Fooyin

@@ -26,6 +26,8 @@
 
 Q_LOGGING_CATEGORY(PARSER, "fy.lyricsparser")
 
+using namespace Qt::StringLiterals;
+
 // This tries to parse most unsynced/synced lyric formats
 // Tokenising each line is a little overkill, but it makes it easier to extend in the future
 
@@ -110,35 +112,35 @@ void parseTag(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
     const QString& field = parts.at(0);
     const QString& value = parts.at(1);
 
-    if(field == u"ti") {
+    if(field == "ti"_L1) {
         lyrics.metadata.title = value;
     }
-    else if(field == u"ar") {
+    else if(field == "ar"_L1) {
         lyrics.metadata.artist = value;
     }
-    else if(field == u"al") {
+    else if(field == "al"_L1) {
         lyrics.metadata.album = value;
     }
-    else if(field == u"au") {
+    else if(field == "au"_L1) {
         lyrics.metadata.author = value;
     }
-    else if(field == u"length") {
+    else if(field == "length"_L1) {
         lyrics.metadata.length = value;
     }
-    else if(field == u"by") {
+    else if(field == "by"_L1) {
         lyrics.metadata.lrcAuthor = value;
     }
-    else if(field == u"offset") {
+    else if(field == "offset"_L1) {
         QString offsetStr{value};
-        if(value.size() > 1 && value.startsWith(u"+")) {
+        if(value.size() > 1 && value.startsWith("+"_L1)) {
             offsetStr = offsetStr.sliced(1);
         }
         lyrics.offset = offsetStr.toUInt();
     }
-    else if(field == u"re" || field == u"tool") {
+    else if(field == "re"_L1 || field == "tool"_L1) {
         lyrics.metadata.tool = value;
     }
-    else if(field == u"ve") {
+    else if(field == "ve"_L1) {
         lyrics.metadata.version = value;
     }
 }
@@ -424,7 +426,7 @@ Lyrics parse(const QByteArray& text)
 
     while(!buffer.atEnd()) {
         QString line = QString::fromUtf8(buffer.readLine()).trimmed();
-        line.replace(QLatin1String{"&apos;"}, QLatin1String{"'"});
+        line.replace("&apos;"_L1, "'"_L1);
         parseLine(lyrics, line);
     }
 
@@ -443,8 +445,7 @@ QString formatTimestamp(uint64_t timestampMs)
     const uint64_t seconds    = (timestampMs % 60000) / 1000;
     const uint64_t hundredths = (timestampMs % 1000) / 10;
 
-    return QStringLiteral("%1:%2.%3")
-        .arg(minutes, 2, 10, QLatin1Char{'0'})
+    return u"%1:%2.%3"_s.arg(minutes, 2, 10, QLatin1Char{'0'})
         .arg(seconds, 2, 10, QLatin1Char{'0'})
         .arg(hundredths, 2, 10, QLatin1Char{'0'});
 }

@@ -24,6 +24,8 @@
 #include <QStringDecoder>
 #include <QUrl>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PlaylistParser::PlaylistParser(std::shared_ptr<AudioLoader> audioLoader)
     : m_audioLoader{std::move(audioLoader)}
@@ -45,7 +47,7 @@ QString PlaylistParser::determineTrackPath(const QUrl& url, const QDir& dir, Pat
     if(type != PathType::Absolute && QDir::isAbsolutePath(filepath)) {
         const QString relative = dir.relativeFilePath(filepath);
 
-        if(!relative.startsWith(u"../") || type == PathType::Relative) {
+        if(!relative.startsWith("../"_L1) || type == PathType::Relative) {
             return relative;
         }
     }
@@ -86,8 +88,8 @@ QByteArray PlaylistParser::toUtf8(QIODevice* file)
     }
 
     QString string = toUtf16(data);
-    string.replace(QLatin1String{"\n\n"}, QLatin1String{"\n"});
-    string.replace(u'\r', u'\n');
+    string.replace("\n\n"_L1, "\n"_L1);
+    string.replace('\r'_L1, '\n'_L1);
 
     return string.toUtf8();
 }

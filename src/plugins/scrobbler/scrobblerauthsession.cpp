@@ -30,6 +30,8 @@
 
 Q_LOGGING_CATEGORY(SCROBBLER_AUTH, "fy.scrobbler")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 QString getSuccessIcon()
 {
@@ -57,14 +59,14 @@ ScrobblerAuthSession::ScrobblerAuthSession(QObject* parent)
     : QObject{parent}
     , m_server{new QTcpServer(this)}
     , m_socket{nullptr}
-    , m_tokenName{QStringLiteral("token")}
+    , m_tokenName{u"token"_s}
 {
     m_server->setProxy(QNetworkProxy::NoProxy);
     if(!m_server->listen(QHostAddress::LocalHost)) {
         qCCritical(SCROBBLER_AUTH) << "Could not open port; callback won't work:" << m_server->errorString();
     }
 
-    m_callbackUrl = QStringLiteral("http://localhost:%1").arg(m_server->serverPort());
+    m_callbackUrl = u"http://localhost:%1"_s.arg(m_server->serverPort());
 
     QObject::connect(m_server, &QTcpServer::newConnection, this, [this] {
         m_socket = m_server->nextPendingConnection();
@@ -118,11 +120,11 @@ void ScrobblerAuthSession::processCallback()
     qCDebug(SCROBBLER_AUTH) << "Found the token in callback";
 
     const auto msg
-        = QStringLiteral("<div style='text-align:center;'>"
-                         "<img src='data:image/png;base64,%1' alt='icon' width='40' height='40'/><br/>"
-                         "<p>%2</p>"
-                         "</div>\r\n")
-              .arg(getSuccessIcon(), tr("The application has successfully logged in. This window can now be closed."));
+        = u"<div style='text-align:center;'>"
+          "<img src='data:image/png;base64,%1' alt='icon' width='40' height='40'/><br/>"
+          "<p>%2</p>"
+          "</div>\r\n"_s.arg(getSuccessIcon(),
+                             tr("The application has successfully logged in. This window can now be closed."));
 
     sendHttpResponse("200 OK", msg.toUtf8());
 
@@ -144,11 +146,10 @@ void ScrobblerAuthSession::onError(const QByteArray& code, const QString& errorM
 {
     qCWarning(SCROBBLER_AUTH) << errorMsg;
 
-    const auto msg = QStringLiteral("<div style='text-align:center;'>"
-                                    "<img src='data:image/png;base64,%1' alt='icon' width='40' height='40'/><br/>"
-                                    "<p>%2</p>"
-                                    "</div>\r\n")
-                         .arg(getErrorIcon(), errorMsg);
+    const auto msg = u"<div style='text-align:center;'>"
+                     "<img src='data:image/png;base64,%1' alt='icon' width='40' height='40'/><br/>"
+                     "<p>%2</p>"
+                     "</div>\r\n"_s.arg(getErrorIcon(), errorMsg);
 
     sendHttpResponse(code, msg.toUtf8());
 }

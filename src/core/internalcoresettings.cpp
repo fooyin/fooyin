@@ -29,6 +29,8 @@
 
 #include <QFileInfo>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto LogLevel = "LogLevel";
 
 namespace Fooyin {
@@ -49,50 +51,45 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->createTempSetting<FirstRun>(true);
     m_settings->createTempSetting<Version>(QString::fromLatin1(VERSION));
-    m_settings->createSetting<PlayMode>(0, QStringLiteral("Player/PlayMode"));
-    m_settings->createSetting<AutoRefresh>(true, QStringLiteral("Library/AutoRefresh"));
+    m_settings->createSetting<PlayMode>(0, u"Player/PlayMode"_s);
+    m_settings->createSetting<AutoRefresh>(true, u"Library/AutoRefresh"_s);
     m_settings->createSetting<LibrarySortScript>(
-        QStringLiteral("%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"),
-        QStringLiteral("Library/SortScript"));
-    m_settings->createSetting<AudioOutput>(QString{}, QStringLiteral("Engine/AudioOutput"));
-    m_settings->createSetting<OutputVolume>(1.0, QStringLiteral("Engine/OutputVolume"));
-    m_settings->createSetting<RewindPreviousTrack>(false, QStringLiteral("Playlist/RewindPreviousTrack"));
-    m_settings->createSetting<GaplessPlayback>(true, QStringLiteral("Engine/GaplessPlayback"));
-    m_settings->createSetting<Language>(QString{}, QStringLiteral("Language"));
-    m_settings->createSetting<BufferLength>(4000, QStringLiteral("Engine/BufferLength"));
-    m_settings->createSetting<OpenFilesPlaylist>(QStringLiteral("Default"),
-                                                 QStringLiteral("Playlist/OpenFilesPlaylist"));
-    m_settings->createSetting<OpenFilesSendTo>(false, QStringLiteral("Playlist/OpenFilesSendToPlaylist"));
-    m_settings->createSetting<SaveRatingToMetadata>(false, QStringLiteral("Library/SaveRatingToFile"));
-    m_settings->createSetting<SavePlaycountToMetadata>(false, QStringLiteral("Library/SavePlaycountToFile"));
-    m_settings->createSetting<PlayedThreshold>(0.5, QStringLiteral("Playback/PlayedThreshold"));
-    m_settings->createSetting<ExternalSortScript>(QStringLiteral("%filepath%"),
-                                                  QStringLiteral("Library/ExternalSortScript"));
+        u"%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"_s, u"Library/SortScript"_s);
+    m_settings->createSetting<AudioOutput>(QString{}, u"Engine/AudioOutput"_s);
+    m_settings->createSetting<OutputVolume>(1.0, u"Engine/OutputVolume"_s);
+    m_settings->createSetting<RewindPreviousTrack>(false, u"Playlist/RewindPreviousTrack"_s);
+    m_settings->createSetting<GaplessPlayback>(true, u"Engine/GaplessPlayback"_s);
+    m_settings->createSetting<Language>(QString{}, u"Language"_s);
+    m_settings->createSetting<BufferLength>(4000, u"Engine/BufferLength"_s);
+    m_settings->createSetting<OpenFilesPlaylist>(u"Default"_s, u"Playlist/OpenFilesPlaylist"_s);
+    m_settings->createSetting<OpenFilesSendTo>(false, u"Playlist/OpenFilesSendToPlaylist"_s);
+    m_settings->createSetting<SaveRatingToMetadata>(false, u"Library/SaveRatingToFile"_s);
+    m_settings->createSetting<SavePlaycountToMetadata>(false, u"Library/SavePlaycountToFile"_s);
+    m_settings->createSetting<PlayedThreshold>(0.5, u"Playback/PlayedThreshold"_s);
+    m_settings->createSetting<ExternalSortScript>(u"%filepath%"_s, u"Library/ExternalSortScript"_s);
     m_settings->createTempSetting<Shutdown>(false);
     m_settings->createTempSetting<StopAfterCurrent>(false);
-    m_settings->createSetting<RGMode>(0, QStringLiteral("Engine/ReplayGainMode"));
-    m_settings->createSetting<RGType>(static_cast<int>(ReplayGainType::Track), QStringLiteral("Engine/ReplayGainType"));
-    m_settings->createSetting<RGPreAmp>(0.0F, QStringLiteral("Engine/ReplayGainPreAmp"));
-    m_settings->createSetting<NonRGPreAmp>(0.0F, QStringLiteral("Engine/NonReplayGainPreAmp"));
-    m_settings->createSetting<ProxyMode>(static_cast<int>(NetworkAccessManager::Mode::None),
-                                         QStringLiteral("Networking/ProxyMode"));
-    m_settings->createSetting<ProxyConfig>(QVariant{}, QStringLiteral("Networking/ProxyConfig"));
-    m_settings->createSetting<UseVariousForCompilations>(false,
-                                                         QStringLiteral("Library/UseVariousArtistsForCompilations"));
-    m_settings->createSetting<ShuffleAlbumsGroupScript>(QStringLiteral("%albumartist% - %date% - %album%"),
-                                                        QStringLiteral("Playback/ShuffleAlbumsGroupScript"));
-    m_settings->createSetting<ShuffleAlbumsSortScript>(QStringLiteral("%disc% - %track% - %title%"),
-                                                       QStringLiteral("Playback/ShuffleAlbumsSortScript"));
+    m_settings->createSetting<RGMode>(0, u"Engine/ReplayGainMode"_s);
+    m_settings->createSetting<RGType>(static_cast<int>(ReplayGainType::Track), u"Engine/ReplayGainType"_s);
+    m_settings->createSetting<RGPreAmp>(0.0F, u"Engine/ReplayGainPreAmp"_s);
+    m_settings->createSetting<NonRGPreAmp>(0.0F, u"Engine/NonReplayGainPreAmp"_s);
+    m_settings->createSetting<ProxyMode>(static_cast<int>(NetworkAccessManager::Mode::None), u"Networking/ProxyMode"_s);
+    m_settings->createSetting<ProxyConfig>(QVariant{}, u"Networking/ProxyConfig"_s);
+    m_settings->createSetting<UseVariousForCompilations>(false, u"Library/UseVariousArtistsForCompilations"_s);
+    m_settings->createSetting<ShuffleAlbumsGroupScript>(u"%albumartist% - %date% - %album%"_s,
+                                                        u"Playback/ShuffleAlbumsGroupScript"_s);
+    m_settings->createSetting<ShuffleAlbumsSortScript>(u"%disc% - %track% - %title%"_s,
+                                                       u"Playback/ShuffleAlbumsSortScript"_s);
     m_settings->createTempSetting<ActiveTrack>(QVariant{});
     m_settings->createTempSetting<ActiveTrackId>(-2);
 
-    m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
+    m_settings->createSetting<Internal::MonitorLibraries>(true, u"Library/MonitorLibraries"_s);
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
-    m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, QStringLiteral("Plugins/Disabled"));
-    m_settings->createSetting<Internal::EngineFading>(false, QStringLiteral("Engine/Fading"));
+    m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, u"Plugins/Disabled"_s);
+    m_settings->createSetting<Internal::EngineFading>(false, u"Engine/Fading"_s);
     m_settings->createSetting<Internal::FadingIntervals>(QVariant::fromValue(FadingIntervals{}),
-                                                         QStringLiteral("Engine/FadingIntervals"));
-    m_settings->createSetting<Internal::VBRUpdateInterval>(1000, QStringLiteral("Engine/VBRUpdateInterval"));
+                                                         u"Engine/FadingIntervals"_s);
+    m_settings->createSetting<Internal::VBRUpdateInterval>(1000, u"Engine/VBRUpdateInterval"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 

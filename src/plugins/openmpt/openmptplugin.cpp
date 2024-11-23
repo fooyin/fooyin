@@ -25,21 +25,23 @@
 
 #include <utils/settings/settingsmanager.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::OpenMpt {
 void OpenMptPlugin::initialise(const CorePluginContext& context)
 {
     m_settings = context.settingsManager;
 
-    m_settings->createSetting<Settings::OpenMpt::Gain>(0.0, QStringLiteral("OpenMpt/Gain"));
-    m_settings->createSetting<Settings::OpenMpt::Separation>(100, QStringLiteral("OpenMpt/Separation"));
-    m_settings->createSetting<Settings::OpenMpt::VolumeRamping>(-1, QStringLiteral("OpenMpt/VolumeRamping"));
-    m_settings->createSetting<Settings::OpenMpt::InterpolationFilter>(0, QStringLiteral("OpenMpt/InterpolationFilter"));
-    m_settings->createSetting<Settings::OpenMpt::EmulateAmiga>(true, QStringLiteral("OpenMpt/EmulateAmiga"));
+    m_settings->createSetting<Settings::OpenMpt::Gain>(0.0, u"OpenMpt/Gain"_s);
+    m_settings->createSetting<Settings::OpenMpt::Separation>(100, u"OpenMpt/Separation"_s);
+    m_settings->createSetting<Settings::OpenMpt::VolumeRamping>(-1, u"OpenMpt/VolumeRamping"_s);
+    m_settings->createSetting<Settings::OpenMpt::InterpolationFilter>(0, u"OpenMpt/InterpolationFilter"_s);
+    m_settings->createSetting<Settings::OpenMpt::EmulateAmiga>(true, u"OpenMpt/EmulateAmiga"_s);
 }
 
 QString OpenMptPlugin::inputName() const
 {
-    return QStringLiteral("OpenMpt");
+    return u"OpenMpt"_s;
 }
 
 InputCreator OpenMptPlugin::inputCreator() const

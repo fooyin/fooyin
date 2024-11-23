@@ -124,7 +124,7 @@ PlaylistControllerPrivate::PlaylistControllerPrivate(PlaylistController* self, A
 void PlaylistControllerPrivate::restoreLastPlaylist()
 {
     const FyStateSettings stateSettings;
-    const int lastId = stateSettings.value(QLatin1String{LastPlaylistId}).toInt();
+    const int lastId = stateSettings.value(LastPlaylistId).toInt();
 
     if(lastId >= 0) {
         m_currentPlaylist = m_handler->playlistByDbId(lastId);
@@ -345,14 +345,14 @@ void PlaylistControllerPrivate::saveStates() const
     out = qCompress(out, 9);
 
     FyStateSettings stateSettings;
-    stateSettings.setValue(QLatin1String{PlaylistStates}, out);
-    stateSettings.setValue(QLatin1String{LastPlaylistId}, m_currentPlaylist->dbId());
+    stateSettings.setValue(PlaylistStates, out);
+    stateSettings.setValue(LastPlaylistId, m_currentPlaylist->dbId());
 }
 
 void PlaylistControllerPrivate::restoreStates()
 {
     const FyStateSettings stateSettings;
-    QByteArray in = stateSettings.value(QLatin1String{PlaylistStates}).toByteArray();
+    QByteArray in = stateSettings.value(PlaylistStates).toByteArray();
 
     if(in.isEmpty()) {
         return;

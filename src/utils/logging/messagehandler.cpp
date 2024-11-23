@@ -28,15 +28,17 @@
 namespace {
 QString levelToFilterRule(QtMsgType level)
 {
+    using namespace Qt::StringLiterals;
+
     switch(level) {
         case(QtDebugMsg):
-            return QStringLiteral("fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=true\n");
+            return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=true\n"_s;
         case(QtInfoMsg):
-            return QStringLiteral("fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=false\n");
+            return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=false\n"_s;
         case(QtWarningMsg):
-            return QStringLiteral("fy.*.critical=true\nfy.*.warning=true\nfy.*.info=false\nfy.*.debug=false\n");
+            return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=false\nfy.*.debug=false\n"_s;
         case(QtCriticalMsg):
-            return QStringLiteral("fy.*.critical=true\nfy.*.warning=false\nfy.*.info=false\nfy.*.debug=false\n");
+            return u"fy.*.critical=true\nfy.*.warning=false\nfy.*.info=false\nfy.*.debug=false\n"_s;
         case(QtFatalMsg):
         default:
             return {};

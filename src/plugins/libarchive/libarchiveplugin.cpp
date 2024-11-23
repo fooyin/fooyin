@@ -21,10 +21,12 @@
 
 #include "libarchiveinput.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::LibArchive {
 QString LibArchivePlugin::inputName() const
 {
-    return QStringLiteral("LibArchive");
+    return u"LibArchive"_s;
 }
 
 InputCreator LibArchivePlugin::inputCreator() const

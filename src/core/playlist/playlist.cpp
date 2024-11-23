@@ -30,6 +30,8 @@
 #include <ranges>
 #include <set>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 using AlbumTracks = std::vector<int>;
 } // namespace
@@ -663,8 +665,7 @@ void Playlist::resetFlags()
 
 QStringList Playlist::supportedPlaylistExtensions()
 {
-    static const QStringList supportedExtensions
-        = {QStringLiteral("cue"), QStringLiteral("m3u"), QStringLiteral("m3u8")};
+    static const QStringList supportedExtensions = {u"cue"_s, u"m3"_s, u"m3u8"_s};
     return supportedExtensions;
 }
 

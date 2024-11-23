@@ -22,6 +22,8 @@
 #include <QApplication>
 #include <QPainter>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 MenuHeader::MenuHeader(QString text, QWidget* parent)
     : QWidget{parent}
@@ -32,7 +34,7 @@ MenuHeader::MenuHeader(QString text, QWidget* parent)
 {
     const QFontMetrics fm{fontMetrics()};
     m_textHeight = fm.height();
-    m_margin     = fm.horizontalAdvance(QStringLiteral("..."));
+    m_margin     = fm.horizontalAdvance(u"..."_s);
     m_minWidth   = fm.boundingRect(m_text).width() + (3 * m_margin);
 
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);

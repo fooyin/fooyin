@@ -43,6 +43,8 @@
 
 #include <stack>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto OrganiserModel = "PlaylistOrganiser/Model";
 constexpr auto OrganiserState = "PlaylistOrganiser/State";
 
@@ -257,7 +259,7 @@ QString PlaylistOrganiser::name() const
 
 QString PlaylistOrganiser::layoutName() const
 {
-    return QStringLiteral("PlaylistOrganiser");
+    return u"PlaylistOrganiser"_s;
 }
 
 void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)

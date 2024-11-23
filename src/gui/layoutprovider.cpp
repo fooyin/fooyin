@@ -33,11 +33,13 @@
 
 Q_LOGGING_CATEGORY(LAYOUT_PROV, "fy.layoutprovider")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 bool checkFile(const QFileInfo& file)
 {
     return file.exists() && file.isFile() && file.isReadable()
-        && file.suffix().compare(QStringLiteral("fyl"), Qt::CaseInsensitive) == 0;
+        && file.suffix().compare(u"fyl"_s, Qt::CaseInsensitive) == 0;
 }
 } // namespace
 
@@ -126,7 +128,7 @@ void LayoutProvider::findLayouts()
             stack.append(QDir{subDir.absoluteFilePath()});
         }
 
-        const auto dirFiles = dir.entryInfoList({QStringLiteral("*.fyl")}, QDir::Files);
+        const auto dirFiles = dir.entryInfoList({u"*.fyl"_s}, QDir::Files);
         for(const auto& file : dirFiles) {
             files.append(file.absoluteFilePath());
         }
@@ -241,7 +243,7 @@ FyLayout LayoutProvider::importLayout(const QString& path)
 void LayoutProvider::importLayout(QWidget* parent)
 {
     const QString layoutFile
-        = QFileDialog::getOpenFileName(parent, tr("Open Layout"), {}, tr("%1 Layout").arg(u"fooyin") + u" (*.fyl)");
+        = QFileDialog::getOpenFileName(parent, tr("Open Layout"), {}, tr("%1 Layout").arg("fooyin"_L1) + " (*.fyl)"_L1);
 
     if(layoutFile.isEmpty()) {
         return;
@@ -271,8 +273,8 @@ void LayoutProvider::importLayout(QWidget* parent)
 bool LayoutProvider::exportLayout(const FyLayout& layout, const QString& path)
 {
     QString filepath{path};
-    if(!filepath.contains(QStringLiteral(".fyl"))) {
-        filepath += QStringLiteral(".fyl");
+    if(!filepath.contains(u".fyl"_s)) {
+        filepath += u".fyl"_s;
     }
 
     QFile file{filepath};

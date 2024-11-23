@@ -32,6 +32,8 @@
 
 Q_LOGGING_CATEGORY(AUD_LDR, "fy.audioloader")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto DecoderState = "Engine/DecoderState";
 constexpr auto ReaderState  = "Engine/ReaderState";
 
@@ -83,7 +85,7 @@ void AudioLoader::saveState()
             stream << loader.name << loader.index << loader.enabled;
         }
 
-        settings.setValue(QLatin1String{state}, data);
+        settings.setValue(state, data);
     };
 
     const std::shared_lock lock{p->m_mutex};
@@ -99,7 +101,7 @@ void AudioLoader::restoreState()
         defaultLoaders = loaders;
         sortLoaderEntries(defaultLoaders);
 
-        QByteArray data = settings.value(QLatin1String{state}, {}).toByteArray();
+        QByteArray data = settings.value(state, {}).toByteArray();
         QDataStream stream{&data, QIODevice::ReadOnly};
 
         qsizetype size{0};
@@ -126,11 +128,13 @@ void AudioLoader::restoreState()
     const QStringList archiveExts = supportedArchiveExtensions();
     const std::unique_lock lock{p->m_mutex};
 
-    auto archiveDec = std::ranges::find_if(p->m_decoders, [](const auto& loader) { return loader.name == u"Archive"; });
+    auto archiveDec
+        = std::ranges::find_if(p->m_decoders, [](const auto& loader) { return loader.name == "Archive"_L1; });
     if(archiveDec != p->m_decoders.end()) {
         archiveDec->extensions = archiveExts;
     }
-    auto archiveRead = std::ranges::find_if(p->m_readers, [](const auto& loader) { return loader.name == u"Archive"; });
+    auto archiveRead
+        = std::ranges::find_if(p->m_readers, [](const auto& loader) { return loader.name == "Archive"_L1; });
     if(archiveRead != p->m_readers.end()) {
         archiveRead->extensions = archiveExts;
     }
@@ -222,7 +226,7 @@ AudioDecoder* AudioLoader::decoderForFile(const QString& file) const
         if(!loader.enabled) {
             continue;
         }
-        if((isInArchive && loader.name == u"Archive") || (!isInArchive && loader.extensions.contains(ext))) {
+        if((isInArchive && loader.name == "Archive"_L1) || (!isInArchive && loader.extensions.contains(ext))) {
             if(p->m_decoderInstances.hasLocalData()) {
                 auto& readers = p->m_decoderInstances.localData();
                 if(readers->contains(loader.name)) {
@@ -254,7 +258,7 @@ AudioReader* AudioLoader::readerForFile(const QString& file) const
         if(!loader.enabled) {
             continue;
         }
-        if((isInArchive && loader.name == u"Archive") || (!isInArchive && loader.extensions.contains(ext))) {
+        if((isInArchive && loader.name == "Archive"_L1) || (!isInArchive && loader.extensions.contains(ext))) {
             if(p->m_readerInstances.hasLocalData()) {
                 auto& readers = p->m_readerInstances.localData();
                 if(readers->contains(loader.name)) {

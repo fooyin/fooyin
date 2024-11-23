@@ -26,6 +26,8 @@
 #include <QSlider>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 SliderEditor::SliderEditor(const QString& name, QWidget* parent)
     : QWidget{parent}
@@ -38,7 +40,7 @@ SliderEditor::SliderEditor(const QString& name, QWidget* parent)
     layout->setContentsMargins({});
 
     if(!name.isEmpty()) {
-        auto* label = new QLabel(name + u":", this);
+        auto* label = new QLabel(name + ":"_L1, this);
         layout->addWidget(label);
     }
 

@@ -64,6 +64,8 @@
 
 #include <stack>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 Fooyin::TrackList getTracks(const QModelIndexList& indexes)
 {
@@ -1639,13 +1641,13 @@ QString PlaylistWidget::name() const
 
 QString PlaylistWidget::layoutName() const
 {
-    return QStringLiteral("Playlist");
+    return u"Playlist"_s;
 }
 
 void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"Preset"]     = p->m_currentPreset.id;
-    layout[u"SingleMode"] = p->m_singleMode;
+    layout["Preset"_L1]     = p->m_currentPreset.id;
+    layout["SingleMode"_L1] = p->m_singleMode;
 
     if(!p->m_columns.empty()) {
         QStringList columns;
@@ -1655,13 +1657,13 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
             QString colStr       = QString::number(column.id);
 
             if(alignment != Qt::AlignLeft) {
-                colStr += u":" + QString::number(alignment.toInt());
+                colStr += ":"_L1 + QString::number(alignment.toInt());
             }
 
             columns.push_back(colStr);
         }
 
-        layout[u"Columns"] = columns.join(QStringLiteral("|"));
+        layout["Columns"_L1] = columns.join(u"|"_s);
     }
 
     p->resetSort();
@@ -1669,27 +1671,27 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
     if(!p->m_singleMode || !p->m_headerState.isEmpty()) {
         QByteArray state
             = p->m_singleMode && !p->m_headerState.isEmpty() ? p->m_headerState : p->m_header->saveHeaderState();
-        state                  = qCompress(state, 9);
-        layout[u"HeaderState"] = QString::fromUtf8(state.toBase64());
+        state                    = qCompress(state, 9);
+        layout["HeaderState"_L1] = QString::fromUtf8(state.toBase64());
     }
 }
 
 void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"Preset")) {
-        const int presetId = layout.value(u"Preset").toInt();
+    if(layout.contains("Preset"_L1)) {
+        const int presetId = layout.value("Preset"_L1).toInt();
         if(const auto preset = p->m_presetRegistry->itemById(presetId)) {
             p->m_currentPreset = preset.value();
         }
     }
-    if(layout.contains(u"SingleMode")) {
-        p->m_singleMode = layout.value(u"SingleMode").toBool();
+    if(layout.contains("SingleMode"_L1)) {
+        p->m_singleMode = layout.value("SingleMode"_L1).toBool();
     }
 
-    if(layout.contains(u"Columns")) {
+    if(layout.contains("Columns"_L1)) {
         p->m_columns.clear();
 
-        const QString columnData    = layout.value(u"Columns").toString();
+        const QString columnData    = layout.value("Columns"_L1).toString();
         const QStringList columnIds = columnData.split(u'|');
 
         for(int i{0}; const auto& columnId : columnIds) {
@@ -1711,8 +1713,8 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
         p->updateSpans();
     }
 
-    if(layout.contains(u"HeaderState")) {
-        const auto headerState = layout.value(u"HeaderState").toString().toUtf8();
+    if(layout.contains("HeaderState"_L1)) {
+        const auto headerState = layout.value("HeaderState"_L1).toString().toUtf8();
 
         if(!headerState.isEmpty()
 #if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)

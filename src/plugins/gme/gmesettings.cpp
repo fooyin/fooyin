@@ -34,6 +34,8 @@
 
 #include <gme/gme.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Gme {
 GmeSettings::GmeSettings(QWidget* parent)
     : QDialog{parent}
@@ -41,7 +43,7 @@ GmeSettings::GmeSettings(QWidget* parent)
     , m_loopCount{new QSpinBox(this)}
     , m_fadeLength{new QSpinBox(this)}
 {
-    setWindowTitle(tr("%1 Settings").arg(QStringLiteral("GME")));
+    setWindowTitle(tr("%1 Settings").arg(u"GME"_s));
     setModal(true);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -51,24 +53,24 @@ GmeSettings::GmeSettings(QWidget* parent)
     auto* lengthGroup  = new QGroupBox(tr("Length"), this);
     auto* lengthLayout = new QGridLayout(lengthGroup);
 
-    auto* maxLengthLabel = new QLabel(tr("Maximum length") + QStringLiteral(":"), this);
+    auto* maxLengthLabel = new QLabel(tr("Maximum length") + u":"_s, this);
 
     m_maxLength->setRange(1.0, 60.0);
     m_maxLength->setSingleStep(0.5);
-    m_maxLength->setSuffix(QStringLiteral(" ") + tr("minutes"));
+    m_maxLength->setSuffix(u" "_s + tr("minutes"));
 
-    auto* loopLabel     = new QLabel(tr("Loop count") + QStringLiteral(":"), this);
+    auto* loopLabel     = new QLabel(tr("Loop count") + u":"_s, this);
     auto* loopHintLabel = new QLabel(tr("(0 = infinite)"), this);
 
     m_loopCount->setRange(0, 16);
     m_loopCount->setSingleStep(1);
-    m_loopCount->setSuffix(QStringLiteral(" ") + tr("times"));
+    m_loopCount->setSuffix(u" "_s + tr("times"));
 
-    auto* fadeLabel = new QLabel(tr("Fade length") + QStringLiteral(":"), this);
+    auto* fadeLabel = new QLabel(tr("Fade length") + u":"_s, this);
 
     m_fadeLength->setRange(0, 10000);
     m_fadeLength->setSingleStep(500);
-    m_fadeLength->setSuffix(QStringLiteral(" ") + tr("ms"));
+    m_fadeLength->setSuffix(u" "_s + tr("ms"));
 
     int row{0};
     lengthLayout->addWidget(maxLengthLabel, row, 0);
@@ -89,9 +91,9 @@ GmeSettings::GmeSettings(QWidget* parent)
     layout->addWidget(buttons, row++, 0, 1, 4, Qt::AlignBottom);
     layout->setColumnStretch(2, 1);
 
-    m_maxLength->setValue(m_settings.value(QLatin1String{MaxLength}, DefaultMaxLength).toInt());
-    m_loopCount->setValue(m_settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt());
-    m_fadeLength->setValue(m_settings.value(QLatin1String{FadeLength}, DefaultFadeLength).toInt());
+    m_maxLength->setValue(m_settings.value(MaxLength, DefaultMaxLength).toInt());
+    m_loopCount->setValue(m_settings.value(LoopCount, DefaultLoopCount).toInt());
+    m_fadeLength->setValue(m_settings.value(FadeLength, DefaultFadeLength).toInt());
 
 #if defined(GME_VERSION) && GME_VERSION < 0x000604
     fadeLabel->setVisible(false);
@@ -101,9 +103,9 @@ GmeSettings::GmeSettings(QWidget* parent)
 
 void GmeSettings::accept()
 {
-    m_settings.setValue(QLatin1String{MaxLength}, m_maxLength->value());
-    m_settings.setValue(QLatin1String{LoopCount}, m_loopCount->value());
-    m_settings.setValue(QLatin1String{FadeLength}, m_fadeLength->value());
+    m_settings.setValue(MaxLength, m_maxLength->value());
+    m_settings.setValue(LoopCount, m_loopCount->value());
+    m_settings.setValue(FadeLength, m_fadeLength->value());
 
     done(Accepted);
 }

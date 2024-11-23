@@ -30,6 +30,8 @@
 
 Q_LOGGING_CATEGORY(ALSA, "fy.alsa")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
 {
@@ -124,9 +126,8 @@ void getPcmDevices(Fooyin::OutputDevices& devices)
             devices.insert(devices.begin(), {QString::fromLatin1(name.str), QString::fromLatin1(desc.str)});
         }
         else {
-            devices.emplace_back(
-                QString::fromLatin1(name.str),
-                QStringLiteral("%1 - %2").arg(QString::fromLatin1(name.str), QString::fromLatin1(desc.str)));
+            devices.emplace_back(QString::fromLatin1(name.str),
+                                 u"%1 - %2"_s.arg(QString::fromLatin1(name.str), QString::fromLatin1(desc.str)));
         }
     }
 }
@@ -159,7 +160,7 @@ AlsaOutput::AlsaOutput()
     : m_initialised{false}
     , m_pausable{true}
     , m_started{false}
-    , m_device{QStringLiteral("default")}
+    , m_device{u"default"_s}
     , m_volume{1.0}
     , m_bufferSize{8192}
     , m_periodSize{1024}
@@ -388,14 +389,14 @@ bool AlsaOutput::initAlsa()
         return false;
     }
 
-    uint32_t bufferTime = std::min<uint32_t>(
-        m_settings.value(QLatin1String{BufferLengthSetting}, DefaultBufferLength).toUInt() * 1000, maxBufferTime);
+    uint32_t bufferTime
+        = std::min<uint32_t>(m_settings.value(BufferLengthSetting, DefaultBufferLength).toUInt() * 1000, maxBufferTime);
     err = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &bufferTime, nullptr);
     if(checkError(err, "Unable to set buffer time")) {
         return false;
     }
-    uint32_t periodTime = std::min<uint32_t>(
-        m_settings.value(QLatin1String{PeriodLengthSetting}, DefaultPeriodLength).toUInt() * 1000, maxPeriodTime);
+    uint32_t periodTime
+        = std::min<uint32_t>(m_settings.value(PeriodLengthSetting, DefaultPeriodLength).toUInt() * 1000, maxPeriodTime);
     err = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &periodTime, nullptr);
     if(checkError(err, "Unable to set period time")) {
         return false;
@@ -566,10 +567,9 @@ void AlsaOutput::getHardwareDevices(OutputDevices& devices)
             }
 
             OutputDevice device;
-            device.name = QStringLiteral("hw:%1,%2").arg(card).arg(dev);
-            device.desc = QStringLiteral("%1 - %2 %3")
-                              .arg(device.name, QLatin1String(snd_ctl_card_info_get_name(cardinfo)),
-                                   QLatin1String(snd_pcm_info_get_name(pcminfo)));
+            device.name = u"hw:%1,%2"_s.arg(card).arg(dev);
+            device.desc = u"%1 - %2 %3"_s.arg(device.name, QLatin1String(snd_ctl_card_info_get_name(cardinfo)),
+                                              QLatin1String(snd_pcm_info_get_name(pcminfo)));
             devices.emplace_back(device);
         }
     }

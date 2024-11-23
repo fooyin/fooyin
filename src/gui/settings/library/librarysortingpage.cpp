@@ -34,6 +34,8 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class LibrarySortingPageWidget : public SettingsPageWidget
 {
@@ -85,7 +87,7 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_sortList, 0, 0, 1, 2);
-    mainLayout->addWidget(new QLabel(tr("Sort tracks in library by") + u":", this), 1, 0);
+    mainLayout->addWidget(new QLabel(tr("Sort tracks in library by") + ":"_L1, this), 1, 0);
     mainLayout->addWidget(m_sortScript, 2, 0, 1, 2);
     mainLayout->setRowStretch(0, 1);
 

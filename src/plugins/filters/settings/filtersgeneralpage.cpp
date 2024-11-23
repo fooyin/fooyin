@@ -34,6 +34,8 @@
 #include <QLabel>
 #include <QLineEdit>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Filters {
 class FiltersGeneralPageWidget : public SettingsPageWidget
 {
@@ -72,9 +74,9 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + QStringLiteral(":"), this), 0, 0);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + u":"_s, this), 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + QStringLiteral(":"), this), 1, 0);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, this), 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
     clickBehaviourLayout->setColumnStretch(2, 1);
@@ -87,7 +89,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_keepAlive, 2, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + QStringLiteral(":"), this), 3, 0, 1, 1);
+    selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + u":"_s, this), 3, 0, 1, 1);
     selectionPlaylistLayout->addWidget(m_playlistName, 3, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
 

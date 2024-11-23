@@ -43,6 +43,8 @@
 #include <QRadioButton>
 #include <QTreeView>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto CurrentPreset = "FileOps/CurrentPreset";
 constexpr auto SavedPresets  = "FileOps/Presets";
 
@@ -117,7 +119,7 @@ FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* li
     , m_moveOp{new QRadioButton(FileOpsDialog::tr("Move"), self)}
     , m_renameOp{new QRadioButton(FileOpsDialog::tr("Rename"), self)}
     , m_destination{new QLineEdit(self)}
-    , m_filename{new ScriptLineEdit(QStringLiteral("%filename%"), tracks.front(), self)}
+    , m_filename{new ScriptLineEdit(u"%filename%"_s, tracks.front(), self)}
     , m_entireSource{new QCheckBox(self)}
     , m_removeEmpty{new QCheckBox(FileOpsDialog::tr("Remove empty source folders"), self)}
     , m_presetBox{new QComboBox(self)}
@@ -152,10 +154,10 @@ void FileOpsDialogPrivate::setup()
 
     m_presetBox->setEditable(true);
 
-    auto* opLabel = new QLabel(tr("Operation") + QStringLiteral(":"));
+    auto* opLabel = new QLabel(tr("Operation") + u":"_s);
 
-    auto* destLabel     = new QLabel(tr("Destination") + QStringLiteral(":"));
-    auto* filenameLabel = new QLabel(tr("Filename") + QStringLiteral(":"));
+    auto* destLabel     = new QLabel(tr("Destination") + u":"_s);
+    auto* filenameLabel = new QLabel(tr("Filename") + u":"_s);
 
     auto* presetGroup  = new QGroupBox(tr("Presets"), m_self);
     auto* presetLayout = new QGridLayout(presetGroup);
@@ -456,7 +458,7 @@ void FileOpsDialogPrivate::modelUpdated()
         m_runButton->setEnabled(false);
     }
     else {
-        m_status->setText(FileOpsDialog::tr("Pending operations") + QStringLiteral(": %1").arg(opCount));
+        m_status->setText(FileOpsDialog::tr("Pending operations") + u": %1"_s.arg(opCount));
         m_runButton->setEnabled(true);
     }
 }

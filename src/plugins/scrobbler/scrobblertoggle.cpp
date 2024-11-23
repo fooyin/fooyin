@@ -31,6 +31,8 @@
 #include <QHBoxLayout>
 #include <QIcon>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto ScrobbleIcon = "scrobble";
 
 namespace Fooyin::Scrobbler {
@@ -64,7 +66,7 @@ QString ScrobblerToggle::name() const
 
 QString ScrobblerToggle::layoutName() const
 {
-    return QStringLiteral("ScrobbleToggle");
+    return u"ScrobbleToggle"_s;
 }
 
 void ScrobblerToggle::updateButtonStyle() const

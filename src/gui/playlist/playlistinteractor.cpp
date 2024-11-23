@@ -35,6 +35,7 @@
 #include <QMainWindow>
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 namespace {
 template <typename Func>
@@ -64,7 +65,7 @@ void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& f
                          scanDialog->setValue(progress.percentage());
 
                          if(!progress.file.isEmpty()) {
-                             scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + u":\n"
+                             scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + ":\n"_L1
                                                  + progress.file);
                          }
                      });
@@ -105,7 +106,7 @@ void loadPlaylistTracks(Fooyin::MusicLibrary* library, const QList<QUrl>& files,
                          scanDialog->setValue(progress.percentage());
 
                          if(!progress.file.isEmpty()) {
-                             scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + u":\n"
+                             scanDialog->setText(Fooyin::PlaylistInteractor::tr("Current file") + ":\n"_L1
                                                  + progress.file);
                          }
                      });

@@ -33,6 +33,8 @@
 #include <QIODevice>
 #include <QTimer>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto AutosaveTimer = 60000;
 
 namespace {
@@ -112,7 +114,7 @@ void toLrc(const Fooyin::Lyrics::Lyrics& lyrics, Device device, Format format,
 
         for(const auto& [line, duplicate] : sortedLines) {
             for(const auto timestamp : duplicate.timestamps) {
-                stream << QStringLiteral("[%1]").arg(format(timestamp));
+                stream << u"[%1]"_s.arg(format(timestamp));
             }
 
             stream << duplicate.line;
@@ -122,10 +124,10 @@ void toLrc(const Fooyin::Lyrics::Lyrics& lyrics, Device device, Format format,
     }
 
     for(const auto& line : lyrics.lines) {
-        stream << QStringLiteral("[%1]").arg(format(line.timestamp));
+        stream << u"[%1]"_s.arg(format(line.timestamp));
         if(syncedWords) {
             for(const auto& word : line.words) {
-                stream << " " << QStringLiteral("<%1>").arg(format(word.timestamp)) << " " << word.word;
+                stream << " " << u"<%1>"_s.arg(format(word.timestamp)) << " " << word.word;
             }
         }
         else {
@@ -223,9 +225,9 @@ void LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
     }
 
     const QString dir      = m_settings->value<Settings::Lyrics::SaveDir>();
-    const QString filename = m_settings->value<Settings::Lyrics::SaveFilename>() + u".lrc";
+    const QString filename = m_settings->value<Settings::Lyrics::SaveFilename>() + ".lrc"_L1;
 
-    const QString filepath = QDir::cleanPath(m_parser.evaluate(dir + u"/" + filename, track));
+    const QString filepath = QDir::cleanPath(m_parser.evaluate(dir + "/"_L1 + filename, track));
 
     QFile file{filepath};
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {

@@ -40,6 +40,8 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class ExpandableGroupBox : public ExpandableInput
 {
@@ -49,7 +51,7 @@ public:
     explicit ExpandableGroupBox(int rowHeight, QWidget* parent = nullptr)
         : ExpandableInput{ExpandableInput::CustomWidget, parent}
         , m_groupBox{new QGroupBox(this)}
-        , m_overrideHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
+        , m_overrideHeight{new QCheckBox(tr("Override height") + u":"_s, this)}
         , m_rowHeight{new QSpinBox(this)}
         , m_leftScript{new ScriptTextEdit(this)}
         , m_rightScript{new ScriptTextEdit(this)}
@@ -64,8 +66,8 @@ public:
         m_rowHeight->setValue(rowHeight);
         m_rowHeight->setEnabled(m_overrideHeight->isChecked());
 
-        auto* leftScript  = new QLabel(tr("Left-aligned") + QStringLiteral(":"), this);
-        auto* rightScript = new QLabel(tr("Right-aligned") + QStringLiteral(":"), this);
+        auto* leftScript  = new QLabel(tr("Left-aligned") + u":"_s, this);
+        auto* rightScript = new QLabel(tr("Right-aligned") + u":"_s, this);
 
         m_rowHeight->setMinimum(20);
         m_rowHeight->setMaximum(150);
@@ -216,7 +218,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     , m_headerSubtitle{new ScriptTextEdit(this)}
     , m_headerSideText{new ScriptTextEdit(this)}
     , m_headerInfo{new ScriptTextEdit(this)}
-    , m_overrideHeaderHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
+    , m_overrideHeaderHeight{new QCheckBox(tr("Override height") + u":"_s, this)}
     , m_headerRowHeight{new QSpinBox(this)}
     , m_trackLeftText{new ScriptTextEdit(this)}
     , m_trackRightText{new ScriptTextEdit(this)}
@@ -252,13 +254,13 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     headerLayout->addWidget(m_showCover, row++, 0, 1, 2);
     headerLayout->addWidget(m_overrideHeaderHeight, row, 0);
     headerLayout->addWidget(m_headerRowHeight, row++, 1);
-    headerLayout->addWidget(new QLabel(tr("Title") + QStringLiteral(":"), this), row++, 0, 1, 5);
+    headerLayout->addWidget(new QLabel(tr("Title") + u":"_s, this), row++, 0, 1, 5);
     headerLayout->addWidget(m_headerTitle, row++, 0, 1, 5);
-    headerLayout->addWidget(new QLabel(tr("Subtitle") + QStringLiteral(":"), this), row++, 0, 1, 5);
+    headerLayout->addWidget(new QLabel(tr("Subtitle") + u":"_s, this), row++, 0, 1, 5);
     headerLayout->addWidget(m_headerSubtitle, row++, 0, 1, 5);
-    headerLayout->addWidget(new QLabel(tr("Side") + QStringLiteral(":"), this), row++, 0, 1, 5);
+    headerLayout->addWidget(new QLabel(tr("Side") + u":"_s, this), row++, 0, 1, 5);
     headerLayout->addWidget(m_headerSideText, row++, 0, 1, 5);
-    headerLayout->addWidget(new QLabel(tr("Info") + QStringLiteral(":"), this), row++, 0, 1, 5);
+    headerLayout->addWidget(new QLabel(tr("Info") + u":"_s, this), row++, 0, 1, 5);
     headerLayout->addWidget(m_headerInfo, row++, 0, 1, 5);
 
     headerLayout->setColumnStretch(4, 1);
@@ -269,7 +271,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     auto* subheaderWidget = new QWidget();
     auto* subheaderLayout = new QGridLayout(subheaderWidget);
 
-    m_subHeaders = new ExpandableInputBox(tr("Subheaders") + QStringLiteral(":"), ExpandableInput::CustomWidget, this);
+    m_subHeaders = new ExpandableInputBox(tr("Subheaders") + u":"_s, ExpandableInput::CustomWidget, this);
     m_subHeaders->setInputWidget([](QWidget* parent) {
         const SubheaderRow subheader;
         auto* groupBox = new ExpandableGroupBox(subheader.rowHeight, parent);
@@ -290,9 +292,9 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
 
     trackLayout->addWidget(m_overrideTrackHeight, 0, 0);
     trackLayout->addWidget(m_trackRowHeight, 0, 1);
-    trackLayout->addWidget(new QLabel(tr("Left-aligned") + QStringLiteral(":"), this), 1, 0, 1, 3);
+    trackLayout->addWidget(new QLabel(tr("Left-aligned") + u":"_s, this), 1, 0, 1, 3);
     trackLayout->addWidget(m_trackLeftText, 2, 0, 1, 3);
-    trackLayout->addWidget(new QLabel(tr("Right-aligned") + QStringLiteral(":"), this), 3, 0, 1, 3);
+    trackLayout->addWidget(new QLabel(tr("Right-aligned") + u":"_s, this), 3, 0, 1, 3);
     trackLayout->addWidget(m_trackRightText, 4, 0, 1, 3);
 
     trackLayout->setColumnStretch(2, 1);
@@ -344,8 +346,8 @@ void PlaylistPresetsPageWidget::newPreset()
     preset.name = tr("New preset");
 
     bool success{false};
-    const QString text = QInputDialog::getText(this, tr("Add Preset"), tr("Preset Name") + QStringLiteral(":"),
-                                               QLineEdit::Normal, preset.name, &success);
+    const QString text = QInputDialog::getText(this, tr("Add Preset"), tr("Preset Name") + u":"_s, QLineEdit::Normal,
+                                               preset.name, &success);
 
     if(success && !text.isEmpty()) {
         preset.name                      = text;
@@ -365,7 +367,7 @@ void PlaylistPresetsPageWidget::renamePreset()
         auto preset = regPreset.value();
 
         bool success{false};
-        const QString text = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name") + QStringLiteral(":"),
+        const QString text = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name") + u":"_s,
                                                    QLineEdit::Normal, preset.name, &success);
 
         if(success && !text.isEmpty()) {

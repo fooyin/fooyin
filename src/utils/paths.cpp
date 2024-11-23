@@ -28,6 +28,8 @@
 
 Q_LOGGING_CATEGORY(UTILS_PATHS, "fy.paths")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 QString operator/(const QString& first, const QString& second)
 {
@@ -70,10 +72,10 @@ QString statePath(const QString& appendPath)
         stateHome.clear();
     }
     if(stateHome.isEmpty()) {
-        stateHome = QDir::homePath() + u"/.local/state";
+        stateHome = QDir::homePath() + "/.local/state"_L1;
     }
 
-    stateHome += u"/fooyin";
+    stateHome += "/fooyin"_L1;
 
     return createPath(stateHome, appendPath);
 }

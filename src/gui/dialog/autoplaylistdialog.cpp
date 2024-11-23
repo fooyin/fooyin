@@ -33,6 +33,8 @@
 #include <QMessageBox>
 #include <QPushButton>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto SavedQueries = "Playlist/AutoPlaylistQueries";
 
 namespace Fooyin {
@@ -82,9 +84,9 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
 
     row = 0;
     layout->addLayout(buttonLayout, row, 2, 2, 1);
-    layout->addWidget(new QLabel(tr("Name") + u":", this), row, 0);
+    layout->addWidget(new QLabel(tr("Name") + ":"_L1, this), row, 0);
     layout->addWidget(m_queryBox, row++, 1);
-    layout->addWidget(new QLabel(tr("Query") + u":", this), row, 0, Qt::AlignTop);
+    layout->addWidget(new QLabel(tr("Query") + ":"_L1, this), row, 0, Qt::AlignTop);
     layout->addWidget(m_queryEdit, row++, 1);
     layout->addWidget(buttonBox, row++, 0, 1, 3);
     layout->setColumnStretch(1, 1);
@@ -229,13 +231,13 @@ void AutoPlaylistDialog::saveQueries() const
     }
 
     FySettings settings;
-    settings.setValue(QLatin1String{SavedQueries}, byteArray);
+    settings.setValue(SavedQueries, byteArray);
 }
 
 void AutoPlaylistDialog::loadQueries()
 {
     const FySettings settings;
-    QByteArray byteArray = settings.value(QLatin1String{SavedQueries}).toByteArray();
+    QByteArray byteArray = settings.value(SavedQueries).toByteArray();
 
     if(!byteArray.isEmpty()) {
         QDataStream stream(&byteArray, QIODevice::ReadOnly);
@@ -274,10 +276,10 @@ void AutoPlaylistDialog::populateQueries()
 
 void AutoPlaylistDialog::loadDefaultQueries()
 {
-    m_queries = {{tr("Most Played"), QStringLiteral("playcount>0 LIMIT 25 SORT- playcount")},
-                 {tr("Recently Added"), QStringLiteral("addedtime DURING LAST 2 WEEKS SORT- addedtime")},
-                 {tr("Last Played 2 Weeks"), QStringLiteral("lastplayed DURING LAST 2 WEEKS SORT- lastplayed")},
-                 {tr("Has Lyrics"), QStringLiteral("lyrics PRESENT")}};
+    m_queries = {{tr("Most Played"), u"playcount>0 LIMIT 25 SORT- playcount"_s},
+                 {tr("Recently Added"), u"addedtime DURING LAST 2 WEEKS SORT- addedtime"_s},
+                 {tr("Last Played 2 Weeks"), u"lastplayed DURING LAST 2 WEEKS SORT- lastplayed"_s},
+                 {tr("Has Lyrics"), u"lyrics PRESENT"_s}};
 }
 } // namespace Fooyin
 

@@ -27,6 +27,8 @@
 #include <QUrl>
 #include <QXmlStreamReader>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto SearchUrl = "http://darklyrics.com/lyrics/";
 
 namespace {
@@ -48,7 +50,7 @@ QString normalise(const QString& str)
 
 QString cleanTitle(const QString& title)
 {
-    static const QRegularExpression regex{QStringLiteral(R"(^\d+\.\s*)")};
+    static const QRegularExpression regex{uR"(^\d+\.\s*)"_s};
     return title.section(regex, 1, 1);
 }
 } // namespace
@@ -56,7 +58,7 @@ QString cleanTitle(const QString& title)
 namespace Fooyin::Lyrics {
 QString DarkLyrics::name() const
 {
-    return QStringLiteral("DarkLyrics");
+    return u"DarkLyrics"_s;
 }
 
 void DarkLyrics::search(const SearchParams& params)
@@ -72,7 +74,7 @@ void DarkLyrics::search(const SearchParams& params)
         return;
     }
 
-    const QUrl url{QString::fromLatin1(SearchUrl) + artist + u"/" + album + u".html"};
+    const QUrl url{QString::fromLatin1(SearchUrl) + artist + "/"_L1 + album + ".html"_L1};
 
     qCInfo(LYRICS) << "Sending request" << url.toString();
 
@@ -101,9 +103,9 @@ void DarkLyrics::handleLyricReply()
     while(!reader.atEnd() && !reader.hasError()) {
         reader.readNext();
 
-        if(!trackFound && reader.isStartElement() && reader.name() == u"h3") {
+        if(!trackFound && reader.isStartElement() && reader.name() == "h3"_L1) {
             reader.readNextStartElement();
-            if(reader.name() == u"a" && reader.attributes().hasAttribute(QLatin1String{"name"})) {
+            if(reader.name() == "a"_L1 && reader.attributes().hasAttribute(QLatin1String{"name"})) {
                 const QString title = cleanTitle(reader.readElementText());
                 if(title == m_params.title) {
                     trackFound = true;
@@ -112,19 +114,19 @@ void DarkLyrics::handleLyricReply()
         }
 
         else if(trackFound) {
-            if(reader.isEndElement() && reader.name() == u"br") {
+            if(reader.isEndElement() && reader.name() == "br"_L1) {
                 if(!lyricsText.isEmpty()) {
                     lyricsText += u'\n';
                 }
             }
             else if(reader.isCharacters() && !reader.isWhitespace()) {
                 QString lineText = reader.text().toString();
-                if(lineText.startsWith(u"\n")) {
+                if(lineText.startsWith("\n"_L1)) {
                     lineText = lineText.sliced(1);
                 }
                 lyricsText.append(lineText);
             }
-            else if(reader.isStartElement() && reader.name() == u"h3") {
+            else if(reader.isStartElement() && reader.name() == "h3"_L1) {
                 break;
             }
         }
@@ -135,7 +137,7 @@ void DarkLyrics::handleLyricReply()
         emit searchResult({});
     }
 
-    if(lyricsText == u"[Instrumental]") {
+    if(lyricsText == "[Instrumental]"_L1) {
         emit searchResult({});
         return;
     }

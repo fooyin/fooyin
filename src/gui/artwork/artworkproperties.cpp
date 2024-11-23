@@ -29,6 +29,8 @@
 #include <QPainter>
 #include <QtConcurrentMap>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library, TrackList tracks, bool readOnly,
                                      QWidget* parent)
@@ -40,9 +42,9 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
     , m_loading{true}
     , m_writing{false}
     , m_artworkWidget{new QWidget(this)}
-    , m_rows{new ArtworkRow(u" " + tr("Front Cover"), Track::Cover::Front, readOnly, this),
-             new ArtworkRow(u" " + tr("Back Cover"), Track::Cover::Back, readOnly, this),
-             new ArtworkRow(u" " + tr("Artist"), Track::Cover::Artist, readOnly, this)}
+    , m_rows{new ArtworkRow(" "_L1 + tr("Front Cover"), Track::Cover::Front, readOnly, this),
+             new ArtworkRow(" "_L1 + tr("Back Cover"), Track::Cover::Back, readOnly, this),
+             new ArtworkRow(" "_L1 + tr("Artist"), Track::Cover::Artist, readOnly, this)}
 {
     auto* layout = new QGridLayout(this);
     layout->setContentsMargins({});
@@ -109,7 +111,7 @@ QString ArtworkProperties::name() const
 
 QString ArtworkProperties::layoutName() const
 {
-    return QStringLiteral("ArtworkProperties");
+    return u"ArtworkProperties"_s;
 }
 
 void ArtworkProperties::apply()

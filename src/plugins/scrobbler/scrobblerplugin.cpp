@@ -31,6 +31,8 @@
 
 #include <QAction>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Scrobbler {
 void ScrobblerPlugin::initialise(const CorePluginContext& context)
 {
@@ -55,9 +57,9 @@ void ScrobblerPlugin::initialise(const GuiPluginContext& context)
     toggleCmd->setCategories({tr("Scrobbler")});
 
     context.widgetProvider->registerWidget(
-        QStringLiteral("ScrobbleToggle"), [this]() { return new ScrobblerToggle(m_actionManager, m_settings); },
+        u"ScrobbleToggle"_s, [this]() { return new ScrobblerToggle(m_actionManager, m_settings); },
         tr("Scrobble Toggle"));
-    context.widgetProvider->setSubMenus(QStringLiteral("ScrobbleToggle"), {tr("Controls")});
+    context.widgetProvider->setSubMenus(u"ScrobbleToggle"_s, {tr("Controls")});
 
     new ScrobblerPage(m_scrobbler.get(), m_settings, this);
 }

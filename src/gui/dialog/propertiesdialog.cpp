@@ -32,6 +32,8 @@
 
 #include <ranges>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto DialogGeometry = "Interface/PropertiesDialogGeometry";
 
 namespace Fooyin {
@@ -118,14 +120,14 @@ public:
     void saveState()
     {
         FyStateSettings stateSettings;
-        stateSettings.setValue(QLatin1String{DialogGeometry}, saveGeometry());
+        stateSettings.setValue(DialogGeometry, saveGeometry());
     }
 
     void restoreState()
     {
         const FyStateSettings stateSettings;
         if(stateSettings.contains(QLatin1String{DialogGeometry})) {
-            const auto geometry = stateSettings.value(QLatin1String{DialogGeometry}).toByteArray();
+            const auto geometry = stateSettings.value(DialogGeometry).toByteArray();
             if(!geometry.isEmpty()) {
                 restoreGeometry(geometry);
             }
@@ -238,8 +240,8 @@ void PropertiesDialogWidget::currentTabChanged(int index)
 
     tabIt->setVisited(true);
     const QString subtitle = m_tracks.size() == 1
-                               ? QStringLiteral(" (%1): %2").arg(m_tracks.front().effectiveTitle(), tabIt->title())
-                               : QStringLiteral(" (%1 tracks): %2").arg(m_tracks.size()).arg(tabIt->title());
+                               ? u" (%1): %2"_s.arg(m_tracks.front().effectiveTitle(), tabIt->title())
+                               : u" (%1 tracks): %2"_s.arg(m_tracks.size()).arg(tabIt->title());
 
     setWindowTitle(tr("Properties") + subtitle);
 

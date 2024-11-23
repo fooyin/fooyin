@@ -34,6 +34,8 @@
 #include <QTextBlock>
 #include <QTextEdit>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto TimestampRegex = R"(\[\d{2}:\d{2}\.\d{2,3}\])";
 
 namespace Fooyin::Lyrics {
@@ -139,7 +141,7 @@ void LyricsEditor::seek()
 
 void LyricsEditor::updateButtons()
 {
-    const auto time = QStringLiteral(" [%1]").arg(formatTimestamp(m_playerController->currentPosition()));
+    const auto time = u" [%1]"_s.arg(formatTimestamp(m_playerController->currentPosition()));
 
     switch(m_playerController->playState()) {
         case(Player::PlayState::Playing):
@@ -176,7 +178,7 @@ void LyricsEditor::insertOrUpdateTimestamp()
     cursor.select(QTextCursor::LineUnderCursor);
     QString currentLine = cursor.selectedText();
 
-    QString newTimestamp = QStringLiteral("[%1]").arg(formatTimestamp(m_playerController->currentPosition()));
+    QString newTimestamp = u"[%1]"_s.arg(formatTimestamp(m_playerController->currentPosition()));
 
     static const QRegularExpression regex{QLatin1String{TimestampRegex}};
     if(regex.match(currentLine).hasMatch()) {

@@ -28,6 +28,8 @@
 
 #include <core/coresettings.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::RGScanner {
 RGWorker::RGWorker(QObject* parent)
     : Worker{parent}
@@ -37,10 +39,10 @@ RGScanner::RGScanner(const std::shared_ptr<AudioLoader>& audioLoader, QObject* p
     : QObject{parent}
 {
     const FySettings settings;
-    const auto scanner = settings.value(QLatin1String{ScannerOption}, QStringLiteral("libebur128")).toString();
+    const auto scanner = settings.value(ScannerOption, u"libebur128"_s).toString();
 
 #ifdef HAVE_EBUR128
-    if(scanner == u"libebur128") {
+    if(scanner == "libebur128"_L1) {
         m_worker = std::make_unique<Ebur128Scanner>(audioLoader);
     }
     else {
@@ -72,9 +74,9 @@ void RGScanner::close()
 QStringList RGScanner::scannerNames()
 {
     QStringList scanners{
-        QStringLiteral("FFmpeg"),
+        u"FFmpeg"_s,
 #ifdef HAVE_EBUR128
-        QStringLiteral("libebur128"),
+        u"libebur128"_s,
 #endif
     };
     return scanners;
@@ -84,7 +86,7 @@ void RGScanner::calculatePerTrack(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
         const FySettings settings;
-        m_worker->calculatePerTrack(tracks, settings.value(QLatin1String{TruePeakSetting}, false).toBool());
+        m_worker->calculatePerTrack(tracks, settings.value(TruePeakSetting, false).toBool());
     });
 }
 
@@ -92,7 +94,7 @@ void RGScanner::calculateAsAlbum(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
         const FySettings settings;
-        m_worker->calculateAsAlbum(tracks, settings.value(QLatin1String{TruePeakSetting}, false).toBool());
+        m_worker->calculateAsAlbum(tracks, settings.value(TruePeakSetting, false).toBool());
     });
 }
 
@@ -101,10 +103,8 @@ void RGScanner::calculateByAlbumTags(const TrackList& tracks)
     QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
         const FySettings settings;
         m_worker->calculateByAlbumTags(
-            tracks,
-            settings.value(QLatin1String{AlbumGroupScriptSetting}, QStringLiteral("%albumartist% - %date% - %album%"))
-                .toString(),
-            settings.value(QLatin1String{TruePeakSetting}, false).toBool());
+            tracks, settings.value(AlbumGroupScriptSetting, u"%albumartist% - %date% - %album%"_s).toString(),
+            settings.value(TruePeakSetting, false).toBool());
     });
 }
 } // namespace Fooyin::RGScanner

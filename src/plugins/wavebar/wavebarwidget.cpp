@@ -37,6 +37,7 @@
 #include <QVBoxLayout>
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 namespace Fooyin::WaveBar {
 WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerController, SettingsManager* settings,
@@ -89,28 +90,28 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
 
 QString WaveBarWidget::name() const
 {
-    return QStringLiteral("Waveform Seekbar");
+    return u"Waveform Seekbar"_s;
 }
 
 QString WaveBarWidget::layoutName() const
 {
-    return QStringLiteral("WaveBar");
+    return u"WaveBar"_s;
 }
 
 void WaveBarWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"ShowLabels"]   = m_container->labelsEnabled();
-    layout[u"ElapsedTotal"] = m_container->elapsedTotal();
+    layout["ShowLabels"_L1]   = m_container->labelsEnabled();
+    layout["ElapsedTotal"_L1] = m_container->elapsedTotal();
 }
 
 void WaveBarWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"ShowLabels")) {
-        const bool showLabels = layout.value(u"ShowLabels").toBool();
+    if(layout.contains("ShowLabels"_L1)) {
+        const bool showLabels = layout.value("ShowLabels"_L1).toBool();
         m_container->setLabelsEnabled(showLabels);
     }
-    if(layout.contains(u"ElapsedTotal")) {
-        const bool elapsedTotal = layout.value(u"ElapsedTotal").toBool();
+    if(layout.contains("ElapsedTotal"_L1)) {
+        const bool elapsedTotal = layout.value("ElapsedTotal"_L1).toBool();
         m_container->setElapsedTotal(elapsedTotal);
     }
 }

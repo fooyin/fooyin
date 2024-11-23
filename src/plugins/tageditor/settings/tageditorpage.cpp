@@ -32,6 +32,8 @@
 #include <QHeaderView>
 #include <QLabel>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::TagEditor {
 class TagEditorFieldsPageWidget : public SettingsPageWidget
 {
@@ -77,8 +79,8 @@ TagEditorFieldsPageWidget::TagEditorFieldsPageWidget(TagEditorFieldRegistry* reg
     m_fieldList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_fieldList->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 
-    auto* hintLabel = new QLabel(
-        QStringLiteral("🛈 ") + tr("Multiple values can be specified in the editor using %1").arg(u"\";\""), this);
+    auto* hintLabel
+        = new QLabel(u"🛈 "_s + tr("Multiple values can be specified in the editor using %1").arg("\";\""_L1), this);
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_fieldList, 0, 0, 1, 2);

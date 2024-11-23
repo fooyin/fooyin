@@ -44,6 +44,8 @@
 #include <QMenu>
 #include <QStyleOptionFrame>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto QuickSearchState = "Searching/QuickSearchState";
 
 namespace Fooyin {
@@ -114,7 +116,7 @@ QString SearchWidget::name() const
 
 QString SearchWidget::layoutName() const
 {
-    return QStringLiteral("SearchBar");
+    return u"SearchBar"_s;
 }
 
 void SearchWidget::layoutEditingMenu(QMenu* menu)
@@ -127,12 +129,12 @@ void SearchWidget::layoutEditingMenu(QMenu* menu)
 
 void SearchWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"AutoSearch"] = m_autoSearch;
-    layout[u"SearchMode"] = static_cast<quint8>(m_mode);
+    layout["AutoSearch"_L1] = m_autoSearch;
+    layout["SearchMode"_L1] = static_cast<quint8>(m_mode);
 
     const QString placeholderText = m_searchBox->placeholderText();
     if(!placeholderText.isEmpty() && placeholderText != m_defaultPlaceholder) {
-        layout[u"Placeholder"] = placeholderText;
+        layout["Placeholder"_L1] = placeholderText;
     }
 
     const auto connectedWidgets = m_searchController->connectedWidgetIds(id());
@@ -144,28 +146,28 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
     QStringList widgetIds;
     std::ranges::transform(connectedWidgets, std::back_inserter(widgetIds), [](const Id& id) { return id.name(); });
 
-    layout[u"Widgets"] = widgetIds.join(QStringLiteral("|"));
+    layout["Widgets"_L1] = widgetIds.join(u"|"_s);
 }
 
 void SearchWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"AutoSearch")) {
-        m_autoSearch = layout.value(u"AutoSearch").toBool();
+    if(layout.contains("AutoSearch"_L1)) {
+        m_autoSearch = layout.value("AutoSearch"_L1).toBool();
     }
 
-    if(layout.contains(u"SearchMode")) {
-        m_mode = static_cast<SearchMode>(layout.value(u"SearchMode").toVariant().value<quint8>());
+    if(layout.contains("SearchMode"_L1)) {
+        m_mode = static_cast<SearchMode>(layout.value("SearchMode"_L1).toVariant().value<quint8>());
     }
 
-    if(layout.contains(u"Placeholder")) {
-        m_searchBox->setPlaceholderText(layout.value(u"Placeholder").toString());
+    if(layout.contains("Placeholder"_L1)) {
+        m_searchBox->setPlaceholderText(layout.value("Placeholder"_L1).toString());
     }
 
-    if(!layout.contains(u"Widgets")) {
+    if(!layout.contains("Widgets"_L1)) {
         return;
     }
 
-    const QStringList widgetIds = layout.value(u"Widgets").toString().split(u'|');
+    const QStringList widgetIds = layout.value("Widgets"_L1).toString().split(u'|');
 
     if(widgetIds.isEmpty()) {
         return;
@@ -198,7 +200,7 @@ void SearchWidget::showEvent(QShowEvent* event)
 
     if(isQuickSearch()) {
         const FyStateSettings stateSettings;
-        const QJsonObject layoutData = stateSettings.value(QLatin1String{QuickSearchState}).toJsonObject();
+        const QJsonObject layoutData = stateSettings.value(QuickSearchState).toJsonObject();
         loadLayoutData(layoutData);
     }
 
@@ -212,7 +214,7 @@ void SearchWidget::closeEvent(QCloseEvent* event)
         saveLayoutData(layoutData);
 
         FyStateSettings stateSettings;
-        stateSettings.setValue(QLatin1String{QuickSearchState}, layoutData);
+        stateSettings.setValue(QuickSearchState, layoutData);
     }
     FyWidget::closeEvent(event);
 }
@@ -276,7 +278,7 @@ Playlist* SearchWidget::findOrAddPlaylist(const TrackList& tracks)
         for(auto* playlist : playlists) {
             if(playlist->name().startsWith(searchResultsName)) {
                 if(m_settings->value<Settings::Gui::SearchPlaylistAppendSearch>()) {
-                    searchResultsName.append(QStringLiteral(" [%1]").arg(m_searchBox->text()));
+                    searchResultsName.append(u" [%1]"_s.arg(m_searchBox->text()));
                 }
                 if(searchResultsName != playlist->name()) {
                     m_playlistHandler->renamePlaylist(playlist->id(), searchResultsName);
@@ -292,7 +294,7 @@ Playlist* SearchWidget::findOrAddPlaylist(const TrackList& tracks)
     if(auto* playlist = forceNew ? m_playlistHandler->createNewPlaylist(searchResultsName, tracks)
                                  : m_playlistHandler->createPlaylist(searchResultsName, tracks)) {
         if(m_settings->value<Settings::Gui::SearchPlaylistAppendSearch>()) {
-            searchResultsName.append(QStringLiteral(" (%1)").arg(m_searchBox->text()));
+            searchResultsName.append(u" (%1)"_s.arg(m_searchBox->text()));
             m_playlistHandler->renamePlaylist(playlist->id(), searchResultsName);
         }
         m_playlistController->changeCurrentPlaylist(playlist);
@@ -336,7 +338,7 @@ void SearchWidget::deleteWord()
     QString text             = m_searchBox->text();
     const int cursorPosition = m_searchBox->cursorPosition();
 
-    static const QRegularExpression wordRegex{QStringLiteral("\\W")};
+    static const QRegularExpression wordRegex{u"\\W"_s};
 
     int lastWordBoundary = static_cast<int>(text.lastIndexOf(wordRegex, cursorPosition - 1));
     if(lastWordBoundary == -1) {
@@ -424,17 +426,17 @@ void SearchWidget::updateConnectedState()
 
     if(m_unconnected) {
         static const QString searchTooltip
-            = QStringLiteral("<b>%1</b><br><br>"
-                             "<b>Ctrl</b>: %2<br>"
-                             "<b>Alt</b>: %3<br>"
-                             "<b>Shift</b>: %4<br>"
-                             "<b>Ctrl + Alt</b>: %5<br>"
-                             "<b>Ctrl + Alt + Shift</b>: %6<br>"
-                             "<b>Ctrl + Backspace</b>: %7<br>")
-                  .arg(tr("Special Keys"), tr("Force the creation of a new results playlist"),
-                       tr("Force search in the current playlist"), tr("Force search in all playlists"),
-                       tr("Force new results playlist using the current playlist as the source"),
-                       tr("Force new results playlist using all playlists"), tr("Delete a word in the search box"));
+            = u"<b>%1</b><br><br>"
+              "<b>Ctrl</b>: %2<br>"
+              "<b>Alt</b>: %3<br>"
+              "<b>Shift</b>: %4<br>"
+              "<b>Ctrl + Alt</b>: %5<br>"
+              "<b>Ctrl + Alt + Shift</b>: %6<br>"
+              "<b>Ctrl + Backspace</b>: %7<br>"_s.arg(
+                  tr("Special Keys"), tr("Force the creation of a new results playlist"),
+                  tr("Force search in the current playlist"), tr("Force search in all playlists"),
+                  tr("Force new results playlist using the current playlist as the source"),
+                  tr("Force new results playlist using all playlists"), tr("Delete a word in the search box"));
         m_searchBox->setToolTip(searchTooltip);
     }
     else {
@@ -534,9 +536,8 @@ void SearchWidget::showOptionsMenu()
     }
 
     auto* searching = new QAction(tr("Help"), this);
-    QObject::connect(searching, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/searching/basics.html"));
-    });
+    QObject::connect(searching, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/searching/basics.html"_s); });
     menu->addAction(searching);
 
     QStyleOptionFrame opt;

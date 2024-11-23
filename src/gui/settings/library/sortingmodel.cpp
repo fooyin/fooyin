@@ -25,6 +25,8 @@
 
 Q_LOGGING_CATEGORY(SORT_MOD, "fy.sortingmodel")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 SortingItem::SortingItem()
     : SortingItem{{}, nullptr}
@@ -192,11 +194,11 @@ QVariant SortingModel::data(const QModelIndex& index, int role) const
                 return item->sortScript().index;
             case(1): {
                 const QString& name = item->sortScript().name;
-                return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
+                return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
             case(2): {
                 const QString& field = item->sortScript().script;
-                return !field.isEmpty() ? field : QStringLiteral("<enter sort script here>");
+                return !field.isEmpty() ? field : u"<enter sort script here>"_s;
             }
             default:
                 break;
@@ -217,7 +219,7 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
 
     switch(index.column()) {
         case(1): {
-            if(value.toString() == QStringLiteral("<enter name here>") || sortScript.name == value.toString()) {
+            if(value.toString() == u"<enter name here>"_s || sortScript.name == value.toString()) {
                 if(item->status() == SortingItem::Added) {
                     emit pendingRowCancelled();
                 }

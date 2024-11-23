@@ -28,15 +28,17 @@
 
 #include <QFileInfo>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto CurrentSchemaVersion = 14;
 
 namespace {
 Fooyin::DbConnection::DbParams dbConnectionParams()
 {
     Fooyin::DbConnection::DbParams params;
-    params.type           = QStringLiteral("QSQLITE");
-    params.connectOptions = QStringLiteral("QSQLITE_OPEN_URI");
-    params.filePath       = Fooyin::Utils::sharePath() + QStringLiteral("/fooyin.db");
+    params.type           = u"QSQLITE"_s;
+    params.connectOptions = u"QSQLITE_OPEN_URI"_s;
+    params.filePath       = Fooyin::Utils::sharePath() + u"/fooyin.db"_s;
 
     return params;
 }
@@ -45,7 +47,7 @@ Fooyin::DbConnection::DbParams dbConnectionParams()
 namespace Fooyin {
 Database::Database(QObject* parent)
     : QObject{parent}
-    , m_dbPool(DbConnectionPool::create(dbConnectionParams(), QStringLiteral("fooyin")))
+    , m_dbPool(DbConnectionPool::create(dbConnectionParams(), u"fooyin"_s))
     , m_connectionHandler{m_dbPool}
     , m_status{Status::Ok}
     , m_previousRevision{0}
@@ -86,7 +88,7 @@ bool Database::initSchema()
     DbSchema schema{dbProvider};
     m_previousRevision = schema.currentVersion();
 
-    const auto upgradeResult = schema.upgradeDatabase(CurrentSchemaVersion, QStringLiteral("://dbschema.xml"));
+    const auto upgradeResult = schema.upgradeDatabase(CurrentSchemaVersion, u"://dbschema.xml"_s);
 
     switch(upgradeResult) {
         case(DbSchema::UpgradeResult::Success):

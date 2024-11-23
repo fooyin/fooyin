@@ -48,6 +48,8 @@
 
 #include <set>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 Fooyin::TrackList fetchAllTracks(QAbstractItemView* view)
 {
@@ -261,7 +263,7 @@ QString FilterWidget::name() const
 
 QString FilterWidget::layoutName() const
 {
-    return QStringLiteral("LibraryFilter");
+    return u"LibraryFilter"_s;
 }
 
 void FilterWidget::saveLayoutData(QJsonObject& layout)
@@ -273,32 +275,32 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
         QString colStr       = QString::number(column.id);
 
         if(alignment != Qt::AlignLeft) {
-            colStr += QStringLiteral(":") + QString::number(alignment.toInt());
+            colStr += u":"_s + QString::number(alignment.toInt());
         }
 
         columns.push_back(colStr);
     }
 
-    layout[u"Columns"]     = columns.join(QStringLiteral("|"));
-    layout[u"Display"]     = static_cast<int>(m_view->viewMode());
-    layout[u"Captions"]    = static_cast<int>(m_view->captionDisplay());
-    layout[u"Artwork"]     = static_cast<int>(m_model->coverType());
-    layout[u"ShowSummary"] = m_model->showSummary();
+    layout["Columns"_L1]     = columns.join(u"|"_s);
+    layout["Display"_L1]     = static_cast<int>(m_view->viewMode());
+    layout["Captions"_L1]    = static_cast<int>(m_view->captionDisplay());
+    layout["Artwork"_L1]     = static_cast<int>(m_model->coverType());
+    layout["ShowSummary"_L1] = m_model->showSummary();
 
     QByteArray state = m_header->saveHeaderState();
     state            = qCompress(state, 9);
 
-    layout[u"Group"] = m_group.name();
-    layout[u"Index"] = m_index;
-    layout[u"State"] = QString::fromUtf8(state.toBase64());
+    layout["Group"_L1] = m_group.name();
+    layout["Index"_L1] = m_index;
+    layout["State"_L1] = QString::fromUtf8(state.toBase64());
 }
 
 void FilterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"Columns")) {
+    if(layout.contains("Columns"_L1)) {
         m_columns.clear();
 
-        const QString columnData    = layout.value(u"Columns").toString();
+        const QString columnData    = layout.value("Columns"_L1).toString();
         const QStringList columnIds = columnData.split(u'|');
 
         for(int i{0}; const auto& columnId : columnIds) {
@@ -318,34 +320,34 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
         }
     }
 
-    if(layout.contains(u"Display")) {
-        m_view->setViewMode(static_cast<ExpandedTreeView::ViewMode>(layout.value(u"Display").toInt()));
+    if(layout.contains("Display"_L1)) {
+        m_view->setViewMode(static_cast<ExpandedTreeView::ViewMode>(layout.value("Display"_L1).toInt()));
     }
 
-    if(layout.contains(u"Captions")) {
-        updateCaptions(static_cast<ExpandedTreeView::CaptionDisplay>(layout.value(u"Captions").toInt()));
+    if(layout.contains("Captions"_L1)) {
+        updateCaptions(static_cast<ExpandedTreeView::CaptionDisplay>(layout.value("Captions"_L1).toInt()));
     }
 
-    if(layout.contains(u"Artwork")) {
-        m_model->setCoverType(static_cast<Track::Cover>(layout.value(u"Artwork").toInt()));
+    if(layout.contains("Artwork"_L1)) {
+        m_model->setCoverType(static_cast<Track::Cover>(layout.value("Artwork"_L1).toInt()));
     }
 
-    if(layout.contains(u"ShowSummary")) {
-        m_model->setShowSummary(layout.value(u"ShowSummary").toBool());
+    if(layout.contains("ShowSummary"_L1)) {
+        m_model->setShowSummary(layout.value("ShowSummary"_L1).toBool());
     }
 
-    if(layout.contains(u"Group")) {
-        m_group = Id{layout.value(u"Group").toString()};
+    if(layout.contains("Group"_L1)) {
+        m_group = Id{layout.value("Group"_L1).toString()};
     }
 
-    if(layout.contains(u"Index")) {
-        m_index = layout.value(u"Index").toInt();
+    if(layout.contains("Index"_L1)) {
+        m_index = layout.value("Index"_L1).toInt();
     }
 
     emit filterUpdated();
 
-    if(layout.contains(u"State")) {
-        const auto headerState = layout.value(u"State").toString().toUtf8();
+    if(layout.contains("State"_L1)) {
+        const auto headerState = layout.value("State"_L1).toString().toUtf8();
 
         if(!headerState.isEmpty()
 #if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)

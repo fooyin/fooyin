@@ -27,6 +27,8 @@
 #include <QColor>
 #include <QPalette>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::VuMeter {
 VuMeterSettings::VuMeterSettings(SettingsManager* settings)
     : m_settings{settings}
@@ -35,13 +37,13 @@ VuMeterSettings::VuMeterSettings(SettingsManager* settings)
 
     qRegisterMetaType<Fooyin::VuMeter::Colours>("Fooyin::VuMeter::Colours");
 
-    m_settings->createSetting<PeakHoldTime>(1.5, QStringLiteral("VuMeter/PeakHoldTime"));
-    m_settings->createSetting<FalloffTime>(13.0, QStringLiteral("VuMeter/FalloffTime"));
-    m_settings->createSetting<ChannelSpacing>(1, QStringLiteral("VuMeter/ChannelSpacing"));
-    m_settings->createSetting<BarSize>(0, QStringLiteral("VuMeter/BarSize"));
-    m_settings->createSetting<BarSpacing>(1, QStringLiteral("VuMeter/BarSpacing"));
-    m_settings->createSetting<BarSections>(1, QStringLiteral("VuMeter/BarSections"));
-    m_settings->createSetting<SectionSpacing>(1, QStringLiteral("VuMeter/SectionSpacing"));
-    m_settings->createSetting<MeterColours>(QVariant{}, QStringLiteral("VuMeter/Colours"));
+    m_settings->createSetting<PeakHoldTime>(1.5, u"VuMeter/PeakHoldTime"_s);
+    m_settings->createSetting<FalloffTime>(13.0, u"VuMeter/FalloffTime"_s);
+    m_settings->createSetting<ChannelSpacing>(1, u"VuMeter/ChannelSpacing"_s);
+    m_settings->createSetting<BarSize>(0, u"VuMeter/BarSize"_s);
+    m_settings->createSetting<BarSpacing>(1, u"VuMeter/BarSpacing"_s);
+    m_settings->createSetting<BarSections>(1, u"VuMeter/BarSections"_s);
+    m_settings->createSetting<SectionSpacing>(1, u"VuMeter/SectionSpacing"_s);
+    m_settings->createSetting<MeterColours>(QVariant{}, u"VuMeter/Colours"_s);
 }
 } // namespace Fooyin::VuMeter

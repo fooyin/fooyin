@@ -53,6 +53,8 @@ extern "C"
 
 Q_LOGGING_CATEGORY(REPLAYGAIN, "fy.ffmpegscanner")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto FrameFlags   = AV_BUFFERSRC_FLAG_KEEP_REF | AV_BUFFERSRC_FLAG_NO_CHECK_FORMAT | AV_BUFFERSRC_FLAG_PUSH;
 constexpr auto DecoderFlags = Fooyin::AudioDecoder::NoSeeking | Fooyin::AudioDecoder::NoLooping;
 
@@ -164,7 +166,7 @@ ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool true
 
     const auto sampleFmtName
         = std::string{av_get_sample_fmt_name(Fooyin::Utils::sampleFormat(sampleFmt, format.sampleFormatIsPlanar()))};
-    const auto args = QString{QStringLiteral("time_base=%1/%2:sample_rate=%2:sample_fmt=%3:channel_layout=0x%4")}
+    const auto args = QString{u"time_base=%1/%2:sample_rate=%2:sample_fmt=%3:channel_layout=0x%4"_s}
                           .arg(1)
                           .arg(sampleRate)
                           .arg(QString::fromStdString(sampleFmtName))
@@ -193,7 +195,7 @@ ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool true
     filter.filterOutput = outputs;
 
     AVFilterInOut* inputs   = nullptr;
-    const auto filterParams = QString{QStringLiteral("ebur128=peak=%1,anullsink")}.arg(truePeak ? u"true" : u"sample");
+    const auto filterParams = QString{u"ebur128=peak=%1,anullsink"_s}.arg(truePeak ? "true"_L1 : "sample"_L1);
     rc = avfilter_graph_parse_ptr(filterGraph, filterParams.toUtf8().constData(), &inputs, &outputs, nullptr);
     if(rc < 0) {
         Fooyin::Utils::printError(rc);

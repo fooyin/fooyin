@@ -29,6 +29,8 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/starrating.h>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto MultipleValuesPrefix = "<<multiple values>>";
 
 namespace Fooyin::TagEditor {
@@ -58,7 +60,7 @@ public:
 
     TrackList m_tracks;
 
-    QString m_defaultFieldtext{QStringLiteral("<input field name>")};
+    QString m_defaultFieldtext{u"<input field name>"_s};
     std::vector<TagEditorField> m_fields;
     int m_ratingRow{-1};
 
@@ -146,7 +148,7 @@ bool TagEditorModelPrivate::updateTrackMetadata(const TagEditorField& field, con
     float floatValue{-1};
 
     if(isList) {
-        listValue = value.toString().split(QStringLiteral(";"), Qt::SkipEmptyParts);
+        listValue = value.toString().split(u";"_s, Qt::SkipEmptyParts);
         std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
     }
     else if(isFloat) {
@@ -248,7 +250,7 @@ void TagEditorModel::autoNumberTracks()
     addMissingTag(trackTotalTag);
 
     auto& track = p->m_tags.at(trackTag);
-    if(track.setValue(trackNums.join(u"; "))) {
+    if(track.setValue(trackNums.join("; "_L1))) {
         track.setMultipleValues(total > 1);
         track.setSplitTrackValues(true);
         emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
@@ -263,9 +265,9 @@ void TagEditorModel::autoNumberTracks()
 void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues, bool match)
 {
     auto splitValues = [this](const QString& value) {
-        QStringList values = value.split(QStringLiteral("; "));
+        QStringList values = value.split(u"; "_s);
         values.resize(static_cast<qsizetype>(p->m_tracks.size()));
-        return values.join(u"; ").remove(QLatin1String{MultipleValuesPrefix}).trimmed();
+        return values.join("; "_L1).remove(QLatin1String{MultipleValuesPrefix}).trimmed();
     };
 
     auto updateItem = [&](TagEditorItem& item, const QString& value) {
@@ -315,8 +317,8 @@ bool TagEditorModel::haveOnlyStatChanges()
 {
     return std::ranges::all_of(
                p->m_tags,
-               [](const auto& tag) { return tag.first == u"Rating" || tag.second.status() == TagEditorItem::None; })
-        && p->m_tags.at(QStringLiteral("Rating")).status() == TagEditorItem::Changed;
+               [](const auto& tag) { return tag.first == "Rating"_L1 || tag.second.status() == TagEditorItem::None; })
+        && p->m_tags.at(u"Rating"_s).status() == TagEditorItem::Changed;
 }
 
 void TagEditorModel::applyChanges()
@@ -395,9 +397,9 @@ QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, in
 
     switch(section) {
         case(0):
-            return QStringLiteral("Name");
+            return u"Name"_s;
         case(1):
-            return QStringLiteral("Value");
+            return u"Value"_s;
         default:
             break;
     }
@@ -443,7 +445,7 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
                 return title;
             }
             if(!item->isSetField() && role != TagEditorItem::Title) {
-                const QString name = QStringLiteral("<") + title + QStringLiteral(">");
+                const QString name = u"<"_s + title + u">"_s;
                 return name;
             }
 

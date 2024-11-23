@@ -38,6 +38,8 @@
 #include <QHBoxLayout>
 #include <QMenu>
 
+using namespace Qt::StringLiterals;
+
 constexpr int IconSize = 50;
 
 namespace Fooyin {
@@ -281,18 +283,17 @@ QString StatusWidget::name() const
 
 QString StatusWidget::layoutName() const
 {
-    return QStringLiteral("StatusBar");
+    return u"StatusBar"_s;
 }
 
 QString StatusWidget::defaultPlayingScript()
 {
-    return QStringLiteral(
-        "[%codec% | ][%bitrate% kbps | ][%samplerate% Hz | ][%channels% | ]%playback_time%[ / %duration%]");
+    return u"[%codec% | ][%bitrate% kbps | ][%samplerate% Hz | ][%channels% | ]%playback_time%[ / %duration%]"_s;
 }
 
 QString StatusWidget::defaultSelectionScript()
 {
-    return QStringLiteral("[%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%]");
+    return u"[%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%]"_s;
 }
 
 void StatusWidget::showMessage(const QString& message)

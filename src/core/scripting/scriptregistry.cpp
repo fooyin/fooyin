@@ -36,6 +36,8 @@
 #include <QDateTime>
 #include <QDir>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 using NativeFunc          = std::function<QString(const QStringList&)>;
 using NativeVoidFunc      = std::function<QString()>;
@@ -103,23 +105,23 @@ QString trackChannels(const Fooyin::Track& track)
 {
     switch(track.channels()) {
         case(1):
-            return QStringLiteral("Mono");
+            return u"Mono"_s;
         case(2):
-            return QStringLiteral("Stereo");
+            return u"Stereo"_s;
         default:
-            return QStringLiteral("%1ch").arg(track.channels());
+            return u"%1ch"_s.arg(track.channels());
     }
 }
 
 QString formatGain(const float gain)
 {
-    return QStringLiteral("%1 dB").arg(gain);
+    return u"%1 dB"_s.arg(gain);
 }
 
 QString formatPeak(const float peak)
 {
     const double dbPeak = Fooyin::Audio::volumeToDb(static_cast<double>(peak));
-    return QStringLiteral("%1 dB").arg(dbPeak, 0, 'f', 2).prepend(dbPeak > 0 ? u"+" : u"");
+    return u"%1 dB"_s.arg(dbPeak, 0, 'f', 2).prepend(dbPeak > 0 ? "+"_L1 : ""_L1);
 }
 
 QString formatDateTime(const uint64_t ms)
@@ -169,24 +171,24 @@ ScriptRegistryPrivate::ScriptRegistryPrivate(LibraryManager* libraryManager, Pla
     addPlaybackVars();
     addLibraryVars();
 
-    m_funcs.emplace(QStringLiteral("info"), trackInfo);
-    m_funcs.emplace(QStringLiteral("meta"), trackMeta);
+    m_funcs.emplace(u"info"_s, trackInfo);
+    m_funcs.emplace(u"meta"_s, trackMeta);
 }
 
 void ScriptRegistryPrivate::addPlaybackVars()
 {
-    m_playbackVars[QStringLiteral("PLAYBACK_TIME")] = [this]() {
+    m_playbackVars[u"PLAYBACK_TIME"_s] = [this]() {
         return Utils::msToString(m_playerController ? m_playerController->currentPosition() : 0);
     };
-    m_playbackVars[QStringLiteral("PLAYBACK_TIME_s")] = [this]() {
+    m_playbackVars[u"PLAYBACK_TIME_s"_s] = [this]() {
         return QString::number(m_playerController ? m_playerController->currentPosition() / 1000 : 0);
     };
-    m_playbackVars[QStringLiteral("PLAYBACK_TIME_REMAINING")] = [this]() {
+    m_playbackVars[u"PLAYBACK_TIME_REMAINING"_s] = [this]() {
         return Utils::msToString(m_playerController ? m_playerController->currentTrack().duration()
                                                           - m_playerController->currentPosition()
                                                     : 0);
     };
-    m_playbackVars[QStringLiteral("PLAYBACK_TIME_REMAINING_S")] = [this]() {
+    m_playbackVars[u"PLAYBACK_TIME_REMAINING_S"_s] = [this]() {
         return QString::number(
             m_playerController
                 ? (m_playerController->currentTrack().duration() - m_playerController->currentPosition()) / 1000
@@ -200,19 +202,19 @@ void ScriptRegistryPrivate::addLibraryVars()
         return;
     }
 
-    m_libraryVars[QStringLiteral("LIBRARYNAME")] = [this](const Track& track) {
+    m_libraryVars[u"LIBRARYNAME"_s] = [this](const Track& track) {
         if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
             return library->name;
         }
         return QString{};
     };
-    m_libraryVars[QStringLiteral("LIBRARYPATH")] = [this](const Track& track) {
+    m_libraryVars[u"LIBRARYPATH"_s] = [this](const Track& track) {
         if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
             return library->path;
         }
         return QString{};
     };
-    m_libraryVars[QStringLiteral("RELATIVEPATH")] = [this](const Track& track) {
+    m_libraryVars[u"RELATIVEPATH"_s] = [this](const Track& track) {
         if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
             return QDir{library->path}.relativeFilePath(track.prettyFilepath());
         }
@@ -222,66 +224,66 @@ void ScriptRegistryPrivate::addLibraryVars()
 
 void ScriptRegistryPrivate::addDefaultFunctions()
 {
-    m_funcs[QStringLiteral("add")]  = Scripting::add;
-    m_funcs[QStringLiteral("sub")]  = Scripting::sub;
-    m_funcs[QStringLiteral("mul")]  = Scripting::mul;
-    m_funcs[QStringLiteral("div")]  = Scripting::div;
-    m_funcs[QStringLiteral("min")]  = Scripting::min;
-    m_funcs[QStringLiteral("max")]  = Scripting::max;
-    m_funcs[QStringLiteral("mod")]  = Scripting::mod;
-    m_funcs[QStringLiteral("rand")] = Scripting::rand;
+    m_funcs[u"add"_s]  = Scripting::add;
+    m_funcs[u"sub"_s]  = Scripting::sub;
+    m_funcs[u"mul"_s]  = Scripting::mul;
+    m_funcs[u"div"_s]  = Scripting::div;
+    m_funcs[u"min"_s]  = Scripting::min;
+    m_funcs[u"max"_s]  = Scripting::max;
+    m_funcs[u"mod"_s]  = Scripting::mod;
+    m_funcs[u"rand"_s] = Scripting::rand;
 
-    m_funcs[QStringLiteral("num")]            = Scripting::num;
-    m_funcs[QStringLiteral("replace")]        = Scripting::replace;
-    m_funcs[QStringLiteral("ascii")]          = Scripting::ascii;
-    m_funcs[QStringLiteral("slice")]          = Scripting::slice;
-    m_funcs[QStringLiteral("chop")]           = Scripting::chop;
-    m_funcs[QStringLiteral("left")]           = Scripting::left;
-    m_funcs[QStringLiteral("right")]          = Scripting::right;
-    m_funcs[QStringLiteral("insert")]         = Scripting::insert;
-    m_funcs[QStringLiteral("substr")]         = Scripting::substr;
-    m_funcs[QStringLiteral("split")]          = Scripting::split;
-    m_funcs[QStringLiteral("len")]            = Scripting::len;
-    m_funcs[QStringLiteral("longest")]        = Scripting::longest;
-    m_funcs[QStringLiteral("strcmp")]         = Scripting::strcmp;
-    m_funcs[QStringLiteral("stricmp")]        = Scripting::stricmp;
-    m_funcs[QStringLiteral("longer")]         = Scripting::longer;
-    m_funcs[QStringLiteral("sep")]            = Scripting::sep;
-    m_funcs[QStringLiteral("crlf")]           = Scripting::crlf;
-    m_funcs[QStringLiteral("tab")]            = Scripting::tab;
-    m_funcs[QStringLiteral("swapprefix")]     = Scripting::swapPrefix;
-    m_funcs[QStringLiteral("stripprefix")]    = Scripting::stripPrefix;
-    m_funcs[QStringLiteral("pad")]            = Scripting::pad;
-    m_funcs[QStringLiteral("padright")]       = Scripting::padRight;
-    m_funcs[QStringLiteral("repeat")]         = Scripting::repeat;
-    m_funcs[QStringLiteral("trim")]           = Scripting::trim;
-    m_funcs[QStringLiteral("lower")]          = Scripting::lower;
-    m_funcs[QStringLiteral("upper")]          = Scripting::upper;
-    m_funcs[QStringLiteral("abbr")]           = Scripting::abbr;
-    m_funcs[QStringLiteral("caps")]           = Scripting::caps;
-    m_funcs[QStringLiteral("directory")]      = Scripting::directory;
-    m_funcs[QStringLiteral("directory_path")] = Scripting::directoryPath;
-    m_funcs[QStringLiteral("elide_end")]      = Scripting::elide_end;
-    m_funcs[QStringLiteral("elide_mid")]      = Scripting::elide_mid;
-    m_funcs[QStringLiteral("ext")]            = Scripting::ext;
-    m_funcs[QStringLiteral("filename")]       = Scripting::filename;
-    m_funcs[QStringLiteral("progress")]       = Scripting::progress;
-    m_funcs[QStringLiteral("progress2")]      = Scripting::progress2;
+    m_funcs[u"num"_s]            = Scripting::num;
+    m_funcs[u"replace"_s]        = Scripting::replace;
+    m_funcs[u"ascii"_s]          = Scripting::ascii;
+    m_funcs[u"slice"_s]          = Scripting::slice;
+    m_funcs[u"chop"_s]           = Scripting::chop;
+    m_funcs[u"left"_s]           = Scripting::left;
+    m_funcs[u"right"_s]          = Scripting::right;
+    m_funcs[u"insert"_s]         = Scripting::insert;
+    m_funcs[u"substr"_s]         = Scripting::substr;
+    m_funcs[u"split"_s]          = Scripting::split;
+    m_funcs[u"len"_s]            = Scripting::len;
+    m_funcs[u"longest"_s]        = Scripting::longest;
+    m_funcs[u"strcmp"_s]         = Scripting::strcmp;
+    m_funcs[u"stricmp"_s]        = Scripting::stricmp;
+    m_funcs[u"longer"_s]         = Scripting::longer;
+    m_funcs[u"sep"_s]            = Scripting::sep;
+    m_funcs[u"crlf"_s]           = Scripting::crlf;
+    m_funcs[u"tab"_s]            = Scripting::tab;
+    m_funcs[u"swapprefix"_s]     = Scripting::swapPrefix;
+    m_funcs[u"stripprefix"_s]    = Scripting::stripPrefix;
+    m_funcs[u"pad"_s]            = Scripting::pad;
+    m_funcs[u"padright"_s]       = Scripting::padRight;
+    m_funcs[u"repeat"_s]         = Scripting::repeat;
+    m_funcs[u"trim"_s]           = Scripting::trim;
+    m_funcs[u"lower"_s]          = Scripting::lower;
+    m_funcs[u"upper"_s]          = Scripting::upper;
+    m_funcs[u"abbr"_s]           = Scripting::abbr;
+    m_funcs[u"caps"_s]           = Scripting::caps;
+    m_funcs[u"directory"_s]      = Scripting::directory;
+    m_funcs[u"directory_path"_s] = Scripting::directoryPath;
+    m_funcs[u"elide_end"_s]      = Scripting::elide_end;
+    m_funcs[u"elide_mid"_s]      = Scripting::elide_mid;
+    m_funcs[u"ext"_s]            = Scripting::ext;
+    m_funcs[u"filename"_s]       = Scripting::filename;
+    m_funcs[u"progress"_s]       = Scripting::progress;
+    m_funcs[u"progress2"_s]      = Scripting::progress2;
 
-    m_funcs[QStringLiteral("timems")] = Scripting::msToString;
+    m_funcs[u"timems"_s] = Scripting::msToString;
 
-    m_funcs[QStringLiteral("if")]        = Scripting::cif;
-    m_funcs[QStringLiteral("if2")]       = Scripting::cif2;
-    m_funcs[QStringLiteral("ifgreater")] = Scripting::ifgreater;
-    m_funcs[QStringLiteral("iflonger")]  = Scripting::iflonger;
-    m_funcs[QStringLiteral("ifequal")]   = Scripting::ifequal;
+    m_funcs[u"if"_s]        = Scripting::cif;
+    m_funcs[u"if2"_s]       = Scripting::cif2;
+    m_funcs[u"ifgreater"_s] = Scripting::ifgreater;
+    m_funcs[u"iflonger"_s]  = Scripting::iflonger;
+    m_funcs[u"ifequal"_s]   = Scripting::ifequal;
 }
 
 void ScriptRegistryPrivate::addDefaultListFuncs()
 {
-    m_listProperties[QStringLiteral("TRACKCOUNT")] = Scripting::trackCount;
-    m_listProperties[QStringLiteral("PLAYTIME")]   = Scripting::playtime;
-    m_listProperties[QStringLiteral("GENRES")]     = Scripting::genres;
+    m_listProperties[u"TRACKCOUNT"_s] = Scripting::trackCount;
+    m_listProperties[u"PLAYTIME"_s]   = Scripting::playtime;
+    m_listProperties[u"GENRES"_s]     = Scripting::genres;
 }
 
 void ScriptRegistryPrivate::addDefaultMetadata()
@@ -343,7 +345,7 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::CodecProfile)] = &Track::codecProfile;
     m_metadata[QString::fromLatin1(MetaData::Tool)]         = &Track::tool;
     m_metadata[QString::fromLatin1(MetaData::TagType)]      = [](const Track& track) {
-        return track.tagType(QStringLiteral(" | "));
+        return track.tagType(u" | "_s);
     };
     m_metadata[QString::fromLatin1(MetaData::Encoding)]  = &Track::encoding;
     m_metadata[QString::fromLatin1(MetaData::Channels)]  = trackChannels;

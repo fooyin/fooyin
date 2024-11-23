@@ -26,6 +26,8 @@
 #include <QJsonObject>
 #include <QLabel>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 Dummy::Dummy(SettingsManager* settings, QWidget* parent)
     : Dummy{{}, settings, parent}
@@ -67,20 +69,20 @@ QString Dummy::name() const
 
 QString Dummy::layoutName() const
 {
-    return QStringLiteral("Dummy");
+    return u"Dummy"_s;
 }
 
 void Dummy::saveLayoutData(QJsonObject& layout)
 {
     if(!m_missingName.isEmpty()) {
-        layout[u"MissingWidget"] = m_missingName;
+        layout["MissingWidget"_L1] = m_missingName;
     }
 }
 
 void Dummy::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"MissingWidget")) {
-        m_missingName = layout.value(u"MissingWidget").toString();
+    if(layout.contains("MissingWidget"_L1)) {
+        m_missingName = layout.value("MissingWidget"_L1).toString();
     }
 }
 
@@ -94,7 +96,7 @@ void Dummy::updateText()
     const bool isEditing = m_settings->value<Settings::Gui::LayoutEditing>();
 
     if(!m_missingName.isEmpty()) {
-        m_label->setText(tr("Missing Widget") + u":\n" + m_missingName);
+        m_label->setText(tr("Missing Widget") + ":\n"_L1 + m_missingName);
     }
     else if(isEditing) {
         m_label->setText(tr("Right-click to add a new widget"));

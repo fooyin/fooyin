@@ -21,6 +21,8 @@
 
 #include <QRegularExpression>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ScriptResult FileOpsRegistry::value(const QString& var, const Track& track) const
 {
@@ -32,8 +34,8 @@ ScriptResult FileOpsRegistry::value(const QString& var, const Track& track) cons
 
 QString FileOpsRegistry::replaceSeparators(const QString& input)
 {
-    static const QRegularExpression regex{QStringLiteral(R"([/\\])")};
+    static const QRegularExpression regex{uR"([/\\])"_s};
     QString output{input};
-    return output.replace(regex, QStringLiteral("-"));
+    return output.replace(regex, "-"_L1);
 }
 } // namespace Fooyin

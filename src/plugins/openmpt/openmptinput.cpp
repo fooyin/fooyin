@@ -28,6 +28,8 @@
 
 Q_LOGGING_CATEGORY(OPENMPT, "fy.openmpt")
 
+using namespace Qt::StringLiterals;
+
 // TODO: Make configurable
 constexpr auto SampleRate  = 44100;
 constexpr auto Channels    = 2;
@@ -218,28 +220,28 @@ bool OpenMptReader::readTrack(const AudioSource& /*source*/, Track& track)
             const QString tag   = QString::fromUtf8(key);
             const QString value = QString::fromUtf8(m_module->get_metadata(key));
 
-            if(tag == u"title" && track.title().isEmpty()) {
+            if(tag == "title"_L1 && track.title().isEmpty()) {
                 track.setTitle(value);
             }
-            else if(tag == u"album") {
+            else if(tag == "album"_L1) {
                 track.setAlbum(value);
             }
-            else if(tag == u"artist") {
+            else if(tag == "artist"_L1) {
                 track.setArtists({value});
             }
-            else if(tag == u"date") {
+            else if(tag == "date"_L1) {
                 track.setDate(value);
             }
-            else if(tag == u"year") {
+            else if(tag == "year"_L1) {
                 track.setYear(value.toInt());
             }
-            else if(tag == u"genre") {
+            else if(tag == "genre"_L1) {
                 track.setGenres({value});
             }
-            else if(tag == u"track number") {
+            else if(tag == "track number"_L1) {
                 track.setTrackNumber(value);
             }
-            else if(tag == u"comments") {
+            else if(tag == "comments"_L1) {
                 track.setComment(value);
             }
             else {
@@ -251,22 +253,21 @@ bool OpenMptReader::readTrack(const AudioSource& /*source*/, Track& track)
             for(auto it = names.cbegin(); it != names.cend(); ++it) {
                 if(!it->empty()) {
                     const int index = static_cast<int>(std::distance(names.cbegin(), it));
-                    track.addExtraTag(field + QStringLiteral("%1").arg(index, 2, 10, QLatin1Char('0')),
-                                      QString::fromUtf8(*it));
+                    track.addExtraTag(field + u"%1"_s.arg(index, 2, 10, QLatin1Char('0')), QString::fromUtf8(*it));
                 }
             }
         };
 
-        getModuleNames(QStringLiteral("CHAN"), m_module->get_channel_names());
-        getModuleNames(QStringLiteral("PATT"), m_module->get_pattern_names());
-        getModuleNames(QStringLiteral("INST"), m_module->get_instrument_names());
-        getModuleNames(QStringLiteral("SMPL"), m_module->get_sample_names());
+        getModuleNames(u"CHAN"_s, m_module->get_channel_names());
+        getModuleNames(u"PATT"_s, m_module->get_pattern_names());
+        getModuleNames(u"INST"_s, m_module->get_instrument_names());
+        getModuleNames(u"SMPL"_s, m_module->get_sample_names());
 
-        track.setExtraProperty(QStringLiteral("MOD_CHANNELS"), QString::number(m_module->get_num_channels()));
-        track.setExtraProperty(QStringLiteral("MOD_INSTRUMENTS"), QString::number(m_module->get_num_instruments()));
-        track.setExtraProperty(QStringLiteral("MOD_ORDERS"), QString::number(m_module->get_num_orders()));
-        track.setExtraProperty(QStringLiteral("MOD_PATTERNS"), QString::number(m_module->get_num_patterns()));
-        track.setExtraProperty(QStringLiteral("MOD_SAMPLES"), QString::number(m_module->get_num_samples()));
+        track.setExtraProperty(u"MOD_CHANNELS"_s, QString::number(m_module->get_num_channels()));
+        track.setExtraProperty(u"MOD_INSTRUMENTS"_s, QString::number(m_module->get_num_instruments()));
+        track.setExtraProperty(u"MOD_ORDERS"_s, QString::number(m_module->get_num_orders()));
+        track.setExtraProperty(u"MOD_PATTERNS"_s, QString::number(m_module->get_num_patterns()));
+        track.setExtraProperty(u"MOD_SAMPLES"_s, QString::number(m_module->get_num_samples()));
     }
     catch(...) {
         qCWarning(OPENMPT) << "Failed to open" << track.filepath();
@@ -276,7 +277,7 @@ bool OpenMptReader::readTrack(const AudioSource& /*source*/, Track& track)
     track.setSampleRate(SampleRate);
     track.setChannels(Channels);
     track.setBitDepth(32);
-    track.setEncoding(QStringLiteral("Synthesized"));
+    track.setEncoding(u"Synthesized"_s);
 
     return true;
 }

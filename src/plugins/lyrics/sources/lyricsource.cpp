@@ -29,6 +29,8 @@
 
 Q_LOGGING_CATEGORY(LYRICS, "fy.lyrics")
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Lyrics {
 LyricSource::LyricSource(NetworkAccessManager* network, SettingsManager* settings, int index, bool enabled,
                          QObject* parent)
@@ -107,8 +109,8 @@ QString LyricSource::toUtf8(QIODevice* file)
     }
 
     QString string = toUtf16(data);
-    string.replace(QLatin1String{"\n\n"}, QLatin1String{"\n"});
-    string.replace(u'\r', u'\n');
+    string.replace("\n\n"_L1, "\n"_L1);
+    string.replace('\r'_L1, '\n'_L1);
 
     return string;
 }
@@ -127,12 +129,12 @@ bool LyricSource::getJsonFromReply(QNetworkReply* reply, QJsonObject* obj)
             success = true;
         }
         else {
-            qCDebug(LYRICS) << QStringLiteral("Received HTTP code %1")
-                                   .arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+            qCDebug(LYRICS) << u"Received HTTP code %1"_s.arg(
+                reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
         }
     }
     else {
-        qCDebug(LYRICS) << QStringLiteral("%1 (%2)").arg(reply->errorString()).arg(reply->error());
+        qCDebug(LYRICS) << u"%1 (%2)"_s.arg(reply->errorString()).arg(reply->error());
     }
 
     if(reply->error() == QNetworkReply::NoError || reply->error() >= 200) {

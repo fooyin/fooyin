@@ -32,6 +32,8 @@
 
 #include <set>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class ActionManagerPrivate
 {
@@ -91,7 +93,7 @@ Command* ActionManagerPrivate::overridableAction(const Id& id)
 
 void ActionManagerPrivate::loadSetting(const Id& id, Command* command) const
 {
-    const QString key = QStringLiteral("KeyboardShortcuts/") + id.name();
+    const QString key = u"KeyboardShortcuts/"_s + id.name();
 
     if(m_settingsManager->fileContains(key)) {
         const QVariant var = m_settingsManager->fileValue(key);
@@ -217,7 +219,7 @@ void ActionManager::setMainWindow(QMainWindow* mainWindow)
 void ActionManager::saveSettings()
 {
     for(const auto& [_, command] : p->m_idCmdMap) {
-        const QString key = QStringLiteral("KeyboardShortcuts/") + command->id().name();
+        const QString key = u"KeyboardShortcuts/"_s + command->id().name();
 
         const ShortcutList commandShortcuts = command->shortcuts();
         const ShortcutList defaultShortcuts = command->defaultShortcuts();

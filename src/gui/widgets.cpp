@@ -79,6 +79,8 @@
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, PlaylistInteractor* playlistInteractor,
                  QObject* parent)
@@ -99,28 +101,27 @@ void Widgets::registerWidgets()
 {
     auto* provider = m_gui->widgetProvider();
 
-    provider->registerWidget(
-        QStringLiteral("Dummy"), [this]() { return new Dummy(m_settings, m_window); }, tr("Dummy"));
-    provider->setIsHidden(QStringLiteral("Dummy"), true);
+    provider->registerWidget(u"Dummy"_s, [this]() { return new Dummy(m_settings, m_window); }, tr("Dummy"));
+    provider->setIsHidden(u"Dummy"_s, true);
 
     provider->registerWidget(
-        QStringLiteral("SplitterVertical"),
+        u"SplitterVertical"_s,
         [this, provider]() { return new VerticalSplitterWidget(provider, m_settings, m_window); },
         tr("Splitter (Top/Bottom)"));
-    provider->setSubMenus(QStringLiteral("SplitterVertical"), {tr("Splitters")});
+    provider->setSubMenus(u"SplitterVertical"_s, {tr("Splitters")});
 
     provider->registerWidget(
-        QStringLiteral("SplitterHorizontal"),
+        u"SplitterHorizontal"_s,
         [this]() { return new HorizontalSplitterWidget(m_gui->widgetProvider(), m_settings, m_window); },
         tr("Splitter (Left/Right)"));
-    provider->setSubMenus(QStringLiteral("SplitterHorizontal"), {tr("Splitters")});
+    provider->setSubMenus(u"SplitterHorizontal"_s, {tr("Splitters")});
 
     provider->registerWidget(
-        QStringLiteral("PlaylistSwitcher"), [this]() { return new PlaylistBox(m_playlistController, m_window); },
+        u"PlaylistSwitcher"_s, [this]() { return new PlaylistBox(m_playlistController, m_window); },
         tr("Playlist Switcher"));
 
     provider->registerWidget(
-        QStringLiteral("PlaylistTabs"),
+        u"PlaylistTabs"_s,
         [this]() {
             auto* playlistTabs = new PlaylistTabs(m_gui->actionManager(), m_gui->widgetProvider(), m_playlistController,
                                                   m_settings, m_window);
@@ -131,29 +132,29 @@ void Widgets::registerWidgets()
             return playlistTabs;
         },
         tr("Playlist Tabs"));
-    provider->setSubMenus(QStringLiteral("PlaylistTabs"), {tr("Splitters")});
+    provider->setSubMenus(u"PlaylistTabs"_s, {tr("Splitters")});
 
     provider->registerWidget(
-        QStringLiteral("PlaylistOrganiser"),
+        u"PlaylistOrganiser"_s,
         [this]() { return new PlaylistOrganiser(m_gui->actionManager(), m_playlistInteractor, m_settings, m_window); },
         tr("Playlist Organiser"));
 
     provider->registerWidget(
-        QStringLiteral("PlaybackQueue"),
+        u"PlaybackQueue"_s,
         [this]() {
             return new QueueViewer(m_gui->actionManager(), m_playlistInteractor, m_core->audioLoader(), m_settings,
                                    m_window);
         },
         tr("Playback Queue"));
-    provider->setLimit(QStringLiteral("PlaybackQueue"), 1);
+    provider->setLimit(u"PlaybackQueue"_s, 1);
 
     provider->registerWidget(
-        QStringLiteral("TabStack"), [this, provider]() { return new TabStackWidget(provider, m_settings, m_window); },
+        u"TabStack"_s, [this, provider]() { return new TabStackWidget(provider, m_settings, m_window); },
         tr("Tab Stack"));
-    provider->setSubMenus(QStringLiteral("TabStack"), {tr("Splitters")});
+    provider->setSubMenus(u"TabStack"_s, {tr("Splitters")});
 
     provider->registerWidget(
-        QStringLiteral("LibraryTree"),
+        u"LibraryTree"_s,
         [this]() {
             return new LibraryTreeWidget(m_gui->actionManager(), m_playlistController, m_libraryTreeController, m_core,
                                          m_window);
@@ -161,35 +162,35 @@ void Widgets::registerWidgets()
         tr("Library Tree"));
 
     provider->registerWidget(
-        QStringLiteral("PlayerControls"),
+        u"PlayerControls"_s,
         [this]() {
             return new PlayerControl(m_gui->actionManager(), m_core->playerController(), m_settings, m_window);
         },
         tr("Player Controls"));
-    provider->setSubMenus(QStringLiteral("PlayerControls"), {tr("Controls")});
+    provider->setSubMenus(u"PlayerControls"_s, {tr("Controls")});
 
     provider->registerWidget(
-        QStringLiteral("PlaylistControls"),
+        u"PlaylistControls"_s,
         [this]() { return new PlaylistControl(m_core->playerController(), m_settings, m_window); },
         tr("Playlist Controls"));
-    provider->setSubMenus(QStringLiteral("PlaylistControls"), {tr("Controls")});
+    provider->setSubMenus(u"PlaylistControls"_s, {tr("Controls")});
 
     provider->registerWidget(
-        QStringLiteral("VolumeControls"),
-        [this]() { return new VolumeControl(m_gui->actionManager(), m_settings, m_window); }, tr("Volume Controls"));
-    provider->setSubMenus(QStringLiteral("VolumeControls"), {tr("Controls")});
+        u"VolumeControls"_s, [this]() { return new VolumeControl(m_gui->actionManager(), m_settings, m_window); },
+        tr("Volume Controls"));
+    provider->setSubMenus(u"VolumeControls"_s, {tr("Controls")});
 
     provider->registerWidget(
-        QStringLiteral("SeekBar"), [this]() { return new SeekBar(m_core->playerController(), m_settings, m_window); },
+        u"SeekBar"_s, [this]() { return new SeekBar(m_core->playerController(), m_settings, m_window); },
         tr("Seekbar"));
-    provider->setSubMenus(QStringLiteral("SeekBar"), {tr("Controls")});
+    provider->setSubMenus(u"SeekBar"_s, {tr("Controls")});
 
     provider->registerWidget(
-        QStringLiteral("SelectionInfo"), [this]() { return new InfoWidget(m_core, m_gui->trackSelection(), m_window); },
+        u"SelectionInfo"_s, [this]() { return new InfoWidget(m_core, m_gui->trackSelection(), m_window); },
         tr("Selection Info"));
 
     provider->registerWidget(
-        QStringLiteral("ArtworkPanel"),
+        u"ArtworkPanel"_s,
         [this]() {
             return new CoverWidget(m_core->playerController(), m_gui->trackSelection(), m_core->audioLoader(),
                                    m_settings, m_window);
@@ -197,18 +198,18 @@ void Widgets::registerWidgets()
         tr("Artwork Panel"));
 
     provider->registerWidget(
-        QStringLiteral("Playlist"),
+        u"Playlist"_s,
         [this]() {
             return new PlaylistWidget(m_gui->actionManager(), m_playlistInteractor, m_coverProvider, m_core,
                                       PlaylistWidget::Mode::Playlist, m_window);
         },
         tr("Playlist"));
-    provider->setLimit(QStringLiteral("Playlist"), 1);
+    provider->setLimit(u"Playlist"_s, 1);
 
-    provider->registerWidget(QStringLiteral("Spacer"), [this]() { return new Spacer(m_window); }, tr("Spacer"));
+    provider->registerWidget(u"Spacer"_s, [this]() { return new Spacer(m_window); }, tr("Spacer"));
 
     provider->registerWidget(
-        QStringLiteral("StatusBar"),
+        u"StatusBar"_s,
         [this]() {
             auto* statusWidget
                 = new StatusWidget(m_core->playerController(), m_gui->trackSelection(), m_settings, m_window);
@@ -216,19 +217,18 @@ void Widgets::registerWidgets()
             return statusWidget;
         },
         tr("Status Bar"));
-    provider->setLimit(QStringLiteral("StatusBar"), 1);
+    provider->setLimit(u"StatusBar"_s, 1);
 
     provider->registerWidget(
-        QStringLiteral("SearchBar"),
+        u"SearchBar"_s,
         [this]() {
             return new SearchWidget(m_gui->searchController(), m_gui->playlistController(), m_core->library(),
                                     m_settings, m_window);
         },
         tr("Search Bar"));
 
-    provider->registerWidget(
-        QStringLiteral("DirectoryBrowser"), [this]() { return createDirBrowser(); }, tr("Directory Browser"));
-    provider->setLimit(QStringLiteral("DirectoryBrowser"), 1);
+    provider->registerWidget(u"DirectoryBrowser"_s, [this]() { return createDirBrowser(); }, tr("Directory Browser"));
+    provider->setLimit(u"DirectoryBrowser"_s, 1);
 }
 
 void Widgets::registerPages()
@@ -282,11 +282,11 @@ void Widgets::registerFontEntries() const
     auto* themeReg = m_gui->themeRegistry();
 
     themeReg->registerFontEntry(tr("Default"), {});
-    themeReg->registerFontEntry(tr("Lists"), QStringLiteral("QAbstractItemView"));
-    themeReg->registerFontEntry(tr("Library Tree"), QStringLiteral("Fooyin::LibraryTreeView"));
-    themeReg->registerFontEntry(tr("Playlist"), QStringLiteral("Fooyin::PlaylistView"));
-    themeReg->registerFontEntry(tr("Status bar"), QStringLiteral("Fooyin::StatusLabel"));
-    themeReg->registerFontEntry(tr("Tabs"), QStringLiteral("Fooyin::EditableTabBar"));
+    themeReg->registerFontEntry(tr("Lists"), u"QAbstractItemView"_s);
+    themeReg->registerFontEntry(tr("Library Tree"), u"Fooyin::LibraryTreeView"_s);
+    themeReg->registerFontEntry(tr("Playlist"), u"Fooyin::PlaylistView"_s);
+    themeReg->registerFontEntry(tr("Status bar"), u"Fooyin::StatusLabel"_s);
+    themeReg->registerFontEntry(tr("Tabs"), u"Fooyin::EditableTabBar"_s);
 }
 
 FyWidget* Widgets::createDirBrowser()
@@ -330,7 +330,7 @@ void Widgets::showScanProgress(const ScanProgress& progress)
             break;
     }
 
-    scanText = QStringLiteral("%1: %2%").arg(scanText).arg(progress.percentage());
+    scanText = u"%1: %2%"_s.arg(scanText).arg(progress.percentage());
     StatusEvent::post(scanText);
 }
 } // namespace Fooyin

@@ -38,6 +38,8 @@
 #include <QPlainTextEdit>
 #include <QSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Lyrics {
 class LyricsGuiPageWidget : public SettingsPageWidget
 {
@@ -93,25 +95,25 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
     , m_topMargin{new QSpinBox(this)}
     , m_rightMargin{new QSpinBox(this)}
     , m_bottomMargin{new QSpinBox(this)}
-    , m_bgColour{new QCheckBox(tr("Background colour") + u":", this)}
+    , m_bgColour{new QCheckBox(tr("Background colour") + ":"_L1, this)}
     , m_bgColourBtn{new ColourButton(this)}
-    , m_lineColour{new QCheckBox(tr("Line colour") + u":", this)}
+    , m_lineColour{new QCheckBox(tr("Line colour") + ":"_L1, this)}
     , m_lineColourBtn{new ColourButton(this)}
-    , m_unplayedColour{new QCheckBox(tr("Unplayed line colour") + u":", this)}
+    , m_unplayedColour{new QCheckBox(tr("Unplayed line colour") + ":"_L1, this)}
     , m_unplayedColourBtn{new ColourButton(this)}
-    , m_playedColour{new QCheckBox(tr("Played line colour") + u":", this)}
+    , m_playedColour{new QCheckBox(tr("Played line colour") + ":"_L1, this)}
     , m_playedColourBtn{new ColourButton(this)}
-    , m_syncedLineColour{new QCheckBox(tr("Current line colour") + u":", this)}
+    , m_syncedLineColour{new QCheckBox(tr("Current line colour") + ":"_L1, this)}
     , m_syncedLineColourBtn{new ColourButton(this)}
-    , m_wordLineColour{new QCheckBox(tr("Current line colour") + u":", this)}
+    , m_wordLineColour{new QCheckBox(tr("Current line colour") + ":"_L1, this)}
     , m_wordLineColourBtn{new ColourButton(this)}
-    , m_wordColour{new QCheckBox(tr("Current word colour") + u":", this)}
+    , m_wordColour{new QCheckBox(tr("Current word colour") + ":"_L1, this)}
     , m_wordColourBtn{new ColourButton(this)}
-    , m_lineFont{new QCheckBox(tr("Current line font") + u":", this)}
+    , m_lineFont{new QCheckBox(tr("Current line font") + ":"_L1, this)}
     , m_lineFontBtn{new FontButton(this)}
-    , m_wordLineFont{new QCheckBox(tr("Current line font") + u":", this)}
+    , m_wordLineFont{new QCheckBox(tr("Current line font") + ":"_L1, this)}
     , m_wordLineFontBtn{new FontButton(this)}
-    , m_wordFont{new QCheckBox(tr("Current word font") + u":", this)}
+    , m_wordFont{new QCheckBox(tr("Current word font") + ":"_L1, this)}
     , m_wordFontBtn{new FontButton(this)}
 {
     auto* generalGroup  = new QGroupBox(tr("General"), this);
@@ -122,13 +124,13 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
     m_alignment->addItem(tr("Align to right"), Qt::AlignRight);
 
     m_lineSpacing->setRange(0, 100);
-    m_lineSpacing->setSuffix(QStringLiteral(" px"));
+    m_lineSpacing->setSuffix(u" px"_s);
 
     int row{0};
     generalLayout->addWidget(m_showScrollbar, row++, 0, 1, 2);
-    generalLayout->addWidget(new QLabel(tr("Line spacing") + u":", this), row, 0);
+    generalLayout->addWidget(new QLabel(tr("Line spacing") + ":"_L1, this), row, 0);
     generalLayout->addWidget(m_lineSpacing, row++, 1);
-    generalLayout->addWidget(new QLabel(tr("Alignment") + u":", this), row, 0);
+    generalLayout->addWidget(new QLabel(tr("Alignment") + ":"_L1, this), row, 0);
     generalLayout->addWidget(m_alignment, row++, 1);
     generalLayout->setColumnStretch(generalLayout->columnCount(), 1);
 
@@ -140,19 +142,19 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
     m_rightMargin->setRange(0, 100);
     m_bottomMargin->setRange(0, 100);
 
-    m_leftMargin->setSuffix(QStringLiteral(" px"));
-    m_topMargin->setSuffix(QStringLiteral(" px"));
-    m_rightMargin->setSuffix(QStringLiteral(" px"));
-    m_bottomMargin->setSuffix(QStringLiteral(" px"));
+    m_leftMargin->setSuffix(u" px"_s);
+    m_topMargin->setSuffix(u" px"_s);
+    m_rightMargin->setSuffix(u" px"_s);
+    m_bottomMargin->setSuffix(u" px"_s);
 
     row = 0;
-    marginsLayout->addWidget(new QLabel(tr("Left") + u":", this), row, 0);
+    marginsLayout->addWidget(new QLabel(tr("Left") + ":"_L1, this), row, 0);
     marginsLayout->addWidget(m_leftMargin, row, 1);
-    marginsLayout->addWidget(new QLabel(tr("Right") + u":", this), row, 2);
+    marginsLayout->addWidget(new QLabel(tr("Right") + ":"_L1, this), row, 2);
     marginsLayout->addWidget(m_rightMargin, row++, 3);
-    marginsLayout->addWidget(new QLabel(tr("Top") + u":", this), row, 0);
+    marginsLayout->addWidget(new QLabel(tr("Top") + ":"_L1, this), row, 0);
     marginsLayout->addWidget(m_topMargin, row, 1);
-    marginsLayout->addWidget(new QLabel(tr("Bottom") + u":", this), row, 2);
+    marginsLayout->addWidget(new QLabel(tr("Bottom") + ":"_L1, this), row, 2);
     marginsLayout->addWidget(m_bottomMargin, row, 3);
     marginsLayout->setColumnStretch(marginsLayout->columnCount(), 1);
 

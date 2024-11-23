@@ -36,6 +36,8 @@
 #include <QPushButton>
 #include <QRadioButton>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::WaveBar {
 class WaveBarSettingsPageWidget : public SettingsPageWidget
 {
@@ -98,31 +100,31 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
 
     m_cursorWidth->setMinimum(1);
     m_cursorWidth->setMaximum(20);
-    m_cursorWidth->setSuffix(QStringLiteral(" px"));
+    m_cursorWidth->setSuffix(u" px"_s);
 
     m_channelScale->setMinimum(0.0);
     m_channelScale->setMaximum(1.0);
     m_channelScale->setSingleStep(0.1);
-    m_channelScale->setPrefix(QStringLiteral("x"));
+    m_channelScale->setPrefix(u"x"_s);
 
     m_barWidth->setMinimum(1);
     m_barWidth->setMaximum(50);
     m_barWidth->setSingleStep(1);
-    m_barWidth->setSuffix(QStringLiteral(" px"));
+    m_barWidth->setSuffix(u" px"_s);
 
     m_barGap->setMinimum(0);
     m_barGap->setMaximum(50);
     m_barGap->setSingleStep(1);
-    m_barGap->setSuffix(QStringLiteral(" px"));
+    m_barGap->setSuffix(u" px"_s);
 
     m_centreGap->setMinimum(0);
     m_centreGap->setMaximum(10);
-    m_centreGap->setSuffix(QStringLiteral(" px"));
+    m_centreGap->setSuffix(u" px"_s);
 
     m_maxScale->setMinimum(0.0);
     m_maxScale->setMaximum(2.0);
     m_maxScale->setSingleStep(0.25);
-    m_maxScale->setPrefix(QStringLiteral("x"));
+    m_maxScale->setPrefix(u"x"_s);
 
     auto* modeGroup  = new QGroupBox(tr("Display"), this);
     auto* modeLayout = new QVBoxLayout(modeGroup);
@@ -149,7 +151,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* cursorGroupLayout = new QGridLayout(cursorGroup);
 
     cursorGroupLayout->addWidget(m_showCursor, 0, 0, 1, 2);
-    cursorGroupLayout->addWidget(new QLabel(tr("Cursor width") + QStringLiteral(":"), this), 1, 0);
+    cursorGroupLayout->addWidget(new QLabel(tr("Cursor width") + u":"_s, this), 1, 0);
     cursorGroupLayout->addWidget(m_cursorWidth, 1, 1);
     cursorGroupLayout->setColumnStretch(2, 1);
 
@@ -157,9 +159,9 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* scaleGroupLayout = new QGridLayout(scaleGroup);
 
     int row{0};
-    scaleGroupLayout->addWidget(new QLabel(tr("Channel scale") + QStringLiteral(":"), this), row, 0);
+    scaleGroupLayout->addWidget(new QLabel(tr("Channel scale") + u":"_s, this), row, 0);
     scaleGroupLayout->addWidget(m_channelScale, row++, 1);
-    scaleGroupLayout->addWidget(new QLabel(tr("Max scale") + QStringLiteral(":"), this), row, 0);
+    scaleGroupLayout->addWidget(new QLabel(tr("Max scale") + u":"_s, this), row, 0);
     scaleGroupLayout->addWidget(m_maxScale, row++, 1);
     scaleGroupLayout->setColumnStretch(2, 1);
 
@@ -167,11 +169,11 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* dimensionGroupLayout = new QGridLayout(dimensionGroup);
 
     row = 0;
-    dimensionGroupLayout->addWidget(new QLabel(tr("Bar width") + QStringLiteral(":"), this), row, 0);
+    dimensionGroupLayout->addWidget(new QLabel(tr("Bar width") + u":"_s, this), row, 0);
     dimensionGroupLayout->addWidget(m_barWidth, row++, 1);
-    dimensionGroupLayout->addWidget(new QLabel(tr("Bar gap") + QStringLiteral(":"), this), row, 0);
+    dimensionGroupLayout->addWidget(new QLabel(tr("Bar gap") + u":"_s, this), row, 0);
     dimensionGroupLayout->addWidget(m_barGap, row++, 1);
-    dimensionGroupLayout->addWidget(new QLabel(tr("Centre gap") + QStringLiteral(":"), this), row, 0);
+    dimensionGroupLayout->addWidget(new QLabel(tr("Centre gap") + u":"_s, this), row, 0);
     dimensionGroupLayout->addWidget(m_centreGap, row++, 1);
     dimensionGroupLayout->setColumnStretch(2, 1);
 
@@ -185,7 +187,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
         updateCacheSize();
     });
 
-    auto* numSamplesLabel = new QLabel(tr("Number of samples") + QStringLiteral(":"), this);
+    auto* numSamplesLabel = new QLabel(tr("Number of samples") + u":"_s, this);
     const QString numSamplesTip{tr("Number of samples (per channel) to use \n"
                                    "for waveform data. Higher values will result \n"
                                    "in a more accurate and detailed waveform at the \n"
@@ -303,7 +305,7 @@ void WaveBarSettingsPageWidget::updateCacheSize()
     const QFile cacheFile{cachePath()};
     const QString cacheSize = Utils::formatFileSize(cacheFile.size());
 
-    m_cacheSizeLabel->setText(tr("Disk cache usage") + QStringLiteral(": %1").arg(cacheSize));
+    m_cacheSizeLabel->setText(tr("Disk cache usage") + u": %1"_s.arg(cacheSize));
 }
 
 WaveBarSettingsPage::WaveBarSettingsPage(SettingsManager* settings)

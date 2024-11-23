@@ -31,6 +31,8 @@
 #include <QIcon>
 #include <QUrl>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 void showAboutDialog()
 {
@@ -50,25 +52,23 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
     auto* quickStart = new QAction(tr("&Quick start"), this);
     quickStart->setStatusTip(tr("Open the quick start guide"));
     QObject::connect(quickStart, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/quick-start/quick-start.html"));
+        QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/quick-start/quick-start.html"_s);
     });
 
     auto* scripting = new QAction(tr("&Scripting help"), this);
     scripting->setStatusTip(tr("Open the scripting documentation"));
-    QObject::connect(scripting, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/scripting/basics.html"));
-    });
+    QObject::connect(scripting, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/scripting/basics.html"_s); });
 
     auto* searching = new QAction(tr("S&earching help"), this);
     searching->setStatusTip(tr("Open the search documentation"));
-    QObject::connect(searching, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/searching/basics.html"));
-    });
+    QObject::connect(searching, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/searching/basics.html"_s); });
 
     auto* faq = new QAction(tr("&Frequently asked questions"), this);
     faq->setStatusTip(tr("Open the FAQ"));
     QObject::connect(faq, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(QStringLiteral("https://www.fooyin.org/faq")); });
+                     []() { QDesktopServices::openUrl(u"https://www.fooyin.org/faq"_s); });
 
     auto* about = new QAction(Utils::iconFromTheme(Constants::Icons::Fooyin), tr("&About"), this);
     about->setStatusTip(tr("Open the about dialog"));

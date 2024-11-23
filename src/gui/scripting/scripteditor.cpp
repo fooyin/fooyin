@@ -41,6 +41,7 @@
 #include <chrono>
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto TextChangeInterval = 1500ms;
@@ -138,20 +139,20 @@ void ScriptEditorPrivate::setupConnections()
 
 void ScriptEditorPrivate::setupPlaceholder()
 {
-    m_placeholderTrack.setFilePath(QDir::homePath() + u"/placeholder.flac");
-    m_placeholderTrack.setTitle(QStringLiteral("Title"));
-    m_placeholderTrack.setAlbum(QStringLiteral("Album"));
-    m_placeholderTrack.setAlbumArtists({QStringLiteral("Album Artist 1"), QStringLiteral("Album Artist 2")});
-    m_placeholderTrack.setArtists({QStringLiteral("Artist 1"), QStringLiteral("Artist 2")});
-    m_placeholderTrack.setDate(QStringLiteral("2024-08-24"));
-    m_placeholderTrack.setTrackNumber(QStringLiteral("1"));
-    m_placeholderTrack.setDiscNumber(QStringLiteral("1"));
+    m_placeholderTrack.setFilePath(QDir::homePath() + "/placeholder.flac"_L1);
+    m_placeholderTrack.setTitle(u"Title"_s);
+    m_placeholderTrack.setAlbum(u"Album"_s);
+    m_placeholderTrack.setAlbumArtists({u"Album Artist 1"_s, u"Album Artist 2"_s});
+    m_placeholderTrack.setArtists({u"Artist 1"_s, u"Artist 2"_s});
+    m_placeholderTrack.setDate(u"2024-08-24"_s);
+    m_placeholderTrack.setTrackNumber(u"1"_s);
+    m_placeholderTrack.setDiscNumber(u"1"_s);
     m_placeholderTrack.setBitDepth(16);
     m_placeholderTrack.setSampleRate(48000);
     m_placeholderTrack.setBitrate(850);
-    m_placeholderTrack.setComment(QStringLiteral("Comment"));
-    m_placeholderTrack.setComposers({QStringLiteral("Composer 1"), QStringLiteral("Composer 2")});
-    m_placeholderTrack.setPerformers({QStringLiteral("Performer 1"), QStringLiteral("Performer 2")});
+    m_placeholderTrack.setComment(u"Comment"_s);
+    m_placeholderTrack.setComposers({u"Composer 1"_s, u"Composer 2"_s});
+    m_placeholderTrack.setPerformers({u"Performer 1"_s, u"Performer 2"_s});
     m_placeholderTrack.setDuration(180000);
     m_placeholderTrack.setFileSize(34560000);
 }
@@ -218,14 +219,14 @@ void ScriptEditorPrivate::saveState()
 
     byteArray = qCompress(byteArray, 9);
 
-    m_settings.setValue(QLatin1String{DialogState}, byteArray);
+    m_settings.setValue(DialogState, byteArray);
 }
 
 void ScriptEditorPrivate::restoreState()
 {
-    QByteArray byteArray = m_settings.value(QLatin1String{DialogState}).toByteArray();
+    QByteArray byteArray = m_settings.value(DialogState).toByteArray();
 
-    static auto defaultScript = QStringLiteral("%track%. %title%");
+    static auto defaultScript = u"%track%. %title%"_s;
 
     if(byteArray.isEmpty()) {
         m_editor->setPlainText(defaultScript);

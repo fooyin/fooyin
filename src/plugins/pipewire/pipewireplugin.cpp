@@ -21,10 +21,12 @@
 
 #include "pipewireoutput.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Pipewire {
 QString PipeWirePlugin::name() const
 {
-    return QStringLiteral("PipeWire");
+    return u"PipeWire"_s;
 }
 
 OutputCreator PipeWirePlugin::creator() const

@@ -30,49 +30,47 @@
 #include <QPushButton>
 #include <QSysInfo>
 
+using namespace Qt::StringLiterals;
+
 constexpr int IconSize = 256;
 
 namespace {
 QString compilerVersion()
 {
 #if defined(Q_CC_CLANG)
-    return QStringLiteral("Clang ") + QString::number(__clang_major__) + QStringLiteral(".")
-         + QString::number(__clang_minor__);
+    return u"Clang "_s + QString::number(__clang_major__) + u"."_s + QString::number(__clang_minor__);
 #elif defined(Q_CC_GNU)
-    return QStringLiteral("GCC ") + QLatin1String(__VERSION__);
+    return u"GCC "_s + QLatin1String(__VERSION__);
 #elif defined(Q_CC_MSVC)
-    return QStringLiteral("MSVC ") + QString::number(_MSC_VER);
+    return u"MSVC "_s + QString::number(_MSC_VER);
 #endif
-    return QStringLiteral("<unknown compiler>");
+    return u"<unknown compiler>"_s;
 }
 
 QString copyright()
 {
-    return QString{
-        QStringLiteral("Copyright © 2024, Luke Taylor. All rights reserved.<br/>"
-                       "<br/>"
-                       "%1 is free software released under GPL. The source code is available on %2<br/>"
-                       "<br/>"
-                       "You should have received a copy of the GNU General Public License along with this program.  If "
-                       "not, see "
-                       "%3")}
-        .arg(u"fooyin", u"<a href=\"https://github.com/fooyin/fooyin\">GitHub</a>.",
-             u"<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>.");
+    return u"Copyright © 2024, Luke Taylor. All rights reserved.<br/>"
+           "<br/>"
+           "%1 is free software released under GPL. The source code is available on %2<br/>"
+           "<br/>"
+           "You should have received a copy of the GNU General Public License along with this program. If "
+           "not, see "
+           "%3"_s.arg("fooyin"_L1, "<a href=\"_L1https://github.com/fooyin/fooyin\">GitHub</a>."_L1,
+                      "<a href=\"_L1http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>."_L1);
 }
 
 QString qtVersion()
 {
-    return QStringLiteral("Based on Qt %1 (%2, %3)")
-        .arg(QString::fromLatin1(QT_VERSION_STR), compilerVersion(), QSysInfo::buildCpuArchitecture());
+    return u"Based on Qt %1 (%2, %3)"_s.arg(QString::fromLatin1(QT_VERSION_STR), compilerVersion(),
+                                            QSysInfo::buildCpuArchitecture());
 }
 
 QString description()
 {
-    return QStringLiteral("<h3>%1</h3>"
-                          "Version: %2<br/>"
-                          "%3<br/>"
-                          "<br/>")
-        .arg(u"fooyin", QCoreApplication::applicationVersion(), qtVersion());
+    return u"<h3>%1</h3>"
+           "Version: %2<br/>"
+           "%3<br/>"
+           "<br/>"_s.arg("fooyin"_L1, QCoreApplication::applicationVersion(), qtVersion());
 }
 } // namespace
 
@@ -80,7 +78,7 @@ namespace Fooyin {
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog{parent}
 {
-    setWindowTitle(tr("About %1").arg(u"fooyin"));
+    setWindowTitle(tr("About %1").arg("fooyin"_L1));
     auto* layout = new QGridLayout(this);
     layout->setSizeConstraint(QLayout::SetFixedSize);
 

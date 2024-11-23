@@ -28,6 +28,8 @@
 
 Q_LOGGING_CATEGORY(GME, "fy.gme")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto SampleRate = 44100;
 constexpr auto Bps        = 16;
 constexpr auto BufferLen  = 1024;
@@ -49,7 +51,7 @@ QString findM3u(const QString& filepath)
     const QFileInfo info{filepath};
     const QDir dir{info.absolutePath()};
 
-    const auto files = dir.entryInfoList({info.completeBaseName() + QStringLiteral(".m3u")}, QDir::Files);
+    const auto files = dir.entryInfoList({info.completeBaseName() + u".m3u"_s}, QDir::Files);
     if(files.isEmpty()) {
         return {};
     }
@@ -67,8 +69,8 @@ uint64_t getDuration(const gme_info_t* info, Fooyin::AudioDecoder::DecoderOption
     using namespace Fooyin::Gme;
 
     const Fooyin::FySettings settings;
-    const int maxLength = settings.value(QLatin1String{MaxLength}, DefaultMaxLength).toInt();
-    int loopCount       = settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt();
+    const int maxLength = settings.value(MaxLength, DefaultMaxLength).toInt();
+    int loopCount       = settings.value(LoopCount, DefaultLoopCount).toInt();
 
     if(options & AudioDecoder::NoLooping) {
         loopCount = 1;
@@ -90,8 +92,7 @@ uint64_t getDuration(const gme_info_t* info, Fooyin::AudioDecoder::DecoderOption
 QStringList supportedExtensions()
 {
     static const QStringList extensions
-        = {QStringLiteral("ay"),  QStringLiteral("gbs"),  QStringLiteral("hes"), QStringLiteral("kss"),
-           QStringLiteral("nsf"), QStringLiteral("nsfe"), QStringLiteral("sap"), QStringLiteral("spc")};
+        = {u"ay"_s, u"gbs"_s, u"hes"_s, u"kss"_s, u"nsf"_s, u"nsfe"_s, u"sap"_s, u"spc"_s};
     return extensions;
 }
 } // namespace
@@ -191,13 +192,13 @@ AudioBuffer GmeDecoder::readBuffer(size_t /*bytes*/)
         return {};
     }
 
-    const int loopCount = m_settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt();
+    const int loopCount = m_settings.value(LoopCount, DefaultLoopCount).toInt();
     if(m_loopLength > 0 && !(m_options & NoInfiniteLooping) && loopCount == 0) {
         gme_set_fade(m_emu.get(), -1);
     }
     else {
 #if defined(GME_VERSION) && GME_VERSION >= 0x000604
-        const int fadeLength = m_settings.value(QLatin1String{FadeLength}, DefaultFadeLength).toInt();
+        const int fadeLength = m_settings.value(FadeLength, DefaultFadeLength).toInt();
         gme_set_fade_msecs(m_emu.get(), m_duration - fadeLength, fadeLength);
 #else
         gme_set_fade(m_emu.get(), m_duration - 8000);
@@ -266,7 +267,7 @@ bool GmeReader::readTrack(const AudioSource& source, Track& track)
 {
     if(track.isInArchive()) {
         const QFileInfo fileInfo{track.pathInArchive()};
-        const QString m3uPath = fileInfo.dir().relativeFilePath(fileInfo.completeBaseName() + QStringLiteral(".m3u"));
+        const QString m3uPath = fileInfo.dir().relativeFilePath(fileInfo.completeBaseName() + u".m3u"_s);
         auto m3uEntry         = source.archiveReader->entry(m3uPath);
         if(m3uEntry) {
             const auto m3uData = m3uEntry->readAll();
@@ -297,7 +298,7 @@ bool GmeReader::readTrack(const AudioSource& source, Track& track)
     track.setDuration(getDuration(info.get()));
     track.setSampleRate(SampleRate);
     track.setBitDepth(Bps);
-    track.setEncoding(QStringLiteral("Synthesized"));
+    track.setEncoding(u"Synthesized"_s);
 
     if(*info->song) {
         track.setTitle(QString::fromUtf8(info->song));
@@ -312,13 +313,13 @@ bool GmeReader::readTrack(const AudioSource& source, Track& track)
         track.setAlbum({QString::fromUtf8(info->game)});
     }
     if(*info->system) {
-        track.addExtraTag(QStringLiteral("SYSTEM"), {QString::fromUtf8(info->system)});
+        track.addExtraTag(u"SYSTEM"_s, {QString::fromUtf8(info->system)});
     }
     if(*info->copyright) {
-        track.addExtraTag(QStringLiteral("COPYRIGHT"), {QString::fromUtf8(info->copyright)});
+        track.addExtraTag(u"COPYRIGHT"_s, {QString::fromUtf8(info->copyright)});
     }
     if(*info->comment) {
-        track.addExtraTag(QStringLiteral("COMMENT"), {QString::fromUtf8(info->comment)});
+        track.addExtraTag(u"COMMENT"_s, {QString::fromUtf8(info->comment)});
     }
 
     return true;

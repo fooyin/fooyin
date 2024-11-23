@@ -28,6 +28,7 @@
 Q_LOGGING_CATEGORY(SDL, "fy.sdl")
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto EventInterval = 200ms;
@@ -76,7 +77,7 @@ namespace Fooyin::Sdl {
 SdlOutput::SdlOutput()
     : m_bufferSize{8192}
     , m_initialised{false}
-    , m_device{QStringLiteral("default")}
+    , m_device{u"default"_s}
     , m_volume{1.0}
 { }
 
@@ -92,7 +93,7 @@ bool SdlOutput::init(const AudioFormat& format)
     m_desiredSpec.samples  = m_bufferSize;
     m_desiredSpec.callback = nullptr;
 
-    if(m_device == QStringLiteral("default")) {
+    if(m_device == u"default"_s) {
         m_audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &m_desiredSpec, &m_obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
     }
     else {
@@ -182,7 +183,7 @@ OutputDevices SdlOutput::getAllDevices(bool isCurrentOutput)
         SDL_Init(SDL_INIT_AUDIO);
     }
 
-    devices.emplace_back(QStringLiteral("default"), QStringLiteral("Default"));
+    devices.emplace_back(u"default"_s, u"Default"_s);
 
     const int num = SDL_GetNumAudioDevices(0);
     for(int i = 0; i < num; ++i) {

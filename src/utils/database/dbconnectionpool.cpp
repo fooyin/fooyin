@@ -24,11 +24,13 @@
 
 Q_LOGGING_CATEGORY(DB_POOL, "fy.db")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 bool updatePragmas(Fooyin::DbConnection* connection)
 {
     QSqlQuery foreignKeys{connection->db()};
-    if(!foreignKeys.exec(QStringLiteral("PRAGMA foreign_keys = ON;"))) {
+    if(!foreignKeys.exec(u"PRAGMA foreign_keys = ON;"_s)) {
         return false;
     }
 
@@ -67,7 +69,7 @@ bool DbConnectionPool::createThreadConnection()
     }
 
     const int connectionIndex = m_connectionCount.fetch_add(1, std::memory_order_acquire) + 1;
-    const auto connectionName = QStringLiteral("%1-%2").arg(m_prototype.name()).arg(connectionIndex);
+    const auto connectionName = u"%1-%2"_s.arg(m_prototype.name()).arg(connectionIndex);
     auto connection           = std::make_unique<DbConnection>(m_prototype, connectionName);
 
     if(!connection->open()) {

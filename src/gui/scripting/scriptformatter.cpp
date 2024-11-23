@@ -28,6 +28,8 @@
 
 #include <stack>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class ScriptFormatterPrivate
 {
@@ -100,16 +102,16 @@ void ScriptFormatterPrivate::error(const QString& message)
 
 void ScriptFormatterPrivate::errorAt(const ScriptScanner::Token& token, const QString& message)
 {
-    QString errorMsg = QStringLiteral("[%1] Error").arg(token.position);
+    QString errorMsg = u"[%1] Error"_s.arg(token.position);
 
     if(token.type == ScriptScanner::TokEos) {
-        errorMsg += QStringLiteral(" at end of string");
+        errorMsg += u" at end of string"_s;
     }
     else {
-        errorMsg += QStringLiteral(": '") + token.value + QStringLiteral("'");
+        errorMsg += u": '"_s + token.value + u"'"_s;
     }
 
-    errorMsg += QStringLiteral(" (%1)").arg(message);
+    errorMsg += u" (%1)"_s.arg(message);
 
     ScriptError currentError;
     currentError.value    = token.value;
@@ -207,10 +209,10 @@ void ScriptFormatterPrivate::processFormat(const QString& func, const QString& o
         m_registry.format(m_currentBlock.format, func, option);
     }
     else {
-        error(QStringLiteral("Format option not found"));
+        error(u"Format option not found"_s);
     }
 
-    consume(ScriptScanner::TokRightAngle, QStringLiteral("Expected '>' after expression"));
+    consume(ScriptScanner::TokRightAngle, u"Expected '>' after expression"_s);
 
     while(m_current.type != ScriptScanner::TokEos
           && (m_current.type != ScriptScanner::TokLeftAngle
@@ -295,7 +297,7 @@ RichText ScriptFormatter::evaluate(const QString& input)
         p->expression();
     }
 
-    p->consume(ScriptScanner::TokEos, QStringLiteral("Expected end of expression"));
+    p->consume(ScriptScanner::TokEos, u"Expected end of expression"_s);
 
     if(!p->m_currentBlock.text.isEmpty()) {
         p->m_formatResult.emplace_back(p->m_currentBlock);

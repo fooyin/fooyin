@@ -33,6 +33,8 @@
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Lyrics {
 void LyricsPlugin::initialise(const CorePluginContext& context)
 {
@@ -52,11 +54,11 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider = context.widgetProvider;
 
     m_widgetProvider->registerWidget(
-        QStringLiteral("Lyrics"),
+        u"Lyrics"_s,
         [this]() { return new LyricsWidget(m_playerController, m_lyricsFinder, m_lyricsSaver, m_settings); },
         tr("Lyrics"));
-    m_widgetProvider->setLimit(QStringLiteral("Lyrics"), 1);
-    context.themeRegistry->registerFontEntry(tr("Lyrics"), QStringLiteral("Fooyin::Lyrics::LyricsArea"));
+    m_widgetProvider->setLimit(u"Lyrics"_s, 1);
+    context.themeRegistry->registerFontEntry(tr("Lyrics"), u"Fooyin::Lyrics::LyricsArea"_s);
 
     new LyricsGeneralPage(m_settings, this);
     new LyricsGuiPage(m_settings, this);

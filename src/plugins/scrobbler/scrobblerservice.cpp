@@ -42,6 +42,8 @@
 
 Q_LOGGING_CATEGORY(SCROBBLER, "fy.scrobbler")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto MinScrobbleDelay        = 5000;
 constexpr auto MinScrobbleDelayOnError = 30000;
 
@@ -78,7 +80,7 @@ QString ScrobblerService::username() const
 void ScrobblerService::initialise()
 {
     if(!m_cache) {
-        m_cache = new ScrobblerCache(Utils::cachePath() + u"/" + name().toLower() + u".cache", this);
+        m_cache = new ScrobblerCache(Utils::cachePath() + "/"_L1 + name().toLower() + ".cache"_L1, this);
     }
 }
 
@@ -96,9 +98,9 @@ void ScrobblerService::authenticate()
     QUrl url{authUrl()};
     url.setQuery(query);
 
-    const QString messageTitle    = tr("%1 Authentication").arg(name());
-    const QString messageSubtitle = tr("Open url in web browser?")
-                                  + QStringLiteral("<br /><br /><a href=\"%1\">%1</a><br />").arg(url.toString());
+    const QString messageTitle = tr("%1 Authentication").arg(name());
+    const QString messageSubtitle
+        = tr("Open url in web browser?") + u"<br /><br /><a href=\"%1\">%1</a><br />"_s.arg(url.toString());
 
     const QPointer<QMessageBox> message
         = new QMessageBox(QMessageBox::Information, messageTitle, messageSubtitle, QMessageBox::Cancel);

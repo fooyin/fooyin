@@ -34,6 +34,8 @@
 #include <QListView>
 #include <QPlainTextEdit>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Lyrics {
 class LyricsSourcesPageWidget : public SettingsPageWidget
 {
@@ -77,13 +79,12 @@ LyricsSourcesPageWidget::LyricsSourcesPageWidget(LyricsFinder* lyricsFinder, Set
     auto* layout = new QGridLayout(this);
 
     int row{0};
-    layout->addWidget(new QLabel(tr("Lyrics sources") + u":", this), row++, 0);
+    layout->addWidget(new QLabel(tr("Lyrics sources") + ":"_L1, this), row++, 0);
     layout->addWidget(m_sourceList, row++, 0);
-    layout->addWidget(new QLabel(QStringLiteral("🛈 ") + tr("Lyrics will be searched for in the above order."), this),
-                      row++, 0);
-    layout->addWidget(new QLabel(tr("Metadata tags") + u":", this), row++, 0);
+    layout->addWidget(new QLabel(u"🛈 "_s + tr("Lyrics will be searched for in the above order."), this), row++, 0);
+    layout->addWidget(new QLabel(tr("Metadata tags") + ":"_L1, this), row++, 0);
     layout->addWidget(m_lyricTags, row++, 0);
-    layout->addWidget(new QLabel(tr("Local files") + u":", this), row++, 0);
+    layout->addWidget(new QLabel(tr("Local files") + ":"_L1, this), row++, 0);
     layout->addWidget(m_lyricPaths, row++, 0);
 }
 
@@ -93,7 +94,7 @@ void LyricsSourcesPageWidget::load()
 
     m_lyricTags->setText(m_settings->value<Settings::Lyrics::SearchTags>().join(u';'));
     const auto paths = m_settings->value<Settings::Lyrics::Paths>();
-    m_lyricPaths->setPlainText(paths.join(QStringLiteral("\n")));
+    m_lyricPaths->setPlainText(paths.join(u"\n"_s));
 }
 
 void LyricsSourcesPageWidget::apply()

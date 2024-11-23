@@ -29,12 +29,14 @@
 #include <QUrl>
 #include <QUrlQuery>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto ApiUrl = "https://lrclib.net/api/get";
 
 namespace Fooyin::Lyrics {
 QString LrcLibLyrics::name() const
 {
-    return QStringLiteral("LRCLIB");
+    return u"LRCLIB"_s;
 }
 
 void LrcLibLyrics::search(const SearchParams& params)
@@ -44,16 +46,16 @@ void LrcLibLyrics::search(const SearchParams& params)
     QUrl url{QString::fromLatin1(ApiUrl)};
 
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(encode(QStringLiteral("track_name")), encode(params.title));
-    urlQuery.addQueryItem(encode(QStringLiteral("artist_name")), encode(params.artist));
-    urlQuery.addQueryItem(encode(QStringLiteral("album_name")), encode(params.album));
-    urlQuery.addQueryItem(encode(QStringLiteral("duration")), encode(QString::number(params.track.duration() / 1000)));
+    urlQuery.addQueryItem(encode(u"track_name"_s), encode(params.title));
+    urlQuery.addQueryItem(encode(u"artist_name"_s), encode(params.artist));
+    urlQuery.addQueryItem(encode(u"album_name"_s), encode(params.album));
+    urlQuery.addQueryItem(encode(u"duration"_s), encode(QString::number(params.track.duration() / 1000)));
     url.setQuery(urlQuery);
 
     QNetworkRequest req{url};
-    req.setRawHeader("User-Agent", QStringLiteral("fooyin v%1 (https://www.fooyin.org)")
-                                       .arg(settings()->value<Settings::Core::Version>())
-                                       .toUtf8());
+    req.setRawHeader(
+        "User-Agent",
+        u"fooyin v%1 (https://www.fooyin.org)"_s.arg(settings()->value<Settings::Core::Version>()).toUtf8());
 
     qCDebug(LYRICS) << "Sending request" << url.toString();
 
@@ -68,22 +70,22 @@ void LrcLibLyrics::handleLyricReply()
         resetReply();
 
         LyricData data;
-        QString lyrics = obj.value(u"syncedLyrics").toString();
+        QString lyrics = obj.value("syncedLyrics"_L1).toString();
         if(!lyrics.isEmpty()) {
             data.data = lyrics;
         }
         else {
-            lyrics = obj.value(u"plainLyrics").toString();
+            lyrics = obj.value("plainLyrics"_L1).toString();
             if(!lyrics.isEmpty()) {
                 data.data = lyrics;
             }
         }
 
         if(!data.data.isEmpty()) {
-            data.title    = obj.value(u"trackName").toString();
-            data.album    = obj.value(u"albumName").toString();
-            data.artist   = obj.value(u"artistName").toString();
-            data.duration = obj.value(u"duration").toInteger();
+            data.title    = obj.value("trackName"_L1).toString();
+            data.album    = obj.value("albumName"_L1).toString();
+            data.artist   = obj.value("artistName"_L1).toString();
+            data.duration = obj.value("duration"_L1).toInteger();
         }
 
         emit searchResult({data});

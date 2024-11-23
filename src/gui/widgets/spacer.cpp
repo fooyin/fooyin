@@ -19,6 +19,8 @@
 
 #include "spacer.h"
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 Spacer::Spacer(QWidget* parent)
     : FyWidget{parent}
@@ -34,7 +36,7 @@ QString Spacer::name() const
 
 QString Spacer::layoutName() const
 {
-    return QStringLiteral("Spacer");
+    return u"Spacer"_s;
 }
 } // namespace Fooyin
 

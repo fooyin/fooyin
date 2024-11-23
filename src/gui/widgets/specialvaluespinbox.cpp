@@ -22,6 +22,8 @@
 #include <QLineEdit>
 #include <QStyleOptionSpinBox>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 QString SpecialValueSpinBox::specialValue(int val)
 {
@@ -69,7 +71,7 @@ QSize SpecialValueSpinBox::sizeHint() const
         width = std::max(width, fm.horizontalAdvance(text));
 
         for(const auto& [_, specialText] : m_specialValues) {
-            text  = specialText + fixedContent + u"   ";
+            text  = specialText + fixedContent + "   "_L1;
             width = std::max(width, fm.horizontalAdvance(text));
         }
 
@@ -105,7 +107,7 @@ QSize SpecialValueSpinBox::minimumSizeHint() const
         width = std::max(width, fm.horizontalAdvance(text));
 
         for(const auto& [_, specialText] : m_specialValues) {
-            text  = specialText + fixedContent + u"   ";
+            text  = specialText + fixedContent + "   "_L1;
             width = std::max(width, fm.horizontalAdvance(text));
         }
 
@@ -207,7 +209,7 @@ QSize SpecialValueDoubleSpinBox::sizeHint() const
         width = std::max(width, fm.horizontalAdvance(text));
 
         for(const auto& [_, specialText] : m_specialValues) {
-            text  = specialText + fixedContent + u"   ";
+            text  = specialText + fixedContent + "   "_L1;
             width = std::max(width, fm.horizontalAdvance(text));
         }
 
@@ -243,7 +245,7 @@ QSize SpecialValueDoubleSpinBox::minimumSizeHint() const
         width = std::max(width, fm.horizontalAdvance(text));
 
         for(const auto& [_, specialText] : m_specialValues) {
-            text  = specialText + fixedContent + u"   ";
+            text  = specialText + fixedContent + "   "_L1;
             width = std::max(width, fm.horizontalAdvance(text));
         }
 

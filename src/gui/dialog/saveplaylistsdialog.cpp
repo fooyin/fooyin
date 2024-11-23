@@ -38,6 +38,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 SavePlaylistsDialog::SavePlaylistsDialog(Application* core, QWidget* parent)
     : QDialog{parent}
@@ -49,7 +51,7 @@ SavePlaylistsDialog::SavePlaylistsDialog(Application* core, QWidget* parent)
         m_formats->addItem(ext);
     }
 
-    auto* formatLabel = new QLabel(tr("Playlist file format") + u":", this);
+    auto* formatLabel = new QLabel(tr("Playlist file format") + ":"_L1, this);
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
@@ -66,7 +68,7 @@ void SavePlaylistsDialog::accept()
     FyStateSettings stateSettings;
 
     QString dir{QDir::homePath()};
-    if(const auto lastPath = stateSettings.value(QLatin1String{Settings::Gui::Internal::LastFilePath}).toString();
+    if(const auto lastPath = stateSettings.value(Settings::Gui::Internal::LastFilePath).toString();
        !lastPath.isEmpty()) {
         dir = lastPath;
     }
@@ -80,7 +82,7 @@ void SavePlaylistsDialog::accept()
         return;
     }
 
-    stateSettings.setValue(QLatin1String{Settings::Gui::Internal::LastFilePath}, saveDir);
+    stateSettings.setValue(Settings::Gui::Internal::LastFilePath, saveDir);
 
     const QString extension = m_formats->currentText();
     if(extension.isEmpty()) {
@@ -102,7 +104,7 @@ void SavePlaylistsDialog::accept()
             continue;
         }
 
-        const QString filepath = QStringLiteral("%1/%2.%3").arg(saveDir, playlist->name(), extension);
+        const QString filepath = u"%1/%2.%3"_s.arg(saveDir, playlist->name(), extension);
         QFile playlistFile{QDir::cleanPath(filepath)};
         if(!playlistFile.open(QIODevice::WriteOnly)) {
             qCWarning(log) << "Could not open playlist file" << filepath

@@ -86,14 +86,14 @@ void LyricsFinder::saveState()
         stream << source->name() << source->index() << source->enabled();
     }
 
-    settings.setValue(QLatin1String{SourceState}, data);
+    settings.setValue(SourceState, data);
 }
 
 void LyricsFinder::restoreState()
 {
     const FySettings settings;
 
-    QByteArray data = settings.value(QLatin1String{SourceState}, {}).toByteArray();
+    QByteArray data = settings.value(SourceState, {}).toByteArray();
     QDataStream stream{&data, QIODevice::ReadOnly};
 
     qsizetype size{0};

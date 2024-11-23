@@ -38,6 +38,8 @@
 #include <QScrollBar>
 #include <QSortFilterProxyModel>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 class InfoFilterModel : public QSortFilterProxyModel
 {
@@ -142,23 +144,23 @@ QString InfoWidget::name() const
 
 QString InfoWidget::layoutName() const
 {
-    return QStringLiteral("SelectionInfo");
+    return u"SelectionInfo"_s;
 }
 
 void InfoWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"Options"] = static_cast<int>(m_model->options());
-    layout[u"State"]   = QString::fromUtf8(m_view->header()->saveState().toBase64());
+    layout["Options"_L1] = static_cast<int>(m_model->options());
+    layout["State"_L1]   = QString::fromUtf8(m_view->header()->saveState().toBase64());
 }
 
 void InfoWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"Options")) {
-        const auto options = static_cast<InfoItem::Options>(layout.value(u"Options").toInt());
+    if(layout.contains("Options"_L1)) {
+        const auto options = static_cast<InfoItem::Options>(layout.value("Options"_L1).toInt());
         m_model->setOptions(options);
     }
-    if(layout.contains(u"State")) {
-        const auto state = QByteArray::fromBase64(layout[u"State"].toString().toUtf8());
+    if(layout.contains("State"_L1)) {
+        const auto state = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
         m_view->header()->restoreState(state);
     }
 }

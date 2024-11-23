@@ -19,6 +19,8 @@
 
 #include "tageditorfieldregistry.h"
 
+using namespace Qt::StringLiterals;
+
 constexpr auto TagFieldSetting = "TagEditor/Fields";
 
 namespace Fooyin::TagEditor {
@@ -33,27 +35,26 @@ TagEditorFieldRegistry::TagEditorFieldRegistry(SettingsManager* settings, QObjec
 
     loadItems();
 
-    if(settings->fileValue(QLatin1String{TagFieldSetting}).isNull()) {
+    if(settings->fileValue(TagFieldSetting).isNull()) {
         loadDefaultFields();
     }
 }
 
 void TagEditorFieldRegistry::loadDefaultFields()
 {
-    addDefaultItem({.name = tr("Artist Name"), .scriptField = QStringLiteral("artist"), .multivalue = true}, true);
-    addDefaultItem({.name = tr("Track Title"), .scriptField = QStringLiteral("title")}, true);
-    addDefaultItem({.name = tr("Album Title"), .scriptField = QStringLiteral("album")}, true);
-    addDefaultItem({.name = tr("Date"), .scriptField = QStringLiteral("date")}, true);
-    addDefaultItem({.name = tr("Genre"), .scriptField = QStringLiteral("genre"), .multivalue = true}, true);
-    addDefaultItem({.name = tr("Composer"), .scriptField = QStringLiteral("composer"), .multivalue = true}, true);
-    addDefaultItem({.name = tr("Performer"), .scriptField = QStringLiteral("performer"), .multivalue = true}, true);
-    addDefaultItem({.name = tr("Album Artist"), .scriptField = QStringLiteral("albumartist"), .multivalue = true},
-                   true);
-    addDefaultItem({.name = tr("Track Number"), .scriptField = QStringLiteral("track")}, true);
-    addDefaultItem({.name = tr("Total Tracks"), .scriptField = QStringLiteral("tracktotal")}, true);
-    addDefaultItem({.name = tr("Disc Number"), .scriptField = QStringLiteral("disc")}, true);
-    addDefaultItem({.name = tr("Total Discs"), .scriptField = QStringLiteral("disctotal")}, true);
-    addDefaultItem({.name = tr("Comment"), .scriptField = QStringLiteral("comment")}, true);
-    addDefaultItem({.name = tr("Rating"), .scriptField = QStringLiteral("rating_editor")}, true);
+    addDefaultItem({.name = tr("Artist Name"), .scriptField = u"artist"_s, .multivalue = true}, true);
+    addDefaultItem({.name = tr("Track Title"), .scriptField = u"title"_s}, true);
+    addDefaultItem({.name = tr("Album Title"), .scriptField = u"album"_s}, true);
+    addDefaultItem({.name = tr("Date"), .scriptField = u"date"_s}, true);
+    addDefaultItem({.name = tr("Genre"), .scriptField = u"genre"_s, .multivalue = true}, true);
+    addDefaultItem({.name = tr("Composer"), .scriptField = u"composer"_s, .multivalue = true}, true);
+    addDefaultItem({.name = tr("Performer"), .scriptField = u"performer"_s, .multivalue = true}, true);
+    addDefaultItem({.name = tr("Album Artist"), .scriptField = u"albumartist"_s, .multivalue = true}, true);
+    addDefaultItem({.name = tr("Track Number"), .scriptField = u"track"_s}, true);
+    addDefaultItem({.name = tr("Total Tracks"), .scriptField = u"tracktotal"_s}, true);
+    addDefaultItem({.name = tr("Disc Number"), .scriptField = u"disc"_s}, true);
+    addDefaultItem({.name = tr("Total Discs"), .scriptField = u"disctotal"_s}, true);
+    addDefaultItem({.name = tr("Comment"), .scriptField = u"comment"_s}, true);
+    addDefaultItem({.name = tr("Rating"), .scriptField = u"rating_editor"_s}, true);
 }
 } // namespace Fooyin::TagEditor

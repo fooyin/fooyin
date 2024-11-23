@@ -31,6 +31,8 @@
 
 Q_LOGGING_CATEGORY(WIDGET_PROV, "fy.widgetprovider")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 struct FactoryWidget
 {
@@ -253,6 +255,6 @@ void WidgetProvider::setupSplitWidgetMenu(EditableLayout* layout, QMenu* menu, W
                        [this, layout, container, widgetId](const QString& key) {
                            p->m_layoutCommands->push(new SplitWidgetCommand(layout, this, container, key, widgetId));
                        },
-                       {QStringLiteral("Splitters")});
+                       {u"Splitters"_s});
 }
 } // namespace Fooyin

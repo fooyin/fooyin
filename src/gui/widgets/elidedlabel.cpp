@@ -23,6 +23,8 @@
 
 #include <utility>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ElidedLabel::ElidedLabel(QWidget* parent)
     : ElidedLabel{{}, Qt::ElideRight, parent}
@@ -71,7 +73,7 @@ QSize ElidedLabel::sizeHint() const
 QSize ElidedLabel::minimumSizeHint() const
 {
     const QFontMetrics fm{fontMetrics()};
-    const QSize size{fm.horizontalAdvance(m_text.left(2) + QStringLiteral("…")), QLabel::sizeHint().height()};
+    const QSize size{fm.horizontalAdvance(m_text.left(2) + u"…"_s), QLabel::sizeHint().height()};
     return size;
 }
 
@@ -88,7 +90,7 @@ void ElidedLabel::elideText(int width)
 
     QString elidedText = fm.elidedText(m_text, m_elideMode, width - (margin() * 2) - indent());
 
-    if(elidedText == u"…") {
+    if(elidedText == "…"_L1) {
         elidedText = m_text.at(0);
     }
 

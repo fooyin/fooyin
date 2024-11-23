@@ -46,6 +46,8 @@
 
 Q_LOGGING_CATEGORY(COV_PROV, "fy.coverprovider")
 
+using namespace Qt::StringLiterals;
+
 constexpr auto MaxSize = 1024;
 
 // Used to keep track of tracks without artwork so we don't query the filesystem more than necessary
@@ -56,18 +58,17 @@ using Fooyin::CoverProvider;
 
 QString generateCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type)
 {
-    return Fooyin::Utils::generateHash(QStringLiteral("FyCover") + QString::number(static_cast<int>(type)),
-                                       track.albumHash());
+    return Fooyin::Utils::generateHash(u"FyCover"_s + QString::number(static_cast<int>(type)), track.albumHash());
 }
 
 QString generateThumbCoverKey(const QString& key, int size)
 {
-    return Fooyin::Utils::generateHash(QStringLiteral("Thumb|%1|%2").arg(key).arg(size));
+    return Fooyin::Utils::generateHash(u"Thumb|%1|%2"_s.arg(key).arg(size));
 }
 
 QString coverThumbnailPath(const QString& key)
 {
-    return Fooyin::Gui::coverPath() + key + QStringLiteral(".jpg");
+    return Fooyin::Gui::coverPath() + key + u".jpg"_s;
 }
 
 void saveThumbnail(const QImage& cover, const QString& key)
@@ -234,7 +235,7 @@ QImage loadImageFromDirectory(CoverLoader& loader)
         return {};
     }
 
-    return readImage(dirPath, loader.size, QStringLiteral("directory"));
+    return readImage(dirPath, loader.size, u"directory"_s);
 }
 
 QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath)
@@ -262,7 +263,7 @@ CoverLoader loadCoverImage(CoverLoader loader)
 
     // First check disk cache
     if(result.isThumb && QFileInfo::exists(cachePath)) {
-        result.cover = readImage(cachePath, loader.size, QStringLiteral("cached"));
+        result.cover = readImage(cachePath, loader.size, u"cached"_s);
     }
 
     // Then check directory paths

@@ -31,6 +31,8 @@
 #include <QDateTime>
 #include <QDebug>
 
+using namespace Qt::StringLiterals;
+
 using TokenType = Fooyin::ScriptScanner::TokenType;
 
 namespace {
@@ -306,16 +308,16 @@ void ScriptParserPrivate::errorAtCurrent(const QString& message)
 
 void ScriptParserPrivate::errorAt(const ScriptScanner::Token& token, const QString& message)
 {
-    QString errorMsg = QStringLiteral("[%1] Error").arg(token.position);
+    QString errorMsg = u"[%1] Error"_s.arg(token.position);
 
     if(token.type == TokenType::TokEos) {
-        errorMsg += QStringLiteral(" at end of string");
+        errorMsg += u" at end of string"_s;
     }
     else {
-        errorMsg += QStringLiteral(": '") + token.value + QStringLiteral("'");
+        errorMsg += u": '"_s + token.value + u"'"_s;
     }
 
-    errorMsg += QStringLiteral(" (%1)").arg(message);
+    errorMsg += u" (%1)"_s.arg(message);
 
     ScriptError currentError;
     currentError.value    = token.value;
@@ -424,7 +426,7 @@ Expression ScriptParserPrivate::quote()
     }
 
     expr.value = val;
-    consume(TokenType::TokQuote, QObject::tr("Expected %1 to close quote").arg(u"'\"'"));
+    consume(TokenType::TokQuote, QObject::tr("Expected %1 to close quote").arg("'\'"_L1));
     return expr;
 }
 
@@ -439,7 +441,7 @@ Expression ScriptParserPrivate::variable()
         advance();
         expr.type = Expr::VariableList;
         value     = m_previous.value.toLower();
-        consume(TokenType::TokRightAngle, QObject::tr("Expected %1 to close variable list").arg(u"'>'"));
+        consume(TokenType::TokRightAngle, QObject::tr("Expected %1 to close variable list").arg("'>'"_L1));
     }
     else {
         expr.type = Expr::Variable;
@@ -450,7 +452,7 @@ Expression ScriptParserPrivate::variable()
     }
 
     expr.value = value;
-    consume(TokenType::TokVar, QObject::tr("Expected %1 to close variable").arg(u"'%'"));
+    consume(TokenType::TokVar, QObject::tr("Expected %1 to close variable").arg("'%'"_L1));
     return expr;
 }
 
@@ -459,7 +461,7 @@ Expression ScriptParserPrivate::function()
     advance();
 
     if(m_previous.type != TokenType::TokLiteral) {
-        error(QStringLiteral("Expected function name"));
+        error(u"Expected function name"_s);
     }
 
     Expression expr{Expr::Function};
@@ -467,10 +469,10 @@ Expression ScriptParserPrivate::function()
     funcExpr.name = m_previous.value.toLower();
 
     if(!m_registry->isFunction(funcExpr.name)) {
-        error(QStringLiteral("Function not found"));
+        error(u"Function not found"_s);
     }
 
-    consume(TokenType::TokLeftParen, QObject::tr("Expected %1 after function name").arg(u"'('"));
+    consume(TokenType::TokLeftParen, QObject::tr("Expected %1 after function name").arg("'('"_L1));
 
     if(!currentToken(TokenType::TokRightParen)) {
         funcExpr.args.emplace_back(functionArgs());
@@ -480,7 +482,7 @@ Expression ScriptParserPrivate::function()
     }
 
     expr.value = funcExpr;
-    consume(TokenType::TokRightParen, QObject::tr("Expected %1 at end of function").arg(u"')'"));
+    consume(TokenType::TokRightParen, QObject::tr("Expected %1 at end of function").arg("')'"_L1));
     return expr;
 }
 
@@ -514,7 +516,7 @@ Expression ScriptParserPrivate::conditional()
     }
 
     expr.value = condExpr;
-    consume(TokenType::TokRightSquare, QObject::tr("Expected %1 to close conditional").arg(u"']'"));
+    consume(TokenType::TokRightSquare, QObject::tr("Expected %1 to close conditional").arg("']'"_L1));
     return expr;
 }
 
@@ -541,14 +543,14 @@ Expression ScriptParserPrivate::group()
         const auto& firstArg = args.front();
         if(firstArg.type == Expr::Literal || firstArg.type == Expr::QuotedLiteral) {
             expr.type  = firstArg.type;
-            expr.value = QStringLiteral("(%1)").arg(std::get<QString>(firstArg.value));
-            consume(TokenType::TokRightParen, QObject::tr("Expected %1 to close group").arg(u"')'"));
+            expr.value = u"(%1)"_s.arg(std::get<QString>(firstArg.value));
+            consume(TokenType::TokRightParen, QObject::tr("Expected %1 to close group").arg("')'"_L1));
             return expr;
         }
     }
 
     expr.value = args;
-    consume(TokenType::TokRightParen, QObject::tr("Expected %1 to close group").arg(u"')'"));
+    consume(TokenType::TokRightParen, QObject::tr("Expected %1 to close group").arg("')'"_L1));
     return expr;
 }
 
@@ -778,12 +780,12 @@ Expression ScriptParserPrivate::sort()
     else if(currentToken(TokenType::TokAscending)) {
         advance();
         expr.type = Expr::SortAscending;
-        consume(TokenType::TokBy, QObject::tr("Expected %1 after %2").arg(u"'BY'", u"'ASCENDING'"));
+        consume(TokenType::TokBy, QObject::tr("Expected %1 after %2").arg("'BY'"_L1, "'ASCENDING'"_L1));
     }
     else if(currentToken(TokenType::TokDescending)) {
         advance();
         expr.type = Expr::SortDescending;
-        consume(TokenType::TokBy, QObject::tr("Expected %1 after %2").arg(u"'BY'", u"'DESCENDING'"));
+        consume(TokenType::TokBy, QObject::tr("Expected %1 after %2").arg("'BY'"_L1, "'DESCENDING'"_L1));
     }
 
     while(!currentToken(TokenType::TokLimit) && !currentToken(TokenType::TokEos)) {
@@ -890,7 +892,7 @@ ScriptResult ScriptParserPrivate::evalVariable(const Expression& exp, const auto
     }
 
     if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
-        result.value = result.value.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
+        result.value = result.value.replace(QLatin1String{Constants::UnitSeparator}, u", "_s);
     }
 
     return result;
@@ -920,7 +922,7 @@ ScriptResult ScriptParserPrivate::evalVariableRaw(const Expression& exp, const a
     }
 
     if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
-        result.value = result.value.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
+        result.value = result.value.replace(QLatin1String{Constants::UnitSeparator}, u", "_s);
     }
 
     return result;

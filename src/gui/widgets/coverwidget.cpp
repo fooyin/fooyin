@@ -39,6 +39,7 @@
 #include <QTimerEvent>
 
 using namespace std::chrono_literals;
+using namespace Qt::StringLiterals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto ResizeInterval = 5ms;
@@ -85,26 +86,26 @@ QString CoverWidget::name() const
 
 QString CoverWidget::layoutName() const
 {
-    return QStringLiteral("ArtworkPanel");
+    return u"ArtworkPanel"_s;
 }
 
 void CoverWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[u"CoverType"]       = static_cast<int>(m_coverType);
-    layout[u"CoverAlignment"]  = static_cast<int>(m_coverAlignment);
-    layout[u"KeepAspectRatio"] = m_keepAspectRatio;
+    layout["CoverType"_L1]       = static_cast<int>(m_coverType);
+    layout["CoverAlignment"_L1]  = static_cast<int>(m_coverAlignment);
+    layout["KeepAspectRatio"_L1] = m_keepAspectRatio;
 }
 
 void CoverWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(u"CoverType")) {
-        m_coverType = static_cast<Track::Cover>(layout.value(u"CoverType").toInt());
+    if(layout.contains("CoverType"_L1)) {
+        m_coverType = static_cast<Track::Cover>(layout.value("CoverType"_L1).toInt());
     }
-    if(layout.contains(u"CoverAlignment")) {
-        m_coverAlignment = static_cast<Qt::Alignment>(layout.value(u"CoverAlignment").toInt());
+    if(layout.contains("CoverAlignment"_L1)) {
+        m_coverAlignment = static_cast<Qt::Alignment>(layout.value("CoverAlignment"_L1).toInt());
     }
-    if(layout.contains(u"KeepAspectRatio")) {
-        m_keepAspectRatio = layout.value(u"KeepAspectRatio").toBool();
+    if(layout.contains("KeepAspectRatio"_L1)) {
+        m_keepAspectRatio = layout.value("KeepAspectRatio"_L1).toBool();
     }
 }
 

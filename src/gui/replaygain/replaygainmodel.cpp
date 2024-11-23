@@ -21,6 +21,8 @@
 
 #include <core/constants.h>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto HeaderFontDelta = 2;
 
 namespace Fooyin {
@@ -165,7 +167,7 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
     if(item->isSummary()) {
         if(column == 1) {
             if(item->multipleValues()) {
-                return QStringLiteral("<<multiple>>");
+                return u"<<multiple>>"_s;
             }
 
             QString value;
@@ -193,14 +195,14 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
                 return {};
             }
 
-            return (isEdit || isPeak) ? value : QStringLiteral("%1 dB").arg(value);
+            return (isEdit || isPeak) ? value : u"%1 dB"_s.arg(value);
         }
         return {};
     }
 
     if(column == 1) {
         if(item->multipleValues()) {
-            return QStringLiteral("<<multiple values>>");
+            return u"<<multiple values>>"_s;
         }
 
         const float trackGain = item->trackGain();
@@ -209,7 +211,7 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
             return {};
         }
 
-        return isEdit ? value : QStringLiteral("%1 dB").arg(value).prepend(trackGain > 0 ? u"+" : u"");
+        return isEdit ? value : u"%1 dB"_s.arg(value).prepend(trackGain > 0 ? "+"_L1 : ""_L1);
     }
 
     if(column == 2) {
@@ -222,7 +224,7 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
         if(value.isEmpty()) {
             return {};
         }
-        return isEdit ? value : QStringLiteral("%1 dB").arg(value).prepend(albumGain > 0 ? u"+" : u"");
+        return isEdit ? value : u"%1 dB"_s.arg(value).prepend(albumGain > 0 ? "+"_L1 : ""_L1);
     }
 
     if(column == 4) {
@@ -325,7 +327,7 @@ void ReplayGainModel::populate(const RGInfoData& data)
     for(const auto& [parentKey, children] : data.parents) {
         ReplayGainItem* parent{nullptr};
 
-        if(parentKey == u"Root") {
+        if(parentKey == "Root"_L1) {
             parent = rootItem();
         }
         else if(m_nodes.contains(parentKey)) {
@@ -350,15 +352,15 @@ void ReplayGainModel::populate(const RGInfoData& data)
 
 void ReplayGainModel::updateSummary()
 {
-    if(!m_nodes.contains(QStringLiteral("Summary"))) {
+    if(!m_nodes.contains(u"Summary"_s)) {
         return;
     }
-    if(!m_nodes.contains(QStringLiteral("Details"))) {
+    if(!m_nodes.contains(u"Details"_s)) {
         return;
     }
 
-    auto& summary           = m_nodes.at(QStringLiteral("Summary"));
-    auto& parent            = m_nodes.at(QStringLiteral("Details"));
+    auto& summary           = m_nodes.at(u"Summary"_s);
+    auto& parent            = m_nodes.at(u"Details"_s);
     const auto summaryItems = summary.children();
     const auto children     = parent.children();
 
