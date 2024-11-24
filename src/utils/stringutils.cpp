@@ -225,6 +225,7 @@ int levenshteinDistance(const QString& first, const QString& second, Qt::CaseSen
     if(firstLength > secondLength) {
         std::swap(a, b);
         std::swap(firstLength, secondLength);
+        std::swap(aChar, bChar);
     }
 
     std::vector<int> col(secondLength + 1, 0);
