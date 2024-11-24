@@ -86,7 +86,9 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
 
 void AudioRenderer::init(const Track& track, const AudioFormat& format)
 {
-    const auto prevFormat    = std::exchange(m_format, format);
+    const auto prevFormat = std::exchange(m_format, format);
+    const bool isGapless  = m_settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format;
+
     m_currentTrack           = track;
     m_currentBufferResampled = false;
     m_bufferPrefilled        = false;
@@ -97,7 +99,7 @@ void AudioRenderer::init(const Track& track, const AudioFormat& format)
         emit initialised(false);
     }
 
-    if(m_audioOutput->initialised()) {
+    if(!isGapless && m_audioOutput->initialised()) {
         m_audioOutput->uninit();
     }
 
@@ -105,7 +107,7 @@ void AudioRenderer::init(const Track& track, const AudioFormat& format)
         buffer = Audio::convert(buffer, m_format);
     }
 
-    const bool success = initOutput();
+    const bool success = (isGapless && resetResampler()) || initOutput();
 
     // Align offset in case format was changed
     alignBufferOffset(m_currentBufferOffset, prevFormat.bytesPerFrame(), m_format.bytesPerFrame());

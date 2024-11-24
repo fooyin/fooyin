@@ -180,8 +180,11 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
         emit trackChanged(m_currentTrack);
     }
 
-    updateFormat(format.value(), [this, track](bool success) {
+    m_format = format.value();
+
+    const auto finaliseTrack = [this, track](const bool success) {
         if(!success) {
+            m_format = {};
             updateState(PlaybackState::Error);
             updateTrackStatus(TrackStatus::NoTrack);
         }
@@ -208,7 +211,10 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
                 }
             }
         }
-    });
+    };
+
+    QObject::connect(&m_renderer, &AudioRenderer::initialised, this, finaliseTrack, Qt::SingleShotConnection);
+    QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
 }
 
 void AudioPlaybackEngine::prepareNextTrack(const Track& track)
@@ -645,28 +651,6 @@ void AudioPlaybackEngine::setupDuration()
     m_endPosition   = m_startPosition + m_duration;
     m_lastPosition  = m_startPosition;
 };
-
-void AudioPlaybackEngine::updateFormat(const AudioFormat& nextFormat, const std::function<void(bool)>& callback)
-{
-    const auto prevFormat = std::exchange(m_format, nextFormat);
-
-    if(m_settings->value<Settings::Core::GaplessPlayback>() && prevFormat == m_format
-       && playbackState() != PlaybackState::Paused && m_outputState != AudioOutput::State::Error) {
-        callback(true);
-        return;
-    }
-
-    QObject::connect(
-        &m_renderer, &AudioRenderer::initialised, this,
-        [this, callback](bool success) {
-            if(!success) {
-                m_format = {};
-            }
-            callback(success);
-        },
-        Qt::SingleShotConnection);
-    QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
-}
 
 bool AudioPlaybackEngine::checkReadyToDecode()
 {
