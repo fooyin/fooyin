@@ -41,7 +41,7 @@ class AudioRenderer : public QObject
 public:
     explicit AudioRenderer(SettingsManager* settings, QObject* parent = nullptr);
 
-    void init(const Track& track, const AudioFormat& format);
+    void init(const Track& track, const AudioFormat& format, bool forceReload = false);
     void start();
     void stop();
     void closeOutput();

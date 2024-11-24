@@ -84,10 +84,10 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
     m_settings->subscribe<Settings::Core::NonRGPreAmp>(this, &AudioRenderer::recalculateGain);
 }
 
-void AudioRenderer::init(const Track& track, const AudioFormat& format)
+void AudioRenderer::init(const Track& track, const AudioFormat& format, bool forceReload)
 {
     const auto prevFormat = std::exchange(m_format, format);
-    const bool isGapless  = m_settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format;
+    const bool isGapless = !forceReload && m_settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format;
 
     m_currentTrack           = track;
     m_currentBufferResampled = false;

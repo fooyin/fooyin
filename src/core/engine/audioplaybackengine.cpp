@@ -478,7 +478,7 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QStr
                 }
             },
             Qt::SingleShotConnection);
-        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
+        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format, true); });
     }
 }
 
@@ -507,7 +507,7 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
                 QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::play));
             }
         });
-        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
+        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format, true); });
     }
 }
 
@@ -621,7 +621,7 @@ void AudioPlaybackEngine::reloadOutput()
                 }
             },
             Qt::SingleShotConnection);
-        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
+        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format, true); });
     }
 }
 
