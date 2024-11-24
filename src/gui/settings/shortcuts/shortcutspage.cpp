@@ -49,9 +49,7 @@ public:
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(m_shortcut);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
         m_shortcut->setClearButtonEnabled(true);
-#endif
 
         QObject::connect(m_shortcut, &QKeySequenceEdit::keySequenceChanged, this,
                          [this](const QKeySequence& shortcut) { emit textChanged(shortcut.toString()); });

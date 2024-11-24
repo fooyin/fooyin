@@ -1716,11 +1716,7 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
     if(layout.contains("HeaderState"_L1)) {
         const auto headerState = layout.value("HeaderState"_L1).toString().toUtf8();
 
-        if(!headerState.isEmpty()
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
-           && headerState.isValidUtf8()
-#endif
-        ) {
+        if(!headerState.isEmpty() && headerState.isValidUtf8()) {
             const auto state = QByteArray::fromBase64(headerState);
             p->m_headerState = qUncompress(state);
         }

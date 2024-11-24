@@ -349,11 +349,7 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
     if(layout.contains("State"_L1)) {
         const auto headerState = layout.value("State"_L1).toString().toUtf8();
 
-        if(!headerState.isEmpty()
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
-           && headerState.isValidUtf8()
-#endif
-        ) {
+        if(!headerState.isEmpty() && headerState.isValidUtf8()) {
             const auto state = QByteArray::fromBase64(headerState);
             m_headerState    = qUncompress(state);
         }

@@ -144,11 +144,7 @@ bool SettingsManager::contains(QAnyStringView key) const
 
 QVariant SettingsManager::fileValue(QAnyStringView key, const QVariant& defaultValue) const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
     return m_settingsFile->value(key, defaultValue);
-#else
-    return m_settingsFile->value(key.toString(), defaultValue);
-#endif
 }
 
 bool SettingsManager::fileSet(QAnyStringView key, const QVariant& value)
@@ -157,31 +153,19 @@ bool SettingsManager::fileSet(QAnyStringView key, const QVariant& value)
         return false;
     }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
     m_settingsFile->setValue(key, value);
-#else
-    m_settingsFile->setValue(key.toString(), value);
-#endif
 
     return true;
 }
 
 bool SettingsManager::fileContains(QAnyStringView key) const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
     return m_settingsFile->contains(key);
-#else
-    return m_settingsFile->contains(key.toString());
-#endif
 }
 
 void SettingsManager::fileRemove(QAnyStringView key)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
     m_settingsFile->remove(key);
-#else
-    m_settingsFile->remove(key.toString());
-#endif
 }
 
 void SettingsManager::createSetting(const QString& key, const QVariant& value)
