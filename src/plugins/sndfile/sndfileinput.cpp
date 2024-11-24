@@ -34,7 +34,7 @@ namespace {
 QStringList fileExtensions()
 {
     static const QStringList extensions
-        = {u"aif"_s, u"aiff"_s, u"a"_s, u"_L1snd"_s, u"sph"_s, u"voc"_s, u"wav"_s, u"wavex"_s, u"w64"_s, u"wve"_s};
+        = {u"aif"_s, u"aiff"_s, u"a"_s, u"snd"_s, u"sph"_s, u"voc"_s, u"wav"_s, u"wavex"_s, u"w64"_s, u"wve"_s};
     return extensions;
 }
 

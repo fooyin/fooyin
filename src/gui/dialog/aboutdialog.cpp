@@ -55,8 +55,8 @@ QString copyright()
            "<br/>"
            "You should have received a copy of the GNU General Public License along with this program. If "
            "not, see "
-           "%3"_s.arg("fooyin"_L1, "<a href=\"_L1https://github.com/fooyin/fooyin\">GitHub</a>."_L1,
-                      "<a href=\"_L1http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>."_L1);
+           "%3"_s.arg("fooyin"_L1, R"(<a href="https://github.com/fooyin/fooyin">GitHub</a>.)"_L1,
+                      R"(<a href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a>.)"_L1);
 }
 
 QString qtVersion()
