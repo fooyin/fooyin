@@ -47,6 +47,7 @@ constexpr auto Comment         = "COMMENT";
 constexpr auto Date            = "DATE";
 constexpr auto Year            = "YEAR";
 constexpr auto FileSize        = "FILESIZE";
+constexpr auto FileSizeNatural = "FILESIZE_NATURAL";
 constexpr auto Bitrate         = "BITRATE";
 constexpr auto SampleRate      = "SAMPLERATE";
 constexpr auto FirstPlayed     = "FIRSTPLAYED";

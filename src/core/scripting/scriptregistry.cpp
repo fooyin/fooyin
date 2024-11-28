@@ -320,7 +320,10 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Date)]     = &Track::date;
     m_metadata[QString::fromLatin1(MetaData::Year)]     = &Track::year;
     m_metadata[QString::fromLatin1(MetaData::FileSize)] = &Track::fileSize;
-    m_metadata[QString::fromLatin1(MetaData::Bitrate)]  = [this](const Track& track) {
+    m_metadata[QString::fromLatin1(MetaData::FileSizeNatural)] = [this](const Track& track) {
+        return Utils::formatFileSize(track.fileSize());
+    };
+    m_metadata[QString::fromLatin1(MetaData::Bitrate)] = [this](const Track& track) {
         return getBitrate(track);
     };
     m_metadata[QString::fromLatin1(MetaData::SampleRate)] = [](const Track& track) {
