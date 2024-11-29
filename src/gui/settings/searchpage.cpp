@@ -86,7 +86,7 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     m_autosearchDelay->addSpecialValue(2, tr("Medium"));
     m_autosearchDelay->addSpecialValue(3, tr("Slow"));
 
-    auto* successHint = new QLabel("🛈 "_L1 + tr("These settings will only apply if autosearch is disabled."), this);
+    auto* successHint = new QLabel(u"🛈 "_s + tr("These settings will only apply if autosearch is disabled."), this);
 
     int row{0};
     searchGroupLayout->addWidget(m_clearOnSuccess, row++, 0, 1, 3);
