@@ -194,6 +194,14 @@ void ScriptRegistryPrivate::addPlaybackVars()
                 ? (m_playerController->currentTrack().duration() - m_playerController->currentPosition()) / 1000
                 : 0);
     };
+    m_playbackVars[u"ISPLAYING"_s] = [this]() {
+        return QString::number(
+            static_cast<int>(m_playerController && m_playerController->playState() == Player::PlayState::Playing));
+    };
+    m_playbackVars[u"ISPAUSED"_s] = [this]() {
+        return QString::number(
+            static_cast<int>(m_playerController && m_playerController->playState() == Player::PlayState::Paused));
+    };
 }
 
 void ScriptRegistryPrivate::addLibraryVars()
