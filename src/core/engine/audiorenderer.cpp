@@ -107,7 +107,7 @@ void AudioRenderer::init(const Track& track, const AudioFormat& format, bool for
         buffer = Audio::convert(buffer, m_format);
     }
 
-    const bool success = (isGapless && resetResampler()) || initOutput();
+    const bool success = (isGapless && m_audioOutput->initialised() && resetResampler()) || initOutput();
 
     // Align offset in case format was changed
     alignBufferOffset(m_currentBufferOffset, prevFormat.bytesPerFrame(), m_format.bytesPerFrame());
