@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+dnf -y update
+dnf -y upgrade
 dnf -y install \
      @development-tools \
      redhat-lsb-core \
