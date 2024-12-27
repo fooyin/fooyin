@@ -398,7 +398,7 @@ int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool only
     }
 
     if(m_nextTrackIndex >= 0) {
-        return std::exchange(m_nextTrackIndex, -1);
+        return onlyCheck ? m_nextTrackIndex : std::exchange(m_nextTrackIndex, -1);
     }
 
     if(mode & Playlist::RepeatTrack) {
