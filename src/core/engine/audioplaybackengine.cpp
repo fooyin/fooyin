@@ -434,7 +434,7 @@ void AudioPlaybackEngine::seek(uint64_t pos)
         return;
     }
 
-    resetWorkers();
+    resetWorkers(false);
     m_decoder->seek(pos + m_startPosition);
     m_clock.sync(pos);
 
@@ -552,11 +552,11 @@ AudioFormat AudioPlaybackEngine::loadPreparedTrack()
     return format;
 }
 
-void AudioPlaybackEngine::resetWorkers()
+void AudioPlaybackEngine::resetWorkers(bool resetFade)
 {
     m_bufferTimer.stop();
     m_clock.setPaused(true);
-    QMetaObject::invokeMethod(&m_renderer, &AudioRenderer::reset);
+    QMetaObject::invokeMethod(&m_renderer, [this, resetFade]() { m_renderer.reset(resetFade); });
     m_totalBufferTime = 0;
 }
 
