@@ -46,7 +46,7 @@ public:
     void stop();
     void closeOutput();
     void drainOutput();
-    void reset();
+    void reset(bool stopFade);
 
     void play();
     void play(int fadeLength);

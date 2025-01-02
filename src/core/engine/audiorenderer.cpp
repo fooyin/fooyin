@@ -147,15 +147,18 @@ void AudioRenderer::drainOutput()
     }
 }
 
-void AudioRenderer::reset()
+void AudioRenderer::reset(bool stopFade)
 {
     if(validOutputState()) {
         m_audioOutput->reset();
     }
 
-    resetFade(0);
     resetBuffer();
-    m_fadeVolume = -1;
+
+    if(stopFade) {
+        resetFade(0);
+        m_fadeVolume = -1;
+    }
 }
 
 void AudioRenderer::play()
@@ -192,6 +195,9 @@ void AudioRenderer::play(int fadeLength)
 
 void AudioRenderer::pause()
 {
+    resetFade(0);
+    m_fadingOut = false;
+
     pauseOutput();
 }
 

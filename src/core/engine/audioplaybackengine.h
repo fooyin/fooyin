@@ -63,7 +63,7 @@ protected:
 private:
     void resetNextTrack();
     AudioFormat loadPreparedTrack();
-    void resetWorkers();
+    void resetWorkers(bool resetFade = true);
     void stopWorkers(bool full = false);
     void startBitrateTimer();
 
