@@ -4,7 +4,7 @@ dnf -y update
 dnf -y upgrade
 dnf -y install --skip-broken \
      @development-tools \
-     redhat-lsb-core \
+     lsb_release \
      rpmdevtools \
      tar \
      desktop-file-utils \
