@@ -213,7 +213,7 @@ void PlaylistHandlerPrivate::startNextTrack(const Track& track, int index) const
 PlaylistTrack PlaylistHandlerPrivate::nextTrackChange(int delta)
 {
     if(m_scheduledPlaylist) {
-        m_activePlaylist    = m_scheduledPlaylist;
+        m_self->changeActivePlaylist(m_scheduledPlaylist);
         m_scheduledPlaylist = nullptr;
     }
 

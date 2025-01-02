@@ -500,7 +500,7 @@ void PlaylistTabs::setupConnections()
     QObject::connect(m_playlistController->playerController(), &PlayerController::playStateChanged, this,
                      &PlaylistTabs::playStateChanged);
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
-                     &PlaylistTabs::activatePlaylistChanged);
+                     &PlaylistTabs::activePlaylistChanged);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistAdded, this, &PlaylistTabs::addPlaylist);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRemoved, this, &PlaylistTabs::removePlaylist);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRenamed, this, &PlaylistTabs::playlistRenamed);
@@ -590,7 +590,7 @@ void PlaylistTabs::playlistChanged(Playlist* /*oldPlaylist*/, Playlist* playlist
     }
 }
 
-void PlaylistTabs::activatePlaylistChanged(Playlist* playlist)
+void PlaylistTabs::activePlaylistChanged(Playlist* playlist)
 {
     if(!playlist) {
         return;
