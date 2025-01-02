@@ -2,7 +2,7 @@
 
 dnf -y update
 dnf -y upgrade
-dnf -y install --skip-unavailable \
+dnf -y install --skip-broken \
      @development-tools \
      redhat-lsb-core \
      rpmdevtools \
