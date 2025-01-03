@@ -469,7 +469,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
@@ -524,7 +524,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="347"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить выделенные треки в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="354"/>
@@ -686,7 +686,7 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="147"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
@@ -1600,7 +1600,7 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="129"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="138"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="130"/>
@@ -2346,7 +2346,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="182"/>
         <source>Playback</source>
-        <translation type="unfinished">Воспроизведение</translation>
+        <translation>Воспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
@@ -2371,7 +2371,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="192"/>
         <source>VBR update interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Интервал обновления VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
@@ -3320,7 +3320,7 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="202"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="203"/>
@@ -3358,7 +3358,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="263"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="264"/>
@@ -4902,7 +4902,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="212"/>
@@ -5309,7 +5309,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="193"/>
@@ -5379,7 +5379,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="414"/>
         <source>Add the selected tracks to the start of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выделенные треки в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="419"/>
@@ -7089,7 +7089,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="132"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="133"/>
@@ -7139,7 +7139,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="199"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить выделенные треки в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="211"/>
