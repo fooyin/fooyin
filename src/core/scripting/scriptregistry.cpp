@@ -250,6 +250,10 @@ void ScriptRegistryPrivate::addDefaultFunctions()
     m_funcs[u"right"_s]          = Scripting::right;
     m_funcs[u"insert"_s]         = Scripting::insert;
     m_funcs[u"substr"_s]         = Scripting::substr;
+    m_funcs[u"strstr"_s]         = Scripting::strstr;
+    m_funcs[u"stristr"_s]        = Scripting::stristr;
+    m_funcs[u"strstrlast"_s]     = Scripting::strstrLast;
+    m_funcs[u"stristrlast"_s]    = Scripting::stristrLast;
     m_funcs[u"split"_s]          = Scripting::split;
     m_funcs[u"len"_s]            = Scripting::len;
     m_funcs[u"longest"_s]        = Scripting::longest;
@@ -271,8 +275,8 @@ void ScriptRegistryPrivate::addDefaultFunctions()
     m_funcs[u"caps"_s]           = Scripting::caps;
     m_funcs[u"directory"_s]      = Scripting::directory;
     m_funcs[u"directory_path"_s] = Scripting::directoryPath;
-    m_funcs[u"elide_end"_s]      = Scripting::elide_end;
-    m_funcs[u"elide_mid"_s]      = Scripting::elide_mid;
+    m_funcs[u"elide_end"_s]      = Scripting::elideEnd;
+    m_funcs[u"elide_mid"_s]      = Scripting::elideMid;
     m_funcs[u"ext"_s]            = Scripting::ext;
     m_funcs[u"filename"_s]       = Scripting::filename;
     m_funcs[u"progress"_s]       = Scripting::progress;
