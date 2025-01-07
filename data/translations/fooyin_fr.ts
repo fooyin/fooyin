@@ -273,7 +273,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>&amp;Restore Defaults</source>
-        <translation type="unfinished">&amp;Rétablir les réglages par défaut</translation>
+        <translation>&amp;Rétablir les réglages par défaut</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
