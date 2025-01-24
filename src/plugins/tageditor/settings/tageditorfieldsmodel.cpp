@@ -288,7 +288,6 @@ bool TagEditorFieldsModel::setData(const QModelIndex& index, const QVariant& val
         case(2): {
             QString setValue = value.toString().trimmed();
             setValue.remove(u'%');
-            setValue = setValue.split(u" "_s).front();
 
             if(field.scriptField == setValue) {
                 return false;
