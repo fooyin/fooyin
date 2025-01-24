@@ -27,6 +27,32 @@
 
 using namespace Qt::StringLiterals;
 
+namespace {
+QString strstrHelper(const QStringList& vec, bool reverse, Qt::CaseSensitivity cs)
+{
+    const qsizetype count = vec.size();
+
+    if(count < 2 || count > 3 || vec.at(0).isEmpty()) {
+        return {};
+    }
+
+    bool numSuccess{false};
+    qsizetype from = reverse ? -1 : 0;
+    if(count == 3) {
+        from = vec.at(2).toLongLong(&numSuccess);
+        if(!numSuccess) {
+            return {};
+        }
+    }
+
+    const QStringView str = vec.at(0);
+    const auto ret        = reverse ? str.lastIndexOf(vec.at(1), from, cs) : str.indexOf(vec.at(1), from, cs);
+    if(ret == -1)
+        return {};
+    return QString::number(ret);
+}
+} // namespace
+
 namespace Fooyin::Scripting {
 QString num(const QStringList& vec)
 {
@@ -144,16 +170,17 @@ QString slice(const QStringList& vec)
     bool posSuccess{false};
     const int pos = vec.at(1).toInt(&posSuccess);
 
-    if(posSuccess && pos >= 0) {
+    if(posSuccess && pos >= 0 && pos <= vec.at(0).size()) {
         if(count == 2) {
             return vec.at(0).sliced(pos);
         }
         bool numSuccess{false};
         const int num = vec.at(2).toInt(&numSuccess);
-        if(numSuccess && num >= 0) {
+        if(numSuccess && num >= 0 && pos + num <= vec.at(0).size()) {
             return vec.at(0).sliced(pos, num);
         }
     }
+
     return {};
 }
 
@@ -222,13 +249,14 @@ QString insert(const QStringList& vec)
     if(count == 3) {
         bool numSuccess{false};
         index = vec.at(2).toInt(&numSuccess);
-        if(numSuccess && index >= 0) {
-            QString ret{vec.front()};
-            ret.insert(index, vec.at(1));
-            return ret;
+        if(!numSuccess || index < 0) {
+            return {};
         }
     }
-    return {};
+
+    QString ret{vec.front()};
+    ret.insert(index, vec.at(1));
+    return ret;
 }
 
 QString substr(const QStringList& vec)
@@ -247,6 +275,26 @@ QString substr(const QStringList& vec)
     }
 
     return {};
+}
+
+QString strstr(const QStringList& vec)
+{
+    return strstrHelper(vec, false, Qt::CaseSensitive);
+}
+
+QString stristr(const QStringList& vec)
+{
+    return strstrHelper(vec, false, Qt::CaseInsensitive);
+}
+
+QString strstrLast(const QStringList& vec)
+{
+    return strstrHelper(vec, true, Qt::CaseSensitive);
+}
+
+QString stristrLast(const QStringList& vec)
+{
+    return strstrHelper(vec, true, Qt::CaseInsensitive);
 }
 
 QString split(const QStringList& vec)
@@ -532,15 +580,15 @@ QString abbr(const QStringList& vec)
     return abbreviated;
 }
 
-QString elide_end(const QStringList& vec)
+QString elideEnd(const QStringList& vec)
 {
     if(vec.size() != 3) {
         return {};
     }
 
-    bool ok{false};
-    const auto limit = vec.at(1).toLongLong(&ok);
-    if(!ok || limit < 1) {
+    bool numSuccess{false};
+    const auto limit = vec.at(1).toLongLong(&numSuccess);
+    if(!numSuccess || limit < 1) {
         return {};
     }
 
@@ -552,15 +600,15 @@ QString elide_end(const QStringList& vec)
     return vec.at(0);
 }
 
-QString elide_mid(const QStringList& vec)
+QString elideMid(const QStringList& vec)
 {
     if(vec.size() != 3) {
         return {};
     }
 
-    bool ok{false};
-    const auto limit = vec.at(1).toLongLong(&ok);
-    if(!ok || limit < 2) {
+    bool numSuccess{false};
+    const auto limit = vec.at(1).toLongLong(&numSuccess);
+    if(!numSuccess || limit < 2) {
         return {};
     }
 
