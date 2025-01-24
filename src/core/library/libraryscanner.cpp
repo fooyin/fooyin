@@ -100,6 +100,8 @@ QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExte
             continue;
         }
 
+        const QString suffix = file.suffix().toLower();
+
         if(file.isDir()) {
             QDirIterator dirIt{file.absoluteFilePath(), Fooyin::Utils::extensionsToWildcards(nameFilters), QDir::Files,
                                QDirIterator::Subdirectories};
@@ -112,10 +114,10 @@ QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExte
             }
         }
         else {
-            if(playlistExtensions.contains(file.suffix())) {
+            if(playlistExtensions.contains(suffix)) {
                 files.emplace_back(file.absoluteFilePath());
             }
-            else if(nameFilters.contains(file.suffix())) {
+            else if(nameFilters.contains(suffix)) {
                 if(const auto cue = findMatchingCue(file)) {
                     files.emplace_back(cue.value());
                 }
