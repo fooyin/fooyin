@@ -87,13 +87,14 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
 void AudioRenderer::init(const Track& track, const AudioFormat& format, bool forceReload)
 {
     const auto prevFormat = std::exchange(m_format, format);
-    const bool isGapless = !forceReload && m_settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format;
 
     m_currentTrack           = track;
     m_currentBufferResampled = false;
     m_bufferPrefilled        = false;
 
     calculateGain(false);
+    const bool isGapless
+        = !forceReload && m_settings->value<Settings::Core::GaplessPlayback>() && prevFormat == m_format;
 
     if(!m_audioOutput) {
         emit initialised(false);
