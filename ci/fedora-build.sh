@@ -5,7 +5,8 @@ export FOOYIN_DIR=$PWD
 cmake -S "$FOOYIN_DIR" \
   -G Ninja \
   -B build \
-  -DCMAKE_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_LIBVGM=OFF
 
 cmake --build build
 cd build
