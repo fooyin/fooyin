@@ -579,7 +579,7 @@ QString codecForMime(const QString& mimeType)
     if(mimeType == "audio/x-wavpack"_L1) {
         return u"WavPack"_s;
     }
-    if(mimeType == "audio/flac"_L1) {
+    if(mimeType == "audio/flac"_L1 || mimeType == "audio/x-flac"_L1) {
         return u"FLAC"_s;
     }
     if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "application/ogg"_L1) {
@@ -2394,7 +2394,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
         }
     }
-    else if(mimeType == "audio/flac"_L1) {
+    else if(mimeType == "audio/flac"_L1 || mimeType == "audio/x-flac"_L1) {
 #if(TAGLIB_MAJOR_VERSION >= 2)
         TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
@@ -2579,7 +2579,7 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             return readMp4Cover(file.tag(), cover);
         }
     }
-    else if(mimeType == "audio/flac"_L1) {
+    else if(mimeType == "audio/flac"_L1 || mimeType == "audio/x-flac"_L1) {
 #if(TAGLIB_MAJOR_VERSION >= 2)
         TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
@@ -2725,7 +2725,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
             file.save();
         }
     }
-    else if(mimeType == "audio/flac"_L1) {
+    else if(mimeType == "audio/flac"_L1 || mimeType == "audio/x-flac"_L1) {
 #if(TAGLIB_MAJOR_VERSION >= 2)
         TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
@@ -2880,7 +2880,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             file.save();
         }
     }
-    else if(mimeType == "audio/flac"_L1) {
+    else if(mimeType == "audio/flac"_L1 || mimeType == "audio/x-flac"_L1) {
 #if(TAGLIB_MAJOR_VERSION >= 2)
         TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
