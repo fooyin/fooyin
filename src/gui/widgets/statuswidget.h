@@ -24,6 +24,7 @@
 namespace Fooyin {
 class SettingsManager;
 class PlayerController;
+class PlaylistHandler;
 class StatusWidgetPrivate;
 class TrackSelectionController;
 
@@ -32,8 +33,8 @@ class StatusWidget : public FyWidget
     Q_OBJECT
 
 public:
-    StatusWidget(PlayerController* playerController, TrackSelectionController* selectionController,
-                 SettingsManager* settings, QWidget* parent = nullptr);
+    StatusWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
+                 TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent = nullptr);
     ~StatusWidget() override;
 
     [[nodiscard]] QString name() const override;

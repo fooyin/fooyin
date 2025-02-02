@@ -211,8 +211,8 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"StatusBar"_s,
         [this]() {
-            auto* statusWidget
-                = new StatusWidget(m_core->playerController(), m_gui->trackSelection(), m_settings, m_window);
+            auto* statusWidget = new StatusWidget(m_core->playerController(), m_core->playlistHandler(),
+                                                  m_gui->trackSelection(), m_settings, m_window);
             m_window->installStatusWidget(statusWidget);
             return statusWidget;
         },

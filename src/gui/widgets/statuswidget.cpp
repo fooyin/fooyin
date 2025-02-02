@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 
 #include <core/player/playercontroller.h>
+#include <core/playlist/playlisthandler.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 #include <core/track.h>
@@ -56,7 +57,7 @@ class StatusWidgetPrivate : public QObject
     Q_OBJECT
 
 public:
-    StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController,
+    StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController, PlaylistHandler* playlistHandler,
                         TrackSelectionController* selectionController, SettingsManager* settings);
 
     void setupConnections();
@@ -77,6 +78,7 @@ public:
 
     StatusWidget* m_self;
     PlayerController* m_playerController;
+    PlaylistHandler* m_playlistHandler;
     TrackSelectionController* m_selectionController;
 
     SettingsManager* m_settings;
@@ -96,10 +98,12 @@ public:
 };
 
 StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController,
+                                         PlaylistHandler* playlistHandler,
                                          TrackSelectionController* selectionController, SettingsManager* settings)
     : QObject{self}
     , m_self{self}
     , m_playerController{playerController}
+    , m_playlistHandler{playlistHandler}
     , m_selectionController{selectionController}
     , m_settings{settings}
     , m_scriptParser{new ScriptRegistry(m_playerController)}
@@ -239,7 +243,11 @@ void StatusWidgetPrivate::updatePlayingText()
 {
     const auto ps = m_playerController->playState();
     if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused) {
-        showPlayingMessage(m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack()));
+        QString playingText = m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack());
+        if(auto* playlist = m_playlistHandler->activePlaylist()) {
+            playingText = m_scriptParser.evaluate(playingText, playlist->tracks());
+        }
+        showPlayingMessage(playingText);
     }
     else {
         m_playingText->clear();
@@ -266,10 +274,10 @@ void StatusWidgetPrivate::stateChanged(const Player::PlayState state)
     }
 }
 
-StatusWidget::StatusWidget(PlayerController* playerController, TrackSelectionController* selectionController,
-                           SettingsManager* settings, QWidget* parent)
+StatusWidget::StatusWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
+                           TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<StatusWidgetPrivate>(this, playerController, selectionController, settings)}
+    , p{std::make_unique<StatusWidgetPrivate>(this, playerController, playlistHandler, selectionController, settings)}
 {
     setObjectName(StatusWidget::name());
 }

@@ -143,10 +143,11 @@ public:
     void addPlaybackVars();
     void addLibraryVars();
     void addDefaultFunctions();
-    void addDefaultListFuncs();
+    void addPlaylistVars();
     void addDefaultMetadata();
 
     QString getBitrate(const Track& track) const;
+    QString playlistDuration(const TrackList& tracks) const;
 
     LibraryManager* m_libraryManager{nullptr};
     PlayerController* m_playerController{nullptr};
@@ -166,7 +167,7 @@ ScriptRegistryPrivate::ScriptRegistryPrivate(LibraryManager* libraryManager, Pla
     , m_playerController{playerController}
 {
     addDefaultFunctions();
-    addDefaultListFuncs();
+    addPlaylistVars();
     addDefaultMetadata();
     addPlaybackVars();
     addLibraryVars();
@@ -291,11 +292,17 @@ void ScriptRegistryPrivate::addDefaultFunctions()
     m_funcs[u"ifequal"_s]   = Scripting::ifequal;
 }
 
-void ScriptRegistryPrivate::addDefaultListFuncs()
+void ScriptRegistryPrivate::addPlaylistVars()
 {
-    m_listProperties[u"TRACKCOUNT"_s] = Scripting::trackCount;
-    m_listProperties[u"PLAYTIME"_s]   = Scripting::playtime;
-    m_listProperties[u"GENRES"_s]     = Scripting::genres;
+    m_listProperties[u"TRACKCOUNT"_s]        = Scripting::trackCount;
+    m_listProperties[u"PLAYTIME"_s]          = Scripting::playtime;
+    m_listProperties[u"PLAYLIST_DURATION"_s] = Scripting::playtime;
+    if(m_playerController) {
+        m_listProperties[u"PLAYLIST_ELAPSED"_s] = [this](const TrackList& tracks) {
+            return playlistDuration(tracks);
+        };
+    }
+    m_listProperties[u"GENRES"_s] = Scripting::genres;
 }
 
 void ScriptRegistryPrivate::addDefaultMetadata()
@@ -328,11 +335,11 @@ void ScriptRegistryPrivate::addDefaultMetadata()
         const auto duration = track.duration();
         return duration == 0 ? QString{} : QString::number(duration);
     };
-    m_metadata[QString::fromLatin1(MetaData::Comment)]  = &Track::comment;
-    m_metadata[QString::fromLatin1(MetaData::Date)]     = &Track::date;
-    m_metadata[QString::fromLatin1(MetaData::Year)]     = &Track::year;
-    m_metadata[QString::fromLatin1(MetaData::FileSize)] = &Track::fileSize;
-    m_metadata[QString::fromLatin1(MetaData::FileSizeNatural)] = [this](const Track& track) {
+    m_metadata[QString::fromLatin1(MetaData::Comment)]         = &Track::comment;
+    m_metadata[QString::fromLatin1(MetaData::Date)]            = &Track::date;
+    m_metadata[QString::fromLatin1(MetaData::Year)]            = &Track::year;
+    m_metadata[QString::fromLatin1(MetaData::FileSize)]        = &Track::fileSize;
+    m_metadata[QString::fromLatin1(MetaData::FileSizeNatural)] = [](const Track& track) {
         return Utils::formatFileSize(track.fileSize());
     };
     m_metadata[QString::fromLatin1(MetaData::Bitrate)] = [this](const Track& track) {
@@ -421,6 +428,21 @@ QString ScriptRegistryPrivate::getBitrate(const Track& track) const
     return bitrate > 0 ? QString::number(bitrate) : QString{};
 }
 
+QString ScriptRegistryPrivate::playlistDuration(const TrackList& tracks) const
+{
+    const auto currentTrack = m_playerController->currentPlaylistTrack();
+    uint64_t total{0};
+
+    for(auto i{0}; i <= currentTrack.indexInPlaylist; ++i) {
+        total += tracks[i].duration();
+    }
+
+    total -= currentTrack.track.duration();
+    total += m_playerController->currentPosition();
+
+    return Utils::msToString(total);
+}
+
 ScriptRegistry::ScriptRegistry()
     : ScriptRegistry{nullptr, nullptr}
 { }
@@ -487,7 +509,7 @@ ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
         return calculateResult(p->m_libraryVars.at(variable)(track));
     }
     if(p->m_listProperties.contains(variable)) {
-        return calculateResult(p->m_listProperties.at(variable)({track}));
+        return {.value = u"%%1%"_s.arg(var), .cond = true};
     }
 
     return calculateResult(track.extraTag(variable));
