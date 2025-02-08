@@ -1600,7 +1600,7 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="129"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="138"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="130"/>
@@ -1740,17 +1740,17 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>User Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>用户目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Config Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>打开配置目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Share Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>打开共享目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -2346,7 +2346,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="182"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
@@ -2371,7 +2371,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="192"/>
         <source>VBR update interval</source>
-        <translation type="unfinished"></translation>
+        <translation>可变码率更新间隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
@@ -2922,12 +2922,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
         <source>&amp;Clean</source>
-        <translation type="unfinished"></translation>
+        <translation>清除(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>删除不在媒体库和任何播放列表的音轨以及过时的播放统计信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -3002,12 +3002,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="123"/>
         <source>Cleaning database…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在清理数据库…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="133"/>
         <source>Database cleaned</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库清理完成</translation>
     </message>
 </context>
 <context>
@@ -3320,7 +3320,7 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="202"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="203"/>
@@ -3358,7 +3358,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="263"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>加入队列下首播放(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="264"/>
@@ -4902,7 +4902,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="212"/>
@@ -4990,12 +4990,12 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="135"/>
         <source>Create autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>新建自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="138"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="162"/>
@@ -5178,12 +5178,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="295"/>
         <source>Add new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加新自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="313"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="323"/>
@@ -5193,7 +5193,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="323"/>
         <source>Rename autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="327"/>
@@ -5203,7 +5203,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="327"/>
         <source>Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>删除自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="342"/>
@@ -5309,7 +5309,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到队列下首播放(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="193"/>
@@ -5379,7 +5379,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="414"/>
         <source>Add the selected tracks to the start of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的音轨加入播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="419"/>
@@ -7087,7 +7087,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="132"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到队列下首播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="133"/>
@@ -7137,7 +7137,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="199"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的音轨加入播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="211"/>
@@ -7724,8 +7724,9 @@ for waveform data. Higher values will result
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
         <translation>用作波形数据的样本数量（基于每一轨道）。
-更高的值将生成更准确和详细的波形，
-但是会使用更多的磁盘缓存空间。</translation>
+更高的值将生成更准确和详细的
+波形，但是会使用更多的磁盘缓
+存空间。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="308"/>
