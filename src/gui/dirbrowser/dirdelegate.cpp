@@ -34,7 +34,7 @@ void DirDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, c
 
     if(opt.backgroundBrush.style() != Qt::NoBrush) {
         painter->fillRect(option.rect, opt.backgroundBrush);
-        opt.backgroundBrush = {};
+        opt.backgroundBrush = QBrush{};
     }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
 
