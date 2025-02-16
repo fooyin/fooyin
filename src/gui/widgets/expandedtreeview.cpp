@@ -2068,8 +2068,13 @@ QSize IconView::indexSizeHint(const QModelIndex& index) const
         }
 
         if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom) {
-            size.rwidth() = std::clamp(size.width(), hint.width(),
-                                       std::max(hint.width(), iconSize().width() + (2 * MinItemSpacing)));
+            const int maxWidth = std::max(hint.width(), iconSize().width() + (2 * MinItemSpacing));
+            if(size.width() < hint.width()) {
+                size.rwidth() = hint.width();
+            }
+            else if(size.width() > maxWidth) {
+                size.rwidth() = maxWidth;
+            }
         }
         else if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right) {
             size.rwidth() = iconSize().width() + (2 * MinItemSpacing) + RightCaptionWidth;
