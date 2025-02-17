@@ -913,6 +913,11 @@ void PlaylistHandler::startPlayback(Playlist* playlist)
     p->startNextTrack(playlist->currentTrack(), playlist->currentTrackIndex());
 }
 
+void PlaylistHandler::resetNextTrackIndex()
+{
+    p->m_activePlaylist->resetNextTrackIndex();
+}
+
 void PlaylistHandler::trackAboutToFinish()
 {
     p->nextTrack(1);

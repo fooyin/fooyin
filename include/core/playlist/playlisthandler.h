@@ -129,6 +129,8 @@ public:
     void savePlaylists();
     void savePlaylist(const UId& id);
 
+    void resetNextTrackIndex();
+
 signals:
     void playlistsPopulated();
     void playlistAdded(Fooyin::Playlist* playlist);
