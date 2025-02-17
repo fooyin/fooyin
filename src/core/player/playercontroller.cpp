@@ -119,6 +119,7 @@ void PlayerController::play()
     }
 
     if(p->m_currentTrack.isValid()) {
+        p->m_playlistHandler->resetNextTrackIndex();
         if(std::exchange(p->m_playStatus, Player::PlayState::Playing) != Player::PlayState::Playing) {
             emit playStateChanged(p->m_playStatus);
         }
@@ -191,6 +192,8 @@ void PlayerController::stop()
 
         emit playStateChanged(p->m_playStatus);
         emit positionChanged(0);
+
+        p->m_playlistHandler->resetNextTrackIndex();
     }
 }
 

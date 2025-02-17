@@ -663,6 +663,11 @@ void Playlist::resetFlags()
     p->m_tracksModified = false;
 }
 
+void Playlist::resetNextTrackIndex()
+{
+    p->m_nextTrackIndex = -1;
+}
+
 QStringList Playlist::supportedPlaylistExtensions()
 {
     static const QStringList supportedExtensions = {u"cue"_s, u"m3"_s, u"m3u8"_s};
