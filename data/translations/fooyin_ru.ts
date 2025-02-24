@@ -62,7 +62,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="43"/>
         <source>Period length</source>
-        <translation>Продолжительность периода</translation>
+        <translation>Длительность периода</translation>
     </message>
 </context>
 <context>
@@ -3391,7 +3391,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="50"/>
         <source>Log</source>
-        <translation>Лог</translation>
+        <translation>Журнал</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="52"/>
@@ -3401,7 +3401,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="54"/>
         <source>&amp;Save Log</source>
-        <translation>&amp;Сохранить лог</translation>
+        <translation>&amp;Сохранить журнал</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="61"/>
@@ -3426,7 +3426,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="104"/>
         <source>Save Log</source>
-        <translation>Сохранить лог</translation>
+        <translation>Сохранить журнал</translation>
     </message>
 </context>
 <context>
@@ -3505,7 +3505,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="70"/>
         <source>Synced scroll duration</source>
-        <translation>Синхронизированная продолжительность прокрутки</translation>
+        <translation>Синхронизированная длительность прокрутки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
@@ -6420,7 +6420,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="89"/>
         <source>These settings will only apply if autosearch is disabled.</source>
-        <translation>Эти настройки будут применяться только в том случае, если автопоиск отключен.</translation>
+        <translation>Эти настройки применяются только в том случае, если автопоиск отключён.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
@@ -7208,7 +7208,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="69"/>
         <source>End silence length</source>
-        <translation>Продолжительность тишины в конце</translation>
+        <translation>Длительность тишины в конце</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="86"/>
@@ -7261,7 +7261,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
         <source>Open the log dialog</source>
-        <translation>Открыть окно лога</translation>
+        <translation>Открыть окно журнала</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="55"/>
