@@ -2409,7 +2409,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="383"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Temas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
@@ -2419,7 +2419,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Colours &amp; Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Colores y Fuentes</translation>
     </message>
 </context>
 <context>
@@ -2540,27 +2540,27 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
         <source>File Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombres de Archivos</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de Archivo</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="174"/>
         <source>Folder Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombres de Carpetas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="174"/>
         <source>Folder Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de Carpeta</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="178"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruta del Archivo</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="180"/>
@@ -2570,17 +2570,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
         <source>Total Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño Total</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño de Archivo</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="190"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Última Modificación</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="195"/>
@@ -2590,22 +2590,22 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="200"/>
         <source>Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregado</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="208"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Pistas</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="211"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Duración</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="215"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Canales</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="217"/>
@@ -2740,7 +2740,7 @@
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="57"/>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="113"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Diseño</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="60"/>
@@ -2765,7 +2765,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
         <source>&amp;Import layout…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importar diseño…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
@@ -2775,7 +2775,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="86"/>
         <source>E&amp;xport layout…</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xportar diseño…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="87"/>
@@ -7903,7 +7903,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="209"/>
         <source>Spacer</source>
-        <translation type="unfinished"></translation>
+        <translation>Espaciador</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="219"/>
@@ -7913,7 +7913,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="228"/>
         <source>Search Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de Búsqueda</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="230"/>
@@ -7923,7 +7923,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="263"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Detalles</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="266"/>
