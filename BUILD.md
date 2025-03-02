@@ -13,12 +13,13 @@ The following libraries are required:
 * [TagLib](https://taglib.org) (1.12+)
 * [FFmpeg](https://ffmpeg.org) (4.4+)
 * [ICU](https://icu.unicode.org/)
+* [brew](https://brew.sh) (Only for if building on MacOS)
 
 At least one of the following is required for audio output:
 
 * [ALSA](https://alsa-project.org)
 * [PipeWire](https://pipewire.org)
-* [SDL2](https://www.libsdl.org)
+* [SDL2](https://www.libsdl.org) (Needed for MacOS)
 
 The following libraries are optional:
 * [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) - will use 3rd party dep if not present on system
@@ -65,6 +66,13 @@ sudo dnf install \
     libsndfile-devel libopenmpt-devel game-music-emu-devel libarchive-devel libebur128-devel
 ```
 
+### MacOS
+
+'''
+brew update && brew upgrade
+brew install git cmake ninja qt taglib ffmpeg icu4c@76 sdl2
+'''
+
 ## Building
 
 1. Using a terminal, switch to the directory where fooyin will be checked out
@@ -75,11 +83,18 @@ git clone --recurse-submodules https://github.com/fooyin/fooyin.git
 ```
 
 3. Switch into the directory: `cd fooyin`
-4. Run CMake to generate a build environment:
+4. Run CMake to generate a build environment (Go to step 4.5 if on MacOS, if not skip step 4.5):
 
 ```
 cmake -S . -G Ninja -B <BUILD_DIRECTORY>
 ```
+
+4.5. MacOS only (Skip if not on MacOS)
+you have to generate the build environment using this command instead
+
+'''
+cmake -S . -B Ninja -B <BUILD_DIRECTORY> -DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c
+'''
 
 5. And then build fooyin:
 
@@ -89,7 +104,7 @@ cmake --build <BUILD_DIRECTORY>
 
 * Optionally add `-j$(nproc)` to build faster
 
-A *Release* build is built by default. This can be changed by passing either 
+A *Release* build is built by default. This can be changed by passing either
 `Debug`, `RelWithDebInfo`, or `MinSizeRel` to `-DCMAKE_BUILD_TYPE`
 
 The following options can be passed to CMake to customise the build:
@@ -107,7 +122,7 @@ The following options can be passed to CMake to customise the build:
 * `-DINSTALL_FHS` - Install in Linux distros /usr hierarchy (ON by default)
 * `-DINSTALL_HEADERS` - Install development files (OFF by default)
 
-## Installing
+## Installing (Scroll down to next section if on MacOS)
 
 Once built, fooyin can be installed using the following:
 
@@ -116,12 +131,39 @@ cmake --install <BUILD_DIRECTORY>
 ```
 
 This will install fooyin to `/usr/local` by default.
-To install to a custom location, either pass it to `-DCMAKE_INSTALL_PREFIX`, or 
+To install to a custom location, either pass it to `-DCMAKE_INSTALL_PREFIX`, or
 use the prefix switch:
 
 ```
 cmake --install <BUILD_DIRECTORY> --prefix <INSTALL_DIRECTORY>
 ```
+
+## Installing on MacOS
+* 1. Open up finder and your terminal.
+* 2. in finder find where you cloned fooyin and follow this path "<BUILD_DIRECTORY>/run/bin"
+* 3. Now you should see an executable called fooyin.
+* 4. Double Click fooyin to make sure you didn't build it wrong. After that works close it.
+* 5. switch to your terminal, and cd into the same directory you got to in finder.
+* 6. run the command "pwd" to get the full directory path.
+* 7. then open up you apps, and open an app called "Automator".
+* 8. Choose to create a new application.
+* 9. search shell script, find run shell script, and drag it into the spot in the middle.
+* 10. choose your interpreter as "/usr/bash".
+* 11. Then copy the output of the pwd command and paste it into the text box in automator.
+* 12. then add "/fooyin; exit;" to the end of it.
+* 13. then in the corner of automator click "file -> save".
+* 14. Make sure to set the type to "Application" and the app name to fooyin when your saving.
+* 15. Find this new app and it will have the default icon.
+* 16. Go to where you cloned fooyin and copy (CMD+C on MacOS) the "512-fooyin.png" file from your fooyin build in "data/icons" or download it from github.
+* 17. Go to "Applications", find your fooyin app, right click on it, click get info, then click on the little tiny icon in the top-left corner of that menu.
+* 18. Once clicked once press CMD+V to paste.
+* 19. You should now have an application that has the fooyin icon and when clicked on launches fooyin!
+
+# Why build and install process is different for MacOS
+For "cmake -S . -B Ninja -B <BUILD_DIRECTORY> -DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c":
+  - The ICU Library is not findable by cmake the way brew installs it so you must tell cmake where it is manually.
+For the install:
+  - When you run "cmake --install <BUILD_DIRECTORY>" it does not install behind the scences library's such as lib-fooyingui to your "/usr/local" only the fooyin executable, which means fooyin can't open.
 
 ## Uninstalling
 
@@ -131,7 +173,9 @@ To uninstall fooyin, simply pass the uninstall target to CMake like so:
 cmake --build <BUILD_DIRECTORY> --target uninstall
 ```
 
+On MacOS also delete the fooyin.app in your Applications folder
+
 ### Notes for package maintainers
 
-* The install script above will handle installation of all files needed by fooyin following the typical Linux FHS.
+* The install script above will handle installation of all files needed by fooyin following the typical Unix (Linux & MacOS) FHS.
 For non-standard installations outside of this hierarchy, turn off `INSTALL_FHS`.
