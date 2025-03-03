@@ -159,7 +159,7 @@ cmake --install <BUILD_DIRECTORY> --prefix <INSTALL_DIRECTORY>
 * 18. Once clicked once press CMD+V to paste.
 * 19. You should now have an application that has the fooyin icon and when clicked on launches fooyin!
 
-# Why build and install process is different for MacOS
+### Why build and install process is different for MacOS
 For "cmake -S . -B Ninja -B <BUILD_DIRECTORY> -DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c":
   - The ICU Library is not findable by cmake the way brew installs it so you must tell cmake where it is manually.
 For the install:
