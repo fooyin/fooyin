@@ -29,7 +29,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished"></translation>
+        <translation>Układ</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
         <source>Buffer length</source>
-        <translation type="unfinished">Długość bufora</translation>
+        <translation>Długość bufora</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="43"/>
@@ -308,12 +308,12 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="279"/>
         <source>Most Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Najczęściej odtwarzane</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="280"/>
         <source>Recently Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Ostatnio dodane</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="281"/>
@@ -444,27 +444,27 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="246"/>
         <source>Add to &amp;current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj do &amp;bieżącej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="247"/>
         <source>Add to &amp;active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj do &amp;aktywnej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="248"/>
         <source>&amp;Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wyślij do bieżącej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="249"/>
         <source>Send to &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyślij do &amp;nowej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="250"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj do &amp;kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
@@ -474,22 +474,22 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
         <source>Send to playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyślij do kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="284"/>
         <source>Go up to the parent directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Przejdź do katalogu nadrzędnego</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="289"/>
         <source>Return to the previous directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Powrót do poprzedniego katalogu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="298"/>
         <source>Undo a Go-&gt;Back action</source>
-        <translation type="unfinished"></translation>
+        <translation>Cofnięcie akcji Idź-&gt;Wstecz</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="308"/>
