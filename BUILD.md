@@ -68,10 +68,10 @@ sudo dnf install \
 
 ### MacOS
 
-'''
+```
 brew update && brew upgrade
 brew install git cmake ninja qt taglib ffmpeg icu4c@76 sdl2
-'''
+```
 
 ## Building
 
@@ -92,9 +92,9 @@ cmake -S . -G Ninja -B <BUILD_DIRECTORY>
 4.5. MacOS only (Skip if not on MacOS)
 you have to generate the build environment using this command instead
 
-'''
+```
 cmake -S . -B Ninja -B <BUILD_DIRECTORY> -DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c
-'''
+```
 
 5. And then build fooyin:
 
