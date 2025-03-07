@@ -93,7 +93,7 @@ cmake -S . -G Ninja -B <BUILD_DIRECTORY>
 you have to generate the build environment using this command instead
 
 ```
-cmake -S . -B Ninja -B <BUILD_DIRECTORY> -DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c
+cmake -S . -G Ninja -B <BUILD_DIRECTORY> -DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c
 ```
 
 5. And then build fooyin:
