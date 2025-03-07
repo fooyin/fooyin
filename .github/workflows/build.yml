@@ -26,6 +26,11 @@ jobs:
     uses: ./.github/workflows/build-windows.yml
     secrets: inherit
 
+  macos:
+    name: Build macOS
+    uses: ./.github/workflows/build-macos.yml
+    secrets: inherit
+
   attach:
     name: Attach to release
     if: github.event_name == 'release' && github.event.action == 'published'
