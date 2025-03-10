@@ -817,7 +817,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="553"/>
         <source>&amp;Undo</source>
-        <translation>回復(&amp;U)</translation>
+        <translation>取消動作(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="554"/>
@@ -827,7 +827,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="565"/>
         <source>&amp;Redo</source>
-        <translation>重做(&amp;R)</translation>
+        <translation>再次動作(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="566"/>
@@ -866,17 +866,17 @@
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="35"/>
         <source>Tab</source>
-        <translation>選項卡</translation>
+        <translation>分頁</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Edit %1 Name</source>
-        <translation>編輯%1的名稱</translation>
+        <translation>編輯 %1 的名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="73"/>
         <source>%1 name:</source>
-        <translation>%1的名稱：</translation>
+        <translation>%1 的名稱：</translation>
     </message>
 </context>
 <context>
@@ -1745,7 +1745,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Config Directory</source>
-        <translation>開啟調設目錄</translation>
+        <translation>開啟設定目錄</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
@@ -5505,7 +5505,7 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="102"/>
         <source>Configure</source>
-        <translation>調設</translation>
+        <translation>設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="103"/>
