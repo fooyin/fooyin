@@ -52,6 +52,13 @@ Metadata::Metadata(const Track& track)
             musicBrainzId = values.front();
         }
     }
+
+    if(track.hasExtraTag(u"MUSICBRAINZ_ALBUMID"_s)) {
+        const auto values = track.extraTag(u"MUSICBRAINZ_ALBUMID"_s);
+        if(!values.empty()) {
+            musicBrainzAlbumId = values.front();
+        }
+    }
 }
 
 ScrobblerCache::ScrobblerCache(QString filepath, QObject* parent)
@@ -138,6 +145,7 @@ void ScrobblerCache::readCache()
         metadata.trackNum       = trackObj.value("Track"_L1).toString();
         metadata.duration       = trackObj.value("Duration"_L1).toVariant().toULongLong();
         metadata.musicBrainzId  = trackObj.value("MusicbrainzTrackId"_L1).toString();
+        metadata.musicBrainzAlbumId  = trackObj.value("MusicbrainzAlbumId"_L1).toString();
         const quint64 timestamp = trackObj.value("Timestamp"_L1).toVariant().toULongLong();
 
         if(!metadata.isValid()) {
@@ -214,6 +222,7 @@ void ScrobblerCache::writeCache()
         object["Track"_L1]              = item->metadata.trackNum;
         object["Duration"_L1]           = QJsonValue::fromVariant(static_cast<quint64>(item->metadata.duration));
         object["MusicbrainzTrackId"_L1] = item->metadata.musicBrainzId;
+        object["MusicbrainzAlbumId"_L1] = item->metadata.musicBrainzAlbumId;
         object["Timestamp"_L1]          = QJsonValue::fromVariant(static_cast<quint64>(item->timestamp));
 
         array.append(object);
