@@ -21,7 +21,7 @@ It's highly extensible with a plugin system and includes _FooScript_,
 a scripting language for advanced configuration of widgets.
 A layout editing mode enables the entire user interface to be customised, starting from a blank slate or a preset layout.
 
-Only Linux is supported at present, though support for other platforms is coming soon.
+Only Linux is supported at present, though macOS can be built, and support for other platforms is coming soon.
 
 | ![Simple](https://github.com/user-attachments/assets/8e8732a7-a7e5-4542-87b4-7d0a7b5e8fa0)     | ![Browser](https://github.com/user-attachments/assets/d9f4ed62-e50a-419c-aa26-8801a76a6597) |
 |----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
