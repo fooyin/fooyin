@@ -202,7 +202,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="163"/>
         <source>%1 of %2 files have artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 de %2 fichiers ont une illustration</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
@@ -225,7 +225,7 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="490"/>
         <source>Show hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les éléments cachés</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="499"/>
@@ -283,7 +283,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Create New Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Créer une nouvelle playlist automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
@@ -293,22 +293,22 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="89"/>
         <source>Query</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Requête</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="160"/>
         <source>Query already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>La requête existe déjà</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="161"/>
         <source>Query %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>La requête %1 existe déjà. Écraser&#x202f;?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="279"/>
         <source>Most Played</source>
-        <translation type="unfinished">Les plus jouées</translation>
+        <translation type="unfinished">Les plus écoutées</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="280"/>
@@ -469,7 +469,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajouter au début de la file d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
@@ -524,7 +524,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="347"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajouter les morceaux sélectionnés au début de la file d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="354"/>
@@ -686,7 +686,7 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="147"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajouter au début de la file d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
