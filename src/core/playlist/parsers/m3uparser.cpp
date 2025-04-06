@@ -95,7 +95,7 @@ QString M3uParser::name() const
 
 QStringList M3uParser::supportedExtensions() const
 {
-    static const QStringList extensions{u"m3"_s, u"m3u8"_s};
+    static const QStringList extensions{u"m3u"_s, u"m3u8"_s};
     return extensions;
 }
 
