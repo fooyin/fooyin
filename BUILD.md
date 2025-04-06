@@ -7,13 +7,15 @@ To build Fooyin you will need *at least*:
 - CMake (3.18+)
 - a C++ compiler with C++20 support
 
+The following package managers are required:
+* [brew](https://brew.sh) (Only if building on MacOS)
+
 The following libraries are required:
 
 * [Qt6](https://www.qt.io) (6.4+)
 * [TagLib](https://taglib.org) (1.12+)
 * [FFmpeg](https://ffmpeg.org) (4.4+)
 * [ICU](https://icu.unicode.org/)
-* [brew](https://brew.sh) (Only if building on MacOS)
 
 At least one of the following is required for audio output:
 
