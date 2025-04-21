@@ -19,10 +19,12 @@
 
 #include "mathfuncs.h"
 
+#include <QLocale>
+
 #include <random>
 
 namespace {
-uint32_t getRandomNumber(uint32_t min, uint32_t max)
+uint32_t getRandomU32(uint32_t min, uint32_t max)
 {
     std::mt19937 gen{std::random_device{}()};
     std::uniform_int_distribution<uint32_t> dist{min, max};
@@ -111,20 +113,53 @@ QString mod(const QStringList& vec)
 QString rand(const QStringList& vec)
 {
     if(vec.size() < 2) {
-        return QString::number(getRandomNumber(0, std::numeric_limits<uint32_t>::max()));
+        return QString::number(getRandomU32(0, std::numeric_limits<uint32_t>::max() - 1));
     }
 
     bool ok{false};
-    const int min = vec.at(0).toInt(&ok);
+    const int min = vec.at(0).toUInt(&ok);
     if(!ok) {
         return {};
     }
 
-    const int max = vec.at(1).toInt(&ok);
+    const int max = vec.at(1).toUInt(&ok);
     if(!ok) {
         return {};
     }
 
-    return QString::number(getRandomNumber(min, max));
+    return QString::number(getRandomU32(min, max));
+}
+
+QString round(const QStringList& vec)
+{
+    if(vec.size() < 1 || vec.size() > 2) {
+        return {};
+    }
+
+    bool ok{false};
+    const double num = vec.at(0).toDouble(&ok);
+    if(!ok) {
+        return {};
+    }
+
+    if(vec.size() == 1) {
+        return QString::number(num, 'f', QLocale::FloatingPointShortest);
+    }
+
+    const int precision = vec.at(1).toInt(&ok);
+    if(!ok || precision < 0) {
+        return {};
+    }
+
+    auto str = QString::number(num, 'f', precision);
+    if(str.contains(u'.')) {
+        while(str.back() == u'0') {
+            str.chop(1);
+        }
+        if(str.back() == u'.') {
+            str.chop(1);
+        }
+    }
+    return str;
 }
 } // namespace Fooyin::Scripting
