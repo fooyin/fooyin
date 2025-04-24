@@ -291,7 +291,7 @@ void PlaylistHandlerPrivate::savePlaylists()
     }
 
     if(!m_activePlaylist->isTemporary()
-       && m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
+       && m_settings->fileValue(Settings::Core::Internal::SaveActivePlaylistState, false).toBool()) {
         stateSettings.setValue(ActiveIndex, m_activePlaylist->currentTrackIndex());
     }
     else {
@@ -371,7 +371,7 @@ void PlaylistHandlerPrivate::restoreActivePlaylist()
     m_activePlaylist = playlist->get();
     emit m_self->activePlaylistChanged(m_activePlaylist);
 
-    if(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState).toBool()) {
+    if(m_settings->fileValue(Settings::Core::Internal::SaveActivePlaylistState).toBool()) {
         const int lastIndex = stateSettings.value(ActiveIndex).toInt();
         m_activePlaylist->changeCurrentIndex(lastIndex);
         m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
