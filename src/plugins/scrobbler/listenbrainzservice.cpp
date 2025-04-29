@@ -358,7 +358,10 @@ QJsonObject ListenBrainzService::getTrackMetadata(const Metadata& metadata) cons
         infoObj.insert(u"tracknumber"_s, metadata.trackNum);
     }
     if(!metadata.musicBrainzId.isEmpty()) {
-        infoObj.insert(u"track_mbid"_s, metadata.musicBrainzId);
+        infoObj.insert(u"recording_mbid"_s, metadata.musicBrainzId);
+    }
+    if(!metadata.musicBrainzAlbumId.isEmpty()) {
+        infoObj.insert(u"release_mbid"_s, metadata.musicBrainzAlbumId);
     }
 
     infoObj.insert(u"media_player"_s, QCoreApplication::applicationName());

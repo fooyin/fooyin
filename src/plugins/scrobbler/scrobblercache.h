@@ -38,6 +38,7 @@ public:
     QString trackNum;
     uint64_t duration{0};
     QString musicBrainzId;
+    QString musicBrainzAlbumId;
 
     [[nodiscard]] bool isValid() const
     {

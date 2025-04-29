@@ -670,7 +670,7 @@ void Playlist::resetNextTrackIndex()
 
 QStringList Playlist::supportedPlaylistExtensions()
 {
-    static const QStringList supportedExtensions = {u"cue"_s, u"m3"_s, u"m3u8"_s};
+    static const QStringList supportedExtensions = {u"cue"_s, u"m3u"_s, u"m3u8"_s};
     return supportedExtensions;
 }
 
