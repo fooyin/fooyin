@@ -130,6 +130,7 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
         box->addItem(text, actionValue);
     };
 
+    addTrackAction(m_doubleClick, tr("None"), TrackAction::None, doubleActions);
     addTrackAction(m_doubleClick, tr("Expand/Collapse/Play"), TrackAction::Play, doubleActions);
     addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist, doubleActions);
     addTrackAction(m_doubleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist, doubleActions);
@@ -144,6 +145,7 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     addTrackAction(m_middleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist, middleActions);
     addTrackAction(m_middleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, middleActions);
     addTrackAction(m_middleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Add to playback queue"), TrackAction::AddToQueue, middleActions);
     addTrackAction(m_middleClick, tr("Add to front of playback queue"), TrackAction::QueueNext, middleActions);
     addTrackAction(m_middleClick, tr("Send to playback queue"), TrackAction::SendToQueue, middleActions);
 
