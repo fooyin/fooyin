@@ -56,6 +56,7 @@ private:
     QCheckBox* m_cursorFollowsPlayback;
     QCheckBox* m_playbackFollowsCursor;
     QCheckBox* m_rewindPrevious;
+    QCheckBox* m_followPlaybackQueue;
     QCheckBox* m_skipUnavailable;
     SliderEditor* m_playedSlider;
     ScriptLineEdit* m_shuffleAlbumsGroup;
@@ -68,6 +69,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_cursorFollowsPlayback{new QCheckBox(tr("Cursor follows playback"), this)}
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
+    , m_followPlaybackQueue{new QCheckBox(tr("Follow last playback queue track"), this)}
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
     , m_playedSlider{new SliderEditor(tr("Played threshold"), this)}
     , m_shuffleAlbumsGroup{new ScriptLineEdit(this)}
@@ -78,6 +80,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     m_restorePlayback->setToolTip(tr("Save playback state on exit and restore it on next startup"));
     m_rewindPrevious->setToolTip(tr(
         "If the current track has been playing for more than 5s, restart it instead of moving to the previous track"));
+    m_followPlaybackQueue->setToolTip(tr(
+        "Once the playback queue has finished, start playback from the tracks following the last queued track"));
     m_skipUnavailable->setToolTip(
         tr("If the current track in a playlist is unavailable, silently continue to the next track"));
 
@@ -96,6 +100,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     generalGroupLayout->addWidget(m_restorePlayback, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_cursorFollowsPlayback, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playbackFollowsCursor, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_followPlaybackQueue, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_rewindPrevious, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 2);
@@ -119,6 +124,7 @@ void PlaybackPageWidget::load()
     m_restorePlayback->setChecked(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool());
     m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
+    m_followPlaybackQueue->setChecked(m_settings->value<Settings::Core::FollowPlaybackQueue>());
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
     m_skipUnavailable->setChecked(
         m_settings->fileValue(Settings::Core::Internal::PlaylistSkipUnavailable, false).toBool());
@@ -136,6 +142,7 @@ void PlaybackPageWidget::apply()
     m_settings->fileSet(Settings::Core::Internal::SavePlaybackState, m_restorePlayback->isChecked());
     m_settings->set<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
+    m_settings->set<Settings::Core::FollowPlaybackQueue>(m_followPlaybackQueue->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
     m_settings->fileSet(Settings::Core::Internal::PlaylistSkipUnavailable, m_skipUnavailable->isChecked());
 

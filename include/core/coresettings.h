@@ -75,6 +75,7 @@ enum CoreSettings : uint32_t
     ShuffleAlbumsSortScript   = 28 | Type::String,
     ActiveTrack               = 29 | Type::Variant,
     ActiveTrackId             = 30 | Type::Int,
+    FollowPlaybackQueue       = 31 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core
