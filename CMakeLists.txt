@@ -82,6 +82,7 @@ list(
     -Wdisabled-optimization
     -Woverloaded-virtual
     -Wold-style-cast
+    -Wno-array-bounds
 )
 if(BUILD_WERROR)
     list(APPEND FOOYIN_COMPILE_OPTIONS -Werror)

@@ -181,7 +181,7 @@ void ScriptRegistryPrivate::addPlaybackVars()
     m_playbackVars[u"PLAYBACK_TIME"_s] = [this]() {
         return Utils::msToString(m_playerController ? m_playerController->currentPosition() : 0);
     };
-    m_playbackVars[u"PLAYBACK_TIME_s"_s] = [this]() {
+    m_playbackVars[u"PLAYBACK_TIME_S"_s] = [this]() {
         return QString::number(m_playerController ? m_playerController->currentPosition() / 1000 : 0);
     };
     m_playbackVars[u"PLAYBACK_TIME_REMAINING"_s] = [this]() {
@@ -233,14 +233,15 @@ void ScriptRegistryPrivate::addLibraryVars()
 
 void ScriptRegistryPrivate::addDefaultFunctions()
 {
-    m_funcs[u"add"_s]  = Scripting::add;
-    m_funcs[u"sub"_s]  = Scripting::sub;
-    m_funcs[u"mul"_s]  = Scripting::mul;
-    m_funcs[u"div"_s]  = Scripting::div;
-    m_funcs[u"min"_s]  = Scripting::min;
-    m_funcs[u"max"_s]  = Scripting::max;
-    m_funcs[u"mod"_s]  = Scripting::mod;
-    m_funcs[u"rand"_s] = Scripting::rand;
+    m_funcs[u"add"_s]   = Scripting::add;
+    m_funcs[u"sub"_s]   = Scripting::sub;
+    m_funcs[u"mul"_s]   = Scripting::mul;
+    m_funcs[u"div"_s]   = Scripting::div;
+    m_funcs[u"min"_s]   = Scripting::min;
+    m_funcs[u"max"_s]   = Scripting::max;
+    m_funcs[u"mod"_s]   = Scripting::mod;
+    m_funcs[u"rand"_s]  = Scripting::rand;
+    m_funcs[u"round"_s] = Scripting::round;
 
     m_funcs[u"num"_s]            = Scripting::num;
     m_funcs[u"replace"_s]        = Scripting::replace;
