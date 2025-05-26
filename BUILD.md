@@ -141,30 +141,29 @@ cmake --install <BUILD_DIRECTORY> --prefix <INSTALL_DIRECTORY>
 ```
 
 ## Installing on MacOS
-* 1. Open up finder and your terminal.
-* 2. in finder find where you cloned fooyin and follow this path "<BUILD_DIRECTORY>/run/bin"
-* 3. Now you should see an executable called fooyin.
-* 4. Double Click fooyin to make sure you didn't build it wrong. After that works close it.
-* 5. switch to your terminal, and cd into the same directory you got to in finder.
-* 6. run the command ```pwd``` to get the full directory path.
-* 7. then open up your apps, and open an app called "Automator".
-* 8. Choose to create a new application.
-* 9. search shell script, find run shell script, and drag it into the spot in the middle.
-* 10. choose your interpreter as ```/usr/bash```.
-* 11. Then copy the output of the pwd command and paste it into the text box in automator.
-* 12. then add ```/fooyin; exit;``` to the end of it.
-* 13. then in the corner of automator click "file -> save".
-* 14. Make sure to set the type to "Application" and the app name to fooyin when you're saving.
-* 15. Find this new app and it will have the default icon.
-* 16. Go to where you cloned fooyin and copy (CMD+C on MacOS) the "512-fooyin.png" file from your fooyin build in ```data/icons``` or download it from github.
-* 17. Go to "Applications", find your fooyin app, right click on it, click get info, then click on the little tiny icon in the top-left corner of that menu.
-* 18. Once clicked once press CMD+V to paste.
-* 19. You should now have an application that has the fooyin icon and when clicked on launches fooyin!
+1. Open up finder and your terminal.
+2. in finder find where you cloned fooyin and follow this path "<BUILD_DIRECTORY>/run/bin"
+3. Now you should see an executable called fooyin.
+4. Double Click fooyin to make sure you didn't build it wrong. After that works close it.
+5. switch to your terminal, and cd into the same directory you got to in finder.
+6. run the command ```pwd``` to get the full directory path.
+7. then open up your apps, and open an app called "Automator".
+8. Choose to create a new application.
+9. search shell script, find run shell script, and drag it into the spot in the middle.
+10. choose your interpreter as ```/usr/bash```.
+11. Then copy the output of the pwd command and paste it into the text box in automator.
+12. then add ```/fooyin; exit;``` to the end of it.
+13. then in the corner of automator click "file -> save".
+14. Make sure to set the type to "Application" and the app name to fooyin when you're saving.
+15. Find this new app and it will have the default icon.
+16. Go to where you cloned fooyin and copy (CMD+C on MacOS) the "512-fooyin.png" file from your fooyin build in ```data/icons``` or download it from github.
+17. Go to "Applications", find your fooyin app, right click on it, click get info, then click on the little tiny icon in the top-left corner of that menu.
+18. Once clicked once press CMD+V to paste.
+19. You should now have an application that has the fooyin icon and when clicked on launches fooyin!
 
 ### Why build and install process is different for MacOS
 For ```cmake -S . -G Ninja -B <BUILD_DIRECTORY> -DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c```:
   - The ICU Library is not findable by cmake the way brew installs it so you must tell cmake where it is manually.
-For the install:
   - When you run ```cmake --install <BUILD_DIRECTORY>``` it does not install behind the scences libraries such as lib-fooyingui to your "/usr/local" only the fooyin executable, which means fooyin can't open.
 
 ## Uninstalling
