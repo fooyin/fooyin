@@ -524,7 +524,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="347"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Agrega las pistas seleccionadas al frente de la cola de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="354"/>
@@ -2115,27 +2115,27 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="115"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Base</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
         <source>Base (Alternate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Base (Alternativo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="117"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Resaltado</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="118"/>
         <source>Highlighted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Texto resaltado</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="119"/>
         <source>Button (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Botón (Fondo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="120"/>
@@ -2155,12 +2155,12 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="130"/>
         <source>Highlighted Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Texto resaltado (Desactivado)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="131"/>
         <source>Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Texto (Desactivado)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="132"/>
@@ -2190,7 +2190,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="137"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Claro</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="138"/>
@@ -2200,7 +2200,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="139"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Oscuro</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="140"/>
