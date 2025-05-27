@@ -193,7 +193,7 @@ void LibraryTreePageWidget::load()
     };
 
     addTrackAction(m_doubleClick, tr("None"), TrackAction::None, doubleActions);
-    addTrackAction(m_doubleClick, tr("Play"), TrackAction::Play, doubleActions);
+    addTrackAction(m_doubleClick, tr("Expand/Collapse/Play"), TrackAction::Play, doubleActions);
     addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist, doubleActions);
     addTrackAction(m_doubleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist, doubleActions);
     addTrackAction(m_doubleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, doubleActions);
