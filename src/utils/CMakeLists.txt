@@ -5,10 +5,10 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/datastream.h
     ${CMAKE_SOURCE_DIR}/include/utils/enum.h
     ${CMAKE_SOURCE_DIR}/include/utils/fileutils.h
+    ${CMAKE_SOURCE_DIR}/include/utils/fymath.h
     ${CMAKE_SOURCE_DIR}/include/utils/helpers.h
     ${CMAKE_SOURCE_DIR}/include/utils/id.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
-    ${CMAKE_SOURCE_DIR}/include/utils/math.h
     ${CMAKE_SOURCE_DIR}/include/utils/paths.h
     ${CMAKE_SOURCE_DIR}/include/utils/signalthrottler.h
     ${CMAKE_SOURCE_DIR}/include/utils/stareditor.h
