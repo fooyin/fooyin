@@ -56,9 +56,14 @@ std::set<QString> Fooyin::CoverProvider::m_noCoverKeys;
 namespace {
 using Fooyin::CoverProvider;
 
-QString generateCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type)
+QString generateAlbumCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type)
 {
     return Fooyin::Utils::generateHash(u"FyCover"_s + QString::number(static_cast<int>(type)), track.albumHash());
+}
+
+QString generateTrackCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type)
+{
+    return Fooyin::Utils::generateHash(u"FyCover"_s + QString::number(static_cast<int>(type)), track.hash());
 }
 
 QString generateThumbCoverKey(const QString& key, int size)
@@ -74,8 +79,9 @@ QString coverThumbnailPath(const QString& key)
 void saveThumbnail(const QImage& cover, const QString& key)
 {
     QFile file{coverThumbnailPath(key)};
-    file.open(QIODevice::WriteOnly);
-    cover.save(&file, "JPG", 85);
+    if(file.open(QIODevice::WriteOnly)) {
+        cover.save(&file, "JPG", 85);
+    }
 }
 
 QSize calculateScaledSize(const QSize& originalSize, int maxSize)
@@ -389,7 +395,7 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
         return p->m_usePlacerholder ? p->loadNoCover() : QPixmap{};
     }
 
-    const QString coverKey = generateCoverKey(track, type);
+    const QString coverKey = generateTrackCoverKey(track, type);
     if(!p->m_pendingCovers.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey);
         if(!cover.isNull()) {
@@ -409,7 +415,7 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, ThumbnailSize siz
         return p->m_usePlacerholder ? p->loadNoCover() : QPixmap{};
     }
 
-    const QString coverKey = generateCoverKey(track, type);
+    const QString coverKey = generateAlbumCoverKey(track, type);
     if(!p->m_pendingCovers.contains(coverKey) && !m_noCoverKeys.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey, size);
         if(!cover.isNull()) {
@@ -474,13 +480,13 @@ void CoverProvider::removeFromCache(const Track& track)
         QPixmapCache::remove(key);
     };
 
-    removeKey(generateCoverKey(track, Track::Cover::Front));
-    removeKey(generateCoverKey(track, Track::Cover::Back));
-    removeKey(generateCoverKey(track, Track::Cover::Artist));
-
     for(const auto type : {Track::Cover::Front, Track::Cover::Back, Track::Cover::Artist}) {
+        removeKey(generateAlbumCoverKey(track, type));
+        removeKey(generateTrackCoverKey(track, type));
+
         for(const auto size : {Tiny, Small, MediumSmall, Medium, Large, VeryLarge, ExtraLarge, Huge}) {
-            QPixmapCache::remove(generateThumbCoverKey(generateCoverKey(track, type), size));
+            QPixmapCache::remove(generateThumbCoverKey(generateAlbumCoverKey(track, type), size));
+            QPixmapCache::remove(generateThumbCoverKey(generateTrackCoverKey(track, type), size));
         }
     }
 }
