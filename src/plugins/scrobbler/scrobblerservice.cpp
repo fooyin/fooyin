@@ -23,7 +23,7 @@
 #include "scrobblersettings.h"
 
 #include <core/network/networkaccessmanager.h>
-#include <utils/paths.h>
+#include <utils/fypaths.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>

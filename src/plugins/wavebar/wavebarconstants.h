@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <utils/paths.h>
+#include <utils/fypaths.h>
 
 namespace Fooyin::WaveBar {
 QString cachePath();
