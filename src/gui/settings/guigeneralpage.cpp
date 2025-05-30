@@ -78,6 +78,8 @@ private:
     QRadioButton* m_darkTheme;
     QRadioButton* m_systemTheme;
 
+    QCheckBox* m_showMenuBar;
+
     QCheckBox* m_overrideMargin;
     QSpinBox* m_editableLayoutMargin;
 
@@ -110,6 +112,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_lightTheme{new QRadioButton(tr("Light"), this)}
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
     , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
+    , m_showMenuBar{new QCheckBox(tr("Show menu bar"), this)}
     , m_overrideMargin{new QCheckBox(tr("Override root margin") + u":"_s, this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
     , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
@@ -159,6 +162,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* layoutGroupLayout = new QGridLayout(layoutGroup);
 
     row = 0;
+    layoutGroupLayout->addWidget(m_showMenuBar, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_overrideSplitterHandle, row, 0);
@@ -286,6 +290,8 @@ void GuiGeneralPageWidget::load()
             break;
     }
 
+    m_showMenuBar->setChecked(m_settings->value<ShowMenuBar>());
+
     m_splitterHandles->setChecked(m_settings->value<ShowSplitterHandles>());
     m_lockSplitters->setChecked(m_settings->value<LockSplitterHandles>());
 
@@ -336,6 +342,8 @@ void GuiGeneralPageWidget::apply()
     }
     m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
 
+    m_settings->set<ShowMenuBar>(m_showMenuBar->isChecked());
+
     m_settings->set<ShowSplitterHandles>(m_splitterHandles->isChecked());
     m_settings->set<LockSplitterHandles>(m_lockSplitters->isChecked());
 
@@ -375,6 +383,7 @@ void GuiGeneralPageWidget::reset()
 {
     m_settings->reset<Style>();
     m_settings->reset<IconTheme>();
+    m_settings->reset<ShowMenuBar>();
     m_settings->reset<ShowSplitterHandles>();
     m_settings->reset<LockSplitterHandles>();
     m_settings->reset<EditableLayoutMargin>();

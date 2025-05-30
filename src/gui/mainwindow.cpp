@@ -81,6 +81,9 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
     }
 
     m_settings->subscribe<Settings::Gui::ShowStatusTips>(this, [this](const bool show) { m_showStatusTips = show; });
+    m_settings->subscribe<Settings::Gui::ShowMenuBar>(this, [this](const bool show) { menuBar()->setVisible(show); });
+
+    menuBar()->setVisible(m_settings->value<Settings::Gui::ShowMenuBar>());
 }
 
 MainWindow::~MainWindow()
