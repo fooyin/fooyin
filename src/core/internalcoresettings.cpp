@@ -82,6 +82,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
                                                        u"Playback/ShuffleAlbumsSortScript"_s);
     m_settings->createTempSetting<ActiveTrack>(QVariant{});
     m_settings->createTempSetting<ActiveTrackId>(-2);
+    m_settings->createSetting<FollowPlaybackQueue>(false, u"Playback/FollowPlaybackQueue"_s);
 
     m_settings->createSetting<Internal::MonitorLibraries>(true, u"Library/MonitorLibraries"_s);
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());

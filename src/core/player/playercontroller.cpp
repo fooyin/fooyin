@@ -109,6 +109,23 @@ void PlayerController::play()
 {
     if(!p->m_currentTrack.isValid()) {
         if(!p->m_queue.empty()) {
+            const auto& nextTrack = p->m_queue.nextTrack();
+            Playlist* playlist    = nullptr;
+            if(p->m_playlistHandler) {
+                playlist = p->m_playlistHandler->activePlaylist();
+                if(playlist && playlist->id() != nextTrack.playlistId && nextTrack.playlistId.isValid()) {
+                    p->m_playlistHandler->changeActivePlaylist(nextTrack.playlistId);
+                }
+                if(p->m_queue.trackCount() == 1 && p->m_settings->value<Settings::Core::FollowPlaybackQueue>()) {
+                    const auto index = nextTrack.indexInPlaylist;
+                    if(playlist->id() != nextTrack.playlistId) {
+                        playlist = p->m_playlistHandler->playlistById(nextTrack.playlistId);
+                    }
+                    if(playlist && index != -1) {
+                        playlist->changeCurrentIndex(index);
+                    }
+                }
+            }
             changeCurrentTrack(p->m_queue.nextTrackChange());
             emit tracksDequeued({p->m_currentTrack});
         }
