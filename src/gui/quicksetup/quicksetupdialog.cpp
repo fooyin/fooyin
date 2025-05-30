@@ -21,7 +21,7 @@
 
 #include "quicksetupmodel.h"
 
-#include <utils/paths.h>
+#include <utils/fypaths.h>
 
 #include <QDir>
 #include <QListWidget>

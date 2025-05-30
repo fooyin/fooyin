@@ -232,7 +232,9 @@ void CoverWidget::reloadCover()
     }
 
     m_cover = m_coverProvider->trackCover(track, m_coverType);
-    rescaleCover();
+    // Delay showing cover so we don't display the placeholder if still loading
+    // TODO: Implement fading between cover changes
+    QTimer::singleShot(200, this, &CoverWidget::rescaleCover);
 }
 } // namespace Fooyin
 
