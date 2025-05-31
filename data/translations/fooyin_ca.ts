@@ -2346,62 +2346,62 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="182"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
         <source>Icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Icones</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="158"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="176"/>
         <source>Tool Buttons</source>
-        <translation type="unfinished"></translation>
+        <translation>Botons d&apos;eines</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
         <source>Window title</source>
-        <translation type="unfinished"></translation>
+        <translation>Títol de la finestra</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="192"/>
         <source>VBR update interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Interval d&apos;actualització de VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informació de selecció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="206"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="216"/>
         <source>Seek step</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de cerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="218"/>
         <source>Volume step</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de volum</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="222"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Valoració</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="228"/>
         <source>Star size</source>
-        <translation type="unfinished"></translation>
+        <translation>Mida de l&apos;estrella</translation>
     </message>
 </context>
 <context>
@@ -2409,17 +2409,17 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="383"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Temes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Interfície</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Colours &amp; Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Colors i fonts</translation>
     </message>
 </context>
 <context>
@@ -2427,22 +2427,22 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="52"/>
         <source>&amp;Quick start</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Inici ràpid</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="53"/>
         <source>Open the quick start guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre la guia d&apos;inici ràpid</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="58"/>
         <source>&amp;Scripting help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ajuda amb scripts</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="59"/>
         <source>Open the scripting documentation</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre la documentació d&apos;scripts</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
@@ -2545,32 +2545,32 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom del fitxer</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="174"/>
         <source>Folder Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Noms de carpeta</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="174"/>
         <source>Folder Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de la carpeta</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="178"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruta del fitxer</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="180"/>
         <source>Subsong Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Índex de subcançons</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
         <source>Total Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Mida total</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
@@ -2605,72 +2605,72 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="215"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Canals</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="217"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Profunditat de bits</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
         <source>Avg. Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Taxa de bits mitjana</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Taxa de bits</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="226"/>
         <source>Sample Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Freqüència de mostreig</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="228"/>
         <source>Codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Còdec</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="230"/>
         <source>Codec Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Perfil de còdec</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="232"/>
         <source>Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Eina</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="233"/>
         <source>Tag Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipus d&apos;etiquetes</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="247"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Guany de pista</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="252"/>
         <source>Track Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic de la pista</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="257"/>
         <source>Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Guany de l&apos;àlbum</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="262"/>
         <source>Album Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic de l&apos;àlbum</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="267"/>
         <source>Total Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic total</translation>
     </message>
 </context>
 <context>
@@ -2678,7 +2678,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infoview.cpp" line="45"/>
         <source>No Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Sense selecció</translation>
     </message>
 </context>
 <context>
@@ -2686,7 +2686,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="142"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informació de selecció</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="184"/>
