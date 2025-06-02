@@ -1,0 +1,42 @@
+name: FreeBSD build
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
+
+env:
+  BUILD_TESTS: Off
+
+jobs:
+  freebsd:
+    name: FreeBSD
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: run VM
+        uses: cross-platform-actions/action@master
+        with:
+          operating_system: freebsd
+          architecture: x86-64
+          cpu_count: 4
+          shell: bash
+          version: '14.2'
+          run: |
+            ./ci/freebsd-depends.sh
+            ./ci/freebsd-build.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: freebsd-14.2
+          path: pkg
