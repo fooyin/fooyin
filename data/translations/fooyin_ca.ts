@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="81"/>
         <source>About %1</source>
-        <translation>Sobre %1</translation>
+        <translation>Quant a %1</translation>
     </message>
 </context>
 <context>
@@ -2467,12 +2467,12 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="73"/>
         <source>&amp;About</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Quant a</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
         <source>Open the about dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre el quadre de diàleg Quant a</translation>
     </message>
 </context>
 <context>
@@ -5449,7 +5449,7 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="39"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="40"/>
@@ -5459,32 +5459,32 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="41"/>
         <source>Author</source>
-        <translation type="unfinished"></translation>
+        <translation>Autor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="42"/>
         <source>Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Categoria</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="43"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Descripció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="44"/>
         <source>URL</source>
-        <translation type="unfinished"></translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="45"/>
         <source>Copyright</source>
-        <translation type="unfinished"></translation>
+        <translation>Copyright</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="46"/>
         <source>License</source>
-        <translation type="unfinished"></translation>
+        <translation>Llicència</translation>
     </message>
 </context>
 <context>
@@ -5492,12 +5492,12 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="243"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Complements</translation>
     </message>
 </context>
 <context>
@@ -5505,43 +5505,43 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="102"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Configura</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="103"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>Quant a</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="104"/>
         <source>Install…</source>
-        <translation type="unfinished"></translation>
+        <translation>Instal·la…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="171"/>
         <source>Plugins Changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Complements modificats</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="223"/>
         <source>Install Plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>Instal·la el complement</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="224"/>
         <source>%1 Plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>Complement %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="231"/>
         <source>Plugin Installed</source>
-        <translation type="unfinished"></translation>
+        <translation>Complement instal·lat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="172"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="232"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Has de reiniciar l&apos;aplicació perquè els canvis tinguin efecte. Vols reiniciar-la ara?</translation>
     </message>
 </context>
 <context>
@@ -5549,27 +5549,27 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="121"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="123"/>
         <source>Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versió</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="125"/>
         <source>Author</source>
-        <translation type="unfinished"></translation>
+        <translation>Autor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="127"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Carrega</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="129"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Estat</translation>
     </message>
 </context>
 <context>
@@ -5577,22 +5577,22 @@
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="41"/>
         <source>Track Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Taula de pistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="49"/>
         <source>Album/Disc</source>
-        <translation type="unfinished"></translation>
+        <translation>Àlbum/Disc</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
         <source>Disc Albums</source>
-        <translation type="unfinished"></translation>
+        <translation>Àlbums de disc</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Simple Artist/Album/Year</source>
-        <translation type="unfinished"></translation>
+        <translation>Artista/Àlbum/Any simple</translation>
     </message>
 </context>
 <context>
@@ -5601,13 +5601,13 @@
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="156"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="176"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Eines</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="160"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="246"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Propietats</translation>
     </message>
 </context>
 <context>
@@ -5615,37 +5615,37 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="58"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="60"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Esborra</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="108"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina les pistes seleccionades de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="118"/>
         <source>Remove all tracks in the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina totes les pistes de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="124"/>
         <source>&amp;Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Selecciona-ho tot</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="125"/>
         <source>Select all tracks in the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona totes les pistes de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="81"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Cua de reproducció</translation>
     </message>
 </context>
 <context>
@@ -5653,7 +5653,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="131"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Cua de reproducció</translation>
     </message>
 </context>
 <context>
@@ -5661,7 +5661,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerview.cpp" line="53"/>
         <source>Empty Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Cua de reproducció buida</translation>
     </message>
 </context>
 <context>
@@ -5669,12 +5669,12 @@
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="38"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>D&apos;acord</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="41"/>
         <source>Quick Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuració ràpida</translation>
     </message>
 </context>
 <context>
@@ -5682,22 +5682,22 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="47"/>
         <source>ReplayGain Scan Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Resultats de l&apos;escaneig ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="59"/>
         <source>&amp;Update File Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Actualitza les etiquetes de fitxer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="76"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished"></translation>
+        <translation>Escrivint a les etiquetes de fitxer…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="44"/>
         <source>Time taken</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps que s&apos;ha trigat</translation>
     </message>
 </context>
 <context>
@@ -5705,27 +5705,27 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="46"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="48"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Guany de volum de les pistes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="50"/>
         <source>Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Guany de volum dels àlbums</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="52"/>
         <source>Track Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic de volum de la pista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="54"/>
         <source>Album Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic de volum de l&apos;àlbum</translation>
     </message>
 </context>
 <context>
@@ -5733,17 +5733,17 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="143"/>
         <source>Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation>Càlcul</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="144"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducció</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="144"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Guany de volum</translation>
     </message>
 </context>
 <context>
@@ -5751,37 +5751,37 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="59"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilitzeu el pic de mostra per calcular els pics de volum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="60"/>
         <source>Use true peak for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilitza el pic real per calcular els pics de volum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="63"/>
         <source>Scanner</source>
-        <translation type="unfinished"></translation>
+        <translation>Escàner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="75"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opcions</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Album grouping pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Patró d&apos;agrupació d&apos;àlbums</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="85"/>
         <source>Used with the %1 action</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;utilitza amb l&apos;acció %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="85"/>
         <source>Calculate as albums (by tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcula com a àlbums (per etiquetes)</translation>
     </message>
 </context>
 <context>
@@ -5789,7 +5789,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="70"/>
         <source>Scanning tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Escanejant pistes…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="70"/>
