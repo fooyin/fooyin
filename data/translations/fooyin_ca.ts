@@ -6138,42 +6138,42 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="86"/>
         <source>Prefer album artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artista de l&apos;àlbum preferit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="89"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="92"/>
         <source>Scrobble delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Retard de Scrobble</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="94"/>
         <source>Time to wait before submitting scrobbles</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps d&apos;espera abans d&apos;enviar scrobbles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="100"/>
         <source>seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>segons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="110"/>
         <source>Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="181"/>
         <source>User token</source>
-        <translation type="unfinished"></translation>
+        <translation>Token d&apos;usuari</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="255"/>
         <source>Sign Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Tanca la sessió</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="257"/>
