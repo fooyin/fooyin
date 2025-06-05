@@ -6617,27 +6617,27 @@
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="72"/>
         <source>Exclude</source>
-        <translation type="unfinished"></translation>
+        <translation>Exclou</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="77"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="84"/>
         <source>Playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de la llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="86"/>
         <source>Sort incoming tracks by</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordena les pistes entrants per</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="80"/>
         <source>When opening files, always send to playlist, replacing all existing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Quan obriu fitxers, envieu-los sempre a la llista de reproducció i substituïu totes les pistes existents.</translation>
     </message>
 </context>
 <context>
@@ -6645,12 +6645,12 @@
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="224"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Acció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="226"/>
         <source>Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Id</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="228"/>
