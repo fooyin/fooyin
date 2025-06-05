@@ -53,7 +53,7 @@ public:
     void filesToNewPlaylistReplace(const QString& playlistName, const QList<QUrl>& urls, bool play = false) const;
     void filesToActivePlaylist(const QList<QUrl>& urls) const;
     void filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func) const;
-    void loadPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play = false) const;
+    void loadPlaylist(const QList<QPair<QString, QUrl>>& playlistData, bool play = false) const;
 
     void trackMimeToPlaylist(const QByteArray& data, const UId& id);
 
