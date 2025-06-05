@@ -51,6 +51,7 @@ public:
     ~ScrobblerService() override;
 
     [[nodiscard]] virtual QString name() const = 0;
+    [[nodiscard]] virtual QUrl url() const = 0;
     [[nodiscard]] virtual QUrl authUrl() const = 0;
     [[nodiscard]] virtual QString username() const;
     [[nodiscard]] virtual bool isAuthenticated() const = 0;

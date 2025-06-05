@@ -28,6 +28,7 @@ public:
     LastFmService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
+    [[nodiscard]] QUrl url() const override;
     [[nodiscard]] QUrl authUrl() const override;
     [[nodiscard]] QString username() const override;
     [[nodiscard]] bool isAuthenticated() const override;
