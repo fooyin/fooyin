@@ -227,6 +227,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          m_editableLayout.get(), m_windowController, m_themeRegistry}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_self, &m_playlistInteractor, m_self)}
+    , m_scriptParser{new ScriptRegistry(m_playerController)}
 { }
 
 void GuiApplicationPrivate::initialise()
