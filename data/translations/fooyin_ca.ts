@@ -6221,7 +6221,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="62"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls</translation>
     </message>
 </context>
 <context>
@@ -6229,22 +6229,22 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="101"/>
         <source>%1 Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Autenticació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="103"/>
         <source>Open url in web browser?</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrir l&apos;URL al navegador web?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="110"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="112"/>
         <source>Copy URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia l&apos;URL</translation>
     </message>
 </context>
 <context>
@@ -6252,7 +6252,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="64"/>
         <source>Scrobble Toggle</source>
-        <translation type="unfinished"></translation>
+        <translation>Activa/desactiva l&apos;Scrobble</translation>
     </message>
 </context>
 <context>
@@ -6262,31 +6262,31 @@
         <location filename="../../src/gui/search/searchcontroller.cpp" line="190"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="226"/>
         <source>Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Connecta</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="182"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="194"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="226"/>
         <source>Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconnecta</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="167"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="175"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="222"/>
         <source>Unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="245"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Esborra-ho tot</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="255"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Finalitza</translation>
     </message>
 </context>
 <context>
@@ -6295,45 +6295,45 @@
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="69"/>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="137"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opcions</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="122"/>
         <source>Search Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca a la llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="122"/>
         <source>Search Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca a la biblioteca</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
         <source>Start typing to search</source>
-        <translation type="unfinished"></translation>
+        <translation>Comença a escriure per cercar</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
         <source>%Ln result(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln resultat</numerusform>
+            <numerusform>%Ln resultats</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="129"/>
         <source>No results</source>
-        <translation type="unfinished"></translation>
+        <translation>Sense resultats</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="141"/>
         <source>Auto-select on search</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecció automàtica a la cerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="151"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuda</translation>
     </message>
 </context>
 <context>
@@ -6341,17 +6341,17 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="202"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Biblioteca</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>Cercant</translation>
     </message>
 </context>
 <context>
@@ -6359,67 +6359,67 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="69"/>
         <source>Clear search string when successful</source>
-        <translation type="unfinished"></translation>
+        <translation>Esborra la cadena de cerca quan tingui èxit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="70"/>
         <source>Autosearch delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Retard de la cerca automàtica</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="72"/>
         <source>Append search string to the playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix la cadena de cerca al nom de la llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
         <source>Switch focus to playlist on successful search</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el focus a la llista de reproducció si la cerca és correcta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="74"/>
         <source>Close quick search when successful</source>
-        <translation type="unfinished"></translation>
+        <translation>Tanca la cerca ràpida quan tingui èxit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="75"/>
         <source>Error background</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de fons</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="77"/>
         <source>Error foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Error en primer pla</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="80"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="84"/>
         <source>Very fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Molt ràpid</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="85"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Ràpid</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="86"/>
         <source>Medium</source>
-        <translation type="unfinished"></translation>
+        <translation>Mitjà</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
         <source>Slow</source>
-        <translation type="unfinished"></translation>
+        <translation>Lent</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="89"/>
         <source>These settings will only apply if autosearch is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aquesta configuració només s&apos;aplicarà si la cerca automàtica està desactivada.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
