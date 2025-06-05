@@ -30,10 +30,12 @@ find_package_handle_standard_args(
     SndFile_INCLUDEDIR
 )
 
-file(STRINGS "${SndFile_INCLUDEDIR}/sndfile.h"
-     SndFile_SUPPORTS_SET_COMPRESSION_LEVEL
-     REGEX ".*SFC_SET_COMPRESSION_LEVEL.*"
-)
+if(EXISTS "${SndFile_INCLUDEDIR}/sndfile.h")
+    file(STRINGS "${SndFile_INCLUDEDIR}/sndfile.h"
+         SndFile_SUPPORTS_SET_COMPRESSION_LEVEL
+         REGEX ".*SFC_SET_COMPRESSION_LEVEL.*")
+endif()
+
 if(SndFile_SUPPORTS_SET_COMPRESSION_LEVEL)
     set(SndFile_SUPPORTS_SET_COMPRESSION_LEVEL ON)
 else()
