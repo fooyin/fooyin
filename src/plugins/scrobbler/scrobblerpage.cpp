@@ -197,6 +197,7 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
                 tokenLayout->addWidget(urlLabel, 1, 0, 1, 2);
             }
 
+            loginBtn->setEnabled(!tokenInput->text().isEmpty());
             QObject::connect(tokenInput, &QLineEdit::textChanged, this,
                              [loginBtn](const QString& text) { loginBtn->setEnabled(!text.isEmpty()); });
 
