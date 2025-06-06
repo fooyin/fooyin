@@ -6703,22 +6703,22 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="39"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Àlbum</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="40"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="41"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Títol</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="42"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Número de pista</translation>
     </message>
 </context>
 <context>
@@ -6726,7 +6726,7 @@
     <message>
         <location filename="../../src/gui/widgets/spacer.cpp" line="34"/>
         <source>Spacer</source>
-        <translation type="unfinished"></translation>
+        <translation>Espaiador</translation>
     </message>
 </context>
 <context>
@@ -6734,22 +6734,22 @@
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="369"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished"></translation>
+        <translation>Divisor (superior/inferior)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="371"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>Divisor (esquerra/dreta)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="381"/>
         <source>Switch orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Orientació de l&apos;interruptor</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="384"/>
         <source>Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>Divisor</translation>
     </message>
 </context>
 <context>
@@ -6757,12 +6757,12 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="281"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra d&apos;estat</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="348"/>
         <source>Show icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra la icona</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="354"/>
