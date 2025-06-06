@@ -152,17 +152,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="109"/>
         <source>Artwork Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>插图属性</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="158"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在加载插图…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="162"/>
         <source>Saving artwork to files…</source>
-        <translation type="unfinished"></translation>
+        <translation>保存插图到文件…</translation>
     </message>
 </context>
 <context>
@@ -182,37 +182,37 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="112"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation>无现有插图</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>打开图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="162"/>
         <source>Multiple images</source>
-        <translation type="unfinished"></translation>
+        <translation>多个图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="163"/>
         <source>%1 of %2 files have artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 个文件中 %1 个有插图</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Replace image</source>
-        <translation type="unfinished"></translation>
+        <translation>替换图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>添加图像</translation>
     </message>
 </context>
 <context>
@@ -273,17 +273,17 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>&amp;Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复默认值(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Edit Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Create New Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>新建自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
@@ -293,37 +293,37 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="89"/>
         <source>Query</source>
-        <translation type="unfinished"></translation>
+        <translation>查询</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="160"/>
         <source>Query already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>查询已经存在</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="161"/>
         <source>Query %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>查询 %1 已经存在。是否替换？</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="279"/>
         <source>Most Played</source>
-        <translation type="unfinished"></translation>
+        <translation>最多次播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="280"/>
         <source>Recently Added</source>
-        <translation type="unfinished"></translation>
+        <translation>最近添加</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="281"/>
         <source>Last Played 2 Weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>最近两周播放过</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="282"/>
         <source>Has Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>有歌词</translation>
     </message>
 </context>
 <context>
@@ -469,7 +469,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
@@ -524,7 +524,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="347"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>把选择的音轨添加到播放队列的头部</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="354"/>
@@ -686,7 +686,7 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="147"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到播放队列头部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
@@ -848,7 +848,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="554"/>
         <source>Undo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>撤销前一次布局变更</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="565"/>
@@ -858,7 +858,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="566"/>
         <source>Redo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>重做前一次布局变更</translation>
     </message>
 </context>
 <context>
@@ -1036,12 +1036,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>&amp;New autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>新自动播放列表(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="72"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>新建一个新自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="79"/>
@@ -1600,7 +1600,7 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="129"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="138"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="130"/>
@@ -1740,17 +1740,17 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>User Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>用户目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Config Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>打开配置目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Share Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>打开共享目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -2346,7 +2346,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="182"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
@@ -2371,7 +2371,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="192"/>
         <source>VBR update interval</source>
-        <translation type="unfinished"></translation>
+        <translation>可变码率更新间隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
@@ -2922,12 +2922,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
         <source>&amp;Clean</source>
-        <translation type="unfinished"></translation>
+        <translation>清除(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>删除不在媒体库和任何播放列表的音轨以及过时的播放统计信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -3002,12 +3002,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="123"/>
         <source>Cleaning database…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在清理数据库…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="133"/>
         <source>Database cleaned</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库清理完成</translation>
     </message>
 </context>
 <context>
@@ -3320,7 +3320,7 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="202"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="203"/>
@@ -3358,7 +3358,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="263"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>加入队列下首播放(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="264"/>
@@ -4902,7 +4902,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="212"/>
@@ -4990,12 +4990,12 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="135"/>
         <source>Create autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>新建自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="138"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="162"/>
@@ -5178,12 +5178,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="295"/>
         <source>Add new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加新自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="313"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="323"/>
@@ -5193,7 +5193,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="323"/>
         <source>Rename autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="327"/>
@@ -5203,7 +5203,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="327"/>
         <source>Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>删除自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="342"/>
@@ -5309,7 +5309,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到队列下首播放(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="193"/>
@@ -5379,7 +5379,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="414"/>
         <source>Add the selected tracks to the start of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的音轨加入播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="419"/>
@@ -7087,7 +7087,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="132"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到队列下首播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="133"/>
@@ -7137,7 +7137,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="199"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的音轨加入播放队列头</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="211"/>
@@ -7724,8 +7724,9 @@ for waveform data. Higher values will result
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
         <translation>用作波形数据的样本数量（基于每一轨道）。
-更高的值将生成更准确和详细的波形，
-但是会使用更多的磁盘缓存空间。</translation>
+更高的值将生成更准确和详细的
+波形，但是会使用更多的磁盘缓
+存空间。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="308"/>

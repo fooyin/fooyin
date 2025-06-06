@@ -152,17 +152,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="109"/>
         <source>Artwork Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Covereigenschaften</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="158"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cover wird geladen…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="162"/>
         <source>Saving artwork to files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cover wird in Datei gespeichert…</translation>
     </message>
 </context>
 <context>
@@ -7880,7 +7880,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="185"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortschrittsbalken</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="190"/>
@@ -7890,7 +7890,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="198"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelbild-Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="206"/>

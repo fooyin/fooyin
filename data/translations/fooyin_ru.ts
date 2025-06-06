@@ -62,7 +62,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="43"/>
         <source>Period length</source>
-        <translation>Продолжительность периода</translation>
+        <translation>Длительность периода</translation>
     </message>
 </context>
 <context>
@@ -469,7 +469,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
@@ -524,7 +524,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="347"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить выделенные треки в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="354"/>
@@ -686,7 +686,7 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="147"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
@@ -1600,7 +1600,7 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="129"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="138"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="130"/>
@@ -2346,7 +2346,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="182"/>
         <source>Playback</source>
-        <translation type="unfinished">Воспроизведение</translation>
+        <translation>Воспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
@@ -2371,7 +2371,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="192"/>
         <source>VBR update interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Интервал обновления VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
@@ -3320,7 +3320,7 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="202"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="203"/>
@@ -3358,7 +3358,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="263"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="264"/>
@@ -3391,7 +3391,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="50"/>
         <source>Log</source>
-        <translation>Лог</translation>
+        <translation>Журнал</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="52"/>
@@ -3401,7 +3401,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="54"/>
         <source>&amp;Save Log</source>
-        <translation>&amp;Сохранить лог</translation>
+        <translation>&amp;Сохранить журнал</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="61"/>
@@ -3426,7 +3426,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="104"/>
         <source>Save Log</source>
-        <translation>Сохранить лог</translation>
+        <translation>Сохранить журнал</translation>
     </message>
 </context>
 <context>
@@ -3505,7 +3505,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="70"/>
         <source>Synced scroll duration</source>
-        <translation>Синхронизированная продолжительность прокрутки</translation>
+        <translation>Синхронизированная длительность прокрутки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
@@ -4902,7 +4902,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="212"/>
@@ -5309,7 +5309,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="193"/>
@@ -5379,7 +5379,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="414"/>
         <source>Add the selected tracks to the start of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выделенные треки в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="419"/>
@@ -6420,7 +6420,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="89"/>
         <source>These settings will only apply if autosearch is disabled.</source>
-        <translation>Эти настройки будут применяться только в том случае, если автопоиск отключен.</translation>
+        <translation>Эти настройки применяются только в том случае, если автопоиск отключён.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
@@ -7089,7 +7089,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="132"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="133"/>
@@ -7139,7 +7139,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="199"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить выделенные треки в начало очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="211"/>
@@ -7208,7 +7208,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="69"/>
         <source>End silence length</source>
-        <translation>Продолжительность тишины в конце</translation>
+        <translation>Длительность тишины в конце</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="86"/>
@@ -7261,7 +7261,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
         <source>Open the log dialog</source>
-        <translation>Открыть окно лога</translation>
+        <translation>Открыть окно журнала</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="55"/>
