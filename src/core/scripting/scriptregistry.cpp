@@ -538,6 +538,27 @@ ScriptResult ScriptRegistry::value(const QString& var, const TrackList& tracks) 
     return {};
 }
 
+ScriptResult ScriptRegistry::value(const QString& var, const Playlist& playlist) const
+{
+    const TrackList tracks = playlist.tracks();
+
+    if(var.isEmpty() || !isVariable(var, tracks)) {
+        return {};
+    }
+
+    const QString variable = var.toUpper();
+
+    if(p->m_listProperties.contains(variable)) {
+        return calculateResult(p->m_listProperties.at(variable)(tracks));
+    }
+
+    if(!tracks.empty()) {
+        return value(var, playlist.currentTrack());
+    }
+
+    return {};
+}
+
 ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const Track& track) const
 {
     if(func.isEmpty() || !p->m_funcs.contains(func)) {
@@ -578,6 +599,19 @@ ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList
     }
 
     return function(func, args, tracks.front());
+}
+
+ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const Playlist& playlist) const
+{
+    if(func.isEmpty() || !p->m_funcs.contains(func)) {
+        return {};
+    }
+
+    if(playlist.tracks().empty()) {
+        return {};
+    }
+
+    return function(func, args, playlist.currentTrack());
 }
 
 void ScriptRegistry::setValue(const QString& var, const FuncRet& value, Track& track)

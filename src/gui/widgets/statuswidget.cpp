@@ -243,9 +243,12 @@ void StatusWidgetPrivate::updatePlayingText()
 {
     const auto ps = m_playerController->playState();
     if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused) {
-        QString playingText = m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack());
+        QString playingText;
         if(auto* playlist = m_playlistHandler->activePlaylist()) {
-            playingText = m_scriptParser.evaluate(playingText, playlist->tracks());
+            playingText = m_scriptParser.evaluate(m_playingScript, *playlist);
+        }
+        else {
+            playingText = m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack());
         }
         showPlayingMessage(playingText);
     }

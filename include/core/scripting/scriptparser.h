@@ -52,7 +52,7 @@ struct ParsedScript
 };
 
 /*!
- * Parses and evaluates scripts for a given Track or TrackList.
+ * Parses and evaluates scripts for a given Track, TrackList or Playlist.
  * @note this class will take ownership of ScriptRegistry if passed in the constructor.
  */
 class FYCORE_EXPORT ScriptParser
@@ -75,6 +75,9 @@ public:
 
     QString evaluate(const QString& input, const TrackList& tracks);
     QString evaluate(const ParsedScript& input, const TrackList& tracks);
+
+    QString evaluate(const QString& input, const Playlist& playlist);
+    QString evaluate(const ParsedScript& input, const Playlist& playlist);
 
     TrackList filter(const QString& input, const TrackList& tracks);
     TrackList filter(const ParsedScript& input, const TrackList& tracks);

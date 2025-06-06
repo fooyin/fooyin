@@ -1612,7 +1612,7 @@ QString ScriptParser::evaluate(const QString& input, const Track& track)
     }
 
     const auto script = parse(input);
-    return p->evaluate(script, track);
+    return evaluate(script, track);
 }
 
 QString ScriptParser::evaluate(const ParsedScript& input, const Track& track)
@@ -1633,7 +1633,7 @@ QString ScriptParser::evaluate(const QString& input, const TrackList& tracks)
     }
 
     const auto script = parse(input);
-    return p->evaluate(script, tracks);
+    return evaluate(script, tracks);
 }
 
 QString ScriptParser::evaluate(const ParsedScript& input, const TrackList& tracks)
@@ -1647,6 +1647,27 @@ QString ScriptParser::evaluate(const ParsedScript& input, const TrackList& track
     return p->evaluate(input, tracks);
 }
 
+QString ScriptParser::evaluate(const QString& input, const Playlist& playlist)
+{
+    if(input.isEmpty()) {
+        return {};
+    }
+
+    const auto script = parse(input);
+    return evaluate(script, playlist);
+}
+
+QString ScriptParser::evaluate(const ParsedScript& input, const Playlist& playlist)
+{
+    if(!input.isValid()) {
+        return {};
+    }
+
+    p->m_isQuery = false;
+
+    return p->evaluate(input, playlist);
+}
+
 TrackList ScriptParser::filter(const QString& input, const TrackList& tracks)
 {
     if(input.isEmpty()) {
@@ -1654,7 +1675,7 @@ TrackList ScriptParser::filter(const QString& input, const TrackList& tracks)
     }
 
     const auto script = parseQuery(input);
-    return p->evaluateQuery(script, tracks);
+    return filter(script, tracks);
 }
 
 TrackList ScriptParser::filter(const ParsedScript& input, const TrackList& tracks)
@@ -1675,7 +1696,7 @@ PlaylistTrackList ScriptParser::filter(const QString& input, const PlaylistTrack
     }
 
     const auto script = parseQuery(input);
-    return p->evaluateQuery(script, tracks);
+    return filter(script, tracks);
 }
 
 PlaylistTrackList ScriptParser::filter(const ParsedScript& input, const PlaylistTrackList& tracks)
