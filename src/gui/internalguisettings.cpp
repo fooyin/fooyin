@@ -89,9 +89,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);
     m_settings->createSetting<Internal::PlaylistHeader>(true, u"PlaylistWidget/Header"_s);
     m_settings->createSetting<Internal::PlaylistScrollBar>(true, u"PlaylistWidget/Scrollbar"_s);
-    m_settings->createSetting<Internal::InfoAltColours>(true, u"InfoPanel/AlternatingColours"_s);
-    m_settings->createSetting<Internal::InfoHeader>(true, u"InfoPanel/Header"_s);
-    m_settings->createSetting<Internal::InfoScrollBar>(true, u"InfoPanel/Scrollbar"_s);
     m_settings->createSetting<Internal::StatusShowIcon>(false, u"StatusWidget/ShowIcon"_s);
     m_settings->createSetting<Internal::StatusShowSelection>(false, u"StatusWidget/ShowSelection"_s);
     m_settings->createSetting<Internal::StatusPlayingScript>(StatusWidget::defaultPlayingScript(),

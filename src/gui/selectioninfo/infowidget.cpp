@@ -71,6 +71,9 @@ InfoWidget::InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, 
     , m_model{new InfoModel(libraryManager, this)}
     , m_displayOption{SelectionDisplay::PreferSelection}
     , m_scrollPos{-1}
+    , m_showHeader{true}
+    , m_showScrollbar{true}
+    , m_alternatingColours{true}
 {
     setObjectName(InfoWidget::name());
 
@@ -98,6 +101,9 @@ InfoWidget::InfoWidget(Application* app, TrackSelectionController* selectionCont
     , m_model{new InfoModel(app->libraryManager(), this)}
     , m_displayOption{static_cast<SelectionDisplay>(m_settings->value<Settings::Gui::Internal::InfoDisplayPrefer>())}
     , m_scrollPos{-1}
+    , m_showHeader{true}
+    , m_showScrollbar{true}
+    , m_alternatingColours{true}
 {
     setObjectName(InfoWidget::name());
 
@@ -109,11 +115,6 @@ InfoWidget::InfoWidget(Application* app, TrackSelectionController* selectionCont
     m_proxyModel->setSourceModel(m_model);
     m_view->setModel(m_proxyModel);
 
-    m_view->setHeaderHidden(!m_settings->value<Settings::Gui::Internal::InfoHeader>());
-    m_view->setVerticalScrollBarPolicy(
-        m_settings->value<Settings::Gui::Internal::InfoScrollBar>() ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-    m_view->setAlternatingRowColors(m_settings->value<Settings::Gui::Internal::InfoAltColours>());
-
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { m_resetTimer.start(50, this); });
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
@@ -122,11 +123,6 @@ InfoWidget::InfoWidget(Application* app, TrackSelectionController* selectionCont
 
     using namespace Settings::Gui::Internal;
 
-    m_settings->subscribe<InfoHeader>(this, [this](bool enabled) { m_view->setHeaderHidden(!enabled); });
-    m_settings->subscribe<InfoScrollBar>(this, [this](bool enabled) {
-        m_view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-    });
-    m_settings->subscribe<InfoAltColours>(this, [this](bool enabled) { m_view->setAlternatingRowColors(enabled); });
     m_settings->subscribe<Settings::Gui::Internal::InfoDisplayPrefer>(this, [this](const int option) {
         m_displayOption = static_cast<SelectionDisplay>(option);
         resetModel();
@@ -149,8 +145,11 @@ QString InfoWidget::layoutName() const
 
 void InfoWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout["Options"_L1] = static_cast<int>(m_model->options());
-    layout["State"_L1]   = QString::fromUtf8(m_view->header()->saveState().toBase64());
+    layout["Options"_L1]         = static_cast<int>(m_model->options());
+    layout["ShowHeader"_L1]      = m_showHeader;
+    layout["ShowScrollbar"_L1]   = m_showScrollbar;
+    layout["AlternatingRows"_L1] = m_alternatingColours;
+    layout["State"_L1]           = QString::fromUtf8(m_view->header()->saveState().toBase64());
 }
 
 void InfoWidget::loadLayoutData(const QJsonObject& layout)
@@ -159,10 +158,26 @@ void InfoWidget::loadLayoutData(const QJsonObject& layout)
         const auto options = static_cast<InfoItem::Options>(layout.value("Options"_L1).toInt());
         m_model->setOptions(options);
     }
+    if(layout.contains("ShowHeader"_L1)) {
+        m_showHeader = layout.value("ShowHeader"_L1).toBool();
+    }
+    if(layout.contains("ShowScrollbar"_L1)) {
+        m_showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
+    }
+    if(layout.contains("AlternatingRows"_L1)) {
+        m_alternatingColours = layout.value("AlternatingRows"_L1).toBool();
+    }
     if(layout.contains("State"_L1)) {
         const auto state = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
         m_view->header()->restoreState(state);
     }
+}
+
+void InfoWidget::finalise()
+{
+    m_view->setHeaderHidden(!m_showHeader);
+    m_view->setVerticalScrollBarPolicy(m_showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_view->setAlternatingRowColors(m_alternatingColours);
 }
 
 bool InfoWidget::canApply() const
@@ -184,21 +199,27 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* showHeaders = new QAction(tr("Show header"), this);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!m_view->isHeaderHidden());
-    QAction::connect(showHeaders, &QAction::triggered, this,
-                     [this](bool checked) { m_settings->set<InfoHeader>(checked); });
+    QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
+        m_showHeader = checked;
+        finalise();
+    });
 
     auto* showScrollBar = new QAction(tr("Show scrollbar"), menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(m_view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
-    QAction::connect(showScrollBar, &QAction::triggered, this,
-                     [this](bool checked) { m_settings->set<InfoScrollBar>(checked); });
+    QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
+        m_showScrollbar = checked;
+        finalise();
+    });
     menu->addAction(showScrollBar);
 
     auto* altColours = new QAction(tr("Alternating row colours"), this);
     altColours->setCheckable(true);
     altColours->setChecked(m_view->alternatingRowColors());
-    QAction::connect(altColours, &QAction::triggered, this,
-                     [this](bool checked) { m_settings->set<InfoAltColours>(checked); });
+    QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
+        m_alternatingColours = checked;
+        finalise();
+    });
 
     const auto options = m_model->options();
 
