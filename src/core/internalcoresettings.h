@@ -77,6 +77,7 @@ constexpr auto AutoExportPlaylistsType = "Playlist/AutoExportType";
 constexpr auto AutoExportPlaylistsPath = "Playlist/AutoExportPath";
 constexpr auto MarkUnavailable         = "Library/MarkUnavailable";
 constexpr auto MarkUnavailableStartup  = "Library/MarkUnavailableOnStartup";
+constexpr auto SaveActivePlaylistState = "Playlist/SaveActivePlaylistState";
 constexpr auto SavePlaybackState       = "Player/SavePlaybackState";
 constexpr auto LibraryRestrictTypes    = "Library/RestrictTypes";
 constexpr auto LibraryExcludeTypes     = "Library/ExcludeTypes";
