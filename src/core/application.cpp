@@ -99,6 +99,9 @@ public:
     void startSaveTimer();
     void exportAllPlaylists();
 
+    void saveActivePlaylistState() const;
+    void loadActivePlaylistState() const;
+
     void savePlaybackState() const;
     void loadPlaybackState() const;
 
@@ -203,6 +206,7 @@ void ApplicationPrivate::setupConnections()
                      [this](const Track& track) { markTrack(track); });
 
     m_settings->subscribe<Settings::Core::Shutdown>(m_self, [this]() {
+        saveActivePlaylistState();
         savePlaybackState();
 
         const auto state = m_engine.engineState();
@@ -321,18 +325,48 @@ void ApplicationPrivate::exportAllPlaylists()
     }
 }
 
+void ApplicationPrivate::saveActivePlaylistState() const
+{
+    FyStateSettings stateSettings;
+
+    if(m_settings->fileValue(Settings::Core::Internal::SaveActivePlaylistState, false).toBool()) {
+        const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
+
+        stateSettings.setValue(LastPlaybackPosition, lastPos);
+    }
+    else {
+        stateSettings.remove(LastPlaybackPosition);
+    }
+}
+
+void ApplicationPrivate::loadActivePlaylistState() const
+{
+    const FyStateSettings stateSettings;
+
+    if(!m_playerController->currentTrack().isValid()) {
+        return;
+    }
+
+    if(!m_settings->fileValue(Settings::Core::Internal::SaveActivePlaylistState, false).toBool()) {
+        return;
+    }
+
+    const auto lastPos = stateSettings.value(LastPlaybackPosition).value<uint64_t>();
+
+    if(lastPos > 0) {
+        QMetaObject::invokeMethod(
+            m_playerController, [this, lastPos]() { m_playerController->seek(lastPos); }, Qt::QueuedConnection);
+    }
+}
+
 void ApplicationPrivate::savePlaybackState() const
 {
     FyStateSettings stateSettings;
 
     if(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
-        const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
-
-        stateSettings.setValue(LastPlaybackPosition, lastPos);
         stateSettings.setValue(LastPlaybackState, Utils::Enum::toString(m_playerController->playState()));
     }
     else {
-        stateSettings.remove(LastPlaybackPosition);
         stateSettings.remove(LastPlaybackState);
     }
 }
@@ -349,15 +383,6 @@ void ApplicationPrivate::loadPlaybackState() const
         return;
     }
 
-    const auto lastPos = stateSettings.value(LastPlaybackPosition).value<uint64_t>();
-
-    auto seek = [this, lastPos]() {
-        if(lastPos > 0) {
-            QMetaObject::invokeMethod(
-                m_playerController, [this, lastPos]() { m_playerController->seek(lastPos); }, Qt::QueuedConnection);
-        }
-    };
-
     const QString savedState = stateSettings.value(LastPlaybackState).toString();
     const auto state         = Utils::Enum::fromString<Player::PlayState>(savedState);
     if(!state) {
@@ -368,12 +393,10 @@ void ApplicationPrivate::loadPlaybackState() const
         case(Player::PlayState::Paused):
             qCDebug(APP) << "Restoring paused state…";
             QMetaObject::invokeMethod(m_playerController, &PlayerController::pause, Qt::QueuedConnection);
-            seek();
             break;
         case(Player::PlayState::Playing):
             qCDebug(APP) << "Restoring playing state…";
             QMetaObject::invokeMethod(m_playerController, &PlayerController::play, Qt::QueuedConnection);
-            seek();
             break;
         case(Player::PlayState::Stopped):
             qCDebug(APP) << "Restoring stopped state…";
@@ -421,6 +444,7 @@ Application::Application(QObject* parent)
                                                   [this](const AudioEngine::TrackStatus status) {
                                                       if(status == AudioEngine::TrackStatus::Loaded) {
                                                           QObject::disconnect(p->m_trackLoadedConnection);
+                                                          p->loadActivePlaylistState();
                                                           p->loadPlaybackState();
                                                       }
                                                   });
