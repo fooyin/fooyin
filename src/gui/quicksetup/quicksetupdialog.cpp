@@ -54,6 +54,13 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* pare
     QObject::connect(m_accept, &QPushButton::pressed, this, &QuickSetupDialog::close);
 }
 
+QSize QuickSetupDialog::sizeHint() const
+{
+    QSize size     = QDialog::sizeHint();
+    size.rheight() = static_cast<int>(size.height() * 1.2);
+    return size;
+}
+
 void QuickSetupDialog::changeLayout(const QItemSelection& selected, const QItemSelection& /*deselected*/)
 {
     if(selected.isEmpty()) {
@@ -78,10 +85,6 @@ void QuickSetupDialog::showEvent(QShowEvent* event)
     move(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), parentRect).topLeft());
 
     QDialog::showEvent(event);
-
-    QSize size = sizeHint();
-    size.setHeight(static_cast<int>(size.height() * 1.2));
-    resize(size);
 }
 } // namespace Fooyin
 

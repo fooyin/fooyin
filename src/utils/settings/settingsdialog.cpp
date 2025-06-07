@@ -23,6 +23,7 @@
 
 #include <utils/settings/settingsmanager.h>
 #include <utils/settings/settingspage.h>
+#include <utils/utils.h>
 
 #include <QDialogButtonBox>
 #include <QEvent>
@@ -255,6 +256,11 @@ void SettingsDialog::reject()
         page->finish();
     }
     done(Rejected);
+}
+
+QSize SettingsDialog::sizeHint() const
+{
+    return Utils::proportionateSize(this, 0.3, 0.4);
 }
 
 void SettingsDialog::apply()

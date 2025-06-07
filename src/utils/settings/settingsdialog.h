@@ -48,6 +48,8 @@ public:
     void accept() override;
     void reject() override;
 
+    [[nodiscard]] QSize sizeHint() const override;
+
 signals:
     void resettingAll();
 

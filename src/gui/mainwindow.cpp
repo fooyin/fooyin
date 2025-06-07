@@ -73,7 +73,6 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
 
     resetTitle();
 
-    resize(1280, 720);
     setWindowIcon(Utils::iconFromTheme(Constants::Icons::Fooyin));
 
     if(windowHandle()) {
@@ -176,6 +175,11 @@ void MainWindow::resetTitle()
 void MainWindow::installStatusWidget(StatusWidget* statusWidget)
 {
     m_statusWidget = statusWidget;
+}
+
+QSize MainWindow::sizeHint() const
+{
+    return Utils::proportionateSize(this, 0.6, 0.6);
 }
 
 bool MainWindow::event(QEvent* event)

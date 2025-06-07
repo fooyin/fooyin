@@ -86,12 +86,8 @@ void SettingsDialogController::openAtPage(const Id& page)
     if(!p->geometry.isEmpty()) {
         settingsDialog->restoreGeometry(p->geometry);
     }
-
     if(p->size.isValid()) {
         settingsDialog->resize(p->size);
-    }
-    else if(p->geometry.isEmpty()) {
-        settingsDialog->resize({800, 500});
     }
 
     p->isOpen = true;

@@ -27,6 +27,7 @@
 #include <gui/scripting/scripteditor.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/trackselectioncontroller.h>
+#include <utils/utils.h>
 
 #include <QApplication>
 #include <QBasicTimer>
@@ -305,7 +306,7 @@ void ScriptEditor::openEditor(const QString& script, const std::function<void(co
 
 QSize ScriptEditor::sizeHint() const
 {
-    return {800, 500};
+    return Utils::proportionateSize(this, 0.3, 0.3);
 }
 
 void ScriptEditor::timerEvent(QTimerEvent* event)

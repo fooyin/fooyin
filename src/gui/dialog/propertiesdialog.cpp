@@ -22,6 +22,7 @@
 #include <core/coresettings.h>
 #include <gui/propertiesdialog.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QDialogButtonBox>
 #include <QGridLayout>
@@ -116,6 +117,11 @@ class PropertiesDialogWidget : public QDialog
 
 public:
     explicit PropertiesDialogWidget(TrackList tracks, PropertiesDialog::TabList tabs);
+
+    [[nodiscard]] QSize sizeHint() const override
+    {
+        return Utils::proportionateSize(this, 0.25, 0.5);
+    }
 
     void saveState()
     {
@@ -300,10 +306,9 @@ void PropertiesDialog::show(const TrackList& tracks)
 
     QObject::connect(dialog, &QDialog::finished, dialog, &PropertiesDialogWidget::saveState);
 
-    dialog->resize(600, 700);
     dialog->show();
 
-    dialog->restoreState();
+    // dialog->restoreState();
 }
 } // namespace Fooyin
 

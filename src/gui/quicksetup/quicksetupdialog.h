@@ -37,6 +37,8 @@ class QuickSetupDialog : public QDialog
 public:
     explicit QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent = nullptr);
 
+    [[nodiscard]] QSize sizeHint() const override;
+
 signals:
     void layoutChanged(const Fooyin::FyLayout& layout);
 

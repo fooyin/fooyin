@@ -23,6 +23,7 @@
 
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -90,13 +91,16 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     });
 
     MessageHandler::install(this);
-
-    resize(720, 480);
 }
 
 void LogWidget::addEntry(const QString& message, QtMsgType type)
 {
     m_model->addEntry({.time = QDateTime::currentDateTime(), .type = type, .category = {}, .message = message});
+}
+
+QSize LogWidget::sizeHint() const
+{
+    return Utils::proportionateSize(this, 0.3, 0.4);
 }
 
 void LogWidget::saveLog()

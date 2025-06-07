@@ -39,6 +39,8 @@ public:
 
     void addEntry(const QString& message, QtMsgType type);
 
+    [[nodiscard]] QSize sizeHint() const override;
+
 private:
     void saveLog();
 
