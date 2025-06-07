@@ -25,6 +25,7 @@
 #include "lyricsfinder.h"
 #include "lyricssaver.h"
 
+#include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <core/scripting/scriptparser.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -74,10 +75,11 @@ protected:
     }
 };
 
-LyricsWidget::LyricsWidget(PlayerController* playerController, LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver,
-                           SettingsManager* settings, QWidget* parent)
+LyricsWidget::LyricsWidget(PlayerController* playerController, EngineController* engine, LyricsFinder* lyricsFinder,
+                           LyricsSaver* lyricsSaver, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
+    , m_engine{engine}
     , m_settings{settings}
     , m_scrollArea{new LyricsScrollArea(this)}
     , m_lyricsArea{new LyricsArea(m_settings, this)}
@@ -98,6 +100,7 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, LyricsFinder* lyr
     m_scrollArea->setWidgetResizable(true);
     m_scrollArea->setWidget(m_lyricsArea);
 
+    QObject::connect(m_engine, &EngineController::engineStateChanged, this, &LyricsWidget::playStateChanged);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &LyricsWidget::updateLyrics);
     QObject::connect(m_playerController, &PlayerController::positionChanged, m_lyricsArea, &LyricsArea::setCurrentTime);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
@@ -308,6 +311,31 @@ void LyricsWidget::openEditor(const Lyrics& lyrics)
     editor->setAttribute(Qt::WA_DeleteOnClose);
     QObject::connect(editor, &LyricsEditor::lyricsEdited, this, &LyricsWidget::changeLyrics);
     editor->show();
+}
+
+void LyricsWidget::playStateChanged(AudioEngine::PlaybackState state)
+{
+    const auto stopScrolling = [this]() {
+        if(m_scrollMode == ScrollMode::Automatic && m_scrollAnim) {
+            m_scrollAnim->stop();
+        }
+    };
+
+    switch(state) {
+        case(AudioEngine::PlaybackState::Paused):
+            stopScrolling();
+            break;
+        case(AudioEngine::PlaybackState::Error):
+        case(AudioEngine::PlaybackState::Stopped): {
+            stopScrolling();
+            scrollToCurrentLine(0);
+        } break;
+        case(AudioEngine::PlaybackState::Playing):
+            updateScrollMode(m_scrollMode);
+            break;
+        case(AudioEngine::PlaybackState::FadingOut):
+            break;
+    }
 }
 
 void LyricsWidget::scrollToCurrentLine(int scrollValue)

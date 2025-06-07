@@ -48,6 +48,7 @@ public:
 private:
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
+    EngineController* m_engine;
     WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
     std::unique_ptr<LyricsSettings> m_lyricsSettings;

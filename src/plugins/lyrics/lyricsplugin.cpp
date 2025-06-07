@@ -39,6 +39,7 @@ namespace Fooyin::Lyrics {
 void LyricsPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
+    m_engine           = context.engine;
     m_settings         = context.settingsManager;
 
     m_lyricsSettings = std::make_unique<LyricsSettings>(m_settings);
@@ -55,7 +56,7 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
 
     m_widgetProvider->registerWidget(
         u"Lyrics"_s,
-        [this]() { return new LyricsWidget(m_playerController, m_lyricsFinder, m_lyricsSaver, m_settings); },
+        [this]() { return new LyricsWidget(m_playerController, m_engine, m_lyricsFinder, m_lyricsSaver, m_settings); },
         tr("Lyrics"));
     m_widgetProvider->setLimit(u"Lyrics"_s, 1);
     context.themeRegistry->registerFontEntry(tr("Lyrics"), u"Fooyin::Lyrics::LyricsArea"_s);
