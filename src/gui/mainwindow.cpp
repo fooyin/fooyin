@@ -44,6 +44,7 @@
 using namespace Qt::StringLiterals;
 
 constexpr auto MainWindowGeometry  = "Interface/Geometry";
+constexpr auto MainWindowSize      = "Interface/Size";
 constexpr auto MainWindowPrevState = "Interface/PrevState";
 
 namespace Fooyin {
@@ -151,6 +152,7 @@ void MainWindow::exit()
         m_settings->settingsDialog()->saveState(stateSettings);
 
         stateSettings.setValue(MainWindowGeometry, saveGeometry());
+        stateSettings.setValue(MainWindowSize, size());
         stateSettings.setValue(MainWindowPrevState, Utils::Enum::toString(currentState()));
 
         m_settings->set<Settings::Core::Shutdown>(true);
@@ -244,12 +246,22 @@ void MainWindow::saveWindowGeometry()
 {
     FyStateSettings stateSettings;
     stateSettings.setValue(MainWindowGeometry, saveGeometry());
+    stateSettings.setValue(MainWindowSize, size());
 }
 
 void MainWindow::restoreWindowGeometry()
 {
     const FyStateSettings stateSettings;
-    restoreGeometry(stateSettings.value(MainWindowGeometry).toByteArray());
+
+    const auto geometry = stateSettings.value(MainWindowGeometry).toByteArray();
+    if(!geometry.isEmpty()) {
+        restoreGeometry(geometry);
+    }
+
+    const auto size = stateSettings.value(MainWindowSize).toSize();
+    if(size.isValid()) {
+        resize(size);
+    }
 }
 
 void MainWindow::restoreState(WindowState state)

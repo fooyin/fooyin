@@ -30,6 +30,7 @@
 #include <QSettings>
 
 constexpr auto DialogGeometry = "SettingsDialog/Geometry";
+constexpr auto DialogSize     = "SettingsDialog/Size";
 constexpr auto LastOpenPage   = "SettingsDialog/LastPage";
 
 namespace Fooyin {
@@ -45,6 +46,7 @@ public:
     QMainWindow* mainWindow;
 
     QByteArray geometry;
+    QSize size;
     PageList pages;
     Id lastOpenPage;
     bool isOpen{false};
@@ -72,6 +74,7 @@ void SettingsDialogController::openAtPage(const Id& page)
 
     QObject::connect(settingsDialog, &QDialog::finished, this, [this, settingsDialog]() {
         p->geometry     = settingsDialog->saveGeometry();
+        p->size         = settingsDialog->size();
         p->lastOpenPage = settingsDialog->currentPage();
         p->isOpen       = false;
         emit closing();
@@ -83,7 +86,11 @@ void SettingsDialogController::openAtPage(const Id& page)
     if(!p->geometry.isEmpty()) {
         settingsDialog->restoreGeometry(p->geometry);
     }
-    else {
+
+    if(p->size.isValid()) {
+        settingsDialog->resize(p->size);
+    }
+    else if(p->geometry.isEmpty()) {
         settingsDialog->resize({800, 500});
     }
 
@@ -105,6 +112,7 @@ void SettingsDialogController::addPage(SettingsPage* page)
 void SettingsDialogController::saveState(QSettings& settings) const
 {
     settings.setValue(DialogGeometry, p->geometry);
+    settings.setValue(DialogSize, p->size);
     settings.setValue(LastOpenPage, p->lastOpenPage.name());
 }
 
@@ -114,6 +122,13 @@ void SettingsDialogController::restoreState(const QSettings& settings)
         const auto geometry = settings.value(DialogGeometry).toByteArray();
         if(!geometry.isEmpty()) {
             p->geometry = geometry;
+        }
+    }
+
+    if(settings.contains(DialogSize)) {
+        const auto size = settings.value(DialogSize).toSize();
+        if(size.isValid()) {
+            p->size = size;
         }
     }
 
