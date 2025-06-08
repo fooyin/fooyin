@@ -834,28 +834,28 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="566"/>
         <source>Redo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Refeu l&apos;edició anterior del disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="446"/>
         <source>&amp;Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Substitueix</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="354"/>
         <location filename="../../src/gui/editablelayout.cpp" line="361"/>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Insereix</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="456"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="469"/>
         <source>Paste (Replace)</source>
-        <translation type="unfinished"></translation>
+        <translation>Enganxa (Substitueix)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
@@ -868,17 +868,17 @@
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="35"/>
         <source>Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Pestanya</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Edit %1 Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Edita el nom de %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="73"/>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 nom:</translation>
     </message>
 </context>
 <context>
@@ -886,17 +886,17 @@
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="134"/>
         <source>Time elapsed</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps transcorregut</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="140"/>
         <source>Estimated</source>
-        <translation type="unfinished"></translation>
+        <translation>Estimat</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="143"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculant…</translation>
     </message>
 </context>
 <context>
@@ -904,17 +904,17 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="54"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>Substitueix alçada</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="69"/>
         <source>Left-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>Alineat a l&apos;esquerra</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="70"/>
         <source>Right-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>Alineat a la dreta</translation>
     </message>
 </context>
 <context>
@@ -922,22 +922,22 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="48"/>
         <source>Save window size</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa la mida de la finestra</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="49"/>
         <source>Save colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa els colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="50"/>
         <source>Save fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa les fonts</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="53"/>
         <source>Export Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="62"/>
@@ -952,7 +952,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="65"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Navega…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="72"/>
@@ -962,22 +962,22 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="111"/>
         <source>Failed to save the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut desar el disseny actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="137"/>
         <source>Failed to export layout</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut exportar el disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="143"/>
         <source>Save Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa el disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="144"/>
         <source>%1 Layout %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Disseny %2</translation>
     </message>
 </context>
 <context>
@@ -995,12 +995,12 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="180"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Mou amunt</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="188"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Mou avall</translation>
     </message>
 </context>
 <context>
@@ -1008,67 +1008,67 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="47"/>
         <source>Add &amp;files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix &amp;fitxers…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="48"/>
         <source>Add the specified files to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix els fitxers especificats a la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="54"/>
         <source>Ad&amp;d folders…</source>
-        <translation type="unfinished"></translation>
+        <translation>Af&amp;egeix carpetes…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="55"/>
         <source>Add the contents of the specified directory to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix el contingut del directori especificat a la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="63"/>
         <source>&amp;New playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nova llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="64"/>
         <source>Create a new empty playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea una nova llista de reproducció buida</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>&amp;New autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nova llista de reproducció automàtica</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="72"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea una nova llista de reproducció automàtica</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="79"/>
         <source>&amp;Load playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Carrega la llista de reproducció…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="86"/>
         <source>&amp;Save playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Desa la llista de reproducció…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="102"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Surt</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="103"/>
         <source>Quit %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Surt %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="80"/>
         <source>Load the playlist from the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Carrega la llista de reproducció des del fitxer especificat</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="45"/>
@@ -1078,17 +1078,17 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="87"/>
         <source>Save the current playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa la llista de reproducció actual al fitxer especificat</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
         <source>Save &amp;all playlists…</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa &amp;totes les llistes de reproducció…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
         <source>Save all playlists to the specified location</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa totes les llistes de reproducció a la ubicació especificada</translation>
     </message>
 </context>
 <context>
@@ -1096,22 +1096,22 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="118"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="119"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Mou</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="120"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="124"/>
         <source>Remove empty source folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina les carpetes font buides</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="126"/>
@@ -1131,22 +1131,22 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="429"/>
         <source>Determining operations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Determinant operacions…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="453"/>
         <source>Nothing to do</source>
-        <translation type="unfinished"></translation>
+        <translation>No hi ha res a fer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="457"/>
         <source>Cannot write to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No es pot escriure a %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="461"/>
         <source>Pending operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Operacions pendents</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="469"/>
@@ -1156,7 +1156,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="486"/>
         <source>File Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Operació de fitxers</translation>
     </message>
 </context>
 <context>
@@ -1164,12 +1164,12 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="157"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Operació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="159"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Destinació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="160"/>
@@ -1186,32 +1186,32 @@
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="435"/>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="451"/>
         <source>&amp;Run</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Executa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="239"/>
         <source>Copy entire source folder contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia tot el contingut de la carpeta d&apos;origen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="240"/>
         <source>Move entire source folder contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Mou tot el contingut de la carpeta d&apos;origen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="273"/>
         <source>Preset already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>El preajust ja existeix</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="274"/>
         <source>Preset %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>El preajust %1 ja existeix. Voleu sobreescriure-ho?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="439"/>
         <source>&amp;Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aborta</translation>
     </message>
 </context>
 <context>
@@ -1219,37 +1219,37 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="91"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Operació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="93"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Font</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="95"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Destinació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="172"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="174"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Mou</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="176"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="178"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
@@ -1259,7 +1259,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconegut</translation>
     </message>
 </context>
 <context>
@@ -1267,22 +1267,22 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="46"/>
         <source>&amp;File operations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Operacions amb fitxers</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="49"/>
         <source>&amp;Copy to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Copia a…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="50"/>
         <source>&amp;Move to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Moure a…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="51"/>
         <source>&amp;Rename to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Canvia el nom a…</translation>
     </message>
 </context>
 <context>
@@ -1290,7 +1290,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Gènere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
@@ -1310,7 +1310,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="43"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Data</translation>
     </message>
 </context>
 <context>
@@ -1318,7 +1318,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="529"/>
         <source>Filter Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtra els resultats</translation>
     </message>
 </context>
 <context>
@@ -1326,13 +1326,13 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="108"/>
         <source>Clear Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Esborra el grup</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="118"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="313"/>
         <source>Clear Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Esborra els grups</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
@@ -1343,7 +1343,7 @@
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="251"/>
         <source>Ungrouped</source>
-        <translation type="unfinished"></translation>
+        <translation>Desagrupat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="185"/>
@@ -1353,12 +1353,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="304"/>
         <source>Add New Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix un grup nou</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="332"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="349"/>
@@ -1371,12 +1371,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="207"/>
         <source>All (%1 %2s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tot (%1 %2s)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="421"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtre</translation>
     </message>
 </context>
 <context>
@@ -1395,22 +1395,22 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="588"/>
         <source>Artwork (bottom labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Art gràfic (etiquetes inferiors)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="589"/>
         <source>Artwork (right labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Art gràfic (etiquetes de la dreta)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="590"/>
         <source>Artwork (no labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Art gràfic (sense etiquetes)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="633"/>
         <source>Summary item</source>
-        <translation type="unfinished"></translation>
+        <translation>Element de resum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="640"/>
@@ -1425,12 +1425,12 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="724"/>
         <source>Multiple columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Columnes múltiples</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="747"/>
         <source>Manage groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Gestiona grups</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="642"/>
@@ -1440,7 +1440,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="732"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Més…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="261"/>
@@ -1530,7 +1530,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="71"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>Manté viu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="74"/>
@@ -1540,7 +1540,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="84"/>
         <source>Filter Selection Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Llista de reproducció de selecció de filtres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="77"/>
@@ -1560,7 +1560,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="87"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Si aquesta és la llista de reproducció activa, mantén-la activa en canviar la selecció</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="123"/>
@@ -1634,12 +1634,12 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="65"/>
         <source>Show headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra les capçaleres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="66"/>
         <source>Show scrollbars</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra les barres de desplaçament</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="67"/>
@@ -1649,7 +1649,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="68"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Substitueix l&apos;alçada de la fila</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="73"/>
@@ -1659,7 +1659,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="78"/>
         <source>Artwork Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode d&apos;Art Gràfic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="94"/>
@@ -1984,7 +1984,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="782"/>
         <source>Reload Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Torna a carregar ara</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="784"/>
@@ -1994,27 +1994,27 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="849"/>
         <source>Playback Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="902"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Pista no trobada</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="874"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Continua</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="618"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilitats</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="876"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Atura</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="880"/>
