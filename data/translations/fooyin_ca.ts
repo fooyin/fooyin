@@ -2019,12 +2019,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="880"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Continua sempre la reproducció si una pista no està disponible</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="907"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished"></translation>
+        <translation>No hi ha cap descodificador disponible</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="936"/>
