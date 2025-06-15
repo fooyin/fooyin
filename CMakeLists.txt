@@ -385,6 +385,8 @@ target_link_libraries(
 if(WIN32)
 	target_include_directories(fooyin PRIVATE ${GETOPT_INCLUDE_DIR})
 	target_link_libraries(fooyin PRIVATE ${GETOPT_LIBRARY})
+    configure_file(data/win_version.rc.in win_version.rc @ONLY)
+    target_sources(fooyin PRIVATE win_version.rc)
 endif()
 
 # ---- Fooyin install ----
