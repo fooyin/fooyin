@@ -1,0 +1,32 @@
+#ifdef RC_INVOKED
+
+#include <winuser.h>
+#include <winver.h>
+#include <ntdef.h>
+
+id ICON "@PROJECT_SOURCE_DIR@/data/icons/fooyin.ico"
+
+VS_VERSION_INFO VERSIONINFO
+    FILEVERSION             @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@,0
+    PRODUCTVERSION          @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@,0
+    FILEOS                  VOS_NT
+    FILETYPE                VFT_APP
+{
+    BLOCK "StringFileInfo" {
+        BLOCK "040904b0" {
+            VALUE "Comments",         "https://github.com/fooyin/fooyin"
+            VALUE "FileDescription",  "@PROJECT_DESCRIPTION@"
+            VALUE "FileVersion",      "@PROJECT_VERSION@"
+            VALUE "InternalName",     "@PROJECT_VERSION@"
+            VALUE "LegalCopyright",   "GPL-3.0 license"
+            VALUE "OriginalFilename", "@PROJECT_NAME@.exe"
+            VALUE "ProductName",      "@PROJECT_NAME@ - @PROJECT_DESCRIPTION@"
+            VALUE "ProductVersion",   "@PROJECT_VERSION@"
+            VALUE "CompanyName",      "@PROJECT_HOMEPAGE_URL@"
+        }
+    }
+    BLOCK "VarFileInfo" {
+        VALUE "Translation", 0x0409, 1200
+    }
+}
+#endif
