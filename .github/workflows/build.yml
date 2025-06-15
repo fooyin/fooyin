@@ -208,6 +208,49 @@ jobs:
           name: freebsd-14.2
           path: pkg
 
+  windows:
+    name: Windows-${{ matrix.arch }}
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runs-on: windows-latest
+            msystem: CLANG64
+          - arch: aarch64
+            runs-on: windows-11-arm
+            msystem: CLANGARM64
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: setup-msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.msystem }}
+          update: true
+
+      - name: Dependencies
+        run: |
+          ./ci/windows-depends.sh
+
+      - name: Build
+        run: |
+          ./ci/windows-build.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-${{ matrix.arch }}
+          path: zip
+
   attach:
     name: Attach to release
     if: github.event_name == 'release' && github.event.action == 'published'
