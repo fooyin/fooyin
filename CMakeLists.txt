@@ -369,6 +369,11 @@ target_link_libraries(
             Fooyin::CorePrivate
 )
 
+if(APPLE)
+    configure_file(data/mac_Info.plist.in Info.plist @ONLY)
+    target_link_options(fooyin PRIVATE LINKER:-sectcreate,__TEXT,__info_plist,Info.plist)
+endif()
+
 # ---- Fooyin install ----
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
