@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>@PROJECT_NAME@</string>
+
+    <key>CFBundleIdentifier</key>
+    <string>com.github.fooyin</string>
+
+    <key>CFBundleName</key>
+    <string>@PROJECT_NAME@</string>
+
+    <key>CFBundleDisplayName</key>
+    <string>@PROJECT_NAME@</string>
+
+    <key>CFBundleVersion</key>
+    <string>@PROJECT_VERSION@</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>@PROJECT_VERSION@</string>
+
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <key>CFBundleSignature</key>
+    <string>????</string>
+
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <key>LSMinimumSystemVersion</key>
+    <string>12.0</string>
+
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
+    <key>NSSupportsAutomaticGraphicsSwitching</key>
+    <true/>
+
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.music</string>
+
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Audio Files</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSTypeIsPackage</key>
+            <false/>
+            <key>LSHandlerRank</key>
+            <string>Alternative</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>mp3</string>
+                <string>flac</string>
+                <string>ogg</string>
+                <string>mp4</string>
+                <string>m4a</string>
+                <string>aac</string>
+                <string>wav</string>
+                <string>wv</string>
+                <string>mpc</string>
+                <string>ape</string>
+                <string>aiff</string>
+                <string>cue</string>
+                <string>m3u</string>
+                <string>m3u8</string>
+            </array>
+        </dict>
+    </array>
+
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>org.fooyin.audio</string>
+            <key>UTTypeDescription</key>
+            <string>Audio File</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.audio</string>
+            </array>
+        </dict>
+    </array>
+
+    <key>NSAppleScriptEnabled</key>
+    <true/>
+
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © 2022-2025, Luke Taylor. All rights reserved.</string>
+</dict>
+</plist>

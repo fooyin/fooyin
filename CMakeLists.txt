@@ -349,7 +349,7 @@ if(BUILD_TRANSLATIONS)
 
         if(NOT CMAKE_SKIP_INSTALL_RULES)
             install(
-                FILES ${qm_files} 
+                FILES ${qm_files}
                 DESTINATION ${TRANSLATION_INSTALL_DIR}
                 COMPONENT fooyin
             )
@@ -391,6 +391,11 @@ if(WIN32)
 	target_link_libraries(fooyin PRIVATE ${GETOPT_LIBRARY})
     configure_file(data/win_version.rc.in win_version.rc @ONLY)
     target_sources(fooyin PRIVATE win_version.rc)
+endif()
+
+if(APPLE)
+    configure_file(data/mac_Info.plist.in Info.plist @ONLY)
+    target_link_options(fooyin PRIVATE LINKER:-sectcreate,__TEXT,__info_plist,Info.plist)
 endif()
 
 # ---- Fooyin install ----
