@@ -2029,37 +2029,37 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="936"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tots els fitxers multimèdia compatibles (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="937"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fitxers d&apos;àudio (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="949"/>
         <source>Add Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix fitxers</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="963"/>
         <source>Add Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix carpetes</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="990"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Totes les llistes de reproducció compatibles (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1000"/>
         <source>Load Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Carrega la llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1037"/>
         <source>Save Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa la llista de reproducció</translation>
     </message>
 </context>
 <context>
@@ -2082,7 +2082,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>Per defecte del sistema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
@@ -2092,137 +2092,137 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="110"/>
         <source>Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Fons</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="111"/>
         <source>Foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Primer pla</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="112"/>
         <source>Foreground (Bright)</source>
-        <translation type="unfinished"></translation>
+        <translation>Primer pla (Clar)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="113"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="114"/>
         <source>Placeholder text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text de marcador de posició</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="115"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Base</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
         <source>Base (Alternate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Base (Alterna)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="117"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Destacat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="118"/>
         <source>Highlighted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text destacat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="119"/>
         <source>Button (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Botó (Fons)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="120"/>
         <source>Button (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Botó (Primer pla)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="128"/>
         <source>Foreground (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Primer pla (Desactivat)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="129"/>
         <source>Highlight (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ressaltat (Desactivat)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="130"/>
         <source>Highlighted Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Text destacat (Desactivat)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="131"/>
         <source>Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Text (Desactivat)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="132"/>
         <source>Button Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Text del botó (Desactivat)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="133"/>
         <source>ToolTip (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Descripció emergent (Fons)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="134"/>
         <source>ToolTip (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Descripció emergent (Primer pla)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="135"/>
         <source>Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Enllaç</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="136"/>
         <source>Link (Visited)</source>
-        <translation type="unfinished"></translation>
+        <translation>Enllaç (Visitat)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="137"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Clar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="138"/>
         <source>Midlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Mitja llum</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="139"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Fosc</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="140"/>
         <source>Mid</source>
-        <translation type="unfinished"></translation>
+        <translation>Mig</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="141"/>
         <source>Shadow</source>
-        <translation type="unfinished"></translation>
+        <translation>Ombra</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="163"/>
         <source>Basic Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Colors bàsics</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="164"/>
         <source>Advanced Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Colors avançats</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="165"/>
@@ -2232,12 +2232,12 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="315"/>
         <source>Theme already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>El tema ja existeix</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="316"/>
         <source>Theme %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>El tema %1 ja existeix. Voleu sobreescriure-ho?</translation>
     </message>
 </context>
 <context>
@@ -2258,22 +2258,22 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="111"/>
         <source>Auto-detect theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Autodetecta tema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="112"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Clar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="113"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Fosc</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="114"/>
         <source>Use system icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilitza icones del sistema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="118"/>
@@ -2288,7 +2288,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="115"/>
         <source>Show menu bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra la barra de menú</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
@@ -2323,7 +2323,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="132"/>
         <source>Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuració</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
@@ -2333,22 +2333,22 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="135"/>
         <source>Import Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa el disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="136"/>
         <source>Export Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta el disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
         <source>Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Tema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="156"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Estil</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="186"/>
@@ -2454,22 +2454,22 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
         <source>S&amp;earching help</source>
-        <translation type="unfinished"></translation>
+        <translation>A&amp;juda de cerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
         <source>Open the search documentation</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre la documentació de cerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="68"/>
         <source>&amp;Frequently asked questions</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Preguntes freqüents</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
         <source>Open the FAQ</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre les preguntes freqüents</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="73"/>
@@ -2487,12 +2487,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="125"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadades</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="128"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubicació</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="131"/>
