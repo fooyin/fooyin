@@ -2610,7 +2610,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="215"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Canali</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="217"/>
@@ -4695,7 +4695,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="55"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Canali</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="56"/>
@@ -6869,22 +6869,22 @@
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="269"/>
         <source>&amp;Position</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Posizione</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="273"/>
         <source>&amp;North</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nord</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="274"/>
         <source>&amp;East</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Est</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="275"/>
         <source>&amp;South</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sud</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="276"/>
