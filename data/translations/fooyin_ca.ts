@@ -2507,7 +2507,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="137"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Altres</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="149"/>
@@ -2527,12 +2527,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="152"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Data</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="153"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Gènere</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="154"/>
@@ -2547,7 +2547,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
         <source>File Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Noms de fitxer</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
@@ -2582,12 +2582,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Mida del fitxer</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="190"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Última modificació</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="195"/>
@@ -2597,7 +2597,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="200"/>
         <source>Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegit</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="208"/>
@@ -2713,17 +2713,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="205"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadades</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="213"/>
         <source>Extended metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadades ampliades</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="221"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubicació</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="229"/>
@@ -2738,7 +2738,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="245"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Altres</translation>
     </message>
 </context>
 <context>
@@ -2752,32 +2752,32 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="60"/>
         <source>&amp;Editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Mode d&apos;edició</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="61"/>
         <source>Toggle layout editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Activa/desactiva el mode d&apos;edició del disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="72"/>
         <source>Loc&amp;k splitters</source>
-        <translation type="unfinished"></translation>
+        <translation>Divi&amp;sors de blocs</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
         <source>Prevent manual resizing of splitters when not in layout editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Evita el canvi de mida manual dels divisors quan no es troba en mode d&apos;edició de disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
         <source>&amp;Import layout…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importa el disseny…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
         <source>Add the layout from the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix el disseny del fitxer especificat</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="86"/>
@@ -2815,22 +2815,22 @@
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
         <source>Invalid Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Disseny no vàlid</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
         <source>Layout could not be imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut importar el disseny.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="260"/>
         <source>Replace existing layout?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voleu substituir el disseny existent?</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="261"/>
         <source>Unless exported, the current layout will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si no s&apos;exporta, el disseny actual es perdrà.</translation>
     </message>
 </context>
 <context>
@@ -3206,7 +3206,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="108"/>
         <source>Library Selection Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Llista de reproducció de selecció de la biblioteca</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="98"/>
@@ -3221,17 +3221,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="83"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>Manté viu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="85"/>
         <source>Restore state on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaura l&apos;estat a l&apos;inici</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="86"/>
         <source>Expand/collapse animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animació d&apos;expansió/contracció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="87"/>
@@ -3241,7 +3241,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="90"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Substitueix l&apos;alçada de la fila</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="99"/>
@@ -3256,7 +3256,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="113"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Si aquesta és la llista de reproducció activa, mantén-la activa en canviar la selecció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="122"/>
@@ -3347,7 +3347,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="103"/>
         <source>Loading Library…</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;està carregant la biblioteca…</translation>
     </message>
 </context>
 <context>
@@ -3360,17 +3360,17 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="262"/>
         <source>&amp;Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Afegeix a la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="263"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Cua per reproduir a continuació</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="264"/>
         <source>&amp;Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Elimina de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="265"/>
@@ -3380,12 +3380,12 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="296"/>
         <source>Start playback of the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicia la reproducció de les pistes seleccionades</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="480"/>
         <source>Open folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre la carpeta</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="925"/>
@@ -3398,7 +3398,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="50"/>
         <source>Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Registre</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="52"/>
@@ -3408,32 +3408,32 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="54"/>
         <source>&amp;Save Log</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Desa el registre</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="61"/>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Depuració</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="62"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informació</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="63"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Avís</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="64"/>
         <source>Critical</source>
-        <translation type="unfinished"></translation>
+        <translation>Crític</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="104"/>
         <source>Save Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa el registre</translation>
     </message>
 </context>
 <context>
@@ -3441,17 +3441,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="49"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="50"/>
         <source>Reset Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Restableix els canvis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="51"/>
         <source>Insert/Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Insereix/Actualitza</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="52"/>
@@ -3461,32 +3461,32 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="53"/>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina-ho tot</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="59"/>
         <source>Lyrics Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor de lletres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="63"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Operació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="70"/>
         <source>Timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>Marques de temps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="148"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Pausa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="152"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Reprodueix</translation>
     </message>
 </context>
 <context>
@@ -3507,17 +3507,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="68"/>
         <source>Seek on click</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca en fer clic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="70"/>
         <source>Synced scroll duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Durada del desplaçament sincronitzat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
         <source>Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>Manual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="72"/>
@@ -3527,7 +3527,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automàtic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="75"/>
@@ -3598,39 +3598,39 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
         <source>Background colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de fons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="100"/>
         <source>Line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de la línia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="102"/>
         <source>Unplayed line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de línia no reproduïda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="104"/>
         <source>Played line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de la línia reproduïda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="106"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="108"/>
         <source>Current line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de línia actual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="110"/>
         <source>Current word colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de la paraula actual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="112"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="114"/>
         <source>Current line font</source>
-        <translation type="unfinished"></translation>
+        <translation>Font de la línia actual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="116"/>
@@ -3934,7 +3934,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="87"/>
         <source>Local files</source>
-        <translation type="unfinished"></translation>
+        <translation>Fitxers locals</translation>
     </message>
 </context>
 <context>
@@ -3962,37 +3962,37 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="166"/>
         <source>Select lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona la lletra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="176"/>
         <source>Search for lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca lletres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="177"/>
         <source>Search for lyrics for the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca la lletra de la cançó actual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="188"/>
         <source>Edit lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Edita la lletra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="189"/>
         <source>Open editor for the current lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre l&apos;editor de les lletres actuals</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="194"/>
         <source>Save lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa la lletra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="195"/>
         <source>Save lyrics using current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa la lletra amb la configuració actual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="204"/>
@@ -4002,7 +4002,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="210"/>
         <source>Text-align</source>
-        <translation type="unfinished"></translation>
+        <translation>Alineació de text</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="214"/>
@@ -4022,7 +4022,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="240"/>
         <source>Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuració…</translation>
     </message>
 </context>
 <context>
@@ -4030,7 +4030,7 @@
     <message>
         <location filename="../../src/gui/mainwindow.cpp" line="164"/>
         <source>Layout Editing Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode d&apos;edició de disseny</translation>
     </message>
 </context>
 <context>
@@ -4043,7 +4043,7 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="183"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation>Xarxes</translation>
     </message>
 </context>
 <context>
@@ -4051,52 +4051,52 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="71"/>
         <source>No proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Sense intermediari</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="72"/>
         <source>Use system proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilitza el proxy del sistema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="73"/>
         <source>Manual proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy manual</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
         <source>Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Autenticació</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
         <source>Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="97"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom d&apos;usuari</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="99"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Contrasenya</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="109"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="111"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>Amfitrió</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="113"/>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Port</translation>
     </message>
 </context>
 <context>
@@ -4104,22 +4104,22 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="42"/>
         <source>Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Guany</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="43"/>
         <source>Separation</source>
-        <translation type="unfinished"></translation>
+        <translation>Separació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="44"/>
         <source>Volume ramping</source>
-        <translation type="unfinished"></translation>
+        <translation>Augment de volum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="45"/>
         <source>Use Amiga resampler</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilitza el remostrejador d&apos;Amiga</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="48"/>
@@ -4130,17 +4130,17 @@
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="66"/>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="71"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Per defecte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="67"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Desactivat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="69"/>
         <source>Interpolation</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="72"/>
@@ -4150,17 +4150,17 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="73"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Lineal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="74"/>
         <source>Cubic</source>
-        <translation type="unfinished"></translation>
+        <translation>Cúbic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="75"/>
         <source>Sinc</source>
-        <translation type="unfinished"></translation>
+        <translation>Sinc</translation>
     </message>
 </context>
 <context>
@@ -4178,7 +4178,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="252"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortida</translation>
     </message>
 </context>
 <context>
@@ -4186,22 +4186,22 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="76"/>
         <source>Gapless playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducció sense interrupcions</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="78"/>
         <source>Fading</source>
-        <translation type="unfinished"></translation>
+        <translation>Esvaïment</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="131"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortida</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="133"/>
         <source>Device</source>
-        <translation type="unfinished"></translation>
+        <translation>Dispositiu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="84"/>
@@ -4211,7 +4211,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="88"/>
         <source>Try to play consecutive tracks with no silence or disruption at the point of file change</source>
-        <translation type="unfinished"></translation>
+        <translation>Intenta reproduir pistes consecutives sense silencis ni interrupcions en el punt de canvi de fitxer.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="97"/>
@@ -4221,12 +4221,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="120"/>
         <source>Fade In</source>
-        <translation type="unfinished"></translation>
+        <translation>Inici de l&apos;esvaïment</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="121"/>
         <source>Fade Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Final de l&apos;esvaïment</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="122"/>
@@ -4437,7 +4437,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="72"/>
         <source>Follow last playback queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>Segueix l&apos;última pista de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="73"/>
@@ -4457,7 +4457,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Once the playback queue has finished, start playback from the tracks following the last queued track</source>
-        <translation type="unfinished"></translation>
+        <translation>Un cop finalitzada la cua de reproducció, inicia la reproducció des de les pistes següents a l&apos;última pista a la cua</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
@@ -4707,22 +4707,22 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="57"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Última modificació</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="59"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Puntuació</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="60"/>
         <source>First Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Primera reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
         <source>Last Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Última reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
@@ -4737,7 +4737,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="64"/>
         <source>Artist Picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Imatge de l&apos;artista</translation>
     </message>
 </context>
 <context>
@@ -4745,7 +4745,7 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="59"/>
         <source>Repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>Repeteix</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="63"/>
@@ -4755,47 +4755,47 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="105"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Per defecte</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="106"/>
         <source>Repeat playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Repeteix la llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="107"/>
         <source>Repeat album</source>
-        <translation type="unfinished"></translation>
+        <translation>Repeteix àlbum</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="108"/>
         <source>Repeat track</source>
-        <translation type="unfinished"></translation>
+        <translation>Repeteix pista</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="140"/>
         <source>Shuffle off</source>
-        <translation type="unfinished"></translation>
+        <translation>Desactiva la reproducció aleatòria</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="141"/>
         <source>Shuffle tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Pistes aleatòries</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="142"/>
         <source>Shuffle albums</source>
-        <translation type="unfinished"></translation>
+        <translation>Àlbums aleatòris</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="143"/>
         <source>Random</source>
-        <translation type="unfinished"></translation>
+        <translation>Aleatori</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="79"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls de la llista de reproducció</translation>
     </message>
 </context>
 <context>
@@ -4803,7 +4803,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="459"/>
         <source>Playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Llistes de reproducció</translation>
     </message>
 </context>
 <context>
@@ -4834,37 +4834,37 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="92"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandeix les pestanyes per omplir l&apos;espai buit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="93"/>
         <source>Show add button</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra el botó Afegeix</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="94"/>
         <source>Show clear button</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra el botó Esborra</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra el botó d&apos;eliminar a les pestanyes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="96"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimeix les llistes de reproducció amb un clic amb el botó central</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="99"/>
         <source>Auto-export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportació automàtica</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="101"/>
         <source>Write metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Escriu metadades</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="105"/>
@@ -4884,22 +4884,22 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="125"/>
         <source>Path type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipus de ruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="133"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Format</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="134"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubicació</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="136"/>
         <source>Export and synchronise playlists in the specified format and location</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta i sincronitza llistes de reproducció en el format i la ubicació especificats</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="173"/>
@@ -4934,17 +4934,17 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="152"/>
         <source>Image Padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Farciment d&apos;imatges</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="156"/>
         <source>Left/Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Esquerra/Dreta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="158"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Damunt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="91"/>
@@ -4979,7 +4979,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="85"/>
         <source>Loading playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;està carregant la llista de reproducció…</translation>
     </message>
 </context>
 <context>
@@ -4992,22 +4992,22 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="128"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el nom</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="130"/>
         <source>New group</source>
-        <translation type="unfinished"></translation>
+        <translation>Grup nou</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="132"/>
         <source>Create playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea una llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="135"/>
         <source>Create autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea una llista de reproducció automàtica</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="138"/>
@@ -5022,38 +5022,38 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="293"/>
         <source>Remove the selected playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina les llistes de reproducció seleccionades</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="296"/>
         <source>Rename the selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el nom del grup seleccionat</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="297"/>
         <source>Remove the selected groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina els grups seleccionats</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="300"/>
         <source>Remove the selected playlists and groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina les llistes de reproducció i els grups seleccionats</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="292"/>
         <source>Rename the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el nom de la llista de reproducció seleccionada</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="173"/>
         <source>Create a new empty group</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea un nou grup buit</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="163"/>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="257"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation>Organitzador de llistes de reproducció</translation>
     </message>
 </context>
 <context>
@@ -5075,27 +5075,27 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="229"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="230"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el nom</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="231"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimeix</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="232"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualitza</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="233"/>
         <source>Clone</source>
-        <translation type="unfinished"></translation>
+        <translation>Clona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="257"/>
@@ -5105,64 +5105,64 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="259"/>
         <source>Subtitle</source>
-        <translation type="unfinished"></translation>
+        <translation>Subtítol</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="263"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informació</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="349"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="370"/>
         <source>Preset Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom predefinit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="436"/>
         <source>Copy of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Còpia de %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="269"/>
         <source>Header</source>
-        <translation type="unfinished"></translation>
+        <translation>Capçalera</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="221"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>Substitueix l&apos;alçada</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="227"/>
         <source>Show cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra la portada</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
         <source>Simple header</source>
-        <translation type="unfinished"></translation>
+        <translation>Capçalera simple</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="261"/>
         <source>Side</source>
-        <translation type="unfinished"></translation>
+        <translation>Costat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="274"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="283"/>
         <source>Subheaders</source>
-        <translation type="unfinished"></translation>
+        <translation>Subcapçaleres</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="295"/>
         <source>Left-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>Alineat a l&apos;esquerra</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="297"/>
         <source>Right-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>Alineat a la dreta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="303"/>
@@ -5326,12 +5326,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Cua per reproduir a continuació</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="193"/>
         <source>Remove from playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina de la cu&amp;a de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="309"/>
@@ -5351,42 +5351,42 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="334"/>
         <source>Redo the previous playlist change</source>
-        <translation type="unfinished"></translation>
+        <translation>Refés el canvi anterior a la llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="348"/>
         <source>Cut the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Talla les pistes seleccionades</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="357"/>
         <source>Copy the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar les pistes seleccionades</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="366"/>
         <source>Paste the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Enganxa les pistes seleccionades</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="379"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina totes les pistes de la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="389"/>
         <source>Select &amp;all</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona-ho &amp;tot</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="390"/>
         <source>Select all tracks in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona totes les pistes de la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="399"/>
         <source>Remove the selected tracks from the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina les pistes seleccionades de la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="408"/>
@@ -5396,7 +5396,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="414"/>
         <source>Add the selected tracks to the start of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix les pistes seleccionades a l&apos;inici de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="419"/>
@@ -5406,12 +5406,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="431"/>
         <source>Playlist empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Llista de reproducció buida</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="432"/>
         <source>Loading playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;està carregant la llista de reproducció…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="435"/>
@@ -5423,7 +5423,7 @@
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="436"/>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="440"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cercant…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1533"/>
@@ -5433,12 +5433,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1571"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Més…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1268"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Restableix les columnes a l&apos;estat predeterminat</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="182"/>
@@ -5448,17 +5448,17 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="183"/>
         <source>&amp;Crop</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Retalla</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="184"/>
         <source>&amp;Stop after this</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Atura després d&apos;això</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1277"/>
         <source>Single-column mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode d&apos;una sola columna</translation>
     </message>
 </context>
 <context>
@@ -5817,7 +5817,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="73"/>
         <source>ReplayGain Scan Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Progrés de l&apos;escaneig de ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="94"/>
@@ -5832,37 +5832,37 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="121"/>
         <source>Calculate ReplayGain values per-file</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcula els valors de ReplayGain per fitxer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="122"/>
         <source>Calculate ReplayGain values as a single album</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcula els valors de ReplayGain com un sol àlbum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="123"/>
         <source>Calculate ReplayGain values as albums (by tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcula els valors de ReplayGain com a àlbums (per etiquetes)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="124"/>
         <source>Remove ReplayGain information from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina la informació de ReplayGain dels fitxers</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="126"/>
         <source>Calculate ReplayGain values for selected files, considering each file individually</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcula els valors de ReplayGain per als fitxers seleccionats, considerant cada fitxer individualment</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="128"/>
         <source>Calculate ReplayGain values for selected files, considering all files as part of one album</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcula els valors de ReplayGain per als fitxers seleccionats, considerant tots els fitxers com a part d&apos;un àlbum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="129"/>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcula els valors de ReplayGain per als fitxers seleccionats, dividint-los en àlbums per etiquetes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="130"/>
