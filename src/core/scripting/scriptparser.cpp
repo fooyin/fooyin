@@ -437,15 +437,23 @@ Expression ScriptParserPrivate::variable()
     Expression expr;
     QString value;
 
+    const auto consumeVar = [this, &value](TokenType type) {
+        value.append(m_previous.value);
+        while(!currentToken(type) && !currentToken(TokenType::TokEos)) {
+            advance();
+            value.append(m_previous.value);
+        }
+    };
+
     if(m_previous.type == TokenType::TokLeftAngle) {
         advance();
         expr.type = Expr::VariableList;
-        value     = m_previous.value.toLower();
+        consumeVar(TokenType::TokRightAngle);
         consume(TokenType::TokRightAngle, QObject::tr("Expected %1 to close variable list").arg("'>'"_L1));
     }
     else {
         expr.type = Expr::Variable;
-        value     = m_previous.value;
+        consumeVar(TokenType::TokVar);
         if(m_isQuery) {
             value = value.trimmed();
         }
