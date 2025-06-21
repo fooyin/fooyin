@@ -361,7 +361,8 @@ ScriptScanner::Token ScriptScanner::keyword()
 
 ScriptScanner::Token ScriptScanner::checkKeyword(int start, QAnyStringView rest, TokenType type)
 {
-    if(currentLength() == start + rest.length() && std::memcmp(m_start + start, rest.data(), rest.length()) == 0) {
+    const QAnyStringView keyword{m_start + start, rest.length()};
+    if(keyword == rest) {
         return makeToken(type);
     }
     return literal();
@@ -385,6 +386,7 @@ QChar ScriptScanner::peek() const
 
 int ScriptScanner::currentLength() const
 {
-    return static_cast<int>(m_current - m_start);
+    const int len = static_cast<int>(m_current - m_start);
+    return len;
 }
 } // namespace Fooyin
