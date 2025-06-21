@@ -21,6 +21,7 @@
 
 #include "scrobblercache.h"
 
+#include <core/scripting/scriptparser.h>
 #include <core/track.h>
 
 #include <QBasicTimer>
@@ -88,6 +89,8 @@ protected:
     QNetworkReply* addReply(QNetworkReply* reply);
     bool removeReply(QNetworkReply* reply);
 
+    bool allowedByFilter(const Track& track);
+
     enum class ReplyResult : uint8_t
     {
         Success = 0,
@@ -111,6 +114,8 @@ protected:
 private:
     NetworkAccessManager* m_network;
     SettingsManager* m_settings;
+
+    ScriptParser m_scriptParser;
 
     ScrobblerAuthSession* m_authSession;
     std::vector<QNetworkReply*> m_replies;

@@ -22,6 +22,7 @@
 #include "scrobbler.h"
 #include "scrobblersettings.h"
 
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -30,6 +31,7 @@
 #include <QIcon>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QStyle>
@@ -60,6 +62,9 @@ private:
     QCheckBox* m_preferAlbumArtist;
     QSpinBox* m_scrobbleDelay;
 
+    QCheckBox* m_scrobbleFilterEnabled;
+    ScriptTextEdit* m_scrobbleFilter;
+
     struct ServiceContext
     {
         ScrobblerService* service{nullptr};
@@ -85,12 +90,13 @@ ScrobblerPageWidget::ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* 
     , m_scrobblingEnabled{new QCheckBox(tr("Enable scrobbling"), this)}
     , m_preferAlbumArtist{new QCheckBox(tr("Prefer album artist"), this)}
     , m_scrobbleDelay{new QSpinBox(this)}
+    , m_scrobbleFilterEnabled{new QCheckBox(tr("Filter scrobbles"), this)}
+    , m_scrobbleFilter{new ScriptTextEdit(tr("Filter"), this)}
 {
     auto* genralGroup   = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(genralGroup);
 
     auto* delayLabel = new QLabel(tr("Scrobble delay") + ":"_L1, this);
-
     const QString delayTip = tr("Time to wait before submitting scrobbles");
 
     delayLabel->setToolTip(delayTip);
@@ -99,11 +105,21 @@ ScrobblerPageWidget::ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* 
     m_scrobbleDelay->setRange(0, 600);
     m_scrobbleDelay->setSuffix(" "_L1 + tr("seconds"));
 
+    auto* filterLabel       = new QLabel(tr("Query") + ":"_L1, this);
+    const QString filterTip = tr("Enter a query. Tracks that match the query will NOT be scrobbled");
+    filterLabel->setToolTip(filterTip);
+    m_scrobbleFilter->setToolTip(filterTip);
+
     int row{0};
     generalLayout->addWidget(m_scrobblingEnabled, row++, 0, 1, 2);
     generalLayout->addWidget(m_preferAlbumArtist, row++, 0, 1, 2);
     generalLayout->addWidget(delayLabel, row, 0);
     generalLayout->addWidget(m_scrobbleDelay, row++, 1);
+
+    generalLayout->addWidget(m_scrobbleFilterEnabled, row++, 0, 1, 2);
+    generalLayout->addWidget(filterLabel, row, 0, Qt::AlignTop);
+    generalLayout->addWidget(m_scrobbleFilter, row++, 1);
+
     generalLayout->setRowStretch(generalLayout->rowCount(), 1);
     generalLayout->setColumnStretch(2, 1);
 
@@ -129,6 +145,9 @@ void ScrobblerPageWidget::load()
     m_scrobblingEnabled->setChecked(m_settings->value<Settings::Scrobbler::ScrobblingEnabled>());
     m_scrobbleDelay->setValue(m_settings->value<Settings::Scrobbler::ScrobblingDelay>());
     m_preferAlbumArtist->setChecked(m_settings->value<Settings::Scrobbler::PreferAlbumArtist>());
+
+    m_scrobbleFilterEnabled->setChecked(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>());
+    m_scrobbleFilter->setText(m_settings->value<Settings::Scrobbler::ScrobbleFilter>());
 }
 
 void ScrobblerPageWidget::apply()
@@ -136,6 +155,9 @@ void ScrobblerPageWidget::apply()
     m_settings->set<Settings::Scrobbler::ScrobblingEnabled>(m_scrobblingEnabled->isChecked());
     m_settings->set<Settings::Scrobbler::ScrobblingDelay>(m_scrobbleDelay->value());
     m_settings->set<Settings::Scrobbler::PreferAlbumArtist>(m_preferAlbumArtist->isChecked());
+
+    m_settings->set<Settings::Scrobbler::EnableScrobbleFilter>(m_scrobbleFilterEnabled->isChecked());
+    m_settings->set<Settings::Scrobbler::ScrobbleFilter>(m_scrobbleFilter->text());
 
     for(const auto& [_, context] : m_serviceContext) {
         if(context.tokenInput && !context.tokenSetting.isEmpty()) {
@@ -149,6 +171,9 @@ void ScrobblerPageWidget::reset()
     m_settings->reset<Settings::Scrobbler::ScrobblingEnabled>();
     m_settings->reset<Settings::Scrobbler::ScrobblingDelay>();
     m_settings->reset<Settings::Scrobbler::PreferAlbumArtist>();
+
+    m_settings->reset<Settings::Scrobbler::EnableScrobbleFilter>();
+    m_settings->reset<Settings::Scrobbler::ScrobbleFilter>();
 }
 
 void ScrobblerPageWidget::populateServices(QGridLayout* layout)

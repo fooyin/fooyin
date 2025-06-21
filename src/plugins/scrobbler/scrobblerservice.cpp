@@ -18,7 +18,6 @@
  */
 
 #include "scrobblerservice.h"
-
 #include "scrobblerauthsession.h"
 #include "scrobblersettings.h"
 
@@ -59,6 +58,7 @@ ScrobblerService::ScrobblerService(NetworkAccessManager* network, SettingsManage
     : QObject{parent}
     , m_network{network}
     , m_settings{settings}
+    , m_scriptParser{new ScriptRegistry()}
     , m_authSession{nullptr}
     , m_cache{nullptr}
     , m_submitError{false}
@@ -156,6 +156,12 @@ void ScrobblerService::updateNowPlaying(const Track& track)
         return;
     }
 
+    if(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>()) {
+        if(!allowedByFilter(track)) {
+            return;
+        }
+    }
+
     updateNowPlaying();
 }
 
@@ -171,6 +177,12 @@ void ScrobblerService::scrobble(const Track& track)
 
     if(track.id() != m_currentTrack.id() || track.uniqueFilepath() != m_currentTrack.uniqueFilepath()) {
         return;
+    }
+
+    if(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>()) {
+        if(!allowedByFilter(track)) {
+            return;
+        }
     }
 
     setScrobbled(true);
@@ -232,6 +244,12 @@ bool ScrobblerService::removeReply(QNetworkReply* reply)
     QObject::disconnect(reply, nullptr, this, nullptr);
     reply->deleteLater();
     return true;
+}
+
+bool ScrobblerService::allowedByFilter(const Track& track)
+{
+    const QString query   = m_settings->value<Settings::Scrobbler::ScrobbleFilter>();
+    return m_scriptParser.filter(query, {track}).empty();
 }
 
 bool ScrobblerService::extractJsonObj(const QByteArray& data, QJsonObject* obj, QString* errorDesc)
