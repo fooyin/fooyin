@@ -128,7 +128,13 @@ void ExportLayoutDialog::accept()
         layout.saveTheme(currentTheme, themeOptions);
     }
 
-    const bool success = m_layoutProvider->exportLayout(layout, m_pathEdit->text());
+    if(QFileInfo(m_pathEdit->text()).isDir() && !m_pathEdit->text().endsWith(QDir::separator())) {
+        m_pathEdit->setText(m_pathEdit->text() + QDir::separator());
+    }
+
+    const bool success = m_layoutProvider->exportLayout(layout, QFileInfo(m_pathEdit->text()).isDir()
+                                                                    ? m_pathEdit->text().append(m_nameEdit->text())
+                                                                    : m_pathEdit->text());
     if(success) {
         QDialog::accept();
         return;
