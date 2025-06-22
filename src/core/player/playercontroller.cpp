@@ -171,13 +171,19 @@ void PlayerController::previous()
 {
     if(p->m_settings->value<Settings::Core::RewindPreviousTrack>() && currentPosition() > 5000) {
         seek(0);
+        return;
     }
-    else if(p->m_playlistHandler) {
+
+    if(p->m_playlistHandler) {
         const PlaylistTrack track = p->m_playlistHandler->changePreviousTrack();
         changeCurrentTrack(track);
     }
     else {
         p->m_currentTrack = {};
+    }
+
+    if(p->m_currentTrack.isValid()) {
+        play();
     }
 }
 
@@ -197,6 +203,9 @@ void PlayerController::next()
     else {
         p->m_currentTrack = {};
         p->m_isQueueTrack = true;
+    }
+
+    if(p->m_currentTrack.isValid()) {
         play();
     }
 }
