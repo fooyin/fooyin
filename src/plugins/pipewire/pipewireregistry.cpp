@@ -82,6 +82,6 @@ void PipewireRegistry::onRegistryEvent(void* data, uint32_t /*id*/, uint32_t /*p
     const char* name = spa_dict_lookup(props, PW_KEY_NODE_NAME);
     const char* desc = spa_dict_lookup(props, PW_KEY_NODE_DESCRIPTION);
 
-    registry->m_sinks.emplace_back(QString::fromLatin1(name), QString::fromLatin1(desc));
+    registry->m_sinks.emplace_back(QString::fromUtf8(name), QString::fromUtf8(desc));
 }
 } // namespace Fooyin::Pipewire
