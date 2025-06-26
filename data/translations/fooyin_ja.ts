@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="81"/>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 について</translation>
     </message>
 </context>
 <context>
@@ -14,37 +14,37 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="47"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ファイル</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;編集</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ビュー</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;レイアウト</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Library</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ライブラリ</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="71"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ヘルプ</translation>
     </message>
 </context>
 <context>
@@ -52,12 +52,12 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="35"/>
         <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>%1設定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
         <source>Buffer length</source>
-        <translation type="unfinished"></translation>
+        <translation>バッファ長</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="43"/>
@@ -94,27 +94,27 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="85"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="95"/>
         <source>Front Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>表カバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="96"/>
         <source>Back Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>裏カバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="97"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="99"/>
         <source>Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>キャッシュ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="102"/>
@@ -124,12 +124,12 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="108"/>
         <source>Clear Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>キャッシュのクリア</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="175"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスクキャッシュの使用量</translation>
     </message>
 </context>
 <context>
@@ -137,32 +137,32 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="45"/>
         <source>Front Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>表カバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="46"/>
         <source>Back Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>裏カバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="47"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="109"/>
         <source>Artwork Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>カバー画像のプロパティ</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="158"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>カバー画像のロード中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="162"/>
         <source>Saving artwork to files…</source>
-        <translation type="unfinished"></translation>
+        <translation>カバー画像をファイルに保存しています…</translation>
     </message>
 </context>
 <context>
@@ -170,29 +170,29 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="48"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="49"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="253"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="112"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation>カバー画像がありません</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像を開く</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>画像</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="162"/>
@@ -207,12 +207,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Replace image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像を置き換える</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像を追加する</translation>
     </message>
 </context>
 <context>
@@ -225,32 +225,32 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="490"/>
         <source>Show hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>再表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="499"/>
         <source>Hide %1</source>
-        <translation type="unfinished"></translation>
+        <translation>隠す%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="523"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="533"/>
         <source>&amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左寄せ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="534"/>
         <source>&amp;Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;中央</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="535"/>
         <source>&amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;右寄せ</translation>
     </message>
 </context>
 <context>
@@ -263,12 +263,12 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="54"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
