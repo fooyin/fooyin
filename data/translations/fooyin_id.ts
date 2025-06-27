@@ -52,17 +52,17 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="35"/>
         <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Setelan %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
         <source>Buffer length</source>
-        <translation type="unfinished"></translation>
+        <translation>Panjang bufer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="43"/>
         <source>Period length</source>
-        <translation type="unfinished"></translation>
+        <translation>Panjang periode</translation>
     </message>
 </context>
 <context>
@@ -119,17 +119,17 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="102"/>
         <source>Pixmap cache size</source>
-        <translation>Ukuran cache Pixmap</translation>
+        <translation>Ukuran tembolok Pixmap</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="108"/>
         <source>Clear Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Bersihkan Tembolok</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="175"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Penggunaan diska tembolok</translation>
     </message>
 </context>
 <context>
@@ -137,32 +137,32 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="45"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Sampul Depan</translation>
+        <translation>Sampul Depan</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="46"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Sampul Belakang</translation>
+        <translation>Sampul Belakang</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="47"/>
         <source>Artist</source>
-        <translation type="unfinished">Artis</translation>
+        <translation>Artis</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="109"/>
         <source>Artwork Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Properti Sampul</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="158"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Memuat Sampul…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="162"/>
         <source>Saving artwork to files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Menyimpan sampul ke berkas…</translation>
     </message>
 </context>
 <context>
@@ -170,7 +170,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="48"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Tambah</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="49"/>
@@ -182,37 +182,37 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="112"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tidak ada sampul</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka Gambar</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Gambar</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="162"/>
         <source>Multiple images</source>
-        <translation type="unfinished"></translation>
+        <translation>Beberapa gamabr</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="163"/>
         <source>%1 of %2 files have artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 dari %2 berkas mempunyai sampul</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Replace image</source>
-        <translation type="unfinished"></translation>
+        <translation>Ganti gambar</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>Tambah gambar</translation>
     </message>
 </context>
 <context>
@@ -225,7 +225,7 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="490"/>
         <source>Show hidden</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tampilkan tersembunyi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="499"/>
@@ -258,17 +258,17 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="52"/>
         <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Muat</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Simpan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="54"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Hapus</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
@@ -278,52 +278,52 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Edit Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sunting Autoplaylist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Create New Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Buat Autoplaylist Baru</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="89"/>
         <source>Query</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cari</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="160"/>
         <source>Query already exists</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pencarian sudah ada</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="161"/>
         <source>Query %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pencarian %1 sudah ada. Tulis tindih?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="279"/>
         <source>Most Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Paling Dimainkan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="280"/>
         <source>Recently Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Baru Saja Ditambahkan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="281"/>
         <source>Last Played 2 Weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>2 Minggu Terakhir Dimainkan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="282"/>
         <source>Has Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Mempunyai Lirik</translation>
     </message>
 </context>
 <context>
@@ -339,37 +339,37 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="84"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Panel Sampul</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="126"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Pertahankan nisbah aspek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="139"/>
         <source>Align to centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Jajarkan ke tengah</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="140"/>
         <source>Align to left</source>
-        <translation type="unfinished"></translation>
+        <translation>Jajarkan ke kiri</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="141"/>
         <source>Align to right</source>
-        <translation type="unfinished"></translation>
+        <translation>Jajarkan ke kanan</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="162"/>
         <source>Front cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Sampul depan</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="163"/>
         <source>Back cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Sampul belakang</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="164"/>
@@ -395,7 +395,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="82"/>
         <source>Supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekstensi yang didukung</translation>
     </message>
 </context>
 <context>
@@ -403,7 +403,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="161"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Umum</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="162"/>
@@ -413,7 +413,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="162"/>
         <source>Decoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekode</translation>
     </message>
 </context>
 <context>
