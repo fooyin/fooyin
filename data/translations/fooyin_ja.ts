@@ -71,7 +71,7 @@
         <location filename="../../src/gui/settings/artworkpage.cpp" line="182"/>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="183"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワーク</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="183"/>
@@ -84,12 +84,12 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="74"/>
         <source>Prefer currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中のトラックを優先</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="75"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択中を優先</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="85"/>
@@ -119,7 +119,7 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="102"/>
         <source>Pixmap cache size</source>
-        <translation type="unfinished"></translation>
+        <translation>ピクセルマップのキャッシュサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="108"/>
@@ -273,12 +273,12 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>&amp;Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトの&amp;復元</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Edit Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>オートプレイリストの編集</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
@@ -288,7 +288,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名前</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="89"/>
@@ -339,42 +339,42 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="84"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークパネル</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="126"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>縦横比率を保持</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="139"/>
         <source>Align to centre</source>
-        <translation type="unfinished"></translation>
+        <translation>中央寄せ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="140"/>
         <source>Align to left</source>
-        <translation type="unfinished"></translation>
+        <translation>左寄せ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="141"/>
         <source>Align to right</source>
-        <translation type="unfinished"></translation>
+        <translation>右寄せ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="162"/>
         <source>Front cover</source>
-        <translation type="unfinished"></translation>
+        <translation>表ジャケット</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="163"/>
         <source>Back cover</source>
-        <translation type="unfinished"></translation>
+        <translation>裏ジャケット</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="164"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティスト</translation>
     </message>
 </context>
 <context>
@@ -382,12 +382,12 @@
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="84"/>
         <source>Select Font</source>
-        <translation type="unfinished"></translation>
+        <translation>フォントを選ぶ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="93"/>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>色を選ぶ</translation>
     </message>
 </context>
 <context>
@@ -439,7 +439,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="245"/>
         <source>&amp;Play</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="246"/>
@@ -464,7 +464,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="250"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;キュー に追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
@@ -479,12 +479,12 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="284"/>
         <source>Go up to the parent directory</source>
-        <translation type="unfinished"></translation>
+        <translation>上位ディレクトリへ</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="289"/>
         <source>Return to the previous directory</source>
-        <translation type="unfinished"></translation>
+        <translation>直前のディレクトリへ</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="298"/>
@@ -494,12 +494,12 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="308"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="313"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>選択中トラックを現在のプレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="320"/>
@@ -509,17 +509,17 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="327"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のプレイリストを選択中のトラックに置換</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="334"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>選択中のトラックを含む新たなプレイリストを作成</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="340"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>選択中のトラックを再生キューに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="347"/>
@@ -529,33 +529,33 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="354"/>
         <source>Replace the playback queue with the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>再生キューを選択中のトラックに置換</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="242"/>
         <source>Go up</source>
-        <translation type="unfinished"></translation>
+        <translation>上へ</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="243"/>
         <source>Go back</source>
-        <translation type="unfinished"></translation>
+        <translation>戻る</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="244"/>
         <source>Go forwards</source>
-        <translation type="unfinished"></translation>
+        <translation>次へ</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="310"/>
         <source>Start playback of the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>選択中ファイルを再生開始</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="282"/>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="734"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリブラウザー</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="806"/>
@@ -578,7 +578,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="225"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリブラウザー</translation>
     </message>
 </context>
 <context>
@@ -586,37 +586,37 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="76"/>
         <source>Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>ツリーモード</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="77"/>
         <source>List</source>
-        <translation type="unfinished"></translation>
+        <translation>リストモード</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show icons</source>
-        <translation type="unfinished"></translation>
+        <translation>アイコンを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="79"/>
         <source>Show indent</source>
-        <translation type="unfinished"></translation>
+        <translation>インデントする</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="80"/>
         <source>Show horizontal scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>水平バーを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="81"/>
         <source>Show controls</source>
-        <translation type="unfinished"></translation>
+        <translation>コントロールを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="82"/>
         <source>Show location</source>
-        <translation type="unfinished"></translation>
+        <translation>場所を表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="85"/>
@@ -626,17 +626,17 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>クリック時の動作</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="90"/>
         <source>Double-click</source>
-        <translation type="unfinished"></translation>
+        <translation>ダブルクリック</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="92"/>
         <source>Middle-click</source>
-        <translation type="unfinished"></translation>
+        <translation>中クリック</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="97"/>
@@ -3171,7 +3171,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="301"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリツリー</translation>
     </message>
 </context>
 <context>
@@ -3179,7 +3179,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="81"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>有効にする</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="82"/>
@@ -3189,7 +3189,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="88"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>スクロールバー表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="89"/>
@@ -3199,17 +3199,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="95"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>クリック時の動作</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="108"/>
         <source>Library Selection Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリ選択プレイリスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="98"/>
         <source>Double-click</source>
-        <translation type="unfinished"></translation>
+        <translation>ダブルクリック</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="80"/>
@@ -3219,12 +3219,12 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="83"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>常に表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="85"/>
         <source>Restore state on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>起動時に状態を復元</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="86"/>
@@ -3234,22 +3234,22 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="87"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>ヘッダーを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="90"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>行の高さを上書き</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="99"/>
         <source>Middle-click</source>
-        <translation type="unfinished"></translation>
+        <translation>中クリック</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="111"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名前</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="113"/>
@@ -3259,27 +3259,27 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="122"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>全般</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="127"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>外観</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="130"/>
         <source>Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>アイコン</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="146"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>幅</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="148"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation>高さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="196"/>
@@ -3337,7 +3337,7 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="195"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="205"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>なし</translation>
     </message>
 </context>
 <context>
@@ -3345,7 +3345,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="103"/>
         <source>Loading Library…</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリをロード中…</translation>
     </message>
 </context>
 <context>
@@ -3353,7 +3353,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="428"/>
         <source>Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="262"/>
@@ -3373,7 +3373,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="265"/>
         <source>&amp;Play</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="296"/>
@@ -3383,12 +3383,12 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="480"/>
         <source>Open folder</source>
-        <translation type="unfinished"></translation>
+        <translation>フォルダを開く</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="925"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリツリー</translation>
     </message>
 </context>
 <context>
@@ -3396,27 +3396,27 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="50"/>
         <source>Log</source>
-        <translation type="unfinished"></translation>
+        <translation>ログ</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="52"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;クリア</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="54"/>
         <source>&amp;Save Log</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ログを保存</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="61"/>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>デバッグ</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="62"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>情報</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="63"/>
@@ -3431,7 +3431,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="104"/>
         <source>Save Log</source>
-        <translation type="unfinished"></translation>
+        <translation>ログの保存</translation>
     </message>
 </context>
 <context>
