@@ -20,6 +20,7 @@
 #include "scrobbler.h"
 
 #include "lastfmservice.h"
+#include "librefmservice.h"
 #include "listenbrainzservice.h"
 
 #include <core/player/playercontroller.h>
@@ -32,6 +33,7 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
     , m_settings{settings}
 {
     m_services.emplace_back(std::make_unique<LastFmService>(m_network.get(), m_settings));
+    m_services.emplace_back(std::make_unique<LibreFmService>(m_network.get(), m_settings));
     m_services.emplace_back(std::make_unique<ListenBrainzService>(m_network.get(), m_settings));
 
     for(auto& service : m_services) {

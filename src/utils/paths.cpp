@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/paths.h>
+#include <utils/fypaths.h>
 
 #include <utils/fileutils.h>
 

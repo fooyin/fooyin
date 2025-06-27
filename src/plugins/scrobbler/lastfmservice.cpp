@@ -35,6 +35,7 @@
 using namespace Qt::StringLiterals;
 
 constexpr auto ApiUrl    = "https://ws.audioscrobbler.com/2.0/";
+constexpr auto AuthUrl   = "https://www.last.fm/api/auth/";
 constexpr auto ApiKey    = "YjJkNTdjOTc4YTIyYmUyNzljYzNiZTZkNjc2MjdmZWE=";
 constexpr auto ApiSecret = "ODYzZDBiNWI0M2I2NmQ1MmVkOTU4NGFiOWJiZTc3MDY=";
 
@@ -87,9 +88,14 @@ QString LastFmService::name() const
     return u"LastFM"_s;
 }
 
+QUrl LastFmService::url() const
+{
+    return QString::fromLatin1(ApiUrl);
+}
+
 QUrl LastFmService::authUrl() const
 {
-    return u"https://www.last.fm/api/auth/"_s;
+    return QString::fromLatin1(AuthUrl);
 }
 
 QString LastFmService::username() const
@@ -211,7 +217,7 @@ void LastFmService::setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& que
 
 void LastFmService::requestAuth(const QString& token)
 {
-    QUrl url{QString::fromLatin1(ApiUrl)};
+    QUrl reqUrl{url()};
 
     QUrlQuery urlQuery;
     urlQuery.addQueryItem(u"api_key"_s, m_apiKey);
@@ -231,9 +237,9 @@ void LastFmService::requestAuth(const QString& token)
     urlQuery.addQueryItem(u"api_sig"_s, signature);
     urlQuery.addQueryItem(QString::fromLatin1(QUrl::toPercentEncoding(u"format"_s)),
                           QString::fromLatin1(QUrl::toPercentEncoding(u"json"_s)));
-    url.setQuery(urlQuery);
+    reqUrl.setQuery(urlQuery);
 
-    QNetworkRequest req{url};
+    QNetworkRequest req{reqUrl};
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     QNetworkReply* reply = addReply(network()->get(req));
     QObject::connect(reply, &QNetworkReply::finished, this, [this, reply]() { authFinished(reply); });
@@ -349,8 +355,8 @@ QNetworkReply* LastFmService::createRequest(const std::map<QString, QString>& pa
     queryUrl.addQueryItem(u"api_sig"_s, QString::fromLatin1(QUrl::toPercentEncoding(signature)));
     queryUrl.addQueryItem(u"format"_s, u"json"_s);
 
-    const QUrl url{QString::fromLatin1(ApiUrl)};
-    QNetworkRequest req(url);
+    const QUrl reqUrl{url()};
+    QNetworkRequest req{reqUrl};
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
 

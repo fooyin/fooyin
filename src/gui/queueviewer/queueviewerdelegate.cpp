@@ -31,7 +31,8 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
 {
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
-    opt.decorationSize = option.decorationSize;
+    opt.decorationSize         = option.decorationSize;
+    opt.showDecorationSelected = true;
 
     QStyle* style        = opt.widget ? opt.widget->style() : QApplication::style();
     const auto colour    = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;

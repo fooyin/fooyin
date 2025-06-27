@@ -22,6 +22,8 @@
 #include "lyrics.h"
 #include "settings/lyricssettings.h"
 
+#include <core/engine/audioengine.h>
+#include <core/player/playerdefs.h>
 #include <core/scripting/scriptparser.h>
 #include <gui/fywidget.h>
 
@@ -33,6 +35,7 @@ class QScrollArea;
 class QTextEdit;
 
 namespace Fooyin {
+class EngineController;
 class PlayerController;
 class SettingsManager;
 class Track;
@@ -48,8 +51,8 @@ class LyricsWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit LyricsWidget(PlayerController* playerController, LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver,
-                          SettingsManager* settings, QWidget* parent = nullptr);
+    explicit LyricsWidget(PlayerController* playerController, EngineController* engine, LyricsFinder* lyricsFinder,
+                          LyricsSaver* lyricsSaver, SettingsManager* settings, QWidget* parent = nullptr);
 
     static QString defaultNoLyricsScript();
 
@@ -65,6 +68,7 @@ private:
     void loadLyrics(const Lyrics& lyrics);
     void changeLyrics(const Lyrics& lyrics);
     void openEditor(const Lyrics& lyrics);
+    void playStateChanged(AudioEngine::PlaybackState state);
 
     void scrollToCurrentLine(int scrollValue);
     void updateScrollMode(ScrollMode mode);
@@ -74,6 +78,7 @@ private:
     void updateAutoScroll(int startValue);
 
     PlayerController* m_playerController;
+    EngineController* m_engine;
     SettingsManager* m_settings;
 
     LyricsScrollArea* m_scrollArea;

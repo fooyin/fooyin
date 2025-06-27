@@ -340,6 +340,8 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
+    opt.showDecorationSelected = true;
+
     const auto type = index.data(PlaylistItem::Type).toInt();
     switch(type) {
         case(PlaylistItem::Track):

@@ -20,7 +20,7 @@
 #include <core/engine/audioconverter.h>
 
 #include <core/engine/audiobuffer.h>
-#include <utils/math.h>
+#include <utils/fymath.h>
 
 #include <array>
 #include <cfenv>

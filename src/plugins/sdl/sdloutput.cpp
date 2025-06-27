@@ -187,7 +187,7 @@ OutputDevices SdlOutput::getAllDevices(bool isCurrentOutput)
 
     const int num = SDL_GetNumAudioDevices(0);
     for(int i = 0; i < num; ++i) {
-        const QString devName = QString::fromLatin1(SDL_GetAudioDeviceName(i, 0));
+        const QString devName = QString::fromUtf8(SDL_GetAudioDeviceName(i, 0));
         if(!devName.isNull()) {
             devices.emplace_back(devName, devName);
         }

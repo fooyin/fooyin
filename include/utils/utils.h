@@ -56,6 +56,7 @@ FYUTILS_EXPORT QPixmap changePixmapColour(const QPixmap& orig, const QColor& col
 
 FYUTILS_EXPORT QMainWindow* getMainWindow();
 FYUTILS_EXPORT double windowDpr();
+FYUTILS_EXPORT QSize proportionateSize(const QWidget* widget, double widthFactor, double heightFactor);
 FYUTILS_EXPORT void showMessageBox(const QString& text, const QString& infoText);
 FYUTILS_EXPORT void appendMenuActions(QMenu* originalMenu, QMenu* menu);
 FYUTILS_EXPORT int visibleSectionCount(const QHeaderView* headerView);

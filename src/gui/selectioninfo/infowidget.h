@@ -49,6 +49,7 @@ public:
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void finalise() override;
 
     [[nodiscard]] bool canApply() const override;
 
@@ -70,5 +71,9 @@ private:
     QBasicTimer m_resetTimer;
     SelectionDisplay m_displayOption;
     int m_scrollPos;
+
+    bool m_showHeader;
+    bool m_showScrollbar;
+    bool m_alternatingColours;
 };
 } // namespace Fooyin

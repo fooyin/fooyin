@@ -31,5 +31,7 @@ ScrobblerSettings::ScrobblerSettings(SettingsManager* settings)
     settings->createSetting<ScrobblingEnabled>(false, u"Scrobbling/Enabled"_s);
     settings->createSetting<ScrobblingDelay>(0, u"Scrobbling/Delay"_s);
     settings->createSetting<PreferAlbumArtist>(false, u"Scrobbling/PreferAlbumArtist"_s);
+    settings->createSetting<EnableScrobbleFilter>(false, u"Scrobbling/EnableScrobbleFilter"_s);
+    settings->createSetting<ScrobbleFilter>(u""_s, u"Scrobbling/Filter"_s);
 }
 } // namespace Fooyin::Scrobbler

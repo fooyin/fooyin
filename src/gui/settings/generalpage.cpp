@@ -28,7 +28,7 @@
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <utils/paths.h>
+#include <utils/fypaths.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>

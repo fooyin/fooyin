@@ -22,6 +22,7 @@
 #include "commandline.h"
 
 #include <core/application.h>
+#include <core/playlist/playlisthandler.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiapplication.h>
 
@@ -124,7 +125,13 @@ int main(int argc, char** argv)
     guiApp.startup();
 
     if(!commandLine.empty()) {
-        parseCmdOptions(coreApp, guiApp, commandLine);
+        // Wait until playlists have been populated before parsing in case of playback commands
+        const auto delayedParse = [&]() {
+            parseCmdOptions(coreApp, guiApp, commandLine);
+        };
+        auto* playlistHandler = coreApp.playlistHandler();
+        QObject::connect(playlistHandler, &Fooyin::PlaylistHandler::playlistsPopulated, playlistHandler,
+                         [delayedParse]() { delayedParse(); });
     }
 
     QObject::connect(&instance, &KDSingleApplication::messageReceived, &guiApp, [&](const QByteArray& options) {

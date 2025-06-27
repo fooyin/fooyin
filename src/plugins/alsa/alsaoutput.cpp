@@ -123,11 +123,11 @@ void getPcmDevices(Fooyin::OutputDevices& devices)
         }
 
         if(strcmp(name.str, "default") == 0) {
-            devices.insert(devices.begin(), {QString::fromLatin1(name.str), QString::fromLatin1(desc.str)});
+            devices.insert(devices.begin(), {QString::fromUtf8(name.str), QString::fromUtf8(desc.str)});
         }
         else {
-            devices.emplace_back(QString::fromLatin1(name.str),
-                                 u"%1 - %2"_s.arg(QString::fromLatin1(name.str), QString::fromLatin1(desc.str)));
+            devices.emplace_back(QString::fromUtf8(name.str),
+                                 u"%1 - %2"_s.arg(QString::fromUtf8(name.str), QString::fromUtf8(desc.str)));
         }
     }
 }

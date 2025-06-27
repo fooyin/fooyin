@@ -30,6 +30,7 @@
 #include <QPixmapCache>
 #include <QRandomGenerator>
 #include <QRegularExpression>
+#include <QScreen>
 #include <QWidget>
 #include <QWindow>
 
@@ -223,6 +224,21 @@ double windowDpr()
     }
 
     return dpr;
+}
+
+QSize proportionateSize(const QWidget* widget, double widthFactor, double heightFactor)
+{
+    const QPoint center = widget->geometry().center();
+    QScreen* screen     = QGuiApplication::screenAt(center);
+    if(!screen) {
+        screen = QGuiApplication::primaryScreen();
+    }
+
+    const QSize screenSize = screen->availableGeometry().size();
+    const int width        = static_cast<int>(screenSize.width() * widthFactor);
+    const int height       = static_cast<int>(screenSize.height() * heightFactor);
+
+    return {width, height};
 }
 
 void showMessageBox(const QString& text, const QString& infoText)

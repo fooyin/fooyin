@@ -55,6 +55,11 @@ QString ListenBrainzService::name() const
     return u"ListenBrainz"_s;
 }
 
+QUrl ListenBrainzService::url() const
+{
+    return QString::fromLatin1(ApiUrl);
+}
+
 QUrl ListenBrainzService::authUrl() const
 {
     return QString::fromLatin1(AuthUrl);

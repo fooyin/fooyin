@@ -277,32 +277,34 @@ void PlaylistInteractor::filesToTracks(const QList<QUrl>& urls, const std::funct
     scanFiles(m_library, urls, func);
 }
 
-void PlaylistInteractor::loadPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play) const
+void PlaylistInteractor::loadPlaylist(const QList<QPair<QString, QUrl>>& playlistData, bool play) const
 {
-    if(urls.empty()) {
+    if(playlistData.empty()) {
         return;
     }
 
-    auto handleScanResult = [this, playlistName, play](const TrackList& scannedTracks) {
-        Playlist* playlist = m_handler->playlistByName(playlistName);
-        if(playlist) {
-            const int indexToPlay = playlist->trackCount();
-            m_handler->appendToPlaylist(playlist->id(), scannedTracks);
-            playlist->changeCurrentIndex(indexToPlay);
-        }
-        else {
-            playlist = m_handler->createPlaylist(playlistName, scannedTracks);
-        }
-
-        if(playlist) {
-            m_controller->changeCurrentPlaylist(playlist);
-            if(play) {
-                m_handler->startPlayback(playlist);
+    for(const QPair<QString, QUrl>& item : playlistData) {
+        auto [name, url]      = item;
+        auto handleScanResult = [this, name, play](const TrackList& scannedTracks) {
+            Playlist* playlist = m_handler->playlistByName(name);
+            if(playlist) {
+                const int indexToPlay = playlist->trackCount();
+                m_handler->appendToPlaylist(playlist->id(), scannedTracks);
+                playlist->changeCurrentIndex(indexToPlay);
             }
-        }
-    };
+            else {
+                playlist = m_handler->createPlaylist(name, scannedTracks);
+            }
 
-    loadPlaylistTracks(m_library, urls, handleScanResult);
+            if(playlist) {
+                m_controller->changeCurrentPlaylist(playlist);
+                if(play) {
+                    m_handler->startPlayback(playlist);
+                }
+            }
+        };
+        loadPlaylistTracks(m_library, {url}, handleScanResult);
+    }
 }
 
 void PlaylistInteractor::trackMimeToPlaylist(const QByteArray& data, const UId& id)

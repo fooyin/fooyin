@@ -29,6 +29,7 @@
 namespace Fooyin {
 class LibraryManager;
 class PlayerController;
+class Playlist;
 class ScriptRegistryPrivate;
 
 class FYCORE_EXPORT ScriptRegistry
@@ -50,10 +51,13 @@ public:
 
     [[nodiscard]] virtual ScriptResult value(const QString& var, const Track& track) const;
     [[nodiscard]] virtual ScriptResult value(const QString& var, const TrackList& tracks) const;
+    [[nodiscard]] virtual ScriptResult value(const QString& var, const Playlist& playlist) const;
     [[nodiscard]] virtual ScriptResult function(const QString& func, const ScriptValueList& args,
                                                 const Track& track) const;
     [[nodiscard]] virtual ScriptResult function(const QString& func, const ScriptValueList& args,
                                                 const TrackList& tracks) const;
+    [[nodiscard]] virtual ScriptResult function(const QString& func, const ScriptValueList& args,
+                                                const Playlist& playlist) const;
 
     virtual void setValue(const QString& var, const FuncRet& value, Track& track);
 

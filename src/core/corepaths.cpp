@@ -22,7 +22,7 @@
 #include "config.h"
 
 #include <utils/fileutils.h>
-#include <utils/paths.h>
+#include <utils/fypaths.h>
 
 #include <QCoreApplication>
 #include <QDir>

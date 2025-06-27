@@ -21,8 +21,8 @@
 
 #include <core/engine/audioconverter.h>
 #include <core/engine/audioloader.h>
-#include <utils/math.h>
-#include <utils/paths.h>
+#include <utils/fymath.h>
+#include <utils/fypaths.h>
 
 #include <QDebug>
 #include <QFile>

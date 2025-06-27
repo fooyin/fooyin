@@ -281,7 +281,8 @@ void ApplicationPrivate::exportAllPlaylists()
 
     const QString path = m_settings->fileValue(AutoExportPlaylistsPath, Core::playlistsPath()).toString();
     const QDir playlistPath{path};
-    const auto type          = PlaylistParser::PathType::Auto;
+    const auto pathType = static_cast<PlaylistParser::PathType>(
+        m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
     const bool writeMetadata = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
 
     auto saveOrDeletePlaylist = [&](Playlist* playlist, bool forceRemove = false) {
@@ -304,7 +305,7 @@ void ApplicationPrivate::exportAllPlaylists()
 
         const QFileInfo info{playlistFile};
         const QDir playlistDir{info.absolutePath()};
-        parser->savePlaylist(&playlistFile, ext, playlist->tracks(), playlistDir, type, writeMetadata);
+        parser->savePlaylist(&playlistFile, ext, playlist->tracks(), playlistDir, pathType, writeMetadata);
     };
 
     auto playlists        = m_playlistHandler->playlists();

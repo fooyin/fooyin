@@ -65,6 +65,8 @@ public:
 
     void installStatusWidget(StatusWidget* statusWidget);
 
+    [[nodiscard]] QSize sizeHint() const override;
+
 protected:
     bool event(QEvent* event) override;
     void showEvent(QShowEvent* event) override;

@@ -3527,6 +3527,7 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
 void ExpandedTreeView::dragLeaveEvent(QDragLeaveEvent* /*event*/)
 {
     setState(NoState);
+    p->stopAutoScroll();
     p->m_hoverIndex = QModelIndex{};
     viewport()->update();
 }

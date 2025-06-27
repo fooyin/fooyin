@@ -23,7 +23,7 @@
 
 #include <core/coresettings.h>
 #include <utils/fileutils.h>
-#include <utils/paths.h>
+#include <utils/fypaths.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QFileInfo>

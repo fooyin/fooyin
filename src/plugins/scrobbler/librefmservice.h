@@ -17,27 +17,18 @@
  *
  */
 
-#include "dirdelegate.h"
+#pragma once
 
-#include <QApplication>
-#include <QPainter>
+#include "lastfmservice.h"
 
-namespace Fooyin {
-void DirDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+namespace Fooyin::Scrobbler {
+class LibreFmService : public LastFmService
 {
-    QStyleOptionViewItem opt = option;
-    initStyleOption(&opt, index);
+public:
+    using LastFmService::LastFmService;
 
-    QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-
-    painter->save();
-
-    if(opt.backgroundBrush.style() != Qt::NoBrush) {
-        painter->fillRect(option.rect, opt.backgroundBrush);
-        opt.backgroundBrush = Qt::NoBrush;
-    }
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
-
-    painter->restore();
-}
-} // namespace Fooyin
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QUrl url() const override;
+    [[nodiscard]] QUrl authUrl() const override;
+};
+} // namespace Fooyin::Scrobbler

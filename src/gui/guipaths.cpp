@@ -19,7 +19,7 @@
 
 #include <gui/guipaths.h>
 
-#include <utils/paths.h>
+#include <utils/fypaths.h>
 
 #include <QString>
 

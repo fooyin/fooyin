@@ -47,7 +47,8 @@ SavePlaylistsDialog::SavePlaylistsDialog(Application* core, QWidget* parent)
     , m_settings{core->settingsManager()}
     , m_formats{new QComboBox(this)}
 {
-    for(const QString& ext : m_core->playlistLoader()->supportedSaveExtensions()) {
+    const auto extensions = m_core->playlistLoader()->supportedSaveExtensions();
+    for(const QString& ext : extensions) {
         m_formats->addItem(ext);
     }
 

@@ -49,7 +49,7 @@ QString compilerVersion()
 
 QString copyright()
 {
-    return u"Copyright © 2024, Luke Taylor. All rights reserved.<br/>"
+    return u"Copyright © 2022-2025, Luke Taylor. All rights reserved.<br/>"
            "<br/>"
            "%1 is free software released under GPL. The source code is available on %2<br/>"
            "<br/>"

@@ -42,7 +42,7 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
 
     if(opt.backgroundBrush.style() != Qt::NoBrush) {
         painter->fillRect(option.rect, opt.backgroundBrush);
-        opt.backgroundBrush = QBrush{};
+        opt.backgroundBrush = Qt::NoBrush;
     }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
 

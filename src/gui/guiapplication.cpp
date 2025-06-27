@@ -227,6 +227,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          m_editableLayout.get(), m_windowController, m_themeRegistry}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_self, &m_playlistInteractor, m_self)}
+    , m_scriptParser{new ScriptRegistry(m_playerController)}
 { }
 
 void GuiApplicationPrivate::initialise()
@@ -1004,10 +1005,15 @@ void GuiApplicationPrivate::loadPlaylist() const
     }
 
     m_settings->fileSet(Settings::Gui::Internal::LastFilePath, files.front());
+    const QList<QPair<QString, QUrl>> info{[&files]() {
+        QList<QPair<QString, QUrl>> list;
+        for(const QUrl& url : files) {
+            list.append(qMakePair(QFileInfo(url.toLocalFile()).completeBaseName(), url));
+        }
+        return list;
+    }()};
 
-    const QFileInfo info{files.front().toLocalFile()};
-
-    m_playlistInteractor.loadPlaylist(info.completeBaseName(), files);
+    m_playlistInteractor.loadPlaylist(info);
 }
 
 void GuiApplicationPrivate::savePlaylist() const

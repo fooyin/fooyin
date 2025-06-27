@@ -198,7 +198,7 @@ TEST_F(ScriptParserTest, QueryTest)
     track2.setDuration(195000);
     track2.setFileSize(32000000);
     track2.setDate(QStringLiteral("2010-09-15"));
-    track2.setFirstPlayed(QDateTime::currentDateTime().addYears(-3).toMSecsSinceEpoch());
+    track2.setFirstPlayed(QDateTime(QDate(2021, 1, 1), QTime(0, 0, 0)).toMSecsSinceEpoch());
     track2.setLastPlayed(QDateTime::currentDateTime().addDays(-3).toMSecsSinceEpoch());
     track2.setPlayCount(8);
     tracks.push_back(track2);

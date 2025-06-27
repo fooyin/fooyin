@@ -17,27 +17,24 @@
  *
  */
 
-#include "dirdelegate.h"
+#include "librefmservice.h"
 
-#include <QApplication>
-#include <QPainter>
+using namespace Qt::StringLiterals;
 
-namespace Fooyin {
-void DirDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+constexpr auto ApiUrl  = "https://libre.fm/2.0/";
+constexpr auto AuthUrl = "https://www.libre.fm/api/auth/";
+
+QString Fooyin::Scrobbler::LibreFmService::name() const
 {
-    QStyleOptionViewItem opt = option;
-    initStyleOption(&opt, index);
-
-    QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-
-    painter->save();
-
-    if(opt.backgroundBrush.style() != Qt::NoBrush) {
-        painter->fillRect(option.rect, opt.backgroundBrush);
-        opt.backgroundBrush = Qt::NoBrush;
-    }
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
-
-    painter->restore();
+    return u"LibreFM"_s;
 }
-} // namespace Fooyin
+
+QUrl Fooyin::Scrobbler::LibreFmService::url() const
+{
+    return QString::fromLatin1(ApiUrl);
+}
+
+QUrl Fooyin::Scrobbler::LibreFmService::authUrl() const
+{
+    return QString::fromLatin1(AuthUrl);
+}
