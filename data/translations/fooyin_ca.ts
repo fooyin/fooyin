@@ -860,7 +860,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
         <source>Remove</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
 </context>
 <context>
@@ -942,12 +942,12 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="62"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="63"/>
         <source>Path</source>
-        <translation type="unfinished">Ruta</translation>
+        <translation>Ruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="65"/>
@@ -957,7 +957,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="72"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Desa</translation>
+        <translation>&amp;Desa</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="111"/>
@@ -985,12 +985,12 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="139"/>
         <source>Add</source>
-        <translation type="unfinished">Afegeix</translation>
+        <translation>Afegeix</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="140"/>
         <source>Remove</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="180"/>
@@ -1073,7 +1073,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="45"/>
         <source>File</source>
-        <translation type="unfinished">Fitxer</translation>
+        <translation>Fitxer</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="87"/>
@@ -1116,17 +1116,17 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="126"/>
         <source>&amp;Load</source>
-        <translation type="unfinished">&amp;Carrega</translation>
+        <translation>&amp;Carrega</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="127"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Desa</translation>
+        <translation>&amp;Desa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="128"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Elimina</translation>
+        <translation>&amp;Elimina</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="429"/>
@@ -1151,7 +1151,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="469"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Selecciona el directori</translation>
+        <translation>Selecciona el directori</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="486"/>
@@ -1174,12 +1174,12 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="160"/>
         <source>Filename</source>
-        <translation type="unfinished">Nom del fitxer</translation>
+        <translation>Nom del fitxer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="162"/>
         <source>Presets</source>
-        <translation type="unfinished">Preajustos</translation>
+        <translation>Preajustos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="177"/>
@@ -1254,7 +1254,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Remove</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
@@ -1295,17 +1295,17 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Album Artist</source>
-        <translation type="unfinished">Artista de l&apos;àlbum</translation>
+        <translation>Artista de l&apos;àlbum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="41"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="42"/>
         <source>Album</source>
-        <translation type="unfinished">Àlbum</translation>
+        <translation>Àlbum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="43"/>
@@ -1337,7 +1337,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
         <source>Remove</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
@@ -1348,7 +1348,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="185"/>
         <source>Add</source>
-        <translation type="unfinished">Afegeix</translation>
+        <translation>Afegeix</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="304"/>
@@ -1363,7 +1363,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="349"/>
         <source>Finish</source>
-        <translation type="unfinished">Finalitza</translation>
+        <translation>Finalitza</translation>
     </message>
 </context>
 <context>
@@ -1384,13 +1384,13 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="584"/>
         <source>Display</source>
-        <translation type="unfinished">Visualització</translation>
+        <translation>Visualització</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="587"/>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="682"/>
         <source>Columns</source>
-        <translation type="unfinished">Columna</translation>
+        <translation>Columna</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="588"/>
@@ -1415,12 +1415,12 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="640"/>
         <source>Front cover</source>
-        <translation type="unfinished">Imatge de Portada</translation>
+        <translation>Imatge de Portada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="641"/>
         <source>Back cover</source>
-        <translation type="unfinished">Imatge de contraportada</translation>
+        <translation>Imatge de contraportada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="724"/>
@@ -1435,7 +1435,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="642"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="732"/>
@@ -1445,7 +1445,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="261"/>
         <source>Library Filter</source>
-        <translation type="unfinished">Filtre de la biblioteca</translation>
+        <translation>Filtre de la biblioteca</translation>
     </message>
 </context>
 <context>
@@ -1453,17 +1453,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="163"/>
         <source>Index</source>
-        <translation type="unfinished">Índex</translation>
+        <translation>Índex</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="165"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="167"/>
         <source>Field</source>
-        <translation type="unfinished">Camp</translation>
+        <translation>Camp</translation>
     </message>
 </context>
 <context>
@@ -1471,17 +1471,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="133"/>
         <source>Columns</source>
-        <translation type="unfinished">Columna</translation>
+        <translation>Columna</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="134"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="134"/>
         <source>Filters</source>
-        <translation type="unfinished">Filtres</translation>
+        <translation>Filtres</translation>
     </message>
 </context>
 <context>
@@ -1489,7 +1489,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="78"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Editor de scripts</translation>
+        <translation>Editor de scripts</translation>
     </message>
 </context>
 <context>
@@ -1497,17 +1497,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="189"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="190"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="190"/>
         <source>Filters</source>
-        <translation type="unfinished">Filtres</translation>
+        <translation>Filtres</translation>
     </message>
 </context>
 <context>
@@ -1515,17 +1515,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="68"/>
         <source>Start playback on send</source>
-        <translation type="unfinished">Inicia la reproducció en enviar</translation>
+        <translation>Inicia la reproducció en enviar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="69"/>
         <source>Enabled</source>
-        <translation type="unfinished">Activat</translation>
+        <translation>Activat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="70"/>
         <source>Switch when changed</source>
-        <translation type="unfinished">Commuta quan es canvia</translation>
+        <translation>Commuta quan es canvia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="71"/>
@@ -1535,7 +1535,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="74"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Comportament dels clics</translation>
+        <translation>Comportament dels clics</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="84"/>
@@ -1545,17 +1545,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="77"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doble clic</translation>
+        <translation>Doble clic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="79"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Clic amb el botó central</translation>
+        <translation>Clic amb el botó central</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="92"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="87"/>
@@ -1566,49 +1566,49 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="123"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="132"/>
         <source>None</source>
-        <translation type="unfinished">Cap</translation>
+        <translation>Cap</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="124"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="133"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Afegeix a la llista de reproducció actual</translation>
+        <translation>Afegeix a la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="125"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="134"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Afegeix a la llista de reproducció activa</translation>
+        <translation>Afegeix a la llista de reproducció activa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="126"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="135"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished">Envia a la llista de reproducció actual</translation>
+        <translation>Envia a la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="127"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="136"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished">Envia a una nova llista de reproducció</translation>
+        <translation>Envia a una nova llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="128"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="137"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Afegeix a la cua de reproducció</translation>
+        <translation>Afegeix a la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="129"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="138"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Afegeix al principi de la cua de reproducció</translation>
+        <translation>Afegeix al principi de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="130"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="139"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished">Envia a la cua de reproducció</translation>
+        <translation>Envia a la cua de reproducció</translation>
     </message>
 </context>
 <context>
@@ -1616,17 +1616,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="161"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aspecte</translation>
+        <translation>Aspecte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="162"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="162"/>
         <source>Filters</source>
-        <translation type="unfinished">Filtres</translation>
+        <translation>Filtres</translation>
     </message>
 </context>
 <context>
@@ -1644,7 +1644,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="67"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Colors de fila alternats</translation>
+        <translation>Colors de fila alternats</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="68"/>
@@ -1654,7 +1654,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="73"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aspecte</translation>
+        <translation>Aspecte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="78"/>
@@ -1664,7 +1664,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="94"/>
         <source>Width</source>
-        <translation type="unfinished">Amplada</translation>
+        <translation>Amplada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="96"/>
@@ -1704,7 +1704,7 @@
         <location filename="../../src/gui/settings/generalpage.cpp" line="235"/>
         <location filename="../../src/gui/settings/generalpage.cpp" line="236"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
 </context>
 <context>
@@ -1989,7 +1989,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="784"/>
         <source>OK</source>
-        <translation type="unfinished">D&apos;acord</translation>
+        <translation>D&apos;acord</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="849"/>
@@ -2067,17 +2067,17 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="87"/>
         <source>&amp;Load</source>
-        <translation type="unfinished">&amp;Carrega</translation>
+        <translation>&amp;Carrega</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="88"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Desa</translation>
+        <translation>&amp;Desa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="89"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Elimina</translation>
+        <translation>&amp;Elimina</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
@@ -2087,7 +2087,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
         <source>Themes</source>
-        <translation type="unfinished">Temes</translation>
+        <translation>Temes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="110"/>
@@ -2227,7 +2227,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="165"/>
         <source>Fonts</source>
-        <translation type="unfinished">Fonts</translation>
+        <translation>Fonts</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="315"/>
@@ -2245,12 +2245,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="422"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="423"/>
         <source>Interface</source>
-        <translation type="unfinished">Interfície</translation>
+        <translation>Interfície</translation>
     </message>
 </context>
 <context>
@@ -2318,7 +2318,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="127"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished">Prefereix la selecció actual</translation>
+        <translation>Prefereix la selecció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="132"/>
@@ -2328,7 +2328,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
         <source>Quick Setup</source>
-        <translation type="unfinished">Configuració ràpida</translation>
+        <translation>Configuració ràpida</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="135"/>
@@ -2497,12 +2497,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="131"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="134"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">Guany de volum</translation>
+        <translation>Guany de volum</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="137"/>
@@ -2512,17 +2512,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="149"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="150"/>
         <source>Title</source>
-        <translation type="unfinished">Títol</translation>
+        <translation>Títol</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="151"/>
         <source>Album</source>
-        <translation type="unfinished">Àlbum</translation>
+        <translation>Àlbum</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="152"/>
@@ -2537,12 +2537,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="154"/>
         <source>Album Artist</source>
-        <translation type="unfinished">Artista de l&apos;àlbum</translation>
+        <translation>Artista de l&apos;àlbum</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="157"/>
         <source>Track Number</source>
-        <translation type="unfinished">Número de pista</translation>
+        <translation>Número de pista</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
@@ -2592,7 +2592,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="195"/>
         <source>Library</source>
-        <translation type="unfinished">Biblioteca</translation>
+        <translation>Biblioteca</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="200"/>
@@ -2602,12 +2602,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="208"/>
         <source>Tracks</source>
-        <translation type="unfinished">Pistes</translation>
+        <translation>Pistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="211"/>
         <source>Duration</source>
-        <translation type="unfinished">Durada</translation>
+        <translation>Durada</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="215"/>
@@ -2698,17 +2698,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="184"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra la capçalera</translation>
+        <translation>Mostra la capçalera</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="190"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Mostra la barra de desplaçament</translation>
+        <translation>Mostra la barra de desplaçament</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="197"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Colors de fila alternats</translation>
+        <translation>Colors de fila alternats</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="205"/>
@@ -2728,12 +2728,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="229"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="237"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">Guany de volum</translation>
+        <translation>Guany de volum</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="245"/>
@@ -2747,7 +2747,7 @@
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="57"/>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="113"/>
         <source>Layout</source>
-        <translation type="unfinished">Disseny</translation>
+        <translation>Disseny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="60"/>
@@ -2838,12 +2838,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="252"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="253"/>
         <source>Library</source>
-        <translation type="unfinished">Biblioteca</translation>
+        <translation>Biblioteca</translation>
     </message>
 </context>
 <context>
@@ -3201,7 +3201,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="95"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Comportament dels clics</translation>
+        <translation>Comportament dels clics</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="108"/>
@@ -3211,12 +3211,12 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="98"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doble clic</translation>
+        <translation>Doble clic</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="80"/>
         <source>Start playback on send</source>
-        <translation type="unfinished">Inicia la reproducció en enviar</translation>
+        <translation>Inicia la reproducció en enviar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="83"/>
@@ -3236,7 +3236,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="87"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra la capçalera</translation>
+        <translation>Mostra la capçalera</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="90"/>
@@ -3246,12 +3246,12 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="99"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Clic amb el botó central</translation>
+        <translation>Clic amb el botó central</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="111"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="113"/>
@@ -3261,85 +3261,85 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="122"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="127"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aspecte</translation>
+        <translation>Aspecte</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="130"/>
         <source>Icon</source>
-        <translation type="unfinished">Icona</translation>
+        <translation>Icona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="146"/>
         <source>Width</source>
-        <translation type="unfinished">Amplada</translation>
+        <translation>Amplada</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="148"/>
         <source>Height</source>
-        <translation type="unfinished">Alçada</translation>
+        <translation>Alçada</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="196"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished">Expandeix/Replega/Reprodueix</translation>
+        <translation>Expandeix/Replega/Reprodueix</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="143"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished">La mida també es pot canviar amb %1 al widget.</translation>
+        <translation>La mida també es pot canviar amb %1 al widget.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="197"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="206"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Afegeix a la llista de reproducció actual</translation>
+        <translation>Afegeix a la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="198"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="207"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Afegeix a la llista de reproducció activa</translation>
+        <translation>Afegeix a la llista de reproducció activa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="199"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="208"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished">Envia a la llista de reproducció actual</translation>
+        <translation>Envia a la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="200"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="209"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished">Envia a una nova llista de reproducció</translation>
+        <translation>Envia a una nova llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="201"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="210"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Afegeix a la cua de reproducció</translation>
+        <translation>Afegeix a la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="202"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Afegeix al principi de la cua de reproducció</translation>
+        <translation>Afegeix al principi de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="203"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="212"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished">Envia a la cua de reproducció</translation>
+        <translation>Envia a la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="195"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="205"/>
         <source>None</source>
-        <translation type="unfinished">Cap</translation>
+        <translation>Cap</translation>
     </message>
 </context>
 <context>
@@ -3355,7 +3355,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="428"/>
         <source>Grouping</source>
-        <translation type="unfinished">Agrupant</translation>
+        <translation>Agrupant</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="262"/>
@@ -3375,7 +3375,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="265"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Reprodueix</translation>
+        <translation>&amp;Reprodueix</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="296"/>
@@ -3390,7 +3390,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="925"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Arbre de la Biblioteca</translation>
+        <translation>Arbre de la Biblioteca</translation>
     </message>
 </context>
 <context>
@@ -3403,7 +3403,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="52"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished">&amp;Esborra</translation>
+        <translation>&amp;Esborra</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="54"/>
@@ -3456,7 +3456,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="52"/>
         <source>Remove</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="53"/>
@@ -3494,12 +3494,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="165"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="166"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lletres</translation>
+        <translation>Lletres</translation>
     </message>
 </context>
 <context>
@@ -3522,7 +3522,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="72"/>
         <source>Synced</source>
-        <translation type="unfinished">Sincronitzat</translation>
+        <translation>Sincronitzat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
@@ -3532,7 +3532,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="75"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="78"/>
@@ -3585,7 +3585,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="367"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lletres</translation>
+        <translation>Lletres</translation>
     </message>
 </context>
 <context>
@@ -3593,7 +3593,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="91"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Mostra la barra de desplaçament</translation>
+        <translation>Mostra la barra de desplaçament</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
@@ -3942,22 +3942,22 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
         <source>Album</source>
-        <translation type="unfinished">Àlbum</translation>
+        <translation>Àlbum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="137"/>
         <source>Title</source>
-        <translation type="unfinished">Títol</translation>
+        <translation>Títol</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="142"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Lletres</translation>
+        <translation>Lletres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="166"/>
@@ -3997,7 +3997,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="204"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Mostra la barra de desplaçament</translation>
+        <translation>Mostra la barra de desplaçament</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="210"/>
@@ -4007,17 +4007,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="214"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Alinea al centre</translation>
+        <translation>Alinea al centre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="215"/>
         <source>Align to left</source>
-        <translation type="unfinished">Alinea a l&apos;esquerra</translation>
+        <translation>Alinea a l&apos;esquerra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="216"/>
         <source>Align to right</source>
-        <translation type="unfinished">Alinea a la dreta</translation>
+        <translation>Alinea a la dreta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="240"/>
@@ -4038,7 +4038,7 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="182"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="183"/>
@@ -4124,7 +4124,7 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="48"/>
         <source>%1 Settings</source>
-        <translation type="unfinished">%1 Configuració</translation>
+        <translation>%1 Configuració</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="66"/>
@@ -4145,7 +4145,7 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="72"/>
         <source>None</source>
-        <translation type="unfinished">Cap</translation>
+        <translation>Cap</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="73"/>
@@ -4168,12 +4168,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="251"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="252"/>
         <source>Playback</source>
-        <translation type="unfinished">Reproducció</translation>
+        <translation>Reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="252"/>
@@ -4206,7 +4206,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="84"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="88"/>
@@ -4216,7 +4216,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="97"/>
         <source>Buffer length</source>
-        <translation type="unfinished">Longitud de la memòria intermèdia</translation>
+        <translation>Longitud de la memòria intermèdia</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="120"/>
@@ -4727,12 +4727,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Portada</translation>
+        <translation>Portada</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="63"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Contraportada</translation>
+        <translation>Contraportada</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="64"/>
@@ -4750,7 +4750,7 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="63"/>
         <source>Shuffle</source>
-        <translation type="unfinished">Aleatori</translation>
+        <translation>Aleatori</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="105"/>
@@ -4811,12 +4811,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="311"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="312"/>
         <source>Playlist</source>
-        <translation type="unfinished">Llista de reproducció</translation>
+        <translation>Llista de reproducció</translation>
     </message>
 </context>
 <context>
@@ -4824,12 +4824,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Mostra la barra de desplaçament</translation>
+        <translation>Mostra la barra de desplaçament</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="90"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra la capçalera</translation>
+        <translation>Mostra la capçalera</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="92"/>
@@ -4869,17 +4869,17 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="105"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Comportament dels clics</translation>
+        <translation>Comportament dels clics</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Clic amb el botó central</translation>
+        <translation>Clic amb el botó central</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source>Saving</source>
-        <translation type="unfinished">Desant</translation>
+        <translation>Desant</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="125"/>
@@ -4904,32 +4904,32 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="173"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">Pestanyes de llista de reproducció</translation>
+        <translation>Pestanyes de llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="209"/>
         <source>None</source>
-        <translation type="unfinished">Cap</translation>
+        <translation>Cap</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="210"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Afegeix a la cua de reproducció</translation>
+        <translation>Afegeix a la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Afegeix al principi de la cua de reproducció</translation>
+        <translation>Afegeix al principi de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="212"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished">Envia a la cua de reproducció</translation>
+        <translation>Envia a la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="300"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Selecciona el directori</translation>
+        <translation>Selecciona el directori</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="152"/>
@@ -4949,12 +4949,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="91"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Colors de fila alternats</translation>
+        <translation>Colors de fila alternats</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="162"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aspecte</translation>
+        <translation>Aspecte</translation>
     </message>
 </context>
 <context>
@@ -4962,19 +4962,19 @@
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="44"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished">Llegint pistes…</translation>
+        <translation>Llegint pistes…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="45"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="86"/>
         <source>Abort</source>
-        <translation type="unfinished">Aborta</translation>
+        <translation>Aborta</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="68"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="109"/>
         <source>Current file</source>
-        <translation type="unfinished">Fitxer actual</translation>
+        <translation>Fitxer actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="85"/>
@@ -4987,7 +4987,7 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="126"/>
         <source>Remove</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="128"/>
@@ -5012,12 +5012,12 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="138"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished">Edita la llista de reproducció automàtica</translation>
+        <translation>Edita la llista de reproducció automàtica</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="162"/>
         <source>Edit</source>
-        <translation type="unfinished">Edita</translation>
+        <translation>Edita</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="293"/>
@@ -5062,12 +5062,12 @@
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="515"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="516"/>
         <source>Presets</source>
-        <translation type="unfinished">Preajustos</translation>
+        <translation>Preajustos</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="516"/>
         <source>Playlist</source>
-        <translation type="unfinished">Llista de reproducció</translation>
+        <translation>Llista de reproducció</translation>
     </message>
 </context>
 <context>
@@ -5100,7 +5100,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="257"/>
         <source>Title</source>
-        <translation type="unfinished">Títol</translation>
+        <translation>Títol</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="259"/>
@@ -5321,7 +5321,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="190"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished">Afegeix a la &amp;cua de reproducció</translation>
+        <translation>Afegeix a la &amp;cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
@@ -5336,17 +5336,17 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="309"/>
         <source>Edit</source>
-        <translation type="unfinished">Edita</translation>
+        <translation>Edita</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="320"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Desfés</translation>
+        <translation>&amp;Desfés</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="333"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Refés</translation>
+        <translation>&amp;Refés</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="334"/>
@@ -5391,7 +5391,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="408"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished">Afegeix les pistes seleccionades a la cua de reproducció</translation>
+        <translation>Afegeix les pistes seleccionades a la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="414"/>
@@ -5401,7 +5401,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="419"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished">Elimina les pistes seleccionades de la cua de reproducció</translation>
+        <translation>Elimina les pistes seleccionades de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="431"/>
@@ -5417,7 +5417,7 @@
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="435"/>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="439"/>
         <source>No results</source>
-        <translation type="unfinished">Sense resultats</translation>
+        <translation>Sense resultats</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="436"/>
@@ -5428,7 +5428,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1533"/>
         <source>Columns</source>
-        <translation type="unfinished">Columna</translation>
+        <translation>Columna</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1571"/>
@@ -5443,7 +5443,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="182"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Reprodueix</translation>
+        <translation>&amp;Reprodueix</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="183"/>
@@ -5812,7 +5812,7 @@
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="70"/>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="197"/>
         <source>Abort</source>
-        <translation type="unfinished">Aborta</translation>
+        <translation>Aborta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="73"/>
@@ -5822,12 +5822,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="94"/>
         <source>Current file</source>
-        <translation type="unfinished">Fitxer actual</translation>
+        <translation>Fitxer actual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="116"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">Guany de volum</translation>
+        <translation>Guany de volum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="121"/>
@@ -5877,7 +5877,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="193"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished">Escrivint a les etiquetes de fitxer…</translation>
+        <translation>Escrivint a les etiquetes de fitxer…</translation>
     </message>
 </context>
 <context>
@@ -5885,7 +5885,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="108"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="110"/>
@@ -5918,17 +5918,17 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="208"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="209"/>
         <source>Playback</source>
-        <translation type="unfinished">Reproducció</translation>
+        <translation>Reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="209"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">Guany de volum</translation>
+        <translation>Guany de volum</translation>
     </message>
 </context>
 <context>
@@ -6082,7 +6082,7 @@
     <message>
         <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="79"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Selecciona el directori</translation>
+        <translation>Selecciona el directori</translation>
     </message>
 </context>
 <context>
@@ -6090,7 +6090,7 @@
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="270"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Editor de scripts</translation>
+        <translation>Editor de scripts</translation>
     </message>
 </context>
 <context>
@@ -6132,7 +6132,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="287"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="288"/>
@@ -6233,7 +6233,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="61"/>
         <source>Scrobble Toggle</source>
-        <translation type="unfinished">Activa/desactiva l&apos;Scrobble</translation>
+        <translation>Activa/desactiva l&apos;Scrobble</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="62"/>
@@ -6446,7 +6446,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="106"/>
         <source>Playlist name</source>
-        <translation type="unfinished">Nom de la llista de reproducció</translation>
+        <translation>Nom de la llista de reproducció</translation>
     </message>
 </context>
 <context>
@@ -6460,7 +6460,7 @@
         <location filename="../../src/gui/search/searchwidget.cpp" line="92"/>
         <location filename="../../src/gui/search/searchwidget.cpp" line="493"/>
         <source>Options</source>
-        <translation type="unfinished">Opcions</translation>
+        <translation>Opcions</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="109"/>
@@ -6520,12 +6520,12 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="505"/>
         <source>Library</source>
-        <translation type="unfinished">Biblioteca</translation>
+        <translation>Biblioteca</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="511"/>
         <source>Playlist</source>
-        <translation type="unfinished">Llista de reproducció</translation>
+        <translation>Llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="517"/>
@@ -6540,7 +6540,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="538"/>
         <source>Help</source>
-        <translation type="unfinished">Ajuda</translation>
+        <translation>Ajuda</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="124"/>
@@ -6606,7 +6606,7 @@
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="140"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="141"/>
@@ -6624,12 +6624,12 @@
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="66"/>
         <source>File Types</source>
-        <translation type="unfinished">Tipus de fitxer</translation>
+        <translation>Tipus de fitxer</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="70"/>
         <source>Restrict to</source>
-        <translation type="unfinished">Restringeix a</translation>
+        <translation>Restringeix a</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="72"/>
@@ -6702,12 +6702,12 @@
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="163"/>
         <source>Index</source>
-        <translation type="unfinished">Índex</translation>
+        <translation>Índex</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="165"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="167"/>
@@ -6797,12 +6797,12 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="121"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
@@ -6815,7 +6815,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="61"/>
         <source>Show icon</source>
-        <translation type="unfinished">Mostra la icona</translation>
+        <translation>Mostra la icona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="62"/>
@@ -6840,7 +6840,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="67"/>
         <source>Display</source>
-        <translation type="unfinished">Visualització</translation>
+        <translation>Visualització</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="74"/>
@@ -6861,7 +6861,7 @@
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="53"/>
         <source>Playlist</source>
-        <translation type="unfinished">Llista de reproducció</translation>
+        <translation>Llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="71"/>
@@ -6944,12 +6944,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
         <source>Album Artist</source>
-        <translation type="unfinished">Artista de l&apos;àlbum</translation>
+        <translation>Artista de l&apos;àlbum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
         <source>Track Number</source>
-        <translation type="unfinished">Número de pista</translation>
+        <translation>Número de pista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="54"/>
@@ -6982,17 +6982,17 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="180"/>
         <source>Index</source>
-        <translation type="unfinished">Índex</translation>
+        <translation>Índex</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="182"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="184"/>
         <source>Field</source>
-        <translation type="unfinished">Camp</translation>
+        <translation>Camp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="186"/>
@@ -7080,32 +7080,32 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="127"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Afegeix a la llista de reproducció actual</translation>
+        <translation>Afegeix a la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="128"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Afegeix a la llista de reproducció activa</translation>
+        <translation>Afegeix a la llista de reproducció activa</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="129"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished">Envia a la llista de reproducció actual</translation>
+        <translation>Envia a la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="130"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished">Envia a una nova llista de reproducció</translation>
+        <translation>Envia a una nova llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="131"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Afegeix a la cua de reproducció</translation>
+        <translation>Afegeix a la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="132"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Cua per reproduir a continuació</translation>
+        <translation>Cua per reproduir a continuació</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="133"/>
@@ -7120,47 +7120,47 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="135"/>
         <source>Properties</source>
-        <translation type="unfinished">Propietats</translation>
+        <translation>Propietats</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="145"/>
         <source>Tracks</source>
-        <translation type="unfinished">Pistes</translation>
+        <translation>Pistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="147"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished">Afegeix les pistes seleccionades a la llista de reproducció actual</translation>
+        <translation>Afegeix les pistes seleccionades a la llista de reproducció actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="153"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation type="unfinished">Afegeix les pistes seleccionades a la llista de reproducció activa</translation>
+        <translation>Afegeix les pistes seleccionades a la llista de reproducció activa</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="159"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation type="unfinished">Substitueix el contingut de la llista de reproducció actual amb les pistes seleccionades</translation>
+        <translation>Substitueix el contingut de la llista de reproducció actual amb les pistes seleccionades</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="170"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation type="unfinished">Crea una nova llista de reproducció que contingui les pistes seleccionades</translation>
+        <translation>Crea una nova llista de reproducció que contingui les pistes seleccionades</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="187"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished">Afegeix les pistes seleccionades a la cua de reproducció</translation>
+        <translation>Afegeix les pistes seleccionades a la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="199"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished">Afegeix les pistes seleccionades al principi de la cua de reproducció</translation>
+        <translation>Afegeix les pistes seleccionades al principi de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="211"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished">Elimina les pistes seleccionades de la cua de reproducció</translation>
+        <translation>Elimina les pistes seleccionades de la cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="223"/>
@@ -7175,7 +7175,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="366"/>
         <source>Playback</source>
-        <translation type="unfinished">Reproducció</translation>
+        <translation>Reproducció</translation>
     </message>
 </context>
 <context>
@@ -7188,38 +7188,38 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="53"/>
         <source>Length</source>
-        <translation type="unfinished">Duració</translation>
+        <translation>Duració</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="56"/>
         <source>Loop count</source>
-        <translation type="unfinished">Nombre de bucles</translation>
+        <translation>Nombre de bucles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="57"/>
         <source>(0 = infinite)</source>
-        <translation type="unfinished">(0 = infinit)</translation>
+        <translation>(0 = infinit)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="63"/>
         <source>Fade length</source>
-        <translation type="unfinished">Durada de l&apos;esvaïment</translation>
+        <translation>Durada de l&apos;esvaïment</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="46"/>
         <source>%1 Settings</source>
-        <translation type="unfinished">%1 Configuració</translation>
+        <translation>%1 Configuració</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="61"/>
         <source>times</source>
-        <translation type="unfinished">vegades</translation>
+        <translation>vegades</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="67"/>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="73"/>
         <source>ms</source>
-        <translation type="unfinished">ms</translation>
+        <translation>ms</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="69"/>
@@ -7229,7 +7229,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="86"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
@@ -7310,7 +7310,7 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="319"/>
         <source>Icon</source>
-        <translation type="unfinished">Icona</translation>
+        <translation>Icona</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="320"/>
@@ -7337,12 +7337,12 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="219"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="220"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="220"/>
@@ -7360,7 +7360,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="86"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="95"/>
@@ -7375,7 +7375,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="90"/>
         <source>seconds</source>
-        <translation type="unfinished">segons</translation>
+        <translation>segons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="92"/>
@@ -7476,12 +7476,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="199"/>
         <source>Colours</source>
-        <translation type="unfinished">Colors</translation>
+        <translation>Colors</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="200"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="200"/>
@@ -7539,7 +7539,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="119"/>
         <source>Playing</source>
-        <translation type="unfinished">Reproduint</translation>
+        <translation>Reproduint</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="120"/>
@@ -7562,7 +7562,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="97"/>
         <source>Controls</source>
-        <translation type="unfinished">Controls</translation>
+        <translation>Controls</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="101"/>
@@ -7607,7 +7607,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
         <source>Abort</source>
-        <translation type="unfinished">Aborta</translation>
+        <translation>Aborta</translation>
     </message>
 </context>
 <context>
@@ -7615,12 +7615,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="315"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="316"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="316"/>
@@ -7693,7 +7693,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="129"/>
         <source>Display</source>
-        <translation type="unfinished">Visualització</translation>
+        <translation>Visualització</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="132"/>
@@ -7728,7 +7728,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="180"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="190"/>
@@ -7749,12 +7749,12 @@ d&apos;utilitzar més espai de disc a la memòria cau.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="308"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished">Ús de la memòria cau del disc</translation>
+        <translation>Ús de la memòria cau del disc</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="183"/>
         <source>Clear Cache</source>
-        <translation type="unfinished">Esborra la memòria cau</translation>
+        <translation>Esborra la memòria cau</translation>
     </message>
 </context>
 <context>
@@ -7777,7 +7777,7 @@ d&apos;utilitzar més espai de disc a la memòria cau.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="172"/>
         <source>Display</source>
-        <translation type="unfinished">Visualització</translation>
+        <translation>Visualització</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="174"/>
@@ -7797,27 +7797,27 @@ d&apos;utilitzar més espai de disc a la memòria cau.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="209"/>
         <source>Downmix</source>
-        <translation>Redueix  la mescla</translation>
+        <translation>Redueix la mescla</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="212"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Desactiva</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="213"/>
         <source>Stereo</source>
-        <translation type="unfinished"></translation>
+        <translation>Estèreo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="214"/>
         <source>Mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="242"/>
         <source>Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuració…</translation>
     </message>
 </context>
 <context>
@@ -7825,12 +7825,12 @@ d&apos;utilitzar més espai de disc a la memòria cau.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="104"/>
         <source>Dummy</source>
-        <translation type="unfinished">Simulació</translation>
+        <translation>Simulació</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="110"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished">Divisor (superior/inferior)</translation>
+        <translation>Divisor (superior/inferior)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="111"/>
@@ -7838,48 +7838,48 @@ d&apos;utilitzar més espai de disc a la memòria cau.</translation>
         <location filename="../../src/gui/widgets.cpp" line="135"/>
         <location filename="../../src/gui/widgets.cpp" line="154"/>
         <source>Splitters</source>
-        <translation type="unfinished"></translation>
+        <translation>Divisors</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="116"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished">Divisor (esquerra/dreta)</translation>
+        <translation>Divisor (esquerra/dreta)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="121"/>
         <source>Playlist Switcher</source>
-        <translation type="unfinished">Canviador de llistes de reproducció</translation>
+        <translation>Canviador de llistes de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="134"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">Pestanyes de llista de reproducció</translation>
+        <translation>Pestanyes de llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="140"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation>Organitzador de llistes de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="148"/>
         <source>Playback Queue</source>
-        <translation type="unfinished">Cua de reproducció</translation>
+        <translation>Cua de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="153"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Pila de pestanyes</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="162"/>
         <location filename="../../src/gui/widgets.cpp" line="286"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Arbre de la Biblioteca</translation>
+        <translation>Arbre de la Biblioteca</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="169"/>
         <source>Player Controls</source>
-        <translation type="unfinished">Controls del reproductor</translation>
+        <translation>Controls del reproductor</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="170"/>
@@ -7887,113 +7887,113 @@ d&apos;utilitzar més espai de disc a la memòria cau.</translation>
         <location filename="../../src/gui/widgets.cpp" line="181"/>
         <location filename="../../src/gui/widgets.cpp" line="186"/>
         <source>Controls</source>
-        <translation type="unfinished">Controls</translation>
+        <translation>Controls</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="175"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls de la llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="180"/>
         <source>Volume Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls de volum</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="185"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de cerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="190"/>
         <source>Selection Info</source>
-        <translation type="unfinished">Informació de selecció</translation>
+        <translation>Informació de selecció</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="198"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished">Panell d&apos;Art Gràfic</translation>
+        <translation>Panell d&apos;Art Gràfic</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="206"/>
         <location filename="../../src/gui/widgets.cpp" line="287"/>
         <source>Playlist</source>
-        <translation type="unfinished">Llista de reproducció</translation>
+        <translation>Llista de reproducció</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="209"/>
         <source>Spacer</source>
-        <translation type="unfinished">Espaiador</translation>
+        <translation>Espaiador</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="219"/>
         <source>Status Bar</source>
-        <translation type="unfinished">Barra d&apos;estat</translation>
+        <translation>Barra d&apos;estat</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="228"/>
         <source>Search Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de cerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="230"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Navegador de directoris</translation>
+        <translation>Navegador de directoris</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="263"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Detalls</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="266"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">Guany de volum</translation>
+        <translation>Guany de volum</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="272"/>
         <source>Artwork</source>
-        <translation type="unfinished">Art gràfic</translation>
+        <translation>Art gràfic</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="284"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Per defecte</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="289"/>
         <source>Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Pestanyes</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="285"/>
         <source>Lists</source>
-        <translation type="unfinished"></translation>
+        <translation>Llistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="288"/>
         <source>Status bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra d&apos;estat</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="320"/>
         <source>Scanning files</source>
-        <translation type="unfinished"></translation>
+        <translation>Escaneig de fitxers</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="323"/>
         <source>Scanning tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Escanejant pistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="326"/>
         <source>Scanning %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Escanejant %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="329"/>
         <source>Loading playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;està carregant la llista de reproducció</translation>
     </message>
 </context>
 <context>
@@ -8001,125 +8001,125 @@ d&apos;utilitzar més espai de disc a la memòria cau.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Ús</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>options</source>
-        <translation type="unfinished"></translation>
+        <translation>opcions</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>urls</source>
-        <translation type="unfinished"></translation>
+        <translation>urls</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>Options</source>
-        <translation type="unfinished">Opcions</translation>
+        <translation>Opcions</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Display help on command line options</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra l&apos;ajuda a les opcions de la línia d&apos;ordres</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Display version information</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra la informació de la versió</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Player options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opcions del reproductor</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Toggle playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Activa/desactiva la reproducció</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicia la reproducció</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="78"/>
         <source>Pause playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Pausa la reproducció</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="78"/>
         <source>Stop playback</source>
-        <translation type="unfinished">Atura la reproducció</translation>
+        <translation>Atura la reproducció</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="78"/>
         <source>Skip to next track</source>
-        <translation type="unfinished"></translation>
+        <translation>Salta a la pista següent</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="79"/>
         <source>Skip to previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Salta a la pista anterior</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="79"/>
         <source>Arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Arguments</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="79"/>
         <source>Files to open</source>
-        <translation type="unfinished"></translation>
+        <translation>Fitxers per obrir</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="429"/>
         <source>Expected %1 to close quote</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;esperava %1 per tancar la cita</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="444"/>
         <source>Expected %1 to close variable list</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;esperava que %1 tanqués la llista de variables</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="455"/>
         <source>Expected %1 to close variable</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;esperava que %1 tanqués la variable</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="475"/>
         <source>Expected %1 after function name</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;esperava %1 després del nom de la funció</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="485"/>
         <source>Expected %1 at end of function</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;esperava %1 al final de la funció</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="519"/>
         <source>Expected %1 to close conditional</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;esperava que %1 tanqués condicionalment</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="547"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="553"/>
         <source>Expected %1 to close group</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;esperava que %1 tanqués el grup</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="783"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="788"/>
         <source>Expected %1 after %2</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;esperava %1 després de %2</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1256"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1295"/>
         <source>Expected end of script</source>
-        <translation type="unfinished"></translation>
+        <translation>Final previst del script</translation>
     </message>
 </context>
 </TS>
