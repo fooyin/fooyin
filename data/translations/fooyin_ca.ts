@@ -7519,22 +7519,22 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="103"/>
         <source>Max</source>
-        <translation>Màx</translation>
+        <translation>Màxim</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="107"/>
         <source>Min</source>
-        <translation>Mín</translation>
+        <translation>Mínim</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="111"/>
         <source>RMS Max</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS Màxim</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="115"/>
         <source>RMS Min</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS Mínim</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="119"/>
@@ -7544,12 +7544,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="120"/>
         <source>Seeking</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscant</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="121"/>
         <source>Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursor</translation>
     </message>
 </context>
 <context>
@@ -7557,7 +7557,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="96"/>
         <source>Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de cerca de forma d&apos;ona</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="97"/>
@@ -7567,42 +7567,42 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="101"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilitats</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="106"/>
         <source>Regenerate waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>Regenera dades de forma d&apos;ona</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="107"/>
         <source>Regenerate waveform data for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Regenera dades de forma d&apos;ona per a les pistes seleccionades</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="111"/>
         <source>Generate missing waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>Genera dades de forma d&apos;ona que faltin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="112"/>
         <source>Generate waveform data for the selected tracks if missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Genera dades de forma d&apos;ona per a les pistes seleccionades si falten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="116"/>
         <source>Remove waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina dades de forma d&apos;ona</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="117"/>
         <source>Remove any existing waveform data for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina totes les dades de forma d&apos;ona existents per a les pistes seleccionades</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
         <source>Generating waveform data…</source>
-        <translation type="unfinished"></translation>
+        <translation>Generant dades de forma d&apos;ona…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
@@ -7625,7 +7625,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="316"/>
         <source>WaveBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra d&apos;ones</translation>
     </message>
 </context>
 <context>
@@ -7633,62 +7633,62 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
         <source>RMS</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="86"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Desactivat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="87"/>
         <source>Stereo</source>
-        <translation type="unfinished"></translation>
+        <translation>Estèreo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="88"/>
         <source>Mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="83"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Mínim/Màxim</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="85"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Silenci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="89"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra el cursor de progrés</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="154"/>
         <source>Cursor width</source>
-        <translation type="unfinished"></translation>
+        <translation>Amplada del cursor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="172"/>
         <source>Bar width</source>
-        <translation type="unfinished"></translation>
+        <translation>Amplada de la barra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="174"/>
         <source>Bar gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Espaiat de barra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="164"/>
         <source>Max scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala màxima</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="176"/>
         <source>Centre gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Espai central</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="129"/>
@@ -7698,32 +7698,32 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="132"/>
         <source>Draw a line in place of silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Dibuixa una línia en lloc del silenci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="162"/>
         <source>Channel scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala del canal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="138"/>
         <source>Downmix</source>
-        <translation type="unfinished"></translation>
+        <translation>Reduir la mescla</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="150"/>
         <source>Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="158"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="168"/>
         <source>Dimension</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensió</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="180"/>
@@ -7733,7 +7733,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="190"/>
         <source>Number of samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de mostres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="191"/>
@@ -7741,7 +7741,10 @@
 for waveform data. Higher values will result 
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de mostres (per canal) a utilitzar
+per a les dades de forma d&apos;ona. Els valors més alts donaran lloc
+a una forma d&apos;ona més precisa i detallada a costa
+d&apos;utilitzar més espai de disc a la memòria cau.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="308"/>
@@ -7759,17 +7762,17 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="149"/>
         <source>Show cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra el cursor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="155"/>
         <source>Show labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra les etiquetes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="164"/>
         <source>Show elapsed total</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra el total transcorregut</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="172"/>
@@ -7779,22 +7782,22 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="174"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Mínim/Màxim</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="175"/>
         <source>RMS</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="176"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Silenci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="209"/>
         <source>Downmix</source>
-        <translation type="unfinished"></translation>
+        <translation>Redueix  la mescla</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="212"/>
