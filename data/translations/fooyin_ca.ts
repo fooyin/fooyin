@@ -7458,17 +7458,17 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="815"/>
         <source>Horizontal</source>
-        <translation>Horizontal</translation>
+        <translation>Horitzontal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="816"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="830"/>
         <source>Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuració…</translation>
     </message>
 </context>
 <context>
@@ -7486,7 +7486,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="200"/>
         <source>WaveBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra d&apos;ones</translation>
     </message>
 </context>
 <context>
@@ -7494,37 +7494,37 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="72"/>
         <source>Custom colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Colors personalitzats</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="97"/>
         <source>Unplayed</source>
-        <translation type="unfinished"></translation>
+        <translation>No reproduït</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="98"/>
         <source>Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproduït</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="99"/>
         <source>Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Vora</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="100"/>
         <source>Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Fons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="103"/>
         <source>Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Màx</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="107"/>
         <source>Min</source>
-        <translation type="unfinished"></translation>
+        <translation>Mín</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="111"/>
