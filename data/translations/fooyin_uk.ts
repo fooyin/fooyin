@@ -759,42 +759,42 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="377"/>
         <source>Left</source>
-        <translation>Ліворуч</translation>
+        <translation>Зліва</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="377"/>
         <source>Up</source>
-        <translation>Догори</translation>
+        <translation>Зверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="384"/>
         <source>Right</source>
-        <translation>Праворуч</translation>
+        <translation>Справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="384"/>
         <source>Down</source>
-        <translation>Донизу</translation>
+        <translation>Знизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="391"/>
         <source>Far Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Далі зліва</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="391"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Зверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="398"/>
         <source>Far Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Далі справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="398"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Знизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="413"/>
