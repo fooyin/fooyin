@@ -764,7 +764,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="377"/>
         <source>Up</source>
-        <translation>Зверху</translation>
+        <translation>Вище</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="384"/>
@@ -774,7 +774,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="384"/>
         <source>Down</source>
-        <translation>Знизу</translation>
+        <translation>Нижче</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="391"/>
@@ -799,42 +799,42 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="413"/>
         <source>Paste (Insert)</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="451"/>
         <source>&amp;Split</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Розділити</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="478"/>
         <source>&amp;Move</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Перемістити</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="551"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="553"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Скасувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="554"/>
         <source>Undo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Скасувати попереднє редагування макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="565"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Повторити</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="566"/>
         <source>Redo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторити попереднє редагування макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="446"/>
