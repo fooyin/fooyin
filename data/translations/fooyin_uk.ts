@@ -829,33 +829,33 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="565"/>
         <source>&amp;Redo</source>
-        <translation>&amp;Повторити</translation>
+        <translation>&amp;Повернути</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="566"/>
         <source>Redo the previous layout edit</source>
-        <translation>Повторити попереднє редагування макета</translation>
+        <translation>Повернути попереднє редагування макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="446"/>
         <source>&amp;Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Замінити</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="354"/>
         <location filename="../../src/gui/editablelayout.cpp" line="361"/>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вставити</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="456"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Копіювати</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="469"/>
         <source>Paste (Replace)</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
