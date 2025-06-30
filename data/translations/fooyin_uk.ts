@@ -157,12 +157,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="158"/>
         <source>Loading artwork…</source>
-        <translation>Завантаження обкладинки</translation>
+        <translation>Завантаження обкладинки…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="162"/>
         <source>Saving artwork to files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Збереження обкладинки до файлу…</translation>
     </message>
 </context>
 <context>
@@ -170,49 +170,49 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="48"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="49"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="253"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="112"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation>Немає обкладинки</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити зображення</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Зображення</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="162"/>
         <source>Multiple images</source>
-        <translation type="unfinished"></translation>
+        <translation>Декілька зображень</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="163"/>
         <source>%1 of %2 files have artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 з %2 файлів має обкладинку</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Replace image</source>
-        <translation type="unfinished"></translation>
+        <translation>Замінити зображення</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати зображення</translation>
     </message>
 </context>
 <context>
@@ -220,32 +220,32 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="482"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматичний розмір розділів</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="490"/>
         <source>Show hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати приховане</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="499"/>
         <source>Hide %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховати %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="523"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Вирівнювання</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="533"/>
         <source>&amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Зліва</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="534"/>
         <source>&amp;Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;По центру</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="535"/>
