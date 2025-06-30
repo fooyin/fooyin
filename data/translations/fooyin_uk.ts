@@ -596,110 +596,110 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show icons</source>
-        <translation>Показати іконки</translation>
+        <translation>Показувати іконки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="79"/>
         <source>Show indent</source>
-        <translation>Показати відступ</translation>
+        <translation>Показувати відступ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="80"/>
         <source>Show horizontal scrollbar</source>
-        <translation>Показати горизонтальну смугу прокрутки</translation>
+        <translation>Показувати горизонтальну смугу прокрутки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="81"/>
         <source>Show controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Показувати елементи керування</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="82"/>
         <source>Show location</source>
-        <translation type="unfinished"></translation>
+        <translation>Показувати місцезнаходження</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="85"/>
         <source>Start playback on send</source>
-        <translation type="unfinished"></translation>
+        <translation>Починати відтворення під час додавання</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Поведінка при натисканні</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="90"/>
         <source>Double-click</source>
-        <translation type="unfinished"></translation>
+        <translation>Подвійне натискання</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="92"/>
         <source>Middle-click</source>
-        <translation type="unfinished"></translation>
+        <translation>Натискання середньої кнопки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="97"/>
         <source>Browser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим перегляду</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="108"/>
         <source>Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметри відображення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="134"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути/Згорнути/Відтворити</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="135"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="144"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати до поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="136"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="145"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати до активного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="137"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="146"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Надіслати до поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="138"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="147"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Надіслати до нового списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="148"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="149"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати до початку черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="141"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="150"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Надіслати до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="133"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="143"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Порожньо</translation>
     </message>
 </context>
 <context>
@@ -708,22 +708,22 @@
         <location filename="../../src/gui/widgets/dummy.cpp" line="67"/>
         <source>Dummy</source>
         <extracomment>Represents a dummy/placeholder widget</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заповнювач</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="99"/>
         <source>Missing Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Відсутній віджет</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
         <source>Right-click to add a new widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Натисніть правою кнопкою миші, щоб додати новий віджет</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="105"/>
         <source>Enter layout editing mode to edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Увійти в режим редагування макета для внесення змін</translation>
     </message>
 </context>
 <context>
@@ -731,27 +731,27 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміни</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="42"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>П&amp;ошук</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
         <source>Search the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук у поточному списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="50"/>
         <source>&amp;Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Налаштування</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="51"/>
         <source>Open the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити вікно налаштувань</translation>
     </message>
 </context>
 <context>
@@ -759,22 +759,22 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="377"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Ліворуч</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="377"/>
         <source>Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Догори</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="384"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Праворуч</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="384"/>
         <source>Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Донизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="391"/>
