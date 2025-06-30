@@ -57,7 +57,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
         <source>Buffer length</source>
-        <translation>Довжина буфера</translation>
+        <translation>Розмір буфера</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="43"/>
@@ -71,12 +71,12 @@
         <location filename="../../src/gui/settings/artworkpage.cpp" line="182"/>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="183"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="183"/>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Інтерфейс</translation>
     </message>
 </context>
 <context>
@@ -84,52 +84,52 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="74"/>
         <source>Prefer currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Надавати перевагу поточній композиції</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="75"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Надавати перевагу обраній композиції</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="85"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Відображення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="95"/>
         <source>Front Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Передня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="96"/>
         <source>Back Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Задня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="97"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Виконавець</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="99"/>
         <source>Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Кеш</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="102"/>
         <source>Pixmap cache size</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір кешу зображень</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="108"/>
         <source>Clear Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистити кеш</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="175"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Використання кешу диска</translation>
     </message>
 </context>
 <context>
@@ -137,27 +137,27 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="45"/>
         <source>Front Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Передня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="46"/>
         <source>Back Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Задня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="47"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Виконавець</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="109"/>
         <source>Artwork Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Властивості обкладинки</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="158"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження обкладинки</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="162"/>
