@@ -1053,37 +1053,37 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="86"/>
         <source>&amp;Save playlist…</source>
-        <translation>プレイリストを&amp;保存 しています</translation>
+        <translation>プレイリストを&amp;保存 しています…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="102"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;終了</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="103"/>
         <source>Quit %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 を終了</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="80"/>
         <source>Load the playlist from the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>指定ファイルからプレイリストをロード</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="45"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="87"/>
         <source>Save the current playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>最新プレイリストをファイルに保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
         <source>Save &amp;all playlists…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;すべて のプレイリストを保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
