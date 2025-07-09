@@ -1008,12 +1008,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="47"/>
         <source>Add &amp;files…</source>
-        <translation>&amp;ファイル を追加中</translation>
+        <translation>&amp;ファイル を追加中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="48"/>
         <source>Add the specified files to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>指定したファイルを現在のプレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="54"/>
@@ -1023,37 +1023,37 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="55"/>
         <source>Add the contents of the specified directory to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>指定ディレクトリの内容を現在のプレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="63"/>
         <source>&amp;New playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;新規 プレイリスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="64"/>
         <source>Create a new empty playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>新たに空のプレイリストを作る</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>&amp;New autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;新規 自動プレイリスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="72"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>新たに自動プレイリストを作る</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="79"/>
         <source>&amp;Load playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストを&amp;ロード しています…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="86"/>
         <source>&amp;Save playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストを&amp;保存 しています</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="102"/>
