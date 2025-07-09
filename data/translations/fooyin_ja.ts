@@ -819,12 +819,12 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="553"/>
         <source>&amp;Undo</source>
-        <translation>&amp;やり直し</translation>
+        <translation>&amp;元に戻す</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="554"/>
         <source>Undo the previous layout edit</source>
-        <translation>直前のレイアウト編集をやり直す</translation>
+        <translation>直前のレイアウト編集を元に戻す</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="565"/>
@@ -834,33 +834,33 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="566"/>
         <source>Redo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>以前のレイアウト編集をやり直す</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="446"/>
         <source>&amp;Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;置換</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="354"/>
         <location filename="../../src/gui/editablelayout.cpp" line="361"/>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;挿入</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="456"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>コピー</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="469"/>
         <source>Paste (Replace)</source>
-        <translation type="unfinished"></translation>
+        <translation>貼り付け（置換）</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>除去する</translation>
     </message>
 </context>
 <context>
@@ -868,17 +868,17 @@
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="35"/>
         <source>Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>タブ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Edit %1 Name</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 名前を編集</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="73"/>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 名前:</translation>
     </message>
 </context>
 <context>
@@ -886,17 +886,17 @@
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="134"/>
         <source>Time elapsed</source>
-        <translation type="unfinished"></translation>
+        <translation>経過時間</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="140"/>
         <source>Estimated</source>
-        <translation type="unfinished"></translation>
+        <translation>予測</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="143"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>計算中…</translation>
     </message>
 </context>
 <context>
@@ -904,17 +904,17 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="54"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>高さを上書き</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="69"/>
         <source>Left-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>左寄せ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="70"/>
         <source>Right-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>右寄せ</translation>
     </message>
 </context>
 <context>
@@ -922,57 +922,57 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="48"/>
         <source>Save window size</source>
-        <translation type="unfinished"></translation>
+        <translation>ウィンドウサイズの保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="49"/>
         <source>Save colours</source>
-        <translation type="unfinished"></translation>
+        <translation>色を保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="50"/>
         <source>Save fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>フォントを保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="53"/>
         <source>Export Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>レイアウトをエクスポート</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="62"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名前</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="63"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>パス</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="65"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ブラウズ…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="72"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="111"/>
         <source>Failed to save the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のレイアウトを保存できませんでした</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="137"/>
         <source>Failed to export layout</source>
-        <translation type="unfinished"></translation>
+        <translation>レイアウトのエクスポートに失敗しました</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="143"/>
         <source>Save Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>レイアウト保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="144"/>
@@ -985,22 +985,22 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="139"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="140"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="180"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>上に移動</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="188"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>下に移動</translation>
     </message>
 </context>
 <context>
@@ -1008,7 +1008,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="47"/>
         <source>Add &amp;files…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ファイル を追加中</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="48"/>
