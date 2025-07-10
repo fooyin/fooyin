@@ -21,3 +21,7 @@ add_subdirectory(sndfile)
 add_subdirectory(tageditor)
 add_subdirectory(vumeter)
 add_subdirectory(wavebar)
+
+if(WIN32)
+    add_subdirectory(mediacontrol)
+endif()
