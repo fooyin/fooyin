@@ -3,6 +3,7 @@
 pacman -S --noconfirm --needed \
     $MINGW_PACKAGE_PREFIX-clang \
     $MINGW_PACKAGE_PREFIX-cmake \
+    $MINGW_PACKAGE_PREFIX-cppwinrt \
     $MINGW_PACKAGE_PREFIX-ninja \
     $MINGW_PACKAGE_PREFIX-qt6-base \
     $MINGW_PACKAGE_PREFIX-qt6-svg \
