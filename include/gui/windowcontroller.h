@@ -40,6 +40,11 @@ public:
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
+    [[nodiscard]] QMainWindow* mainWindow() const
+    {
+        return m_mainWindow;
+    }
+
 signals:
     void isFullScreenChanged(bool fullscreen);
 
