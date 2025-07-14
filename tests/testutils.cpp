@@ -30,11 +30,12 @@ TempResource::TempResource(const QString& filename, QObject* parent)
 {
     setFileTemplate(QDir::tempPath() + QStringLiteral("/fooyin_test_XXXXXXXXXXXXXXX"));
 
-    open();
-
-    QFile resource(filename);
-    resource.open(QIODevice::ReadOnly);
-    write(resource.readAll());
+    if(open()) {
+        QFile resource{filename};
+        if(resource.open(QIODevice::ReadOnly)) {
+            write(resource.readAll());
+        }
+    }
 
     QTemporaryFile::reset();
 }
@@ -44,22 +45,26 @@ void TempResource::checkValid() const
     QByteArray tmpFileData;
     {
         QFile origFile{m_file};
-        origFile.open(QIODevice::ReadOnly);
+        const bool isOpen = origFile.open(QIODevice::ReadOnly);
 
         EXPECT_TRUE(origFile.isOpen());
 
-        origFileData = origFile.readAll();
-        origFile.close();
+        if(isOpen) {
+            origFileData = origFile.readAll();
+            origFile.close();
+        }
     }
 
     {
         QFile tmpFile{fileName()};
-        tmpFile.open(QIODevice::ReadOnly);
+        const bool isOpen = tmpFile.open(QIODevice::ReadOnly);
 
         EXPECT_TRUE(tmpFile.isOpen());
 
-        tmpFileData = tmpFile.readAll();
-        tmpFile.close();
+        if(isOpen) {
+            tmpFileData = tmpFile.readAll();
+            tmpFile.close();
+        }
     }
 
     EXPECT_TRUE(!origFileData.isEmpty());
