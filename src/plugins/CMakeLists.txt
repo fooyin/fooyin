@@ -24,4 +24,5 @@ add_subdirectory(wavebar)
 
 if(WIN32)
     add_subdirectory(mediacontrol)
+    add_subdirectory(thumbnailtoolbar)
 endif()
