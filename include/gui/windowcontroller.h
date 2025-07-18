@@ -44,6 +44,8 @@ public:
 
 signals:
     void isFullScreenChanged(bool fullscreen);
+    void windowShown();
+    void windowHidden();
 
 private:
     QMainWindow* m_mainWindow;
