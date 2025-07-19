@@ -1489,7 +1489,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="78"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Edytor skryptów</translation>
     </message>
 </context>
 <context>
@@ -1742,7 +1742,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>User Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Katalogi użytkownika</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
@@ -1805,7 +1805,7 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="56"/>
         <source>Maximum length</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna długość</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="60"/>
@@ -1830,12 +1830,12 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="63"/>
         <source>(0 = infinite)</source>
-        <translation type="unfinished"></translation>
+        <translation>(0 = nieskończoność)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="69"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Długość zanikania</translation>
     </message>
 </context>
 <context>
@@ -1867,7 +1867,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="443"/>
         <source>Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>Głośność</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="445"/>
@@ -1892,7 +1892,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="484"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
@@ -1902,7 +1902,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>Przerwij</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
@@ -2024,7 +2024,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="907"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie znaleziono dekodera</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="936"/>
@@ -2087,12 +2087,12 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Motywy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="110"/>
         <source>Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Tło</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="111"/>
@@ -2237,7 +2237,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="316"/>
         <source>Theme %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Motyw %1 już istnieje. Nadpisać?</translation>
     </message>
 </context>
 <context>
@@ -2288,7 +2288,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="115"/>
         <source>Show menu bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż pasek menu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
@@ -2308,7 +2308,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="123"/>
         <source>Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozciągnij</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="126"/>
@@ -2343,12 +2343,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
         <source>Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Motyw</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="156"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Styl</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="186"/>
@@ -2358,27 +2358,27 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
         <source>Icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Ikony</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="161"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Układ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="180"/>
         <source>Tool Buttons</source>
-        <translation type="unfinished"></translation>
+        <translation>Przyciski narzędzi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="194"/>
         <source>Window title</source>
-        <translation type="unfinished"></translation>
+        <translation>Tytuł okna</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
         <source>VBR update interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Częstotliwość odświeżania VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="200"/>
@@ -2398,7 +2398,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="222"/>
         <source>Volume step</source>
-        <translation type="unfinished"></translation>
+        <translation>Krok głośności</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="226"/>
@@ -2416,7 +2416,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="383"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Motywy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
@@ -2426,7 +2426,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Colours &amp; Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolory i czcionki</translation>
     </message>
 </context>
 <context>
@@ -2607,12 +2607,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="211"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Czas trwania</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="215"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanały</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="217"/>
@@ -2622,12 +2622,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
         <source>Avg. Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Średni bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="226"/>
@@ -2637,12 +2637,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="228"/>
         <source>Codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodek</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="230"/>
         <source>Codec Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil kodeka</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="232"/>
@@ -2652,7 +2652,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="233"/>
         <source>Tag Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Typy tagów</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="247"/>
@@ -2698,12 +2698,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="184"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż nagłówek</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="190"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż pasek przewijania</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="197"/>
@@ -2713,12 +2713,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="205"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadane</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="213"/>
         <source>Extended metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozszerzone metadane</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="221"/>
@@ -2747,17 +2747,17 @@
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="57"/>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="113"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Układ</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="60"/>
         <source>&amp;Editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tryb edytowania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="61"/>
         <source>Toggle layout editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz tryb edytowania układu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="72"/>
@@ -2772,17 +2772,17 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
         <source>&amp;Import layout…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importuj układ…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
         <source>Add the layout from the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj układ z określonego pliku</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="86"/>
         <source>E&amp;xport layout…</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj układ…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="87"/>
@@ -2792,7 +2792,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
         <source>Replace the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamień aktualny układ</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="113"/>
@@ -2805,7 +2805,7 @@
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="246"/>
         <source>Open Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz układ</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="246"/>
@@ -2815,17 +2815,17 @@
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
         <source>Invalid Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Niepoprawny układ</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
         <source>Layout could not be imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się załadować&#xa0;układu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="260"/>
         <source>Replace existing layout?</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamienić aktualny układ?</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="261"/>
@@ -2919,12 +2919,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="47"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Biblioteka</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="50"/>
         <source>&amp;Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Baza danych</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
@@ -2939,7 +2939,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
         <source>&amp;Optimise</source>
-        <translation type="unfinished"></translation>
+        <translation>Optymalizuj</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="58"/>
@@ -2969,7 +2969,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="76"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>Szukaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="77"/>
