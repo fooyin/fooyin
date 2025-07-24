@@ -21,6 +21,8 @@
 
 #include "fyutils_export.h"
 
+#include <QString>
+
 namespace Fooyin {
 class StringCollatorPrivate;
 
