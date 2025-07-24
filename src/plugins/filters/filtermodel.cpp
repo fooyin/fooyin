@@ -74,9 +74,7 @@ Fooyin::Filters::FilterItem* filterItem(const QModelIndex& index)
 namespace Fooyin::Filters {
 FilterSortModel::FilterSortModel(QObject* parent)
     : QSortFilterProxyModel{parent}
-{
-    m_collator.setNumericMode(true);
-}
+{ }
 
 bool FilterSortModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {

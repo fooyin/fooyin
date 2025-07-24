@@ -89,9 +89,7 @@ Fooyin::LibraryTreeItem* treeItem(const QModelIndex& index)
 namespace Fooyin {
 LibraryTreeSortModel::LibraryTreeSortModel(QObject* parent)
     : QSortFilterProxyModel{parent}
-{
-    m_collator.setNumericMode(true);
-}
+{ }
 
 bool LibraryTreeSortModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {

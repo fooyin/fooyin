@@ -23,9 +23,9 @@
 #include "filteritem.h"
 
 #include <core/track.h>
+#include <utils/stringcollator.h>
 #include <utils/treemodel.h>
 
-#include <QCollator>
 #include <QSortFilterProxyModel>
 
 namespace Fooyin {
@@ -47,7 +47,7 @@ protected:
     [[nodiscard]] bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
 
 private:
-    QCollator m_collator;
+    StringCollator m_collator;
 };
 
 class FilterModel : public TreeModel<FilterItem>

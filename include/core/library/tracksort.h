@@ -23,8 +23,8 @@
 
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
+#include <utils/stringcollator.h>
 
-#include <QCollator>
 #include <QString>
 
 #include <mutex>
@@ -166,10 +166,9 @@ private:
     template <typename Container, typename Extractor>
     static void sortTracks(Container& tracks, Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
     {
-        QCollator collator;
-        collator.setNumericMode(true);
+        StringCollator collator;
 
-        std::ranges::stable_sort(tracks, [order, collator, extractor](const auto& lhs, const auto& rhs) {
+        std::ranges::stable_sort(tracks, [order, &collator, extractor](const auto& lhs, const auto& rhs) {
             const Track& leftTrack  = extractor(lhs);
             const Track& rightTrack = extractor(rhs);
 

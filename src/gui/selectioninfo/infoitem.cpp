@@ -19,7 +19,6 @@
 
 #include "infoitem.h"
 
-#include <QCollator>
 #include <utility>
 
 using namespace Qt::StringLiterals;
