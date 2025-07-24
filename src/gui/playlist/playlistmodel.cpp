@@ -1006,6 +1006,10 @@ void PlaylistModel::insertTracks(const TrackGroups& tracks)
 
 void PlaylistModel::updateTracks(const std::vector<int>& indexes)
 {
+    if(!m_currentPlaylist) {
+        return;
+    }
+
     TrackGroups groups;
 
     auto startOfSequence = indexes.cbegin();
