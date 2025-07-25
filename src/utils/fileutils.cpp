@@ -100,7 +100,7 @@ uint64_t directorySize(const QString& dir)
 {
     qint64 total{0};
 
-    QDirIterator it{dir, QDirIterator::Subdirectories};
+    QDirIterator it{dir, QDirIterator::Subdirectories | QDirIterator::FollowSymlinks};
 
     while(it.hasNext()) {
         it.next();

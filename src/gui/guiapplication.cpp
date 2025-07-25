@@ -945,8 +945,8 @@ void GuiApplicationPrivate::addFiles() const
         dir = lastPath;
     }
 
-    const auto files
-        = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Add Files"), dir, filters.join(";;"_L1));
+    const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Add Files"), dir,
+                                                    filters.join(";;"_L1), nullptr, QFileDialog::DontResolveSymlinks);
 
     if(files.empty()) {
         return;
@@ -959,8 +959,8 @@ void GuiApplicationPrivate::addFiles() const
 
 void GuiApplicationPrivate::addFolders() const
 {
-    const auto dirs
-        = QFileDialog::getExistingDirectoryUrl(m_mainWindow.get(), GuiApplication::tr("Add Folders"), QDir::homePath());
+    const auto dirs = QFileDialog::getExistingDirectoryUrl(m_mainWindow.get(), GuiApplication::tr("Add Folders"),
+                                                           QDir::homePath(), QFileDialog::DontResolveSymlinks);
 
     if(dirs.isEmpty()) {
         return;
@@ -998,7 +998,7 @@ void GuiApplicationPrivate::loadPlaylist() const
     }
 
     const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Load Playlist"), dir,
-                                                    filters.join(";;"_L1));
+                                                    filters.join(";;"_L1), nullptr, QFileDialog::DontResolveSymlinks);
 
     if(files.empty()) {
         return;
@@ -1033,9 +1033,9 @@ void GuiApplicationPrivate::savePlaylist() const
     }
 
     QString selectedFilter;
-    QString file
-        = QFileDialog::getSaveFileName(m_mainWindow.get(), GuiApplication::tr("Save Playlist"),
-                                       dir.absoluteFilePath(playlist->name()), playlistFilter, &selectedFilter);
+    QString file = QFileDialog::getSaveFileName(m_mainWindow.get(), GuiApplication::tr("Save Playlist"),
+                                                dir.absoluteFilePath(playlist->name()), playlistFilter, &selectedFilter,
+                                                QFileDialog::DontResolveSymlinks);
     if(file.isEmpty()) {
         return;
     }

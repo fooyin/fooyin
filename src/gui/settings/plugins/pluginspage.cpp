@@ -220,8 +220,9 @@ void PluginPageWidget::configurePlugin()
 
 void PluginPageWidget::installPlugin()
 {
-    const QString filepath = QFileDialog::getOpenFileName(this, tr("Install Plugin"), QString{},
-                                                          tr("%1 Plugin").arg("fooyin"_L1) + " (*.fyl)"_L1);
+    const QString filepath
+        = QFileDialog::getOpenFileName(this, tr("Install Plugin"), {}, tr("%1 Plugin").arg("fooyin"_L1) + " (*.fyl)"_L1,
+                                       nullptr, QFileDialog::DontResolveSymlinks);
 
     if(filepath.isEmpty()) {
         return;

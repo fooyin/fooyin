@@ -104,7 +104,7 @@ QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExte
 
         if(file.isDir()) {
             QDirIterator dirIt{file.absoluteFilePath(), Fooyin::Utils::extensionsToWildcards(nameFilters), QDir::Files,
-                               QDirIterator::Subdirectories};
+                               QDirIterator::Subdirectories | QDirIterator::FollowSymlinks};
             while(dirIt.hasNext()) {
                 dirIt.next();
                 const QFileInfo info = dirIt.fileInfo();

@@ -231,7 +231,7 @@ void LibraryGeneralPageWidget::reset()
 void LibraryGeneralPageWidget::addLibrary() const
 {
     const QString dir = QFileDialog::getExistingDirectory(m_libraryView, tr("Directory"), QDir::homePath(),
-                                                          QFileDialog::ShowDirsOnly);
+                                                          QFileDialog::DontResolveSymlinks);
 
     if(dir.isEmpty()) {
         m_model->markForAddition({});

@@ -85,7 +85,8 @@ ArtworkRow::ArtworkRow(const QString& name, Track::Cover cover, bool readOnly, Q
 void ArtworkRow::replaceImage()
 {
     const QString filepath
-        = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Images") + " (*.png *.jpg)"_L1);
+        = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Images") + " (*.png *.jpg)"_L1,
+                                       nullptr, QFileDialog::DontResolveSymlinks);
     if(filepath.isEmpty()) {
         return;
     }

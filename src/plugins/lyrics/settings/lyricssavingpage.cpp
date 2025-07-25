@@ -266,7 +266,8 @@ void LyricsSavingPageWidget::reset()
 void LyricsSavingPageWidget::browseDestination() const
 {
     const QString path = !m_path->text().isEmpty() ? m_path->text() : QDir::homePath();
-    const QString dir  = QFileDialog::getExistingDirectory(Utils::getMainWindow(), tr("Select Directory"), path);
+    const QString dir  = QFileDialog::getExistingDirectory(Utils::getMainWindow(), tr("Select Directory"), path,
+                                                           QFileDialog::DontResolveSymlinks);
     if(!dir.isEmpty()) {
         m_path->setText(dir);
     }

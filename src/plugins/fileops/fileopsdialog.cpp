@@ -466,7 +466,8 @@ void FileOpsDialogPrivate::modelUpdated()
 void FileOpsDialogPrivate::browseDestination() const
 {
     const QString path = !m_destination->text().isEmpty() ? m_destination->text() : QDir::homePath();
-    const QString dir  = QFileDialog::getExistingDirectory(m_self, FileOpsDialog::tr("Select Directory"), path);
+    const QString dir  = QFileDialog::getExistingDirectory(m_self, FileOpsDialog::tr("Select Directory"), path,
+                                                           QFileDialog::DontResolveSymlinks);
     if(!dir.isEmpty()) {
         m_destination->setText(dir);
     }

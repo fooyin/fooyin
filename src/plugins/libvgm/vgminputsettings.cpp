@@ -137,7 +137,8 @@ void VgmInputSettings::accept()
 
 void VgmInputSettings::getRomPath()
 {
-    const QString romPath = QFileDialog::getExistingDirectory(this, tr("Select ROM path"), QDir::homePath());
+    const QString romPath = QFileDialog::getExistingDirectory(this, tr("Select ROM path"), QDir::homePath(),
+                                                              QFileDialog::DontResolveSymlinks);
     if(romPath.isEmpty()) {
         return;
     }

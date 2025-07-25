@@ -297,7 +297,8 @@ void PlaylistGeneralPageWidget::reset()
 void PlaylistGeneralPageWidget::browseExportPath()
 {
     const QString path = !m_autoExportPath->text().isEmpty() ? m_autoExportPath->text() : Core::playlistsPath();
-    const QString dir  = QFileDialog::getExistingDirectory(this, tr("Select Directory"), path);
+    const QString dir
+        = QFileDialog::getExistingDirectory(this, tr("Select Directory"), path, QFileDialog::DontResolveSymlinks);
     if(!dir.isEmpty()) {
         m_autoExportPath->setText(dir);
     }
