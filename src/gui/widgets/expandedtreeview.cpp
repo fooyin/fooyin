@@ -1172,6 +1172,7 @@ void TreeView::renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paint
             if(bg != Qt::NoBrush) {
                 painter->fillRect(opt.rect, bg);
             }
+            m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
             m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
 
             opt.rect = cellRect;
@@ -1349,6 +1350,7 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
         // Span first column of parents
         opt.rect.setX(0);
         opt.rect.setWidth(header()->length());
+        m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
         m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
         delegate(index)->paint(painter, opt, index);
         return;
@@ -1463,6 +1465,7 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
     for(const auto& rect : paintRects) {
         if(rect.width() > 0) {
             opt.rect = rect;
+            m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
             m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
             painter->fillRect(opt.rect, bg);
         }
