@@ -1,6 +1,7 @@
 /*
  * Fooyin
  * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2025, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -394,24 +395,31 @@ void AudioPlaybackEngine::stop()
         stopWorkers(true);
     };
 
-    const bool canFade = playbackState() != PlaybackState::Paused
-                      && m_settings->value<Settings::Core::Internal::EngineFading>() && m_fadeIntervals.outPauseStop > 0
-                      && m_volume > 0.0;
-    if(canFade) {
-        const int fadeLength = calculateFadeLength(m_fadeIntervals.outPauseStop);
-        if(fadeLength > 0 && fadeLength < m_fadeIntervals.outPauseStop) {
-            m_pauseNextTrack = true;
-        }
-
+    if(playbackState() == PlaybackState::FadingOut) {
         QObject::disconnect(m_pausedConnection);
         m_pausedConnection
             = QObject::connect(&m_renderer, &AudioRenderer::paused, this, stopEngine, Qt::SingleShotConnection);
-        QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(fadeLength); });
-
-        AudioPlaybackEngine::updateState(PlaybackState::FadingOut);
     }
     else {
-        stopEngine();
+        const bool canFade = playbackState() != PlaybackState::Paused
+                          && m_settings->value<Settings::Core::Internal::EngineFading>()
+                          && m_fadeIntervals.outPauseStop > 0 && m_volume > 0.0;
+        if(canFade) {
+            const int fadeLength = calculateFadeLength(m_fadeIntervals.outPauseStop);
+            if(fadeLength > 0 && fadeLength < m_fadeIntervals.outPauseStop) {
+                m_pauseNextTrack = true;
+            }
+
+            QObject::disconnect(m_pausedConnection);
+            m_pausedConnection
+                = QObject::connect(&m_renderer, &AudioRenderer::paused, this, stopEngine, Qt::SingleShotConnection);
+            QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(fadeLength); });
+
+            AudioPlaybackEngine::updateState(PlaybackState::FadingOut);
+        }
+        else {
+            stopEngine();
+        }
     }
 
     m_posTimer.stop();
