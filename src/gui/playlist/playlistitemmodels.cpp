@@ -142,7 +142,7 @@ void PlaylistContainerItem::calculateSize()
 
     auto addSize = [&totalSize](const RichScript& script, bool addToTotal = true) {
         QSize blockSize;
-        for(const auto& title : script.text) {
+        for(const auto& title : script.text.blocks) {
             const QFontMetrics fm{title.format.font};
             const QRect br = fm.boundingRect(title.text);
             blockSize.setWidth(blockSize.width() + br.width());
@@ -298,7 +298,7 @@ void PlaylistTrackItem::calculateSize()
 {
     auto addSize = [](const RichScript& script) {
         QSize blockSize;
-        for(const auto& title : script.text) {
+        for(const auto& title : script.text.blocks) {
             const QFontMetrics fm{title.format.font};
             const QRect br = fm.boundingRect(title.text);
             blockSize.setWidth(blockSize.width() + br.width());

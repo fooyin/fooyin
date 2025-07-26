@@ -237,7 +237,7 @@ void ScriptFormatterPrivate::addBlock()
 {
     if(!m_currentBlock.text.isEmpty()) {
         if(m_blockGroup.empty()) {
-            m_formatResult.emplace_back(m_currentBlock);
+            m_formatResult.blocks.emplace_back(m_currentBlock);
         }
         else {
             m_blockStack.emplace(m_currentBlock);
@@ -250,7 +250,7 @@ void ScriptFormatterPrivate::closeBlock()
 {
     if(!m_currentBlock.text.isEmpty()) {
         if(m_blockStack.empty()) {
-            m_formatResult.emplace_back(m_currentBlock);
+            m_formatResult.blocks.emplace_back(m_currentBlock);
         }
         else {
             m_blockGroup.emplace_back(m_currentBlock);
@@ -263,7 +263,7 @@ void ScriptFormatterPrivate::closeBlock()
     }
     else {
         std::ranges::reverse(m_blockGroup);
-        m_formatResult.insert(m_formatResult.end(), m_blockGroup.cbegin(), m_blockGroup.cend());
+        m_formatResult.blocks.insert(m_formatResult.blocks.end(), m_blockGroup.cbegin(), m_blockGroup.cend());
         m_blockGroup.clear();
         resetFormat();
     }
@@ -300,7 +300,7 @@ RichText ScriptFormatter::evaluate(const QString& input)
     p->consume(ScriptScanner::TokEos, u"Expected end of expression"_s);
 
     if(!p->m_currentBlock.text.isEmpty()) {
-        p->m_formatResult.emplace_back(p->m_currentBlock);
+        p->m_formatResult.blocks.emplace_back(p->m_currentBlock);
     }
 
     return p->m_formatResult;

@@ -193,10 +193,10 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
 
     auto generateSubheaderKey = [](const PlaylistContainerItem& subheader) {
         QString subheaderKey;
-        for(const auto& block : subheader.title().text) {
+        for(const auto& block : subheader.title().text.blocks) {
             subheaderKey += block.text;
         }
-        for(const auto& block : subheader.subtitle().text) {
+        for(const auto& block : subheader.subtitle().text.blocks) {
             subheaderKey += block.text;
         }
         return subheaderKey;

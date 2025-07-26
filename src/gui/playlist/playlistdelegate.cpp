@@ -80,10 +80,10 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     lineColour.setAlpha(40);
     linePen.setColor(lineColour);
 
-    const auto title    = index.data(PlaylistItem::Role::Title).value<RichText>();
-    const auto subtitle = index.data(PlaylistItem::Role::Subtitle).value<RichText>();
-    const auto side     = index.data(PlaylistItem::Role::Right).value<RichText>();
-    const auto info     = index.data(PlaylistItem::Role::Info).value<RichText>();
+    const auto title    = index.data(PlaylistItem::Role::Title).value<RichText>().blocks;
+    const auto subtitle = index.data(PlaylistItem::Role::Subtitle).value<RichText>().blocks;
+    const auto side     = index.data(PlaylistItem::Role::Right).value<RichText>().blocks;
+    const auto info     = index.data(PlaylistItem::Role::Info).value<RichText>().blocks;
     const auto cover    = index.data(Qt::DecorationRole).value<QPixmap>();
 
     const QRect& rect           = opt.rect;
@@ -169,8 +169,8 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
     lineColour.setAlpha(40);
     linePen.setColor(lineColour);
 
-    const auto title    = index.data(PlaylistItem::Role::Title).value<RichText>();
-    const auto subtitle = index.data(PlaylistItem::Role::Right).value<RichText>();
+    const auto title    = index.data(PlaylistItem::Role::Title).value<RichText>().blocks;
+    const auto subtitle = index.data(PlaylistItem::Role::Right).value<RichText>().blocks;
 
     const QRect& rect           = opt.rect;
     const int height            = rect.height();
@@ -216,8 +216,8 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const
     lineColour.setAlpha(40);
     linePen.setColor(lineColour);
 
-    const auto title    = index.data(PlaylistItem::Role::Title).value<RichText>();
-    const auto subtitle = index.data(PlaylistItem::Role::Subtitle).value<RichText>();
+    const auto title    = index.data(PlaylistItem::Role::Title).value<RichText>().blocks;
+    const auto subtitle = index.data(PlaylistItem::Role::Subtitle).value<RichText>().blocks;
 
     const QRect& rect           = opt.rect;
     const int height            = rect.height();
@@ -275,8 +275,8 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
         textRect.adjust(textMargin, 0, -textMargin, 0);
 
         const int indent     = opt.icon.isNull() ? 0 : textMargin;
-        const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>();
-        const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>();
+        const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>().blocks;
+        const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>().blocks;
 
         const QRect rightRect     = textRect.adjusted(textRect.center().x() - textRect.left(), 0, 0, 0);
         auto [_, totalRightWidth] = drawTextBlocks(painter, opt, rightRect, rightSide | std::views::reverse,
@@ -316,7 +316,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
             QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
             textRect.adjust(textMargin, 0, -textMargin, 0);
 
-            const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>();
+            const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>().blocks;
 
             const auto& [bound, totalWidth]
                 = drawTextBlocks(painter, opt, textRect, columnText, Qt::AlignVCenter | opt.displayAlignment);

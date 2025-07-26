@@ -636,7 +636,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     }
 
     if(role == PlaylistItem::BaseKey) {
-        return QVariant::fromValue(item->baseKey());
+        return item->baseKey();
     }
 
     if(role == PlaylistItem::SingleColumnMode) {
@@ -1345,15 +1345,14 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         }
         if(const auto* firstSibling = itemForIndex(first)) {
             const auto firstTrack = std::get<PlaylistTrackItem>(firstSibling->data());
-            return QVariant::fromValue(
-                m_coverProvider->trackCoverThumbnail(firstTrack.track().track, {size, size}, type));
+            return m_coverProvider->trackCoverThumbnail(firstTrack.track().track, {size, size}, type);
         }
         return {};
     };
 
     if(role == Qt::DisplayRole && !m_columns.empty()
        && m_columns.at(column).field == QLatin1String{Constants::RatingEditor}) {
-        return QVariant::fromValue(StarRating{track.rating(), 5, m_starRatingSize});
+        return StarRating{track.rating(), 5, m_starRatingSize};
     }
 
     switch(role) {
@@ -1385,7 +1384,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
                 break;
             }
 
-            return QVariant::fromValue(trackItem.column(column).text);
+            return trackItem.column(column).text;
         }
         case(PlaylistItem::Role::DecorationPosition): {
             if(singleColumnMode) {
@@ -1401,11 +1400,11 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         case(PlaylistItem::Role::ImagePaddingTop):
             return m_pixmapPaddingTop;
         case(PlaylistItem::Role::Left):
-            return QVariant::fromValue(trackItem.left().text);
+            return trackItem.left().text;
         case(PlaylistItem::Role::Right):
-            return QVariant::fromValue(trackItem.right().text);
+            return trackItem.right().text;
         case(PlaylistItem::Role::ItemData):
-            return QVariant::fromValue<PlaylistTrack>(trackItem.track());
+            return trackItem.track();
         case(Qt::BackgroundRole): {
             if(!track.isEnabled()) {
                 return m_disabledColour;
@@ -1465,15 +1464,15 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
 
     switch(role) {
         case(PlaylistItem::Role::Title):
-            return QVariant::fromValue(header.title().text);
+            return header.title().text;
         case(PlaylistItem::Role::Simple):
             return m_currentPreset.header.simple;
         case(PlaylistItem::Role::Subtitle):
-            return QVariant::fromValue(header.subtitle().text);
+            return header.subtitle().text;
         case(PlaylistItem::Role::Info):
-            return QVariant::fromValue(header.info().text);
+            return header.info().text;
         case(PlaylistItem::Role::Right):
-            return QVariant::fromValue(header.sideText().text);
+            return header.sideText().text;
         case(Qt::DecorationRole): {
             if(m_currentPreset.header.simple || !m_currentPreset.header.showCover) {
                 return {};
@@ -1501,9 +1500,9 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
 
     switch(role) {
         case(PlaylistItem::Role::Title):
-            return QVariant::fromValue(header.title().text);
+            return header.title().text;
         case(PlaylistItem::Role::Subtitle):
-            return QVariant::fromValue(header.subtitle().text);
+            return header.subtitle().text;
         default:
             break;
     }
