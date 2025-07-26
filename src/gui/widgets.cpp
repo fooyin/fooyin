@@ -294,11 +294,9 @@ void Widgets::registerFontEntries() const
     themeReg->registerFontEntry(tr("Tabs"), u"Fooyin::EditableTabBar"_s);
 }
 
-void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type)
+void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick)
 {
-    auto* search = new ArtworkDialog(m_core->networkManager(), m_core->library(), m_settings, tracks, type, m_window);
-    search->setAttribute(Qt::WA_DeleteOnClose);
-    search->show();
+    m_gui->searchForArtwork(tracks, type, quick);
 }
 
 FyWidget* Widgets::createDirBrowser()

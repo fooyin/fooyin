@@ -20,6 +20,7 @@
 #include "artworkfinder.h"
 
 #include "internalguisettings.h"
+#include "sources/lastfmartwork.h"
 #include "sources/musicbrainzartwork.h"
 
 #include <core/network/networkaccessmanager.h>
@@ -62,7 +63,7 @@ void ArtworkFinder::findArtwork(Track::Cover type, const QString& artist, const 
         QObject::disconnect(source, nullptr, this, nullptr);
     }
 
-    m_params = {type, artist, album, title};
+    m_params = {.type = type, .artist = artist, .album = album, .title = title};
 
     m_currentSourceIndex = -1;
     m_currentSource      = nullptr;
@@ -132,7 +133,8 @@ void ArtworkFinder::reset()
 
 void ArtworkFinder::loadDefaults()
 {
-    m_sources = {new MusicBrainzArtwork(m_networkManager.get(), m_settings, 0, true, this)};
+    m_sources = {new MusicBrainzArtwork(m_networkManager.get(), m_settings, 0, true, this),
+                 new LastFmArtwork(m_networkManager.get(), m_settings, 1, true, this)};
 }
 
 void ArtworkFinder::finishOrStartNextSource(bool forceFinish)
@@ -225,7 +227,7 @@ void ArtworkFinder::onImageResult(const QUrl& url, QNetworkReply* reply)
         const QMimeDatabase mimeDb;
         const QString mimeType = mimeDb.mimeTypeForData(coverData).name();
 
-        emit coverLoaded(url, {mimeType, coverData});
+        emit coverLoaded(url, {.mimeType = mimeType, .image = coverData});
     }
 
     if(m_downloads.empty() && std::cmp_greater_equal(m_currentSourceIndex, m_sources.size())) {

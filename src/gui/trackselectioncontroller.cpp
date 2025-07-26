@@ -19,9 +19,10 @@
 
 #include <gui/trackselectioncontroller.h>
 
-#include "core/library/libraryutils.h"
+#include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
 
+#include <core/library/libraryutils.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -111,6 +112,7 @@ public:
     QAction* m_removeFromQueue;
     QAction* m_openFolder;
     QAction* m_searchArtwork;
+    QAction* m_searchArtworkQuick;
     QAction* m_openProperties;
 };
 
@@ -137,6 +139,7 @@ TrackSelectionControllerPrivate::TrackSelectionControllerPrivate(TrackSelectionC
     , m_removeFromQueue{new QAction(tr("Remove from playback queue"), m_tracksMenu)}
     , m_openFolder{new QAction(tr("Open containing folder"), m_tracksMenu)}
     , m_searchArtwork{new QAction(tr("Search for artwork…"), m_tracksMenu)}
+    , m_searchArtworkQuick{new QAction(tr("Quicksearch for artwork"), m_tracksMenu)}
     , m_openProperties{new QAction(tr("Properties"), m_tracksMenu)}
 {
     setupMenu();
@@ -242,15 +245,31 @@ void TrackSelectionControllerPrivate::setupMenu()
     });
     m_tracksMenu->addAction(openFolderCmd);
 
+    auto* artworkMenu = m_actionManager->createMenu(Constants::Menus::Context::Artwork);
+    artworkMenu->menu()->setTitle(TrackSelectionController::tr("Artwork"));
+    m_tracksMenu->addMenu(artworkMenu);
+
     m_searchArtwork->setStatusTip(tr("Search for artwork for the selected tracks"));
     auto* searchArtworkCmd = m_actionManager->registerAction(m_searchArtwork, Constants::Actions::SearchArtwork);
     searchArtworkCmd->setCategories(tracksCategory);
     QObject::connect(m_searchArtwork, &QAction::triggered, m_tracksMenu, [this]() {
         if(hasTracks()) {
-            emit m_self->requestArtworkSearch(m_self->selectedTracks());
+            emit m_self->requestArtworkSearch(m_self->selectedTracks(), false);
         }
     });
-    m_tracksMenu->addAction(searchArtworkCmd);
+    artworkMenu->addAction(searchArtworkCmd);
+
+    m_searchArtworkQuick->setStatusTip(tr("Search for artwork for the selected files, automatically choosing the best "
+                                          "artwork based on the current settings"));
+    auto* searchArtworkQuickCmd
+        = m_actionManager->registerAction(m_searchArtworkQuick, Constants::Actions::SearchArtworkQuick);
+    searchArtworkQuickCmd->setCategories(tracksCategory);
+    QObject::connect(m_searchArtworkQuick, &QAction::triggered, m_tracksMenu, [this]() {
+        if(hasTracks()) {
+            emit m_self->requestArtworkSearch(m_self->selectedTracks(), true);
+        }
+    });
+    artworkMenu->addAction(searchArtworkQuickCmd);
 
     m_tracksMenu->addSeparator(Actions::Groups::Three);
 
@@ -528,12 +547,22 @@ void TrackSelectionControllerPrivate::updateActionState()
         });
     };
 
+    const auto canWriteCover = [this, canWrite]() {
+        return canWrite()
+            || m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>()
+                       .value<ArtworkSaveMethods>()
+                       .value(Track::Cover::Front)
+                       .method
+                   == ArtworkSaveMethod::Directory;
+    };
+
     m_addCurrent->setEnabled(haveTracks);
     m_addActive->setEnabled(haveTracks && m_playlistHandler->activePlaylist());
     m_sendCurrent->setEnabled(haveTracks);
     m_sendNew->setEnabled(haveTracks);
     m_openFolder->setEnabled(haveTracks && allTracksInSameFolder());
-    m_searchArtwork->setEnabled(haveTracks && canWrite());
+    m_searchArtwork->setEnabled(haveTracks && canWriteCover());
+    m_searchArtworkQuick->setEnabled(haveTracks && canWriteCover());
     m_openProperties->setEnabled(haveTracks);
     m_addToQueue->setEnabled(haveTracks);
     m_queueNext->setEnabled(haveTracks);

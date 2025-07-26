@@ -89,7 +89,7 @@ signals:
     void actionExecuted(TrackAction action);
     void selectionChanged();
     void requestPropertiesDialog();
-    void requestArtworkSearch(const Fooyin::TrackList& tracks);
+    void requestArtworkSearch(const Fooyin::TrackList& tracks, bool quick);
 
 public slots:
     void tracksUpdated(const Fooyin::TrackList& tracks);

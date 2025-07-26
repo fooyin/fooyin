@@ -120,10 +120,8 @@ public:
 
     void registerActions();
     void rescanTracks(const TrackList& tracks, bool onlyModified) const;
-    void searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick);
 
     void setupScanMenu();
-    void setupArtworkMenu();
     void setupRatingMenu();
     void setupUtilitiesMenu() const;
 
@@ -143,7 +141,6 @@ public:
     void showSearchLibraryDialog();
     void showQuickSearch() const;
     void showPropertiesDialog() const;
-    void showArtworkSearchDialog(const TrackList& tracks) const;
     void showEngineError(const QString& error) const;
     void showMessage(const QString& title, const Track& track) const;
     void showTrackNotFoundMessage(const Track& track) const;
@@ -242,7 +239,6 @@ void GuiApplicationPrivate::initialise()
     setupConnections();
     registerActions();
     setupScanMenu();
-    setupArtworkMenu();
     setupRatingMenu();
     setupUtilitiesMenu();
     setStyle();
@@ -300,8 +296,9 @@ void GuiApplicationPrivate::setupConnections()
                      &PlaylistController::handleTrackSelectionAction);
     QObject::connect(&m_selectionController, &TrackSelectionController::requestPropertiesDialog, m_self,
                      [this]() { showPropertiesDialog(); });
-    QObject::connect(&m_selectionController, &TrackSelectionController::requestArtworkSearch, m_self,
-                     [this](const TrackList& tracks) { showArtworkSearchDialog(tracks); });
+    QObject::connect(
+        &m_selectionController, &TrackSelectionController::requestArtworkSearch, m_self,
+        [this](const TrackList& tracks, bool quick) { m_self->searchForArtwork(tracks, Track::Cover::Front, quick); });
     QObject::connect(m_fileMenu, &FileMenu::requestNewPlaylist, m_self, [this]() { createNewPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestNewAutoPlaylist, m_self, [this]() { createNewAutoPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestExit, m_self, [this]() { close(); });
@@ -443,7 +440,6 @@ void GuiApplicationPrivate::removeExpiredCovers(const TrackList& tracks)
 {
     for(const Track& track : tracks) {
         if(track.metadataWasModified()) {
-            CoverProvider::setOverride(track, {}, Track::Cover::Front);
             CoverProvider::removeFromCache(track);
         }
     }
@@ -532,76 +528,6 @@ void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModif
                      });
 }
 
-void GuiApplicationPrivate::searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick)
-{
-    if(!quick) {
-        auto* search = new ArtworkDialog(m_core->networkManager(), m_core->library(), m_settings, tracks, type,
-                                         m_mainWindow.get());
-        search->setAttribute(Qt::WA_DeleteOnClose);
-        search->show();
-        return;
-    }
-
-    StatusEvent::post(GuiApplication::tr("Searching for artwork…"), 0);
-
-    auto* artworkFinder = new ArtworkFinder(m_core->networkManager(), m_settings, m_self);
-
-    const Track& track = tracks.front();
-    ScriptParser parser;
-
-    const QString artist = parser.evaluate(m_settings->value<Settings::Gui::Internal::ArtworkArtistField>(), track);
-    const QString album  = parser.evaluate(m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>(), track);
-    const QString title{u"%title%"_s};
-
-    const auto finishSearch = [artworkFinder]() {
-        artworkFinder->disconnect();
-        artworkFinder->deleteLater();
-        StatusEvent::post(GuiApplication::tr("Artwork search finished"));
-    };
-
-    QObject::connect(
-        artworkFinder, &ArtworkFinder::coverLoaded, m_self,
-        [this, finishSearch, tracks](const QUrl& /*url*/, const Fooyin::ArtworkResult& result) {
-            finishSearch();
-
-            QPixmap cover;
-            cover.loadFromData(result.image);
-            cover.setDevicePixelRatio(Utils::windowDpr());
-
-            const auto saveMethods
-                = m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>().value<ArtworkSaveMethods>();
-            const auto& frontMethod = saveMethods[Track::Cover::Front];
-
-            if(frontMethod.method == ArtworkSaveMethod::Embedded) {
-                TrackCoverData coverData;
-                coverData.tracks = tracks;
-                coverData.coverData.emplace(Track::Cover::Front, CoverImage{result.mimeType, result.image});
-                m_library->writeTrackCovers(coverData);
-                CoverProvider::setOverride(tracks.front(), cover, Track::Cover::Front);
-            }
-            else {
-                const QMimeDatabase mimeDb;
-                const QString suffix = mimeDb.mimeTypeForData(result.image).preferredSuffix().toLower();
-
-                ScriptParser trackParser;
-                const QString path = trackParser.evaluate(
-                    u"%1/%2.%3"_s.arg(frontMethod.dir, frontMethod.filename, suffix), tracks.front());
-                const QString cleanPath = QDir::cleanPath(path);
-
-                QFile file{cleanPath};
-                if(file.open(QIODevice::WriteOnly)) {
-                    cover.save(&file, nullptr, -1);
-                }
-            }
-
-            std::ranges::for_each(tracks, CoverProvider::removeFromCache);
-            m_settings->set<Settings::Gui::RefreshCovers>(!m_settings->value<Settings::Gui::RefreshCovers>());
-        });
-    QObject::connect(artworkFinder, &ArtworkFinder::searchFinished, m_self, [finishSearch]() { finishSearch(); });
-
-    artworkFinder->findArtwork(Track::Cover::Front, artist, album, title);
-}
-
 void GuiApplicationPrivate::setupScanMenu()
 {
     auto* selectionMenu = m_actionManager->actionContainer(Constants::Menus::Context::TrackSelection);
@@ -630,31 +556,6 @@ void GuiApplicationPrivate::setupScanMenu()
 
     QObject::connect(&m_selectionController, &TrackSelectionController::selectionChanged, m_mainWindow.get(),
                      [this, rescanAction]() { rescanAction->setEnabled(m_selectionController.hasTracks()); });
-}
-
-void GuiApplicationPrivate::setupArtworkMenu()
-{
-    auto* selectionMenu = m_actionManager->actionContainer(Constants::Menus::Context::TrackSelection);
-    auto* artworkMenu   = m_actionManager->createMenu(Constants::Menus::Context::Artwork);
-    artworkMenu->menu()->setTitle(GuiApplication::tr("Artwork"));
-    selectionMenu->addMenu(artworkMenu);
-
-    auto* window = Utils::getMainWindow();
-
-    auto* artworkSearch      = new QAction(GuiApplication::tr("Search for artwork"), window);
-    auto* artworkQuickSearch = new QAction(GuiApplication::tr("Quicksearch artwork"), window);
-    artworkSearch->setStatusTip(
-        GuiApplication::tr("Search for artwork for the selected files, considering all files as part of one album"));
-    artworkQuickSearch->setStatusTip(GuiApplication::tr("Search for artwork for the selected files, automatically "
-                                                        "choosing the best artwork based on the current settings"));
-
-    QObject::connect(artworkSearch, &QAction::triggered, window,
-                     [this] { searchForArtwork(m_selectionController.selectedTracks(), Track::Cover::Front, false); });
-    QObject::connect(artworkQuickSearch, &QAction::triggered, window,
-                     [this] { searchForArtwork(m_selectionController.selectedTracks(), Track::Cover::Front, true); });
-
-    artworkMenu->menu()->addAction(artworkSearch);
-    artworkMenu->menu()->addAction(artworkQuickSearch);
 }
 
 void GuiApplicationPrivate::setupRatingMenu()
@@ -942,11 +843,6 @@ void GuiApplicationPrivate::showPropertiesDialog() const
     if(!tracks.empty()) {
         m_propertiesDialog->show(tracks);
     }
-}
-
-void GuiApplicationPrivate::showArtworkSearchDialog(const TrackList& tracks) const
-{
-    m_widgets->showArtworkDialog(tracks, Track::Cover::Front);
 }
 
 void GuiApplicationPrivate::showEngineError(const QString& error) const
@@ -1241,6 +1137,77 @@ void GuiApplication::openFiles(const QList<QUrl>& files)
     QObject::connect(
         p->m_playlistController.get(), &PlaylistController::playlistsLoaded, this,
         [this, files]() { p->openFiles(files); }, Qt::SingleShotConnection);
+}
+
+void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick)
+{
+    if(!quick) {
+        auto* search = new ArtworkDialog(p->m_core->networkManager(), p->m_core->library(), p->m_settings, tracks, type,
+                                         p->m_mainWindow.get());
+        search->setAttribute(Qt::WA_DeleteOnClose);
+        search->show();
+        return;
+    }
+
+    StatusEvent::post(GuiApplication::tr("Searching for artwork…"), 0);
+
+    auto* artworkFinder = new ArtworkFinder(p->m_core->networkManager(), p->m_settings, this);
+
+    const Track& track = tracks.front();
+    ScriptParser parser;
+
+    const QString artist = parser.evaluate(p->m_settings->value<Settings::Gui::Internal::ArtworkArtistField>(), track);
+    const QString album  = parser.evaluate(p->m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>(), track);
+    const QString title{u"%title%"_s};
+
+    const auto finishSearch = [artworkFinder]() {
+        artworkFinder->disconnect();
+        artworkFinder->deleteLater();
+        StatusEvent::post(GuiApplication::tr("Artwork search finished"));
+    };
+
+    QObject::connect(
+        artworkFinder, &ArtworkFinder::coverLoaded, this,
+        [this, finishSearch, tracks](const QUrl& /*url*/, const Fooyin::ArtworkResult& result) {
+            finishSearch();
+
+            QPixmap cover;
+            cover.loadFromData(result.image);
+            cover.setDevicePixelRatio(Utils::windowDpr());
+
+            const auto saveMethods
+                = p->m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>().value<ArtworkSaveMethods>();
+            const auto& frontMethod = saveMethods[Track::Cover::Front];
+
+            if(frontMethod.method == ArtworkSaveMethod::Embedded) {
+                TrackCoverData coverData;
+                coverData.tracks = tracks;
+                coverData.coverData.emplace(Track::Cover::Front,
+                                            CoverImage{.mimeType = result.mimeType, .data = result.image});
+                p->m_library->writeTrackCovers(coverData);
+                std::ranges::for_each(coverData.tracks, &CoverProvider::removeFromCache);
+            }
+            else {
+                const QMimeDatabase mimeDb;
+                const QString suffix = mimeDb.mimeTypeForData(result.image).preferredSuffix().toLower();
+
+                ScriptParser trackParser;
+                const QString path = trackParser.evaluate(
+                    u"%1/%2.%3"_s.arg(frontMethod.dir, frontMethod.filename, suffix), tracks.front());
+                const QString cleanPath = QDir::cleanPath(path);
+
+                QFile file{cleanPath};
+                if(file.open(QIODevice::WriteOnly)) {
+                    cover.save(&file, nullptr, -1);
+                }
+            }
+
+            std::ranges::for_each(tracks, CoverProvider::removeFromCache);
+            p->m_settings->set<Settings::Gui::RefreshCovers>(!p->m_settings->value<Settings::Gui::RefreshCovers>());
+        });
+    QObject::connect(artworkFinder, &ArtworkFinder::searchFinished, this, [finishSearch]() { finishSearch(); });
+
+    artworkFinder->findArtwork(Track::Cover::Front, artist, album, title);
 }
 
 ActionManager* GuiApplication::actionManager() const

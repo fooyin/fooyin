@@ -91,6 +91,8 @@ set(SOURCES
     artwork/sources/artworksource.h
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.cpp
+    artwork/sources/lastfmartwork.cpp
+    artwork/sources/lastfmartwork.h
     artwork/sources/musicbrainzartwork.cpp
     artwork/sources/musicbrainzartwork.h
     controls/playercontrol.cpp

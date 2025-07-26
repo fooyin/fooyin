@@ -21,6 +21,8 @@
 
 #include "fygui_export.h"
 
+#include <core/track.h>
+
 #include <QObject>
 
 namespace Fooyin {
@@ -49,6 +51,8 @@ public:
 
     void raise();
     void openFiles(const QList<QUrl>& files);
+
+    void searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick);
 
     [[nodiscard]] ActionManager* actionManager() const;
     [[nodiscard]] LayoutProvider* layoutProvider() const;

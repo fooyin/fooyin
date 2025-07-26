@@ -19,6 +19,7 @@
 
 #include "coverwidget.h"
 
+#include <core/engine/audioloader.h>
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
@@ -53,8 +54,9 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_trackSelection{trackSelection}
+    , m_audioLoader{audioLoader}
     , m_settings{settings}
-    , m_coverProvider{new CoverProvider(std::move(audioLoader), settings, this)}
+    , m_coverProvider{new CoverProvider(audioLoader, settings, this)}
     , m_displayOption{static_cast<SelectionDisplay>(
           m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>())}
     , m_coverType{Track::Cover::Front}
@@ -192,11 +194,38 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(artistCover);
 
     if(m_track.isValid()) {
-        auto* search = new QAction(tr("Search for artwork…"), menu);
+        const auto canWrite = [this]() {
+            return !m_track.hasCue() && !m_track.isInArchive() && m_audioLoader->canWriteMetadata(m_track);
+        };
+        const auto canWriteCover = [this, canWrite]() {
+            return canWrite()
+                || m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>()
+                           .value<ArtworkSaveMethods>()
+                           .value(m_coverType)
+                           .method
+                       == ArtworkSaveMethod::Directory;
+        };
+
+        auto* search      = new QAction(tr("Search for artwork…"), menu);
+        auto* quickSearch = new QAction(tr("Quicksearch for artwork"), menu);
+
+        search->setEnabled(canWriteCover());
+        quickSearch->setEnabled(canWriteCover());
+
+        if(m_coverType == Track::Cover::Artist) {
+            // Only support front and back cover for now
+            search->setDisabled(true);
+            quickSearch->setDisabled(true);
+        }
+
         QObject::connect(search, &QAction::triggered, this,
-                         [this]() { emit requestArtworkSearch({m_track}, m_coverType); });
+                         [this]() { emit requestArtworkSearch({m_track}, m_coverType, false); });
+        QObject::connect(quickSearch, &QAction::triggered, this,
+                         [this]() { emit requestArtworkSearch({m_track}, m_coverType, true); });
+
         menu->addSeparator();
         menu->addAction(search);
+        menu->addAction(quickSearch);
     }
 
     menu->popup(event->globalPos());
