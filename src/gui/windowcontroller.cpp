@@ -56,6 +56,13 @@ bool WindowController::eventFilter(QObject* watched, QEvent* event)
         emit isFullScreenChanged(m_mainWindow->windowState() & Qt::WindowMaximized);
     }
 
+    if(event->type() == QEvent::ShowToParent) {
+        emit windowShown();
+    }
+    else if(event->type() == QEvent::Hide) {
+        emit windowHidden();
+    }
+
     return QObject::eventFilter(watched, event);
 }
 } // namespace Fooyin
