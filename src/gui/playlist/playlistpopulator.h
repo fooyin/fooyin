@@ -75,19 +75,19 @@ public:
     void setFont(const QFont& font);
     void setUseVarious(bool enabled);
 
-    void run(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+    void run(Playlist* playlist, const PlaylistPreset& preset, const PlaylistColumnList& columns,
              const PlaylistTrackList& tracks);
-    void runTracks(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+    void runTracks(Playlist* playlist, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                    const std::map<int, PlaylistTrackList>& tracks);
-    void updateTracks(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
-                      const TrackItemMap& tracks);
+    void updateTracks(Playlist* playlist, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+                      const std::set<int>& columnsToUpdate, const TrackItemMap& tracks);
     void updateHeaders(const ItemList& headers);
 
 signals:
-    void populated(Fooyin::PendingData data);
-    void populatedTrackGroup(Fooyin::PendingData data);
-    void tracksUpdated(Fooyin::ItemList tracks);
-    void headersUpdated(Fooyin::ItemKeyMap headers);
+    void populated(const Fooyin::PendingData& data);
+    void populatedTrackGroup(const Fooyin::PendingData& data);
+    void tracksUpdated(const Fooyin::ItemList& tracks, const std::set<int>& columnsUpdated);
+    void headersUpdated(const Fooyin::ItemKeyMap& headers);
 
 private:
     std::unique_ptr<PlaylistPopulatorPrivate> p;

@@ -238,7 +238,7 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library, [this](const TrackList& tracks) { m_library->updateTrackStats(tracks); });
     QObject::connect(m_playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidgetPrivate::doubleClicked);
     QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlistView, &QAbstractItemView::clearSelection);
-    QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksPlayed, m_model, &PlaylistModel::refreshTracks);
+    QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksPlayed, m_model,[this](const std::vector<int>& indexes){m_model->refreshTracks(indexes);});
 
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this, &PlaylistWidgetPrivate::onColumnRemoved);
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this, &PlaylistWidgetPrivate::onColumnChanged);
@@ -257,7 +257,7 @@ void PlaylistWidgetPrivate::setupConnections()
 
         QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this, [this]() { m_model->playingTrackChanged(m_playerController->currentPlaylistTrack()); });
         QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksChanged, this, &PlaylistWidgetPrivate::handleTracksChanged);
-        QObject::connect(m_playlistController, &PlaylistController::currentPlaylistQueueChanged, m_model, &PlaylistModel::refreshTracks);
+        QObject::connect(m_playlistController, &PlaylistController::currentPlaylistQueueChanged, m_model, [this](const std::vector<int>& indexes){m_model->refreshTracks(indexes);});
         QObject::connect(m_playlistController, &PlaylistController::currentPlaylistChanged, this, &PlaylistWidgetPrivate::changePlaylist);
         QObject::connect(m_playlistController, &PlaylistController::playlistsLoaded, this, [this]() { changePlaylist(nullptr, m_playlistController->currentPlaylist()); });
         QObject::connect(m_playlistController, &PlaylistController::playingTrackChanged, this, &PlaylistWidgetPrivate::handlePlayingTrackChanged);

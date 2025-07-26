@@ -52,6 +52,7 @@
 #include <queue>
 #include <span>
 #include <stack>
+#include <utility>
 
 using namespace Qt::StringLiterals;
 
@@ -533,20 +534,15 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
         emit playlistLoaded();
     });
 
-    QObject::connect(&m_populator, &PlaylistPopulator::populated, this,
-                     [this](PendingData data) { populateModel(data); });
+    QObject::connect(&m_populator, &PlaylistPopulator::populated, this, &PlaylistModel::populateModel);
+    QObject::connect(&m_populator, &PlaylistPopulator::populatedTrackGroup, this, &PlaylistModel::populateTrackGroup);
+    QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this, &PlaylistModel::updateModel);
 
-    QObject::connect(&m_populator, &PlaylistPopulator::populatedTrackGroup, this,
-                     [this](PendingData data) { populateTrackGroup(data); });
+    QObject::connect(
+        &m_populator, &PlaylistPopulator::tracksUpdated, this,
+        [this](const ItemList& data, const std::set<int>& columnsUpdated) { updateTracks(data, columnsUpdated); });
 
-    QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this,
-                     [this](ItemKeyMap data) { updateModel(data); });
-
-    QObject::connect(&m_populator, &PlaylistPopulator::tracksUpdated, this,
-                     [this](const ItemList& data) { updateTracks(data); });
-
-    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this,
-                     [this](const Track& track) { coverUpdated(track); });
+    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &PlaylistModel::coverUpdated);
 }
 
 PlaylistModel::~PlaylistModel()
@@ -589,7 +585,7 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
 
     if(role == Qt::DisplayRole) {
         if(!m_columns.empty()) {
-            if(section >= 0 && section < static_cast<int>(m_columns.size())) {
+            if(section >= 0 && std::cmp_less(section, m_columns.size())) {
                 return m_columns.at(section).name;
             }
         }
@@ -893,7 +889,7 @@ void PlaylistModel::reset(const PlaylistTrackList& tracks)
 
     QMetaObject::invokeMethod(&m_populator, [this, tracks] {
         m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-        m_populator.run(m_currentPlaylist ? m_currentPlaylist->id() : UId{}, m_currentPreset, m_columns, tracks);
+        m_populator.run(m_currentPlaylist, m_currentPreset, m_columns, tracks);
     });
 }
 
@@ -947,7 +943,7 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index)
             const auto key = m_trackIndexes.at(index);
             if(m_nodes.contains(key)) {
                 auto& item = m_nodes.at(key);
-                return {indexOfItem(&item), false};
+                return {.index = indexOfItem(&item), .endOfPlaylist = false};
             }
         }
     }
@@ -957,7 +953,7 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index)
     const auto key       = m_trackIndexes.at(lastIndex);
     if(m_nodes.contains(key)) {
         auto& item = m_nodes.at(key);
-        return {indexOfItem(&item), true};
+        return {.index = indexOfItem(&item), .endOfPlaylist = true};
     }
 
     return {};
@@ -999,7 +995,7 @@ void PlaylistModel::insertTracks(const TrackGroups& tracks)
 {
     if(m_currentPlaylist) {
         QMetaObject::invokeMethod(&m_populator, [this, tracks] {
-            m_populator.runTracks(m_currentPlaylist->id(), m_currentPreset, m_columns, tracks);
+            m_populator.runTracks(m_currentPlaylist, m_currentPreset, m_columns, tracks);
         });
     }
 }
@@ -1040,6 +1036,17 @@ void PlaylistModel::updateTracks(const std::vector<int>& indexes)
 
 void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
 {
+    std::set<int> columns;
+    const auto count = static_cast<int>(m_columns.size());
+    for(int i{0}; i < count; ++i) {
+        columns.insert(i);
+    }
+
+    refreshTracks(indexes, columns);
+}
+
+void PlaylistModel::refreshTracks(const std::vector<int>& indexes, const std::set<int>& columns)
+{
     if(!m_currentPlaylist) {
         return;
     }
@@ -1055,9 +1062,9 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
         }
     }
 
-    QMetaObject::invokeMethod(&m_populator, [this, items] {
+    QMetaObject::invokeMethod(&m_populator, [this, columns, items] {
         m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-        m_populator.updateTracks(m_currentPlaylist->id(), m_currentPreset, m_columns, items);
+        m_populator.updateTracks(m_currentPlaylist, m_currentPreset, m_columns, columns, items);
     });
 }
 
@@ -1097,6 +1104,13 @@ void PlaylistModel::removeTracks(const TrackGroups& groups)
     }
 
     removeTracks(rows);
+
+    const auto columnsToUpdate = columnsNeedUpdating();
+    if(!columnsToUpdate.empty()) {
+        std::vector<int> indexes(m_currentPlaylist->trackCount());
+        std::iota(indexes.begin(), indexes.end(), 0);
+        refreshTracks(indexes, columnsToUpdate);
+    }
 }
 
 void PlaylistModel::updateHeader(Playlist* playlist)
@@ -1196,7 +1210,7 @@ void PlaylistModel::playStateChanged(Player::PlayState state)
     }
 }
 
-void PlaylistModel::populateModel(PendingData& data)
+void PlaylistModel::populateModel(PendingData data)
 {
     if(m_currentPlaylist && m_currentPlaylist->id() != data.playlistId) {
         return;
@@ -1241,7 +1255,7 @@ void PlaylistModel::populateModel(PendingData& data)
     }
 }
 
-void PlaylistModel::populateTrackGroup(PendingData& data)
+void PlaylistModel::populateTrackGroup(PendingData data)
 {
     if(m_currentPlaylist && m_currentPlaylist->id() != data.playlistId) {
         return;
@@ -1270,9 +1284,16 @@ void PlaylistModel::populateTrackGroup(PendingData& data)
     handleTrackGroup(data);
 
     tracksChanged();
+
+    const auto columnsToUpdate = columnsNeedUpdating();
+    if(!columnsToUpdate.empty()) {
+        std::vector<int> indexes(m_currentPlaylist->trackCount());
+        std::iota(indexes.begin(), indexes.end(), 0);
+        refreshTracks(indexes, columnsToUpdate);
+    }
 }
 
-void PlaylistModel::updateModel(ItemKeyMap& data)
+void PlaylistModel::updateModel(ItemKeyMap data)
 {
     if(m_resetting) {
         return;
@@ -1288,7 +1309,7 @@ void PlaylistModel::updateModel(ItemKeyMap& data)
     }
 }
 
-void PlaylistModel::updateTracks(const ItemList& tracks)
+void PlaylistModel::updateTracks(const ItemList& tracks, const std::set<int>& columnsUpdated)
 {
     if(m_resetting) {
         return;
@@ -1301,7 +1322,8 @@ void PlaylistModel::updateTracks(const ItemList& tracks)
             node->setState(PlaylistItem::State::None);
 
             const QModelIndex trackIndex = indexOfItem(node);
-            emit dataChanged(trackIndex, trackIndex.siblingAtColumn(columnCount(trackIndex) - 1), {});
+            const auto [first, last]     = std::ranges::minmax_element(columnsUpdated);
+            emit dataChanged(trackIndex.siblingAtColumn(*first), trackIndex.siblingAtColumn(*last), {});
         }
     }
 }
@@ -1956,7 +1978,7 @@ bool PlaylistModel::insertPlaylistRows(const QModelIndex& target, int firstRow, 
                                        const PlaylistItemList& children)
 {
     const int diff = firstRow == lastRow ? 1 : lastRow - firstRow + 1;
-    if(static_cast<int>(children.size()) != diff) {
+    if(std::cmp_not_equal(children.size(), diff)) {
         return false;
     }
 
@@ -1977,7 +1999,7 @@ bool PlaylistModel::movePlaylistRows(const QModelIndex& source, int firstRow, in
                                      int row, const PlaylistItemList& children)
 {
     const int diff = firstRow == lastRow ? 1 : lastRow - firstRow + 1;
-    if(static_cast<int>(children.size()) != diff) {
+    if(std::cmp_not_equal(children.size(), diff)) {
         return false;
     }
 
@@ -2221,6 +2243,20 @@ std::vector<int> PlaylistModel::pixmapColumns() const
     return columns;
 }
 
+std::set<int> PlaylistModel::columnsNeedUpdating() const
+{
+    std::set<int> columns;
+
+    for(int i{0}; const auto& column : m_columns) {
+        if(column.field == "%list_index%"_L1) {
+            columns.emplace(i);
+        }
+        ++i;
+    }
+
+    return columns;
+}
+
 void PlaylistModel::coverUpdated(const Track& track)
 {
     if(!m_trackParents.contains(track.id())) {
@@ -2324,7 +2360,7 @@ PlaylistModel::TrackItemResult PlaylistModel::itemForTrackIndex(int index)
     if(m_trackIndexes.contains(index)) {
         const auto& key = m_trackIndexes.at(index);
         if(m_nodes.contains(key)) {
-            return {&m_nodes.at(key), false};
+            return {.item = &m_nodes.at(key), .endOfPlaylist = false};
         }
     }
 
@@ -2333,7 +2369,7 @@ PlaylistModel::TrackItemResult PlaylistModel::itemForTrackIndex(int index)
     while(current->childCount() > 0) {
         current = current->child(current->childCount() - 1);
     }
-    return {current, true};
+    return {.item = current, .endOfPlaylist = true};
 }
 } // namespace Fooyin
 

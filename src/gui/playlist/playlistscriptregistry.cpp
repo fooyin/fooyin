@@ -20,6 +20,7 @@
 #include "playlistscriptregistry.h"
 
 #include <core/constants.h>
+#include <utils/stringutils.h>
 
 using namespace Qt::StringLiterals;
 
@@ -46,19 +47,24 @@ class PlaylistScriptRegistryPrivate
 public:
     QString depth() const;
 
+    QString trackIndex() const;
     QString queueIndex() const;
     QString queueIndexes() const;
     QString playingQueue() const;
 
     PlaylistTrackIndexes m_playlistQueue;
+    Playlist* m_playlist;
     UId m_playlistId;
     int m_trackIndex{0};
     int m_trackDepth{0};
+    mutable int m_trackCount{0};
+    mutable int m_numDigits{2};
 
     using PlaylistVar  = std::function<QString()>;
     using PlaylistVars = std::unordered_map<QString, PlaylistVar>;
     // clang-format off
     PlaylistVars m_vars{{u"depth"_s, [this]() { return depth(); }},
+                        {u"list_index"_s, [this]() { return trackIndex(); }},
                         {u"queueindex"_s, [this]() { return queueIndex(); }},
                         {u"queueindexes"_s, [this]() { return queueIndexes(); }},
                         {u"playingicon"_s, [this]() { return playingQueue(); }},
@@ -71,6 +77,15 @@ public:
 QString PlaylistScriptRegistryPrivate::depth() const
 {
     return QString::number(m_trackDepth);
+}
+
+QString PlaylistScriptRegistryPrivate::trackIndex() const
+{
+    if(m_playlist && std::exchange(m_trackCount, m_playlist->trackCount()) != m_trackCount) {
+        m_numDigits            = m_trackCount > 0 ? static_cast<int>(std::log10(m_trackCount)) + 1 : 2;
+    }
+
+    return Utils::addLeadingZero(m_trackIndex + 1, m_numDigits);
 }
 
 QString PlaylistScriptRegistryPrivate::queueIndex() const
@@ -112,11 +127,14 @@ PlaylistScriptRegistry::PlaylistScriptRegistry()
 
 PlaylistScriptRegistry::~PlaylistScriptRegistry() = default;
 
-void PlaylistScriptRegistry::setup(const UId& playlistId, const PlaybackQueue& queue)
+void PlaylistScriptRegistry::setup(Playlist* playlist, const PlaybackQueue& queue)
 {
-    p->m_playlistId = playlistId;
-    if(playlistId.isValid()) {
-        p->m_playlistQueue = queue.indexesForPlaylist(playlistId);
+    p->m_playlist = playlist;
+    if(playlist) {
+        p->m_playlistId = playlist->id();
+        if(p->m_playlistId.isValid()) {
+            p->m_playlistQueue = queue.indexesForPlaylist(p->m_playlistId);
+        }
     }
 }
 

@@ -73,7 +73,7 @@ PlaylistTrackList PlaylistTrack::updateIndexes(const PlaylistTrackList& playlist
 {
     PlaylistTrackList tracks{playlistTracks};
 
-    for(int i{0}; PlaylistTrack & track : tracks) {
+    for(int i{0}; PlaylistTrack& track : tracks) {
         track.indexInPlaylist = i++;
     }
 
