@@ -50,7 +50,7 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
 signals:
-    void requestArtworkSearch(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type);
+    void requestArtworkSearch(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type, bool quick);
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
@@ -64,6 +64,7 @@ private:
 
     PlayerController* m_playerController;
     TrackSelectionController* m_trackSelection;
+    std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
     CoverProvider* m_coverProvider;
 

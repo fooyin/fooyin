@@ -51,7 +51,7 @@ public:
     void registerPropertiesTabs();
     void registerFontEntries() const;
 
-    void showArtworkDialog(const TrackList& tracks, Track::Cover type);
+    void showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick);
 
 private:
     FyWidget* createDirBrowser();
