@@ -2197,6 +2197,12 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
 
     opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
 
+    if(m_view->alternatingRowColors()
+       && (m_p->m_viewMode == ExpandedTreeView::ViewMode::Tree
+           || m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right)) {
+        opt.features.setFlag(QStyleOptionViewItem::Alternate, index.row() & 1);
+    }
+
     const int left            = m_leftAndRight.first;
     const int right           = m_leftAndRight.second;
     const QModelIndex current = m_view->currentIndex();
@@ -2252,6 +2258,8 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
         mainOpt.showDecorationSelected = true;
         setupDecorationProps(&mainOpt);
 
+        m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
+        m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
         delegate(modelIndex)->paint(painter, mainOpt, modelIndex);
         break;
     }
