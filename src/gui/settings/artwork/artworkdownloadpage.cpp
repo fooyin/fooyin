@@ -55,7 +55,7 @@ public:
     void reset() override;
 
 private:
-    void browseDestination() const;
+    void browseDestination(Track::Cover type) const;
 
     SettingsManager* m_settings;
 
@@ -63,11 +63,27 @@ private:
     QRadioButton* m_autosave;
     QRadioButton* m_autosavePeriod;
 
-    QRadioButton* m_embedded;
-    QRadioButton* m_directory;
+    QTabWidget* m_coverTypes;
+    QWidget* m_frontWidget;
+    QWidget* m_backWidget;
+    QWidget* m_artistWidget;
 
-    QLineEdit* m_path;
-    ScriptLineEdit* m_filename;
+    struct CoverControls
+    {
+        QRadioButton* embedded;
+        QRadioButton* directory;
+        QLineEdit* path;
+        ScriptLineEdit* filename;
+
+        CoverControls(QWidget* parent)
+            : embedded{new QRadioButton(tr("Embed in file"), parent)}
+            , directory{new QRadioButton(tr("Save to directory"), parent)}
+            , path{new QLineEdit(parent)}
+            , filename{new ScriptLineEdit(parent)}
+        { }
+    };
+
+    std::map<Track::Cover, CoverControls> m_typeControls;
 };
 
 ArtworkDownloadPageWidget::ArtworkDownloadPageWidget(SettingsManager* settings)
@@ -75,10 +91,10 @@ ArtworkDownloadPageWidget::ArtworkDownloadPageWidget(SettingsManager* settings)
     , m_manual{new QRadioButton(tr("Manual save"), this)}
     , m_autosave{new QRadioButton(tr("Autosave"), this)}
     , m_autosavePeriod{new QRadioButton(tr("Autosave after 60 seconds or 1/3 of track duration"), this)}
-    , m_embedded{new QRadioButton(tr("Embed in file"), this)}
-    , m_directory{new QRadioButton(tr("Save to directory"), this)}
-    , m_path{new QLineEdit(this)}
-    , m_filename{new ScriptLineEdit(this)}
+    , m_coverTypes{new QTabWidget(this)}
+    , m_frontWidget{new QWidget(this)}
+    , m_backWidget{new QWidget(this)}
+    , m_artistWidget{new QWidget(this)}
 {
     auto* schemeGroup  = new QGroupBox(tr("Save Scheme"), this);
     auto* schemeLayout = new QGridLayout(schemeGroup);
@@ -88,36 +104,54 @@ ArtworkDownloadPageWidget::ArtworkDownloadPageWidget(SettingsManager* settings)
     schemeLayout->addWidget(m_autosave, row++, 0);
     schemeLayout->addWidget(m_autosavePeriod, row++, 0);
 
-    auto* methodGroup  = new QGroupBox(tr("Save Method"), this);
-    auto* methodLayout = new QGridLayout(methodGroup);
+    m_coverTypes->setDocumentMode(true);
+    m_coverTypes->addTab(m_frontWidget, tr("Front Cover"));
+    m_coverTypes->addTab(m_backWidget, tr("Back Cover"));
+    m_coverTypes->addTab(m_artistWidget, tr("Artist"));
 
-    row = 0;
-    methodLayout->addWidget(m_embedded, row++, 0);
-    methodLayout->addWidget(m_directory, row++, 0);
+    const auto addType = [this, &row](Track::Cover type, QWidget* widget) {
+        auto* methodGroup  = new QGroupBox(tr("Save Method"), widget);
+        auto* methodLayout = new QGridLayout(methodGroup);
 
-    auto* locationGroup  = new QGroupBox(tr("Save Location"), this);
-    auto* locationLayout = new QGridLayout(locationGroup);
+        CoverControls& controls = m_typeControls.emplace(type, CoverControls{widget}).first->second;
 
-    auto* dirLabel      = new QLabel(tr("Directory") + u":", this);
-    auto* filenameLabel = new QLabel(tr("Filename") + u":", this);
+        row = 0;
+        methodLayout->addWidget(controls.embedded, row++, 0);
+        methodLayout->addWidget(controls.directory, row++, 0);
 
-    row = 0;
-    locationLayout->addWidget(dirLabel, row, 0);
-    locationLayout->addWidget(m_path, row++, 1);
-    locationLayout->addWidget(filenameLabel, row, 0);
-    locationLayout->addWidget(m_filename, row++, 1);
+        auto* locationGroup  = new QGroupBox(tr("Save Location"), widget);
+        auto* locationLayout = new QGridLayout(locationGroup);
+
+        auto* dirLabel      = new QLabel(tr("Directory") + u":", widget);
+        auto* filenameLabel = new QLabel(tr("Filename") + u":", widget);
+
+        row = 0;
+        locationLayout->addWidget(dirLabel, row, 0);
+        locationLayout->addWidget(controls.path, row++, 1);
+        locationLayout->addWidget(filenameLabel, row, 0);
+        locationLayout->addWidget(controls.filename, row++, 1);
+
+        auto* typeLayout = new QGridLayout(widget);
+
+        row = 0;
+        typeLayout->addWidget(methodGroup, row++, 0);
+        typeLayout->addWidget(locationGroup, row++, 0);
+
+        auto* browseAction = new QAction(Utils::iconFromTheme(::Fooyin::Constants::Icons::Options), {}, widget);
+        QObject::connect(browseAction, &QAction::triggered, widget, [this, type]() { browseDestination(type); });
+        controls.path->addAction(browseAction, QLineEdit::TrailingPosition);
+    };
+
+    addType(Track::Cover::Front, m_frontWidget);
+    addType(Track::Cover::Back, m_backWidget);
+    addType(Track::Cover::Artist, m_artistWidget);
 
     auto* layout = new QGridLayout(this);
 
     row = 0;
     layout->addWidget(schemeGroup, row++, 0);
-    layout->addWidget(methodGroup, row++, 0);
-    layout->addWidget(locationGroup, row++, 0);
+    layout->addWidget(m_coverTypes, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
-
-    auto* browseAction = new QAction(Utils::iconFromTheme(::Fooyin::Constants::Icons::Options), {}, this);
-    QObject::connect(browseAction, &QAction::triggered, this, &ArtworkDownloadPageWidget::browseDestination);
-    m_path->addAction(browseAction, QLineEdit::TrailingPosition);
 }
 
 void ArtworkDownloadPageWidget::load()
@@ -128,14 +162,15 @@ void ArtworkDownloadPageWidget::load()
     m_autosave->setChecked(saveScheme == ArtworkSaveScheme::Autosave);
     m_autosavePeriod->setChecked(saveScheme == ArtworkSaveScheme::AutosavePeriod);
 
-    const auto saveMethod
+    const auto saveMethods
         = m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>().value<ArtworkSaveMethods>();
-    if(saveMethod.contains(Track::Cover::Front)) {
-        const auto& frontMethod = saveMethod.value(Track::Cover::Front);
-        m_embedded->setChecked(frontMethod.method == ArtworkSaveMethod::Embedded);
-        m_directory->setChecked(frontMethod.method == ArtworkSaveMethod::Directory);
-        m_path->setText(frontMethod.dir);
-        m_filename->setText(frontMethod.filename);
+
+    for(const auto& [type, controls] : m_typeControls) {
+        const auto& coverMethod = saveMethods.value(type);
+        controls.embedded->setChecked(coverMethod.method == ArtworkSaveMethod::Embedded);
+        controls.directory->setChecked(coverMethod.method == ArtworkSaveMethod::Directory);
+        controls.path->setText(coverMethod.dir);
+        controls.filename->setText(coverMethod.filename);
     }
 }
 
@@ -154,15 +189,14 @@ void ArtworkDownloadPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::ArtworkSaveScheme>(static_cast<int>(saveScheme));
 
     ArtworkSaveMethods saveMethods;
-    auto& frontMethod = saveMethods[Track::Cover::Front];
-    if(m_embedded->isChecked()) {
-        frontMethod.method = ArtworkSaveMethod::Embedded;
+
+    for(const auto& [type, controls] : m_typeControls) {
+        auto& coverMethod = saveMethods[type];
+        coverMethod.method
+            = controls.embedded->isChecked() ? ArtworkSaveMethod::Embedded : ArtworkSaveMethod::Directory;
+        coverMethod.dir      = controls.path->text();
+        coverMethod.filename = controls.filename->text();
     }
-    else {
-        frontMethod.method = ArtworkSaveMethod::Directory;
-    }
-    frontMethod.dir      = m_path->text();
-    frontMethod.filename = m_filename->text();
 
     m_settings->set<Settings::Gui::Internal::ArtworkSaveMethods>(QVariant::fromValue(saveMethods));
 }
@@ -177,12 +211,13 @@ void ArtworkDownloadPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::ArtworkMatchThreshold>();
 }
 
-void ArtworkDownloadPageWidget::browseDestination() const
+void ArtworkDownloadPageWidget::browseDestination(Track::Cover type) const
 {
-    const QString path = !m_path->text().isEmpty() ? m_path->text() : QDir::homePath();
+    auto* lineEdit     = m_typeControls.at(type).path;
+    const QString path = !lineEdit->text().isEmpty() ? lineEdit->text() : QDir::homePath();
     const QString dir  = QFileDialog::getExistingDirectory(Utils::getMainWindow(), tr("Select Directory"), path);
     if(!dir.isEmpty()) {
-        m_path->setText(dir);
+        lineEdit->setText(dir);
     }
 }
 

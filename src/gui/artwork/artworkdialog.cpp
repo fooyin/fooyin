@@ -91,6 +91,14 @@ ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManage
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
+    if(auto* okButton = buttonBox->button(QDialogButtonBox::Ok)) {
+        okButton->setDisabled(true);
+        QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                         [okButton](const QItemSelection& selected, const QItemSelection& /*deselected*/) {
+                             okButton->setDisabled(selected.empty());
+                         });
+    }
+
     auto* paramsLayout = new QHBoxLayout();
 
     paramsLayout->addWidget(m_artist, 1);
@@ -130,9 +138,9 @@ void ArtworkDialog::accept()
     if(frontMethod.method == ArtworkSaveMethod::Embedded) {
         TrackCoverData coverData;
         coverData.tracks = m_tracks;
-        coverData.coverData.emplace(Track::Cover::Front, CoverImage{result.mimeType, result.image});
+        coverData.coverData.emplace(Track::Cover::Front, CoverImage{.mimeType = result.mimeType, .data = result.image});
         m_library->writeTrackCovers(coverData);
-        CoverProvider::setOverride(m_tracks.front(), cover, Track::Cover::Front);
+        std::ranges::for_each(m_tracks, &CoverProvider::removeFromCache);
     }
     else {
         const QMimeDatabase mimeDb;
@@ -189,8 +197,8 @@ void ArtworkDialog::searchArtwork()
     }
 
     m_model->clear();
-    // Only support front cover for now
-    m_artworkFinder->findArtwork(Track::Cover::Front, artist, album, title);
+
+    m_artworkFinder->findArtwork(m_type, artist, album, title);
     m_status->setText(tr("Searching…"));
 }
 
