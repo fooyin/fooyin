@@ -43,8 +43,9 @@ constexpr int PREVIOUS_BUTTON_ID = 0;
 constexpr int PLAYPAUSE_BUTTON_ID = 1;
 constexpr int NEXT_BUTTON_ID = 2;
 
-HICON QIcon2HICON(const QIcon& icon) {
-    if (icon.isNull()) {
+HICON QIcon2HICON(const QIcon& icon)
+{
+    if(icon.isNull()) {
         return nullptr;
     }
 
@@ -89,7 +90,7 @@ void ThumbnailToolbarPlugin::initialise(const GuiPluginContext& context)
 
 void ThumbnailToolbarPlugin::shutdown()
 {
-    if (m_nativeEventFilter) {
+    if(m_nativeEventFilter) {
         QGuiApplication::instance()->removeNativeEventFilter(m_nativeEventFilter.get());
         m_nativeEventFilter.reset();
     }
@@ -231,8 +232,7 @@ void ThumbnailToolbarPlugin::cleanupToobar()
 
 void ThumbnailToolbarPlugin::updatePosition()
 {
-    if (m_taskbarList && m_toolbarReady)
-    {
+    if(m_taskbarList && m_toolbarReady) {
         m_taskbarList->SetProgressValue(reinterpret_cast<HWND>(m_windowController->mainWindow()->winId()),
                                     m_playerController->currentPosition(),
                                     m_playerController->currentTrack().duration());
