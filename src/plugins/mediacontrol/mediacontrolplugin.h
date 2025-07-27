@@ -68,5 +68,7 @@ private:
     winrt::Windows::Media::ISystemMediaTransportControls m_smtc{nullptr};
     winrt::event_token m_buttonPressedToken;
 };
+
 } // namespace MediaControl
+
 } // namespace Fooyin

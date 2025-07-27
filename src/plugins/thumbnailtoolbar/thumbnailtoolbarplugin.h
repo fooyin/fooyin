@@ -73,10 +73,10 @@ private:
         ThumbnailToolbarNativeEventFilter(ThumbnailToolbarPlugin* plugin) : m_plugin(plugin) {}
 
         bool nativeEventFilter(const QByteArray& eventType, void* message, [[maybe_unused]] qintptr* result) override {
-            if (eventType == "windows_generic_MSG") {
+            if(eventType == "windows_generic_MSG") {
                 MSG* msg = static_cast<MSG*>(message);
-                if (msg && msg->message == WM_COMMAND) {
-                    if (HIWORD(msg->wParam) == THBN_CLICKED) {
+                if(msg && msg->message == WM_COMMAND) {
+                    if(HIWORD(msg->wParam) == THBN_CLICKED) {
                         m_plugin->handleThumbnailClick(LOWORD(msg->wParam));
                         return true;
                     }
@@ -92,5 +92,7 @@ private:
     std::unique_ptr<ThumbnailToolbarNativeEventFilter> m_nativeEventFilter;
     bool m_toolbarReady = false;
 };
+
 } // namespace ThumbnailToolbar
+
 } // namespace Fooyin
