@@ -433,7 +433,7 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
 
     p->m_settings->subscribe<Settings::Gui::Internal::LibTreeIconSize>(this, [this](const auto& size) {
         p->m_iconSize = CoverProvider::findThumbnailSize(size.toSize());
-        emit dataChanged({}, {}, {Qt::DecorationRole});
+        invalidateData();
     });
 }
 
@@ -448,7 +448,7 @@ void LibraryTreeModel::resetPalette()
 {
     p->m_playingColour = QApplication::palette().highlight().color();
     p->m_playingColour.setAlpha(90);
-    emit dataChanged({}, {}, {Qt::BackgroundRole});
+    invalidateData();
 }
 
 void LibraryTreeModel::setRowHeight(int height)
@@ -778,6 +778,12 @@ QModelIndex LibraryTreeModel::indexForKey(const Md5Hash& key)
     }
 
     return {};
+}
+
+void LibraryTreeModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
 }
 } // namespace Fooyin
 

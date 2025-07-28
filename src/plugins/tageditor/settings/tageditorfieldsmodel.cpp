@@ -93,8 +93,6 @@ void TagEditorFieldsModel::processQueue()
                 if(addedField.isValid()) {
                     node->changeField(addedField);
                     node->setStatus(TagEditorFieldItem::None);
-
-                    emit dataChanged({}, {});
                 }
                 else {
                     qCWarning(TAGEDITOR_MODEL) << "Field could not be added:" << field.name;
@@ -117,7 +115,6 @@ void TagEditorFieldsModel::processQueue()
                 if(const auto existingItem = m_fieldRegistry->itemById(field.id)) {
                     if(field == existingItem.value()) {
                         node->setStatus(TagEditorFieldItem::None);
-                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                         break;
                     }
                     if(existingItem->scriptField != field.scriptField && hasField(field.scriptField, field.id)) {
@@ -131,8 +128,6 @@ void TagEditorFieldsModel::processQueue()
                     if(const auto item = m_fieldRegistry->itemById(field.id)) {
                         node->changeField(item.value());
                         node->setStatus(TagEditorFieldItem::None);
-
-                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                     }
                 }
                 else {
@@ -148,6 +143,14 @@ void TagEditorFieldsModel::processQueue()
     for(const auto& index : rowsToRemove) {
         std::erase_if(m_nodes, [index](const auto& node) { return node->field().index == index; });
     }
+
+    invalidateData();
+}
+
+void TagEditorFieldsModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
 }
 
 Qt::ItemFlags TagEditorFieldsModel::flags(const QModelIndex& index) const
@@ -305,7 +308,8 @@ bool TagEditorFieldsModel::setData(const QModelIndex& index, const QVariant& val
     }
 
     item->changeField(field);
-    emit dataChanged({}, {}, {Qt::FontRole, Qt::DisplayRole, Qt::CheckStateRole});
+    emit dataChanged(index, index.siblingAtColumn(columnCount({}) - 1),
+                     {Qt::FontRole, Qt::DisplayRole, Qt::CheckStateRole});
 
     return true;
 }
@@ -350,10 +354,12 @@ bool TagEditorFieldsModel::removeRows(int row, int count, const QModelIndex& /*p
             }
             else if(!item->field().isDefault) {
                 item->setStatus(TagEditorFieldItem::Removed);
-                emit dataChanged({}, {}, {Qt::FontRole});
             }
         }
     }
+
+    invalidateData();
+
     return true;
 }
 

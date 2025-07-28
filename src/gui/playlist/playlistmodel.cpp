@@ -507,30 +507,30 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
 
     m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePadding>(this, [this](int padding) {
         m_pixmapPadding = padding;
-        emit dataChanged({}, {}, {PlaylistItem::ImagePadding});
+        invalidateData();
     });
     m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePaddingTop>(this, [this](int padding) {
         m_pixmapPaddingTop = padding;
-        emit dataChanged({}, {}, {PlaylistItem::ImagePaddingTop});
+        invalidateData();
     });
     m_settings->subscribe<Settings::Gui::StarRatingSize>(this, [this](int size) {
         m_starRatingSize = size;
-        emit dataChanged({}, {}, {Qt::DisplayRole});
+        invalidateData();
     });
 
     auto updateColours = [this]() {
         m_playingColour = QApplication::palette().highlight().color();
         m_playingColour.setAlpha(90);
-        emit dataChanged({}, {}, {Qt::BackgroundRole});
+        invalidateData();
     };
     m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
     m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
 
-    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { emit dataChanged({}, {}, {Qt::DecorationRole}); });
+    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { invalidateData(); });
 
     QObject::connect(&m_populator, &PlaylistPopulator::finished, this, [this]() {
         m_playlistLoaded = true;
-        emit dataChanged({}, {});
+        invalidateData();
         emit playlistLoaded();
     });
 
@@ -608,7 +608,7 @@ bool PlaylistModel::setHeaderData(int section, Qt::Orientation /*orientation*/, 
 
     changeColumnAlignment(section, value.value<Qt::Alignment>());
 
-    emit dataChanged({}, {}, {Qt::TextAlignmentRole});
+    invalidateData();
 
     return true;
 }
@@ -1190,8 +1190,17 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 {
     m_playingIndex = indexAtPlaylistIndex(track.indexInPlaylist, true);
 
-    if(std::exchange(m_playingTrack, track) != track) {
-        emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    const auto oldTrack = std::exchange(m_playingTrack, track);
+
+    if(oldTrack.isValid() && oldTrack != track) {
+        const auto oldIndex = indexAtPlaylistIndex(oldTrack.indexInPlaylist, true);
+        emit dataChanged(oldIndex, rightIndex(oldIndex), {Qt::DecorationRole, Qt::BackgroundRole});
+    }
+
+    if(m_playingTrack.isValid()) {
+        if(const auto bottomRight = rightIndex(m_playingIndex); bottomRight.isValid()) {
+            emit dataChanged(m_playingIndex, bottomRight, {Qt::DecorationRole, Qt::BackgroundRole});
+        }
     }
 
     if(m_stopAtIndex.isValid()
@@ -1205,9 +1214,25 @@ void PlaylistModel::playStateChanged(Player::PlayState state)
     if(state == Player::PlayState::Stopped) {
         m_stopAtIndex = QPersistentModelIndex{};
     }
+
     if(std::exchange(m_currentPlayState, state) != state) {
-        emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+        if(m_playingIndex.isValid()) {
+            if(const auto bottomRight = rightIndex(m_playingIndex); bottomRight.isValid()) {
+                emit dataChanged(m_playingIndex, bottomRight, {Qt::DecorationRole, Qt::BackgroundRole});
+            }
+        }
     }
+}
+
+QModelIndex PlaylistModel::rightIndex(const QModelIndex& index) const
+{
+    return index.sibling(index.row(), columnCount({}) - 1);
+}
+
+void PlaylistModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
 }
 
 void PlaylistModel::populateModel(PendingData data)

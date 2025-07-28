@@ -88,8 +88,6 @@ void FiltersColumnModel::processQueue()
                 if(addedField.isValid()) {
                     node.changeColumn(addedField);
                     node.setStatus(ColumnItem::None);
-
-                    emit dataChanged({}, {});
                 }
                 else {
                     qCWarning(FILTERS) << "Column could not be added:" << column.name;
@@ -113,8 +111,6 @@ void FiltersColumnModel::processQueue()
                     if(const auto item = m_columnsRegistry->itemById(column.id)) {
                         node.changeColumn(item.value());
                         node.setStatus(ColumnItem::None);
-
-                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                     }
                 }
                 else {
@@ -130,6 +126,14 @@ void FiltersColumnModel::processQueue()
     for(const auto& index : columnsToRemove) {
         m_nodes.erase(index);
     }
+
+    invalidateData();
+}
+
+void FiltersColumnModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
 }
 
 Qt::ItemFlags FiltersColumnModel::flags(const QModelIndex& index) const
@@ -289,10 +293,12 @@ bool FiltersColumnModel::removeRows(int row, int count, const QModelIndex& /*par
             }
             else if(!item->column().isDefault) {
                 item->setStatus(ColumnItem::Removed);
-                emit dataChanged({}, {}, {Qt::FontRole});
             }
         }
     }
+
+    invalidateData();
+
     return true;
 }
 

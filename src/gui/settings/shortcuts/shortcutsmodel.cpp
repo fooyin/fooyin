@@ -159,7 +159,8 @@ void ShortcutsModel::shortcutChanged(Command* command, const ShortcutList& short
         item->updateShortcuts(shortcuts);
         item->setStatus(ShortcutItem::Changed);
 
-        emit dataChanged({}, {});
+        const auto index = indexOfItem(item);
+        emit dataChanged(index, index.siblingAtColumn(columnCount({}) - 1));
     }
 }
 
@@ -186,7 +187,7 @@ void ShortcutsModel::shortcutDeleted(Command* command, const QKeySequence& short
     item->updateShortcuts(currentShortcuts);
     item->setStatus(ShortcutItem::Changed);
 
-    emit dataChanged({}, {});
+    invalidateData();
 }
 
 void ShortcutsModel::processQueue()
@@ -197,7 +198,6 @@ void ShortcutsModel::processQueue()
         switch(shortcut.status()) {
             case(ShortcutItem::Changed): {
                 command->setShortcut(shortcut.shortcuts());
-                emit dataChanged({}, {});
                 break;
             }
             case(ShortcutItem::Added):
@@ -207,6 +207,8 @@ void ShortcutsModel::processQueue()
         }
         shortcut.setStatus(ShortcutItem::None);
     }
+
+    invalidateData();
 }
 
 QVariant ShortcutsModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -279,5 +281,11 @@ QVariant ShortcutsModel::data(const QModelIndex& index, int role) const
 int ShortcutsModel::columnCount(const QModelIndex& /*parent*/) const
 {
     return 3;
+}
+
+void ShortcutsModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
 }
 } // namespace Fooyin

@@ -37,6 +37,8 @@ public:
     explicit QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
                               QObject* parent = nullptr);
 
+    void invalidateData();
+
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

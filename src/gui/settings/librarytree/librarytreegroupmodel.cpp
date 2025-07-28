@@ -91,8 +91,6 @@ void LibraryTreeGroupModel::processQueue()
                 if(addedField.isValid()) {
                     node.changeGroup(addedField);
                     node.setStatus(LibraryTreeGroupItem::None);
-
-                    emit dataChanged({}, {});
                 }
                 else {
                     qCWarning(LIBTREE_MOD) << "Group could not be added:" << group.name;
@@ -116,8 +114,6 @@ void LibraryTreeGroupModel::processQueue()
                     if(const auto updatedGroup = m_groupsRegistry->itemById(group.id)) {
                         node.changeGroup(updatedGroup.value());
                         node.setStatus(LibraryTreeGroupItem::None);
-
-                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                     }
                 }
                 else {
@@ -129,9 +125,18 @@ void LibraryTreeGroupModel::processQueue()
                 break;
         }
     }
+
     for(const auto& item : groupsToRemove) {
         m_nodes.erase(item.group().index);
     }
+
+    invalidateData();
+}
+
+void LibraryTreeGroupModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
 }
 
 Qt::ItemFlags LibraryTreeGroupModel::flags(const QModelIndex& index) const
@@ -246,7 +251,7 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
     }
 
     item->changeGroup(group);
-    emit dataChanged({}, {}, {Qt::FontRole, Qt::DisplayRole});
+    emit dataChanged(index, index.siblingAtColumn(columnCount({}) - 1), {Qt::FontRole, Qt::DisplayRole});
 
     return true;
 }
@@ -291,10 +296,12 @@ bool LibraryTreeGroupModel::removeRows(int row, int count, const QModelIndex& /*
             }
             else if(!item->group().isDefault) {
                 item->setStatus(LibraryTreeGroupItem::Removed);
-                emit dataChanged({}, {}, {Qt::FontRole});
             }
         }
     }
+
+    invalidateData();
+
     return true;
 }
 

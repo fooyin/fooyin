@@ -89,8 +89,6 @@ void SortingModel::processQueue()
                 if(addedSort.isValid()) {
                     node.changeSort(addedSort);
                     node.setStatus(SortingItem::None);
-
-                    emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
                     qCWarning(SORT_MOD) << "Sorting could not be added:" << sortScript.name;
@@ -114,8 +112,6 @@ void SortingModel::processQueue()
                     if(const auto changedItem = m_sortRegistry->itemById(sortScript.id)) {
                         node.changeSort(changedItem.value());
                         node.setStatus(SortingItem::None);
-
-                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                     }
                 }
                 else {
@@ -127,9 +123,18 @@ void SortingModel::processQueue()
                 break;
         }
     }
+
     for(const auto& item : sortScriptsToRemove) {
         m_nodes.erase(item.sortScript().index);
     }
+
+    invalidateData();
+}
+
+void SortingModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
 }
 
 Qt::ItemFlags SortingModel::flags(const QModelIndex& index) const
@@ -244,7 +249,7 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
     }
 
     item->changeSort(sortScript);
-    emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
+    emit dataChanged(index, index.siblingAtColumn(columnCount({}) - 1), {Qt::DisplayRole, Qt::FontRole});
 
     return true;
 }
@@ -289,10 +294,12 @@ bool SortingModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
             }
             else if(!item->sortScript().isDefault) {
                 item->setStatus(SortingItem::Removed);
-                emit dataChanged({}, {}, {Qt::FontRole});
             }
         }
     }
+
+    invalidateData();
+
     return true;
 }
 

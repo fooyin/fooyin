@@ -154,6 +154,9 @@ public slots:
     void playStateChanged(Player::PlayState state);
 
 private:
+    QModelIndex rightIndex(const QModelIndex& index) const;
+    void invalidateData();
+
     void populateModel(PendingData data);
     void populateTrackGroup(PendingData data);
     void updateModel(ItemKeyMap data);

@@ -67,7 +67,7 @@ void DirProxyModel::resetPalette()
 {
     m_playingColour = QApplication::palette().highlight().color();
     m_playingColour.setAlpha(90);
-    emit dataChanged({}, {}, {Qt::BackgroundRole});
+    invalidateData();
 }
 
 void DirProxyModel::setSourceModel(QAbstractItemModel* model)
@@ -89,6 +89,12 @@ void DirProxyModel::setSourceModel(QAbstractItemModel* model)
     QObject::connect(model, &QAbstractItemModel::rowsRemoved, this, &DirProxyModel::sourceRowsRemoved);
 
     QSortFilterProxyModel::setSourceModel(model);
+}
+
+void DirProxyModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
 }
 
 Qt::ItemFlags DirProxyModel::flags(const QModelIndex& index) const
@@ -298,20 +304,19 @@ void DirProxyModel::setFlat(bool isFlat)
 void DirProxyModel::setIconsEnabled(bool enabled)
 {
     m_showIcons = enabled;
-    emit dataChanged({}, {}, {Qt::DecorationRole});
+    invalidateData();
 }
 
 void DirProxyModel::setPlayState(Player::PlayState state)
 {
     m_playingState = state;
-
-    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    invalidateData();
 }
 
 void DirProxyModel::setPlayingPath(const QString& path)
 {
     m_playingTrackPath = path;
-    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    invalidateData();
 }
 
 void DirProxyModel::populate()
