@@ -54,7 +54,7 @@ LibraryModel::LibraryModel(LibraryManager* libraryManager, QObject* parent)
     QObject::connect(m_libraryManager, &LibraryManager::libraryStatusChanged, this, [this](const LibraryInfo& info) {
         if(m_nodes.contains(info.path)) {
             m_nodes.at(info.path).changeInfo(info);
-            void invalidateData();
+            invalidateData();
         }
     });
 }
@@ -189,13 +189,7 @@ void LibraryModel::processQueue()
         m_nodes.erase(path);
     }
 
-    void invalidateData();
-}
-
-void LibraryModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
+    invalidateData();
 }
 
 Qt::ItemFlags LibraryModel::flags(const QModelIndex& index) const

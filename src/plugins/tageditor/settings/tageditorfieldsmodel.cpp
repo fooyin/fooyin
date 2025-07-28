@@ -147,12 +147,6 @@ void TagEditorFieldsModel::processQueue()
     invalidateData();
 }
 
-void TagEditorFieldsModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
-
 Qt::ItemFlags TagEditorFieldsModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid()) {

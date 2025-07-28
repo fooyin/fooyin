@@ -86,8 +86,6 @@ public:
 
     [[nodiscard]] QModelIndex indexForKey(const Md5Hash& key);
 
-    void invalidateData();
-
 signals:
     void modelLoaded();
     void modelUpdated();

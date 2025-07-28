@@ -95,12 +95,6 @@ QueueViewerModel::QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, Set
     });
 }
 
-void QueueViewerModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
-
 Qt::ItemFlags QueueViewerModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);

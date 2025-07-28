@@ -779,12 +779,6 @@ QModelIndex LibraryTreeModel::indexForKey(const Md5Hash& key)
 
     return {};
 }
-
-void LibraryTreeModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
 } // namespace Fooyin
 
 #include "moc_librarytreemodel.cpp"

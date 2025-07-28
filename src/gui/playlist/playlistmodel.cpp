@@ -1229,12 +1229,6 @@ QModelIndex PlaylistModel::rightIndex(const QModelIndex& index) const
     return index.sibling(index.row(), columnCount({}) - 1);
 }
 
-void PlaylistModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
-
 void PlaylistModel::populateModel(PendingData data)
 {
     if(m_currentPlaylist && m_currentPlaylist->id() != data.playlistId) {

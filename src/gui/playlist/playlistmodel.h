@@ -155,7 +155,6 @@ public slots:
 
 private:
     QModelIndex rightIndex(const QModelIndex& index) const;
-    void invalidateData();
 
     void populateModel(PendingData data);
     void populateTrackGroup(PendingData data);

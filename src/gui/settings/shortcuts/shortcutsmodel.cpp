@@ -282,10 +282,4 @@ int ShortcutsModel::columnCount(const QModelIndex& /*parent*/) const
 {
     return 3;
 }
-
-void ShortcutsModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
 } // namespace Fooyin

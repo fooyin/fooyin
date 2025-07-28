@@ -130,12 +130,6 @@ void FiltersColumnModel::processQueue()
     invalidateData();
 }
 
-void FiltersColumnModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
-
 Qt::ItemFlags FiltersColumnModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid()) {

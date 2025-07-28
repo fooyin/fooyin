@@ -134,12 +134,6 @@ void PlaylistColumnModel::processQueue()
     invalidateData();
 }
 
-void PlaylistColumnModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
-
 Qt::ItemFlags PlaylistColumnModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid()) {

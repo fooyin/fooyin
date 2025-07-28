@@ -131,12 +131,6 @@ void SortingModel::processQueue()
     invalidateData();
 }
 
-void SortingModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
-
 Qt::ItemFlags SortingModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid()) {

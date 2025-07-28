@@ -385,12 +385,6 @@ void TagEditorModel::applyChanges()
     invalidateData();
 }
 
-void TagEditorModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
-
 QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {

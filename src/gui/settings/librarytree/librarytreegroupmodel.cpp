@@ -133,12 +133,6 @@ void LibraryTreeGroupModel::processQueue()
     invalidateData();
 }
 
-void LibraryTreeGroupModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
-}
-
 Qt::ItemFlags LibraryTreeGroupModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid()) {

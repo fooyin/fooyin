@@ -108,6 +108,12 @@ protected:
         m_root = std::make_unique<Item>();
     }
 
+    void invalidateData()
+    {
+        beginResetModel();
+        endResetModel();
+    }
+
 private:
     std::unique_ptr<Item> m_root;
 };

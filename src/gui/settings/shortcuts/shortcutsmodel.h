@@ -75,8 +75,6 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
-    void invalidateData();
-
 private:
     std::map<Id, ShortcutItem> m_nodes;
 };

@@ -43,6 +43,9 @@ public:
     virtual void moveRowsUp(const QModelIndexList& indexes);
     virtual void moveRowsDown(const QModelIndexList& indexes);
 
+protected:
+    void invalidateData();
+
 signals:
     void pendingRowCancelled();
 };
