@@ -25,6 +25,7 @@ constexpr auto DarkIconTheme  = "dark";
 
 namespace Icons {
 constexpr auto Fooyin       = "fooyin";
+constexpr auto FooyinWindow = "org.fooyin.fooyin";
 constexpr auto NoCover      = "nocover";
 constexpr auto Play         = "media-playback-start";
 constexpr auto Pause        = "media-playback-pause";

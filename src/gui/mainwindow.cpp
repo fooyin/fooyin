@@ -73,7 +73,7 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
 
     resetTitle();
 
-    setWindowIcon(Utils::iconFromTheme(Constants::Icons::Fooyin));
+    setWindowIcon(Utils::iconFromTheme(Constants::Icons::FooyinWindow));
 
     if(windowHandle()) {
         QObject::connect(windowHandle(), &QWindow::screenChanged, this,
