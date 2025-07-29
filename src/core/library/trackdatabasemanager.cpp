@@ -34,20 +34,6 @@
 
 Q_LOGGING_CATEGORY(TRK_DBMAN, "fy.trackdbmanager")
 
-namespace {
-Fooyin::Track extractTrackById(Fooyin::TrackList& tracks, int id)
-{
-    auto trackIt = std::ranges::find(tracks, id, &Fooyin::Track::id);
-    if(trackIt != tracks.end()) {
-        auto foundTrack = *trackIt;
-        tracks.erase(trackIt);
-        return foundTrack;
-    }
-
-    return {};
-}
-} // namespace
-
 namespace Fooyin {
 TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
                                            SettingsManager* settings, QObject* parent)
@@ -56,7 +42,6 @@ TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shar
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
 {
-    m_settings->subscribe<Settings::Core::ActiveTrackId>(this, &TrackDatabaseManager::writePending);
 }
 
 void TrackDatabaseManager::initialiseThread()
@@ -98,11 +83,6 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
         if(m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
             options |= AudioReader::Playcount;
         }
-
-        const Track activeTrack = extractTrackById(tracksToUpdate, m_settings->value<Settings::Core::ActiveTrackId>());
-        if(activeTrack.isValid() && m_audioLoader->canWriteMetadata(activeTrack)) {
-            m_pendingUpdate = activeTrack;
-        }
     }
 
     for(const Track& track : std::as_const(tracksToUpdate)) {
@@ -126,10 +106,6 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
         if(m_trackDatabase.updateTrack(updatedTrack) && m_trackDatabase.updateTrackStats(updatedTrack)) {
             tracksUpdated.push_back(updatedTrack);
         }
-    }
-
-    if(m_pendingUpdate.isValid()) {
-        tracksUpdated.push_back(m_pendingUpdate);
     }
 
     if(!tracksUpdated.empty()) {
@@ -156,13 +132,6 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
 
     const bool writeToFile = options & AudioReader::Rating || options & AudioReader::Playcount;
 
-    if(writeToFile) {
-        const Track activeTrack = extractTrackById(tracksToUpdate, m_settings->value<Settings::Core::ActiveTrackId>());
-        if(activeTrack.isValid() && m_audioLoader->canWriteMetadata(activeTrack)) {
-            m_pendingStatUpdate = activeTrack;
-        }
-    }
-
     for(const Track& track : std::as_const(tracksToUpdate)) {
         if(!mayRun()) {
             break;
@@ -183,10 +152,6 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
         }
     }
 
-    if(m_pendingStatUpdate.isValid()) {
-        tracksUpdated.push_back(m_pendingStatUpdate);
-    }
-
     if(!tracksUpdated.empty()) {
         emit updatedTracksStats(tracksUpdated);
     }
@@ -200,11 +165,6 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
 
     TrackList tracksToUpdate{tracks.tracks};
     TrackList tracksUpdated;
-
-    const Track activeTrack = extractTrackById(tracksToUpdate, m_settings->value<Settings::Core::ActiveTrackId>());
-    if(activeTrack.isValid() && m_audioLoader->canWriteMetadata(activeTrack)) {
-        m_pendingCoverUpdate = {{activeTrack}, tracks.coverData};
-    }
 
     for(const auto& track : std::as_const(tracksToUpdate)) {
         if(!mayRun()) {
@@ -229,10 +189,6 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
         }
     }
 
-    if(!m_pendingCoverUpdate.tracks.empty()) {
-        tracksUpdated.push_back(m_pendingCoverUpdate.tracks.front());
-    }
-
     if(!tracksUpdated.empty()) {
         emit updatedTracks(tracksUpdated);
     }
@@ -248,23 +204,6 @@ void TrackDatabaseManager::cleanupTracks()
     m_trackDatabase.cleanupTracks();
 
     setState(Idle);
-}
-
-void TrackDatabaseManager::writePending()
-{
-    if(m_pendingUpdate.isValid()) {
-        updateTracks({m_pendingUpdate}, true);
-        m_pendingUpdate     = {};
-        m_pendingStatUpdate = {};
-    }
-    else if(m_pendingStatUpdate.isValid()) {
-        updateTrackStats({m_pendingStatUpdate});
-        m_pendingStatUpdate = {};
-    }
-    if(!m_pendingCoverUpdate.tracks.empty()) {
-        writeCovers({m_pendingCoverUpdate});
-        m_pendingCoverUpdate = {};
-    }
 }
 } // namespace Fooyin
 

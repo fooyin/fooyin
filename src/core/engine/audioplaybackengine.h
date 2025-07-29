@@ -30,8 +30,11 @@
 #include <QBasicTimer>
 #include <QFile>
 
+class QFileSystemWatcher;
+
 namespace Fooyin {
 class SettingsManager;
+class SignalThrottler;
 
 class AudioPlaybackEngine : public AudioEngine
 {
@@ -69,6 +72,8 @@ private:
 
     void handleOutputState(AudioOutput::State outState);
     void reloadOutput();
+
+    void currentFileChanged();
 
     bool checkOpenSource();
     void setupDuration();
@@ -130,5 +135,8 @@ private:
 
     FadingIntervals m_fadeIntervals;
     std::optional<uint64_t> m_pendingSeek;
+
+    QFileSystemWatcher* m_trackWatcher;
+    SignalThrottler* m_watcherThrottler;
 };
 } // namespace Fooyin
