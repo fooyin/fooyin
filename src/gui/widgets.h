@@ -52,6 +52,7 @@ public:
     void registerFontEntries() const;
 
     void showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick);
+    void removeArtwork(const TrackList& tracks, Track::Cover type);
 
 private:
     FyWidget* createDirBrowser();

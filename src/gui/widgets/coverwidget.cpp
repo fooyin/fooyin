@@ -62,8 +62,11 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     , m_coverType{Track::Cover::Front}
     , m_coverAlignment{Qt::AlignCenter}
     , m_keepAspectRatio{true}
+    , m_noCover{m_coverProvider->placeholderCover()}
 {
     setObjectName(CoverWidget::name());
+
+    m_coverProvider->setUsePlaceholder(false);
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::reloadCover);
     QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this, &CoverWidget::reloadCover);
@@ -77,9 +80,39 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     m_settings->subscribe<Settings::Gui::IconTheme>(this, &CoverWidget::reloadCover);
     m_settings->subscribe<Settings::Gui::Theme>(this, &CoverWidget::reloadCover);
     m_settings->subscribe<Settings::Gui::Style>(this, &CoverWidget::reloadCover);
-    m_settings->subscribe<Settings::Gui::RefreshCovers>(this, &CoverWidget::reloadCover);
 
     reloadCover();
+}
+
+void CoverWidget::rescaleCover()
+{
+    const auto aspectRatio = m_keepAspectRatio ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
+    const double dpr       = devicePixelRatioF();
+    const QSize scaledSize = size() * dpr;
+
+    const QPixmap& cover = m_cover.isNull() ? m_noCover : m_cover;
+
+    m_scaledCover = cover.scaled(scaledSize, aspectRatio, Qt::SmoothTransformation);
+    m_scaledCover.setDevicePixelRatio(dpr);
+
+    update();
+}
+
+void CoverWidget::reloadCover()
+{
+    m_track = {};
+
+    if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasTracks()) {
+        m_track = m_trackSelection->selectedTrack();
+    }
+    else {
+        m_track = m_playerController->currentTrack();
+    }
+
+    m_cover = m_coverProvider->trackCover(m_track, m_coverType);
+    // Delay showing cover so we don't display the placeholder if still loading
+    // TODO: Implement fading between cover changes
+    QTimer::singleShot(200, this, &CoverWidget::rescaleCover);
 }
 
 QString CoverWidget::name() const
@@ -208,24 +241,34 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
         auto* search      = new QAction(tr("Search for artwork…"), menu);
         auto* quickSearch = new QAction(tr("Quicksearch for artwork"), menu);
+        auto* remove      = new QAction(tr("Remove artwork"), menu);
 
         search->setEnabled(canWriteCover());
         quickSearch->setEnabled(canWriteCover());
+        remove->setEnabled(canWriteCover());
 
         if(m_coverType == Track::Cover::Artist) {
             // Only support front and back cover for now
             search->setDisabled(true);
             quickSearch->setDisabled(true);
+            remove->setDisabled(true);
+        }
+
+        if(m_cover.isNull()) {
+            remove->setDisabled(true);
         }
 
         QObject::connect(search, &QAction::triggered, this,
                          [this]() { emit requestArtworkSearch({m_track}, m_coverType, false); });
         QObject::connect(quickSearch, &QAction::triggered, this,
                          [this]() { emit requestArtworkSearch({m_track}, m_coverType, true); });
+        QObject::connect(remove, &QAction::triggered, this,
+                         [this]() { emit requestArtworkRemoval({m_track}, m_coverType); });
 
         menu->addSeparator();
         menu->addAction(search);
-        menu->addAction(quickSearch);
+        // menu->addAction(quickSearch);
+        menu->addAction(remove);
     }
 
     menu->popup(event->globalPos());
@@ -244,35 +287,6 @@ void CoverWidget::paintEvent(QPaintEvent* /*event*/)
 {
     QStylePainter painter{this};
     painter.drawItemPixmap(contentsRect(), static_cast<int>(Qt::AlignVCenter | m_coverAlignment), m_scaledCover);
-}
-
-void CoverWidget::rescaleCover()
-{
-    const auto aspectRatio = m_keepAspectRatio ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
-    const double dpr       = devicePixelRatioF();
-    const QSize scaledSize = size() * dpr;
-
-    m_scaledCover = m_cover.scaled(scaledSize, aspectRatio, Qt::SmoothTransformation);
-    m_scaledCover.setDevicePixelRatio(dpr);
-
-    update();
-}
-
-void CoverWidget::reloadCover()
-{
-    m_track = {};
-
-    if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasTracks()) {
-        m_track = m_trackSelection->selectedTrack();
-    }
-    else {
-        m_track = m_playerController->currentTrack();
-    }
-
-    m_cover = m_coverProvider->trackCover(m_track, m_coverType);
-    // Delay showing cover so we don't display the placeholder if still loading
-    // TODO: Implement fading between cover changes
-    QTimer::singleShot(200, this, &CoverWidget::rescaleCover);
 }
 } // namespace Fooyin
 

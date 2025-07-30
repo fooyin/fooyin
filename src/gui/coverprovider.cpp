@@ -432,6 +432,11 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, const QSize& size
     return trackCoverThumbnail(track, findThumbnailSize(size), type);
 }
 
+QPixmap CoverProvider::placeholderCover() const
+{
+    return p->loadNoCover();
+}
+
 CoverProvider::ThumbnailSize CoverProvider::findThumbnailSize(const QSize& size)
 {
     const int maxSize = std::max(size.width(), size.height());

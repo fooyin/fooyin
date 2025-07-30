@@ -113,6 +113,7 @@ public:
     QAction* m_openFolder;
     QAction* m_searchArtwork;
     QAction* m_searchArtworkQuick;
+    QAction* m_removeArtwork;
     QAction* m_openProperties;
 };
 
@@ -140,6 +141,7 @@ TrackSelectionControllerPrivate::TrackSelectionControllerPrivate(TrackSelectionC
     , m_openFolder{new QAction(tr("Open containing folder"), m_tracksMenu)}
     , m_searchArtwork{new QAction(tr("Search for artwork…"), m_tracksMenu)}
     , m_searchArtworkQuick{new QAction(tr("Quicksearch for artwork"), m_tracksMenu)}
+    , m_removeArtwork{new QAction(tr("Remove all artwork"), m_tracksMenu)}
     , m_openProperties{new QAction(tr("Properties"), m_tracksMenu)}
 {
     setupMenu();
@@ -269,7 +271,17 @@ void TrackSelectionControllerPrivate::setupMenu()
             emit m_self->requestArtworkSearch(m_self->selectedTracks(), true);
         }
     });
-    artworkMenu->addAction(searchArtworkQuickCmd);
+    // artworkMenu->addAction(searchArtworkQuickCmd);
+
+    m_removeArtwork->setStatusTip(tr("Remove all artwork associated with the selected tracks (embedded, directory)"));
+    auto* removeArtworkCmd = m_actionManager->registerAction(m_removeArtwork, Constants::Actions::RemoveArtwork);
+    removeArtworkCmd->setCategories(tracksCategory);
+    QObject::connect(m_removeArtwork, &QAction::triggered, m_tracksMenu, [this]() {
+        if(hasTracks()) {
+            emit m_self->requestArtworkRemoval(m_self->selectedTracks());
+        }
+    });
+    artworkMenu->addAction(removeArtworkCmd);
 
     m_tracksMenu->addSeparator(Actions::Groups::Three);
 
