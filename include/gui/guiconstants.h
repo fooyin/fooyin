@@ -181,6 +181,7 @@ constexpr auto RemoveFromQueue    = "Tracks.RemoveFromQueue";
 constexpr auto OpenFolder         = "Tracks.OpenFolder";
 constexpr auto SearchArtwork      = "Tracks.SearchArtwork";
 constexpr auto SearchArtworkQuick = "Tracks.SearchArtworkQuick";
+constexpr auto RemoveArtwork      = "Tracks.RemoveArtwork";
 constexpr auto OpenProperties     = "Tracks.OpenProperties";
 } // namespace Actions
 

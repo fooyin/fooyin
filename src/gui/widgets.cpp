@@ -196,7 +196,10 @@ void Widgets::registerWidgets()
         [this]() {
             auto* coverWidget = new CoverWidget(m_core->playerController(), m_gui->trackSelection(),
                                                 m_core->audioLoader(), m_settings, m_window);
+            QObject::connect(m_core->library(), &MusicLibrary::tracksMetadataChanged, coverWidget,
+                             &CoverWidget::reloadCover);
             QObject::connect(coverWidget, &CoverWidget::requestArtworkSearch, this, &Widgets::showArtworkDialog);
+            QObject::connect(coverWidget, &CoverWidget::requestArtworkRemoval, this, &Widgets::removeArtwork);
             return coverWidget;
         },
         tr("Artwork Panel"));
@@ -297,6 +300,11 @@ void Widgets::registerFontEntries() const
 void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick)
 {
     m_gui->searchForArtwork(tracks, type, quick);
+}
+
+void Widgets::removeArtwork(const TrackList& tracks, Track::Cover type)
+{
+    m_gui->removeArtwork(tracks, {type});
 }
 
 FyWidget* Widgets::createDirBrowser()

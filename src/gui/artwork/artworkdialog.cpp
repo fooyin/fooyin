@@ -140,7 +140,9 @@ void ArtworkDialog::accept()
         coverData.tracks = m_tracks;
         coverData.coverData.emplace(Track::Cover::Front, CoverImage{.mimeType = result.mimeType, .data = result.image});
         m_library->writeTrackCovers(coverData);
-        std::ranges::for_each(m_tracks, &CoverProvider::removeFromCache);
+        QObject::connect(
+            m_library, &MusicLibrary::tracksMetadataChanged, this,
+            [this]() { std::ranges::for_each(m_tracks, &CoverProvider::removeFromCache); }, Qt::SingleShotConnection);
     }
     else {
         const QMimeDatabase mimeDb;
@@ -153,11 +155,9 @@ void ArtworkDialog::accept()
         QFile file{cleanPath};
         if(file.open(QIODevice::WriteOnly)) {
             cover.save(&file, nullptr, -1);
+            std::ranges::for_each(m_tracks, CoverProvider::removeFromCache);
         }
     }
-
-    std::ranges::for_each(m_tracks, CoverProvider::removeFromCache);
-    m_settings->set<Settings::Gui::RefreshCovers>(!m_settings->value<Settings::Gui::RefreshCovers>());
 
     QDialog::accept();
 }
