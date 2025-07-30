@@ -299,6 +299,8 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(
         &m_selectionController, &TrackSelectionController::requestArtworkSearch, m_self,
         [this](const TrackList& tracks, bool quick) { m_self->searchForArtwork(tracks, Track::Cover::Front, quick); });
+    QObject::connect(&m_selectionController, &TrackSelectionController::requestArtworkRemoval, m_self,
+                     [this](const TrackList& tracks) { m_self->removeAllArtwork(tracks); });
     QObject::connect(m_fileMenu, &FileMenu::requestNewPlaylist, m_self, [this]() { createNewPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestNewAutoPlaylist, m_self, [this]() { createNewAutoPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestExit, m_self, [this]() { close(); });
@@ -1185,7 +1187,10 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                 coverData.coverData.emplace(Track::Cover::Front,
                                             CoverImage{.mimeType = result.mimeType, .data = result.image});
                 p->m_library->writeTrackCovers(coverData);
-                std::ranges::for_each(coverData.tracks, &CoverProvider::removeFromCache);
+                QObject::connect(
+                    p->m_library, &MusicLibrary::tracksMetadataChanged, this,
+                    [tracks]() { std::ranges::for_each(tracks, &CoverProvider::removeFromCache); },
+                    Qt::SingleShotConnection);
             }
             else {
                 const QMimeDatabase mimeDb;
@@ -1199,15 +1204,35 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                 QFile file{cleanPath};
                 if(file.open(QIODevice::WriteOnly)) {
                     cover.save(&file, nullptr, -1);
+                    std::ranges::for_each(tracks, CoverProvider::removeFromCache);
                 }
             }
-
-            std::ranges::for_each(tracks, CoverProvider::removeFromCache);
-            p->m_settings->set<Settings::Gui::RefreshCovers>(!p->m_settings->value<Settings::Gui::RefreshCovers>());
         });
+
     QObject::connect(artworkFinder, &ArtworkFinder::searchFinished, this, [finishSearch]() { finishSearch(); });
 
     artworkFinder->findArtwork(Track::Cover::Front, artist, album, title);
+}
+
+void GuiApplication::removeArtwork(const TrackList& tracks, const std::set<Track::Cover>& types)
+{
+    TrackCoverData coverData;
+    coverData.tracks = tracks;
+
+    for(const auto& coverType : types) {
+        coverData.coverData.emplace(coverType, CoverImage{});
+    }
+
+    QObject::connect(
+        p->m_library, &MusicLibrary::tracksMetadataChanged, this,
+        [tracks]() { std::ranges::for_each(tracks, CoverProvider::removeFromCache); }, Qt::SingleShotConnection);
+
+    p->m_library->writeTrackCovers(coverData);
+}
+
+void GuiApplication::removeAllArtwork(const TrackList& tracks)
+{
+    removeArtwork(tracks, {Track::Cover::Artist, Track::Cover::Back, Track::Cover::Front, Track::Cover::Other});
 }
 
 ActionManager* GuiApplication::actionManager() const

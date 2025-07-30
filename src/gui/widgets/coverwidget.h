@@ -43,6 +43,9 @@ public:
                          std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
                          QWidget* parent = nullptr);
 
+    void rescaleCover();
+    void reloadCover();
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
@@ -51,6 +54,7 @@ public:
 
 signals:
     void requestArtworkSearch(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type, bool quick);
+    void requestArtworkRemoval(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type);
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
@@ -59,9 +63,6 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
-    void rescaleCover();
-    void reloadCover();
-
     PlayerController* m_playerController;
     TrackSelectionController* m_trackSelection;
     std::shared_ptr<AudioLoader> m_audioLoader;
@@ -77,5 +78,6 @@ private:
     Track m_track;
     QPixmap m_cover;
     QPixmap m_scaledCover;
+    QPixmap m_noCover;
 };
 } // namespace Fooyin
