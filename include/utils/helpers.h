@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <ranges>
+#include <set>
 #include <unordered_set>
 #include <utility>
 #include <vector>
@@ -114,14 +115,22 @@ QString findUniqueString(const QString& name, const T& elements, StringExtractor
         return {};
     }
 
-    auto findCount = [&elements, extractor](const QString& str) -> int {
+    std::set<QString> existingNames;
+    for(const auto& element : elements) {
+        existingNames.emplace(extractor(element));
+    }
+
+    if(!existingNames.contains(name)) {
+        return name;
+    }
+
+    auto findCount = [&existingNames](const QString& str) -> int {
         const QString regexName    = QRegularExpression::escape(str);
         const QString regexPattern = QString::fromUtf8(R"(^%1\s*(\(\d+\))?\s*$)").arg(regexName);
         const QRegularExpression pattern{regexPattern};
 
-        return static_cast<int>(std::ranges::count_if(elements, [&pattern, extractor](const auto& element) {
-            return pattern.match(extractor(element)).hasMatch();
-        }));
+        return static_cast<int>(std::ranges::count_if(
+            existingNames, [&pattern](const auto& element) { return pattern.match(element).hasMatch(); }));
     };
 
     const int count = findCount(name);
