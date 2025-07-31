@@ -21,7 +21,11 @@
 
 #include "fygui_export.h"
 
+#include <core/track.h>
+
 #include <QObject>
+
+#include <set>
 
 namespace Fooyin {
 class ActionManager;
@@ -49,6 +53,10 @@ public:
 
     void raise();
     void openFiles(const QList<QUrl>& files);
+
+    void searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick);
+    void removeArtwork(const TrackList& tracks, const std::set<Track::Cover>& types);
+    void removeAllArtwork(const TrackList& tracks);
 
     [[nodiscard]] ActionManager* actionManager() const;
     [[nodiscard]] LayoutProvider* layoutProvider() const;
