@@ -84,7 +84,6 @@ void ArtworkProperties::loadTrackArtwork()
             const QByteArray cover = m_audioLoader->readTrackCover(track, artworkRow->type());
             QMetaObject::invokeMethod(artworkRow, [artworkRow, cover]() { artworkRow->loadImage(cover); });
         }
-        m_audioLoader->destroyThreadInstance();
     };
 
     const int trackCount = static_cast<int>(m_tracks.size());

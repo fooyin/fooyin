@@ -62,11 +62,6 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
     m_propertiesDialog->insertTab(0, u"Metadata"_s, [this](const TrackList& tracks) { return createEditor(tracks); });
 }
 
-void TagEditorPlugin::shutdown()
-{
-    m_audioLoader->destroyThreadInstance();
-}
-
 TagEditorWidget* TagEditorPlugin::createEditor(const TrackList& tracks)
 {
     const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {

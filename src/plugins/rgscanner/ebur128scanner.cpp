@@ -172,13 +172,11 @@ void Ebur128Scanner::calculateByAlbumTags(const TrackList& tracks, const QString
 void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album)
 {
     if(!mayRun()) {
-        m_audioLoader->destroyThreadInstance();
         return;
     }
 
-    auto* decoder = m_audioLoader->decoderForTrack(track);
+    auto decoder = m_audioLoader->decoderForTrack(track);
     if(!decoder) {
-        m_audioLoader->destroyThreadInstance();
         return;
     }
 
@@ -187,14 +185,12 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
     QFile file{source.filepath};
     if(!file.open(QIODevice::ReadOnly)) {
         qCWarning(EBUR128) << "Failed to open" << source.filepath;
-        m_audioLoader->destroyThreadInstance();
         return;
     }
     source.device = &file;
 
     auto format = decoder->init(source, track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
     if(!format) {
-        m_audioLoader->destroyThreadInstance();
         return;
     }
 
@@ -207,19 +203,17 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
     AudioBuffer buffer;
     while((buffer = decoder->readBuffer(BufferSize)).isValid()) {
         if(!mayRun()) {
-            m_audioLoader->destroyThreadInstance();
             return;
         }
 
         buffer = Audio::convert(buffer, *format);
-        if(ebur128_add_frames_double(state.get(), std::bit_cast<double*>(buffer.data()), buffer.frameCount())
+        if(ebur128_add_frames_double(state.get(), reinterpret_cast<double*>(buffer.data()), buffer.frameCount())
            != EBUR128_SUCCESS) {
             break;
         }
     }
 
     if(!mayRun()) {
-        m_audioLoader->destroyThreadInstance();
         return;
     }
 
@@ -255,8 +249,6 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
         const std::scoped_lock lock{m_mutex};
         m_albumStates[album].emplace_back(std::move(state));
     }
-
-    m_audioLoader->destroyThreadInstance();
 }
 
 void Ebur128Scanner::scanAlbum(bool truePeak)

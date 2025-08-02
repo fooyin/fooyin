@@ -238,7 +238,6 @@ void LibraryScannerPrivate::finishScan()
 
 void LibraryScannerPrivate::cleanupScan()
 {
-    m_audioLoader->destroyThreadInstance();
     m_filesScanned.clear();
     m_totalFiles = 0;
     m_tracksToStore.clear();
@@ -333,7 +332,7 @@ TrackList LibraryScannerPrivate::readTracks(const QString& filepath)
         return readArchiveTracks(filepath);
     }
 
-    auto* tagReader = m_audioLoader->readerForFile(filepath);
+    auto tagReader = m_audioLoader->readerForFile(filepath);
     if(!tagReader) {
         return {};
     }
@@ -369,7 +368,7 @@ TrackList LibraryScannerPrivate::readTracks(const QString& filepath)
 
 TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
 {
-    auto* archiveReader = m_audioLoader->archiveReaderForFile(filepath);
+    auto archiveReader = m_audioLoader->archiveReaderForFile(filepath);
     if(!archiveReader) {
         return {};
     }
@@ -389,7 +388,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
             return;
         }
 
-        auto* fileReader = m_audioLoader->readerForFile(entry);
+        auto fileReader = m_audioLoader->readerForFile(entry);
         if(!fileReader) {
             qCDebug(LIB_SCANNER) << "Unsupported file:" << entry;
             return;
@@ -403,7 +402,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
         AudioSource source;
         source.filepath      = entry;
         source.device        = device;
-        source.archiveReader = archiveReader;
+        source.archiveReader = archiveReader.get();
 
         if(!fileReader->init(source)) {
             qCDebug(LIB_SCANNER) << "Unsupported file:" << entry;

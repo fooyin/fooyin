@@ -53,11 +53,11 @@ public:
     [[nodiscard]] bool canWriteMetadata(const Track& track) const;
 
     [[nodiscard]] bool isArchive(const QString& file) const;
-    [[nodiscard]] AudioDecoder* decoderForFile(const QString& file) const;
-    [[nodiscard]] AudioDecoder* decoderForTrack(const Track& track) const;
-    [[nodiscard]] AudioReader* readerForFile(const QString& file) const;
-    [[nodiscard]] AudioReader* readerForTrack(const Track& track) const;
-    [[nodiscard]] ArchiveReader* archiveReaderForFile(const QString& file) const;
+    [[nodiscard]] std::unique_ptr<AudioDecoder> decoderForFile(const QString& file) const;
+    [[nodiscard]] std::unique_ptr<AudioDecoder> decoderForTrack(const Track& track) const;
+    [[nodiscard]] std::unique_ptr<AudioReader> readerForFile(const QString& file) const;
+    [[nodiscard]] std::unique_ptr<AudioReader> readerForTrack(const Track& track) const;
+    [[nodiscard]] std::unique_ptr<ArchiveReader> archiveReaderForFile(const QString& file) const;
 
     [[nodiscard]] bool readTrackMetadata(Track& track) const;
     [[nodiscard]] QByteArray readTrackCover(const Track& track, Track::Cover cover) const;
@@ -81,7 +81,6 @@ public:
     void reloadReaderExtensions(const QString& name);
 
     void reset();
-    void destroyThreadInstance();
 
 private:
     std::unique_ptr<AudioLoaderPrivate> p;

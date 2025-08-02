@@ -112,8 +112,8 @@ private:
     bool m_pauseNextTrack;
     std::optional<PlaybackState> m_pendingState;
 
-    AudioDecoder* m_decoder;
-    AudioDecoder* m_nextDecoder;
+    std::unique_ptr<AudioDecoder> m_decoder;
+    std::unique_ptr<AudioDecoder> m_nextDecoder;
     AudioFormat m_format;
     AudioFormat m_nextFormat;
 

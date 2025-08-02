@@ -370,8 +370,6 @@ void CoverProvider::CoverProviderPrivate::fetchCover(const QString& key, const T
 
     auto loaderResult = Utils::asyncExec([loader]() -> CoverLoader {
         auto result = loadCoverImage(loader);
-        // Make sure we destroy instance before thread quits
-        loader.audioLoader->destroyThreadInstance();
         return result;
     });
     loaderResult.then(m_self, [this, key, track](const CoverLoader& result) { processCoverResult(result); });

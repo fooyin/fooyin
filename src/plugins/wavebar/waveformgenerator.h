@@ -58,7 +58,7 @@ private:
 
     std::shared_ptr<AudioLoader> m_audioLoader;
     std::unique_ptr<QIODevice> m_file;
-    AudioDecoder* m_decoder;
+    std::unique_ptr<AudioDecoder> m_decoder;
     DbConnectionPoolPtr m_dbPool;
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
     WaveBarDatabase m_waveDb;
