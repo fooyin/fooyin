@@ -25,7 +25,6 @@
 #include "settings/filtersettings.h"
 
 #include <core/coresettings.h>
-#include <core/library/tracksort.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
@@ -265,21 +264,23 @@ void FilterModelPrivate::populateModel(PendingTreeData& data)
         }
     }
 
-    auto* parent   = m_self->rootItem();
-    const int row  = parent->childCount();
-    const int last = row + static_cast<int>(newItems.size()) - 1;
+    if(!newItems.empty()) {
+        auto* parent   = m_self->rootItem();
+        const int row  = parent->childCount();
+        const int last = row + static_cast<int>(newItems.size()) - 1;
 
-    if(!m_resetting) {
-        m_self->beginInsertRows({}, row, last);
-    }
+        if(!m_resetting) {
+            m_self->beginInsertRows({}, row, last);
+        }
 
-    for(const auto& item : newItems) {
-        FilterItem* child = &m_nodes.emplace(item.key(), item).first->second;
-        parent->appendChild(child);
-    }
+        for(const auto& item : newItems) {
+            FilterItem* child = &m_nodes.emplace(item.key(), item).first->second;
+            parent->appendChild(child);
+        }
 
-    if(!m_resetting) {
-        m_self->endInsertRows();
+        if(!m_resetting) {
+            m_self->endInsertRows();
+        }
     }
 
     m_trackParents.merge(data.trackParents);
