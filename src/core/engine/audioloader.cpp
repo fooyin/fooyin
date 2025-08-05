@@ -355,6 +355,12 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
     AudioSource source;
     source.filepath = track.filepath();
     QFile file{track.filepath()};
+
+    if(!file.exists()) {
+        qCWarning(AUD_LDR) << "File not found:" << source.filepath;
+        return false;
+    }
+
     if(!file.open(QIODeviceBase::ReadWrite)) {
         qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
         return false;
