@@ -22,10 +22,13 @@
 #include <core/track.h>
 
 #include <QLoggingCategory>
+#include <QNetworkRequest>
 #include <QObject>
 #include <QPointer>
 #include <QString>
 #include <QUrl>
+
+#include <set>
 
 Q_DECLARE_LOGGING_CATEGORY(ARTWORK)
 
@@ -42,7 +45,7 @@ struct SearchParams
     QString album;
     QString title;
 };
-using CoverTypes = std::vector<Track::Cover>;
+using CoverTypes = std::set<Track::Cover>;
 
 struct SearchResult
 {
@@ -89,7 +92,9 @@ protected:
     static QString toUtf8(QIODevice* file);
     static QString encode(const QString& str);
 
-    bool getJsonFromReply(QNetworkReply* reply, QJsonObject* obj);
+    static QNetworkRequest createRequest(const QUrl& url, const std::map<QString, QString>& params,
+                                         const QString& secret = {});
+    static bool getJsonFromReply(QNetworkReply* reply, QJsonObject* obj);
     static bool extractJsonObj(const QByteArray& data, QJsonObject* obj);
 
     [[nodiscard]] QNetworkReply* reply() const;

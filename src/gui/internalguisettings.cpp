@@ -168,6 +168,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ArtworkSaveMethods>(QVariant::fromValue(defaultArtworkSaveMethods()),
                                                             u"Artwork/SaveMethods"_s);
     m_settings->createSetting<Internal::ArtworkAutoSearch>(true, u"Artwork/AutoSearch"_s);
+    m_settings->createSetting<Internal::ArtworkTitleField>(u"%title%"_s, u"Artwork/TitleField"_s);
     m_settings->createSetting<Internal::ArtworkAlbumField>(u"%album%"_s, u"Artwork/AlbumField"_s);
     m_settings->createSetting<Internal::ArtworkArtistField>(u"%albumartist%"_s, u"Artwork/ArtistField"_s);
     m_settings->createSetting<Internal::ArtworkMatchThreshold>(85, u"Artwork/MatchThreshold"_s);

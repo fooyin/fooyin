@@ -247,8 +247,8 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
         quickSearch->setEnabled(canWriteCover());
         remove->setEnabled(canWriteCover());
 
-        if(m_coverType == Track::Cover::Artist) {
-            // Only support front and back cover for now
+        if(m_coverType == Track::Cover::Back) {
+            // Only support front and artist cover for now
             search->setDisabled(true);
             quickSearch->setDisabled(true);
             remove->setDisabled(true);

@@ -45,6 +45,8 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
 private:
+    void invalidateData();
+
     std::vector<ArtworkItem> m_items;
 };
 } // namespace Fooyin

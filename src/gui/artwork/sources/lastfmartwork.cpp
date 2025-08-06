@@ -115,35 +115,12 @@ void LastFmArtwork::search(const SearchParams& params)
         }
     }
 
-    std::map<QString, QString> queryParams{{u"api_key"_s, m_apiKey},
-                                           {u"lang"_s, QLocale{}.name().left(2).toLower()},
-                                           {u"method"_s, method},
-                                           {m_queryType, searchQuery}};
+    const std::map<QString, QString> queryParams{{u"api_key"_s, m_apiKey},
+                                                 {u"lang"_s, QLocale{}.name().left(2).toLower()},
+                                                 {u"method"_s, method},
+                                                 {m_queryType, searchQuery}};
 
-    QUrlQuery queryUrl;
-    QString data;
-
-    for(const auto& [key, value] : std::as_const(queryParams)) {
-        queryUrl.addQueryItem(QString::fromLatin1(QUrl::toPercentEncoding(key)),
-                              QString::fromLatin1(QUrl::toPercentEncoding(value)));
-        data += key + value;
-    }
-    data += m_secret;
-
-    const QByteArray digest = QCryptographicHash::hash(data.toUtf8(), QCryptographicHash::Md5);
-    const QString signature = QString::fromLatin1(digest.toHex()).rightJustified(32, u'0').toLower();
-
-    queryUrl.addQueryItem(u"api_sig"_s, QString::fromLatin1(QUrl::toPercentEncoding(signature)));
-    queryUrl.addQueryItem(u"format"_s, u"json"_s);
-
-    QUrl reqUrl{QString::fromLatin1(SearchUrl)};
-    reqUrl.setQuery(queryUrl);
-
-    QNetworkRequest req{reqUrl};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
-
-    qCDebug(ARTWORK) << "Sending request" << queryUrl.toString(QUrl::FullyDecoded);
+    const QNetworkRequest req = createRequest(QString::fromLatin1(SearchUrl), queryParams, m_secret);
 
     setReply(network()->get(req));
     QObject::connect(reply(), &QNetworkReply::finished, this, &LastFmArtwork::handleSearchReply);

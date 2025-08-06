@@ -30,6 +30,7 @@
 #include <QMimeDatabase>
 #include <QNetworkReply>
 #include <QStringDecoder>
+#include <QUrlQuery>
 
 Q_LOGGING_CATEGORY(ARTWORK, "fy.artwork")
 
@@ -201,6 +202,40 @@ QString ArtworkSource::toUtf8(QIODevice* file)
 QString ArtworkSource::encode(const QString& str)
 {
     return QString::fromLatin1(QUrl::toPercentEncoding(str));
+}
+
+QNetworkRequest ArtworkSource::createRequest(const QUrl& url, const std::map<QString, QString>& params,
+                                             const QString& secret)
+{
+    QUrlQuery queryUrl;
+    QString data;
+
+    for(const auto& [key, value] : std::as_const(params)) {
+        queryUrl.addQueryItem(QString::fromLatin1(QUrl::toPercentEncoding(key)),
+                              QString::fromLatin1(QUrl::toPercentEncoding(value)));
+        data += key + value;
+    }
+
+    if(!secret.isEmpty()) {
+        data += secret;
+    }
+
+    const QByteArray digest = QCryptographicHash::hash(data.toUtf8(), QCryptographicHash::Md5);
+    const QString signature = QString::fromLatin1(digest.toHex()).rightJustified(32, u'0').toLower();
+
+    queryUrl.addQueryItem(u"api_sig"_s, QString::fromLatin1(QUrl::toPercentEncoding(signature)));
+    queryUrl.addQueryItem(u"format"_s, u"json"_s);
+
+    QUrl reqUrl{url};
+    reqUrl.setQuery(queryUrl);
+
+    QNetworkRequest req{reqUrl};
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
+
+    qCDebug(ARTWORK) << "Sending request" << queryUrl.toString(QUrl::FullyDecoded);
+
+    return req;
 }
 
 bool ArtworkSource::getJsonFromReply(QNetworkReply* reply, QJsonObject* obj)

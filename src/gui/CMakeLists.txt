@@ -91,6 +91,8 @@ set(SOURCES
     artwork/sources/artworksource.h
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.cpp
+    artwork/sources/discogsartwork.cpp
+    artwork/sources/discogsartwork.h
     artwork/sources/lastfmartwork.cpp
     artwork/sources/lastfmartwork.h
     artwork/sources/musicbrainzartwork.cpp
@@ -264,6 +266,8 @@ set(SOURCES
     settings/artwork/artworkdownloadpage.h
     settings/artwork/artworkgeneralpage.cpp
     settings/artwork/artworkgeneralpage.h
+    settings/artwork/artworksearchingpage.cpp
+    settings/artwork/artworksearchingpage.h
     settings/dirbrowser/dirbrowserpage.cpp
     settings/dirbrowser/dirbrowserpage.h
     settings/library/librarygeneralpage.cpp

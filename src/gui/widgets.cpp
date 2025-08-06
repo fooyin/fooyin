@@ -42,6 +42,7 @@
 #include "selectioninfo/infowidget.h"
 #include "settings/artwork/artworkdownloadpage.h"
 #include "settings/artwork/artworkgeneralpage.h"
+#include "settings/artwork/artworksearchingpage.h"
 #include "settings/dirbrowser/dirbrowserpage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
@@ -244,6 +245,7 @@ void Widgets::registerPages()
     new GuiGeneralPage(m_gui->layoutProvider(), m_gui->editableLayout(), m_settings, this);
     new GuiThemesPage(m_gui->themeRegistry(), m_settings, this);
     new ArtworkGeneralPage(m_settings, this);
+    new ArtworkSearchingPage(m_settings, this);
     new ArtworkDownloadPage(m_settings, this);
     new LibraryGeneralPage(m_gui->actionManager(), m_core->libraryManager(), m_core->library(), m_settings, this);
     new LibrarySortingPage(m_gui->actionManager(), m_core->sortingRegistry(), m_settings, this);

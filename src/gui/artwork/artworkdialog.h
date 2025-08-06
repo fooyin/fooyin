@@ -26,6 +26,7 @@
 
 #include <QDialog>
 
+class QComboBox;
 class QLabel;
 class QLineEdit;
 class QListView;
@@ -73,7 +74,7 @@ private:
     QLabel* m_status;
     QLineEdit* m_artist;
     QLineEdit* m_album;
+    QComboBox* m_searchType;
     QPushButton* m_startSearch;
-    bool m_manualSearch;
 };
 } // namespace Fooyin

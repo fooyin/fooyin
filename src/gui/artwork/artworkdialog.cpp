@@ -32,6 +32,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QComboBox>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QFile>
@@ -60,13 +61,19 @@ ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManage
     , m_status{new QLabel(this)}
     , m_artist{new QLineEdit(this)}
     , m_album{new QLineEdit(this)}
+    , m_searchType{new QComboBox(this)}
     , m_startSearch{new QPushButton(tr("Search"), this)}
-    , m_manualSearch{false}
 {
     setWindowTitle(tr("Artwork Finder"));
 
     m_artist->setPlaceholderText(tr("Artist"));
     m_album->setPlaceholderText(tr("Album"));
+
+    if(!m_tracks.empty()) {
+        const Track& track = m_tracks.front();
+        m_artist->setText(m_parser.evaluate(m_settings->value<Settings::Gui::Internal::ArtworkArtistField>(), track));
+        m_album->setText(m_parser.evaluate(m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>(), track));
+    }
 
     m_view->setModel(m_model);
     m_view->setItemDelegate(new ArtworkDelegate(this));
@@ -82,10 +89,9 @@ ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManage
     QObject::connect(m_artworkFinder, &ArtworkFinder::coverLoadProgress, m_model, &ArtworkModel::updateCoverProgress);
     QObject::connect(m_artworkFinder, &ArtworkFinder::searchFinished, this, &ArtworkDialog::searchFinished);
 
-    QObject::connect(m_startSearch, &QPushButton::clicked, this, [this]() {
-        m_manualSearch = true;
-        searchArtwork();
-    });
+    QObject::connect(m_searchType, &QComboBox::currentIndexChanged, this,
+                     [this]() { m_type = m_searchType->currentData().value<Track::Cover>(); });
+    QObject::connect(m_startSearch, &QPushButton::clicked, this, &ArtworkDialog::searchArtwork);
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
@@ -99,11 +105,28 @@ ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManage
                          });
     }
 
-    auto* paramsLayout = new QHBoxLayout();
+    static const std::map<Track::Cover, QString> artworkOptions = {
+        {Track::Cover::Front, u"Front"_s} /*, {Track::Cover::Front, u"Back"_s}*/, {Track::Cover::Artist, u"Artist"_s}};
 
-    paramsLayout->addWidget(m_artist, 1);
-    paramsLayout->addWidget(m_album, 1);
-    paramsLayout->addWidget(m_startSearch);
+    for(const auto& [option, title] : artworkOptions) {
+        m_searchType->addItem(title, QVariant::fromValue(option));
+    }
+
+    if(artworkOptions.contains(m_type)) {
+        m_searchType->setCurrentText(artworkOptions.at(m_type));
+    }
+
+    auto* paramsLayout = new QGridLayout();
+
+    paramsLayout->addWidget(new QLabel(tr("Artist") + ":"_L1, this), 0, 0);
+    paramsLayout->addWidget(m_artist, 0, 1);
+    paramsLayout->addWidget(new QLabel(tr("Album") + ":"_L1, this), 1, 0);
+    paramsLayout->addWidget(m_album, 1, 1);
+    paramsLayout->addWidget(new QLabel(tr("Type") + ":"_L1, this), 2, 0);
+    paramsLayout->addWidget(m_searchType, 2, 1);
+    paramsLayout->addWidget(m_startSearch, 0, 3, 3, 1);
+
+    m_startSearch->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
     auto* layout = new QGridLayout(this);
 
@@ -133,9 +156,9 @@ void ArtworkDialog::accept()
     cover.loadFromData(result.image);
     cover.setDevicePixelRatio(Utils::windowDpr());
 
-    const auto& frontMethod = m_saveMethods[Track::Cover::Front];
+    const auto& method = m_saveMethods.value(m_type);
 
-    if(frontMethod.method == ArtworkSaveMethod::Embedded) {
+    if(method.method == ArtworkSaveMethod::Embedded) {
         TrackCoverData coverData;
         coverData.tracks = m_tracks;
         coverData.coverData.emplace(Track::Cover::Front, CoverImage{.mimeType = result.mimeType, .data = result.image});
@@ -149,7 +172,7 @@ void ArtworkDialog::accept()
         const QString suffix = mimeDb.mimeTypeForData(result.image).preferredSuffix().toLower();
 
         const QString path
-            = m_parser.evaluate(u"%1/%2.%3"_s.arg(frontMethod.dir, frontMethod.filename, suffix), m_tracks.front());
+            = m_parser.evaluate(u"%1/%2.%3"_s.arg(method.dir, method.filename, suffix), m_tracks.front());
         const QString cleanPath = QDir::cleanPath(path);
 
         QFile file{cleanPath};
@@ -181,20 +204,9 @@ void ArtworkDialog::searchArtwork()
 {
     const Track& track = m_tracks.front();
 
-    QString artist = m_artist->text();
-    QString album  = m_album->text();
-    const QString title{u"%title%"_s};
-
-    if(!m_manualSearch) {
-        if(artist.isEmpty()) {
-            artist = m_parser.evaluate(m_settings->value<Settings::Gui::Internal::ArtworkArtistField>(), track);
-            m_artist->setText(artist);
-        }
-        if(album.isEmpty()) {
-            album = m_parser.evaluate(m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>(), track);
-            m_album->setText(album);
-        }
-    }
+    const QString artist = m_artist->text();
+    const QString album  = m_album->text();
+    const QString title  = m_parser.evaluate(m_settings->value<Settings::Gui::Internal::ArtworkTitleField>(), track);
 
     m_model->clear();
 

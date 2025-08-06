@@ -41,11 +41,7 @@ void ArtworkModel::loadCover(const QUrl& url, const ArtworkResult& result)
     }
 
     itemIt->load(result);
-
-    const int row              = static_cast<int>(std::ranges::distance(m_items.cbegin(), itemIt));
-    const QModelIndex coverIdx = index(row, 0, {});
-
-    emit dataChanged(coverIdx, coverIdx, {Qt::DecorationRole});
+    invalidateData();
 }
 
 void ArtworkModel::updateCoverProgress(const QUrl& url, int progress)
@@ -56,11 +52,7 @@ void ArtworkModel::updateCoverProgress(const QUrl& url, int progress)
     }
 
     itemIt->setProgress(progress);
-
-    const int row              = static_cast<int>(std::ranges::distance(m_items.cbegin(), itemIt));
-    const QModelIndex coverIdx = index(row, 0, {});
-
-    emit dataChanged(coverIdx, coverIdx, {Qt::UserRole});
+    invalidateData();
 }
 
 void ArtworkModel::removeCover(const QUrl& url)
@@ -128,5 +120,11 @@ QVariant ArtworkModel::data(const QModelIndex& index, int role) const
     }
 
     return {};
+}
+
+void ArtworkModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
 }
 } // namespace Fooyin

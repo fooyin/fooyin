@@ -170,9 +170,10 @@ enum GuiInternalSettings : uint32_t
     ArtworkSaveScheme         = 60 | Type::Int,
     ArtworkSaveMethods        = 61 | Type::Variant,
     ArtworkAutoSearch         = 62 | Type::Bool,
-    ArtworkAlbumField         = 63 | Type::String,
-    ArtworkArtistField        = 64 | Type::String,
-    ArtworkMatchThreshold     = 65 | Type::Int,
+    ArtworkTitleField         = 63 | Type::String,
+    ArtworkAlbumField         = 64 | Type::String,
+    ArtworkArtistField        = 65 | Type::String,
+    ArtworkMatchThreshold     = 66 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
