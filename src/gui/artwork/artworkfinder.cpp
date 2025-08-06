@@ -20,6 +20,7 @@
 #include "artworkfinder.h"
 
 #include "internalguisettings.h"
+#include "sources/discogsartwork.h"
 #include "sources/lastfmartwork.h"
 #include "sources/musicbrainzartwork.h"
 
@@ -134,7 +135,8 @@ void ArtworkFinder::reset()
 void ArtworkFinder::loadDefaults()
 {
     m_sources = {new MusicBrainzArtwork(m_networkManager.get(), m_settings, 0, true, this),
-                 new LastFmArtwork(m_networkManager.get(), m_settings, 1, true, this)};
+                 new LastFmArtwork(m_networkManager.get(), m_settings, 1, true, this),
+                 new DiscogsArtwork(m_networkManager.get(), m_settings, 2, true, this)};
 }
 
 void ArtworkFinder::finishOrStartNextSource(bool forceFinish)
@@ -159,7 +161,7 @@ bool ArtworkFinder::findNextAvailableSource()
 
     while(std::cmp_less(m_currentSourceIndex, m_sources.size())) {
         auto* source = m_sources.at(m_currentSourceIndex);
-        if(source->enabled()) {
+        if(source->enabled() && source->supportedTypes().contains(m_params.type)) {
             m_currentSource = source;
             return true;
         }

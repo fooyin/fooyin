@@ -181,9 +181,9 @@ void ArtworkDialog::searchArtwork()
 {
     const Track& track = m_tracks.front();
 
-    QString artist = m_artist->text();
-    QString album  = m_album->text();
-    const QString title{u"%title%"_s};
+    QString artist      = m_artist->text();
+    QString album       = m_album->text();
+    const QString title = m_parser.evaluate(u"%title%"_s, track);
 
     if(!m_manualSearch) {
         if(artist.isEmpty()) {
