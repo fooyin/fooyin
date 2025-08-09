@@ -1221,6 +1221,7 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                 if(file.open(QIODevice::WriteOnly)) {
                     cover.save(&file, nullptr, -1);
                     std::ranges::for_each(tracks, CoverProvider::removeFromCache);
+                    p->m_widgets->refreshCoverWidgets();
                 }
             }
         });

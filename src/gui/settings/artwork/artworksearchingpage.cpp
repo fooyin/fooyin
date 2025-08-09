@@ -31,6 +31,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPlainTextEdit>
+#include <QSpinBox>
 
 using namespace Qt::StringLiterals;
 
@@ -55,6 +56,7 @@ private:
     QLineEdit* m_artistParam;
     QLineEdit* m_albumParam;
     SliderEditor* m_matchThreshold;
+    QSpinBox* m_finderThumbSize;
 };
 
 ArtworkSearchingPageWidget::ArtworkSearchingPageWidget(SettingsManager* settings)
@@ -64,6 +66,7 @@ ArtworkSearchingPageWidget::ArtworkSearchingPageWidget(SettingsManager* settings
     , m_artistParam{new QLineEdit(this)}
     , m_albumParam{new QLineEdit(this)}
     , m_matchThreshold{new SliderEditor(tr("Minimum match threshold"), this)}
+    , m_finderThumbSize{new QSpinBox(this)}
 {
     auto* paramsGroup  = new QGroupBox(tr("Search parameters"), this);
     auto* paramsLayout = new QGridLayout(paramsGroup);
@@ -79,12 +82,26 @@ ArtworkSearchingPageWidget::ArtworkSearchingPageWidget(SettingsManager* settings
     paramsLayout->addWidget(m_albumParam, row++, 1);
     paramsLayout->addWidget(m_matchThreshold, row++, 0, 1, 2);
 
+    auto* thumbSizeLabel = new QLabel(tr("Finder thumbnail size") + u":"_s, this);
+
+    m_finderThumbSize->setMinimum(10);
+    m_finderThumbSize->setMaximum(1000);
+    m_finderThumbSize->setSuffix(u"px"_s);
+
+    const auto thumbTooltip = tr("Size of thumbnails in Artwork Finder when searching for artwork");
+
+    thumbSizeLabel->setToolTip(thumbTooltip);
+    m_finderThumbSize->setToolTip(thumbTooltip);
+
     auto* layout = new QGridLayout(this);
 
     row = 0;
-    layout->addWidget(m_autoSearch, row++, 0);
-    layout->addWidget(paramsGroup, row++, 0);
+    layout->addWidget(m_autoSearch, row++, 0, 1, 3);
+    layout->addWidget(thumbSizeLabel, row, 0);
+    layout->addWidget(m_finderThumbSize, row++, 1);
+    layout->addWidget(paramsGroup, row++, 0, 1, 3);
     layout->setRowStretch(layout->rowCount(), 1);
+    layout->setColumnStretch(2, 1);
 }
 
 void ArtworkSearchingPageWidget::load()
@@ -94,6 +111,7 @@ void ArtworkSearchingPageWidget::load()
     m_artistParam->setText(m_settings->value<Settings::Gui::Internal::ArtworkArtistField>());
     m_albumParam->setText(m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>());
     m_matchThreshold->setValue(m_settings->value<Settings::Gui::Internal::ArtworkMatchThreshold>());
+    m_finderThumbSize->setValue(m_settings->value<Settings::Gui::Internal::ArtworkDownloadThumbSize>());
 }
 
 void ArtworkSearchingPageWidget::apply()
@@ -103,6 +121,7 @@ void ArtworkSearchingPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::ArtworkArtistField>(m_artistParam->text());
     m_settings->set<Settings::Gui::Internal::ArtworkAlbumField>(m_albumParam->text());
     m_settings->set<Settings::Gui::Internal::ArtworkMatchThreshold>(m_matchThreshold->value());
+    m_settings->set<Settings::Gui::Internal::ArtworkDownloadThumbSize>(m_finderThumbSize->value());
 }
 
 void ArtworkSearchingPageWidget::reset()
@@ -112,6 +131,7 @@ void ArtworkSearchingPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::ArtworkArtistField>();
     m_settings->reset<Settings::Gui::Internal::ArtworkAlbumField>();
     m_settings->reset<Settings::Gui::Internal::ArtworkMatchThreshold>();
+    m_settings->reset<Settings::Gui::Internal::ArtworkDownloadThumbSize>();
 }
 
 ArtworkSearchingPage::ArtworkSearchingPage(SettingsManager* settings, QObject* parent)

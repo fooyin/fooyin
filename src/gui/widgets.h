@@ -27,6 +27,7 @@ namespace Fooyin {
 class Application;
 class ArtworkFinder;
 class CoverProvider;
+class CoverWidget;
 class FyWidget;
 class GuiApplication;
 class LibraryTreeController;
@@ -54,6 +55,7 @@ public:
 
     void showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick);
     void removeArtwork(const TrackList& tracks, Track::Cover type);
+    void refreshCoverWidgets();
 
 private:
     FyWidget* createDirBrowser();

@@ -29,8 +29,6 @@
 
 Q_LOGGING_CATEGORY(ARTWORK_ITEM, "fy.artworkitem")
 
-constexpr auto MaxSize = 120;
-
 namespace {
 QSize calculateScaledSize(const QSize& originalSize, int maxSize)
 {
@@ -51,11 +49,12 @@ QSize calculateScaledSize(const QSize& originalSize, int maxSize)
 } // namespace
 
 namespace Fooyin {
-ArtworkItem::ArtworkItem(const SearchResult& result)
+ArtworkItem::ArtworkItem(const SearchResult& result, int maxSize)
     : m_url{result.imageUrl}
     , m_title{result.artist}
     , m_isLoaded{false}
     , m_progress{0}
+    , m_maxSize{maxSize}
 {
     if(!result.album.isEmpty()) {
         if(!m_title.isEmpty()) {
@@ -100,7 +99,7 @@ ArtworkResult ArtworkItem::result() const
 QPixmap ArtworkItem::thumbnail() const
 {
     if(!m_isLoaded) {
-        return Utils::pixmapFromTheme(Constants::Icons::NoCover, {MaxSize, MaxSize});
+        return Utils::pixmapFromTheme(Constants::Icons::NoCover, {m_maxSize, m_maxSize});
     }
     return m_image.thumbnail;
 }
@@ -136,11 +135,11 @@ ArtworkItem::ImageData ArtworkItem::readImage(QByteArray data)
     }
 
     const auto size = reader.size();
-    if(size.width() > MaxSize || size.height() > MaxSize) {
-        const auto scaledSize = calculateScaledSize(size, MaxSize);
+    if(size.width() > m_maxSize || size.height() > m_maxSize) {
+        const auto scaledSize = calculateScaledSize(size, m_maxSize);
         reader.setScaledSize(scaledSize);
     }
 
-    return {QPixmap::fromImage(reader.read()), size};
+    return {.thumbnail = QPixmap::fromImage(reader.read()), .size = size};
 }
 } // namespace Fooyin

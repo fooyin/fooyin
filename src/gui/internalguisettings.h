@@ -174,6 +174,7 @@ enum GuiInternalSettings : uint32_t
     ArtworkAlbumField         = 64 | Type::String,
     ArtworkArtistField        = 65 | Type::String,
     ArtworkMatchThreshold     = 66 | Type::Int,
+    ArtworkDownloadThumbSize  = 67 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

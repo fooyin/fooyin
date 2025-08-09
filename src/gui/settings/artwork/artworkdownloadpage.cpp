@@ -40,7 +40,6 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QRadioButton>
-#include <QSpinBox>
 #include <QTabWidget>
 
 using namespace Qt::StringLiterals;

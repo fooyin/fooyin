@@ -19,17 +19,24 @@
 
 #include "artworkmodel.h"
 
+#include "internalguisettings.h"
 #include "sources/artworksource.h"
 
 #include <gui/guiconstants.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 namespace Fooyin {
+ArtworkModel::ArtworkModel(SettingsManager* settings, QObject* parent)
+    : QAbstractListModel{parent}
+    , m_settings{settings}
+{ }
+
 void ArtworkModel::addPendingCover(const SearchResult& result)
 {
     const int row = rowCount({});
     beginInsertRows({}, row, row);
-    m_items.emplace_back(result);
+    m_items.emplace_back(result, m_settings->value<Settings::Gui::Internal::ArtworkDownloadThumbSize>());
     endInsertRows();
 }
 

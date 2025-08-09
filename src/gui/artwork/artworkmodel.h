@@ -32,7 +32,7 @@ class ArtworkModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    using QAbstractListModel::QAbstractListModel;
+    explicit ArtworkModel(SettingsManager* settings, QObject* parent = nullptr);
 
     void addPendingCover(const SearchResult& result);
     void loadCover(const QUrl& url, const ArtworkResult& result);
@@ -46,6 +46,8 @@ public:
 
 private:
     void invalidateData();
+
+    SettingsManager* m_settings;
 
     std::vector<ArtworkItem> m_items;
 };

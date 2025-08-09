@@ -63,6 +63,7 @@ void DiscogsArtwork::search(const SearchParams& params)
                                                  {u"format"_s, u"album"_s},
                                                  {u"artist"_s, params.artist.toLower()},
                                                  {u"release_title"_s, params.album.toLower()},
+                                                 {u"track"_s, params.title.toLower()},
                                                  {u"type"_s, u"master"_s}};
 
     const QNetworkRequest req = createRequest(QString::fromLatin1(SearchUrl), queryParams, m_secret);

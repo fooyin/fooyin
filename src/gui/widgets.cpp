@@ -27,6 +27,7 @@
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
 #include "dirbrowser/dirbrowser.h"
+#include "gui/editablelayout.h"
 #include "guiapplication.h"
 #include "librarytree/librarytreecontroller.h"
 #include "librarytree/librarytreewidget.h"
@@ -311,6 +312,14 @@ void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type, bool
 void Widgets::removeArtwork(const TrackList& tracks, Track::Cover type)
 {
     m_gui->removeArtwork(tracks, {type});
+}
+
+void Widgets::refreshCoverWidgets()
+{
+    const auto coverWidgets = m_gui->editableLayout()->findWidgetsByType<CoverWidget>();
+    for(auto* coverWidget : coverWidgets) {
+        coverWidget->reloadCover();
+    }
 }
 
 FyWidget* Widgets::createDirBrowser()

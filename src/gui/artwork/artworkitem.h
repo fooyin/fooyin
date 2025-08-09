@@ -29,14 +29,14 @@ struct SearchResult;
 class ArtworkItem
 {
 public:
-    enum Role
+    enum Role : uint16_t
     {
         Result = Qt::UserRole,
         Caption,
         IsLoaded
     };
 
-    explicit ArtworkItem(const SearchResult& result);
+    explicit ArtworkItem(const SearchResult& result, int maxSize);
 
     void load(const ArtworkResult& result);
 
@@ -58,7 +58,7 @@ private:
         QSize size;
     };
 
-    static ImageData readImage(QByteArray data);
+    ImageData readImage(QByteArray data);
 
     QUrl m_url;
     QString m_title;
@@ -67,5 +67,6 @@ private:
 
     ImageData m_image;
     int m_progress;
+    int m_maxSize;
 };
 } // namespace Fooyin

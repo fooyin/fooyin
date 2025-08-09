@@ -56,7 +56,7 @@ ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManage
     , m_type{type}
     , m_artworkFinder{new ArtworkFinder(m_networkManager, m_settings, this)}
     , m_view{new ExpandedTreeView(this)}
-    , m_model{new ArtworkModel(this)}
+    , m_model{new ArtworkModel(m_settings, this)}
     , m_saveMethods{m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>().value<ArtworkSaveMethods>()}
     , m_status{new QLabel(this)}
     , m_artist{new QLineEdit(this)}
@@ -189,7 +189,7 @@ void ArtworkDialog::accept()
 
 QSize ArtworkDialog::sizeHint() const
 {
-    return {500, 500};
+    return {800, 800};
 }
 
 void ArtworkDialog::keyPressEvent(QKeyEvent* event)
