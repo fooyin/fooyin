@@ -20,6 +20,7 @@
 #include "widgets.h"
 
 #include "artwork/artworkdialog.h"
+#include "artwork/artworkfinder.h"
 #include "artwork/artworkproperties.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
@@ -43,6 +44,7 @@
 #include "settings/artwork/artworkdownloadpage.h"
 #include "settings/artwork/artworkgeneralpage.h"
 #include "settings/artwork/artworksearchingpage.h"
+#include "settings/artwork/artworksourcespage.h"
 #include "settings/dirbrowser/dirbrowserpage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
@@ -92,6 +94,7 @@ Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, Pla
     , m_gui{gui}
     , m_window{window}
     , m_settings{m_core->settingsManager()}
+    , m_artworkFinder{new ArtworkFinder(m_core->networkManager(), m_settings, this)}
     , m_coverProvider{new CoverProvider(m_core->audioLoader(), m_settings, this)}
     , m_playlistInteractor{playlistInteractor}
     , m_playlistController{playlistInteractor->playlistController()}
@@ -246,6 +249,7 @@ void Widgets::registerPages()
     new GuiThemesPage(m_gui->themeRegistry(), m_settings, this);
     new ArtworkGeneralPage(m_settings, this);
     new ArtworkSearchingPage(m_settings, this);
+    new ArtworkSourcesPage(m_artworkFinder, m_settings, this);
     new ArtworkDownloadPage(m_settings, this);
     new LibraryGeneralPage(m_gui->actionManager(), m_core->libraryManager(), m_core->library(), m_settings, this);
     new LibrarySortingPage(m_gui->actionManager(), m_core->sortingRegistry(), m_settings, this);

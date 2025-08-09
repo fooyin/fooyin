@@ -268,6 +268,10 @@ set(SOURCES
     settings/artwork/artworkgeneralpage.h
     settings/artwork/artworksearchingpage.cpp
     settings/artwork/artworksearchingpage.h
+    settings/artwork/artworksourcesmodel.cpp
+    settings/artwork/artworksourcesmodel.h
+    settings/artwork/artworksourcespage.cpp
+    settings/artwork/artworksourcespage.h
     settings/dirbrowser/dirbrowserpage.cpp
     settings/dirbrowser/dirbrowserpage.h
     settings/library/librarygeneralpage.cpp

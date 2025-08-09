@@ -1901,7 +1901,7 @@ void IconView::doItemLayout()
     // Determine the number of items per row
     const int count = itemCount();
     for(int i{1}; i <= count; ++i) {
-        const int requiredWidth = i * itemWidth(0) + (i - 1) * m_itemSpacing;
+        const int requiredWidth = (i * itemWidth(0)) + (i - 1) * m_itemSpacing;
         if(requiredWidth > (segEndPosition - segStartPosition)) {
             m_segmentSize = (i == 1) ? 1 : i - 1;
             break;
@@ -2131,11 +2131,18 @@ int IconView::itemHeight(int item) const
     int height = viewItem(item).height;
 
     if(height <= 0) {
-        if(m_uniformRowHeight == 0) {
-            const QSize hint   = indexSizeHint(index);
-            m_uniformRowHeight = hint.height();
+        if(m_p->m_uniformRowHeights) {
+            if(m_uniformRowHeight == 0) {
+                const QSize hint   = indexSizeHint(index);
+                m_uniformRowHeight = hint.height();
+            }
+            height = m_uniformRowHeight;
         }
-        height                = m_uniformRowHeight;
+        else {
+            const QSize hint = indexSizeHint(index);
+            height           = hint.height();
+        }
+
         viewItem(item).height = height;
     }
 

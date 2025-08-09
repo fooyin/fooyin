@@ -55,7 +55,7 @@ QString coverTypeToString(Fooyin::Track::Cover cover)
 namespace Fooyin {
 QString Fooyin::MusicBrainzArtwork::name() const
 {
-    return u"LastFM"_s;
+    return u"MusicBrainz (Cover Art Archive)"_s;
 }
 
 CoverTypes MusicBrainzArtwork::supportedTypes() const

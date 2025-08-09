@@ -45,7 +45,7 @@ DiscogsArtwork::DiscogsArtwork(NetworkAccessManager* network, SettingsManager* s
 
 QString DiscogsArtwork::name() const
 {
-    return u"LastFM"_s;
+    return u"Discogs"_s;
 }
 
 CoverTypes DiscogsArtwork::supportedTypes() const

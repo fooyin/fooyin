@@ -56,6 +56,7 @@ ArtworkFinder::ArtworkFinder(std::shared_ptr<NetworkAccessManager> networkManage
     , m_settings{settings}
 {
     loadDefaults();
+    restoreState();
 }
 
 void ArtworkFinder::findArtwork(Track::Cover type, const QString& artist, const QString& album, const QString& title)

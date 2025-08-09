@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2025, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@ namespace Fooyin {
 class ArtworkFinder;
 class SettingsManager;
 
-class ArtworkDownloadPage : public SettingsPage
+class ArtworkSourcesPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    explicit ArtworkDownloadPage(SettingsManager* settings, QObject* parent = nullptr);
+    ArtworkSourcesPage(ArtworkFinder* finder, SettingsManager* settings, QObject* parent = nullptr);
 };
-} // namespace Fooyin
+}

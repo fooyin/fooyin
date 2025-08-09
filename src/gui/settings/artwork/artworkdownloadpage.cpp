@@ -19,6 +19,7 @@
 
 #include "artworkdownloadpage.h"
 
+#include "artwork/artworkfinder.h"
 #include "internalguisettings.h"
 
 #include <gui/guiconstants.h>
@@ -41,6 +42,8 @@
 #include <QRadioButton>
 #include <QSpinBox>
 #include <QTabWidget>
+
+using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 class ArtworkDownloadPageWidget : public SettingsPageWidget
@@ -75,7 +78,7 @@ private:
         QLineEdit* path;
         ScriptLineEdit* filename;
 
-        CoverControls(QWidget* parent)
+        explicit CoverControls(QWidget* parent)
             : embedded{new QRadioButton(tr("Embed in file"), parent)}
             , directory{new QRadioButton(tr("Save to directory"), parent)}
             , path{new QLineEdit(parent)}

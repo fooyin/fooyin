@@ -25,6 +25,7 @@
 
 namespace Fooyin {
 class Application;
+class ArtworkFinder;
 class CoverProvider;
 class FyWidget;
 class GuiApplication;
@@ -64,6 +65,7 @@ private:
     MainWindow* m_window;
     SettingsManager* m_settings;
 
+    ArtworkFinder* m_artworkFinder;
     CoverProvider* m_coverProvider;
     PlaylistInteractor* m_playlistInteractor;
     PlaylistController* m_playlistController;

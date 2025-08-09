@@ -81,6 +81,7 @@ ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManage
     m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_view->setSelectionMode(QAbstractItemView::SingleSelection);
     m_view->setViewMode(ExpandedTreeView::ViewMode::Icon);
+    m_view->setUniformRowHeights(false);
     m_view->setHeaderHidden(true);
 
     QObject::connect(m_artworkFinder, &ArtworkFinder::coverFound, m_model, &ArtworkModel::addPendingCover);
