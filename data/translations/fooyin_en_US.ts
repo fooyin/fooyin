@@ -2288,7 +2288,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="115"/>
         <source>Show menu bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Show menu bar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
@@ -3286,7 +3286,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="196"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished">Expand/Collapse/Play</translation>
+        <translation>Expand/Collapse/Play</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="143"/>
@@ -4437,7 +4437,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="72"/>
         <source>Follow last playback queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>Follow last playback queue track</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="73"/>
@@ -4457,7 +4457,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Once the playback queue has finished, start playback from the tracks following the last queued track</source>
-        <translation type="unfinished"></translation>
+        <translation>Once the playback queue has finished, start playback from the tracks following the last queued track</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
