@@ -2288,7 +2288,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="115"/>
         <source>Show menu bar</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示選單列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
@@ -3286,7 +3286,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="196"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished">展開/摺疊/播放</translation>
+        <translation>展開/縮合/播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="143"/>
@@ -4437,7 +4437,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="72"/>
         <source>Follow last playback queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>跟隨最後一次播放佇列音軌</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="73"/>
@@ -4457,7 +4457,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Once the playback queue has finished, start playback from the tracks following the last queued track</source>
-        <translation type="unfinished"></translation>
+        <translation>播放佇列結束後，從上次最後佇列音軌後跟隨的音軌開始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>

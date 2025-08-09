@@ -19,27 +19,27 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation>B&amp;ewerken</translation>
+        <translation>&amp;Bewerk</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
         <source>&amp;View</source>
-        <translation>Bee&amp;ld</translation>
+        <translation>&amp;Beeld</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Playback</source>
-        <translation>Afs&amp;pelen</translation>
+        <translation>&amp;Afspelen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Library</source>
-        <translation>Ver&amp;zameling</translation>
+        <translation>&amp;Bibliotheek</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="71"/>
@@ -52,17 +52,17 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="35"/>
         <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Instellingen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
         <source>Buffer length</source>
-        <translation type="unfinished">Bufferomvang</translation>
+        <translation>Buffer-omvang</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="43"/>
         <source>Period length</source>
-        <translation type="unfinished"></translation>
+        <translation>Periode-lengte</translation>
     </message>
 </context>
 <context>
@@ -84,12 +84,12 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="74"/>
         <source>Prefer currently playing track</source>
-        <translation>Voorkeur voor huidig spelend nummer</translation>
+        <translation>Prefereer huidig spelend nummer</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="75"/>
         <source>Prefer current selection</source>
-        <translation>Voorkeur voor huidige selectie</translation>
+        <translation>Prefereer huidige selectie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="85"/>
@@ -119,7 +119,7 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="102"/>
         <source>Pixmap cache size</source>
-        <translation>Omvang van pixmapcache</translation>
+        <translation>Pixmap-cachegrootte</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="108"/>
@@ -129,7 +129,7 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="175"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Schijfcache-gebruik</translation>
     </message>
 </context>
 <context>
@@ -152,17 +152,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="109"/>
         <source>Artwork Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenschappen van albumhoes</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="158"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumhoes laden…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="162"/>
         <source>Saving artwork to files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumhoes wordt in het bestand opgeslagen…</translation>
     </message>
 </context>
 <context>
@@ -182,37 +182,37 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="112"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen albumhoes aanwezig</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Afbeelding openen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Afbeeldingen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="162"/>
         <source>Multiple images</source>
-        <translation type="unfinished"></translation>
+        <translation>Meerdere afbeeldingen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="163"/>
         <source>%1 of %2 files have artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 van %2 bestanden hebben een albumhoes</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Replace image</source>
-        <translation type="unfinished"></translation>
+        <translation>Afbeelding vervangen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="247"/>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>Afbeelding toevoegen</translation>
     </message>
 </context>
 <context>
@@ -220,17 +220,17 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="482"/>
         <source>Auto-size sections</source>
-        <translation>Secties automatisch verkleinen/vergroten</translation>
+        <translation>Secties automatisch schalen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="490"/>
         <source>Show hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Laat verborgen zien</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="499"/>
         <source>Hide %1</source>
-        <translation>%1 verbergen</translation>
+        <translation>Verberg %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="523"/>
@@ -258,32 +258,32 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="52"/>
         <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Laden</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">Op&amp;slaan</translation>
+        <translation>&amp;Opslaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="54"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Verwijder</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>&amp;Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Herstel standaardwaarden</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Edit Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewerk automatische afspeellijst</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Create New Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Maak nieuwe automatische afspeellijst</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
@@ -293,37 +293,37 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="89"/>
         <source>Query</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoekopdracht</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="160"/>
         <source>Query already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoekopdracht bestaat al</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="161"/>
         <source>Query %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoekresultaat %1 bestaat al. Overschrijven?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="279"/>
         <source>Most Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Meest afgespeeld</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="280"/>
         <source>Recently Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Recentelijk toegevoegd</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="281"/>
         <source>Last Played 2 Weeks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laatst afgespeeld in de afgelopen 2 weken</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="282"/>
         <source>Has Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Heeft songtekst</translation>
     </message>
 </context>
 <context>
@@ -339,37 +339,37 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="84"/>
         <source>Artwork Panel</source>
-        <translation>Albumhoespaneel</translation>
+        <translation>Albumhoes-paneel</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="126"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Behoud beeldverhouding</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="139"/>
         <source>Align to centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitlijnen naar midden</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="140"/>
         <source>Align to left</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitlijnen naar links</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="141"/>
         <source>Align to right</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitlijnen naar rechts</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="162"/>
         <source>Front cover</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Voorblad</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="163"/>
         <source>Back cover</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Achterblad</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="164"/>
@@ -395,7 +395,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="82"/>
         <source>Supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Ondersteunde extensies</translation>
     </message>
 </context>
 <context>
@@ -413,7 +413,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="162"/>
         <source>Decoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Decoderen</translation>
     </message>
 </context>
 <context>
@@ -421,17 +421,17 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="91"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Schakel alle ondersteunde extenties in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="113"/>
         <source>Decoders</source>
-        <translation type="unfinished"></translation>
+        <translation>Decoderingen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="115"/>
         <source>Tag readers</source>
-        <translation type="unfinished"></translation>
+        <translation>Taglezers</translation>
     </message>
 </context>
 <context>
@@ -439,37 +439,37 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="245"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">Afs&amp;pelen</translation>
+        <translation>&amp;Speel af</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="246"/>
         <source>Add to &amp;current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Toevoegen aan &amp;huidige afspeellijst</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="247"/>
         <source>Add to &amp;active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Toevoegen aan &amp;actieve afspeellijst</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="248"/>
         <source>&amp;Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Stuur naar huidige afspeellijst</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="249"/>
         <source>Send to &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Stuur naar &amp;nieuwe afspeellijst</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="250"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Toevoegen aan afspeel &amp;wachtrij</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Speel als volgende af</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>

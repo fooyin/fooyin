@@ -2288,7 +2288,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="115"/>
         <source>Show menu bar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示菜单栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="119"/>
@@ -3286,7 +3286,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="196"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished">展开/折叠/播放</translation>
+        <translation>展开/折叠/播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="143"/>
@@ -4437,7 +4437,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="72"/>
         <source>Follow last playback queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>播放完队列后继续下一曲</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="73"/>
@@ -4457,7 +4457,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Once the playback queue has finished, start playback from the tracks following the last queued track</source>
-        <translation type="unfinished"></translation>
+        <translation>当播放队列结束之后，不要停止也不要循环，而是从主播放列表中“最后一个队列曲目之后”的歌曲开始继续播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
