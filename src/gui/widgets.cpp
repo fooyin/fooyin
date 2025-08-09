@@ -19,12 +19,15 @@
 
 #include "widgets.h"
 
+#include "artwork/artworkdialog.h"
+#include "artwork/artworkfinder.h"
 #include "artwork/artworkproperties.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
 #include "dirbrowser/dirbrowser.h"
+#include "gui/editablelayout.h"
 #include "guiapplication.h"
 #include "librarytree/librarytreecontroller.h"
 #include "librarytree/librarytreewidget.h"
@@ -39,7 +42,10 @@
 #include "replaygain/replaygainwidget.h"
 #include "search/searchwidget.h"
 #include "selectioninfo/infowidget.h"
-#include "settings/artworkpage.h"
+#include "settings/artwork/artworkdownloadpage.h"
+#include "settings/artwork/artworkgeneralpage.h"
+#include "settings/artwork/artworksearchingpage.h"
+#include "settings/artwork/artworksourcespage.h"
 #include "settings/dirbrowser/dirbrowserpage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
@@ -89,6 +95,7 @@ Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, Pla
     , m_gui{gui}
     , m_window{window}
     , m_settings{m_core->settingsManager()}
+    , m_artworkFinder{new ArtworkFinder(m_core->networkManager(), m_settings, this)}
     , m_coverProvider{new CoverProvider(m_core->audioLoader(), m_settings, this)}
     , m_playlistInteractor{playlistInteractor}
     , m_playlistController{playlistInteractor->playlistController()}
@@ -192,8 +199,13 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"ArtworkPanel"_s,
         [this]() {
-            return new CoverWidget(m_core->playerController(), m_gui->trackSelection(), m_core->audioLoader(),
-                                   m_settings, m_window);
+            auto* coverWidget = new CoverWidget(m_core->playerController(), m_gui->trackSelection(),
+                                                m_core->audioLoader(), m_settings, m_window);
+            QObject::connect(m_core->library(), &MusicLibrary::tracksMetadataChanged, coverWidget,
+                             &CoverWidget::reloadCover);
+            QObject::connect(coverWidget, &CoverWidget::requestArtworkSearch, this, &Widgets::showArtworkDialog);
+            QObject::connect(coverWidget, &CoverWidget::requestArtworkRemoval, this, &Widgets::removeArtwork);
+            return coverWidget;
         },
         tr("Artwork Panel"));
 
@@ -236,7 +248,10 @@ void Widgets::registerPages()
     new GeneralPage(m_settings, this);
     new GuiGeneralPage(m_gui->layoutProvider(), m_gui->editableLayout(), m_settings, this);
     new GuiThemesPage(m_gui->themeRegistry(), m_settings, this);
-    new ArtworkPage(m_settings, this);
+    new ArtworkGeneralPage(m_settings, this);
+    new ArtworkSearchingPage(m_settings, this);
+    new ArtworkSourcesPage(m_artworkFinder, m_settings, this);
+    new ArtworkDownloadPage(m_settings, this);
     new LibraryGeneralPage(m_gui->actionManager(), m_core->libraryManager(), m_core->library(), m_settings, this);
     new LibrarySortingPage(m_gui->actionManager(), m_core->sortingRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);
@@ -287,6 +302,24 @@ void Widgets::registerFontEntries() const
     themeReg->registerFontEntry(tr("Playlist"), u"Fooyin::PlaylistView"_s);
     themeReg->registerFontEntry(tr("Status bar"), u"Fooyin::StatusLabel"_s);
     themeReg->registerFontEntry(tr("Tabs"), u"Fooyin::EditableTabBar"_s);
+}
+
+void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick)
+{
+    m_gui->searchForArtwork(tracks, type, quick);
+}
+
+void Widgets::removeArtwork(const TrackList& tracks, Track::Cover type)
+{
+    m_gui->removeArtwork(tracks, {type});
+}
+
+void Widgets::refreshCoverWidgets()
+{
+    const auto coverWidgets = m_gui->editableLayout()->findWidgetsByType<CoverWidget>();
+    for(auto* coverWidget : coverWidgets) {
+        coverWidget->reloadCover();
+    }
 }
 
 FyWidget* Widgets::createDirBrowser()
