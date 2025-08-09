@@ -261,16 +261,17 @@ void TrackSelectionControllerPrivate::setupMenu()
     });
     artworkMenu->addAction(searchArtworkCmd);
 
-    m_searchArtworkQuick->setStatusTip(tr("Search for artwork for the selected files, automatically choosing the best "
-                                          "artwork based on the current settings"));
-    auto* searchArtworkQuickCmd
-        = m_actionManager->registerAction(m_searchArtworkQuick, Constants::Actions::SearchArtworkQuick);
-    searchArtworkQuickCmd->setCategories(tracksCategory);
-    QObject::connect(m_searchArtworkQuick, &QAction::triggered, m_tracksMenu, [this]() {
-        if(hasTracks()) {
-            emit m_self->requestArtworkSearch(m_self->selectedTracks(), true);
-        }
-    });
+    // m_searchArtworkQuick->setStatusTip(tr("Search for artwork for the selected files, automatically choosing the best
+    // "
+    //                                       "artwork based on the current settings"));
+    // auto* searchArtworkQuickCmd
+    //     = m_actionManager->registerAction(m_searchArtworkQuick, Constants::Actions::SearchArtworkQuick);
+    // searchArtworkQuickCmd->setCategories(tracksCategory);
+    // QObject::connect(m_searchArtworkQuick, &QAction::triggered, m_tracksMenu, [this]() {
+    //     if(hasTracks()) {
+    //         emit m_self->requestArtworkSearch(m_self->selectedTracks(), true);
+    //     }
+    // });
     // artworkMenu->addAction(searchArtworkQuickCmd);
 
     m_removeArtwork->setStatusTip(tr("Remove all artwork associated with the selected tracks (embedded, directory)"));

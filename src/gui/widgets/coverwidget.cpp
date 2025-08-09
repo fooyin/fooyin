@@ -69,6 +69,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     m_coverProvider->setUsePlaceholder(false);
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::reloadCover);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::checkTrackArtwork);
     QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this, &CoverWidget::reloadCover);
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &CoverWidget::reloadCover,
                      Qt::QueuedConnection);
@@ -267,7 +268,7 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
         menu->addSeparator();
         menu->addAction(search);
-        // menu->addAction(quickSearch);
+        menu->addAction(quickSearch);
         menu->addAction(remove);
     }
 
@@ -287,6 +288,19 @@ void CoverWidget::paintEvent(QPaintEvent* /*event*/)
 {
     QStylePainter painter{this};
     painter.drawItemPixmap(contentsRect(), static_cast<int>(Qt::AlignVCenter | m_coverAlignment), m_scaledCover);
+}
+
+void CoverWidget::checkTrackArtwork(const Track& track)
+{
+    if(m_settings->value<Settings::Gui::Internal::ArtworkAutoSearch>()) {
+        if(track.isValid()) {
+            m_coverProvider->trackHasCover(track).then([this, track](const bool hasCover) {
+                if(!hasCover) {
+                    emit requestArtworkSearch({m_track}, m_coverType, true);
+                }
+            });
+        }
+    }
 }
 } // namespace Fooyin
 

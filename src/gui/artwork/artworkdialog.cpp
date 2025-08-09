@@ -89,8 +89,6 @@ ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManage
     QObject::connect(m_artworkFinder, &ArtworkFinder::coverLoadProgress, m_model, &ArtworkModel::updateCoverProgress);
     QObject::connect(m_artworkFinder, &ArtworkFinder::searchFinished, this, &ArtworkDialog::searchFinished);
 
-    QObject::connect(m_searchType, &QComboBox::currentIndexChanged, this,
-                     [this]() { m_type = m_searchType->currentData().value<Track::Cover>(); });
     QObject::connect(m_startSearch, &QPushButton::clicked, this, &ArtworkDialog::searchArtwork);
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -135,6 +133,9 @@ ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManage
     layout->addWidget(m_view, row++, 0, 1, 2);
     layout->addWidget(m_status, row, 0);
     layout->addWidget(buttonBox, row++, 1);
+
+    QObject::connect(m_searchType, &QComboBox::currentIndexChanged, this,
+                     [this]() { m_type = m_searchType->currentData().value<Track::Cover>(); });
 
     searchArtwork();
 }

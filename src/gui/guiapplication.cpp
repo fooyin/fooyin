@@ -114,6 +114,7 @@ public:
     void showPluginsNotFoundMessage();
     void initialiseTray();
     void updateWindowTitle();
+    void checkArtwork();
     void handleTrackStatus(AudioEngine::TrackStatus status);
 
     static void removeExpiredCovers(const TrackList& tracks);
@@ -196,6 +197,7 @@ public:
     std::unique_ptr<LogWidget> m_logWidget;
     Widgets* m_widgets;
     ScriptParser m_scriptParser;
+    CoverProvider m_coverProvider;
 };
 
 GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application* core_)
@@ -232,6 +234,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_self, &m_playlistInteractor, m_self)}
     , m_scriptParser{new ScriptRegistry(m_playerController)}
+    , m_coverProvider{m_core->audioLoader(), m_settings}
 { }
 
 void GuiApplicationPrivate::initialise()
@@ -415,6 +418,19 @@ void GuiApplicationPrivate::updateWindowTitle()
     const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
     const QString title  = m_scriptParser.evaluate(script, currentTrack);
     m_mainWindow->setTitle(title);
+}
+
+void GuiApplicationPrivate::checkArtwork()
+{
+    if(m_settings->value<Settings::Gui::Internal::ArtworkAutoSearch>()) {
+        if(const auto track = m_playerController->currentTrack(); track.isValid()) {
+            m_coverProvider.trackHasCover(track).then([this, track](const bool hasCover) {
+                if(!hasCover) {
+                    m_widgets->showArtworkDialog({track}, Track::Cover::Front, true);
+                }
+            });
+        }
+    }
 }
 
 void GuiApplicationPrivate::handleTrackStatus(AudioEngine::TrackStatus status)

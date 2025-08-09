@@ -63,6 +63,8 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    void checkTrackArtwork(const Track& track);
+
     PlayerController* m_playerController;
     TrackSelectionController* m_trackSelection;
     std::shared_ptr<AudioLoader> m_audioLoader;

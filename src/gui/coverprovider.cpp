@@ -229,6 +229,17 @@ struct CoverLoader
     QImage cover;
 };
 
+bool hasImageInDirectory(CoverLoader& loader)
+{
+    const QString dirPath = findDirectoryCover(loader.paths, loader.track, loader.type);
+    if(dirPath.isEmpty()) {
+        return {};
+    }
+
+    const QFile file{dirPath};
+    return file.size() > 0;
+}
+
 QImage loadImageFromDirectory(CoverLoader& loader)
 {
     const QString dirPath = findDirectoryCover(loader.paths, loader.track, loader.type);
@@ -242,6 +253,12 @@ QImage loadImageFromDirectory(CoverLoader& loader)
     }
 
     return readImage(dirPath, loader.size, u"directory"_s);
+}
+
+bool hasEmbeddedCover(const CoverLoader& loader)
+{
+    const QByteArray coverData = loader.audioLoader->readTrackCover(loader.track, loader.type);
+    return !coverData.isEmpty();
 }
 
 QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath)
@@ -259,6 +276,12 @@ QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath
     }
 
     return cover;
+}
+
+bool hasCoverImage(CoverLoader loader)
+{
+    CoverLoader result{loader};
+    return (hasImageInDirectory(loader) || hasEmbeddedCover(loader));
 }
 
 CoverLoader loadCoverImage(CoverLoader loader)
@@ -297,6 +320,7 @@ public:
     void processCoverResult(const CoverLoader& loader);
     void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail,
                     CoverProvider::ThumbnailSize size = CoverProvider::None);
+    QFuture<bool> hasCover(const QString& key, const Track& track, Track::Cover type);
 
     CoverProvider* m_self;
     std::shared_ptr<AudioLoader> m_audioLoader;
@@ -375,6 +399,23 @@ void CoverProvider::CoverProviderPrivate::fetchCover(const QString& key, const T
     loaderResult.then(m_self, [this, key, track](const CoverLoader& result) { processCoverResult(result); });
 }
 
+QFuture<bool> CoverProvider::CoverProviderPrivate::hasCover(const QString& key, const Track& track, Track::Cover type)
+{
+    CoverLoader loader;
+    loader.key         = key;
+    loader.track       = track;
+    loader.type        = type;
+    loader.audioLoader = m_audioLoader;
+    loader.paths       = m_paths;
+
+    auto loaderResult = Utils::asyncExec([loader]() -> bool {
+        const bool result = hasCoverImage(loader);
+        return result;
+    });
+
+    return loaderResult;
+}
+
 CoverProvider::CoverProvider(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<CoverProviderPrivate>(this, std::move(audioLoader), settings)}
@@ -385,6 +426,21 @@ CoverProvider::~CoverProvider() = default;
 void CoverProvider::setUsePlaceholder(bool enabled)
 {
     p->m_usePlacerholder = enabled;
+}
+
+QFuture<bool> CoverProvider::trackHasCover(const Track& track, Track::Cover type) const
+{
+    if(!track.isValid()) {
+        return Utils::asyncExec([] { return false; });
+    }
+
+    const QString coverKey = generateTrackCoverKey(track, type);
+
+    if(m_noCoverKeys.contains(coverKey)) {
+        return Utils::asyncExec([] { return false; });
+    }
+
+    return p->hasCover(coverKey, track, type);
 }
 
 QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const

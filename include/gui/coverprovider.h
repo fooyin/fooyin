@@ -23,6 +23,7 @@
 
 #include <core/track.h>
 
+#include <QFuture>
 #include <QObject>
 
 #include <memory>
@@ -68,6 +69,9 @@ public:
      * @note this is enabled by default.
      */
     void setUsePlaceholder(bool enabled);
+
+    /** Returns @c true if @p track has a cover of the specific @p type. */
+    [[nodiscard]] QFuture<bool> trackHasCover(const Track& track, Track::Cover type = Track::Cover::Front) const;
 
     /*!
      * This will return the picture of @p type for the @p track if it exists in the cache.
