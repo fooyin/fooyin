@@ -33,7 +33,7 @@
 #include <taglib/asfpicture.h>
 #include <taglib/asftag.h>
 #include <taglib/attachedpictureframe.h>
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
 #include <taglib/dsdifffile.h>
 #include <taglib/dsffile.h>
 #endif
@@ -1098,7 +1098,7 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track, Foo
     }
 }
 
-void writeId3Cover(TagLib::ID3v2::Tag* id3Tags, const Fooyin::TrackCovers& covers)
+bool writeId3Cover(TagLib::ID3v2::Tag* id3Tags, const Fooyin::TrackCovers& covers)
 {
     using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
 
@@ -1128,11 +1128,14 @@ void writeId3Cover(TagLib::ID3v2::Tag* id3Tags, const Fooyin::TrackCovers& cover
         }
     };
 
+    bool modified{false};
+
     auto frames = id3Tags->frameList("APIC");
     for(auto* frame : frames) {
         auto* coverFrame = static_cast<PictureFrame*>(frame);
         if(coverFrame && covers.contains(toCoverType(coverFrame->type()))) {
             id3Tags->removeFrame(coverFrame);
+            modified = true;
         }
     }
 
@@ -1143,8 +1146,11 @@ void writeId3Cover(TagLib::ID3v2::Tag* id3Tags, const Fooyin::TrackCovers& cover
             newCoverFrame->setMimeType(convertString(cover.mimeType));
             newCoverFrame->setPicture(TagLib::ByteVector(cover.data.constData(), cover.data.size()));
             id3Tags->addFrame(newCoverFrame);
+            modified = true;
         }
     }
+
+    return modified;
 }
 
 void readApeTags(const TagLib::APE::Tag* apeTags, Fooyin::Track& track)
@@ -1248,7 +1254,7 @@ void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track, Fooyin:
     }
 }
 
-void writeApeCover(TagLib::APE::Tag* apeTags, const Fooyin::TrackCovers& covers)
+bool writeApeCover(TagLib::APE::Tag* apeTags, const Fooyin::TrackCovers& covers)
 {
     const auto fromCoverType = [](Fooyin::Track::Cover type) {
         switch(type) {
@@ -1263,9 +1269,15 @@ void writeApeCover(TagLib::APE::Tag* apeTags, const Fooyin::TrackCovers& covers)
         }
     };
 
+    bool modified{false};
+
     for(const auto& [type, cover] : covers) {
         const auto* const coverType = fromCoverType(type);
-        apeTags->removeItem(coverType);
+
+        if(apeTags->itemListMap().contains(coverType)) {
+            apeTags->removeItem(coverType);
+            modified = true;
+        }
 
         if(!cover.data.isEmpty()) {
             TagLib::ByteVector coverData;
@@ -1275,8 +1287,11 @@ void writeApeCover(TagLib::APE::Tag* apeTags, const Fooyin::TrackCovers& covers)
 
             const TagLib::APE::Item newItem(coverType, coverData, true);
             apeTags->setItem(coverType, newItem);
+            modified = true;
         }
     }
+
+    return modified;
 }
 
 QString stripMp4FreeFormName(const TagLib::String& name)
@@ -1621,13 +1636,18 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, Fooyin:
     }
 }
 
-void writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const Fooyin::TrackCovers& covers)
+bool writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const Fooyin::TrackCovers& covers)
 {
     if(!covers.contains(Fooyin::Track::Cover::Front)) {
-        return;
+        return false;
     }
 
-    mp4Tags->removeItem("covr");
+    bool modified{false};
+
+    if(mp4Tags->contains("covr")) {
+        mp4Tags->removeItem("covr");
+        modified = true;
+    }
 
     using CoverArt = TagLib::MP4::CoverArt;
 
@@ -1637,7 +1657,7 @@ void writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const Fooyin::TrackCovers& covers)
         }
 
         if(cover.data.isEmpty()) {
-            return;
+            return modified;
         }
 
         CoverArt::Format format{CoverArt::JPEG};
@@ -1655,7 +1675,10 @@ void writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const Fooyin::TrackCovers& covers)
         TagLib::MP4::CoverArtList coverArtList;
         coverArtList.append(newCoverArt);
         mp4Tags->setItem("covr", TagLib::MP4::Item(coverArtList));
+        modified = true;
     }
+
+    return modified;
 }
 
 void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& track)
@@ -1795,7 +1818,7 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
     }
 }
 
-void writeXiphCover(auto* file, const Fooyin::TrackCovers& covers)
+bool writeXiphCover(auto* file, const Fooyin::TrackCovers& covers)
 {
     using Picture = TagLib::FLAC::Picture;
 
@@ -1825,10 +1848,13 @@ void writeXiphCover(auto* file, const Fooyin::TrackCovers& covers)
         }
     };
 
+    bool modified{false};
+
     const auto pictures = file->pictureList();
     for(const auto& picture : pictures) {
         if(covers.contains(toCoverType(picture->type()))) {
             file->removePicture(picture);
+            modified = true;
         }
     }
 
@@ -1840,8 +1866,11 @@ void writeXiphCover(auto* file, const Fooyin::TrackCovers& covers)
             newPicture->setData(TagLib::ByteVector(cover.data.constData(), cover.data.size()));
 
             file->addPicture(newPicture);
+            modified = true;
         }
     }
+
+    return modified;
 }
 
 void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track)
@@ -1971,7 +2000,7 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin:
     }
 }
 
-void writeAsfCover(TagLib::ASF::Tag* asfTags, const Fooyin::TrackCovers& covers)
+bool writeAsfCover(TagLib::ASF::Tag* asfTags, const Fooyin::TrackCovers& covers)
 {
     using Picture = TagLib::ASF::Picture;
 
@@ -2001,13 +2030,16 @@ void writeAsfCover(TagLib::ASF::Tag* asfTags, const Fooyin::TrackCovers& covers)
         }
     };
 
+    bool modified{false};
+
     TagLib::ASF::AttributeList pictures = asfTags->attribute("WM/Picture");
 
     for(auto it = pictures.begin(); it != pictures.end(); ++it) {
         const Picture pic    = it->toPicture();
         const auto coverType = toCoverType(pic.type());
         if(covers.contains(coverType)) {
-            it = pictures.erase(it);
+            it       = pictures.erase(it);
+            modified = true;
         }
     }
 
@@ -2019,10 +2051,13 @@ void writeAsfCover(TagLib::ASF::Tag* asfTags, const Fooyin::TrackCovers& covers)
             newPicture.setPicture(TagLib::ByteVector(cover.data.constData(), cover.data.size()));
 
             pictures.append(TagLib::ASF::Attribute{newPicture});
+            modified = true;
         }
     }
 
     asfTags->setAttribute("WM/Picture", pictures);
+
+    return modified;
 }
 } // namespace
 
@@ -2031,7 +2066,7 @@ QStringList TagLibReader::extensions() const
 {
     static const QStringList extensions{u"mp3"_s,  u"ogg"_s, u"opus"_s, u"oga"_s, u"m4a"_s,  u"wav"_s, u"wv"_s,
                                         u"flac"_s, u"wma"_s, u"asf"_s,  u"mpc"_s, u"aiff"_s, u"ape"_s, u"mp4"_s,
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
                                         u"dsf"_s,  u"dff"_s
 #endif
     };
@@ -2240,7 +2275,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         mimeType = mimeDb.mimeTypeForData(source.device).name();
     }
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
         TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
         TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
@@ -2395,7 +2430,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         }
     }
     else if(mimeType == "audio/flac"_L1 || mimeType == "audio/x-flac"_L1) {
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
         TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
         TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
@@ -2472,7 +2507,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
         }
     }
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
     else if(mimeType == "audio/x-dsf"_L1) {
         const TagLib::DSF::File file(&stream, true, style);
         if(file.isValid()) {
@@ -2534,7 +2569,7 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
         mimeType = mimeDb.mimeTypeForData(source.device).name();
     }
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
         TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
         TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
@@ -2580,7 +2615,7 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
         }
     }
     else if(mimeType == "audio/flac"_L1 || mimeType == "audio/x-flac"_L1) {
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
         TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
         TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
@@ -2608,7 +2643,7 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             return readAsfCover(file.tag(), cover);
         }
     }
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
     else if(mimeType == "audio/x-dsf"_L1) {
         const TagLib::DSF::File file(&stream, true);
         if(file.isValid() && file.tag()) {
@@ -2652,7 +2687,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
         mimeType = mimeDb.mimeTypeForData(source.device).name();
     }
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
         TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
         TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
@@ -2726,7 +2761,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
         }
     }
     else if(mimeType == "audio/flac"_L1 || mimeType == "audio/x-flac"_L1) {
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
         TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
         TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
@@ -2768,7 +2803,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
             file.save();
         }
     }
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
     else if(mimeType == "audio/x-dsf"_L1) {
         TagLib::DSF::File file(&stream, false);
         if(file.isValid()) {
@@ -2814,130 +2849,117 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
         mimeType = mimeDb.mimeTypeForData(source.device).name();
     }
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
         TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
         TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
 #endif
-        if(file.isValid()) {
-            if(file.hasID3v2Tag()) {
-                writeId3Cover(file.ID3v2Tag(), covers);
+        if(file.isValid() && file.hasID3v2Tag()) {
+            if(writeId3Cover(file.ID3v2Tag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/x-aiff"_L1 || mimeType == "audio/x-aifc"_L1) {
         TagLib::RIFF::AIFF::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.hasID3v2Tag()) {
-                writeId3Cover(file.tag(), covers);
+        if(file.isValid() && file.hasID3v2Tag()) {
+            if(writeId3Cover(file.tag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/vnd.wave"_L1 || mimeType == "audio/wav"_L1 || mimeType == "audio/x-wav"_L1) {
         TagLib::RIFF::WAV::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.hasID3v2Tag()) {
-                writeId3Cover(file.ID3v2Tag(), covers);
+        if(file.isValid() && file.hasID3v2Tag()) {
+            if(writeId3Cover(file.ID3v2Tag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/x-musepack"_L1) {
         TagLib::MPC::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.hasAPETag()) {
-                writeApeCover(file.APETag(), covers);
+        if(file.isValid() && file.hasAPETag()) {
+            if(writeApeCover(file.APETag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/x-ape"_L1) {
         TagLib::APE::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.hasAPETag()) {
-                writeApeCover(file.APETag(), covers);
+        if(file.isValid() && file.hasAPETag()) {
+            if(writeApeCover(file.APETag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/x-wavpack"_L1) {
         TagLib::WavPack::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.hasAPETag()) {
-                writeApeCover(file.APETag(), covers);
+        if(file.isValid() && file.hasAPETag()) {
+            if(writeApeCover(file.APETag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/mp4"_L1 || mimeType == "video/mp4"_L1 || mimeType == "audio/vnd.audible.aax"_L1) {
         TagLib::MP4::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.hasMP4Tag()) {
-                writeMp4Cover(file.tag(), covers);
+        if(file.isValid() && file.hasMP4Tag()) {
+            if(writeMp4Cover(file.tag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/flac"_L1 || mimeType == "audio/x-flac"_L1) {
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
         TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
         TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
 #endif
-        if(file.isValid()) {
-            if(file.hasXiphComment()) {
-                writeXiphCover(&file, covers);
+        if(file.isValid() && file.hasXiphComment()) {
+            if(writeXiphCover(&file, covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "application/ogg"_L1) {
         TagLib::Ogg::Vorbis::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.tag()) {
-                writeXiphCover(file.tag(), covers);
+        if(file.isValid() && file.tag()) {
+            if(writeXiphCover(file.tag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/opus"_L1 || mimeType == "audio/x-opus+ogg"_L1) {
         TagLib::Ogg::Opus::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.tag()) {
-                writeXiphCover(file.tag(), covers);
+        if(file.isValid() && file.tag()) {
+            if(writeXiphCover(file.tag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/x-ms-wma"_L1 || mimeType == "video/x-ms-asf"_L1
             || mimeType == "application/vnd.ms-asf"_L1) {
         TagLib::ASF::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.tag()) {
-                writeAsfCover(file.tag(), covers);
+        if(file.isValid() && file.tag()) {
+            if(writeAsfCover(file.tag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
-#if(TAGLIB_MAJOR_VERSION >= 2)
+#if (TAGLIB_MAJOR_VERSION >= 2)
     else if(mimeType == "audio/x-dsf"_L1) {
         TagLib::DSF::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.tag()) {
-                writeId3Cover(file.tag(), covers);
+        if(file.isValid() && file.tag()) {
+            if(writeId3Cover(file.tag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
     else if(mimeType == "audio/x-dff"_L1) {
         TagLib::DSDIFF::File file(&stream, false);
-        if(file.isValid()) {
-            if(file.hasID3v2Tag()) {
-                writeId3Cover(file.ID3v2Tag(), covers);
+        if(file.isValid() && file.hasID3v2Tag()) {
+            if(writeId3Cover(file.ID3v2Tag(), covers)) {
+                file.save();
             }
-            file.save();
         }
     }
 #endif

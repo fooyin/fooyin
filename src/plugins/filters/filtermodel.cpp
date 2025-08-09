@@ -247,6 +247,7 @@ void FilterModelPrivate::batchFinished(PendingTreeData data)
     m_resetting = false;
 
     QMetaObject::invokeMethod(m_self, &FilterModel::modelUpdated);
+    m_self->invalidateData();
 }
 
 void FilterModelPrivate::populateModel(PendingTreeData& data)
