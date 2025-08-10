@@ -110,6 +110,11 @@ void CoverWidget::reloadCover()
         m_track = m_playerController->currentTrack();
     }
 
+    if(!m_track.isValid()) {
+        rescaleCover();
+        return;
+    }
+
     m_cover = m_coverProvider->trackCover(m_track, m_coverType);
     // Delay showing cover so we don't display the placeholder if still loading
     // TODO: Implement fading between cover changes
@@ -148,7 +153,7 @@ void CoverWidget::loadLayoutData(const QJsonObject& layout)
 
 void CoverWidget::resizeEvent(QResizeEvent* event)
 {
-    if(!m_cover.isNull()) {
+    if(!m_scaledCover.isNull()) {
         m_resizeTimer.start(ResizeInterval, this);
     }
 
