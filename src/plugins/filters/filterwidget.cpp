@@ -429,7 +429,7 @@ void FilterWidget::tracksChanged(const TrackList& tracks)
             m_updating = false;
             emit finishedUpdating();
         },
-        Qt::SingleShotConnection);
+        static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
 }
 
 void FilterWidget::tracksUpdated(const TrackList& tracks)
