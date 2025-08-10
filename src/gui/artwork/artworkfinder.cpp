@@ -190,7 +190,8 @@ void ArtworkFinder::onSearchResults(const SearchResults& results)
     };
 
     for(const auto& result : results) {
-        if(!isSimilar(m_params.artist, result.artist)) {
+        if(!std::ranges::any_of(result.artist,
+                                [this, isSimilar](const auto& artist) { return isSimilar(m_params.artist, artist); })) {
             continue;
         }
         if(!isSimilar(m_params.album, result.album)) {

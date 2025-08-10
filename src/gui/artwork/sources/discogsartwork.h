@@ -38,7 +38,7 @@ public:
 private:
     void handleSearchReply();
     void handleReleaseReply(uint64_t id);
-    void handleArtistReply(const QString& artist, QNetworkReply* reply);
+    void handleArtistReply(const QStringList& artists, QNetworkReply* reply);
     void endSearchIfFinished();
 
     QString m_apiKey;

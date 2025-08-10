@@ -245,7 +245,7 @@ void LastFmArtwork::handleSearchReply()
             lastCoverUrl = lastCoverUrl.replace("/300x300/"_L1, "/_x_/"_L1);
         }
 
-        searchResults.emplace_back(artist, album, lastCoverUrl);
+        searchResults.emplace_back(QStringList{artist}, album, lastCoverUrl);
     }
 
     emit searchResult(searchResults);

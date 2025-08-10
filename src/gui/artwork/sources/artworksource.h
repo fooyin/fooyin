@@ -49,7 +49,7 @@ using CoverTypes = std::set<Track::Cover>;
 
 struct SearchResult
 {
-    QString artist;
+    QStringList artist;
     QString album;
     QUrl imageUrl;
 };

@@ -29,6 +29,8 @@
 
 Q_LOGGING_CATEGORY(ARTWORK_ITEM, "fy.artworkitem")
 
+using namespace Qt::StringLiterals;
+
 namespace {
 QSize calculateScaledSize(const QSize& originalSize, int maxSize)
 {
@@ -51,7 +53,7 @@ QSize calculateScaledSize(const QSize& originalSize, int maxSize)
 namespace Fooyin {
 ArtworkItem::ArtworkItem(const SearchResult& result, int maxSize)
     : m_url{result.imageUrl}
-    , m_title{result.artist}
+    , m_title{result.artist.join(u" / "_s)}
     , m_isLoaded{false}
     , m_progress{0}
     , m_maxSize{maxSize}

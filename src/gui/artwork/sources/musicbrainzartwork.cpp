@@ -134,7 +134,7 @@ void MusicBrainzArtwork::handleSearchReply()
             continue;
         }
 
-        QString artist;
+        QStringList artistsNames;
         for(const auto& artistVal : artists) {
             if(!artistVal.isObject()) {
                 continue;
@@ -144,12 +144,7 @@ void MusicBrainzArtwork::handleSearchReply()
             const QString artistName    = artistObj.value("name"_L1).toString();
 
             if(!artistName.isEmpty()) {
-                if(!artist.isEmpty()) {
-                    artist = u"Various Artists"_s;
-                }
-                else {
-                    artist = artistName;
-                }
+                artistsNames.emplace_back(artistName);
             }
         }
 
@@ -157,7 +152,7 @@ void MusicBrainzArtwork::handleSearchReply()
         const QString album     = releaseObj.value("title"_L1).toString();
         const QUrl url          = QString::fromLatin1(ArtworkUrl).arg(releaseId, coverTypeToString(m_type));
 
-        searchResults.emplace_back(artist, album, url);
+        searchResults.emplace_back(artistsNames, album, url);
     }
 
     emit searchResult(searchResults);

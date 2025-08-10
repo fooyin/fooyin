@@ -169,8 +169,7 @@ void DiscogsArtwork::handleReleaseReply(uint64_t id)
     }
 
     QString artistUrl;
-    QString artist;
-    int validArtistCount{0};
+    QStringList artistNames;
 
     for(const auto& artistResult : std::as_const(artists)) {
         const QJsonObject artistObj = artistResult.toObject();
@@ -189,12 +188,10 @@ void DiscogsArtwork::handleReleaseReply(uint64_t id)
         }
 
         artistUrl = artistObj.value("resource_url"_L1).toString();
-        artist    = artistName;
-
-        ++validArtistCount;
+        artistNames.emplace_back(artistName);
     }
 
-    if(artist.isEmpty()) {
+    if(artistNames.empty()) {
         endSearchIfFinished();
         return;
     }
@@ -206,16 +203,12 @@ void DiscogsArtwork::handleReleaseReply(uint64_t id)
 
             auto* artistReply = network()->get(req);
             QObject::connect(artistReply, &QNetworkReply::finished, this,
-                             [this, artist, artistReply]() { handleArtistReply(artist, artistReply); });
+                             [this, artistNames, artistReply]() { handleArtistReply(artistNames, artistReply); });
         }
         else {
             endSearchIfFinished();
         }
         return;
-    }
-
-    if(validArtistCount > 1 && artist != m_params.artist) {
-        artist = "Various Artists"_L1;
     }
 
     const QString album = obj["title"_L1].toString();
@@ -252,13 +245,13 @@ void DiscogsArtwork::handleReleaseReply(uint64_t id)
 
         const QString imageUrl = imageObj.value("resource_url"_L1).toString();
 
-        m_results.emplace_back(artist, album, imageUrl);
+        m_results.emplace_back(artistNames, album, imageUrl);
     }
 
     endSearchIfFinished();
 }
 
-void DiscogsArtwork::handleArtistReply(const QString& artist, QNetworkReply* reply)
+void DiscogsArtwork::handleArtistReply(const QStringList& artists, QNetworkReply* reply)
 {
     QJsonObject obj;
     if(!getJsonFromReply(reply, &obj)) {
@@ -304,7 +297,7 @@ void DiscogsArtwork::handleArtistReply(const QString& artist, QNetworkReply* rep
 
         const QString imageUrl = imageObj.value("resource_url"_L1).toString();
 
-        m_results.emplace_back(artist, QString{}, imageUrl);
+        m_results.emplace_back(artists, QString{}, imageUrl);
     }
 
     endSearchIfFinished();
