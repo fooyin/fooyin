@@ -29,6 +29,7 @@ public:
     explicit TreeModel(QObject* parent = nullptr)
         : QAbstractItemModel{parent}
         , m_root{std::make_unique<Item>()}
+        , m_dirty{false}
     { }
 
     ~TreeModel() override = default;
