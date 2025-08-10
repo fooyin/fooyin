@@ -497,6 +497,10 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* pla
 
 void PlaylistWidgetPrivate::resetTree()
 {
+    if(m_model->isDirty()) {
+        return;
+    }
+
     resetSort();
     restoreState(m_playlistController->currentPlaylist());
     m_clearAction->setEnabled(!m_playlistController->currentIsAuto() && m_model->rowCount({}) > 0);
