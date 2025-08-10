@@ -125,14 +125,20 @@ void NeteaseLyrics::handleSearchReply()
         return;
     }
 
-    m_currentData = m_data.begin();
+    m_currentIndex = 0;
     makeLyricRequest();
 }
 
 void NeteaseLyrics::makeLyricRequest()
 {
+    if(m_currentIndex < 0 || std::cmp_greater_equal(m_currentIndex, m_data.size())) {
+        return;
+    }
+
+    const LyricData& data = m_data.at(m_currentIndex);
+
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(u"id"_s, m_currentData->id);
+    urlQuery.addQueryItem(u"id"_s, data.id);
     urlQuery.addQueryItem(u"lv"_s, u"-1"_s);
     urlQuery.addQueryItem(u"kv"_s, u"-1"_s);
     urlQuery.addQueryItem(u"tv"_s, u"-1"_s);
@@ -152,16 +158,21 @@ void NeteaseLyrics::handleLyricReply()
     if(getJsonFromReply(reply(), &obj)) {
         resetReply();
 
+        if(m_currentIndex < 0 || std::cmp_greater_equal(m_currentIndex, m_data.size())) {
+            return;
+        }
+
         const QJsonObject lrc = obj.value("lrc"_L1).toObject();
         const QString lyrics  = lrc.value("lyric"_L1).toString().trimmed();
         if(!lyrics.isEmpty()) {
-            m_currentData->data = lyrics;
+            LyricData& data = m_data.at(m_currentIndex);
+            data.data       = lyrics;
         }
     }
 
-    ++m_currentData;
+    ++m_currentIndex;
 
-    if(m_currentData == m_data.end()) {
+    if(std::cmp_greater_equal(m_currentIndex, m_data.size())) {
         emit searchResult(m_data);
     }
     else {
