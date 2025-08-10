@@ -217,8 +217,11 @@ void ArtworkFinder::onSearchResults(const SearchResults& results)
 
 void ArtworkFinder::onDownloadProgress(const QUrl& url, qint64 bytesReceived, qint64 bytesTotal)
 {
-    int progress = static_cast<int>((static_cast<double>(bytesReceived) / static_cast<double>(bytesTotal)) * 100);
-    progress     = std::clamp(progress, 0, 100);
+    int progress{0};
+    if(bytesTotal > 0 && bytesTotal >= bytesReceived) {
+        progress = static_cast<int>((static_cast<double>(bytesReceived) / static_cast<double>(bytesTotal)) * 100);
+    }
+    progress = std::clamp(progress, 0, 100);
     emit coverLoadProgress(url, progress);
 }
 
