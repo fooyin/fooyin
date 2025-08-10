@@ -140,7 +140,9 @@ void TagEditorWidget::setReadOnly(bool readOnly)
 {
     m_readOnly = readOnly;
 
-    m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers : QAbstractItemView::AllEditTriggers);
+    m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers
+                                        : (QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked
+                                           | QAbstractItemView::EditKeyPressed));
     m_view->addRowAction()->setDisabled(readOnly);
     m_view->removeRowAction()->setDisabled(readOnly);
     m_autoTrackNum->setDisabled(readOnly);
