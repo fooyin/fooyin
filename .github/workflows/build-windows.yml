@@ -1,0 +1,83 @@
+name: Windows build
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
+
+env:
+  BUILD_TESTS: Off
+
+jobs:
+  windows:
+    name: Windows-x64
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: setup-msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANG64
+          update: true
+
+      - name: Dependencies
+        run: |
+          ./ci/windows-depends.sh
+
+      - name: Build
+        run: |
+          ./ci/windows-build.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64
+          path: zip
+
+
+  windows-arm64:
+    name: Windows-arm64
+    runs-on: windows-11-arm
+    strategy:
+      fail-fast: false
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: setup-msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANGARM64
+          update: true
+
+      - name: Dependencies
+        run: |
+          ./ci/windows-depends.sh
+
+      - name: Build
+        run: |
+          ./ci/windows-build.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-arm64
+          path: zip
