@@ -37,4 +37,5 @@ $SUDO apt-get install -y \
         libgme-dev \
         libarchive-dev \
         libsndfile1-dev \
-        libebur128-dev
+        libebur128-dev \
+        libgtest-dev

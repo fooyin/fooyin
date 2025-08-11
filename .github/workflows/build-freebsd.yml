@@ -8,7 +8,7 @@ on:
     types: [published]
 
 env:
-  BUILD_TESTS: Off
+  BUILD_TESTS: ON
 
 jobs:
   freebsd:
@@ -34,6 +34,7 @@ jobs:
           run: |
             ./ci/freebsd-depends.sh
             ./ci/freebsd-build.sh
+            ./ci/tests.sh
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
