@@ -18,4 +18,5 @@ sudo pkg install -y \
      sdl2 \
      libopenmpt \
      libarchive \
-     ebur128
+     ebur128 \
+     googletest

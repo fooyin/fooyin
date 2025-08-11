@@ -8,7 +8,7 @@ on:
     types: [published]
 
 env:
-  BUILD_TESTS: Off
+  BUILD_TESTS: ON
 
 jobs:
   archlinux:
@@ -37,6 +37,11 @@ jobs:
         run: |
           ./ci/archlinux-build.sh
 
+      - name: Run tests
+        if: env.BUILD_TESTS == 'ON'
+        run: |
+          ./ci/tests.sh
+
   fedora:
     name: Fedora
     runs-on: ubuntu-latest
@@ -64,6 +69,11 @@ jobs:
       - name: Build
         run: |
           ./ci/fedora-build.sh
+
+      - name: Run tests
+        if: env.BUILD_TESTS == 'ON'
+        run: |
+          ./ci/tests.sh
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -96,9 +106,23 @@ jobs:
         run: |
           ./ci/ubuntu-depends.sh
 
+      - name: Install GTest
+        run: |
+          cd /usr/src/gtest
+          cmake .
+          make
+          cp lib/*.a /usr/lib
+          ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
+          ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+
       - name: Build
         run: |
           ./ci/ubuntu-build.sh
+
+      - name: Run tests
+        if: env.BUILD_TESTS == 'ON'
+        run: |
+          ./ci/tests.sh
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -131,9 +155,23 @@ jobs:
         run: |
           ./ci/ubuntu-depends.sh
 
+      - name: Install GTest
+        run: |
+          cd /usr/src/gtest
+          cmake .
+          make
+          cp lib/*.a /usr/lib
+          ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
+          ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+
       - name: Build
         run: |
           ./ci/ubuntu-build.sh
+
+      - name: Run tests
+        if: env.BUILD_TESTS == 'ON'
+        run: |
+          ./ci/tests.sh
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
