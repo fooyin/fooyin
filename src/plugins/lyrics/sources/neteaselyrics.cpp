@@ -31,11 +31,8 @@
 
 using namespace Qt::StringLiterals;
 
-// TODO: Use offical API once we resolve issues with random search results
-// constexpr auto SearchUrl = "https://music.163.com/api/search/get";
-constexpr auto SearchUrl = "https://music.xianqiao.wang/neteaseapiv2/search";
-// constexpr auto LyricUrl  = "https://music.163.com/api/song/lyric";
-constexpr auto LyricUrl = "https://music.xianqiao.wang/neteaseapiv2/lyric";
+constexpr auto SearchUrl = "https://music.163.com/api/cloudsearch/pc";
+constexpr auto LyricUrl  = "https://interface3.music.163.com/api/song/lyric";
 
 namespace {
 QNetworkRequest setupRequest(const char* url)
@@ -61,12 +58,11 @@ void NeteaseLyrics::search(const SearchParams& params)
     m_data.clear();
 
     QUrlQuery urlQuery;
-    urlQuery.addQueryItem(u"keywords"_s, u"%1+%2"_s.arg(params.artist, params.title));
+    urlQuery.addQueryItem(u"s"_s, u"%1+%2"_s.arg(params.artist, params.title));
     urlQuery.addQueryItem(u"type"_s, u"1"_s);
     urlQuery.addQueryItem(u"offset"_s, u"0"_s);
     urlQuery.addQueryItem(u"sub"_s, u"false"_s);
-    urlQuery.addQueryItem(u"limit"_s, u"3"_s);
-    urlQuery.addQueryItem(u"total"_s, u"true"_s);
+    urlQuery.addQueryItem(u"limit"_s, u"5"_s);
 
     const QNetworkRequest req = setupRequest(SearchUrl);
 
@@ -80,7 +76,7 @@ void NeteaseLyrics::handleSearchReply()
 {
     QJsonObject obj;
     if(!getJsonFromReply(reply(), &obj)) {
-        emit searchResult({});
+        emit searchResult(m_data);
         resetReply();
         return;
     }
@@ -91,7 +87,7 @@ void NeteaseLyrics::handleSearchReply()
     const QJsonArray songs   = result.value("songs"_L1).toArray();
 
     if(songs.isEmpty()) {
-        emit searchResult({});
+        emit searchResult(m_data);
         return;
     }
 
@@ -101,10 +97,10 @@ void NeteaseLyrics::handleSearchReply()
             LyricData songData;
             songData.id    = QString::number(songItem.value("id"_L1).toInteger());
             songData.title = songItem.value("name"_L1).toString();
-            songData.album = songItem.value("album"_L1).toObject().value("name"_L1).toString();
+            songData.album = songItem.value("al"_L1).toObject().value("name"_L1).toString();
 
             QStringList trackArtists;
-            const auto artists = songItem.value("artists"_L1).toArray();
+            const auto artists = songItem.value("ar"_L1).toArray();
             for(const auto& artist : artists) {
                 const QString artistName = artist.toObject().value("name"_L1).toString();
                 if(!artistName.isEmpty()) {
@@ -121,7 +117,7 @@ void NeteaseLyrics::handleSearchReply()
     }
 
     if(m_data.empty()) {
-        emit searchResult({});
+        emit searchResult(m_data);
         return;
     }
 
@@ -132,6 +128,7 @@ void NeteaseLyrics::handleSearchReply()
 void NeteaseLyrics::makeLyricRequest()
 {
     if(m_currentIndex < 0 || std::cmp_greater_equal(m_currentIndex, m_data.size())) {
+        emit searchResult(m_data);
         return;
     }
 
@@ -139,9 +136,14 @@ void NeteaseLyrics::makeLyricRequest()
 
     QUrlQuery urlQuery;
     urlQuery.addQueryItem(u"id"_s, data.id);
-    urlQuery.addQueryItem(u"lv"_s, u"-1"_s);
-    urlQuery.addQueryItem(u"kv"_s, u"-1"_s);
-    urlQuery.addQueryItem(u"tv"_s, u"-1"_s);
+    urlQuery.addQueryItem(u"cp"_s, u"false"_s);
+    urlQuery.addQueryItem(u"lv"_s, u"0"_s);
+    urlQuery.addQueryItem(u"kv"_s, u"0"_s);
+    urlQuery.addQueryItem(u"tv"_s, u"0"_s);
+    urlQuery.addQueryItem(u"rv"_s, u"0"_s);
+    urlQuery.addQueryItem(u"yv"_s, u"0"_s);
+    urlQuery.addQueryItem(u"ytv"_s, u"0"_s);
+    urlQuery.addQueryItem(u"yrv"_s, u"0"_s);
     urlQuery.addQueryItem(u"os"_s, u"pc"_s);
 
     const QNetworkRequest req = setupRequest(LyricUrl);
@@ -159,12 +161,13 @@ void NeteaseLyrics::handleLyricReply()
         resetReply();
 
         if(m_currentIndex < 0 || std::cmp_greater_equal(m_currentIndex, m_data.size())) {
+            emit searchResult(m_data);
             return;
         }
 
         const QJsonObject lrc = obj.value("lrc"_L1).toObject();
         const QString lyrics  = lrc.value("lyric"_L1).toString().trimmed();
-        if(!lyrics.isEmpty()) {
+        if(!lyrics.isEmpty() && lyrics != "暂无歌词"_L1) {
             LyricData& data = m_data.at(m_currentIndex);
             data.data       = lyrics;
         }
