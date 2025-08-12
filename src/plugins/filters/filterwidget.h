@@ -79,6 +79,8 @@ public:
     void tracksUpdated(const TrackList& tracks);
     void tracksRemoved(const TrackList& tracks);
 
+    void addFilterHeaderMenu(QMenu* menu, const QPoint& pos);
+
 signals:
     void doubleClicked();
     void middleClicked();
@@ -103,8 +105,7 @@ private:
     void handleSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
     void updateViewMode(ExpandedTreeView::ViewMode mode);
     void updateCaptions(ExpandedTreeView::CaptionDisplay captions);
-    void hideHeader(bool hide);
-    void setScrollbarEnabled(bool enabled);
+    void updateAppearance();
 
     void addDisplayMenu(QMenu* menu);
     void filterHeaderMenu(const QPoint& pos);
@@ -136,6 +137,10 @@ private:
     bool m_updating{false};
 
     QByteArray m_headerState;
+
+    bool m_showHeader;
+    bool m_showScrollbar;
+    bool m_alternatingColours;
 };
 } // namespace Filters
 } // namespace Fooyin

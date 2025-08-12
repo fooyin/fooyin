@@ -36,9 +36,6 @@ FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
 {
     using namespace Settings::Filters;
 
-    m_settings->createSetting<FilterAltColours>(false, u"Filters/AlternatingColours"_s);
-    m_settings->createSetting<FilterHeader>(true, u"Filters/Header"_s);
-    m_settings->createSetting<FilterScrollBar>(true, u"Filters/Scrollbar"_s);
     m_settings->createSetting<FilterDoubleClick>(1, u"Filters/DoubleClickBehaviour"_s);
     m_settings->createSetting<FilterMiddleClick>(0, u"Filters/MiddleClickBehaviour"_s);
     m_settings->createSetting<FilterPlaylistEnabled>(true, u"Filters/SelectionPlaylistEnabled"_s);
