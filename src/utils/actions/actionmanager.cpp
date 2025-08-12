@@ -182,14 +182,14 @@ void ActionManagerPrivate::setContext(const Context& updatedContext)
 void ActionManagerPrivate::clear()
 {
     for(auto [_, context] : m_contextWidgets) {
-        context->disconnect();
+        context->disconnect(m_self);
     }
 
     m_contextWidgets.clear();
     m_activeContext.clear();
 
     for(const auto& [_, container] : m_idContainerMap) {
-        container->disconnect();
+        container->disconnect(m_self);
     }
 
     m_idContainerMap.clear();
