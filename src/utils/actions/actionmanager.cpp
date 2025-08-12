@@ -181,7 +181,7 @@ void ActionManagerPrivate::setContext(const Context& updatedContext)
 
 void ActionManagerPrivate::clear()
 {
-    for(auto [_, context] : m_contextWidgets) {
+    for(const auto& [_, context] : m_contextWidgets) {
         context->disconnect(m_self);
     }
 
