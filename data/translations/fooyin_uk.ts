@@ -1046,7 +1046,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="410"/>
         <source>Paste (Insert)</source>
-        <translation>Вставити</translation>
+        <translation>Вставити (Вставити)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
@@ -6510,12 +6510,12 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="61"/>
         <source>Scrobble Toggle</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикач Scrobble</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="62"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Елементи керування</translation>
     </message>
 </context>
 <context>
@@ -6523,22 +6523,22 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="101"/>
         <source>%1 Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Автентифікація</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="103"/>
         <source>Open url in web browser?</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити URL-адресу у веббраузері?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="110"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Відчинено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="112"/>
         <source>Copy URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Копіювати URL-адресу</translation>
     </message>
 </context>
 <context>
@@ -6546,7 +6546,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="64"/>
         <source>Scrobble Toggle</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикач Scrobble</translation>
     </message>
 </context>
 <context>
@@ -6556,31 +6556,31 @@
         <location filename="../../src/gui/search/searchcontroller.cpp" line="190"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="226"/>
         <source>Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Підключитися</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="182"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="194"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="226"/>
         <source>Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Відключитися</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="167"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="175"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="222"/>
         <source>Unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Недоступно</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="245"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистити все</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="255"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Фініш</translation>
     </message>
 </context>
 <context>
@@ -6589,22 +6589,22 @@
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="69"/>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="137"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Опції</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="122"/>
         <source>Search Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук у списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="122"/>
         <source>Search Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук у бібліотеці</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
         <source>Start typing to search</source>
-        <translation type="unfinished"></translation>
+        <translation>Почніть вводити текст для пошуку</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
@@ -6618,17 +6618,17 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="129"/>
         <source>No results</source>
-        <translation type="unfinished"></translation>
+        <translation>Немає результатів</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="141"/>
         <source>Auto-select on search</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматичний вибір під час пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="151"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Допомога</translation>
     </message>
 </context>
 <context>
@@ -6636,17 +6636,17 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="202"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Бібліотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошукаю</translation>
     </message>
 </context>
 <context>
@@ -6654,77 +6654,77 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="69"/>
         <source>Clear search string when successful</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистити рядок пошуку після успішного виконання</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="70"/>
         <source>Autosearch delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Затримка автопошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="72"/>
         <source>Append search string to the playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати рядок пошуку до назви списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
         <source>Switch focus to playlist on successful search</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикання фокусу на список відтворення після успішного пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="74"/>
         <source>Close quick search when successful</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрити швидкий пошук після успішного завершення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="75"/>
         <source>Error background</source>
-        <translation type="unfinished"></translation>
+        <translation>Фон помилки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="77"/>
         <source>Error foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка на передньому плані</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="80"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="84"/>
         <source>Very fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Дуже швидко</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="85"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Швидкий</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="86"/>
         <source>Medium</source>
-        <translation type="unfinished"></translation>
+        <translation>Середній&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
         <source>Slow</source>
-        <translation type="unfinished"></translation>
+        <translation>Повільно</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="89"/>
         <source>These settings will only apply if autosearch is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ці налаштування застосовуватимуться лише за умови вимкнення автоматичного пошуку.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
         <source>Search Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Результати пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="106"/>
         <source>Playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва списку відтворення</translation>
     </message>
 </context>
 <context>
@@ -6732,104 +6732,104 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="61"/>
         <source>Search library…</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук у бібліотеці…</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="92"/>
         <location filename="../../src/gui/search/searchwidget.cpp" line="493"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Опції</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="109"/>
         <source>Search Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Результати пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="114"/>
         <source>Search Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Рядок пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="436"/>
         <source>Special Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Спеціальні клавіші</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="436"/>
         <source>Force the creation of a new results playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Примусово створити новий список відтворення результатів</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
         <source>Force search in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Примусовий пошук у поточному списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="437"/>
         <source>Force search in all playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Примусовий пошук у всіх списках відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="438"/>
         <source>Force new results playlist using the current playlist as the source</source>
-        <translation type="unfinished"></translation>
+        <translation>Примусово створити новий список відтворення результатів, використовуючи поточний список відтворення як джерело</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="439"/>
         <source>Force new results playlist using all playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Примусово створити новий список відтворення результатів, використовуючи всі списки відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="439"/>
         <source>Delete a word in the search box</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалення слова в полі пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="496"/>
         <source>Autosearch</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматичний пошук</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="503"/>
         <source>Search in</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук у</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="505"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Бібліотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="511"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="517"/>
         <source>All Playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Усі списки відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="528"/>
         <source>Change placeholder text</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити текст заповнювача</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="538"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Допомога</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="124"/>
         <location filename="../../src/gui/search/searchwidget.cpp" line="532"/>
         <source>Manage connections</source>
-        <translation type="unfinished"></translation>
+        <translation>Керування підключеннями</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="854"/>
         <source>Quick Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Швидкий пошук</translation>
     </message>
 </context>
 <context>
@@ -6837,17 +6837,17 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="311"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="347"/>
         <source>Show labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати мітки</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="354"/>
         <source>Show elapsed total</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати загальний час, що минув</translation>
     </message>
 </context>
 <context>
@@ -6855,28 +6855,28 @@
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="183"/>
         <source>Reset Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути сторінку</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="184"/>
         <source>Reset All</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути все</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="285"/>
         <source>Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви впевнені?</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="286"/>
         <source>This will reset all settings to default.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це скине всі налаштування до заводських.</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="170"/>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="320"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштуваннях</translation>
     </message>
 </context>
 <context>
@@ -6884,12 +6884,12 @@
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="140"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="141"/>
         <source>Shell Integration</source>
-        <translation type="unfinished"></translation>
+        <translation>Інтеграція оболонки</translation>
     </message>
 </context>
 <context>
@@ -6897,42 +6897,42 @@
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="63"/>
         <source>Always send to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Завжди надсилати до списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="66"/>
         <source>File Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Типи файлів</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="70"/>
         <source>Restrict to</source>
-        <translation type="unfinished"></translation>
+        <translation>Обмежити до</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="72"/>
         <source>Exclude</source>
-        <translation type="unfinished"></translation>
+        <translation>Виключити</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="77"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="84"/>
         <source>Playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="86"/>
         <source>Sort incoming tracks by</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортувати вхідні треки за</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="80"/>
         <source>When opening files, always send to playlist, replacing all existing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Під час відкриття файлів завжди надсилати до списку відтворення, замінюючи всі існуючі треки</translation>
     </message>
 </context>
 <context>
@@ -6940,17 +6940,17 @@
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="226"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Дія</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="228"/>
         <source>Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Id</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="230"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Скорочення</translation>
     </message>
 </context>
 <context>
@@ -6959,7 +6959,7 @@
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="253"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="254"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Скорочення&apos;</translation>
     </message>
 </context>
 <context>
@@ -6967,12 +6967,12 @@
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="104"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Скорочення&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="120"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути</translation>
     </message>
 </context>
 <context>
@@ -6980,7 +6980,7 @@
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="162"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Індекс</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="164"/>
@@ -6990,7 +6990,7 @@
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="166"/>
         <source>Sort Script</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортування сценаріїв</translation>
     </message>
 </context>
 <context>
@@ -6998,7 +6998,7 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="39"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Альбом</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="40"/>
@@ -7008,12 +7008,12 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="41"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="42"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Номер треку</translation>
     </message>
 </context>
 <context>
@@ -7021,7 +7021,7 @@
     <message>
         <location filename="../../src/gui/widgets/spacer.cpp" line="34"/>
         <source>Spacer</source>
-        <translation type="unfinished"></translation>
+        <translation>Розпірка</translation>
     </message>
 </context>
 <context>
@@ -7029,22 +7029,22 @@
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="369"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished"></translation>
+        <translation>Роздільник (верхній/нижній)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="371"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>Роздільник (лівий/правий)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="381"/>
         <source>Switch orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Орієнтація перемикача</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="384"/>
         <source>Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>Роздільник</translation>
     </message>
 </context>
 <context>
@@ -7052,22 +7052,22 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="292"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Рядок стану</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="359"/>
         <source>Show icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="365"/>
         <source>Show track selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати вибір треку</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="372"/>
         <source>Show action tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати поради щодо дій</translation>
     </message>
 </context>
 <context>
@@ -7075,7 +7075,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="121"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
@@ -7085,7 +7085,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
         <source>Status Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Віджет стану</translation>
     </message>
 </context>
 <context>
@@ -7093,27 +7093,27 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="61"/>
         <source>Show icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="62"/>
         <source>Show track selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати вибір треку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="63"/>
         <source>Show action tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати поради щодо дій</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="77"/>
         <source>Playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворення треку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="79"/>
         <source>Track selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибір треку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="67"/>
@@ -7123,7 +7123,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="74"/>
         <source>Scripts</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрипти</translation>
     </message>
 </context>
 <context>
@@ -7131,7 +7131,7 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="233"/>
         <source>Layout Editing Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим редагування макета</translation>
     </message>
 </context>
 <context>
@@ -7139,47 +7139,47 @@
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="53"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="71"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Стек вкладок</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="269"/>
         <source>&amp;Position</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Позиція</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="273"/>
         <source>&amp;North</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Північ</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="274"/>
         <source>&amp;East</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Схід</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="275"/>
         <source>&amp;South</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Південь</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="276"/>
         <source>&amp;West</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Захід</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="315"/>
         <source>&amp;Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Перейменувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="318"/>
         <source>Re&amp;move</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви&amp;лучити</translation>
     </message>
 </context>
 <context>
@@ -7187,72 +7187,72 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="45"/>
         <source>Artist Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Ім&apos;я виконавця</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="46"/>
         <source>Track Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва треку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="47"/>
         <source>Album Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва альбому</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="48"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="49"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Жанр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="50"/>
         <source>Composer</source>
-        <translation type="unfinished"></translation>
+        <translation>Композитор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="51"/>
         <source>Performer</source>
-        <translation type="unfinished"></translation>
+        <translation>Перформер</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Виконавець альбому</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Номер треку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="54"/>
         <source>Total Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальна кількість треків</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="55"/>
         <source>Disc Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Номер диска</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="56"/>
         <source>Total Discs</source>
-        <translation type="unfinished"></translation>
+        <translation>Всього дисків</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="57"/>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Коментар</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Рейтинг</translation>
     </message>
 </context>
 <context>
@@ -7260,7 +7260,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="177"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Індекс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="179"/>
@@ -7270,12 +7270,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="181"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation>Поле</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="183"/>
         <source>Multiline</source>
-        <translation type="unfinished"></translation>
+        <translation>Багаторядковий</translation>
     </message>
 </context>
 <context>
@@ -7283,12 +7283,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="135"/>
         <source>Fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Поля&apos;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="136"/>
         <source>Tag Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор тегів</translation>
     </message>
 </context>
 <context>
@@ -7296,7 +7296,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="83"/>
         <source>Multiple values can be specified in the editor using %1</source>
-        <translation type="unfinished"></translation>
+        <translation>У редакторі можна вказати кілька значень за допомогою %1</translation>
     </message>
 </context>
 <context>
@@ -7309,12 +7309,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="49"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="50"/>
         <source>Paste fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити поля</translation>
     </message>
 </context>
 <context>
@@ -7322,27 +7322,27 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="61"/>
         <source>&amp;Change default fields…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Змінити поля за замовчуванням…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="197"/>
         <source>Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви впевнені?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="198"/>
         <source>Metadata in the associated files will be overwritten.</source>
-        <translation type="unfinished"></translation>
+        <translation>Метадані у пов&apos;язаних файлах будуть перезаписані.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="200"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished"></translation>
+        <translation>Не питати більше</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="60"/>
         <source>Auto &amp;track number</source>
-        <translation type="unfinished"></translation>
+        <translation>Номер авто та відстеження</translation>
     </message>
 </context>
 <context>
@@ -7350,7 +7350,7 @@
     <message>
         <location filename="../../src/gui/theme/themeregistry.cpp" line="46"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Темний режим</translation>
     </message>
 </context>
 <context>
@@ -7388,32 +7388,32 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="140"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити з черги відтворення&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="141"/>
         <source>Open containing folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити папку, що містить</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="142"/>
         <source>Search for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук творів мистецтва…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="143"/>
         <source>Quicksearch for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Швидкий пошук творів мистецтва</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="144"/>
         <source>Remove all artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити всі ілюстрації</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="145"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Властивості</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="155"/>
@@ -7453,27 +7453,27 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="221"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити вибрані треки з черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="233"/>
         <source>Open the directory containing the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити каталог, що містить вибрані треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="254"/>
         <source>Search for artwork for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук обкладинок для вибраних треків</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="277"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити всі обкладинки, пов&apos;язані з вибраними треками (вбудовані, каталог)</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="289"/>
         <source>Open the properties dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте діалогове вікно властивостей</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="413"/>
@@ -7486,27 +7486,27 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="43"/>
         <source>Guess track number from filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Вгадай номер треку з назви файлу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="53"/>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Довжина</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="56"/>
         <source>Loop count</source>
-        <translation type="unfinished"></translation>
+        <translation>Кількість циклів</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="57"/>
         <source>(0 = infinite)</source>
-        <translation type="unfinished"></translation>
+        <translation>(0 = нескінченний)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="63"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Тривалість затухання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="46"/>
@@ -7516,33 +7516,33 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="61"/>
         <source>times</source>
-        <translation type="unfinished"></translation>
+        <translation>рази</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="67"/>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="73"/>
         <source>ms</source>
-        <translation type="unfinished"></translation>
+        <translation>мс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="69"/>
         <source>End silence length</source>
-        <translation type="unfinished"></translation>
+        <translation>Тривалість тиші в кінці</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="86"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
         <source>ROM location</source>
-        <translation type="unfinished"></translation>
+        <translation>Розташування ПЗУ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="91"/>
         <source>Certain files %1 require their system&apos;s ROM to play %2. Provide a directory where these can be found here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Для відтворення певних файлів %1 потрібна системна ПЗП %2. Вкажіть каталог, де їх можна знайти.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="97"/>
@@ -7552,7 +7552,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="140"/>
         <source>Select ROM path</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть шлях до ПЗП</translation>
     </message>
 </context>
 <context>
@@ -7560,47 +7560,47 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="39"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>Переглянути</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="41"/>
         <source>&amp;Quick setup</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Швидке налаштування</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="42"/>
         <source>Open the quick setup dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте діалогове вікно швидкого налаштування</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="48"/>
         <source>&amp;Log</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Журнал</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
         <source>Open the log dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити діалогове вікно журналу</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="55"/>
         <source>&amp;Script editor</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Редактор сценаріїв</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="56"/>
         <source>Open the script editor dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити діалогове вікно редактора скриптів</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="64"/>
         <source>Show playing &amp;track</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати відтворюваний трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="65"/>
         <source>Show the currently playing track in the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Відображення поточної доріжки у списку відтворення</translation>
     </message>
 </context>
 <context>
@@ -7608,22 +7608,22 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="292"/>
         <source>Volume Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Регулювання гучності</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="319"/>
         <source>Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="320"/>
         <source>Slider</source>
-        <translation type="unfinished"></translation>
+        <translation>Слайдер</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="321"/>
         <source>Tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>Підказка</translation>
     </message>
 </context>
 <context>
@@ -7632,7 +7632,7 @@
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="57"/>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="67"/>
         <source>Visualisations</source>
-        <translation type="unfinished"></translation>
+        <translation>Візуалізації</translation>
     </message>
 </context>
 <context>
@@ -7640,7 +7640,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="219"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="220"/>
@@ -7650,7 +7650,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="220"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>VU-метр</translation>
     </message>
 </context>
 <context>
@@ -7658,77 +7658,77 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="80"/>
         <source>Custom colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Кольори на замовлення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="86"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="95"/>
         <source>Peak hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Піковий час утримання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="97"/>
         <source>Falloff time</source>
-        <translation type="unfinished"></translation>
+        <translation>Час спаду</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="90"/>
         <source>seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>секунди</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="92"/>
         <source>dB per second</source>
-        <translation type="unfinished"></translation>
+        <translation>дБ за секунду</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="101"/>
         <source>Dimension</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимір</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="119"/>
         <source>Channel spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Рознос каналів</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="121"/>
         <source>Bar size</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір бруска</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="123"/>
         <source>Bar spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Відстань між рядками</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="127"/>
         <source>Sections</source>
-        <translation type="unfinished"></translation>
+        <translation>Розділи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="129"/>
         <source>Section spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Відстань між секціями</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="137"/>
         <source>Background colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір фону</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="139"/>
         <source>Peak colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Піковий колір</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="141"/>
         <source>Bar colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Кольори смуг</translation>
     </message>
 </context>
 <context>
@@ -7736,42 +7736,42 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="625"/>
         <source>Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>Піковий метр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="625"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>VU-метр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="802"/>
         <source>Show peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати піки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="807"/>
         <source>Show legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати легенду</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="812"/>
         <source>Orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Орієнтація</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="815"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="816"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Вертикальний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="830"/>
         <source>Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування…</translation>
     </message>
 </context>
 <context>
@@ -7779,7 +7779,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="199"/>
         <source>Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Кольори</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="200"/>
@@ -7789,7 +7789,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="200"/>
         <source>WaveBar</source>
-        <translation type="unfinished"></translation>
+        <translation>WaveBar&apos;</translation>
     </message>
 </context>
 <context>
@@ -7797,62 +7797,62 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="72"/>
         <source>Custom colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Кольори на замовлення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="97"/>
         <source>Unplayed</source>
-        <translation type="unfinished"></translation>
+        <translation>Незіграний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="98"/>
         <source>Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Грається</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="99"/>
         <source>Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Кордон</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="100"/>
         <source>Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Передісторія</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="103"/>
         <source>Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Макс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="107"/>
         <source>Min</source>
-        <translation type="unfinished"></translation>
+        <translation>Хв</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="111"/>
         <source>RMS Max</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS Max&apos;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="115"/>
         <source>RMS Min</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS Min&apos;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="119"/>
         <source>Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворюється</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="120"/>
         <source>Seeking</source>
-        <translation type="unfinished"></translation>
+        <translation>Шукаю</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="121"/>
         <source>Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор</translation>
     </message>
 </context>
 <context>
@@ -7860,57 +7860,57 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="96"/>
         <source>Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель пошуку форми хвилі</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="97"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Елементи керування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="101"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>Комунальні послуги</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="106"/>
         <source>Regenerate waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>Регенерувати дані сигналу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="107"/>
         <source>Regenerate waveform data for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Регенерувати дані форми хвилі для вибраних доріжок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="111"/>
         <source>Generate missing waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>Згенерувати відсутні дані сигналу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="112"/>
         <source>Generate waveform data for the selected tracks if missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Згенерувати дані форми хвилі для вибраних доріжок, якщо вони відсутні</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="116"/>
         <source>Remove waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити дані сигналу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="117"/>
         <source>Remove any existing waveform data for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити будь-які наявні дані форми хвилі для вибраних доріжок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
         <source>Generating waveform data…</source>
-        <translation type="unfinished"></translation>
+        <translation>Генерування даних сигналу…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>Перервати</translation>
     </message>
 </context>
 <context>
@@ -7918,7 +7918,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="315"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="316"/>
@@ -7928,7 +7928,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="316"/>
         <source>WaveBar</source>
-        <translation type="unfinished"></translation>
+        <translation>WaveBar&apos;</translation>
     </message>
 </context>
 <context>
@@ -7936,62 +7936,62 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
         <source>RMS</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="86"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимк</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="87"/>
         <source>Stereo</source>
-        <translation type="unfinished"></translation>
+        <translation>Стерео</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="88"/>
         <source>Mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Моно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="83"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Мін/Макс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="85"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Тиша</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="89"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати курсор прогресу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="154"/>
         <source>Cursor width</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина курсора</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="172"/>
         <source>Bar width</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина смуги</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="174"/>
         <source>Bar gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Розрив бару</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="164"/>
         <source>Max scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальний масштаб</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="176"/>
         <source>Centre gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Центральний проміжок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="129"/>
@@ -8001,42 +8001,42 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="132"/>
         <source>Draw a line in place of silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Намалюй лінію замість мовчання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="162"/>
         <source>Channel scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб каналу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="138"/>
         <source>Downmix</source>
-        <translation type="unfinished"></translation>
+        <translation>Даунмікс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="150"/>
         <source>Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="158"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="168"/>
         <source>Dimension</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимір</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="180"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="190"/>
         <source>Number of samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Кількість зразків</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="191"/>
@@ -8044,7 +8044,10 @@
 for waveform data. Higher values will result 
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
-        <translation type="unfinished"></translation>
+        <translation>Кількість вибірок (на канал), що використовуються 
+для даних форми хвилі. Вищі значення призведуть 
+до точнішої та детальнішої форми хвилі 
+ціною використання більшого дискового простору в кеші.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="308"/>
@@ -8062,17 +8065,17 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="149"/>
         <source>Show cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати курсор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="155"/>
         <source>Show labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати мітки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="164"/>
         <source>Show elapsed total</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати загальний час, що минув</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="172"/>
@@ -8082,42 +8085,42 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="174"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Мін/Макс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="175"/>
         <source>RMS</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="176"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Тиша</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="209"/>
         <source>Downmix</source>
-        <translation type="unfinished"></translation>
+        <translation>Даунмікс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="212"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимк</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="213"/>
         <source>Stereo</source>
-        <translation type="unfinished"></translation>
+        <translation>Стерео</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="214"/>
         <source>Mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Моно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="242"/>
         <source>Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування…</translation>
     </message>
 </context>
 <context>
@@ -8130,7 +8133,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="117"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished"></translation>
+        <translation>Роздільник (верхній/нижній)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="118"/>
@@ -8138,48 +8141,48 @@ cost of using more disk space in the cache.</source>
         <location filename="../../src/gui/widgets.cpp" line="142"/>
         <location filename="../../src/gui/widgets.cpp" line="161"/>
         <source>Splitters</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгалужувачі</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="123"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>Роздільник (лівий/правий)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="128"/>
         <source>Playlist Switcher</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикач списків відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="141"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Вкладки списків відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="147"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation>Організатор списків відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="155"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Черга відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="160"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Стек вкладок</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="169"/>
         <location filename="../../src/gui/widgets.cpp" line="301"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Бібліотечне дерево</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="176"/>
         <source>Player Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Елементи керування гравцем</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="177"/>
@@ -8187,27 +8190,27 @@ cost of using more disk space in the cache.</source>
         <location filename="../../src/gui/widgets.cpp" line="188"/>
         <location filename="../../src/gui/widgets.cpp" line="193"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Елементи керування</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="182"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Елементи керування списком відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="187"/>
         <source>Volume Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Регулювання гучності</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="192"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="197"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Інформація про вибір</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="210"/>
@@ -8218,22 +8221,22 @@ cost of using more disk space in the cache.</source>
         <location filename="../../src/gui/widgets.cpp" line="218"/>
         <location filename="../../src/gui/widgets.cpp" line="302"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="221"/>
         <source>Spacer</source>
-        <translation type="unfinished"></translation>
+        <translation>Розпірка</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="231"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Рядок стану</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="240"/>
         <source>Search Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Рядок пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="242"/>
@@ -8243,12 +8246,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="278"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Деталі</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="281"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="287"/>
@@ -8258,42 +8261,42 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="299"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>За замовчуванням</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="304"/>
         <source>Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Вкладки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="300"/>
         <source>Lists</source>
-        <translation type="unfinished"></translation>
+        <translation>Списки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="303"/>
         <source>Status bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Рядок стану&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="353"/>
         <source>Scanning files</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканування файлів</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="356"/>
         <source>Scanning tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканування треків</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="359"/>
         <source>Scanning %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканування %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="362"/>
         <source>Loading playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження списку відтворення</translation>
     </message>
 </context>
 <context>
@@ -8301,125 +8304,125 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Використання</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>options</source>
-        <translation type="unfinished"></translation>
+        <translation>опції</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>urls</source>
-        <translation type="unfinished"></translation>
+        <translation>URL-адреси</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Опції</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Display help on command line options</source>
-        <translation type="unfinished"></translation>
+        <translation>Відображення довідки щодо параметрів командного рядка</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="76"/>
         <source>Display version information</source>
-        <translation type="unfinished"></translation>
+        <translation>Відображення інформації про версію</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Player options</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметри гравця</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Toggle playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути/вимкнути відтворення</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="77"/>
         <source>Start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Розпочати відтворення</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="78"/>
         <source>Pause playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Призупинити відтворення</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="78"/>
         <source>Stop playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Зупинити відтворення</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="78"/>
         <source>Skip to next track</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейти до наступного треку</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="79"/>
         <source>Skip to previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейти до попереднього треку</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="79"/>
         <source>Arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Аргументи</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="79"/>
         <source>Files to open</source>
-        <translation type="unfinished"></translation>
+        <translation>Файли для відкриття</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="429"/>
         <source>Expected %1 to close quote</source>
-        <translation type="unfinished"></translation>
+        <translation>Очікується %1 для закриття котирування</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="452"/>
         <source>Expected %1 to close variable list</source>
-        <translation type="unfinished"></translation>
+        <translation>Очікується %1 для закриття списку змінних</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="463"/>
         <source>Expected %1 to close variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Очікується %1 для закриття змінної</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="483"/>
         <source>Expected %1 after function name</source>
-        <translation type="unfinished"></translation>
+        <translation>Очікується %1 після назви функції</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="493"/>
         <source>Expected %1 at end of function</source>
-        <translation type="unfinished"></translation>
+        <translation>Очікується %1 в кінці функції</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="527"/>
         <source>Expected %1 to close conditional</source>
-        <translation type="unfinished"></translation>
+        <translation>Очікується умовне закриття %1</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="555"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="561"/>
         <source>Expected %1 to close group</source>
-        <translation type="unfinished"></translation>
+        <translation>Очікується, що %1 закриє групу</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="791"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="796"/>
         <source>Expected %1 after %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Очікується %1 після %2</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1264"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1303"/>
         <source>Expected end of script</source>
-        <translation type="unfinished"></translation>
+        <translation>Очікуваний кінець сценарію</translation>
     </message>
 </context>
 <context>
