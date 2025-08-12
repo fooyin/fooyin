@@ -70,7 +70,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="65"/>
         <source>Search</source>
-        <translation>Пошук</translation>
+        <translation>Пошук&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="67"/>
@@ -158,7 +158,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="110"/>
         <source>Front Cover</source>
-        <translation>Передня Обкладинка</translation>
+        <translation>Передня Обкладинка&apos;&apos;&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
@@ -257,12 +257,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="45"/>
         <source>Front Cover</source>
-        <translation>Передня обкладинка</translation>
+        <translation>Передня Обкладинка&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="46"/>
         <source>Back Cover</source>
-        <translation>Задня обкладинка</translation>
+        <translation>Задня Обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="47"/>
@@ -296,7 +296,7 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="49"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="254"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"/>
@@ -340,7 +340,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation>Пошук</translation>
+        <translation>Пошукаю</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
@@ -419,7 +419,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="83"/>
         <source>Front Cover</source>
-        <translation>Передня Обкладинка</translation>
+        <translation>Передня Обкладинка&apos;&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="84"/>
@@ -596,7 +596,7 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="199"/>
         <source>Front cover</source>
-        <translation>Передня обкладинка</translation>
+        <translation>Передня обкладинка&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="200"/>
@@ -786,7 +786,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="243"/>
         <source>Go back</source>
-        <translation>Назад</translation>
+        <translation>Назад до</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="244"/>
@@ -1107,7 +1107,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="481"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
 </context>
 <context>
@@ -1237,7 +1237,7 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="146"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="186"/>
@@ -1358,7 +1358,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="124"/>
         <source>Remove empty source folders</source>
-        <translation>Видалити порожні вихідні каталоги</translation>
+        <translation>Вилучити порожні вихідні каталоги</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="126"/>
@@ -1501,7 +1501,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
@@ -1584,7 +1584,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
@@ -2109,7 +2109,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="379"/>
         <source>Quit</source>
-        <translation>Вихід</translation>
+        <translation>Вийти</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="468"/>
@@ -2134,7 +2134,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="507"/>
         <source>Remove Playlist</source>
-        <translation>Видалити список відтворення</translation>
+        <translation>Вилучити список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="509"/>
@@ -2759,7 +2759,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="134"/>
         <source>ReplayGain</source>
-        <translation>ReplayGain</translation>
+        <translation>ReplayGain&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="137"/>
@@ -2990,7 +2990,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="258"/>
         <source>ReplayGain</source>
-        <translation>ReplayGain</translation>
+        <translation>ReplayGain&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="266"/>
@@ -3226,7 +3226,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="76"/>
         <source>S&amp;earch</source>
-        <translation>Пошук</translation>
+        <translation>П&amp;ошук</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="77"/>
@@ -3513,90 +3513,90 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="113"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо це активний список відтворення, зберігати його активним під час зміни вибору</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="122"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="127"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Зовнішній вигляд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="130"/>
         <source>Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="146"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="148"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Висота</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="196"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished">Розгорнути/Згорнути/Відтворити</translation>
+        <translation>Розгорнути/Згорнути/Відтворити</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="143"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір також можна змінити за допомогою %1 у віджеті.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="197"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="206"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Додати до поточного списку відтворення</translation>
+        <translation>Додати до поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="198"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="207"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Додати до активного списку відтворення</translation>
+        <translation>Додати до активного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="199"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="208"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished">Надіслати до поточного списку відтворення</translation>
+        <translation>Надіслати до поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="200"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="209"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished">Надіслати до нового списку відтворення</translation>
+        <translation>Надіслати до нового списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="201"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="210"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Додати до черги відтворення</translation>
+        <translation>Додати до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="202"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Додати до початку черги відтворення</translation>
+        <translation>Додати до початку черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="203"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="212"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished">Надіслати до черги відтворення</translation>
+        <translation>Надіслати до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="195"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="205"/>
         <source>None</source>
-        <translation type="unfinished">Порожньо</translation>
+        <translation>Порожньо</translation>
     </message>
 </context>
 <context>
@@ -3604,7 +3604,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="103"/>
         <source>Loading Library…</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження бібліотеки…</translation>
     </message>
 </context>
 <context>
@@ -3612,42 +3612,42 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="428"/>
         <source>Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Групування</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="262"/>
         <source>&amp;Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Додати до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="263"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Черга для наступної гри</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="264"/>
         <source>&amp;Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp; Вилучити з черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="265"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Відтворювати</translation>
+        <translation>&amp;Відтворювати</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="296"/>
         <source>Start playback of the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Розпочати відтворення вибраних треків</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="480"/>
         <source>Open folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити папку</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="925"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Бібліотечне дерево</translation>
     </message>
 </context>
 <context>
@@ -3655,42 +3655,42 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="51"/>
         <source>Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="53"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Очистити</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="55"/>
         <source>&amp;Save Log</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Зберегти журнал</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="62"/>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Налагодження</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="63"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Інформація</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="64"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Увага</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="65"/>
         <source>Critical</source>
-        <translation type="unfinished"></translation>
+        <translation>Критичний</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="108"/>
         <source>Save Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти журнал</translation>
     </message>
 </context>
 <context>
@@ -3698,52 +3698,52 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="49"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Шукати</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="50"/>
         <source>Reset Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути зміни</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="51"/>
         <source>Insert/Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити/Оновити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="52"/>
         <source>Remove</source>
-        <translation type="unfinished">Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="53"/>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити Всі</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="59"/>
         <source>Lyrics Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор текстів пісень</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="63"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Операція</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="70"/>
         <source>Timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначки часу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="148"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Пауза</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="152"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворити</translation>
     </message>
 </context>
 <context>
@@ -3751,12 +3751,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="165"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="166"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Тексти пісень</translation>
     </message>
 </context>
 <context>
@@ -3764,72 +3764,72 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="68"/>
         <source>Seek on click</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук при кліці</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="70"/>
         <source>Synced scroll duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Тривалість синхронізованого прокручування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
         <source>Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>Ручний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="72"/>
         <source>Synced</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронізовано</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматичний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="75"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="78"/>
         <source>This will only function with synced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це працюватиме лише із синхронізованими текстами пісень.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="80"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це відображатиметься, якщо текст пісні для поточного треку не знайдено.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="85"/>
         <source>No lyrics script</source>
-        <translation type="unfinished"></translation>
+        <translation>Без сценарію тексту пісні</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="89"/>
         <source>Scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Прокручування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="95"/>
         <source>Scroll Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим прокручування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="98"/>
         <source>No automatic scrolling will take place</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматичне прокручування не відбуватиметься</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="99"/>
         <source>Synced lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронізовані тексти пісень будуть прокручені</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="100"/>
         <source>All lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>Усі тексти пісень будуть прокручені</translation>
     </message>
 </context>
 <context>
@@ -3837,12 +3837,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="366"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Зовнішній вигляд</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="367"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Тексти пісень</translation>
     </message>
 </context>
 <context>
@@ -3850,126 +3850,126 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="91"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати смугу прокручування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
         <source>Background colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір фону</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="100"/>
         <source>Line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір лінії</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="102"/>
         <source>Unplayed line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір невідтвореної лінії</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="104"/>
         <source>Played line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір відтвореної лінії</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="106"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="108"/>
         <source>Current line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Поточний колір лінії</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="110"/>
         <source>Current word colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Поточний колір слова</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="112"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="114"/>
         <source>Current line font</source>
-        <translation type="unfinished"></translation>
+        <translation>Шрифт поточного рядка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="116"/>
         <source>Current word font</source>
-        <translation type="unfinished"></translation>
+        <translation>Поточний шрифт слова</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="119"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="122"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Вирівняти по центру</translation>
+        <translation>Вирівняти по центру</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="123"/>
         <source>Align to left</source>
-        <translation type="unfinished">Вирівняти по лівому краю</translation>
+        <translation>Вирівняти по лівому краю</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="124"/>
         <source>Align to right</source>
-        <translation type="unfinished">Вирівняти по правому краю</translation>
+        <translation>Вирівняти по правому краю</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="131"/>
         <source>Line spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Міжрядковий інтервал</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="133"/>
         <source>Alignment</source>
-        <translation type="unfinished">Вирівнювання</translation>
+        <translation>Вирівнювання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="137"/>
         <source>Margins</source>
-        <translation type="unfinished"></translation>
+        <translation>Поля</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="151"/>
         <source>Left</source>
-        <translation type="unfinished">Зліва</translation>
+        <translation>Зліва</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="153"/>
         <source>Right</source>
-        <translation type="unfinished">Справа</translation>
+        <translation>Справа</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="155"/>
         <source>Top</source>
-        <translation type="unfinished">Зверху</translation>
+        <translation>Зверху</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="157"/>
         <source>Bottom</source>
-        <translation type="unfinished">Знизу</translation>
+        <translation>Знизу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="161"/>
         <source>Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Шрифти</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="164"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="189"/>
         <source>Synced</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронізовано</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="172"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="201"/>
         <source>Synced Words</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронізовані слова</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="186"/>
         <source>Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Кольори</translation>
     </message>
 </context>
 <context>
@@ -3978,7 +3978,7 @@
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="60"/>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="62"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Тексти пісень</translation>
     </message>
 </context>
 <context>
@@ -3986,12 +3986,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="280"/>
         <source>Saving</source>
-        <translation type="unfinished"></translation>
+        <translation>Збереження</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="281"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Тексти пісень</translation>
     </message>
 </context>
 <context>
@@ -3999,102 +3999,102 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="81"/>
         <source>Manual save</source>
-        <translation type="unfinished"></translation>
+        <translation>Ручне збереження</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="82"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>Автозбереження</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="83"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматичне збереження через 60 секунд або 1/3 тривалості треку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="84"/>
         <source>Save to metadata tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти в тег метаданих</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="85"/>
         <source>Save to directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти в каталог</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="86"/>
         <source>Save all</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти все</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="87"/>
         <source>Synced only</source>
-        <translation type="unfinished"></translation>
+        <translation>Тільки синхронізовано</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="88"/>
         <source>Unsynced only</source>
-        <translation type="unfinished"></translation>
+        <translation>Тільки несинхронізовані</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="93"/>
         <source>Collapse duplicate lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Згорнути дублікати рядків</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="94"/>
         <source>Save metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти метадані</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="96"/>
         <source>Save Scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти схему</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="104"/>
         <source>Save Method</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти метод</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="111"/>
         <source>Autosave Preference</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування автозбереження</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="119"/>
         <source>Save Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти місцезнаходження</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="122"/>
         <source>Synced lyric tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Тег синхронізованого тексту пісні</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="123"/>
         <source>Unsynced lyric tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Несинхронізований тег тексту пісні</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="124"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Довідник</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="125"/>
         <source>Filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Ім&apos;я файлу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="137"/>
         <source>Save Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти формат</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="269"/>
         <source>Select Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть каталог</translation>
     </message>
 </context>
 <context>
@@ -4102,12 +4102,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="135"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошукаю</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="136"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Тексти пісень</translation>
     </message>
 </context>
 <context>
@@ -4115,47 +4115,47 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="64"/>
         <source>Automatically search for lyrics on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматичний пошук тексту пісні під час початку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="65"/>
         <source>Skip remaining sources when lyrics are found</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропускати решту джерел, коли знайдено текст пісні</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="66"/>
         <source>Skip external sources if local lyrics are found</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропускати зовнішні джерела, якщо знайдено місцеві тексти пісень</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="70"/>
         <source>Minimum match threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Мінімальний поріг збігу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="72"/>
         <source>Search parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметри пошуку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="78"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="80"/>
         <source>Artist</source>
-        <translation type="unfinished">Виконавець</translation>
+        <translation>Виконавець</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="82"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Альбом</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="86"/>
         <source>Only local lyrics will be used if unchecked</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо не позначено, використовуватимуться лише місцеві тексти пісень</translation>
     </message>
 </context>
 <context>
@@ -4163,12 +4163,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="140"/>
         <source>Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Джерела</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="141"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Тексти пісень</translation>
     </message>
 </context>
 <context>
@@ -4176,22 +4176,22 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="82"/>
         <source>Lyrics sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Джерела текстів пісень</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="84"/>
         <source>Lyrics will be searched for in the above order.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук текстів пісень буде здійснюватися у вказаному вище порядку.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="85"/>
         <source>Metadata tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Теги метаданих</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="87"/>
         <source>Local files</source>
-        <translation type="unfinished"></translation>
+        <translation>Локальні файли</translation>
     </message>
 </context>
 <context>
@@ -4199,87 +4199,87 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="140"/>
         <source>Artist</source>
-        <translation type="unfinished">Виконавець</translation>
+        <translation>Виконавець</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="140"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Альбом</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="140"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="145"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Тексти пісень</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="169"/>
         <source>Select lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть текст пісні</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="179"/>
         <source>Search for lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук текстів пісень</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="180"/>
         <source>Search for lyrics for the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук тексту пісні для поточного треку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="191"/>
         <source>Edit lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати текст пісні</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="192"/>
         <source>Open editor for the current lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити редактор для поточного тексту пісні</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="197"/>
         <source>Save lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти текст пісні</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="198"/>
         <source>Save lyrics using current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти текст пісні з поточними налаштуваннями</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="207"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати смугу прокручування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="213"/>
         <source>Text-align</source>
-        <translation type="unfinished"></translation>
+        <translation>Вирівнювання тексту</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="217"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Вирівняти по центру</translation>
+        <translation>Вирівняти по центру</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="218"/>
         <source>Align to left</source>
-        <translation type="unfinished">Вирівняти по лівому краю</translation>
+        <translation>Вирівняти по лівому краю</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="219"/>
         <source>Align to right</source>
-        <translation type="unfinished">Вирівняти по правому краю</translation>
+        <translation>Вирівняти по правому краю</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="243"/>
         <source>Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування…</translation>
     </message>
 </context>
 <context>
@@ -4287,7 +4287,7 @@
     <message>
         <location filename="../../src/gui/mainwindow.cpp" line="165"/>
         <source>Layout Editing Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим редагування макета</translation>
     </message>
 </context>
 <context>
@@ -4295,12 +4295,12 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="182"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="183"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation>Нетворкінг</translation>
     </message>
 </context>
 <context>
@@ -4308,52 +4308,52 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="71"/>
         <source>No proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Без проксі-сервера</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="72"/>
         <source>Use system proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Використовувати системний проксі-сервер</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="73"/>
         <source>Manual proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Ручний проксі-сервер</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
         <source>Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Автентифікація</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
         <source>Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Проксі</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="97"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Ім&apos;я користувача</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="99"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="109"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="111"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>Хост</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="113"/>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Порт</translation>
     </message>
 </context>
 <context>
@@ -4361,63 +4361,63 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="42"/>
         <source>Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Посилення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="43"/>
         <source>Separation</source>
-        <translation type="unfinished"></translation>
+        <translation>Розлука</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="44"/>
         <source>Volume ramping</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшення гучності</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="45"/>
         <source>Use Amiga resampler</source>
-        <translation type="unfinished"></translation>
+        <translation>Використовуйте ресемплер Amiga</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="48"/>
         <source>%1 Settings</source>
-        <translation type="unfinished">%1 Налаштування</translation>
+        <translation>%1 Налаштування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="66"/>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="71"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>За замовчуванням</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="67"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимк</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="69"/>
         <source>Interpolation</source>
-        <translation type="unfinished"></translation>
+        <translation>Інтерполяція</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="72"/>
         <source>None</source>
-        <translation type="unfinished">Порожньо</translation>
+        <translation>Порожньо</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="73"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Лінійний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="74"/>
         <source>Cubic</source>
-        <translation type="unfinished"></translation>
+        <translation>Кубічний</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="75"/>
         <source>Sinc</source>
-        <translation type="unfinished"></translation>
+        <translation>З часу</translation>
     </message>
 </context>
 <context>
@@ -4425,17 +4425,17 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="251"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="252"/>
         <source>Playback</source>
-        <translation type="unfinished">Відтворення</translation>
+        <translation>Відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="252"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Вихід</translation>
     </message>
 </context>
 <context>
@@ -4443,52 +4443,52 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="76"/>
         <source>Gapless playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Безперервне відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="78"/>
         <source>Fading</source>
-        <translation type="unfinished"></translation>
+        <translation>Згасання</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="131"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Вихід</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="133"/>
         <source>Device</source>
-        <translation type="unfinished"></translation>
+        <translation>Пристрій</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="84"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="88"/>
         <source>Try to play consecutive tracks with no silence or disruption at the point of file change</source>
-        <translation type="unfinished"></translation>
+        <translation>Намагайтеся відтворювати послідовні треки без паузи чи переривань у момент зміни файлу</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="97"/>
         <source>Buffer length</source>
-        <translation type="unfinished">Розмір буфера</translation>
+        <translation>Довжина буфера</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="120"/>
         <source>Fade In</source>
-        <translation type="unfinished"></translation>
+        <translation>Згасання У</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="121"/>
         <source>Fade Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Згасання До</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="122"/>
         <source>Pause/Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Пауза/Стоп</translation>
     </message>
 </context>
 <context>
@@ -4496,164 +4496,164 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Стій</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="218"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Відтворювати</translation>
+        <translation>&amp;Відтворювати</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>P&amp;revious</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Наступний</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
         <source>Repeat &amp;playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторити список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="53"/>
         <source>&amp;Shuffle tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Перемішати треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="54"/>
         <source>Shu&amp;ffle albums</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемішати альбоми</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
         <source>&amp;Random</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Випадкове</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="56"/>
         <source>Stop &amp;after current</source>
-        <translation type="unfinished"></translation>
+        <translation>Зупинка та післяструмовий</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="60"/>
         <source>Playback</source>
-        <translation type="unfinished">Відтворення</translation>
+        <translation>Відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="67"/>
         <source>Stop playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Зупинити відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="73"/>
         <source>Pause or unpause playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Призупинення або відновлення відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="82"/>
         <source>Start playing the next track in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Почати відтворення наступного треку в поточному списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="88"/>
         <source>Start playing the previous track in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Почати відтворення попереднього треку в поточному списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="102"/>
         <source>Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Замовлення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
         <source>&amp;Order</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Замовлення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="116"/>
         <source>Set playback order to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити порядок відтворення за замовчуванням</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="122"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="146"/>
         <source>Set playback order to shuffle tracks in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити порядок відтворення у випадковому порядку для треків у поточному списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="128"/>
         <source>Set playback order to repeat the current album</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити порядок відтворення для повторення поточного альбому</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="134"/>
         <source>Set playback order to repeat the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити порядок відтворення для повторення поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="140"/>
         <source>Set playback order to shuffle albums in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити порядок відтворення в випадковому порядку для альбомів у поточному списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="152"/>
         <source>Set playback order to play a random track in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити порядок відтворення для випадкового відтворення треку в поточному списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="171"/>
         <source>Cursor follows play&amp;back</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор слідує за відтворенням і назад</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="172"/>
         <source>Select the currently playing track when changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибір поточної доріжки, що відтворюється, при зміні</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="173"/>
         <source>Playback follows &amp;cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворення відбувається за курсором</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="214"/>
         <source>&amp;Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пауза</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
         <source>&amp;Default</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;За замовчуванням</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Repeat &amp;track</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторити та відстежити</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Repeat &amp;album</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторити &amp;альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="76"/>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворення/Пауза</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
         <source>Start playback of the currently selected track on next</source>
-        <translation type="unfinished"></translation>
+        <translation>Розпочати відтворення вибраної доріжки на наступній</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="176"/>
         <source>Stop playback at the end of the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Зупинити відтворення в кінці поточної доріжки</translation>
     </message>
 </context>
 <context>
@@ -4661,12 +4661,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="174"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="175"/>
         <source>Playback</source>
-        <translation type="unfinished">Відтворення</translation>
+        <translation>Відтворення</translation>
     </message>
 </context>
 <context>
@@ -4674,82 +4674,82 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="68"/>
         <source>Save/restore playback state</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти/відновити стан відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="69"/>
         <source>Cursor follows playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор слідує за відтворенням</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="70"/>
         <source>Playback follows cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворення слідує за курсором</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="71"/>
         <source>Rewind track on previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотування треку назад на попередній</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="72"/>
         <source>Follow last playback queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>Слідкуйте за останнім треком черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="73"/>
         <source>Skip unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропустити недоступні треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="80"/>
         <source>Save playback state on exit and restore it on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти стан відтворення під час виходу та відновити його під час наступного запуску</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="81"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо поточний трек відтворюється більше 5 секунд, перезапустіть його замість переходу до попереднього треку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Once the playback queue has finished, start playback from the tracks following the last queued track</source>
-        <translation type="unfinished"></translation>
+        <translation>Після завершення черги відтворення розпочніть відтворення з треків, що йдуть після останнього треку в черзі</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
         <source>If the current track in a playlist is unavailable, silently continue to the next track</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо поточний трек у списку відтворення недоступний, безшумно перейти до наступного треку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="88"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="108"/>
         <source>Shuffle</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемішати</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="111"/>
         <source>Album grouping pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаблон групування альбомів</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="113"/>
         <source>Album sorting pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаблон сортування альбомів</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="74"/>
         <source>Played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Зіграний поріг</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="92"/>
         <source>The percentage of a track that must be listened to before it is counted as &apos;played&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Відсоток треку, який потрібно прослухати, перш ніж його буде зараховано як «відтворений»</translation>
     </message>
 </context>
 <context>
@@ -4757,17 +4757,17 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="161"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="162"/>
         <source>Widgets</source>
-        <translation type="unfinished">Віджети</translation>
+        <translation>Віджети</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="162"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Черга відтворення</translation>
     </message>
 </context>
 <context>
@@ -4775,57 +4775,57 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="65"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати заголовок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="66"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати смугу прокручування</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="67"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Чергування кольорів рядків</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="68"/>
         <source>Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Значок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="72"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="75"/>
         <source>Left script</source>
-        <translation type="unfinished"></translation>
+        <translation>Лівий сценарій</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="77"/>
         <source>Right script</source>
-        <translation type="unfinished"></translation>
+        <translation>Правильний сценарій</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="80"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Зовнішній вигляд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="100"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="102"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Висота</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="97"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір також можна змінити за допомогою %1 у віджеті.</translation>
     </message>
 </context>
 <context>
@@ -4833,7 +4833,7 @@
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="82"/>
         <source>Player Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Елементи керування гравцем</translation>
     </message>
 </context>
 <context>
@@ -4841,7 +4841,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="62"/>
         <source>Playlist Switcher</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикач списків відтворення</translation>
     </message>
 </context>
 <context>
@@ -4849,17 +4849,17 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="165"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Індекс</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="167"/>
         <source>Name</source>
-        <translation type="unfinished">Ім&apos;я</translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="169"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation>Поле</translation>
     </message>
 </context>
 <context>
@@ -4868,12 +4868,12 @@
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="130"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="131"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Колонки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="131"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Список відтворення</translation>
     </message>
 </context>
 <context>
@@ -4881,7 +4881,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="75"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор сценаріїв</translation>
     </message>
 </context>
 <context>
@@ -4889,112 +4889,112 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="43"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="44"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
         <source>Artist</source>
-        <translation type="unfinished">Виконавець</translation>
+        <translation>Виконавець</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Artist/Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Виконавець/Альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Виконавець альбому</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="58"/>
         <source>Playcount</source>
-        <translation type="unfinished"></translation>
+        <translation>Кількість відтворень</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Тривалість</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="50"/>
         <source>Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворюємо</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="51"/>
         <source>Codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодек</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="52"/>
         <source>Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Розширення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="53"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Бітрейт</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="54"/>
         <source>Sample Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Частота дискретизації</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="55"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Канали</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="56"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Глибина бітів</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="57"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Остання зміна</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="59"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Рейтинг</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="60"/>
         <source>First Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Вперше зіграно</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
         <source>Last Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Остання гра</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Передня обкладинка</translation>
+        <translation>Передня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="63"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Задня обкладинка</translation>
+        <translation>Задня Обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="64"/>
         <source>Artist Picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Зображення художника</translation>
     </message>
 </context>
 <context>
@@ -5002,57 +5002,57 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="59"/>
         <source>Repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторити</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="63"/>
         <source>Shuffle</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемішати</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="105"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>За замовчуванням</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="106"/>
         <source>Repeat playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторення списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="107"/>
         <source>Repeat album</source>
-        <translation type="unfinished"></translation>
+        <translation>Повтор альбому</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="108"/>
         <source>Repeat track</source>
-        <translation type="unfinished"></translation>
+        <translation>Повтор треку</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="140"/>
         <source>Shuffle off</source>
-        <translation type="unfinished"></translation>
+        <translation>Випадкове відтворення вимкнено</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="141"/>
         <source>Shuffle tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемішати треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="142"/>
         <source>Shuffle albums</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемішати альбоми&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="143"/>
         <source>Random</source>
-        <translation type="unfinished"></translation>
+        <translation>Випадкове</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="79"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Елементи керування списком відтворення</translation>
     </message>
 </context>
 <context>
@@ -5060,7 +5060,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="459"/>
         <source>Playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Списки відтворення</translation>
     </message>
 </context>
 <context>
@@ -5068,12 +5068,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="312"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="313"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Список відтворення</translation>
     </message>
 </context>
 <context>
@@ -5081,137 +5081,137 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати смугу прокручування</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="90"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати заголовок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="92"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорніть вкладки, щоб заповнити порожній простір</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="93"/>
         <source>Show add button</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати кнопку додавання</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="94"/>
         <source>Show clear button</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати кнопку очищення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Показувати кнопку видалення на вкладках</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="96"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалення списків відтворення клацанням середньою кнопкою миші</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="99"/>
         <source>Auto-export</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматичний експорт</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="101"/>
         <source>Write metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Запис метаданих</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="105"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Поведінка при натисканні</translation>
+        <translation>Поведінка при натисканні</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Натискання середньої кнопки</translation>
+        <translation>Натискання середньої кнопки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source>Saving</source>
-        <translation type="unfinished"></translation>
+        <translation>Збереження</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="125"/>
         <source>Path type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип шляху</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="133"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="134"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Розташування</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="136"/>
         <source>Export and synchronise playlists in the specified format and location</source>
-        <translation type="unfinished"></translation>
+        <translation>Експорт та синхронізація списків відтворення у вказаному форматі та розташуванні</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="173"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Вкладки списків відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="209"/>
         <source>None</source>
-        <translation type="unfinished">Порожньо</translation>
+        <translation>Порожньо</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="210"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Додати до черги відтворення</translation>
+        <translation>Додати до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="211"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Додати до початку черги відтворення</translation>
+        <translation>Додати до початку черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="212"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished">Надіслати до черги відтворення</translation>
+        <translation>Надіслати до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="301"/>
         <source>Select Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть каталог</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="152"/>
         <source>Image Padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Відступи від зображення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="156"/>
         <source>Left/Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Ліворуч/Праворуч</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="158"/>
         <source>Top</source>
-        <translation type="unfinished">Зверху</translation>
+        <translation>Зверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="91"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Чергування кольорів рядків</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="162"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Зовнішній вигляд</translation>
     </message>
 </context>
 <context>
@@ -5219,24 +5219,24 @@
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="44"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Читання треків…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="45"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="86"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>Перервати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="68"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="109"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>Поточний файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="85"/>
         <source>Loading playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження списку відтворення…</translation>
     </message>
 </context>
 <context>
@@ -5244,73 +5244,73 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="126"/>
         <source>Remove</source>
-        <translation type="unfinished">Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="128"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="130"/>
         <source>New group</source>
-        <translation type="unfinished"></translation>
+        <translation>Нова група</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="132"/>
         <source>Create playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Створити плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="135"/>
         <source>Create autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Створити автоматичний список відтворення&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="138"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати автоматичний список відтворення&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="162"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="293"/>
         <source>Remove the selected playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити вибрані списки відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="296"/>
         <source>Rename the selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати вибрану групу</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="297"/>
         <source>Remove the selected groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити вибрані групи</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="300"/>
         <source>Remove the selected playlists and groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити вибрані списки відтворення та групи</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="292"/>
         <source>Rename the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати вибраний список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="173"/>
         <source>Create a new empty group</source>
-        <translation type="unfinished"></translation>
+        <translation>Створити нову порожню групу</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="163"/>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="257"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation>Організатор списків відтворення</translation>
     </message>
 </context>
 <context>
@@ -5319,12 +5319,12 @@
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="515"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="516"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Пресети</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="516"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Список відтворення</translation>
     </message>
 </context>
 <context>
@@ -5332,114 +5332,114 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="229"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новий</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="230"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="231"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="232"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Оновлення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="233"/>
         <source>Clone</source>
-        <translation type="unfinished"></translation>
+        <translation>Клон</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="257"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="259"/>
         <source>Subtitle</source>
-        <translation type="unfinished"></translation>
+        <translation>Підзаголовок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="263"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Інформація</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="349"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="370"/>
         <source>Preset Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва пресета</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="436"/>
         <source>Copy of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Копія %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="269"/>
         <source>Header</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="221"/>
         <source>Override height</source>
-        <translation type="unfinished">Змінити висоту</translation>
+        <translation>Змінити висоту</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="227"/>
         <source>Show cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати обкладинку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
         <source>Simple header</source>
-        <translation type="unfinished"></translation>
+        <translation>Простий заголовок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="261"/>
         <source>Side</source>
-        <translation type="unfinished"></translation>
+        <translation>Сторона</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="274"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="283"/>
         <source>Subheaders</source>
-        <translation type="unfinished"></translation>
+        <translation>Підзаголовки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="295"/>
         <source>Left-aligned</source>
-        <translation type="unfinished">Вирівнювання по лівому краю</translation>
+        <translation>Вирівнювання по лівому краю</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="297"/>
         <source>Right-aligned</source>
-        <translation type="unfinished">Вирівнювання по правому краю</translation>
+        <translation>Вирівнювання по правому краю</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="303"/>
         <source>Tracks</source>
-        <translation type="unfinished">Доріжки</translation>
+        <translation>Доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="346"/>
         <source>New preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Новий пресет</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="349"/>
         <source>Add Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати пресет</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="370"/>
         <source>Rename Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати пресет</translation>
     </message>
 </context>
 <context>
@@ -5447,67 +5447,67 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="288"/>
         <source>Add new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати новий список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="295"/>
         <source>Add new autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати новий автоматичний список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="313"/>
         <source>Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати Автоматичний список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="323"/>
         <source>Rename playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="323"/>
         <source>Rename autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати автоматичний список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="327"/>
         <source>Remove playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити список відтворення&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="327"/>
         <source>Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити автоматичний список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="342"/>
         <source>Move left</source>
-        <translation type="unfinished"></translation>
+        <translation>Рухатися ліворуч</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="347"/>
         <source>Move right</source>
-        <translation type="unfinished"></translation>
+        <translation>Рухатися праворуч</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="536"/>
         <source>Add playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="544"/>
         <source>Clear playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистити список відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="366"/>
         <source>%1 contents</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 зміст</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="151"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Вкладки списків відтворення</translation>
     </message>
 </context>
 <context>
@@ -5515,17 +5515,17 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1478"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1509"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Пресети</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1639"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Список відтворення</translation>
     </message>
 </context>
 <context>
@@ -5533,189 +5533,189 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="304"/>
         <source>Start playback of the selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Розпочати відтворення вибраної доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="312"/>
         <source>Remove all tracks from the playlist except for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити всі треки зі списку відтворення, окрім вибраних треків</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="315"/>
         <source>Stop playback at the end of the selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Зупинити відтворення в кінці вибраної доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="321"/>
         <source>Undo the previous playlist change</source>
-        <translation type="unfinished"></translation>
+        <translation>Відмінити попередню зміну списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="185"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>Вирізати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="186"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Копіювати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="187"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вставити&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="188"/>
         <source>C&amp;lear</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистити</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="189"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="190"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished">Додати до &amp;черги відтворення</translation>
+        <translation>Додати до &amp;черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Черга для наступної гри</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="193"/>
         <source>Remove from playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити з черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="309"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="320"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Скасувати</translation>
+        <translation>&amp;Скасувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="333"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Повернути</translation>
+        <translation>&amp;Повернути</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="334"/>
         <source>Redo the previous playlist change</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторити попередню зміну списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="348"/>
         <source>Cut the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрізати вибрані треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="357"/>
         <source>Copy the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Копіювати вибрані треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="366"/>
         <source>Paste the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити вибрані треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="379"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити всі треки з поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="389"/>
         <source>Select &amp;all</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати &amp;всі</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="390"/>
         <source>Select all tracks in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати всі треки в поточному списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="399"/>
         <source>Remove the selected tracks from the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити вибрані треки з поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="408"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished">Додати вибрані доріжки до черги відтворення</translation>
+        <translation>Додати вибрані доріжки до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="414"/>
         <source>Add the selected tracks to the start of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати вибрані треки на початок черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="419"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити вибрані треки з черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="431"/>
         <source>Playlist empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Список відтворення порожній</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="432"/>
         <source>Loading playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження списку відтворення…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="435"/>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="439"/>
         <source>No results</source>
-        <translation type="unfinished"></translation>
+        <translation>Немає результатів</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="436"/>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="440"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1533"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Колонки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1571"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Більше…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1268"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути значення стовпців за замовчуванням</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="182"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Відтворювати</translation>
+        <translation>&amp;Відтворювати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="183"/>
         <source>&amp;Crop</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Урожай</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="184"/>
         <source>&amp;Stop after this</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Зупиніться після цього</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1277"/>
         <source>Single-column mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим одного стовпця</translation>
     </message>
 </context>
 <context>
@@ -5723,42 +5723,42 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="39"/>
         <source>Name</source>
-        <translation type="unfinished">Ім&apos;я</translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="40"/>
         <source>Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Версія</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="41"/>
         <source>Author</source>
-        <translation type="unfinished"></translation>
+        <translation>Автор</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="42"/>
         <source>Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Категорія</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="43"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Опис</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="44"/>
         <source>URL</source>
-        <translation type="unfinished"></translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="45"/>
         <source>Copyright</source>
-        <translation type="unfinished"></translation>
+        <translation>Авторське право</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="46"/>
         <source>License</source>
-        <translation type="unfinished"></translation>
+        <translation>Ліцензія</translation>
     </message>
 </context>
 <context>
@@ -5766,12 +5766,12 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="245"/>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Плагіни</translation>
     </message>
 </context>
 <context>
@@ -5779,43 +5779,43 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="102"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштувати</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="103"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>Про нас</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="104"/>
         <source>Install…</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="171"/>
         <source>Plugins Changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінені плагіни</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="224"/>
         <source>Install Plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити плагін</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="224"/>
         <source>%1 Plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Плагін</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="232"/>
         <source>Plugin Installed</source>
-        <translation type="unfinished"></translation>
+        <translation>Плагін встановлено</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="172"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="233"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Перезавантажте, щоб зміни набули чинності. Перезавантажити зараз?</translation>
     </message>
 </context>
 <context>
@@ -5823,27 +5823,27 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="121"/>
         <source>Name</source>
-        <translation type="unfinished">Ім&apos;я</translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="123"/>
         <source>Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Версія</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="125"/>
         <source>Author</source>
-        <translation type="unfinished"></translation>
+        <translation>Автор</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="127"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Навантаження</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="129"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус</translation>
     </message>
 </context>
 <context>
@@ -5851,22 +5851,22 @@
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="41"/>
         <source>Track Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Таблиця доріжок</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="49"/>
         <source>Album/Disc</source>
-        <translation type="unfinished"></translation>
+        <translation>Альбом/Диск</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
         <source>Disc Albums</source>
-        <translation type="unfinished"></translation>
+        <translation>Дискові альбоми</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Simple Artist/Album/Year</source>
-        <translation type="unfinished"></translation>
+        <translation>Простий виконавець/альбом/рік</translation>
     </message>
 </context>
 <context>
@@ -5875,13 +5875,13 @@
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="162"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="182"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструменти</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="166"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="252"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Властивості</translation>
     </message>
 </context>
 <context>
@@ -5889,37 +5889,37 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="58"/>
         <source>Remove</source>
-        <translation type="unfinished">Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="60"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Очистити</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="108"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити вибрані треки з черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="118"/>
         <source>Remove all tracks in the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити всі треки з черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="124"/>
         <source>&amp;Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вибрати все</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="125"/>
         <source>Select all tracks in the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати всі треки в черзі відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="81"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Черга відтворення</translation>
     </message>
 </context>
 <context>
@@ -5927,7 +5927,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="131"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Черга відтворення</translation>
     </message>
 </context>
 <context>
@@ -5935,7 +5935,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerview.cpp" line="53"/>
         <source>Empty Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Порожня черга</translation>
     </message>
 </context>
 <context>
@@ -5943,12 +5943,12 @@
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="38"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Гаразд</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="41"/>
         <source>Quick Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Швидке налаштування</translation>
     </message>
 </context>
 <context>
@@ -5956,22 +5956,22 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="47"/>
         <source>ReplayGain Scan Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Результати сканування ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="59"/>
         <source>&amp;Update File Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Оновити теги файлів</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="76"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished"></translation>
+        <translation>Запис тегів у файл…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="44"/>
         <source>Time taken</source>
-        <translation type="unfinished"></translation>
+        <translation>Витрачений час</translation>
     </message>
 </context>
 <context>
@@ -5979,27 +5979,27 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="46"/>
         <source>Name</source>
-        <translation type="unfinished">Ім&apos;я</translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="48"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Підсилення треку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="50"/>
         <source>Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Посилення альбому</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="52"/>
         <source>Track Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Трек Пік</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="54"/>
         <source>Album Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Пік альбому</translation>
     </message>
 </context>
 <context>
@@ -6007,17 +6007,17 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="143"/>
         <source>Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation>Розрахунок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="144"/>
         <source>Playback</source>
-        <translation type="unfinished">Відтворення</translation>
+        <translation>Відтворення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="144"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain&apos;</translation>
     </message>
 </context>
 <context>
@@ -6142,7 +6142,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="109"/>
         <source>Name</source>
-        <translation type="unfinished">Ім&apos;я</translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="111"/>
@@ -6180,7 +6180,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="209"/>
         <source>Playback</source>
-        <translation type="unfinished">Відтворення</translation>
+        <translation>Відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="209"/>
@@ -6447,7 +6447,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="108"/>
         <source>Query</source>
-        <translation type="unfinished">Запит</translation>
+        <translation>Запит</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="109"/>
@@ -6609,10 +6609,10 @@
     <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
         <source>%Ln result(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln результат</numerusform>
+            <numerusform>%Ln результати</numerusform>
+            <numerusform>%Ln результатів</numerusform>
         </translation>
     </message>
     <message>
@@ -6985,7 +6985,7 @@
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="164"/>
         <source>Name</source>
-        <translation type="unfinished">Ім&apos;я</translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="166"/>
@@ -7003,7 +7003,7 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="40"/>
         <source>Artist</source>
-        <translation type="unfinished">Виконавець</translation>
+        <translation>Виконавець</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="41"/>
@@ -7080,7 +7080,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
         <source>Widgets</source>
-        <translation type="unfinished">Віджети</translation>
+        <translation>Віджети</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
@@ -7118,7 +7118,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="67"/>
         <source>Display</source>
-        <translation type="unfinished">Відображення</translation>
+        <translation>Відображення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="74"/>
@@ -7265,7 +7265,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="179"/>
         <source>Name</source>
-        <translation type="unfinished">Ім&apos;я</translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="181"/>
@@ -7304,7 +7304,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="48"/>
         <source>Copy</source>
-        <translation type="unfinished">Копіювати</translation>
+        <translation>Копіювати</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="49"/>
@@ -7358,32 +7358,32 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="134"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Додати до поточного списку відтворення</translation>
+        <translation>Додати до поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="135"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Додати до активного списку відтворення</translation>
+        <translation>Додати до активного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="136"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished">Надіслати до поточного списку відтворення</translation>
+        <translation>Надіслати до поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="137"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished">Надіслати до нового списку відтворення</translation>
+        <translation>Надіслати до нового списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="138"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Додати до черги відтворення</translation>
+        <translation>Додати до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="139"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Додати наступним у черзі</translation>
+        <translation>Додати наступним у черзі</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="140"/>
@@ -7418,37 +7418,37 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="155"/>
         <source>Tracks</source>
-        <translation type="unfinished">Доріжки</translation>
+        <translation>Доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="157"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished">Додати вибрані доріжки до поточного списку відтворення</translation>
+        <translation>Додати вибрані доріжки до поточного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="163"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation type="unfinished">Додати вибрані доріжки до активного списку відтворення</translation>
+        <translation>Додати вибрані доріжки до активного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="169"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation type="unfinished">Замінити вміст поточного списку відтворення вибраними доріжками</translation>
+        <translation>Замінити вміст поточного списку відтворення вибраними доріжками</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="180"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation type="unfinished">Створити новий список відтворення з вибраних доріжок</translation>
+        <translation>Створити новий список відтворення з вибраних доріжок</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="197"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished">Додати вибрані доріжки до черги відтворення</translation>
+        <translation>Додати вибрані доріжки до черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="209"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished">Додати вибрані доріжки до початку черги відтворення</translation>
+        <translation>Додати вибрані доріжки до початку черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="221"/>
@@ -7478,7 +7478,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="413"/>
         <source>Playback</source>
-        <translation type="unfinished">Відтворення</translation>
+        <translation>Відтворення</translation>
     </message>
 </context>
 <context>
@@ -7511,7 +7511,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="46"/>
         <source>%1 Settings</source>
-        <translation type="unfinished">%1 Налаштування</translation>
+        <translation>%1 Налаштування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="61"/>
@@ -7547,7 +7547,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="97"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished">&amp;Переглянути…</translation>
+        <translation>&amp;Переглянути…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="140"/>
@@ -7645,7 +7645,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="220"/>
         <source>Widgets</source>
-        <translation type="unfinished">Віджети</translation>
+        <translation>Віджети</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="220"/>
@@ -7784,7 +7784,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="200"/>
         <source>Widgets</source>
-        <translation type="unfinished">Віджети</translation>
+        <translation>Віджети</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="200"/>
@@ -7923,7 +7923,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="316"/>
         <source>Widgets</source>
-        <translation type="unfinished">Віджети</translation>
+        <translation>Віджети</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="316"/>
@@ -7996,7 +7996,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="129"/>
         <source>Display</source>
-        <translation type="unfinished">Відображення</translation>
+        <translation>Відображення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="132"/>
@@ -8049,12 +8049,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="308"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished">Використання кешу диска</translation>
+        <translation>Використання кешу диска</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="183"/>
         <source>Clear Cache</source>
-        <translation type="unfinished">Очистити кеш</translation>
+        <translation>Очистити кеш</translation>
     </message>
 </context>
 <context>
@@ -8077,7 +8077,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="172"/>
         <source>Display</source>
-        <translation type="unfinished">Відображення</translation>
+        <translation>Відображення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="174"/>
@@ -8125,7 +8125,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="111"/>
         <source>Dummy</source>
-        <translation type="unfinished">Заповнювач</translation>
+        <translation>Заповнювач</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="117"/>
@@ -8212,7 +8212,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="210"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished">Панель обкладинки</translation>
+        <translation>Панель обкладинки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="218"/>
@@ -8238,7 +8238,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="242"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Переглядач каталогів</translation>
+        <translation>Переглядач каталогів</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="278"/>
@@ -8253,7 +8253,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="287"/>
         <source>Artwork</source>
-        <translation type="unfinished">Обкладинка</translation>
+        <translation>Обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="299"/>
@@ -8427,7 +8427,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="251"/>
         <source>Artwork</source>
-        <translation type="unfinished">Обкладинка</translation>
+        <translation>Обкладинка</translation>
     </message>
 </context>
 </TS>
