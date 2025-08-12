@@ -70,39 +70,39 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="65"/>
         <source>Search</source>
-        <translation type="unfinished">Recherche</translation>
+        <translation>Recherche</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="67"/>
         <source>Artwork Finder</source>
-        <translation type="unfinished"></translation>
+        <translation>Chercheur d&apos;illustration</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="69"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="120"/>
         <source>Artist</source>
-        <translation type="unfinished">Artiste</translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="122"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="124"/>
         <source>Type</source>
-        <translation type="unfinished">Type</translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="216"/>
         <source>Searching…</source>
-        <translation type="unfinished">Recherche…</translation>
+        <translation>Recherche…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="222"/>
         <source>No artwork found</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucune illustration</translation>
     </message>
 </context>
 <context>
@@ -110,17 +110,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="230"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Télécharger</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="231"/>
         <source>Interface</source>
-        <translation type="unfinished">Interface</translation>
+        <translation>Interface</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="231"/>
         <source>Artwork</source>
-        <translation type="unfinished">Illustration</translation>
+        <translation>Illustration</translation>
     </message>
 </context>
 <context>
@@ -128,27 +128,27 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="81"/>
         <source>Embed in file</source>
-        <translation type="unfinished"></translation>
+        <translation>Intégrer au fichier</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="82"/>
         <source>Save to directory</source>
-        <translation type="unfinished">Enregistrer dans un répertoire</translation>
+        <translation>Enregistrer dans un répertoire</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="93"/>
         <source>Manual save</source>
-        <translation type="unfinished">Sauvegarde manuelle</translation>
+        <translation>Sauvegarde manuelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="94"/>
         <source>Autosave</source>
-        <translation type="unfinished">Sauvegarde automatique</translation>
+        <translation>Sauvegarde automatique</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation type="unfinished">Sauvegarde automatique après 60 secondes ou 1/3 de la durée de la piste</translation>
+        <translation>Sauvegarde automatique après 60 secondes ou 1/3 de la durée de la piste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="101"/>
@@ -158,42 +158,42 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="110"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Pochette Avant</translation>
+        <translation>Pochette Avant</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Pochette Arrière</translation>
+        <translation>Pochette Arrière</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="112"/>
         <source>Artist</source>
-        <translation type="unfinished">Artiste</translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
         <source>Save Method</source>
-        <translation type="unfinished">Enregistrer la Méthode</translation>
+        <translation>Méthode de sauvegarde</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="124"/>
         <source>Save Location</source>
-        <translation type="unfinished">Emplacement de sauvegarde</translation>
+        <translation>Emplacement de sauvegarde</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="127"/>
         <source>Directory</source>
-        <translation type="unfinished">Répertoire</translation>
+        <translation>Répertoire</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="128"/>
         <source>Filename</source>
-        <translation type="unfinished">Nom du fichier</translation>
+        <translation>Nom du fichier</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="220"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Sélectionner un répertoire</translation>
+        <translation>Sélectionner un répertoire</translation>
     </message>
 </context>
 <context>
@@ -201,17 +201,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="153"/>
         <source>General</source>
-        <translation type="unfinished">Général</translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="154"/>
         <source>Interface</source>
-        <translation type="unfinished">Interface</translation>
+        <translation>Interface</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="154"/>
         <source>Artwork</source>
-        <translation type="unfinished">Illustration</translation>
+        <translation>Illustration</translation>
     </message>
 </context>
 <context>
@@ -340,17 +340,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche en cours</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
         <source>Interface</source>
-        <translation type="unfinished">Interface</translation>
+        <translation>Interface</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
         <source>Artwork</source>
-        <translation type="unfinished">Illustration</translation>
+        <translation>Illustration</translation>
     </message>
 </context>
 <context>
@@ -358,42 +358,42 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechercher automatiquement les illustrations manquantes au début de la lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
         <source>Minimum match threshold</source>
-        <translation type="unfinished">Seuil de correspondance minimal</translation>
+        <translation>Seuil de correspondance minimal</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="71"/>
         <source>Search parameters</source>
-        <translation type="unfinished">Paramètres de recherche</translation>
+        <translation>Paramètres de recherche</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="77"/>
         <source>Title</source>
-        <translation type="unfinished">Titre</translation>
+        <translation>Titre</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="79"/>
         <source>Artist</source>
-        <translation type="unfinished">Artiste</translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="81"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="85"/>
         <source>Finder thumbnail size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille des miniatures</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="91"/>
         <source>Size of thumbnails in Artwork Finder when searching for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille des miniatures affichées dans le chercheur d&apos;illustrations</translation>
     </message>
 </context>
 <context>
@@ -401,17 +401,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="155"/>
         <source>Sources</source>
-        <translation type="unfinished">Sources</translation>
+        <translation>Sources</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="156"/>
         <source>Interface</source>
-        <translation type="unfinished">Interface</translation>
+        <translation>Interface</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="156"/>
         <source>Artwork</source>
-        <translation type="unfinished">Illustration</translation>
+        <translation>Illustration</translation>
     </message>
 </context>
 <context>
@@ -419,32 +419,32 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="83"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Pochette Avant</translation>
+        <translation>Pochette Avant</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="84"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Pochette Arrière</translation>
+        <translation>Pochette Arrière</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="85"/>
         <source>Artist</source>
-        <translation type="unfinished">Artiste</translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="91"/>
         <source>Local paths</source>
-        <translation type="unfinished"></translation>
+        <translation>Chemins locaux</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="93"/>
         <source>Download sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Sources de téléchargement</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="95"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les illustrations seront recherchées selon l&apos;ordre suivant.</translation>
     </message>
 </context>
 <context>
@@ -525,7 +525,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="89"/>
         <source>Query</source>
-        <translation type="unfinished">Requête</translation>
+        <translation>Requête</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="160"/>
@@ -611,17 +611,17 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="243"/>
         <source>Search for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechercher des illustrations…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="244"/>
         <source>Quicksearch for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche rapide d&apos;illustrations</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="245"/>
         <source>Remove artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer l&apos;illustration</translation>
     </message>
 </context>
 <context>
@@ -2251,12 +2251,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1170"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche d&apos;illustrations…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche d&apos;illustrations terminée</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="899"/>
@@ -2610,7 +2610,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="186"/>
         <source>Playback</source>
-        <translation type="unfinished">Lecture en cours</translation>
+        <translation>Lecture en cours</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
@@ -2829,7 +2829,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="180"/>
         <source>Subsong Index</source>
-        <translation type="unfinished">Index des sous-chants / index des sous-titres&#x202f;?</translation>
+        <translation>Numéro de sous-piste</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
@@ -3191,7 +3191,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation type="unfinished">Supprimer les pistes n&apos;appartenant ni à la bibliothèque, ni à une liste de lecture, et les statistiques de lecture obsolètes</translation>
+        <translation>Supprimer les pistes n&apos;appartenant ni à la bibliothèque, ni à une liste de lecture, et les statistiques de lecture obsolètes</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -3443,7 +3443,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="82"/>
         <source>Switch when changed</source>
-        <translation type="unfinished">Basculer au changement</translation>
+        <translation>Basculer lors du changement</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="88"/>
@@ -3543,7 +3543,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="196"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished">Développer/Réduire/Lire</translation>
+        <translation>Développer/Réduire/Lire</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="143"/>
@@ -3698,7 +3698,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="49"/>
         <source>Seek</source>
-        <translation type="unfinished">Rechercher</translation>
+        <translation>Balayage temporel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="50"/>
@@ -3769,17 +3769,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="70"/>
         <source>Synced scroll duration</source>
-        <translation type="unfinished">Vitesse de défilement synchronisée</translation>
+        <translation>Vitesse de défilement synchronisée</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="71"/>
         <source>Manual</source>
-        <translation type="unfinished">Manuel</translation>
+        <translation>Manuel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="72"/>
         <source>Synced</source>
-        <translation type="unfinished">Synchronisé</translation>
+        <translation>Synchronisé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="73"/>
@@ -3958,7 +3958,7 @@
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="164"/>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="189"/>
         <source>Synced</source>
-        <translation type="unfinished">Synchronisé</translation>
+        <translation>Synchronisé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="172"/>
@@ -4064,7 +4064,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="119"/>
         <source>Save Location</source>
-        <translation type="unfinished">Emplacement de sauvegarde</translation>
+        <translation>Emplacement de sauvegarde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="122"/>
@@ -4181,12 +4181,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="84"/>
         <source>Lyrics will be searched for in the above order.</source>
-        <translation type="unfinished">Les paroles seront recherchées dans l&apos;ordre indiqué ci-dessus.</translation>
+        <translation>Les paroles seront recherchées dans l&apos;ordre indiqué ci-dessus.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="85"/>
         <source>Metadata tags</source>
-        <translation type="unfinished">Étiquettes de métadonnées</translation>
+        <translation>Étiquettes de métadonnées</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="87"/>
@@ -4734,12 +4734,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="111"/>
         <source>Album grouping pattern</source>
-        <translation type="unfinished">Modèle de groupement d&apos;albums</translation>
+        <translation>Modèle de groupement d&apos;albums</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="113"/>
         <source>Album sorting pattern</source>
-        <translation type="unfinished">Modèle de tri des albums</translation>
+        <translation>Modèle de tri des albums</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="74"/>
@@ -5502,7 +5502,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="366"/>
         <source>%1 contents</source>
-        <translation type="unfinished">Contenu de %1</translation>
+        <translation>Contenu de %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="151"/>
@@ -5861,7 +5861,7 @@
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
         <source>Disc Albums</source>
-        <translation type="unfinished">Disque Albums</translation>
+        <translation>Albums mono-disque</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
@@ -6045,12 +6045,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Album grouping pattern</source>
-        <translation type="unfinished">Modèle de groupement d&apos;albums</translation>
+        <translation>Modèle de groupement des albums</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="85"/>
         <source>Used with the %1 action</source>
-        <translation type="unfinished">Utilisé avec l&apos;action %1</translation>
+        <translation>Utilisé avec l&apos;action %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="85"/>
@@ -6417,12 +6417,12 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="93"/>
         <source>Filter scrobbles</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtre de scrobbles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="94"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtre</translation>
+        <translation>Filtre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="96"/>
@@ -6447,12 +6447,12 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="108"/>
         <source>Query</source>
-        <translation type="unfinished">Requête</translation>
+        <translation>Requête</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="109"/>
         <source>Enter a query. Tracks that match the query will NOT be scrobbled</source>
-        <translation type="unfinished"></translation>
+        <translation>Saisissez une requête. Les pistes qui correspondent à la requête ne seront PAS scrobblés</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="126"/>
@@ -7397,17 +7397,17 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="142"/>
         <source>Search for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechercher des illustrations…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="143"/>
         <source>Quicksearch for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche rapide d&apos;illustrations</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="144"/>
         <source>Remove all artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer toutes les illustrations</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="145"/>
@@ -7462,12 +7462,12 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="254"/>
         <source>Search for artwork for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechercher des illustrations pour les pistes sélectionnées</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="277"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer toutes les illustrations associées aux pistes sélectionnées (intégrées, dossier)</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="289"/>
