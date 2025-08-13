@@ -5,21 +5,12 @@
 ### New Features
 
 * Artwork
-  - Add support for changing embedded artwork
-  - Add support for downloading artwork ([#594](https://github.com/fooyin/fooyin/pull/594))
-* Interface
-  - Add setting to toggle main menu bar ([#534](https://github.com/fooyin/fooyin/issues/534))
+  - Support changing embedded artwork
+  - Support downloading and saving artwork ([#594](https://github.com/fooyin/fooyin/pull/594))
 * Lyrics
   - Support finding, saving, and editing lyrics ([#355](https://github.com/fooyin/fooyin/pull/355))
-* Playback
-  - Add “Follow playback queue” option ([#479](https://github.com/fooyin/fooyin/pull/479))
-  - Add autoplaylist support ([#366](https://github.com/fooyin/fooyin/pull/366))
-* Playlist/Library
-  - Add `%list_index%` variable ([#519](https://github.com/fooyin/fooyin/issues/519))
-  - Add queue/play next actions ([#367](https://github.com/fooyin/fooyin/issues/367))
-* Scrobbler
-  - Add filtering options ([#565](https://github.com/fooyin/fooyin/pull/565))
-  - Add libre.fm service ([#517](https://github.com/fooyin/fooyin/issues/517))
+* Playlist
+  - Add autoplaylist functionality ([#366](https://github.com/fooyin/fooyin/pull/366))
 
 ### Improvements
 
@@ -31,11 +22,16 @@
   - Make VBR update interval configurable ([#375](https://github.com/fooyin/fooyin/issues/375))
   - Start playback on next/previous if stopped ([#564](https://github.com/fooyin/fooyin/issues/564))
 * Interface
+  - Add setting to toggle main menu bar ([#534](https://github.com/fooyin/fooyin/issues/534))
   - LibraryTree: Align click actions with browser page ([#516](https://github.com/fooyin/fooyin/pull/516))
   - LibraryTree: Improve selection playlist behaviour
   - Selection Info: Include library name if track is in library
   - Settings: Add buttons to open config and share directories
+* Playback
+  - Add “Follow playback queue” option ([#479](https://github.com/fooyin/fooyin/pull/479))
 * Playlist
+  - Add `%list_index%` variable ([#519](https://github.com/fooyin/fooyin/issues/519))
+  - Add queue/play next actions ([#367](https://github.com/fooyin/fooyin/issues/367))
   - Automatically load rest of playlist when ready ([#359](https://github.com/fooyin/fooyin/issues/359))
   - Optimise updating track data by limiting column updates ([#519](https://github.com/fooyin/fooyin/issues/519))
   - Perform searches by filtering the current playlist ([#350](https://github.com/fooyin/fooyin/issues/350))
@@ -48,6 +44,9 @@
   - Add `LIMIT` keyword and `*` alias for `ALL`
   - Add sorting shorthand `S+`/`S-` and improve sort expression evaluation
   - Add number arg to `$crlf` to support multiple line breaks in one call
+* Scrobbler
+  - Add filtering options ([#565](https://github.com/fooyin/fooyin/pull/565))
+  - Add libre.fm service ([#517](https://github.com/fooyin/fooyin/issues/517))
 
 ### Fixes
 
