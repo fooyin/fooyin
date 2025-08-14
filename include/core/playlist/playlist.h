@@ -154,6 +154,7 @@ public:
     void reset();
     /** Resets the modified and tracksModified flags. */
     void resetFlags();
+    void resetNextTrackIndex();
 
     static QStringList supportedPlaylistExtensions();
 
