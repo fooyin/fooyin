@@ -95,6 +95,6 @@ FYCORE_EXPORT void printError(const QString& error);
 
 FYCORE_EXPORT SampleFormat sampleFormat(AVSampleFormat format, int bps);
 FYCORE_EXPORT AVSampleFormat sampleFormat(SampleFormat format, bool planar = false);
-FYCORE_EXPORT AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
+FYCORE_EXPORT AudioFormat audioFormatFromCodec(AVCodecParameters* codec, AVSampleFormat ctxFormat);
 FYCORE_EXPORT Stream findAudioStream(AVFormatContext* context);
 } // namespace Fooyin::Utils

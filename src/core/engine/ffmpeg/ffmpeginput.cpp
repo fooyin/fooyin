@@ -91,6 +91,8 @@ QString getCodec(AVCodecID codec)
             return u"AAC"_s;
         case(AV_CODEC_ID_ALAC):
             return u"ALAC"_s;
+        case(AV_CODEC_ID_MP2):
+            return u"MP2"_s;
         case(AV_CODEC_ID_MP3):
             return u"MP3"_s;
         case(AV_CODEC_ID_WAVPACK):
@@ -454,10 +456,14 @@ bool FFmpegInputPrivate::setup(QIODevice* source)
         return false;
     }
 
-    m_timeBase    = m_stream.avStream()->time_base;
-    m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar);
+    m_timeBase = m_stream.avStream()->time_base;
 
-    return createCodec(m_stream.avStream());
+    if(createCodec(m_stream.avStream())) {
+        m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar, m_codec.context()->sample_fmt);
+        return true;
+    }
+
+    return false;
 }
 
 void FFmpegInputPrivate::checkIsVbr(const Track& track)
@@ -824,14 +830,41 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     }
 
     const auto* avStream = stream.avStream();
-    const auto* codec    = stream.avStream()->codecpar;
-    const auto format    = Utils::audioFormatFromCodec(stream.avStream()->codecpar);
+    const auto* codecPar = stream.avStream()->codecpar;
 
-    track.setCodec(getCodec(codec->codec_id));
+    const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
+    if(!avCodec) {
+        Utils::printError(u"Could not find a decoder for stream"_s);
+        return false;
+    }
+
+    CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
+    if(!avCodecContext) {
+        Utils::printError(u"Could not allocate context"_s);
+        return false;
+    }
+
+    if(avCodecContext->codec_type != AVMEDIA_TYPE_AUDIO) {
+        return false;
+    }
+
+    if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
+        Utils::printError(u"Could not obtain codec parameters"_s);
+        return {};
+    }
+
+    if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
+        Utils::printError(u"Could not initialise codec context"_s);
+        return {};
+    }
+
+    const auto format = Utils::audioFormatFromCodec(stream.avStream()->codecpar, avCodecContext->sample_fmt);
+
+    track.setCodec(getCodec(codecPar->codec_id));
     track.setSampleRate(format.sampleRate());
     track.setChannels(format.channelCount());
     track.setBitDepth(format.bitsPerSample());
-    track.setEncoding(isLossless(codec->codec_id) ? u"Lossless"_s : u"Lossy"_s);
+    track.setEncoding(isLossless(codecPar->codec_id) ? u"Lossless"_s : u"Lossy"_s);
 
     if(track.duration() == 0) {
         AVRational timeBase = avStream->time_base;
@@ -844,7 +877,7 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
         track.setDuration(durationMs);
     }
 
-    auto bitrate = static_cast<int>(codec->bit_rate / 1000);
+    auto bitrate = static_cast<int>(codecPar->bit_rate / 1000);
     if(bitrate <= 0) {
         bitrate = static_cast<int>(context.formatContext->bit_rate / 1000);
     }
