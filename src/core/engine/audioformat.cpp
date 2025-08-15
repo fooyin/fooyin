@@ -30,6 +30,7 @@ AudioFormat::AudioFormat()
 
 AudioFormat::AudioFormat(SampleFormat format, int sampleRate, int channelCount)
     : m_sampleFormat{format}
+    , m_sampleFormatPlanar{false}
     , m_channelCount{channelCount}
     , m_sampleRate{sampleRate}
 { }
