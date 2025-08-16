@@ -63,7 +63,7 @@ private:
     QSpinBox* m_scrobbleDelay;
 
     QCheckBox* m_scrobbleFilterEnabled;
-    ScriptTextEdit* m_scrobbleFilter;
+    ScriptLineEdit* m_scrobbleFilter;
 
     struct ServiceContext
     {
@@ -91,12 +91,12 @@ ScrobblerPageWidget::ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* 
     , m_preferAlbumArtist{new QCheckBox(tr("Prefer album artist"), this)}
     , m_scrobbleDelay{new QSpinBox(this)}
     , m_scrobbleFilterEnabled{new QCheckBox(tr("Filter scrobbles"), this)}
-    , m_scrobbleFilter{new ScriptTextEdit(tr("Filter"), this)}
+    , m_scrobbleFilter{new ScriptLineEdit(tr("Filter"), this)}
 {
     auto* genralGroup   = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(genralGroup);
 
-    auto* delayLabel = new QLabel(tr("Scrobble delay") + ":"_L1, this);
+    auto* delayLabel       = new QLabel(tr("Scrobble delay") + ":"_L1, this);
     const QString delayTip = tr("Time to wait before submitting scrobbles");
 
     delayLabel->setToolTip(delayTip);
@@ -106,19 +106,19 @@ ScrobblerPageWidget::ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* 
     m_scrobbleDelay->setSuffix(" "_L1 + tr("seconds"));
 
     auto* filterLabel       = new QLabel(tr("Query") + ":"_L1, this);
-    const QString filterTip = tr("Enter a query. Tracks that match the query will NOT be scrobbled");
+    const QString filterTip = tr("Enter a query - tracks that match the query will NOT be scrobbled");
     filterLabel->setToolTip(filterTip);
     m_scrobbleFilter->setToolTip(filterTip);
 
     int row{0};
     generalLayout->addWidget(m_scrobblingEnabled, row++, 0, 1, 2);
     generalLayout->addWidget(m_preferAlbumArtist, row++, 0, 1, 2);
-    generalLayout->addWidget(delayLabel, row, 0);
+    generalLayout->addWidget(delayLabel, row, 0, 1, 2);
     generalLayout->addWidget(m_scrobbleDelay, row++, 1);
 
     generalLayout->addWidget(m_scrobbleFilterEnabled, row++, 0, 1, 2);
     generalLayout->addWidget(filterLabel, row, 0, Qt::AlignTop);
-    generalLayout->addWidget(m_scrobbleFilter, row++, 1);
+    generalLayout->addWidget(m_scrobbleFilter, row++, 1, 1, 2);
 
     generalLayout->setRowStretch(generalLayout->rowCount(), 1);
     generalLayout->setColumnStretch(2, 1);
@@ -138,6 +138,8 @@ ScrobblerPageWidget::ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* 
     layout->addWidget(serviceGroup, row++, 0, 1, 3);
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(2, 1);
+
+    QObject::connect(m_scrobbleFilterEnabled, &QCheckBox::clicked, m_scrobbleFilter, &QWidget::setEnabled);
 }
 
 void ScrobblerPageWidget::load()
@@ -148,6 +150,8 @@ void ScrobblerPageWidget::load()
 
     m_scrobbleFilterEnabled->setChecked(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>());
     m_scrobbleFilter->setText(m_settings->value<Settings::Scrobbler::ScrobbleFilter>());
+
+    m_scrobbleFilter->setEnabled(m_scrobbleFilterEnabled->isChecked());
 }
 
 void ScrobblerPageWidget::apply()
