@@ -108,17 +108,17 @@
 <context>
     <name>Fooyin::ArtworkDownloadPage</name>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="230"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="197"/>
         <source>Download</source>
         <translation>Télécharger</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="231"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
         <source>Interface</source>
         <translation>Interface</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="231"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
         <source>Artwork</source>
         <translation>Illustration</translation>
     </message>
@@ -126,72 +126,52 @@
 <context>
     <name>Fooyin::ArtworkDownloadPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="81"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="77"/>
         <source>Embed in file</source>
         <translation>Intégrer au fichier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="82"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="78"/>
         <source>Save to directory</source>
         <translation>Enregistrer dans un répertoire</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="93"/>
-        <source>Manual save</source>
-        <translation>Sauvegarde manuelle</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="94"/>
-        <source>Autosave</source>
-        <translation>Sauvegarde automatique</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
-        <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation>Sauvegarde automatique après 60 secondes ou 1/3 de la durée de la piste</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="101"/>
-        <source>Save Scheme</source>
-        <translation type="unfinished">Enregistrer le projet</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="110"/>
         <source>Front Cover</source>
         <translation>Pochette Avant</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="96"/>
         <source>Back Cover</source>
         <translation>Pochette Arrière</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="112"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="97"/>
         <source>Artist</source>
         <translation>Artiste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Save Method</source>
         <translation>Méthode de sauvegarde</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="124"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Save Location</source>
         <translation>Emplacement de sauvegarde</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="127"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="114"/>
         <source>Directory</source>
         <translation>Répertoire</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="128"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
         <source>Filename</source>
         <translation>Nom du fichier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="220"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="187"/>
         <source>Select Directory</source>
         <translation>Sélectionner un répertoire</translation>
     </message>
@@ -569,57 +549,57 @@
 <context>
     <name>Fooyin::CoverWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="121"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="126"/>
         <source>Artwork Panel</source>
         <translation>Panneau des illustrations</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="163"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="168"/>
         <source>Keep aspect ratio</source>
         <translation>Conserver les proportions</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="176"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="181"/>
         <source>Align to centre</source>
         <translation>Centrer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="177"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="182"/>
         <source>Align to left</source>
         <translation>Aligner à gauche</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="178"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="183"/>
         <source>Align to right</source>
         <translation>Aligner à droite</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="199"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="204"/>
         <source>Front cover</source>
         <translation>Pochette avant</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="200"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="205"/>
         <source>Back cover</source>
         <translation>Pochette arrière</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="201"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="206"/>
         <source>Artist</source>
         <translation>Artiste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="243"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="248"/>
         <source>Search for artwork…</source>
         <translation>Rechercher des illustrations…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="244"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="249"/>
         <source>Quicksearch for artwork</source>
         <translation>Recherche rapide d&apos;illustrations</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="245"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="250"/>
         <source>Remove artwork</source>
         <translation>Supprimer l&apos;illustration</translation>
     </message>
@@ -1563,7 +1543,7 @@
 <context>
     <name>Fooyin::Filters::FilterController</name>
     <message>
-        <location filename="../../src/plugins/filters/filtercontroller.cpp" line="529"/>
+        <location filename="../../src/plugins/filters/filtercontroller.cpp" line="535"/>
         <source>Filter Results</source>
         <translation>Sélection du filtrage</translation>
     </message>
@@ -1629,63 +1609,78 @@
 <context>
     <name>Fooyin::Filters::FilterWidget</name>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="584"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="658"/>
         <source>Display</source>
         <translation>Affichage</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="587"/>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="682"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="456"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="661"/>
         <source>Columns</source>
         <translation>Colonnes</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="588"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="662"/>
         <source>Artwork (bottom labels)</source>
         <translation>Illustrations (texte en dessous)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="589"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="663"/>
         <source>Artwork (right labels)</source>
         <translation>Illustrations (texte à droite)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="590"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="664"/>
         <source>Artwork (no labels)</source>
         <translation>Illustrations (sans texte)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="633"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="707"/>
         <source>Summary item</source>
         <translation>Afficher le résumé</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="640"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="714"/>
         <source>Front cover</source>
         <translation>Pochette avant</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="641"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="715"/>
         <source>Back cover</source>
         <translation>Pochette arrière</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="724"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="737"/>
+        <source>Show header</source>
+        <translation type="unfinished">Afficher l&apos;en-tête</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="745"/>
+        <source>Show scrollbar</source>
+        <translation type="unfinished">Afficher la barre de défilement</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="753"/>
+        <source>Alternating row colours</source>
+        <translation type="unfinished">Alterner la couleur des lignes</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="498"/>
         <source>Multiple columns</source>
         <translation>Plusieurs colonnes</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="747"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="521"/>
         <source>Manage groups</source>
         <translation>Gérer les groupes</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="642"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="716"/>
         <source>Artist</source>
         <translation>Artiste</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="732"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="506"/>
         <source>More…</source>
         <translation>Plus…</translation>
     </message>
@@ -1693,6 +1688,11 @@
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="261"/>
         <source>Library Filter</source>
         <translation>Filtre de bibliothèque</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filtercontroller.cpp" line="227"/>
+        <source>Filter options</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1861,17 +1861,17 @@
 <context>
     <name>Fooyin::Filters::FiltersGuiPage</name>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="161"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="141"/>
         <source>Appearance</source>
         <translation>Apparence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="162"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="142"/>
         <source>Widgets</source>
         <translation>Widgets</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="162"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="142"/>
         <source>Filters</source>
         <translation>Filtres</translation>
     </message>
@@ -1879,47 +1879,32 @@
 <context>
     <name>Fooyin::Filters::FiltersGuiPageWidget</name>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="65"/>
-        <source>Show headers</source>
-        <translation>Afficher les En-Têtes</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="66"/>
-        <source>Show scrollbars</source>
-        <translation>Afficher la Barre de Défilement</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="67"/>
-        <source>Alternating row colours</source>
-        <translation>Alterner la couleur des lignes</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="68"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="61"/>
         <source>Override row height</source>
         <translation>Modifier la hauteur des lignes</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="73"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="66"/>
         <source>Appearance</source>
         <translation>Apparence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="78"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="71"/>
         <source>Artwork Mode</source>
         <translation>Mode Illustrations</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="94"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="87"/>
         <source>Width</source>
         <translation>Largeur</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="96"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="89"/>
         <source>Height</source>
         <translation>Hauteur</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="91"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="84"/>
         <source>Size can also be changed using %1 in the widget.</source>
         <translation>La taille peut également être modifiée en utilisant %1 dans le widget.</translation>
     </message>
@@ -5513,17 +5498,17 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1478"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1482"/>
         <source>Sort</source>
         <translation>Trier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1509"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1513"/>
         <source>Presets</source>
         <translation>Préréglages</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1639"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1643"/>
         <source>Playlist</source>
         <translation>Liste de Lecture</translation>
     </message>
@@ -5683,17 +5668,17 @@
         <translation>Recherche…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1533"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1537"/>
         <source>Columns</source>
         <translation>Colonnes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1571"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1575"/>
         <source>More…</source>
         <translation>Plus…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1268"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1272"/>
         <source>Reset columns to default</source>
         <translation>Rétablir les colonnes par défaut</translation>
     </message>
@@ -5713,7 +5698,7 @@
         <translation>&amp;Arrêter la lecture après ce titre</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1277"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1281"/>
         <source>Single-column mode</source>
         <translation>Mode colonne unique</translation>
     </message>
@@ -7324,17 +7309,17 @@
         <translation>&amp;Changer les champs par défaut…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="197"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="199"/>
         <source>Are you sure?</source>
         <translation>Êtes-vous sûr(e)&#x202f;?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="198"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="200"/>
         <source>Metadata in the associated files will be overwritten.</source>
         <translation>Les métadonnées des fichiers associés seront écrasées.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="200"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="202"/>
         <source>Don&apos;t ask again</source>
         <translation>Ne plus demander</translation>
     </message>

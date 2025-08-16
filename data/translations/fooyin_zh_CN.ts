@@ -108,17 +108,17 @@
 <context>
     <name>Fooyin::ArtworkDownloadPage</name>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="230"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="197"/>
         <source>Download</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="231"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
         <source>Interface</source>
         <translation>界面</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="231"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
         <source>Artwork</source>
         <translation>插图</translation>
     </message>
@@ -126,72 +126,52 @@
 <context>
     <name>Fooyin::ArtworkDownloadPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="81"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="77"/>
         <source>Embed in file</source>
         <translation>内嵌入文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="82"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="78"/>
         <source>Save to directory</source>
         <translation>保存至目录</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="93"/>
-        <source>Manual save</source>
-        <translation>手动保存</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="94"/>
-        <source>Autosave</source>
-        <translation>自动保存</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
-        <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation>在60秒或三分之一音轨时长后自动保存</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="101"/>
-        <source>Save Scheme</source>
-        <translation>保存计划</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="110"/>
         <source>Front Cover</source>
         <translation>封面</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="96"/>
         <source>Back Cover</source>
         <translation>背面</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="112"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="97"/>
         <source>Artist</source>
         <translation>艺术家</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Save Method</source>
         <translation>保存方式</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="124"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Save Location</source>
         <translation>保存地址</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="127"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="114"/>
         <source>Directory</source>
         <translation>目录</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="128"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
         <source>Filename</source>
         <translation>文件名</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="220"/>
+        <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="187"/>
         <source>Select Directory</source>
         <translation>选择目录</translation>
     </message>
@@ -569,57 +549,57 @@
 <context>
     <name>Fooyin::CoverWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="121"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="126"/>
         <source>Artwork Panel</source>
         <translation>封面面板</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="163"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="168"/>
         <source>Keep aspect ratio</source>
         <translation>保持纵横比</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="176"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="181"/>
         <source>Align to centre</source>
         <translation>居中对齐</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="177"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="182"/>
         <source>Align to left</source>
         <translation>左对齐</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="178"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="183"/>
         <source>Align to right</source>
         <translation>右对齐</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="199"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="204"/>
         <source>Front cover</source>
         <translation>封面</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="200"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="205"/>
         <source>Back cover</source>
         <translation>背面</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="201"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="206"/>
         <source>Artist</source>
         <translation>艺术家</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="243"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="248"/>
         <source>Search for artwork…</source>
         <translation>搜索插图…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="244"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="249"/>
         <source>Quicksearch for artwork</source>
         <translation>快速搜索插图</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="245"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="250"/>
         <source>Remove artwork</source>
         <translation>删除插图</translation>
     </message>
@@ -1563,7 +1543,7 @@
 <context>
     <name>Fooyin::Filters::FilterController</name>
     <message>
-        <location filename="../../src/plugins/filters/filtercontroller.cpp" line="529"/>
+        <location filename="../../src/plugins/filters/filtercontroller.cpp" line="535"/>
         <source>Filter Results</source>
         <translation>过滤结果</translation>
     </message>
@@ -1629,63 +1609,78 @@
 <context>
     <name>Fooyin::Filters::FilterWidget</name>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="584"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="658"/>
         <source>Display</source>
         <translation>显示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="587"/>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="682"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="456"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="661"/>
         <source>Columns</source>
         <translation>列</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="588"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="662"/>
         <source>Artwork (bottom labels)</source>
         <translation>专辑插图 (底部标签)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="589"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="663"/>
         <source>Artwork (right labels)</source>
         <translation>专辑插图 (右标签)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="590"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="664"/>
         <source>Artwork (no labels)</source>
         <translation>专辑插图 (无标签)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="633"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="707"/>
         <source>Summary item</source>
         <translation>汇总项</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="640"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="714"/>
         <source>Front cover</source>
         <translation>封面</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="641"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="715"/>
         <source>Back cover</source>
         <translation>背面</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="724"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="737"/>
+        <source>Show header</source>
+        <translation type="unfinished">显示标题</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="745"/>
+        <source>Show scrollbar</source>
+        <translation type="unfinished">显示滚动条</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="753"/>
+        <source>Alternating row colours</source>
+        <translation type="unfinished">交替行颜色</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="498"/>
         <source>Multiple columns</source>
         <translation>多列</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="747"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="521"/>
         <source>Manage groups</source>
         <translation>管理分组</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="642"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="716"/>
         <source>Artist</source>
         <translation>艺术家</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="732"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="506"/>
         <source>More…</source>
         <translation>更多…</translation>
     </message>
@@ -1693,6 +1688,11 @@
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="261"/>
         <source>Library Filter</source>
         <translation>媒体库筛选器</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filtercontroller.cpp" line="227"/>
+        <source>Filter options</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1861,17 +1861,17 @@
 <context>
     <name>Fooyin::Filters::FiltersGuiPage</name>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="161"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="141"/>
         <source>Appearance</source>
         <translation>外观</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="162"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="142"/>
         <source>Widgets</source>
         <translation>小部件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="162"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="142"/>
         <source>Filters</source>
         <translation>筛选器</translation>
     </message>
@@ -1879,47 +1879,32 @@
 <context>
     <name>Fooyin::Filters::FiltersGuiPageWidget</name>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="65"/>
-        <source>Show headers</source>
-        <translation>显示标题</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="66"/>
-        <source>Show scrollbars</source>
-        <translation>显示滚动条</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="67"/>
-        <source>Alternating row colours</source>
-        <translation>交替行颜色</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="68"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="61"/>
         <source>Override row height</source>
         <translation>覆盖高度</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="73"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="66"/>
         <source>Appearance</source>
         <translation>外观</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="78"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="71"/>
         <source>Artwork Mode</source>
         <translation>专辑插图模式</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="94"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="87"/>
         <source>Width</source>
         <translation>宽度</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="96"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="89"/>
         <source>Height</source>
         <translation>高度</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="91"/>
+        <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="84"/>
         <source>Size can also be changed using %1 in the widget.</source>
         <translation>在小部件中使用 %1 也可以改变大小。</translation>
     </message>
@@ -5513,17 +5498,17 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1478"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1482"/>
         <source>Sort</source>
         <translation>排序</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1509"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1513"/>
         <source>Presets</source>
         <translation>预设</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1639"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1643"/>
         <source>Playlist</source>
         <translation>播放列表</translation>
     </message>
@@ -5683,17 +5668,17 @@
         <translation>搜索中…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1533"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1537"/>
         <source>Columns</source>
         <translation>列</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1571"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1575"/>
         <source>More…</source>
         <translation>更多…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1268"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1272"/>
         <source>Reset columns to default</source>
         <translation>重置列为默认</translation>
     </message>
@@ -5713,7 +5698,7 @@
         <translation>当前音轨后停止(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1277"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1281"/>
         <source>Single-column mode</source>
         <translation>单列模式</translation>
     </message>
@@ -7323,17 +7308,17 @@
         <translation>更改默认字段(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="197"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="199"/>
         <source>Are you sure?</source>
         <translation>你确定吗？</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="198"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="200"/>
         <source>Metadata in the associated files will be overwritten.</source>
         <translation>关联文件中的元数据标签将被覆盖。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="200"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="202"/>
         <source>Don&apos;t ask again</source>
         <translation>不再显示此消息</translation>
     </message>
