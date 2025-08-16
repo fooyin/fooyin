@@ -63,7 +63,6 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
     , m_duration{0}
     , m_volume{1.0}
     , m_ending{false}
-    , m_decoding{false}
     , m_updatingTrack{false}
     , m_pauseNextTrack{false}
     , m_decoder{nullptr}
@@ -296,10 +295,7 @@ void AudioPlaybackEngine::play()
             return;
         }
 
-        if(!m_decoding) {
-            m_decoding = true;
-            m_decoder->start();
-        }
+        m_decoder->start();
 
         if(m_pendingSeek) {
             resetWorkers();
@@ -596,7 +592,6 @@ void AudioPlaybackEngine::stopWorkers(bool full)
     m_clock.sync();
 
     m_pendingSeek = {};
-    m_decoding    = false;
 
     QMetaObject::invokeMethod(&m_renderer, &AudioRenderer::stop);
 

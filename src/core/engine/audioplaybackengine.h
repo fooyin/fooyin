@@ -107,7 +107,6 @@ private:
     uint64_t m_duration;
     double m_volume;
     bool m_ending;
-    bool m_decoding;
     bool m_updatingTrack;
     bool m_pauseNextTrack;
     std::optional<PlaybackState> m_pendingState;
