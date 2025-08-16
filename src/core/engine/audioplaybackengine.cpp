@@ -68,6 +68,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
     , m_pauseNextTrack{false}
     , m_decoder{nullptr}
     , m_nextDecoder{nullptr}
+    , m_currentTrackSize{0}
     , m_outputThread{new QThread(this)}
     , m_renderer{settings}
     , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
@@ -191,6 +192,8 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
         m_currentTrack  = m_decoder->changedTrack();
         emit trackChanged(m_currentTrack);
     }
+
+    m_currentTrackSize = m_source.device->size();
 
     m_format = format.value();
 
@@ -654,11 +657,15 @@ void AudioPlaybackEngine::currentFileChanged()
         return;
     }
 
-    m_decoder->stop();
-    m_source.device->seek(0);
-    m_decoder->init(m_source, m_currentTrack, AudioDecoder::UpdateTracks);
-    m_decoder->seek(m_lastPosition + m_totalBufferTime);
-    m_decoder->start();
+    // Reload file only if size changes (and potentially audio data offset) e.g. lyrics/artwork updates
+    // TODO: Improve by seeking to exact position on frame boundary
+    if(std::exchange(m_currentTrackSize, m_source.device->size()) != m_currentTrackSize) {
+        m_decoder->stop();
+        m_source.device->seek(0);
+        m_decoder->init(m_source, m_currentTrack, AudioDecoder::UpdateTracks);
+        m_decoder->seek(m_lastPosition + m_totalBufferTime);
+        m_decoder->start();
+    }
 }
 
 bool AudioPlaybackEngine::checkOpenSource()

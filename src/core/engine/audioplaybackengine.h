@@ -124,6 +124,8 @@ private:
     std::unique_ptr<QFile> m_file;
     std::unique_ptr<QFile> m_nextFile;
 
+    int m_currentTrackSize;
+
     QThread* m_outputThread;
     AudioRenderer m_renderer;
     QMetaObject::Connection m_pausedConnection;
