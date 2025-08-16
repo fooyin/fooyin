@@ -70,39 +70,39 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="65"/>
         <source>Search</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="67"/>
         <source>Artwork Finder</source>
-        <translation type="unfinished"></translation>
+        <translation>插图查找器</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="69"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="120"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="122"/>
         <source>Album</source>
-        <translation type="unfinished">专辑</translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="124"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>类型</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="216"/>
         <source>Searching…</source>
-        <translation type="unfinished">搜索中…</translation>
+        <translation>搜索中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="222"/>
         <source>No artwork found</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到插图</translation>
     </message>
 </context>
 <context>
@@ -110,17 +110,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="230"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>下载</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="231"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="231"/>
         <source>Artwork</source>
-        <translation type="unfinished">图片</translation>
+        <translation>插图</translation>
     </message>
 </context>
 <context>
@@ -128,72 +128,72 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="81"/>
         <source>Embed in file</source>
-        <translation type="unfinished"></translation>
+        <translation>内嵌入文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="82"/>
         <source>Save to directory</source>
-        <translation type="unfinished">保存至目录</translation>
+        <translation>保存至目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="93"/>
         <source>Manual save</source>
-        <translation type="unfinished">手动保存</translation>
+        <translation>手动保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="94"/>
         <source>Autosave</source>
-        <translation type="unfinished">自动保存</translation>
+        <translation>自动保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation type="unfinished">在60秒或三分之一音轨时长后自动保存</translation>
+        <translation>在60秒或三分之一音轨时长后自动保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="101"/>
         <source>Save Scheme</source>
-        <translation type="unfinished">保存计划</translation>
+        <translation>保存计划</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="110"/>
         <source>Front Cover</source>
-        <translation type="unfinished">封面</translation>
+        <translation>封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Back Cover</source>
-        <translation type="unfinished">背面</translation>
+        <translation>背面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="112"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
         <source>Save Method</source>
-        <translation type="unfinished">保存方式</translation>
+        <translation>保存方式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="124"/>
         <source>Save Location</source>
-        <translation type="unfinished">保存地址</translation>
+        <translation>保存地址</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="127"/>
         <source>Directory</source>
-        <translation type="unfinished">目录</translation>
+        <translation>目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="128"/>
         <source>Filename</source>
-        <translation type="unfinished">文件名</translation>
+        <translation>文件名</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="220"/>
         <source>Select Directory</source>
-        <translation type="unfinished">选择目录</translation>
+        <translation>选择目录</translation>
     </message>
 </context>
 <context>
@@ -201,17 +201,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="153"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="154"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="154"/>
         <source>Artwork</source>
-        <translation type="unfinished">图片</translation>
+        <translation>插图</translation>
     </message>
 </context>
 <context>
@@ -340,17 +340,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索中</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
         <source>Artwork</source>
-        <translation type="unfinished">图片</translation>
+        <translation>插图</translation>
     </message>
 </context>
 <context>
@@ -358,42 +358,42 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>开始播放时自动搜索缺失的插图</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
         <source>Minimum match threshold</source>
-        <translation type="unfinished">最小匹配阈值</translation>
+        <translation>最小匹配阈值</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="71"/>
         <source>Search parameters</source>
-        <translation type="unfinished">搜索参数</translation>
+        <translation>搜索参数</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="77"/>
         <source>Title</source>
-        <translation type="unfinished">标题</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="79"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="81"/>
         <source>Album</source>
-        <translation type="unfinished">专辑</translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="85"/>
         <source>Finder thumbnail size</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索器缩略图大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="91"/>
         <source>Size of thumbnails in Artwork Finder when searching for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索插图时的缩略图大小</translation>
     </message>
 </context>
 <context>
@@ -401,17 +401,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="155"/>
         <source>Sources</source>
-        <translation type="unfinished">搜索源</translation>
+        <translation>搜索源</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="156"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="156"/>
         <source>Artwork</source>
-        <translation type="unfinished">图片</translation>
+        <translation>插图</translation>
     </message>
 </context>
 <context>
@@ -419,32 +419,32 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="83"/>
         <source>Front Cover</source>
-        <translation type="unfinished">封面</translation>
+        <translation>封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="84"/>
         <source>Back Cover</source>
-        <translation type="unfinished">背面</translation>
+        <translation>背面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="85"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="91"/>
         <source>Local paths</source>
-        <translation type="unfinished"></translation>
+        <translation>本地路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="93"/>
         <source>Download sources</source>
-        <translation type="unfinished"></translation>
+        <translation>下载源</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="95"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation type="unfinished"></translation>
+        <translation>将以如下顺序搜索插图。</translation>
     </message>
 </context>
 <context>
@@ -611,17 +611,17 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="243"/>
         <source>Search for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索插图…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="244"/>
         <source>Quicksearch for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>快速搜索插图</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="245"/>
         <source>Remove artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>删除插图</translation>
     </message>
 </context>
 <context>
@@ -1642,17 +1642,17 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="588"/>
         <source>Artwork (bottom labels)</source>
-        <translation>专辑封面 (底部标签)</translation>
+        <translation>专辑插图 (底部标签)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="589"/>
         <source>Artwork (right labels)</source>
-        <translation>专辑封面 (右标签)</translation>
+        <translation>专辑插图 (右标签)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="590"/>
         <source>Artwork (no labels)</source>
-        <translation>专辑封面 (无标签)</translation>
+        <translation>专辑插图 (无标签)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="633"/>
@@ -1906,7 +1906,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="78"/>
         <source>Artwork Mode</source>
-        <translation>专辑封面模式</translation>
+        <translation>专辑插图模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="94"/>
@@ -2251,12 +2251,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1170"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在搜索插图…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished"></translation>
+        <translation>插图搜索完成</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="899"/>
@@ -6422,7 +6422,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="94"/>
         <source>Filter</source>
-        <translation type="unfinished">筛选器</translation>
+        <translation>筛选器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="96"/>
@@ -6447,7 +6447,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="108"/>
         <source>Query</source>
-        <translation type="unfinished">查询</translation>
+        <translation>查询</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="109"/>
@@ -7396,17 +7396,17 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="142"/>
         <source>Search for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索插图…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="143"/>
         <source>Quicksearch for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>快速搜索插图</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="144"/>
         <source>Remove all artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>删除所有插图</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="145"/>
@@ -7461,12 +7461,12 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="254"/>
         <source>Search for artwork for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>为所有选中的音轨搜索插图</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="277"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
-        <translation type="unfinished"></translation>
+        <translation>删除所有与选中的音轨相关联的插图（包括内嵌和目录中的）</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="289"/>
@@ -8428,7 +8428,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="251"/>
         <source>Artwork</source>
-        <translation type="unfinished">图片</translation>
+        <translation>插图</translation>
     </message>
 </context>
 </TS>
