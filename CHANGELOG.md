@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.9.0](https://github.com/fooyin/fooyin/releases/tag/v0.9.0) (2025-08-16)
+## [0.9.0](https://github.com/fooyin/fooyin/releases/tag/v0.9.0) (2025-08-17)
 
 ### New Features
 
@@ -21,6 +21,7 @@
   - Handle file changes during playback
   - Make VBR update interval configurable ([#375](https://github.com/fooyin/fooyin/issues/375))
   - Start playback on next/previous if stopped ([#564](https://github.com/fooyin/fooyin/issues/564))
+  - Add support for audio/x-flac mime type ([#458](https://github.com/fooyin/fooyin/pull/458))
 * Interface
   - Add setting to toggle main menu bar ([#534](https://github.com/fooyin/fooyin/issues/534))
   - LibraryTree: Align click actions with browser page ([#516](https://github.com/fooyin/fooyin/pull/516))
@@ -41,6 +42,7 @@
 * Scripting
   - Add `%playlist_elapsed%`, `%playlist_duration%` ([#457](https://github.com/fooyin/fooyin/issues/457))
   - Add `$round` ([#486](https://github.com/fooyin/fooyin/pull/486)), `$strstr` and friends ([#442](https://github.com/fooyin/fooyin/pull/442))
+  - Add %filesize_natural% ([#417](https://github.com/fooyin/fooyin/pull/417))
   - Add `LIMIT` keyword and `*` alias for `ALL`
   - Add sorting shorthand `S+`/`S-` and improve sort expression evaluation
   - Add number arg to `$crlf` to support multiple line breaks in one call
@@ -58,6 +60,7 @@
   - Fix playback restarting when stopping with fade out ([#597](https://github.com/fooyin/fooyin/issues/597))
   - Fix seek interrupting fade-in ([#436](https://github.com/fooyin/fooyin/issues/436))
   - Fix silence between CUE albums ([#376](https://github.com/fooyin/fooyin/issues/376))
+  - Fix playback of MP2 ([#612](https://github.com/fooyin/fooyin/issues/612))
 * Interface
   - ExpandedTreeView: Fix crash with bottom captions in icon mode ([#437](https://github.com/fooyin/fooyin/issues/437))
   - ExpandedTreeView: Fix unintended scrolling after drop ([#542](https://github.com/fooyin/fooyin/issues/542))
@@ -65,9 +68,11 @@
   - Fix encoding for info symbol ([#419](https://github.com/fooyin/fooyin/issues/419))
   - Fix invisible playlist text in some cases ([#481](https://github.com/fooyin/fooyin/issues/481))
   - Fix layout export not respecting theme options
+  - Fix layout export ignoring set layout name ([#557](https://github.com/fooyin/fooyin/pull/557))
   - Fix painting alternating row colours with some styles ([#583](https://github.com/fooyin/fooyin/issues/583))
   - Fix status widget scripts breaking on escaped reserved characters ([#514](https://github.com/fooyin/fooyin/issues/514))
 * Library/LibraryScanner
+  - Fix creation of garbage files when attempting to write metadata to moved files ([#604](https://github.com/fooyin/fooyin/pull/604))
   - Fix duplicate tracks when dropping CUE and related file
   - Improve detection of missing files (CUE) and log missing tracks
   - LibraryTree: Fix selection playlist not working after updating tracks
@@ -80,6 +85,8 @@
   - Fix sorting by album ([#399](https://github.com/fooyin/fooyin/issues/399))
   - Fix underlying track order after sorting ([#358](https://github.com/fooyin/fooyin/issues/358))
   - Fix “Show playing track” after playlist change ([#358](https://github.com/fooyin/fooyin/issues/358))
+  - Fix playlist auto-export not obeying settings ([#545](https://github.com/fooyin/fooyin/pull/545))
+  - Fix import of multiple playlists merging into one ([#541](https://github.com/fooyin/fooyin/pull/541))
 * Scrobbler
   - Fix ListenBrainz scrobbling ([#485](https://github.com/fooyin/fooyin/issues/485))
   - Prevent ListenBrainz sign-in without token
