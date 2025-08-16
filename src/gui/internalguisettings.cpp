@@ -163,8 +163,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<Internal::SystemPalette>(QApplication::palette());
     m_settings->createSetting<Internal::DirBrowserShowHorizScroll>(true, u"DirectoryBrowser/ShowHorizontalScrollbar"_s);
     m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, u"LibraryTree/IconSize"_s);
-    m_settings->createSetting<Internal::ArtworkSaveScheme>(static_cast<int>(ArtworkSaveScheme::Manual),
-                                                           u"Artwork/SaveScheme"_s);
     m_settings->createSetting<Internal::ArtworkSaveMethods>(QVariant::fromValue(defaultArtworkSaveMethods()),
                                                             u"Artwork/SaveMethods"_s);
     m_settings->createSetting<Internal::ArtworkAutoSearch>(false, u"Artwork/AutoSearch"_s);

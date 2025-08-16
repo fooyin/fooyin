@@ -61,10 +61,6 @@ private:
 
     SettingsManager* m_settings;
 
-    QRadioButton* m_manual;
-    QRadioButton* m_autosave;
-    QRadioButton* m_autosavePeriod;
-
     QTabWidget* m_coverTypes;
     QWidget* m_frontWidget;
     QWidget* m_backWidget;
@@ -90,26 +86,17 @@ private:
 
 ArtworkDownloadPageWidget::ArtworkDownloadPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_manual{new QRadioButton(tr("Manual save"), this)}
-    , m_autosave{new QRadioButton(tr("Autosave"), this)}
-    , m_autosavePeriod{new QRadioButton(tr("Autosave after 60 seconds or 1/3 of track duration"), this)}
     , m_coverTypes{new QTabWidget(this)}
     , m_frontWidget{new QWidget(this)}
     , m_backWidget{new QWidget(this)}
     , m_artistWidget{new QWidget(this)}
 {
-    auto* schemeGroup  = new QGroupBox(tr("Save Scheme"), this);
-    auto* schemeLayout = new QGridLayout(schemeGroup);
-
-    int row{0};
-    schemeLayout->addWidget(m_manual, row++, 0);
-    schemeLayout->addWidget(m_autosave, row++, 0);
-    schemeLayout->addWidget(m_autosavePeriod, row++, 0);
-
     m_coverTypes->setDocumentMode(true);
     m_coverTypes->addTab(m_frontWidget, tr("Front Cover"));
     m_coverTypes->addTab(m_backWidget, tr("Back Cover"));
     m_coverTypes->addTab(m_artistWidget, tr("Artist"));
+
+    int row{0};
 
     const auto addType = [this, &row](Track::Cover type, QWidget* widget) {
         auto* methodGroup  = new QGroupBox(tr("Save Method"), widget);
@@ -151,19 +138,12 @@ ArtworkDownloadPageWidget::ArtworkDownloadPageWidget(SettingsManager* settings)
     auto* layout = new QGridLayout(this);
 
     row = 0;
-    layout->addWidget(schemeGroup, row++, 0);
     layout->addWidget(m_coverTypes, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
 }
 
 void ArtworkDownloadPageWidget::load()
 {
-    const auto saveScheme
-        = static_cast<ArtworkSaveScheme>(m_settings->value<Settings::Gui::Internal::ArtworkSaveScheme>());
-    m_manual->setChecked(saveScheme == ArtworkSaveScheme::Manual);
-    m_autosave->setChecked(saveScheme == ArtworkSaveScheme::Autosave);
-    m_autosavePeriod->setChecked(saveScheme == ArtworkSaveScheme::AutosavePeriod);
-
     const auto saveMethods
         = m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>().value<ArtworkSaveMethods>();
 
@@ -178,18 +158,6 @@ void ArtworkDownloadPageWidget::load()
 
 void ArtworkDownloadPageWidget::apply()
 {
-    ArtworkSaveScheme saveScheme{ArtworkSaveScheme::Manual};
-    if(m_manual->isChecked()) {
-        saveScheme = ArtworkSaveScheme::Manual;
-    }
-    else if(m_autosave->isChecked()) {
-        saveScheme = ArtworkSaveScheme::Autosave;
-    }
-    else {
-        saveScheme = ArtworkSaveScheme::AutosavePeriod;
-    }
-    m_settings->set<Settings::Gui::Internal::ArtworkSaveScheme>(static_cast<int>(saveScheme));
-
     ArtworkSaveMethods saveMethods;
 
     for(const auto& [type, controls] : m_typeControls) {
@@ -205,7 +173,6 @@ void ArtworkDownloadPageWidget::apply()
 
 void ArtworkDownloadPageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::Internal::ArtworkSaveScheme>();
     m_settings->reset<Settings::Gui::Internal::ArtworkSaveMethods>();
     m_settings->reset<Settings::Gui::Internal::ArtworkAutoSearch>();
     m_settings->reset<Settings::Gui::Internal::ArtworkAlbumField>();

@@ -249,9 +249,9 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
         auto* quickSearch = new QAction(tr("Quicksearch for artwork"), menu);
         auto* remove      = new QAction(tr("Remove artwork"), menu);
 
-        search->setEnabled(canWriteCover());
-        quickSearch->setEnabled(canWriteCover());
-        remove->setEnabled(canWriteCover());
+        for(const auto& action : {search, quickSearch, remove}) {
+            action->setEnabled(canWriteCover());
+        }
 
         if(m_coverType == Track::Cover::Back) {
             // Only support front and artist cover for now

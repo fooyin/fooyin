@@ -63,13 +63,6 @@ struct CoverPaths
     }
 };
 
-enum class ArtworkSaveScheme : uint8_t
-{
-    Manual = 0,
-    Autosave,
-    AutosavePeriod
-};
-
 enum class ArtworkSaveMethod : uint8_t
 {
     Embedded = 0,
@@ -167,14 +160,13 @@ enum GuiInternalSettings : uint32_t
     SystemPalette             = 57 | Type::Variant,
     DirBrowserShowHorizScroll = 58 | Type::Bool,
     LibTreeIconSize           = 59 | Type::Variant,
-    ArtworkSaveScheme         = 60 | Type::Int,
-    ArtworkSaveMethods        = 61 | Type::Variant,
-    ArtworkAutoSearch         = 62 | Type::Bool,
-    ArtworkTitleField         = 63 | Type::String,
-    ArtworkAlbumField         = 64 | Type::String,
-    ArtworkArtistField        = 65 | Type::String,
-    ArtworkMatchThreshold     = 66 | Type::Int,
-    ArtworkDownloadThumbSize  = 67 | Type::Int,
+    ArtworkSaveMethods        = 60 | Type::Variant,
+    ArtworkAutoSearch         = 61 | Type::Bool,
+    ArtworkTitleField         = 62 | Type::String,
+    ArtworkAlbumField         = 63 | Type::String,
+    ArtworkArtistField        = 64 | Type::String,
+    ArtworkMatchThreshold     = 65 | Type::Int,
+    ArtworkDownloadThumbSize  = 66 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
