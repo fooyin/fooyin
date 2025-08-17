@@ -111,17 +111,17 @@ ScrobblerPageWidget::ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* 
     m_scrobbleFilter->setToolTip(filterTip);
 
     int row{0};
-    generalLayout->addWidget(m_scrobblingEnabled, row++, 0, 1, 2);
-    generalLayout->addWidget(m_preferAlbumArtist, row++, 0, 1, 2);
+    generalLayout->addWidget(m_scrobblingEnabled, row++, 0, 1, 3);
+    generalLayout->addWidget(m_preferAlbumArtist, row++, 0, 1, 3);
     generalLayout->addWidget(delayLabel, row, 0, 1, 2);
-    generalLayout->addWidget(m_scrobbleDelay, row++, 1);
+    generalLayout->addWidget(m_scrobbleDelay, row++, 2);
 
-    generalLayout->addWidget(m_scrobbleFilterEnabled, row++, 0, 1, 2);
-    generalLayout->addWidget(filterLabel, row, 0, Qt::AlignTop);
-    generalLayout->addWidget(m_scrobbleFilter, row++, 1, 1, 2);
+    generalLayout->addWidget(m_scrobbleFilterEnabled, row++, 0, 1, 3);
+    generalLayout->addWidget(filterLabel, row, 0, 1, 1);
+    generalLayout->addWidget(m_scrobbleFilter, row++, 1, 1, 3);
 
     generalLayout->setRowStretch(generalLayout->rowCount(), 1);
-    generalLayout->setColumnStretch(2, 1);
+    generalLayout->setColumnStretch(3, 1);
 
     auto* serviceGroup  = new QGroupBox(tr("Services"), this);
     auto* serviceLayout = new QGridLayout(serviceGroup);
