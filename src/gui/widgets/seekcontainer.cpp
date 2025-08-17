@@ -114,7 +114,7 @@ void SeekContainerPrivate::updateLabels(uint64_t time) const
 void SeekContainerPrivate::updateLabelSize() const
 {
     const QFontMetrics fm{m_self->fontMetrics()};
-    const QString zero = Utils::msToString(0);
+    const QString zero = Utils::msToString(0) + u"0"_s;
     m_elapsed->setFixedWidth(fm.horizontalAdvance(zero));
     m_total->setFixedWidth(fm.horizontalAdvance((m_elapsedTotal ? u"-"_s : QString{}) + zero));
 }
