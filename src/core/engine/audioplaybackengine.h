@@ -100,6 +100,7 @@ private:
     uint64_t m_startPosition;
     uint64_t m_endPosition;
     uint64_t m_lastPosition;
+    uint64_t m_lastBufferEnd;
 
     uint64_t m_totalBufferTime;
     uint64_t m_bufferLength;
@@ -123,7 +124,7 @@ private:
     std::unique_ptr<QFile> m_file;
     std::unique_ptr<QFile> m_nextFile;
 
-    int m_currentTrackSize;
+    uint64_t m_currentTrackSize;
 
     QThread* m_outputThread;
     AudioRenderer m_renderer;

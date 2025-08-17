@@ -58,6 +58,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
     , m_startPosition{0}
     , m_endPosition{0}
     , m_lastPosition{0}
+    , m_lastBufferEnd{0}
     , m_totalBufferTime{0}
     , m_bufferLength{static_cast<uint64_t>(m_settings->value<Settings::Core::BufferLength>())}
     , m_duration{0}
@@ -192,7 +193,9 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
         emit trackChanged(m_currentTrack);
     }
 
-    m_currentTrackSize = m_source.device->size();
+    if(m_source.device) {
+        m_currentTrackSize = static_cast<uint64_t>(m_source.device->size());
+    }
 
     m_format = format.value();
 
@@ -653,13 +656,13 @@ void AudioPlaybackEngine::currentFileChanged()
     }
 
     // Reload file only if size changes (and potentially audio data offset) e.g. lyrics/artwork updates
-    // TODO: Improve by seeking to exact position on frame boundary
     if(std::exchange(m_currentTrackSize, m_source.device->size()) != m_currentTrackSize) {
         m_decoder->stop();
-        m_source.device->seek(0);
-        m_decoder->init(m_source, m_currentTrack, AudioDecoder::UpdateTracks);
-        m_decoder->seek(m_lastPosition + m_totalBufferTime);
-        m_decoder->start();
+        if(checkOpenSource()) {
+            m_decoder->init(m_source, m_currentTrack, AudioDecoder::UpdateTracks);
+            m_decoder->seek(m_lastBufferEnd);
+            m_decoder->start();
+        }
     }
 }
 
@@ -726,6 +729,7 @@ void AudioPlaybackEngine::readNextBuffer()
     const auto buffer = m_decoder->readBuffer(maxBytes);
     if(buffer.isValid()) {
         m_totalBufferTime += buffer.duration();
+        m_lastBufferEnd = buffer.endTime();
         QMetaObject::invokeMethod(&m_renderer, [this, buffer]() { m_renderer.queueBuffer(buffer); });
     }
 

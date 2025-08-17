@@ -260,7 +260,7 @@ void interleave(uint8_t** in, Fooyin::AudioBuffer& buffer)
 int ffRead(void* data, uint8_t* buffer, int size)
 {
     auto* device        = static_cast<QIODevice*>(data);
-    const auto sizeRead = device->read(std::bit_cast<char*>(buffer), size);
+    const auto sizeRead = device->read(reinterpret_cast<char*>(buffer), size);
     if(sizeRead == 0) {
         return AVERROR_EOF;
     }

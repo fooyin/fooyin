@@ -349,7 +349,7 @@ void AudioRenderer::handleFading()
     if(inFade) {
         if(m_fadeLength >= 1000) {
             const auto step = static_cast<double>(currentStep) / m_fadeSteps;
-            m_fadeVolume    = m_volume * ((1.0 + std::erf(3.0 * step - 1.5)) / 2.0);
+            m_fadeVolume    = m_volume * ((1.0 + std::erf((3.0 * step) - 1.5)) / 2.0);
             if(m_flipFade ^ m_fadingOut) {
                 m_fadeVolume = m_volume - m_fadeVolume;
             }
