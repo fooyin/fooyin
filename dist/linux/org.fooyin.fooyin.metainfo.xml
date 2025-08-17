@@ -63,9 +63,6 @@
         </screenshot>
     </screenshots>
     <releases>
-        <release version="0.9.1" date="2025-08-17">
-            <url>https://github.com/fooyin/fooyin/releases/tag/v0.9.1</url>
-        </release>
         <release version="0.9.0" date="2025-08-17">
             <url>https://github.com/fooyin/fooyin/releases/tag/v0.9.0</url>
         </release>
