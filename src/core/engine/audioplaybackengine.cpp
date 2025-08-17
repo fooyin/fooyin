@@ -126,6 +126,8 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
         return;
     }
 
+    m_decoderStarted = false;
+
     qCDebug(ENGINE) << "Loading track:" << track.filenameExt();
 
     std::optional<AudioFormat> format;
