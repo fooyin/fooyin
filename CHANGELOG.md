@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.1](https://github.com/fooyin/fooyin/releases/tag/v0.9.1) (2025-08-17)
+
+### Fixes
+
+* Engine: Fix silent playback in some cases ([#380](https://github.com/fooyin/fooyin/issues/380))
+* Engine: Resolve crash when playing tracks in archives
+* Directory Browser: Fix scrolling to top on playback ([#617](https://github.com/fooyin/fooyin/issues/617))
+* Directory Browser: Fix restoring directory on startup in tree mode
+* Scrobbler: Fix layout of settings page
+* Seekbar: Fix display of labels in some instances
+* Status Bar: Fix evaluation of playing script when active playlist tracks change
+* WaveBar: Resolve crash when seeking ([#616](https://github.com/fooyin/fooyin/issues/616))
+
+
 ## [0.9.0](https://github.com/fooyin/fooyin/releases/tag/v0.9.0) (2025-08-17)
 
 ### New Features

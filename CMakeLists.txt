@@ -8,7 +8,7 @@ include(CheckLevel)
 
 project(
     fooyin
-    VERSION 0.9.0
+    VERSION 0.9.1
     DESCRIPTION "A customisable music player"
     HOMEPAGE_URL "https://www.fooyin.org"
     LANGUAGES CXX
