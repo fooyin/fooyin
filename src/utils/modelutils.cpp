@@ -71,4 +71,23 @@ bool sortModelIndexes(const QModelIndex& index1, const QModelIndex& index2)
     }
     return item1.row() < item2.row();
 }
+
+void recursiveDataChanged(QAbstractItemModel* model, const QModelIndex& parent, const QList<int>& roles)
+{
+    const int rowCount    = model->rowCount(parent);
+    const int columnCount = model->columnCount(parent);
+
+    if(rowCount > 0 && columnCount > 0) {
+        const QModelIndex topLeft     = model->index(0, 0, parent);
+        const QModelIndex bottomRight = model->index(rowCount - 1, columnCount - 1, parent);
+        emit model->dataChanged(topLeft, bottomRight, roles);
+    }
+
+    for(int row{0}; row < rowCount; ++row) {
+        const QModelIndex index = model->index(row, 0, parent);
+        if(model->hasChildren(index)) {
+            recursiveDataChanged(model, index, roles);
+        }
+    }
+}
 } // namespace Fooyin::Utils

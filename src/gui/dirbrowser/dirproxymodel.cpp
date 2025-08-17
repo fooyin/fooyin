@@ -19,6 +19,7 @@
 
 #include "dirproxymodel.h"
 
+#include <utils/modelutils.h>
 #include <gui/guiconstants.h>
 #include <utils/utils.h>
 
@@ -27,13 +28,14 @@
 #include <QFileSystemModel>
 #include <QPalette>
 #include <QPixmap>
+#include <algorithm>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-DirProxyModel::DirProxyModel(QObject* parent)
+DirProxyModel::DirProxyModel(bool flat, QObject* parent)
     : QSortFilterProxyModel{parent}
-    , m_flat{true}
+    , m_flat{flat}
     , m_playingState{Player::PlayState::Stopped}
     , m_showIcons{true}
     , m_playingColour{QApplication::palette().highlight().color()}
@@ -67,7 +69,7 @@ void DirProxyModel::resetPalette()
 {
     m_playingColour = QApplication::palette().highlight().color();
     m_playingColour.setAlpha(90);
-    invalidateData();
+    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole});
 }
 
 void DirProxyModel::setSourceModel(QAbstractItemModel* model)
@@ -89,12 +91,6 @@ void DirProxyModel::setSourceModel(QAbstractItemModel* model)
     QObject::connect(model, &QAbstractItemModel::rowsRemoved, this, &DirProxyModel::sourceRowsRemoved);
 
     QSortFilterProxyModel::setSourceModel(model);
-}
-
-void DirProxyModel::invalidateData()
-{
-    beginResetModel();
-    endResetModel();
 }
 
 Qt::ItemFlags DirProxyModel::flags(const QModelIndex& index) const
@@ -260,8 +256,8 @@ QModelIndex DirProxyModel::mapFromSource(const QModelIndex& index) const
         return {};
     }
 
-    const auto indexIt = std::find_if(m_nodes.cbegin(), m_nodes.cend(),
-                                      [&index](const auto& node) { return node->sourceIndex == index; });
+    const auto indexIt
+        = std::ranges::find_if(m_nodes, [&index](const auto& node) { return node->sourceIndex == index; });
     if(indexIt != m_nodes.cend()) {
         const auto row = static_cast<int>(std::distance(m_nodes.begin(), indexIt));
         return createIndex(row, 0, indexIt->get());
@@ -304,19 +300,19 @@ void DirProxyModel::setFlat(bool isFlat)
 void DirProxyModel::setIconsEnabled(bool enabled)
 {
     m_showIcons = enabled;
-    invalidateData();
+    Utils::recursiveDataChanged(this, {});
 }
 
 void DirProxyModel::setPlayState(Player::PlayState state)
 {
     m_playingState = state;
-    invalidateData();
+    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole});
 }
 
 void DirProxyModel::setPlayingPath(const QString& path)
 {
     m_playingTrackPath = path;
-    invalidateData();
+    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole});
 }
 
 void DirProxyModel::populate()

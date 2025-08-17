@@ -28,4 +28,7 @@ using IndexRangeList = std::vector<QModelIndexList>;
 
 FYUTILS_EXPORT IndexRangeList getIndexRanges(const QModelIndexList& indexes);
 FYUTILS_EXPORT bool sortModelIndexes(const QModelIndex& index1, const QModelIndex& index2);
+
+FYUTILS_EXPORT void recursiveDataChanged(QAbstractItemModel* model, const QModelIndex& parent,
+                                         const QList<int>& roles = {});
 } // namespace Fooyin::Utils

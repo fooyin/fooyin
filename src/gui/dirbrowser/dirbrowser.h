@@ -35,7 +35,7 @@ class DirBrowser : public FyWidget
     Q_OBJECT
 
 public:
-    enum class Mode
+    enum class Mode : int
     {
         Tree,
         List,
