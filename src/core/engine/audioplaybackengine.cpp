@@ -69,6 +69,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
     , m_decoder{nullptr}
     , m_nextDecoder{nullptr}
     , m_currentTrackSize{0}
+    , m_decoderStarted{false}
     , m_outputThread{new QThread(this)}
     , m_renderer{settings}
     , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
@@ -298,7 +299,10 @@ void AudioPlaybackEngine::play()
             return;
         }
 
-        m_decoder->start();
+        if(!m_decoderStarted) {
+            m_decoderStarted = true;
+            m_decoder->start();
+        }
 
         if(m_pendingSeek) {
             resetWorkers();
@@ -604,6 +608,7 @@ void AudioPlaybackEngine::stopWorkers(bool full)
     }
     if(m_decoder && (full || playbackState() != PlaybackState::Stopped)) {
         m_decoder->stop();
+        m_decoderStarted = false;
     }
 
     m_totalBufferTime = 0;

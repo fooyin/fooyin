@@ -125,6 +125,7 @@ private:
     std::unique_ptr<QFile> m_nextFile;
 
     uint64_t m_currentTrackSize;
+    bool m_decoderStarted;
 
     QThread* m_outputThread;
     AudioRenderer m_renderer;
