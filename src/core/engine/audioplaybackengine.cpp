@@ -760,7 +760,13 @@ void AudioPlaybackEngine::updateBitrate()
 
 void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
 {
-    m_totalBufferTime -= buffer.duration();
+    if(buffer.duration() <= m_totalBufferTime) {
+        m_totalBufferTime -= buffer.duration();
+    }
+    else {
+        m_totalBufferTime = 0;
+    }
+
     emit bufferPlayed(buffer);
 }
 
