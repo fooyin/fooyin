@@ -22,7 +22,6 @@ $SUDO apt-get install -y \
         libasound2-dev \
         libpipewire-0.3-dev \
         libsdl2-dev \
-        libtag1-dev \
         qt6-base-dev \
         libqt6svg6-dev \
         qt6-tools-dev \
@@ -39,3 +38,14 @@ $SUDO apt-get install -y \
         libsndfile1-dev \
         libebur128-dev \
         libgtest-dev
+
+CODENAME=$(lsb_release -sc)
+
+case "$CODENAME" in
+  bookworm|noble)
+    $SUDO apt-get install -y libtag1-dev
+    ;;
+  *)
+    $SUDO apt-get install -y libtag-dev
+    ;;
+esac

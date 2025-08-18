@@ -38,7 +38,6 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
         qt6-image-formats-plugins (>= 6.4.0),
         qt6-qpa-plugins,
         libasound2,
-        libtag1v5,
         ffmpeg (>= 7:4.4),
         pipewire,
         libsdl2-2.0-0,
