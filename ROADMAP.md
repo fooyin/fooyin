@@ -22,6 +22,7 @@ This document outlines the upcoming features for fooyin.
 | Metadata lookup                               | ❓ TBD    |
 | Internet radio support                        | ❓ TBD    |
 | DSP plugins                                   | ❓ TBD    |
+| Equaliser                                     | ❓ TBD    |
 
 ## Enhancements
 
