@@ -70,12 +70,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="65"></location>
         <source>Search</source>
-        <translation>Пошук&apos;</translation>
+        <translation>Пошук</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="67"></location>
         <source>Artwork Finder</source>
-        <translation>Пошук творів мистецтва</translation>
+        <translation>Пошук обкладинки</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="69"></location>
@@ -102,7 +102,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="222"></location>
         <source>No artwork found</source>
-        <translation>Не знайдено жодного твору мистецтва</translation>
+        <translation>Обкладинку не знайдено</translation>
     </message>
 </context>
 <context>
@@ -115,12 +115,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"></location>
         <source>Interface</source>
-        <translation>Інтерфейс</translation>
+        <translation>Вигляд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"></location>
         <source>Artwork</source>
-        <translation>Ілюстрації</translation>
+        <translation>Обкладинка</translation>
     </message>
 </context>
 <context>
@@ -138,12 +138,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"></location>
         <source>Front Cover</source>
-        <translation>Передня Обкладинка&apos;&apos;&apos;</translation>
+        <translation>Передня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="96"></location>
         <source>Back Cover</source>
-        <translation>Задня Обкладинка</translation>
+        <translation>Задня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="97"></location>
@@ -153,17 +153,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"></location>
         <source>Save Method</source>
-        <translation>Зберегти метод</translation>
+        <translation>Метод збереження</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"></location>
         <source>Save Location</source>
-        <translation>Зберегти місцезнаходження</translation>
+        <translation>Місце збереження</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="114"></location>
         <source>Directory</source>
-        <translation>Довідник</translation>
+        <translation>Каталог</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"></location>
@@ -173,7 +173,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="187"></location>
         <source>Select Directory</source>
-        <translation>Виберіть каталог</translation>
+        <translation>Вибрати каталог</translation>
     </message>
 </context>
 <context>
@@ -186,12 +186,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="154"></location>
         <source>Interface</source>
-        <translation>Інтерфейс</translation>
+        <translation>Вигляд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="154"></location>
         <source>Artwork</source>
-        <translation>Ілюстрації</translation>
+        <translation>Обкладинка</translation>
     </message>
 </context>
 <context>
