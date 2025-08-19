@@ -199,7 +199,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="69"></location>
         <source>Prefer currently playing track</source>
-        <translation>Надавати перевагу поточній композиції</translation>
+        <translation>Віддавати перевагу поточній доріжці</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="70"></location>
