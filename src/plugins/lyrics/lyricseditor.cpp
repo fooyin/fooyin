@@ -98,8 +98,8 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Se
     QObject::connect(m_seek, &QPushButton::clicked, this, &LyricsEditor::seek);
     QObject::connect(m_reset, &QPushButton::clicked, this, &LyricsEditor::reset);
     QObject::connect(m_insert, &QPushButton::clicked, this, &LyricsEditor::insertOrUpdateTimestamp);
-    QObject::connect(m_rewind, &QPushButton::clicked, this, &LyricsEditor::rewind);
-    QObject::connect(m_forward, &QPushButton::clicked, this, &LyricsEditor::forward);
+    QObject::connect(m_rewind, &QPushButton::clicked, this, &LyricsEditor::adjustTimestamp);
+    QObject::connect(m_forward, &QPushButton::clicked, this, &LyricsEditor::adjustTimestamp);
     QObject::connect(m_remove, &QPushButton::clicked, this, &LyricsEditor::removeTimestamp);
     QObject::connect(m_removeAll, &QPushButton::clicked, this, &LyricsEditor::removeAllTimestamps);
 
@@ -131,27 +131,6 @@ void LyricsEditor::reset()
     m_lyricsText->setPlainText(m_lyrics.data);
 }
 
-void LyricsEditor::rewind()
-{
-    QTextCursor cursor = m_lyricsText->textCursor();
-    cursor.select(QTextCursor::LineUnderCursor);
-    QString currentLine = cursor.selectedText();
-
-    static const QRegularExpression regex{QLatin1String{TimestampRegex}};
-    const QRegularExpressionMatch match = regex.match(currentLine);
-
-    if(match.hasMatch()) {
-        const uint64_t pos = timestampToMs(match.captured(0)) + m_lyrics.offset;
-        QString newTimeStamp = u"[%1]"_s.arg(formatTimestamp(pos > 100
-                                                               ? pos - 100
-                                                               : 0)
-                                                               );
-        currentLine.replace(regex, newTimeStamp);
-        m_playerController->seek(pos);
-    }
-    cursor.insertText(currentLine);
-}
-
 void LyricsEditor::seek()
 {
     QTextCursor cursor = m_lyricsText->textCursor();
@@ -166,24 +145,6 @@ void LyricsEditor::seek()
     }
 }
 
-void LyricsEditor::forward()
-{
-    QTextCursor cursor = m_lyricsText->textCursor();
-    cursor.movePosition(QTextCursor::StartOfLine);
-    cursor.select(QTextCursor::LineUnderCursor);
-    QString currentLine = cursor.selectedText();
-
-    static const QRegularExpression regex{QLatin1String{TimestampRegex}};
-    const QRegularExpressionMatch match = regex.match(currentLine);
-
-    if(match.hasMatch()) {
-        const uint64_t pos = timestampToMs(match.captured(0)) + m_lyrics.offset;
-        QString newTimeStamp = u"[%1]"_s.arg(formatTimestamp(pos + 100));
-        currentLine.replace(regex, newTimeStamp);
-        m_playerController->seek(pos);
-    }
-    cursor.insertText(currentLine);
-}
 
 void LyricsEditor::updateButtons()
 {
@@ -234,6 +195,27 @@ void LyricsEditor::insertOrUpdateTimestamp()
         currentLine = newTimestamp + currentLine;
     }
 
+    cursor.insertText(currentLine);
+}
+
+void LyricsEditor::adjustTimestamp()
+{
+    QTextCursor cursor = m_lyricsText->textCursor();
+    cursor.select(QTextCursor::LineUnderCursor);
+    QString currentLine = cursor.selectedText();
+
+    static const QRegularExpression regex{QLatin1String{TimestampRegex}};
+    const QRegularExpressionMatch match = regex.match(currentLine);
+
+    if(match.hasMatch()) {
+        uint64_t pos = timestampToMs(match.captured(0)) + m_lyrics.offset;
+        if(sender() == m_rewind) {pos > 100 ? pos -= 100 : pos = 0;}
+        else                     {pos += 100;}
+
+        const QString newTimeStamp = u"[%1]"_s.arg(formatTimestamp(pos));
+        currentLine.replace(regex, newTimeStamp);
+        m_playerController->seek(pos);
+    }
     cursor.insertText(currentLine);
 }
 

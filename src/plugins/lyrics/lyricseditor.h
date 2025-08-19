@@ -52,8 +52,7 @@ private:
     void updateButtons();
     void highlightCurrentLine();
     void insertOrUpdateTimestamp();
-    void rewind();
-    void forward();
+    void adjustTimestamp();
     void removeTimestamp();
     void removeAllTimestamps();
 
