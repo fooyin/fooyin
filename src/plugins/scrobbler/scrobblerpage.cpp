@@ -226,7 +226,7 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
                 tokenLayout->addWidget(urlLabel, 1, 0, 1, 2);
             }
 
-            loginBtn->setEnabled(!tokenInput->text().isEmpty());
+            loginBtn->setEnabled(service->isAuthenticated() || !tokenInput->text().isEmpty());
             QObject::connect(tokenInput, &QLineEdit::textChanged, this,
                              [loginBtn](const QString& text) { loginBtn->setEnabled(!text.isEmpty()); });
 
@@ -252,7 +252,8 @@ void ScrobblerPageWidget::toggleLogin(const QString& name)
         return;
     }
 
-    const auto& service = m_serviceContext.at(name).service;
+    const auto& context = m_serviceContext.at(name);
+    const auto& service = context.service;
 
     if(service->isAuthenticated()) {
         service->logout();
@@ -260,8 +261,9 @@ void ScrobblerPageWidget::toggleLogin(const QString& name)
         return;
     }
 
-    const auto authFinished = [this, name](const bool success, const QString& error) {
+    const auto authFinished = [this, name, context](const bool success, const QString& error) {
         m_serviceContext.at(name).error = success ? QString{} : error;
+        m_settings->fileSet(context.tokenSetting, context.tokenInput->text());
         updateServiceState(name);
     };
 
