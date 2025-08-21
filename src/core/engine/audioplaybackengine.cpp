@@ -147,15 +147,17 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
 
         updateTrackStatus(TrackStatus::Loading);
 
-        m_decoder = m_audioLoader->decoderForTrack(track);
-        if(!m_decoder) {
-            updateTrackStatus(TrackStatus::Unreadable);
-            return;
-        }
-
         const Track prevTrack = std::exchange(m_currentTrack, track);
+        const bool sameFile   = m_ending && track.filepath() == prevTrack.filepath() && m_endPosition == track.offset();
 
-        if(m_ending && track.filepath() == prevTrack.filepath() && m_endPosition == track.offset()) {
+        if(!sameFile) {
+            m_decoder = m_audioLoader->decoderForTrack(track);
+            if(!m_decoder) {
+                updateTrackStatus(TrackStatus::Unreadable);
+                return;
+            }
+        }
+        else {
             // Multi-track file
             emit positionChanged(m_currentTrack, 0);
             m_ending = false;
@@ -785,8 +787,6 @@ void AudioPlaybackEngine::onRendererFinished()
             return;
         }
     }
-
-    m_decoder = nullptr;
 
     m_clock.setPaused(true);
     m_clock.sync(m_duration);
