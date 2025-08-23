@@ -252,17 +252,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="104"></location>
         <source>Artwork Properties</source>
-        <translation>封面屬性</translation>
+        <translation>圖面屬性</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="157"></location>
         <source>Loading artwork…</source>
-        <translation>載入封面…</translation>
+        <translation>載入圖面…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="161"></location>
         <source>Saving artwork to files…</source>
-        <translation>儲存封面至檔案…</translation>
+        <translation>儲存圖面至檔案…</translation>
     </message>
 </context>
 <context>
@@ -270,7 +270,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="48"></location>
         <source>Add</source>
-        <translation>加入</translation>
+        <translation>增加</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="49"></location>
@@ -282,7 +282,7 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"></location>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="113"></location>
         <source>No artwork present</source>
-        <translation>無網路出現</translation>
+        <translation>無圖面呈現</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"></location>
@@ -302,7 +302,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="164"></location>
         <source>%1 of %2 files have artwork</source>
-        <translation>%1 / %2 檔案擁有封面</translation>
+        <translation>%1 / %2 檔案含有圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="248"></location>
@@ -515,12 +515,12 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="161"></location>
         <source>Query %1 already exists. Overwrite?</source>
-        <translation>詢查 %1 已有存在。要覆蓋嗎？</translation>
+        <translation>查詢 %1 已有存在。要覆蓋嗎？</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="279"></location>
         <source>Most Played</source>
-        <translation>大多已經播放</translation>
+        <translation>最常播放的</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="280"></location>
@@ -551,7 +551,7 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="126"></location>
         <source>Artwork Panel</source>
-        <translation>封面面板</translation>
+        <translation>圖面面板</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="168"></location>
@@ -858,7 +858,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="90"></location>
         <source>Double-click</source>
-        <translation>雙擊</translation>
+        <translation>點按二下</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="92"></location>
@@ -1622,17 +1622,17 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="662"></location>
         <source>Artwork (bottom labels)</source>
-        <translation>專輯封面 (底部標籤)</translation>
+        <translation>專輯圖面 (底部標籤)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="663"></location>
         <source>Artwork (right labels)</source>
-        <translation>專輯封面 (右標籤)</translation>
+        <translation>專輯圖面 (右標籤)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="664"></location>
         <source>Artwork (no labels)</source>
-        <translation>專輯封面 (無標籤)</translation>
+        <translation>專輯圖面 (無標籤)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="707"></location>
@@ -1792,7 +1792,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="77"></location>
         <source>Double-click</source>
-        <translation>雙擊</translation>
+        <translation>點按二下</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="79"></location>
@@ -1891,7 +1891,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="71"></location>
         <source>Artwork Mode</source>
-        <translation>封面模式</translation>
+        <translation>圖面模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="87"></location>
@@ -4679,7 +4679,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="72"></location>
         <source>Follow last playback queue track</source>
-        <translation>跟隨最後一次播放佇列音軌</translation>
+        <translation>跟隨最後一次播放佇列曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="73"></location>
@@ -4699,7 +4699,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"></location>
         <source>Once the playback queue has finished, start playback from the tracks following the last queued track</source>
-        <translation>播放佇列結束後，從上次最後佇列音軌後跟隨的音軌開始播放</translation>
+        <translation>播放佇列結束後，即從上次最後佇列曲目之後跟隨的曲目開始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"></location>
@@ -6059,7 +6059,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="73"></location>
         <source>ReplayGain Scan Progress</source>
-        <translation>撥放增益掃瞄進度</translation>
+        <translation>播放增益掃瞄進度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="94"></location>
@@ -6069,22 +6069,22 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="116"></location>
         <source>ReplayGain</source>
-        <translation>撥放增益</translation>
+        <translation>播放增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="121"></location>
         <source>Calculate ReplayGain values per-file</source>
-        <translation>每個檔案獨立計算撥放增益</translation>
+        <translation>每個檔案獨立計算播放增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="122"></location>
         <source>Calculate ReplayGain values as a single album</source>
-        <translation>全部檔案作為一張專輯整體計算撥放增益</translation>
+        <translation>全部檔案作為一張專輯整體計算播放增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="123"></location>
         <source>Calculate ReplayGain values as albums (by tags)</source>
-        <translation>按標籤分別專輯去計算撥放增益</translation>
+        <translation>按標籤分別專輯去計算播放增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="124"></location>
@@ -6094,17 +6094,17 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="126"></location>
         <source>Calculate ReplayGain values for selected files, considering each file individually</source>
-        <translation>依所選的檔案計算撥放增益，將每個檔案個別作用</translation>
+        <translation>依所選的檔案計算播放，將每個檔案個別作用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="128"></location>
         <source>Calculate ReplayGain values for selected files, considering all files as part of one album</source>
-        <translation>依所選的檔案計算撥放增益，將全部檔案視為專輯部分</translation>
+        <translation>依所選的檔案計算播放增益，將全部檔案視為專輯部分</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="129"></location>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation>依所選的檔案計算撥放增益，按標籤分別專輯區分</translation>
+        <translation>依所選的檔案計算播放增益，按標籤分別專輯區分</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="130"></location>
@@ -6170,7 +6170,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="209"></location>
         <source>ReplayGain</source>
-        <translation>撥放增益</translation>
+        <translation>播放增益</translation>
     </message>
 </context>
 <context>
@@ -6243,22 +6243,22 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="112"></location>
         <source>With RG info</source>
-        <translation>使用撥放增益資訊</translation>
+        <translation>使用播放增益資訊</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="113"></location>
         <source>Without RG info</source>
-        <translation>不使用撥放增益資訊</translation>
+        <translation>不使用播放增益資訊</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="123"></location>
         <source>Amount of gain to apply in combination with ReplayGain</source>
-        <translation>與撥放增益混合套用的增益量</translation>
+        <translation>與播放增益混合套用的增益量</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="126"></location>
         <source>Amount of gain to apply for tracks without ReplayGain info</source>
-        <translation>不與撥放增益一併套用的增益量</translation>
+        <translation>不與播放增益一併套用的增益量</translation>
     </message>
 </context>
 <context>
@@ -6277,7 +6277,7 @@
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="123"></location>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="134"></location>
         <source>Track Gain</source>
-        <translation>撥放增益</translation>
+        <translation>播放增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="125"></location>
@@ -6311,7 +6311,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="62"></location>
         <source>ReplayGain Editor</source>
-        <translation>撥放增益編輯器</translation>
+        <translation>播放增益編輯器</translation>
     </message>
 </context>
 <context>
@@ -8198,7 +8198,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="210"></location>
         <source>Artwork Panel</source>
-        <translation>封面面板</translation>
+        <translation>圖面面板</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="218"></location>
@@ -8239,7 +8239,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="287"></location>
         <source>Artwork</source>
-        <translation>封面</translation>
+        <translation>圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="299"></location>
@@ -8297,7 +8297,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"></location>
         <source>urls</source>
-        <translation>連結</translation>
+        <translation>網址</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="75"></location>
