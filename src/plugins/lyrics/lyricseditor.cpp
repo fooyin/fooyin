@@ -49,6 +49,8 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Se
     , m_seek{new QPushButton(tr("Seek"), this)}
     , m_reset{new QPushButton(tr("Reset Changes"), this)}
     , m_insert{new QPushButton(tr("Insert/Update"), this)}
+    , m_rewind{new QPushButton(tr("Rewind line (- 100ms)"), this)}
+    , m_forward{new QPushButton(tr("Forward line (+ 100ms)"), this)}
     , m_remove{new QPushButton(tr("Remove"), this)}
     , m_removeAll{new QPushButton(tr("Remove All"), this)}
     , m_lyricsText{new QTextEdit(this)}
@@ -71,6 +73,8 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Se
     auto* timestampsLayout = new QHBoxLayout(timestampsGroup);
 
     timestampsLayout->addWidget(m_insert);
+    timestampsLayout->addWidget(m_rewind);
+    timestampsLayout->addWidget(m_forward);
     timestampsLayout->addWidget(m_remove);
     timestampsLayout->addWidget(m_removeAll);
 
@@ -94,6 +98,8 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Se
     QObject::connect(m_seek, &QPushButton::clicked, this, &LyricsEditor::seek);
     QObject::connect(m_reset, &QPushButton::clicked, this, &LyricsEditor::reset);
     QObject::connect(m_insert, &QPushButton::clicked, this, &LyricsEditor::insertOrUpdateTimestamp);
+    QObject::connect(m_rewind, &QPushButton::clicked, this, &LyricsEditor::adjustTimestamp);
+    QObject::connect(m_forward, &QPushButton::clicked, this, &LyricsEditor::adjustTimestamp);
     QObject::connect(m_remove, &QPushButton::clicked, this, &LyricsEditor::removeTimestamp);
     QObject::connect(m_removeAll, &QPushButton::clicked, this, &LyricsEditor::removeAllTimestamps);
 
@@ -138,6 +144,7 @@ void LyricsEditor::seek()
         m_playerController->seek(pos);
     }
 }
+
 
 void LyricsEditor::updateButtons()
 {
@@ -188,6 +195,33 @@ void LyricsEditor::insertOrUpdateTimestamp()
         currentLine = newTimestamp + currentLine;
     }
 
+    cursor.insertText(currentLine);
+}
+
+void LyricsEditor::adjustTimestamp()
+{
+    QTextCursor cursor = m_lyricsText->textCursor();
+    cursor.select(QTextCursor::LineUnderCursor);
+    QString currentLine = cursor.selectedText();
+
+    static const QRegularExpression regex{QLatin1String{TimestampRegex}};
+    const QRegularExpressionMatch match = regex.match(currentLine);
+
+    const uint64_t trackDuration = m_playerController->currentTrack().duration();
+
+    if(match.hasMatch()) {
+        uint64_t pos = timestampToMs(match.captured(0)) + m_lyrics.offset;
+        if(sender() == m_rewind) {pos > 100 ? pos -= 100 : pos = 0;}
+        else                     {pos < trackDuration - 100 ? pos += 100 : pos = trackDuration;}
+
+        const QString newTimeStamp = u"[%1]"_s.arg(formatTimestamp(pos));
+        currentLine.replace(regex, newTimeStamp);
+
+        //to avoid skipping to next track in playlist during corrections near the end of a track.
+        //alternative solutions are welcome.
+        if(pos > trackDuration - 1000) {m_playerController->pause();}
+        else                           {m_playerController->seek(pos);}
+    }
     cursor.insertText(currentLine);
 }
 
