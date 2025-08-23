@@ -207,14 +207,20 @@ void LyricsEditor::adjustTimestamp()
     static const QRegularExpression regex{QLatin1String{TimestampRegex}};
     const QRegularExpressionMatch match = regex.match(currentLine);
 
+    const uint64_t trackDuration = m_playerController->currentTrack().duration();
+
     if(match.hasMatch()) {
         uint64_t pos = timestampToMs(match.captured(0)) + m_lyrics.offset;
         if(sender() == m_rewind) {pos > 100 ? pos -= 100 : pos = 0;}
-        else                     {pos += 100;}
+        else                     {pos < trackDuration - 100 ? pos += 100 : pos = trackDuration;}
 
         const QString newTimeStamp = u"[%1]"_s.arg(formatTimestamp(pos));
         currentLine.replace(regex, newTimeStamp);
-        m_playerController->seek(pos);
+
+        //to avoid skipping to next track in playlist during corrections near the end of a track.
+        //alternative solutions are welcome.
+        if(pos > trackDuration - 1000) {m_playerController->pause();}
+        else                           {m_playerController->seek(pos);}
     }
     cursor.insertText(currentLine);
 }
