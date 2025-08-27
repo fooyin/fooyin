@@ -38,6 +38,7 @@ if(CPACK_GENERATOR STREQUAL "DEB")
             "fooyin_${CPACK_PACKAGE_VERSION}-${DIST_RELEASE}_${CPACK_SYSTEM_NAME}.deb"
     )
 
+    # Distro specific packages
     if("${DIST_RELEASE}" STREQUAL "jammy")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu70")
     elseif("${DIST_RELEASE}" STREQUAL "mantic")
@@ -46,8 +47,20 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu74")
     elseif("${DIST_RELEASE}" STREQUAL "oracular")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu74")
+    elseif("${DIST_RELEASE}" STREQUAL "trixie")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu76")
     else()
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu72")
+    endif()
+
+    if("${DIST_RELEASE}" STREQUAL "trixie")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag2")
+    elseif("${DIST_RELEASE}" STREQUAL "bookworm")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag1v5")
+    elseif("${DIST_RELEASE}" STREQUAL "plucky")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag2")
+    elseif("${DIST_RELEASE}" STREQUAL "noble")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag1v5")
     endif()
 endif()
 

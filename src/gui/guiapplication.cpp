@@ -19,6 +19,8 @@
 
 #include "guiapplication.h"
 
+#include "artwork/artworkdialog.h"
+#include "artwork/artworkfinder.h"
 #include "dialog/autoplaylistdialog.h"
 #include "dialog/saveplaylistsdialog.h"
 #include "dialog/searchdialog.h"
@@ -36,6 +38,7 @@
 #include "playlist/playlistinteractor.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
+#include "statusevent.h"
 #include "systemtrayicon.h"
 #include "widgets.h"
 
@@ -85,6 +88,7 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 #include <QMessageBox>
+#include <QMimeDatabase>
 #include <QPixmapCache>
 #include <QProgressDialog>
 #include <QPushButton>
@@ -110,6 +114,7 @@ public:
     void showPluginsNotFoundMessage();
     void initialiseTray();
     void updateWindowTitle();
+    void checkArtwork();
     void handleTrackStatus(AudioEngine::TrackStatus status);
 
     static void removeExpiredCovers(const TrackList& tracks);
@@ -192,6 +197,7 @@ public:
     std::unique_ptr<LogWidget> m_logWidget;
     Widgets* m_widgets;
     ScriptParser m_scriptParser;
+    CoverProvider m_coverProvider;
 };
 
 GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application* core_)
@@ -210,7 +216,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_mainContext{new WidgetContext(m_mainWindow.get(), Context{"Fooyin.MainWindow"}, m_self)}
     , m_playlistController{std::make_unique<PlaylistController>(m_core, &m_selectionController)}
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library}
-    , m_selectionController{m_actionManager, m_settings, m_playlistController.get()}
+    , m_selectionController{m_actionManager, m_core->audioLoader().get(), m_settings, m_playlistController.get()}
     , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
     , m_fileMenu{new FileMenu(m_actionManager, m_settings, m_self)}
     , m_editMenu{new EditMenu(m_actionManager, m_settings, m_self)}
@@ -228,6 +234,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_self, &m_playlistInteractor, m_self)}
     , m_scriptParser{new ScriptRegistry(m_playerController)}
+    , m_coverProvider{m_core->audioLoader(), m_settings}
 { }
 
 void GuiApplicationPrivate::initialise()
@@ -292,6 +299,11 @@ void GuiApplicationPrivate::setupConnections()
                      &PlaylistController::handleTrackSelectionAction);
     QObject::connect(&m_selectionController, &TrackSelectionController::requestPropertiesDialog, m_self,
                      [this]() { showPropertiesDialog(); });
+    QObject::connect(
+        &m_selectionController, &TrackSelectionController::requestArtworkSearch, m_self,
+        [this](const TrackList& tracks, bool quick) { m_self->searchForArtwork(tracks, Track::Cover::Front, quick); });
+    QObject::connect(&m_selectionController, &TrackSelectionController::requestArtworkRemoval, m_self,
+                     [this](const TrackList& tracks) { m_self->removeAllArtwork(tracks); });
     QObject::connect(m_fileMenu, &FileMenu::requestNewPlaylist, m_self, [this]() { createNewPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestNewAutoPlaylist, m_self, [this]() { createNewAutoPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestExit, m_self, [this]() { close(); });
@@ -406,6 +418,19 @@ void GuiApplicationPrivate::updateWindowTitle()
     const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
     const QString title  = m_scriptParser.evaluate(script, currentTrack);
     m_mainWindow->setTitle(title);
+}
+
+void GuiApplicationPrivate::checkArtwork()
+{
+    if(m_settings->value<Settings::Gui::Internal::ArtworkAutoSearch>()) {
+        if(const auto track = m_playerController->currentTrack(); track.isValid()) {
+            m_coverProvider.trackHasCover(track).then([this, track](const bool hasCover) {
+                if(!hasCover) {
+                    m_widgets->showArtworkDialog({track}, Track::Cover::Front, true);
+                }
+            });
+        }
+    }
 }
 
 void GuiApplicationPrivate::handleTrackStatus(AudioEngine::TrackStatus status)
@@ -945,8 +970,8 @@ void GuiApplicationPrivate::addFiles() const
         dir = lastPath;
     }
 
-    const auto files
-        = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Add Files"), dir, filters.join(";;"_L1));
+    const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Add Files"), dir,
+                                                    filters.join(";;"_L1), nullptr, QFileDialog::DontResolveSymlinks);
 
     if(files.empty()) {
         return;
@@ -959,8 +984,8 @@ void GuiApplicationPrivate::addFiles() const
 
 void GuiApplicationPrivate::addFolders() const
 {
-    const auto dirs
-        = QFileDialog::getExistingDirectoryUrl(m_mainWindow.get(), GuiApplication::tr("Add Folders"), QDir::homePath());
+    const auto dirs = QFileDialog::getExistingDirectoryUrl(m_mainWindow.get(), GuiApplication::tr("Add Folders"),
+                                                           QDir::homePath(), QFileDialog::DontResolveSymlinks);
 
     if(dirs.isEmpty()) {
         return;
@@ -998,7 +1023,7 @@ void GuiApplicationPrivate::loadPlaylist() const
     }
 
     const auto files = QFileDialog::getOpenFileUrls(m_mainWindow.get(), GuiApplication::tr("Load Playlist"), dir,
-                                                    filters.join(";;"_L1));
+                                                    filters.join(";;"_L1), nullptr, QFileDialog::DontResolveSymlinks);
 
     if(files.empty()) {
         return;
@@ -1033,9 +1058,9 @@ void GuiApplicationPrivate::savePlaylist() const
     }
 
     QString selectedFilter;
-    QString file
-        = QFileDialog::getSaveFileName(m_mainWindow.get(), GuiApplication::tr("Save Playlist"),
-                                       dir.absoluteFilePath(playlist->name()), playlistFilter, &selectedFilter);
+    QString file = QFileDialog::getSaveFileName(m_mainWindow.get(), GuiApplication::tr("Save Playlist"),
+                                                dir.absoluteFilePath(playlist->name()), playlistFilter, &selectedFilter,
+                                                QFileDialog::DontResolveSymlinks);
     if(file.isEmpty()) {
         return;
     }
@@ -1130,6 +1155,101 @@ void GuiApplication::openFiles(const QList<QUrl>& files)
     QObject::connect(
         p->m_playlistController.get(), &PlaylistController::playlistsLoaded, this,
         [this, files]() { p->openFiles(files); }, Qt::SingleShotConnection);
+}
+
+void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick)
+{
+    if(!quick) {
+        auto* search = new ArtworkDialog(p->m_core->networkManager(), p->m_core->library(), p->m_settings, tracks, type,
+                                         p->m_mainWindow.get());
+        search->setAttribute(Qt::WA_DeleteOnClose);
+        search->show();
+        return;
+    }
+
+    StatusEvent::post(GuiApplication::tr("Searching for artwork…"), 0);
+
+    auto* artworkFinder = new ArtworkFinder(p->m_core->networkManager(), p->m_settings, this);
+
+    const Track& track = tracks.front();
+    ScriptParser parser;
+
+    const QString artist = parser.evaluate(p->m_settings->value<Settings::Gui::Internal::ArtworkArtistField>(), track);
+    const QString album  = parser.evaluate(p->m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>(), track);
+    const QString title{u"%title%"_s};
+
+    const auto finishSearch = [artworkFinder]() {
+        artworkFinder->disconnect();
+        artworkFinder->deleteLater();
+        StatusEvent::post(GuiApplication::tr("Artwork search finished"));
+    };
+
+    QObject::connect(
+        artworkFinder, &ArtworkFinder::coverLoaded, this,
+        [this, finishSearch, tracks](const QUrl& /*url*/, const Fooyin::ArtworkResult& result) {
+            finishSearch();
+
+            QPixmap cover;
+            cover.loadFromData(result.image);
+            cover.setDevicePixelRatio(Utils::windowDpr());
+
+            const auto saveMethods
+                = p->m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>().value<ArtworkSaveMethods>();
+            const auto& frontMethod = saveMethods[Track::Cover::Front];
+
+            if(frontMethod.method == ArtworkSaveMethod::Embedded) {
+                TrackCoverData coverData;
+                coverData.tracks = tracks;
+                coverData.coverData.emplace(Track::Cover::Front,
+                                            CoverImage{.mimeType = result.mimeType, .data = result.image});
+                p->m_library->writeTrackCovers(coverData);
+                QObject::connect(
+                    p->m_library, &MusicLibrary::tracksMetadataChanged, this,
+                    [tracks]() { std::ranges::for_each(tracks, &CoverProvider::removeFromCache); },
+                    Qt::SingleShotConnection);
+            }
+            else {
+                const QMimeDatabase mimeDb;
+                const QString suffix = mimeDb.mimeTypeForData(result.image).preferredSuffix().toLower();
+
+                ScriptParser trackParser;
+                const QString path = trackParser.evaluate(
+                    u"%1/%2.%3"_s.arg(frontMethod.dir, frontMethod.filename, suffix), tracks.front());
+                const QString cleanPath = QDir::cleanPath(path);
+
+                QFile file{cleanPath};
+                if(file.open(QIODevice::WriteOnly)) {
+                    cover.save(&file, nullptr, -1);
+                    std::ranges::for_each(tracks, CoverProvider::removeFromCache);
+                    p->m_widgets->refreshCoverWidgets();
+                }
+            }
+        });
+
+    QObject::connect(artworkFinder, &ArtworkFinder::searchFinished, this, [finishSearch]() { finishSearch(); });
+
+    artworkFinder->findArtwork(Track::Cover::Front, artist, album, title);
+}
+
+void GuiApplication::removeArtwork(const TrackList& tracks, const std::set<Track::Cover>& types)
+{
+    TrackCoverData coverData;
+    coverData.tracks = tracks;
+
+    for(const auto& coverType : types) {
+        coverData.coverData.emplace(coverType, CoverImage{});
+    }
+
+    QObject::connect(
+        p->m_library, &MusicLibrary::tracksMetadataChanged, this,
+        [tracks]() { std::ranges::for_each(tracks, CoverProvider::removeFromCache); }, Qt::SingleShotConnection);
+
+    p->m_library->writeTrackCovers(coverData);
+}
+
+void GuiApplication::removeAllArtwork(const TrackList& tracks)
+{
+    removeArtwork(tracks, {Track::Cover::Artist, Track::Cover::Back, Track::Cover::Front, Track::Cover::Other});
 }
 
 ActionManager* GuiApplication::actionManager() const

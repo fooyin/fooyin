@@ -76,7 +76,8 @@ void SavePlaylistsDialog::accept()
 
     QLoggingCategory log{"fy.saveplaylists"};
 
-    const auto saveDir = QFileDialog::getExistingDirectory(Utils::getMainWindow(), tr("Select Directory"), dir);
+    const auto saveDir = QFileDialog::getExistingDirectory(Utils::getMainWindow(), tr("Select Directory"), dir,
+                                                           QFileDialog::DontResolveSymlinks);
     if(saveDir.isEmpty()) {
         qCInfo(log) << "Could not save playlists: Invalid directory";
         QDialog::accept();

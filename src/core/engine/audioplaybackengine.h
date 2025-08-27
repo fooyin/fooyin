@@ -30,8 +30,11 @@
 #include <QBasicTimer>
 #include <QFile>
 
+class QFileSystemWatcher;
+
 namespace Fooyin {
 class SettingsManager;
+class SignalThrottler;
 
 class AudioPlaybackEngine : public AudioEngine
 {
@@ -70,6 +73,8 @@ private:
     void handleOutputState(AudioOutput::State outState);
     void reloadOutput();
 
+    void currentFileChanged();
+
     bool checkOpenSource();
     void setupDuration();
     bool checkReadyToDecode();
@@ -95,6 +100,7 @@ private:
     uint64_t m_startPosition;
     uint64_t m_endPosition;
     uint64_t m_lastPosition;
+    uint64_t m_lastBufferEnd;
 
     uint64_t m_totalBufferTime;
     uint64_t m_bufferLength;
@@ -102,13 +108,12 @@ private:
     uint64_t m_duration;
     double m_volume;
     bool m_ending;
-    bool m_decoding;
     bool m_updatingTrack;
     bool m_pauseNextTrack;
     std::optional<PlaybackState> m_pendingState;
 
-    AudioDecoder* m_decoder;
-    AudioDecoder* m_nextDecoder;
+    std::unique_ptr<AudioDecoder> m_decoder;
+    std::unique_ptr<AudioDecoder> m_nextDecoder;
     AudioFormat m_format;
     AudioFormat m_nextFormat;
 
@@ -118,6 +123,9 @@ private:
     AudioSource m_nextSource;
     std::unique_ptr<QFile> m_file;
     std::unique_ptr<QFile> m_nextFile;
+
+    uint64_t m_currentTrackSize;
+    bool m_decoderStarted;
 
     QThread* m_outputThread;
     AudioRenderer m_renderer;
@@ -130,5 +138,8 @@ private:
 
     FadingIntervals m_fadeIntervals;
     std::optional<uint64_t> m_pendingSeek;
+
+    QFileSystemWatcher* m_trackWatcher;
+    SignalThrottler* m_watcherThrottler;
 };
 } // namespace Fooyin

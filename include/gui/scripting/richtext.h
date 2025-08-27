@@ -21,6 +21,7 @@
 
 #include <QColor>
 #include <QFont>
+#include <QVariant>
 
 namespace Fooyin {
 struct RichFormatting
@@ -45,12 +46,39 @@ struct RichTextBlock
     };
 };
 
-struct RichText : public std::vector<RichTextBlock>
+struct RichText
 {
+    std::vector<RichTextBlock> blocks;
+
+    bool operator==(const RichText& other) const
+    {
+        return blocks == other.blocks;
+    };
+
+    operator QVariant() const
+    {
+        return QVariant::fromValue(*this);
+    }
+
+    [[nodiscard]] size_t size() const
+    {
+        return blocks.size();
+    }
+
+    [[nodiscard]] bool empty() const
+    {
+        return blocks.empty();
+    }
+
+    void clear()
+    {
+        blocks.clear();
+    }
+
     [[nodiscard]] QString joinedText() const
     {
         QString text;
-        for(const auto& block : *this) {
+        for(const auto& block : blocks) {
             text.append(block.text);
         }
         return text;

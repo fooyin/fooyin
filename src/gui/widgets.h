@@ -19,11 +19,15 @@
 
 #pragma once
 
+#include <core/track.h>
+
 #include <QObject>
 
 namespace Fooyin {
 class Application;
+class ArtworkFinder;
 class CoverProvider;
+class CoverWidget;
 class FyWidget;
 class GuiApplication;
 class LibraryTreeController;
@@ -49,6 +53,10 @@ public:
     void registerPropertiesTabs();
     void registerFontEntries() const;
 
+    void showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick);
+    void removeArtwork(const TrackList& tracks, Track::Cover type);
+    void refreshCoverWidgets();
+
 private:
     FyWidget* createDirBrowser();
     static void showScanProgress(const ScanProgress& progress);
@@ -59,6 +67,7 @@ private:
     MainWindow* m_window;
     SettingsManager* m_settings;
 
+    ArtworkFinder* m_artworkFinder;
     CoverProvider* m_coverProvider;
     PlaylistInteractor* m_playlistInteractor;
     PlaylistController* m_playlistController;

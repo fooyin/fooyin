@@ -50,10 +50,6 @@ public:
 private:
     SettingsManager* m_settings;
 
-    QCheckBox* m_filterHeaders;
-    QCheckBox* m_filterScrollBars;
-    QCheckBox* m_altRowColours;
-
     QCheckBox* m_overrideRowHeight;
     QSpinBox* m_rowHeight;
     QSpinBox* m_iconWidth;
@@ -62,9 +58,6 @@ private:
 
 FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_filterHeaders{new QCheckBox(tr("Show headers"), this)}
-    , m_filterScrollBars{new QCheckBox(tr("Show scrollbars"), this)}
-    , m_altRowColours{new QCheckBox(tr("Alternating row colours"), this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + u":"_s, this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_iconWidth{new QSpinBox(this)}
@@ -99,9 +92,6 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     artworkLayout->setColumnStretch(3, 1);
 
     row = 0;
-    appearanceLayout->addWidget(m_filterHeaders, row++, 0, 1, 2);
-    appearanceLayout->addWidget(m_filterScrollBars, row++, 0, 1, 2);
-    appearanceLayout->addWidget(m_altRowColours, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_overrideRowHeight, row, 0, 1, 2);
     appearanceLayout->addWidget(m_rowHeight, row++, 2);
     appearanceLayout->setColumnStretch(3, 1);
@@ -116,9 +106,6 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
 
 void FiltersGuiPageWidget::load()
 {
-    m_filterHeaders->setChecked(m_settings->value<Settings::Filters::FilterHeader>());
-    m_filterScrollBars->setChecked(m_settings->value<Settings::Filters::FilterScrollBar>());
-    m_altRowColours->setChecked(m_settings->value<Settings::Filters::FilterAltColours>());
     m_overrideRowHeight->setChecked(m_settings->value<Settings::Filters::FilterRowHeight>() > 0);
     m_rowHeight->setValue(m_settings->value<Settings::Filters::FilterRowHeight>());
     m_rowHeight->setEnabled(m_overrideRowHeight->isChecked());
@@ -130,10 +117,6 @@ void FiltersGuiPageWidget::load()
 
 void FiltersGuiPageWidget::apply()
 {
-    m_settings->set<Settings::Filters::FilterHeader>(m_filterHeaders->isChecked());
-    m_settings->set<Settings::Filters::FilterScrollBar>(m_filterScrollBars->isChecked());
-    m_settings->set<Settings::Filters::FilterAltColours>(m_altRowColours->isChecked());
-
     if(m_overrideRowHeight->isChecked()) {
         m_settings->set<Settings::Filters::FilterRowHeight>(m_rowHeight->value());
     }
@@ -147,9 +130,6 @@ void FiltersGuiPageWidget::apply()
 
 void FiltersGuiPageWidget::reset()
 {
-    m_settings->reset<Settings::Filters::FilterHeader>();
-    m_settings->reset<Settings::Filters::FilterScrollBar>();
-    m_settings->reset<Settings::Filters::FilterAltColours>();
     m_settings->reset<Settings::Filters::FilterRowHeight>();
     m_settings->reset<Settings::Filters::FilterIconSize>();
 }

@@ -38,6 +38,6 @@ private:
     void handleLyricReply();
 
     std::vector<LyricData> m_data;
-    std::vector<LyricData>::iterator m_currentData;
+    int m_currentIndex;
 };
 } // namespace Fooyin::Lyrics

@@ -138,7 +138,7 @@ void SearchDialog::showOptionsMenu()
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
-        auto* autoSelect = new QAction(tr("Auto-select on search"), this);
+        auto* autoSelect = new QAction(tr("Auto-select on search"), menu);
         QObject::connect(autoSelect, &QAction::triggered, this, [this](const bool checked) {
             m_autoSelect = checked;
             m_settings->fileSet(AutoSelect, checked);
@@ -148,7 +148,7 @@ void SearchDialog::showOptionsMenu()
         menu->addAction(autoSelect);
     }
 
-    auto* searching = new QAction(tr("Help"), this);
+    auto* searching = new QAction(tr("Help"), menu);
     QObject::connect(searching, &QAction::triggered, this,
                      []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/searching/basics.html"_s); });
     menu->addAction(searching);

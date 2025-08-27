@@ -80,6 +80,6 @@ LyricsSettings::LyricsSettings(SettingsManager* settingsManager)
     m_settings->createSetting<SkipExternal>(true, u"Lyrics/SkipExternal"_s);
     m_settings->createSetting<AutoSearch>(true, u"Lyrics/AutoSearch"_s);
     m_settings->createSetting<SaveOptions>(static_cast<int>(LyricsSaver::SaveOption::None), u"Lyrics/SaveOptions"_s);
-    m_settings->createSetting<MatchThreshold>(80, u"Lyrics/MatchThreshold"_s);
+    m_settings->createSetting<MatchThreshold>(75, u"Lyrics/MatchThreshold"_s);
 }
 } // namespace Fooyin::Lyrics

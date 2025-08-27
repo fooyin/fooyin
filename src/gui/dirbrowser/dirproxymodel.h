@@ -42,7 +42,7 @@ class DirProxyModel : public QSortFilterProxyModel
     Q_OBJECT
 
 public:
-    explicit DirProxyModel(QObject* parent = nullptr);
+    explicit DirProxyModel(bool flat, QObject* parent = nullptr);
 
     void reset(const QModelIndex& root);
     void resetPalette();

@@ -514,7 +514,8 @@ void WaveSeekBar::drawSeekTip()
     }
 
     seekTipPos.ry() += m_seekTip->height() / 2;
-    seekTipPos.ry() = std::clamp(seekTipPos.y(), m_seekTip->height() / 2, height());
+    seekTipPos.ry() = std::max(seekTipPos.y(), m_seekTip->height() / 2);
+    seekTipPos.ry() = std::min(seekTipPos.y(), height());
 
     m_seekTip->setPosition(mapTo(window(), seekTipPos));
 }

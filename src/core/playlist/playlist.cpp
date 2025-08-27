@@ -73,7 +73,7 @@ PlaylistTrackList PlaylistTrack::updateIndexes(const PlaylistTrackList& playlist
 {
     PlaylistTrackList tracks{playlistTracks};
 
-    for(int i{0}; PlaylistTrack & track : tracks) {
+    for(int i{0}; PlaylistTrack& track : tracks) {
         track.indexInPlaylist = i++;
     }
 
@@ -621,7 +621,7 @@ Track Playlist::nextTrack(int delta, PlayModes mode)
 {
     const int index = p->getNextIndex(delta, mode, true);
 
-    if(index < 0) {
+    if(index < 0 || index >= trackCount()) {
         return {};
     }
 
@@ -632,7 +632,7 @@ Track Playlist::nextTrackChange(int delta, PlayModes mode)
 {
     const int index = p->getNextIndex(delta, mode, false);
 
-    if(index < 0) {
+    if(index < 0 || index >= trackCount()) {
         changeCurrentIndex(-1);
         return {};
     }

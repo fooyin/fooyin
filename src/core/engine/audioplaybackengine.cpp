@@ -1,6 +1,7 @@
 /*
  * Fooyin
  * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2025, Gustav Oechler <gustavoechler@gmail.com>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +28,10 @@
 #include <core/engine/audiobuffer.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/signalthrottler.h>
 
-#include <QBasicTimer>
 #include <QFile>
+#include <QFileSystemWatcher>
 #include <QThread>
 #include <QTimer>
 #include <QTimerEvent>
@@ -56,27 +58,35 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
     , m_startPosition{0}
     , m_endPosition{0}
     , m_lastPosition{0}
+    , m_lastBufferEnd{0}
     , m_totalBufferTime{0}
     , m_bufferLength{static_cast<uint64_t>(m_settings->value<Settings::Core::BufferLength>())}
     , m_duration{0}
     , m_volume{1.0}
     , m_ending{false}
-    , m_decoding{false}
     , m_updatingTrack{false}
     , m_pauseNextTrack{false}
     , m_decoder{nullptr}
     , m_nextDecoder{nullptr}
+    , m_currentTrackSize{0}
+    , m_decoderStarted{false}
     , m_outputThread{new QThread(this)}
     , m_renderer{settings}
     , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
+    , m_trackWatcher{new QFileSystemWatcher(this)}
+    , m_watcherThrottler{new SignalThrottler(this)}
 {
     m_renderer.moveToThread(m_outputThread);
+    m_watcherThrottler->setTimeout(200);
 
     QObject::connect(&m_renderer, &AudioRenderer::requestOutputReload, this, &AudioPlaybackEngine::reloadOutput);
     QObject::connect(&m_renderer, &AudioRenderer::bufferProcessed, this, &AudioPlaybackEngine::onBufferProcessed);
     QObject::connect(&m_renderer, &AudioRenderer::finished, this, &AudioPlaybackEngine::onRendererFinished);
     QObject::connect(&m_renderer, &AudioRenderer::outputStateChanged, this, &AudioPlaybackEngine::handleOutputState);
     QObject::connect(&m_renderer, &AudioRenderer::error, this, &AudioPlaybackEngine::deviceError);
+
+    QObject::connect(m_trackWatcher, &QFileSystemWatcher::fileChanged, m_watcherThrottler, &SignalThrottler::throttle);
+    QObject::connect(m_watcherThrottler, &SignalThrottler::triggered, this, &AudioPlaybackEngine::currentFileChanged);
 
     m_settings->subscribe<Settings::Core::BufferLength>(this, [this](const int length) { m_bufferLength = length; });
     m_settings->subscribe<Settings::Core::Internal::VBRUpdateInterval>(this, [this]() {
@@ -100,6 +110,10 @@ AudioPlaybackEngine::~AudioPlaybackEngine()
 
 void AudioPlaybackEngine::loadTrack(const Track& track)
 {
+    if(m_currentTrack.isValid() && m_audioLoader->canWriteMetadata(m_currentTrack)) {
+        m_trackWatcher->removePath(m_currentTrack.filepath());
+    }
+
     QObject::disconnect(this, &AudioEngine::trackStatusChanged, this, nullptr);
 
     if(m_updatingTrack) {
@@ -111,6 +125,8 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
         updateTrackStatus(TrackStatus::Invalid);
         return;
     }
+
+    m_decoderStarted = false;
 
     qCDebug(ENGINE) << "Loading track:" << track.filenameExt();
 
@@ -131,15 +147,17 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
 
         updateTrackStatus(TrackStatus::Loading);
 
-        m_decoder = m_audioLoader->decoderForTrack(track);
-        if(!m_decoder) {
-            updateTrackStatus(TrackStatus::Unreadable);
-            return;
-        }
-
         const Track prevTrack = std::exchange(m_currentTrack, track);
+        const bool sameFile   = m_ending && track.filepath() == prevTrack.filepath() && m_endPosition == track.offset();
 
-        if(m_ending && track.filepath() == prevTrack.filepath() && m_endPosition == track.offset()) {
+        if(!sameFile) {
+            m_decoder = m_audioLoader->decoderForTrack(track);
+            if(!m_decoder) {
+                updateTrackStatus(TrackStatus::Unreadable);
+                return;
+            }
+        }
+        else {
             // Multi-track file
             emit positionChanged(m_currentTrack, 0);
             m_ending = false;
@@ -180,6 +198,10 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
         emit trackChanged(m_currentTrack);
     }
 
+    if(m_source.device) {
+        m_currentTrackSize = static_cast<uint64_t>(m_source.device->size());
+    }
+
     m_format = format.value();
 
     const auto finaliseTrack = [this, track](const bool success) {
@@ -212,6 +234,10 @@ void AudioPlaybackEngine::loadTrack(const Track& track)
             }
         }
     };
+
+    if(m_audioLoader->canWriteMetadata(m_currentTrack)) {
+        m_trackWatcher->addPath(m_currentTrack.filepath());
+    }
 
     QObject::connect(&m_renderer, &AudioRenderer::initialised, this, finaliseTrack, Qt::SingleShotConnection);
     QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
@@ -277,8 +303,8 @@ void AudioPlaybackEngine::play()
             return;
         }
 
-        if(!m_decoding) {
-            m_decoding = true;
+        if(!m_decoderStarted) {
+            m_decoderStarted = true;
             m_decoder->start();
         }
 
@@ -394,24 +420,31 @@ void AudioPlaybackEngine::stop()
         stopWorkers(true);
     };
 
-    const bool canFade = playbackState() != PlaybackState::Paused
-                      && m_settings->value<Settings::Core::Internal::EngineFading>() && m_fadeIntervals.outPauseStop > 0
-                      && m_volume > 0.0;
-    if(canFade) {
-        const int fadeLength = calculateFadeLength(m_fadeIntervals.outPauseStop);
-        if(fadeLength > 0 && fadeLength < m_fadeIntervals.outPauseStop) {
-            m_pauseNextTrack = true;
-        }
-
+    if(playbackState() == PlaybackState::FadingOut) {
         QObject::disconnect(m_pausedConnection);
         m_pausedConnection
             = QObject::connect(&m_renderer, &AudioRenderer::paused, this, stopEngine, Qt::SingleShotConnection);
-        QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(fadeLength); });
-
-        AudioPlaybackEngine::updateState(PlaybackState::FadingOut);
     }
     else {
-        stopEngine();
+        const bool canFade = playbackState() != PlaybackState::Paused
+                          && m_settings->value<Settings::Core::Internal::EngineFading>()
+                          && m_fadeIntervals.outPauseStop > 0 && m_volume > 0.0;
+        if(canFade) {
+            const int fadeLength = calculateFadeLength(m_fadeIntervals.outPauseStop);
+            if(fadeLength > 0 && fadeLength < m_fadeIntervals.outPauseStop) {
+                m_pauseNextTrack = true;
+            }
+
+            QObject::disconnect(m_pausedConnection);
+            m_pausedConnection
+                = QObject::connect(&m_renderer, &AudioRenderer::paused, this, stopEngine, Qt::SingleShotConnection);
+            QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(fadeLength); });
+
+            AudioPlaybackEngine::updateState(PlaybackState::FadingOut);
+        }
+        else {
+            stopEngine();
+        }
     }
 
     m_posTimer.stop();
@@ -570,7 +603,6 @@ void AudioPlaybackEngine::stopWorkers(bool full)
     m_clock.sync();
 
     m_pendingSeek = {};
-    m_decoding    = false;
 
     QMetaObject::invokeMethod(&m_renderer, &AudioRenderer::stop);
 
@@ -580,6 +612,7 @@ void AudioPlaybackEngine::stopWorkers(bool full)
     }
     if(m_decoder && (full || playbackState() != PlaybackState::Stopped)) {
         m_decoder->stop();
+        m_decoderStarted = false;
     }
 
     m_totalBufferTime = 0;
@@ -622,6 +655,23 @@ void AudioPlaybackEngine::reloadOutput()
             },
             Qt::SingleShotConnection);
         QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format, true); });
+    }
+}
+
+void AudioPlaybackEngine::currentFileChanged()
+{
+    if(!m_decoder) {
+        return;
+    }
+
+    // Reload file only if size changes (and potentially audio data offset) e.g. lyrics/artwork updates
+    if(std::exchange(m_currentTrackSize, m_source.device->size()) != m_currentTrackSize) {
+        m_decoder->stop();
+        if(checkOpenSource()) {
+            m_decoder->init(m_source, m_currentTrack, AudioDecoder::UpdateTracks);
+            m_decoder->seek(m_lastBufferEnd);
+            m_decoder->start();
+        }
     }
 }
 
@@ -688,6 +738,7 @@ void AudioPlaybackEngine::readNextBuffer()
     const auto buffer = m_decoder->readBuffer(maxBytes);
     if(buffer.isValid()) {
         m_totalBufferTime += buffer.duration();
+        m_lastBufferEnd = buffer.endTime();
         QMetaObject::invokeMethod(&m_renderer, [this, buffer]() { m_renderer.queueBuffer(buffer); });
     }
 
@@ -718,7 +769,13 @@ void AudioPlaybackEngine::updateBitrate()
 
 void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
 {
-    m_totalBufferTime -= buffer.duration();
+    if(buffer.duration() <= m_totalBufferTime) {
+        m_totalBufferTime -= buffer.duration();
+    }
+    else {
+        m_totalBufferTime = 0;
+    }
+
     emit bufferPlayed(buffer);
 }
 
@@ -730,8 +787,6 @@ void AudioPlaybackEngine::onRendererFinished()
             return;
         }
     }
-
-    m_decoder = nullptr;
 
     m_clock.setPaused(true);
     m_clock.sync(m_duration);

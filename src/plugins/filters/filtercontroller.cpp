@@ -72,7 +72,7 @@ public:
     void handleAction(const TrackAction& action) const;
     Id findContainingGroup(FilterWidget* widget);
     void handleFilterUpdated(FilterWidget* widget);
-    void filterContextMenu(const QPoint& pos) const;
+    void filterContextMenu(FilterWidget* widget, const QPoint& pos) const;
 
     [[nodiscard]] TrackList tracks(const Id& groupId) const;
 
@@ -215,14 +215,20 @@ void FilterControllerPrivate::handleFilterUpdated(FilterWidget* widget)
     resetGroup(groupId);
 }
 
-void FilterControllerPrivate::filterContextMenu(const QPoint& pos) const
+void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoint& pos) const
 {
-    auto* menu = new QMenu();
+    auto* menu = new QMenu(widget);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     m_trackSelection->addTrackPlaylistContextMenu(menu);
     m_trackSelection->addTrackQueueContextMenu(menu);
     menu->addSeparator();
+
+    auto* headerMenu = new QMenu(FilterWidget::tr("Filter options"), menu);
+    menu->addMenu(headerMenu);
+    widget->addFilterHeaderMenu(headerMenu, pos);
+    menu->addSeparator();
+
     m_trackSelection->addTrackContextMenu(menu);
 
     menu->popup(pos);
@@ -544,7 +550,7 @@ FilterWidget* FilterController::createFilter()
     QObject::connect(widget, &FilterWidget::requestSearch, this,
                      [this, widget](const QString& search) { p->searchChanged(widget, search); });
     QObject::connect(widget, &FilterWidget::requestContextMenu, this,
-                     [this](const QPoint& pos) { p->filterContextMenu(pos); });
+                     [this, widget](const QPoint& pos) { p->filterContextMenu(widget, pos); });
     QObject::connect(widget, &FilterWidget::selectionChanged, this, [this, widget]() { p->selectionChanged(widget); });
     QObject::connect(widget, &FilterWidget::filterUpdated, this, [this, widget]() { p->handleFilterUpdated(widget); });
     QObject::connect(widget, &FilterWidget::filterDeleted, this, [this, widget]() { removeFilter(widget); });

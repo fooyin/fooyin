@@ -61,10 +61,6 @@ public:
     std::vector<AudioLoader::LoaderEntry<ReaderCreator>> m_readers;
     std::vector<AudioLoader::LoaderEntry<ArchiveReaderCreator>> m_archiveReaders;
 
-    QThreadStorage<DecoderInstances*> m_decoderInstances;
-    QThreadStorage<ReaderInstances*> m_readerInstances;
-    QThreadStorage<ArchiveReaderInstances*> m_archiveReaderInstances;
-
     std::shared_mutex m_mutex;
 };
 
@@ -197,7 +193,7 @@ QStringList AudioLoader::supportedArchiveExtensions() const
 
 bool AudioLoader::canWriteMetadata(const Track& track) const
 {
-    if(auto* reader = readerForTrack(track)) {
+    if(auto reader = readerForTrack(track)) {
         if(track.isInArchive()) {
             reader->init({track.filepath(), nullptr, nullptr});
         }
@@ -215,7 +211,7 @@ bool AudioLoader::isArchive(const QString& file) const
                                [&ext](const auto& loader) { return loader.extensions.contains(ext); });
 }
 
-AudioDecoder* AudioLoader::decoderForFile(const QString& file) const
+std::unique_ptr<AudioDecoder> AudioLoader::decoderForFile(const QString& file) const
 {
     const std::shared_lock lock{p->m_mutex};
 
@@ -227,27 +223,19 @@ AudioDecoder* AudioLoader::decoderForFile(const QString& file) const
             continue;
         }
         if((isInArchive && loader.name == "Archive"_L1) || (!isInArchive && loader.extensions.contains(ext))) {
-            if(p->m_decoderInstances.hasLocalData()) {
-                auto& readers = p->m_decoderInstances.localData();
-                if(readers->contains(loader.name)) {
-                    return readers->at(loader.name).get();
-                }
-                return readers->emplace(loader.name, loader.creator()).first->second.get();
-            }
-            p->m_decoderInstances.setLocalData(new DecoderInstances());
-            return p->m_decoderInstances.localData()->emplace(loader.name, loader.creator()).first->second.get();
+            return loader.creator();
         }
     }
 
     return nullptr;
 }
 
-AudioDecoder* AudioLoader::decoderForTrack(const Track& track) const
+std::unique_ptr<AudioDecoder> AudioLoader::decoderForTrack(const Track& track) const
 {
     return decoderForFile(track.filepath());
 }
 
-AudioReader* AudioLoader::readerForFile(const QString& file) const
+std::unique_ptr<AudioReader> AudioLoader::readerForFile(const QString& file) const
 {
     const std::shared_lock lock{p->m_mutex};
 
@@ -259,27 +247,19 @@ AudioReader* AudioLoader::readerForFile(const QString& file) const
             continue;
         }
         if((isInArchive && loader.name == "Archive"_L1) || (!isInArchive && loader.extensions.contains(ext))) {
-            if(p->m_readerInstances.hasLocalData()) {
-                auto& readers = p->m_readerInstances.localData();
-                if(readers->contains(loader.name)) {
-                    return readers->at(loader.name).get();
-                }
-                return readers->emplace(loader.name, loader.creator()).first->second.get();
-            }
-            p->m_readerInstances.setLocalData(new ReaderInstances());
-            return p->m_readerInstances.localData()->emplace(loader.name, loader.creator()).first->second.get();
+            return loader.creator();
         }
     }
 
     return nullptr;
 }
 
-AudioReader* AudioLoader::readerForTrack(const Track& track) const
+std::unique_ptr<AudioReader> AudioLoader::readerForTrack(const Track& track) const
 {
     return readerForFile(track.filepath());
 }
 
-ArchiveReader* AudioLoader::archiveReaderForFile(const QString& file) const
+std::unique_ptr<ArchiveReader> AudioLoader::archiveReaderForFile(const QString& file) const
 {
     const std::shared_lock lock{p->m_mutex};
 
@@ -294,15 +274,7 @@ ArchiveReader* AudioLoader::archiveReaderForFile(const QString& file) const
             continue;
         }
         if(loader.extensions.contains(ext)) {
-            if(p->m_archiveReaderInstances.hasLocalData()) {
-                auto& readers = p->m_archiveReaderInstances.localData();
-                if(readers->contains(loader.name)) {
-                    return readers->at(loader.name).get();
-                }
-                return readers->emplace(loader.name, loader.creator()).first->second.get();
-            }
-            p->m_archiveReaderInstances.setLocalData(new ArchiveReaderInstances());
-            return p->m_archiveReaderInstances.localData()->emplace(loader.name, loader.creator()).first->second.get();
+            return loader.creator();
         }
     }
 
@@ -313,8 +285,8 @@ bool AudioLoader::readTrackMetadata(Track& track) const
 {
     const std::shared_lock lock{p->m_mutex};
 
-    auto* decoder = readerForTrack(track);
-    if(!decoder) {
+    auto reader = readerForTrack(track);
+    if(!reader) {
         qCInfo(AUD_LDR) << "Tag reader not available for file:" << track.filepath();
         return {};
     }
@@ -330,8 +302,8 @@ bool AudioLoader::readTrackMetadata(Track& track) const
         source.device = &file;
     }
 
-    if(decoder->init(source)) {
-        return decoder->readTrack(source, track);
+    if(reader->init(source)) {
+        return reader->readTrack(source, track);
     }
 
     return false;
@@ -341,12 +313,12 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
 {
     const std::shared_lock lock{p->m_mutex};
 
-    auto* decoder = readerForTrack(track);
-    if(!decoder) {
+    auto reader = readerForTrack(track);
+    if(!reader) {
         return {};
     }
 
-    if(!track.isInArchive() && !decoder->canReadCover()) {
+    if(!track.isInArchive() && !reader->canReadCover()) {
         return {};
     }
 
@@ -360,8 +332,8 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
         source.device = &file;
     }
 
-    if(decoder->init(source) && decoder->canReadCover()) {
-        return decoder->readCover(source, track, cover);
+    if(reader->init(source) && reader->canReadCover()) {
+        return reader->readCover(source, track, cover);
     }
 
     return {};
@@ -375,21 +347,27 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
 
     const std::shared_lock lock{p->m_mutex};
 
-    auto* decoder = readerForTrack(track);
-    if(!decoder || !decoder->canWriteMetaData()) {
+    auto reader = readerForTrack(track);
+    if(!reader || !reader->canWriteMetaData()) {
         return false;
     }
 
     AudioSource source;
     source.filepath = track.filepath();
     QFile file{track.filepath()};
+
+    if(!file.exists()) {
+        qCWarning(AUD_LDR) << "File not found:" << source.filepath;
+        return false;
+    }
+
     if(!file.open(QIODeviceBase::ReadWrite)) {
         qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
         return false;
     }
     source.device = &file;
 
-    return decoder->writeTrack(source, track, options);
+    return reader->writeTrack(source, track, options);
 }
 
 bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverData) const
@@ -400,8 +378,8 @@ bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverDa
 
     const std::shared_lock lock{p->m_mutex};
 
-    auto* decoder = readerForTrack(track);
-    if(!decoder || !decoder->canWriteCover()) {
+    auto reader = readerForTrack(track);
+    if(!reader || !reader->canWriteCover()) {
         return false;
     }
 
@@ -414,7 +392,7 @@ bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverDa
     }
     source.device = &file;
 
-    return decoder->writeCover(source, track, coverData);
+    return reader->writeCover(source, track, coverData);
 }
 
 void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator, int priority)
@@ -579,14 +557,5 @@ void AudioLoader::reset()
     const std::unique_lock lock{p->m_mutex};
     p->m_decoders = p->m_defaultDecoders;
     p->m_readers  = p->m_defaultReaders;
-}
-
-void AudioLoader::destroyThreadInstance()
-{
-    const std::unique_lock lock{p->m_mutex};
-
-    p->m_decoderInstances.setLocalData(nullptr);
-    p->m_readerInstances.setLocalData(nullptr);
-    p->m_archiveReaderInstances.setLocalData(nullptr);
 }
 } // namespace Fooyin

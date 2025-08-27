@@ -177,7 +177,7 @@ TEST_F(ScriptParserTest, QueryTest)
     track1.setFileSize(45600000);
     track1.setDate(QStringLiteral("1991-03-29"));
     track1.setFirstPlayed(QDateTime::currentDateTime().addMonths(-2).toMSecsSinceEpoch());
-    track1.setLastPlayed(QDateTime::currentMSecsSinceEpoch());
+    track1.setLastPlayed(QDateTime::currentDateTime().addDays(-6).toMSecsSinceEpoch());
     track1.setPlayCount(1);
     tracks.push_back(track1);
 
@@ -234,7 +234,7 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("date BEFORE 2000"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("date AFTER 2000"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("firstplayed SINCE 2022"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed DURING LAST MINUTE"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("lastplayed DURING LAST WEEK"), tracks).size());
     EXPECT_EQ(0, m_parser.filter(QStringLiteral("lastplayed DURING 2"), tracks).size());
 
     // Grouping and complex queries

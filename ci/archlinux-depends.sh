@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/sh -eux
 
 source ci/setup.sh
 
@@ -22,4 +22,5 @@ $SUDO pacman -S --noconfirm --needed \
        libgme \
        libarchive \
        libsndfile \
-       libebur128
+       libebur128 \
+       gtest

@@ -92,8 +92,6 @@ void PlaylistColumnModel::processQueue()
                 if(addedColumn.isValid()) {
                     node.changeColumn(addedColumn);
                     node.setStatus(ColumnItem::None);
-
-                    emit dataChanged({}, {});
                 }
                 else {
                     qCWarning(PL_COLMOD) << "Column could not be added:" << column.name;
@@ -117,8 +115,6 @@ void PlaylistColumnModel::processQueue()
                     if(const auto changedItem = m_columnsRegistry->itemById(column.id)) {
                         node.changeColumn(changedItem.value());
                         node.setStatus(ColumnItem::None);
-
-                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                     }
                 }
                 else {
@@ -130,9 +126,12 @@ void PlaylistColumnModel::processQueue()
                 break;
         }
     }
+
     for(const auto& index : columnsToRemove) {
         m_nodes.erase(index);
     }
+
+    invalidateData();
 }
 
 Qt::ItemFlags PlaylistColumnModel::flags(const QModelIndex& index) const
@@ -292,10 +291,12 @@ bool PlaylistColumnModel::removeRows(int row, int count, const QModelIndex& /*pa
             }
             else if(!item->column().isDefault) {
                 item->setStatus(ColumnItem::Removed);
-                emit dataChanged({}, {}, {Qt::FontRole});
             }
         }
     }
+
+    invalidateData();
+
     return true;
 }
 

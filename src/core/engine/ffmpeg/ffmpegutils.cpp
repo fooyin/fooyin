@@ -87,14 +87,13 @@ void printError(const QString& error)
     qCWarning(FFMPEG) << error;
 }
 
-AudioFormat audioFormatFromCodec(AVCodecParameters* codec)
+AudioFormat audioFormatFromCodec(AVCodecParameters* codec, AVSampleFormat ctxFormat)
 {
     AudioFormat format;
 
-    const auto avFmt     = static_cast<AVSampleFormat>(codec->format);
-    const auto sampleFmt = sampleFormat(avFmt, codec->bits_per_raw_sample);
+    const auto sampleFmt = sampleFormat(ctxFormat, codec->bits_per_raw_sample);
     format.setSampleFormat(sampleFmt);
-    format.setSampleFormatIsPlanar(av_sample_fmt_is_planar(avFmt) == 1);
+    format.setSampleFormatIsPlanar(av_sample_fmt_is_planar(ctxFormat) == 1);
     format.setSampleRate(codec->sample_rate);
 #if OLD_CHANNEL_LAYOUT
     format.setChannelCount(codec->channels);

@@ -33,7 +33,7 @@ class TagEditorView : public ExtendableTableView
 public:
     explicit TagEditorView(ActionManager* actionManager, QWidget* parent = nullptr);
 
-    void setTagEditTriggers(EditTrigger triggers);
+    void setTagEditTriggers(EditTriggers triggers);
     void setupActions();
     void setRatingRow(int row);
 
@@ -54,7 +54,7 @@ private:
 
     ActionManager* m_actionManager;
 
-    EditTrigger m_editTrigger;
+    EditTriggers m_editTrigger;
     WidgetContext* m_context;
     QAction* m_copyAction;
     QAction* m_pasteAction;

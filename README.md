@@ -29,25 +29,35 @@ Only Linux is supported at present, though macOS can be built, and support for o
 
 ## Features
 
-* [x] Playback of FLAC, MP3, MP4, Vorbis, Opus, WavPack, WAV, AIFF, Musepack, Monkey's Audio
-* [x] Playback of popular VGM and tracker module formats
-* [x] Gapless playback
-* [x] Add and play files from within archives
-* [x] Audio output and device configuration
-* [x] CUE sheet support (including embedded)
-* [x] Fully customisable layout, starting from a blank window
-* [x] Customisable keyboard shortcuts
-* [x] Filter library on any field(s)
-* [x] Create and manage playlists
-* [x] Import/export playlists (M3U/M3U8)
-* [x] Extensible using a plugin system
-* [x] Tag editing
-* [x] Library tree, including directory structure view
-* [x] Directory browser
-* [x] Waveform seekbar
-* [x] MPRIS support
-* [x] ReplayGain support
-* [x] Scrobbling
+### Playback
+- Playback of all major formats: FLAC, MP3, MP4, Vorbis, Opus, WavPack, WAV, AIFF, MKA, Musepack, Monkey’s Audio
+- Native support for VGM and tracker module formats
+- Gapless playback
+- Play files directly from archives
+- Full CUE sheet support (including embedded cues)
+- ReplayGain support (including calculation)
+- Waveform seekbar
+
+### Library & Playlists
+- Powerful filtering on any field
+- Playlist creation and management
+- Dynamic autoplaylists based on scripts
+- Import/export playlists (M3U/M3U8)
+- Library tree with directory structure view
+- Integrated directory browser
+- Built-in tag editor
+- Automatic artwork finder
+- Synced lyrics with multi-source downloads
+
+### Customisation
+- Fully customisable interface, starting from a blank canvas
+- Personalised keyboard shortcuts
+- Extend functionality with a plugin system
+
+### Integration
+- Flexible audio output and device configuration
+- MPRIS support for system-wide control
+- Scrobbling (Last.fm, MusicBrainz, Libre.fm)
 
 ### Roadmap
 

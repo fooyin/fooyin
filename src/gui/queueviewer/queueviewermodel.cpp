@@ -87,11 +87,11 @@ QueueViewerModel::QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, Set
     m_settings->subscribe<Settings::Gui::Internal::QueueViewerRightScript>(this, &QueueViewerModel::regenerateTitles);
     m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowIcon>(this, [this](const bool show) {
         m_showIcon = show;
-        emit dataChanged({}, {}, {Qt::DecorationRole});
+        invalidateData();
     });
     m_settings->subscribe<Settings::Gui::Internal::QueueViewerIconSize>(this, [this](const auto& size) {
         m_iconSize = CoverProvider::findThumbnailSize(size.toSize());
-        emit dataChanged({}, {}, {Qt::DecorationRole});
+        invalidateData();
     });
 }
 
@@ -363,7 +363,8 @@ void QueueViewerModel::regenerateTitles()
     for(const auto& item : m_trackItems) {
         item->generateTitle(&m_scriptParser, titleScript, subtitleScript);
     }
-    emit dataChanged({}, {}, {Qt::DisplayRole});
+
+    invalidateData();
 }
 
 void QueueViewerModel::moveTracks(int row, const QModelIndexList& indexes)

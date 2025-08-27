@@ -68,11 +68,7 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
 
 ArtworkProperties::~ArtworkProperties()
 {
-    if(m_writeRequest) {
-        m_writeRequest->cancel();
-    }
     if(m_watcher) {
-        m_watcher->cancel();
         m_watcher->waitForFinished();
     }
 }
@@ -84,7 +80,6 @@ void ArtworkProperties::loadTrackArtwork()
             const QByteArray cover = m_audioLoader->readTrackCover(track, artworkRow->type());
             QMetaObject::invokeMethod(artworkRow, [artworkRow, cover]() { artworkRow->loadImage(cover); });
         }
-        m_audioLoader->destroyThreadInstance();
     };
 
     const int trackCount = static_cast<int>(m_tracks.size());
@@ -124,6 +119,10 @@ void ArtworkProperties::apply()
             coverData.coverData.emplace(row->type(), CoverImage{row->mimeType(), row->image()});
             row->reset();
         }
+    }
+
+    if(coverData.coverData.empty()) {
+        return;
     }
 
     QObject::connect(

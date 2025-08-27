@@ -105,7 +105,8 @@ QSize LogWidget::sizeHint() const
 
 void LogWidget::saveLog()
 {
-    const QString saveFile = QFileDialog::getSaveFileName(this, tr("Save Log"), QDir::homePath());
+    const QString saveFile = QFileDialog::getSaveFileName(this, tr("Save Log"), QDir::homePath(), {}, nullptr,
+                                                          QFileDialog::DontResolveSymlinks);
     if(saveFile.isEmpty()) {
         return;
     }

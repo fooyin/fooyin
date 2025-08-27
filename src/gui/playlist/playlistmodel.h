@@ -130,6 +130,7 @@ public:
     void insertTracks(const TrackGroups& tracks);
     void updateTracks(const std::vector<int>& indexes);
     void refreshTracks(const std::vector<int>& indexes);
+    void refreshTracks(const std::vector<int>& indexes, const std::set<int>& columns);
     void removeTracks(const QModelIndexList& indexes);
     void removeTracks(const TrackGroups& groups);
     void updateHeader(Playlist* playlist);
@@ -153,10 +154,12 @@ public slots:
     void playStateChanged(Player::PlayState state);
 
 private:
-    void populateModel(PendingData& data);
-    void populateTrackGroup(PendingData& data);
-    void updateModel(ItemKeyMap& data);
-    void updateTracks(const ItemList& tracks);
+    QModelIndex rightIndex(const QModelIndex& index) const;
+
+    void populateModel(PendingData data);
+    void populateTrackGroup(PendingData data);
+    void updateModel(ItemKeyMap data);
+    void updateTracks(const ItemList& tracks, const std::set<int>& columnsUpdated);
     void mergeTrackParents(const TrackIdNodeMap& parents);
 
     QVariant trackData(PlaylistItem* item, const QModelIndex& index, int role) const;
@@ -208,6 +211,7 @@ private:
     void deleteNodes(PlaylistItem* node);
 
     std::vector<int> pixmapColumns() const;
+    std::set<int> columnsNeedUpdating() const;
     void coverUpdated(const Track& track);
     bool trackIsPlaying(const Track& track, int index) const;
 

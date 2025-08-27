@@ -54,7 +54,7 @@ LibraryModel::LibraryModel(LibraryManager* libraryManager, QObject* parent)
     QObject::connect(m_libraryManager, &LibraryManager::libraryStatusChanged, this, [this](const LibraryInfo& info) {
         if(m_nodes.contains(info.path)) {
             m_nodes.at(info.path).changeInfo(info);
-            emit dataChanged({}, {}, {Qt::DisplayRole});
+            invalidateData();
         }
     });
 }
@@ -150,8 +150,6 @@ void LibraryModel::processQueue()
                     if(auto newLibrary = m_libraryManager->libraryInfo(id)) {
                         library.changeInfo(*newLibrary);
                         library.setStatus(LibraryItem::None);
-
-                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                     }
                 }
                 else {
@@ -175,8 +173,6 @@ void LibraryModel::processQueue()
             case(LibraryItem::Changed): {
                 if(m_libraryManager->renameLibrary(info.id, info.name)) {
                     library.setStatus(LibraryItem::None);
-
-                    emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
                     qCWarning(LIB_MODEL) << "Library could not be renamed:" << info.name;
@@ -187,10 +183,13 @@ void LibraryModel::processQueue()
                 break;
         }
     }
+
     m_librariesToAdd.clear();
     for(const QString& path : librariesToRemove) {
         m_nodes.erase(path);
     }
+
+    invalidateData();
 }
 
 Qt::ItemFlags LibraryModel::flags(const QModelIndex& index) const
@@ -287,7 +286,7 @@ bool LibraryModel::setData(const QModelIndex& index, const QVariant& value, int 
         item->setStatus(LibraryItem::Changed);
     }
 
-    emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
+    emit dataChanged(index, index.siblingAtColumn(columnCount({}) - 1), {Qt::DisplayRole, Qt::FontRole});
 
     return true;
 }
@@ -332,7 +331,7 @@ bool LibraryModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
             }
             else {
                 item->setStatus(LibraryItem::Removed);
-                emit dataChanged({}, {}, {Qt::FontRole});
+                emit dataChanged(index, index.siblingAtColumn(columnCount({}) - 1), {Qt::FontRole});
             }
         }
     }

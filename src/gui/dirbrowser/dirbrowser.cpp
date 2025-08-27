@@ -48,7 +48,6 @@
 #include <QLineEdit>
 #include <QMenu>
 #include <QPointer>
-#include <QPushButton>
 #include <QScrollBar>
 #include <QStandardPaths>
 #include <QTreeView>
@@ -166,7 +165,9 @@ public:
     void handlePlayAction(const QList<QUrl>& files, const QString& startingFile);
     void handleDoubleClick(const QModelIndex& index);
     void handleMiddleClick();
+    void handleModelReset();
 
+    void updateDir(const QString& dir) const;
     void changeRoot(const QString& root);
     void updateIndent(bool show) const;
 
@@ -196,6 +197,7 @@ public:
     QPointer<ToolButton> m_forwardDir;
     QPointer<ToolButton> m_upDir;
 
+    bool m_setup{false};
     DirBrowser::Mode m_mode{DirBrowser::Mode::List};
     DirTree* m_dirTree;
     QFileSystemModel* m_model;
@@ -233,9 +235,10 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     , m_playlistHandler{m_playlistInteractor->handler()}
     , m_settings{settings}
     , m_controlLayout{new QHBoxLayout()}
+    , m_mode{settings->value<Settings::Gui::Internal::DirBrowserMode>()}
     , m_dirTree{new DirTree(m_self)}
     , m_model{new QFileSystemModel(m_self)}
-    , m_proxyModel{new DirProxyModel(m_self)}
+    , m_proxyModel{new DirProxyModel(m_mode == DirBrowser::Mode::List, m_self)}
     , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserMiddleClick>())}
     , m_context{new WidgetContext(m_self, Context{Constants::Context::DirBrowser}, m_self)}
@@ -272,11 +275,6 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     m_dirTree->setModel(m_proxyModel);
     m_dirTree->setShowHorizontalScrollbar(m_settings->value<Settings::Gui::Internal::DirBrowserShowHorizScroll>());
 
-    QString rootPath = m_settings->value<Settings::Gui::Internal::DirBrowserPath>();
-    if(rootPath.isEmpty()) {
-        rootPath = QDir::homePath();
-    }
-    m_dirTree->setRootIndex(m_proxyModel->mapFromSource(m_model->setRootPath(rootPath)));
     updateIndent(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
 
     const QStringList browserCategory{DirBrowser::tr("Directory Browser")};
@@ -537,6 +535,38 @@ void DirBrowserPrivate::handleMiddleClick()
     handleAction(m_middleClickAction, true);
 }
 
+void DirBrowserPrivate::handleModelReset()
+{
+    if(!m_setup) {
+        m_setup = true;
+
+        QString rootPath = m_settings->value<Settings::Gui::Internal::DirBrowserPath>();
+        if(rootPath.isEmpty()) {
+            rootPath = QDir::homePath();
+        }
+
+        updateDir(rootPath);
+    }
+
+    emit m_self->rootChanged();
+    m_dirTree->selectionModel()->setCurrentIndex(m_proxyModel->index(0, 0, {}), QItemSelectionModel::NoUpdate);
+    m_dirTree->resizeView();
+}
+
+void DirBrowserPrivate::updateDir(const QString& dir) const
+{
+    const QModelIndex root = m_model->setRootPath(dir);
+    m_dirTree->setRootIndex(m_proxyModel->mapFromSource(root));
+
+    if(m_dirEdit) {
+        m_dirEdit->setText(dir);
+    }
+
+    if(m_playlist) {
+        m_proxyModel->setPlayingPath(m_playlist->currentTrack().filepath());
+    }
+}
+
 void DirBrowserPrivate::changeRoot(const QString& root)
 {
     if(root.isEmpty() || !QFileInfo::exists(root)) {
@@ -690,13 +720,7 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
 
     QObject::connect(p->m_model, &QAbstractItemModel::layoutChanged, this, [this]() { p->handleModelUpdated(); });
     QObject::connect(
-        p->m_proxyModel, &QAbstractItemModel::modelReset, this,
-        [this]() {
-            emit rootChanged();
-            p->m_dirTree->selectionModel()->setCurrentIndex(p->m_proxyModel->index(0, 0, {}),
-                                                            QItemSelectionModel::NoUpdate);
-            p->m_dirTree->resizeView();
-        },
+        p->m_proxyModel, &QAbstractItemModel::modelReset, this, [this]() { p->handleModelReset(); },
         Qt::QueuedConnection);
 
     settings->subscribe<Settings::Gui::Internal::DirBrowserDoubleClick>(
@@ -741,16 +765,7 @@ QString DirBrowser::layoutName() const
 
 void DirBrowser::updateDir(const QString& dir)
 {
-    const QModelIndex root = p->m_model->setRootPath(dir);
-    p->m_dirTree->setRootIndex(p->m_proxyModel->mapFromSource(root));
-
-    if(p->m_dirEdit) {
-        p->m_dirEdit->setText(dir);
-    }
-
-    if(p->m_playlist) {
-        p->m_proxyModel->setPlayingPath(p->m_playlist->currentTrack().filepath());
-    }
+    p->updateDir(dir);
 }
 
 void DirBrowser::playstateChanged(Player::PlayState state)

@@ -24,7 +24,6 @@
 #include <core/engine/audioinput.h>
 
 #include "ffmpegframe.h"
-#include "ffmpegstream.h"
 
 struct AVFormatContext;
 

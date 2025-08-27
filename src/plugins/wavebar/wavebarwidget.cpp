@@ -152,7 +152,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(showCursor, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<Settings::WaveBar::ShowCursor>(checked); });
 
-    auto* showLabels = new QAction(tr("Show labels"), this);
+    auto* showLabels = new QAction(tr("Show labels"), menu);
     showLabels->setCheckable(true);
     showLabels->setChecked(m_container->labelsEnabled());
     QObject::connect(showLabels, &QAction::triggered, this, [this](bool checked) {
@@ -161,7 +161,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
         QMetaObject::invokeMethod(m_container, [this]() { rescaleWaveform(); }, Qt::QueuedConnection);
     });
 
-    auto* showElapsed = new QAction(tr("Show elapsed total"), this);
+    auto* showElapsed = new QAction(tr("Show elapsed total"), menu);
     showElapsed->setCheckable(true);
     showElapsed->setChecked(m_container->elapsedTotal());
     QObject::connect(showElapsed, &QAction::triggered, this, [this](bool checked) {

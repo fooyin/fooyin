@@ -159,7 +159,7 @@ bool TagEditorModelPrivate::updateTrackMetadata(const TagEditorField& field, con
         }
     }
 
-    for(int i{0}; Track & track : m_tracks) {
+    for(int i{0}; Track& track : m_tracks) {
         if(track.hasCue()) {
             continue;
         }
@@ -253,12 +253,12 @@ void TagEditorModel::autoNumberTracks()
     if(track.setValue(trackNums.join("; "_L1))) {
         track.setMultipleValues(total > 1);
         track.setSplitTrackValues(true);
-        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
+        invalidateData();
     }
 
     auto& totalTotal = p->m_tags.at(trackTotalTag);
     if(totalTotal.setValue(total)) {
-        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
+        invalidateData();
     }
 }
 
@@ -305,7 +305,7 @@ void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues,
         }
     }
 
-    emit dataChanged({}, {}, {Qt::DisplayRole});
+    invalidateData();
 }
 
 bool TagEditorModel::haveChanges()
@@ -338,7 +338,6 @@ void TagEditorModel::applyChanges()
             case(TagEditorItem::Added): {
                 if(p->updateTrackMetadata(field, node.changedValue(), node.splitTrackValues())) {
                     node.applyChanges(field);
-                    emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 break;
             }
@@ -371,7 +370,6 @@ void TagEditorModel::applyChanges()
                                           node.splitTrackValues())) {
                     node.applyChanges(field);
                     node.setSplitTrackValues(false);
-                    emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 break;
             }
@@ -383,6 +381,8 @@ void TagEditorModel::applyChanges()
     for(const auto& field : fieldsToRemove) {
         p->m_tags.erase(field);
     }
+
+    invalidateData();
 }
 
 QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -574,7 +574,7 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
         }
         else {
             item->setStatus(TagEditorItem::Removed);
-            emit dataChanged({}, {}, {Qt::FontRole});
+            emit dataChanged(index, index.siblingAtColumn(columnCount({}) - 1), {Qt::FontRole});
         }
     }
 

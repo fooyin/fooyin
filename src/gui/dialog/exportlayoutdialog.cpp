@@ -146,8 +146,9 @@ void ExportLayoutDialog::accept()
 void ExportLayoutDialog::exportLayout()
 {
     const QString path = !m_pathEdit->text().isEmpty() ? m_pathEdit->text() : Gui::layoutsPath() + m_nameEdit->text();
-    const QString saveFile = QFileDialog::getSaveFileName(this, tr("Save Layout"), path,
-                                                          tr("%1 Layout %2").arg("fooyin"_L1, "(*.fyl)"_L1));
+    const QString saveFile
+        = QFileDialog::getSaveFileName(this, tr("Save Layout"), path, tr("%1 Layout %2").arg("fooyin"_L1, "(*.fyl)"_L1),
+                                       nullptr, QFileDialog::DontResolveSymlinks);
     if(saveFile.isEmpty()) {
         return;
     }

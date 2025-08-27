@@ -25,6 +25,7 @@
 #include <QPixmap>
 #include <QPolygonF>
 #include <QSize>
+#include <QVariant>
 
 class QPainter;
 class QPalette;
@@ -55,6 +56,11 @@ public:
     void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                Qt::Alignment alignment = Qt::AlignLeft) const;
     [[nodiscard]] QSize sizeHint() const;
+
+    operator QVariant() const
+    {
+        return QVariant::fromValue(*this);
+    }
 
 private:
     QPolygonF m_starPolygon;

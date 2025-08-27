@@ -98,6 +98,9 @@ FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, LibraryManager*
     , m_sortProxy{new FilterSortModel(this)}
     , m_resetThrottler{new SignalThrottler(this)}
     , m_widgetContext{new WidgetContext(this, Context{Id{"Fooyin.Context.FilterWidget."}.append(id())}, this)}
+    , m_showHeader{true}
+    , m_showScrollbar{true}
+    , m_alternatingColours{false}
 {
     setObjectName(FilterWidget::name());
     setFeature(FyWidget::Search);
@@ -135,9 +138,6 @@ FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, LibraryManager*
     }
 
     m_model->setRowHeight(m_settings->value<Settings::Filters::FilterRowHeight>());
-    hideHeader(!m_settings->value<Settings::Filters::FilterHeader>());
-    setScrollbarEnabled(m_settings->value<Settings::Filters::FilterScrollBar>());
-    m_view->setAlternatingRowColors(m_settings->value<Settings::Filters::FilterAltColours>());
     m_view->changeIconSize(m_settings->value<Settings::Filters::FilterIconSize>().toSize());
 
     setupConnections();
@@ -281,11 +281,14 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
         columns.push_back(colStr);
     }
 
-    layout["Columns"_L1]     = columns.join(u"|"_s);
-    layout["Display"_L1]     = static_cast<int>(m_view->viewMode());
-    layout["Captions"_L1]    = static_cast<int>(m_view->captionDisplay());
-    layout["Artwork"_L1]     = static_cast<int>(m_model->coverType());
-    layout["ShowSummary"_L1] = m_model->showSummary();
+    layout["Columns"_L1]         = columns.join(u"|"_s);
+    layout["Display"_L1]         = static_cast<int>(m_view->viewMode());
+    layout["Captions"_L1]        = static_cast<int>(m_view->captionDisplay());
+    layout["Artwork"_L1]         = static_cast<int>(m_model->coverType());
+    layout["ShowSummary"_L1]     = m_model->showSummary();
+    layout["ShowHeader"_L1]      = m_showHeader;
+    layout["ShowScrollbar"_L1]   = m_showScrollbar;
+    layout["AlternatingRows"_L1] = m_alternatingColours;
 
     QByteArray state = m_header->saveHeaderState();
     state            = qCompress(state, 9);
@@ -323,23 +326,27 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
     if(layout.contains("Display"_L1)) {
         m_view->setViewMode(static_cast<ExpandedTreeView::ViewMode>(layout.value("Display"_L1).toInt()));
     }
-
     if(layout.contains("Captions"_L1)) {
         updateCaptions(static_cast<ExpandedTreeView::CaptionDisplay>(layout.value("Captions"_L1).toInt()));
     }
-
     if(layout.contains("Artwork"_L1)) {
         m_model->setCoverType(static_cast<Track::Cover>(layout.value("Artwork"_L1).toInt()));
     }
-
     if(layout.contains("ShowSummary"_L1)) {
         m_model->setShowSummary(layout.value("ShowSummary"_L1).toBool());
     }
-
+    if(layout.contains("ShowHeader"_L1)) {
+        m_showHeader = layout.value("ShowHeader"_L1).toBool();
+    }
+    if(layout.contains("ShowScrollbar"_L1)) {
+        m_showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
+    }
+    if(layout.contains("AlternatingRows"_L1)) {
+        m_alternatingColours = layout.value("AlternatingRows"_L1).toBool();
+    }
     if(layout.contains("Group"_L1)) {
         m_group = Id{layout.value("Group"_L1).toString()};
     }
-
     if(layout.contains("Index"_L1)) {
         m_index = layout.value("Index"_L1).toInt();
     }
@@ -373,6 +380,8 @@ void FilterWidget::finalise()
             m_header->restoreHeaderState(m_headerState);
         }
     }
+
+    updateAppearance();
 }
 
 void FilterWidget::searchEvent(const QString& search)
@@ -429,7 +438,7 @@ void FilterWidget::tracksChanged(const TrackList& tracks)
             m_updating = false;
             emit finishedUpdating();
         },
-        Qt::SingleShotConnection);
+        static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
 }
 
 void FilterWidget::tracksUpdated(const TrackList& tracks)
@@ -440,6 +449,78 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
 void FilterWidget::tracksRemoved(const TrackList& tracks)
 {
     m_model->removeTracks(tracks);
+}
+
+void FilterWidget::addFilterHeaderMenu(QMenu* menu, const QPoint& pos)
+{
+    auto* columnsMenu = new QMenu(FilterWidget::tr("Columns"), menu);
+    auto* columnGroup = new QActionGroup{menu};
+    columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
+
+    for(const auto& column : m_columnRegistry->items()) {
+        auto* columnAction = new QAction(column.name, menu);
+        columnAction->setData(column.id);
+        columnAction->setCheckable(true);
+        columnAction->setChecked(hasColumn(column.id));
+        columnAction->setEnabled(!hasColumn(column.id) || m_columns.size() > 1);
+        columnsMenu->addAction(columnAction);
+        columnGroup->addAction(columnAction);
+    }
+
+    menu->setDefaultAction(columnGroup->checkedAction());
+    QObject::connect(columnGroup, &QActionGroup::triggered, this, [this](QAction* action) {
+        const int columnId = action->data().toInt();
+        if(action->isChecked()) {
+            if(const auto column = m_columnRegistry->itemById(action->data().toInt())) {
+                if(m_multipleColumns) {
+                    m_columns.push_back(column.value());
+                }
+                else {
+                    m_columns = {column.value()};
+                }
+            }
+        }
+        else {
+            auto colIt
+                = std::ranges::find_if(m_columns, [columnId](const FilterColumn& col) { return col.id == columnId; });
+            if(colIt != m_columns.end()) {
+                const int removedIndex = static_cast<int>(std::distance(m_columns.begin(), colIt));
+                if(m_model->removeColumn(removedIndex)) {
+                    m_columns.erase(colIt);
+                }
+            }
+        }
+
+        m_tracks.clear();
+        emit filterUpdated();
+    });
+
+    auto* multiColAction = new QAction(FilterWidget::tr("Multiple columns"), menu);
+    multiColAction->setCheckable(true);
+    multiColAction->setChecked(m_multipleColumns);
+    multiColAction->setEnabled(m_columns.size() <= 1);
+    QObject::connect(multiColAction, &QAction::triggered, this, [this](bool checked) { m_multipleColumns = checked; });
+    columnsMenu->addSeparator();
+    columnsMenu->addAction(multiColAction);
+
+    auto* moreSettings = new QAction(FilterWidget::tr("More…"), columnsMenu);
+    QObject::connect(moreSettings, &QAction::triggered, this,
+                     [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::FiltersFields); });
+    columnsMenu->addSeparator();
+    columnsMenu->addAction(moreSettings);
+
+    menu->addMenu(columnsMenu);
+    menu->addSeparator();
+    m_header->addHeaderContextMenu(menu, mapToGlobal(pos));
+    menu->addSeparator();
+    m_header->addHeaderAlignmentMenu(menu, mapToGlobal(pos));
+
+    addDisplayMenu(menu);
+
+    menu->addSeparator();
+    auto* manageConnections = new QAction(FilterWidget::tr("Manage groups"), menu);
+    QObject::connect(manageConnections, &QAction::triggered, this, &FilterWidget::requestEditConnections);
+    menu->addAction(manageConnections);
 }
 
 void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -493,10 +574,6 @@ void FilterWidget::setupConnections()
     QObject::connect(m_view, &ExpandedTreeView::doubleClicked, this, &FilterWidget::doubleClicked);
     QObject::connect(m_view, &ExpandedTreeView::middleClicked, this, &FilterWidget::middleClicked);
 
-    m_settings->subscribe<Settings::Filters::FilterAltColours>(m_view, &QAbstractItemView::setAlternatingRowColors);
-    m_settings->subscribe<Settings::Filters::FilterHeader>(this, [this](bool enabled) { hideHeader(!enabled); });
-    m_settings->subscribe<Settings::Filters::FilterScrollBar>(this,
-                                                              [this](bool enabled) { setScrollbarEnabled(enabled); });
     m_settings->subscribe<Settings::Filters::FilterRowHeight>(this, [this](const int height) {
         m_model->setRowHeight(height);
         QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
@@ -568,15 +645,12 @@ void FilterWidget::updateCaptions(ExpandedTreeView::CaptionDisplay captions)
     m_view->setCaptionDisplay(captions);
 }
 
-void FilterWidget::hideHeader(bool hide)
+void FilterWidget::updateAppearance()
 {
-    m_header->setFixedHeight(hide ? 0 : QWIDGETSIZE_MAX);
+    m_view->setVerticalScrollBarPolicy(m_showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_view->setAlternatingRowColors(m_alternatingColours);
+    m_header->setFixedHeight(!m_showHeader ? 0 : QWIDGETSIZE_MAX);
     m_header->adjustSize();
-}
-
-void FilterWidget::setScrollbarEnabled(bool enabled)
-{
-    m_view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 }
 
 void FilterWidget::addDisplayMenu(QMenu* menu)
@@ -660,12 +734,39 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
     QObject::connect(coverBack, &QAction::triggered, this, [this]() { m_model->setCoverType(Track::Cover::Back); });
     QObject::connect(coverArtist, &QAction::triggered, this, [this]() { m_model->setCoverType(Track::Cover::Artist); });
 
+    auto* showHeaders = new QAction(tr("Show header"), menu);
+    showHeaders->setCheckable(true);
+    showHeaders->setChecked(!m_view->isHeaderHidden());
+    QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
+        m_showHeader = checked;
+        updateAppearance();
+    });
+
+    auto* showScrollBar = new QAction(tr("Show scrollbar"), menu);
+    showScrollBar->setCheckable(true);
+    showScrollBar->setChecked(m_view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
+    QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
+        m_showScrollbar = checked;
+        updateAppearance();
+    });
+
+    auto* altColours = new QAction(tr("Alternating row colours"), menu);
+    altColours->setCheckable(true);
+    altColours->setChecked(m_view->alternatingRowColors());
+    QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
+        m_alternatingColours = checked;
+        updateAppearance();
+    });
+
     displayMenu->addAction(displayList);
     displayMenu->addAction(displayArtBottom);
     displayMenu->addAction(displayArtLeft);
     displayMenu->addAction(displayArtNone);
     displayMenu->addSeparator();
     displayMenu->addAction(displaySummary);
+    displayMenu->addAction(showHeaders);
+    displayMenu->addAction(showScrollBar);
+    displayMenu->addAction(altColours);
     displayMenu->addSeparator();
     displayMenu->addAction(coverFront);
     displayMenu->addAction(coverBack);
@@ -679,74 +780,7 @@ void FilterWidget::filterHeaderMenu(const QPoint& pos)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* columnsMenu = new QMenu(FilterWidget::tr("Columns"), menu);
-    auto* columnGroup = new QActionGroup{menu};
-    columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
-
-    for(const auto& column : m_columnRegistry->items()) {
-        auto* columnAction = new QAction(column.name, menu);
-        columnAction->setData(column.id);
-        columnAction->setCheckable(true);
-        columnAction->setChecked(hasColumn(column.id));
-        columnAction->setEnabled(!hasColumn(column.id) || m_columns.size() > 1);
-        columnsMenu->addAction(columnAction);
-        columnGroup->addAction(columnAction);
-    }
-
-    menu->setDefaultAction(columnGroup->checkedAction());
-    QObject::connect(columnGroup, &QActionGroup::triggered, this, [this](QAction* action) {
-        const int columnId = action->data().toInt();
-        if(action->isChecked()) {
-            if(const auto column = m_columnRegistry->itemById(action->data().toInt())) {
-                if(m_multipleColumns) {
-                    m_columns.push_back(column.value());
-                }
-                else {
-                    m_columns = {column.value()};
-                }
-            }
-        }
-        else {
-            auto colIt
-                = std::ranges::find_if(m_columns, [columnId](const FilterColumn& col) { return col.id == columnId; });
-            if(colIt != m_columns.end()) {
-                const int removedIndex = static_cast<int>(std::distance(m_columns.begin(), colIt));
-                if(m_model->removeColumn(removedIndex)) {
-                    m_columns.erase(colIt);
-                }
-            }
-        }
-
-        m_tracks.clear();
-        emit filterUpdated();
-    });
-
-    auto* multiColAction = new QAction(FilterWidget::tr("Multiple columns"), menu);
-    multiColAction->setCheckable(true);
-    multiColAction->setChecked(m_multipleColumns);
-    multiColAction->setEnabled(m_columns.size() <= 1);
-    QObject::connect(multiColAction, &QAction::triggered, this, [this](bool checked) { m_multipleColumns = checked; });
-    columnsMenu->addSeparator();
-    columnsMenu->addAction(multiColAction);
-
-    auto* moreSettings = new QAction(FilterWidget::tr("More…"), columnsMenu);
-    QObject::connect(moreSettings, &QAction::triggered, this,
-                     [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::FiltersFields); });
-    columnsMenu->addSeparator();
-    columnsMenu->addAction(moreSettings);
-
-    menu->addMenu(columnsMenu);
-    menu->addSeparator();
-    m_header->addHeaderContextMenu(menu, mapToGlobal(pos));
-    menu->addSeparator();
-    m_header->addHeaderAlignmentMenu(menu, mapToGlobal(pos));
-
-    addDisplayMenu(menu);
-
-    menu->addSeparator();
-    auto* manageConnections = new QAction(FilterWidget::tr("Manage groups"), menu);
-    QObject::connect(manageConnections, &QAction::triggered, this, &FilterWidget::requestEditConnections);
-    menu->addAction(manageConnections);
+    addFilterHeaderMenu(menu, pos);
 
     menu->popup(mapToGlobal(pos));
 }

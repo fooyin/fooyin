@@ -243,7 +243,8 @@ FyLayout LayoutProvider::importLayout(const QString& path)
 void LayoutProvider::importLayout(QWidget* parent)
 {
     const QString layoutFile
-        = QFileDialog::getOpenFileName(parent, tr("Open Layout"), {}, tr("%1 Layout").arg("fooyin"_L1) + " (*.fyl)"_L1);
+        = QFileDialog::getOpenFileName(parent, tr("Open Layout"), {}, tr("%1 Layout").arg("fooyin"_L1) + " (*.fyl)"_L1,
+                                       nullptr, QFileDialog::DontResolveSymlinks);
 
     if(layoutFile.isEmpty()) {
         return;

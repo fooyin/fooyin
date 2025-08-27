@@ -25,6 +25,7 @@
 #include <utils/id.h>
 
 #include <QObject>
+#include <QVariant>
 
 namespace Fooyin {
 class PlaylistPrivate;
@@ -52,6 +53,11 @@ struct FYCORE_EXPORT PlaylistTrack
     bool operator==(const PlaylistTrack& other) const;
     bool operator!=(const PlaylistTrack& other) const;
     bool operator<(const PlaylistTrack& other) const;
+
+    operator QVariant() const
+    {
+        return QVariant::fromValue(*this);
+    }
 
     struct PlaylistTrackHash
     {

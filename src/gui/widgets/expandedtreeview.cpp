@@ -1172,6 +1172,7 @@ void TreeView::renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paint
             if(bg != Qt::NoBrush) {
                 painter->fillRect(opt.rect, bg);
             }
+            m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
             m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
 
             opt.rect = cellRect;
@@ -1349,6 +1350,7 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
         // Span first column of parents
         opt.rect.setX(0);
         opt.rect.setWidth(header()->length());
+        m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
         m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
         delegate(index)->paint(painter, opt, index);
         return;
@@ -1463,6 +1465,7 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
     for(const auto& rect : paintRects) {
         if(rect.width() > 0) {
             opt.rect = rect;
+            m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
             m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
             painter->fillRect(opt.rect, bg);
         }
@@ -1898,7 +1901,7 @@ void IconView::doItemLayout()
     // Determine the number of items per row
     const int count = itemCount();
     for(int i{1}; i <= count; ++i) {
-        const int requiredWidth = i * itemWidth(0) + (i - 1) * m_itemSpacing;
+        const int requiredWidth = (i * itemWidth(0)) + (i - 1) * m_itemSpacing;
         if(requiredWidth > (segEndPosition - segStartPosition)) {
             m_segmentSize = (i == 1) ? 1 : i - 1;
             break;
@@ -2128,11 +2131,18 @@ int IconView::itemHeight(int item) const
     int height = viewItem(item).height;
 
     if(height <= 0) {
-        if(m_uniformRowHeight == 0) {
-            const QSize hint   = indexSizeHint(index);
-            m_uniformRowHeight = hint.height();
+        if(m_p->m_uniformRowHeights) {
+            if(m_uniformRowHeight == 0) {
+                const QSize hint   = indexSizeHint(index);
+                m_uniformRowHeight = hint.height();
+            }
+            height = m_uniformRowHeight;
         }
-        height                = m_uniformRowHeight;
+        else {
+            const QSize hint = indexSizeHint(index);
+            height           = hint.height();
+        }
+
         viewItem(item).height = height;
     }
 
@@ -2194,6 +2204,12 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
 
     opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
 
+    if(m_view->alternatingRowColors()
+       && (m_p->m_viewMode == ExpandedTreeView::ViewMode::Tree
+           || m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right)) {
+        opt.features.setFlag(QStyleOptionViewItem::Alternate, index.row() & 1);
+    }
+
     const int left            = m_leftAndRight.first;
     const int right           = m_leftAndRight.second;
     const QModelIndex current = m_view->currentIndex();
@@ -2249,6 +2265,8 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
         mainOpt.showDecorationSelected = true;
         setupDecorationProps(&mainOpt);
 
+        m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
+        m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
         delegate(modelIndex)->paint(painter, mainOpt, modelIndex);
         break;
     }
@@ -3586,7 +3604,7 @@ void ExpandedTreeView::wheelEvent(QWheelEvent* event)
 
     const int delta     = event->angleDelta().y();
     const int increment = (delta > 0) ? 1 : -1;
-    int newSize         = iconSize().width() + increment * 2;
+    int newSize         = iconSize().width() + (increment * 2);
     newSize             = std::clamp(newSize, 16, 1024);
     changeIconSize({newSize, newSize});
 

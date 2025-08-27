@@ -52,6 +52,7 @@
 #include <queue>
 #include <span>
 #include <stack>
+#include <utility>
 
 using namespace Qt::StringLiterals;
 
@@ -506,47 +507,42 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
 
     m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePadding>(this, [this](int padding) {
         m_pixmapPadding = padding;
-        emit dataChanged({}, {}, {PlaylistItem::ImagePadding});
+        invalidateData();
     });
     m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePaddingTop>(this, [this](int padding) {
         m_pixmapPaddingTop = padding;
-        emit dataChanged({}, {}, {PlaylistItem::ImagePaddingTop});
+        invalidateData();
     });
     m_settings->subscribe<Settings::Gui::StarRatingSize>(this, [this](int size) {
         m_starRatingSize = size;
-        emit dataChanged({}, {}, {Qt::DisplayRole});
+        invalidateData();
     });
 
     auto updateColours = [this]() {
         m_playingColour = QApplication::palette().highlight().color();
         m_playingColour.setAlpha(90);
-        emit dataChanged({}, {}, {Qt::BackgroundRole});
+        invalidateData();
     };
     m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
     m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
 
-    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { emit dataChanged({}, {}, {Qt::DecorationRole}); });
+    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { invalidateData(); });
 
     QObject::connect(&m_populator, &PlaylistPopulator::finished, this, [this]() {
         m_playlistLoaded = true;
-        emit dataChanged({}, {});
+        invalidateData();
         emit playlistLoaded();
     });
 
-    QObject::connect(&m_populator, &PlaylistPopulator::populated, this,
-                     [this](PendingData data) { populateModel(data); });
+    QObject::connect(&m_populator, &PlaylistPopulator::populated, this, &PlaylistModel::populateModel);
+    QObject::connect(&m_populator, &PlaylistPopulator::populatedTrackGroup, this, &PlaylistModel::populateTrackGroup);
+    QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this, &PlaylistModel::updateModel);
 
-    QObject::connect(&m_populator, &PlaylistPopulator::populatedTrackGroup, this,
-                     [this](PendingData data) { populateTrackGroup(data); });
+    QObject::connect(
+        &m_populator, &PlaylistPopulator::tracksUpdated, this,
+        [this](const ItemList& data, const std::set<int>& columnsUpdated) { updateTracks(data, columnsUpdated); });
 
-    QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this,
-                     [this](ItemKeyMap data) { updateModel(data); });
-
-    QObject::connect(&m_populator, &PlaylistPopulator::tracksUpdated, this,
-                     [this](const ItemList& data) { updateTracks(data); });
-
-    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this,
-                     [this](const Track& track) { coverUpdated(track); });
+    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &PlaylistModel::coverUpdated);
 }
 
 PlaylistModel::~PlaylistModel()
@@ -589,7 +585,7 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
 
     if(role == Qt::DisplayRole) {
         if(!m_columns.empty()) {
-            if(section >= 0 && section < static_cast<int>(m_columns.size())) {
+            if(section >= 0 && std::cmp_less(section, m_columns.size())) {
                 return m_columns.at(section).name;
             }
         }
@@ -612,7 +608,7 @@ bool PlaylistModel::setHeaderData(int section, Qt::Orientation /*orientation*/, 
 
     changeColumnAlignment(section, value.value<Qt::Alignment>());
 
-    emit dataChanged({}, {}, {Qt::TextAlignmentRole});
+    invalidateData();
 
     return true;
 }
@@ -636,7 +632,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     }
 
     if(role == PlaylistItem::BaseKey) {
-        return QVariant::fromValue(item->baseKey());
+        return item->baseKey();
     }
 
     if(role == PlaylistItem::SingleColumnMode) {
@@ -893,7 +889,7 @@ void PlaylistModel::reset(const PlaylistTrackList& tracks)
 
     QMetaObject::invokeMethod(&m_populator, [this, tracks] {
         m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-        m_populator.run(m_currentPlaylist ? m_currentPlaylist->id() : UId{}, m_currentPreset, m_columns, tracks);
+        m_populator.run(m_currentPlaylist, m_currentPreset, m_columns, tracks);
     });
 }
 
@@ -947,7 +943,7 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index)
             const auto key = m_trackIndexes.at(index);
             if(m_nodes.contains(key)) {
                 auto& item = m_nodes.at(key);
-                return {indexOfItem(&item), false};
+                return {.index = indexOfItem(&item), .endOfPlaylist = false};
             }
         }
     }
@@ -957,7 +953,7 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index)
     const auto key       = m_trackIndexes.at(lastIndex);
     if(m_nodes.contains(key)) {
         auto& item = m_nodes.at(key);
-        return {indexOfItem(&item), true};
+        return {.index = indexOfItem(&item), .endOfPlaylist = true};
     }
 
     return {};
@@ -999,13 +995,17 @@ void PlaylistModel::insertTracks(const TrackGroups& tracks)
 {
     if(m_currentPlaylist) {
         QMetaObject::invokeMethod(&m_populator, [this, tracks] {
-            m_populator.runTracks(m_currentPlaylist->id(), m_currentPreset, m_columns, tracks);
+            m_populator.runTracks(m_currentPlaylist, m_currentPreset, m_columns, tracks);
         });
     }
 }
 
 void PlaylistModel::updateTracks(const std::vector<int>& indexes)
 {
+    if(!m_currentPlaylist) {
+        return;
+    }
+
     TrackGroups groups;
 
     auto startOfSequence = indexes.cbegin();
@@ -1036,6 +1036,17 @@ void PlaylistModel::updateTracks(const std::vector<int>& indexes)
 
 void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
 {
+    std::set<int> columns;
+    const auto count = static_cast<int>(m_columns.size());
+    for(int i{0}; i < count; ++i) {
+        columns.insert(i);
+    }
+
+    refreshTracks(indexes, columns);
+}
+
+void PlaylistModel::refreshTracks(const std::vector<int>& indexes, const std::set<int>& columns)
+{
     if(!m_currentPlaylist) {
         return;
     }
@@ -1051,9 +1062,9 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
         }
     }
 
-    QMetaObject::invokeMethod(&m_populator, [this, items] {
+    QMetaObject::invokeMethod(&m_populator, [this, columns, items] {
         m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-        m_populator.updateTracks(m_currentPlaylist->id(), m_currentPreset, m_columns, items);
+        m_populator.updateTracks(m_currentPlaylist, m_currentPreset, m_columns, columns, items);
     });
 }
 
@@ -1093,6 +1104,13 @@ void PlaylistModel::removeTracks(const TrackGroups& groups)
     }
 
     removeTracks(rows);
+
+    const auto columnsToUpdate = columnsNeedUpdating();
+    if(!columnsToUpdate.empty()) {
+        std::vector<int> indexes(m_currentPlaylist->trackCount());
+        std::iota(indexes.begin(), indexes.end(), 0);
+        refreshTracks(indexes, columnsToUpdate);
+    }
 }
 
 void PlaylistModel::updateHeader(Playlist* playlist)
@@ -1173,7 +1191,7 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
     m_playingIndex = indexAtPlaylistIndex(track.indexInPlaylist, true);
 
     if(std::exchange(m_playingTrack, track) != track) {
-        emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+        invalidateData();
     }
 
     if(m_stopAtIndex.isValid()
@@ -1187,12 +1205,22 @@ void PlaylistModel::playStateChanged(Player::PlayState state)
     if(state == Player::PlayState::Stopped) {
         m_stopAtIndex = QPersistentModelIndex{};
     }
+
     if(std::exchange(m_currentPlayState, state) != state) {
-        emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+        if(m_playingIndex.isValid()) {
+            if(const auto bottomRight = rightIndex(m_playingIndex); bottomRight.isValid()) {
+                emit dataChanged(m_playingIndex, bottomRight, {Qt::DecorationRole, Qt::BackgroundRole});
+            }
+        }
     }
 }
 
-void PlaylistModel::populateModel(PendingData& data)
+QModelIndex PlaylistModel::rightIndex(const QModelIndex& index) const
+{
+    return index.sibling(index.row(), columnCount({}) - 1);
+}
+
+void PlaylistModel::populateModel(PendingData data)
 {
     if(m_currentPlaylist && m_currentPlaylist->id() != data.playlistId) {
         return;
@@ -1237,7 +1265,7 @@ void PlaylistModel::populateModel(PendingData& data)
     }
 }
 
-void PlaylistModel::populateTrackGroup(PendingData& data)
+void PlaylistModel::populateTrackGroup(PendingData data)
 {
     if(m_currentPlaylist && m_currentPlaylist->id() != data.playlistId) {
         return;
@@ -1266,9 +1294,16 @@ void PlaylistModel::populateTrackGroup(PendingData& data)
     handleTrackGroup(data);
 
     tracksChanged();
+
+    const auto columnsToUpdate = columnsNeedUpdating();
+    if(!columnsToUpdate.empty()) {
+        std::vector<int> indexes(m_currentPlaylist->trackCount());
+        std::iota(indexes.begin(), indexes.end(), 0);
+        refreshTracks(indexes, columnsToUpdate);
+    }
 }
 
-void PlaylistModel::updateModel(ItemKeyMap& data)
+void PlaylistModel::updateModel(ItemKeyMap data)
 {
     if(m_resetting) {
         return;
@@ -1284,7 +1319,7 @@ void PlaylistModel::updateModel(ItemKeyMap& data)
     }
 }
 
-void PlaylistModel::updateTracks(const ItemList& tracks)
+void PlaylistModel::updateTracks(const ItemList& tracks, const std::set<int>& columnsUpdated)
 {
     if(m_resetting) {
         return;
@@ -1297,7 +1332,8 @@ void PlaylistModel::updateTracks(const ItemList& tracks)
             node->setState(PlaylistItem::State::None);
 
             const QModelIndex trackIndex = indexOfItem(node);
-            emit dataChanged(trackIndex, trackIndex.siblingAtColumn(columnCount(trackIndex) - 1), {});
+            const auto [first, last]     = std::ranges::minmax_element(columnsUpdated);
+            emit dataChanged(trackIndex.siblingAtColumn(*first), trackIndex.siblingAtColumn(*last), {});
         }
     }
 }
@@ -1341,15 +1377,14 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         }
         if(const auto* firstSibling = itemForIndex(first)) {
             const auto firstTrack = std::get<PlaylistTrackItem>(firstSibling->data());
-            return QVariant::fromValue(
-                m_coverProvider->trackCoverThumbnail(firstTrack.track().track, {size, size}, type));
+            return m_coverProvider->trackCoverThumbnail(firstTrack.track().track, {size, size}, type);
         }
         return {};
     };
 
     if(role == Qt::DisplayRole && !m_columns.empty()
        && m_columns.at(column).field == QLatin1String{Constants::RatingEditor}) {
-        return QVariant::fromValue(StarRating{track.rating(), 5, m_starRatingSize});
+        return StarRating{track.rating(), 5, m_starRatingSize};
     }
 
     switch(role) {
@@ -1381,7 +1416,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
                 break;
             }
 
-            return QVariant::fromValue(trackItem.column(column).text);
+            return trackItem.column(column).text;
         }
         case(PlaylistItem::Role::DecorationPosition): {
             if(singleColumnMode) {
@@ -1397,11 +1432,11 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         case(PlaylistItem::Role::ImagePaddingTop):
             return m_pixmapPaddingTop;
         case(PlaylistItem::Role::Left):
-            return QVariant::fromValue(trackItem.left().text);
+            return trackItem.left().text;
         case(PlaylistItem::Role::Right):
-            return QVariant::fromValue(trackItem.right().text);
+            return trackItem.right().text;
         case(PlaylistItem::Role::ItemData):
-            return QVariant::fromValue<PlaylistTrack>(trackItem.track());
+            return trackItem.track();
         case(Qt::BackgroundRole): {
             if(!track.isEnabled()) {
                 return m_disabledColour;
@@ -1461,15 +1496,15 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
 
     switch(role) {
         case(PlaylistItem::Role::Title):
-            return QVariant::fromValue(header.title().text);
+            return header.title().text;
         case(PlaylistItem::Role::Simple):
             return m_currentPreset.header.simple;
         case(PlaylistItem::Role::Subtitle):
-            return QVariant::fromValue(header.subtitle().text);
+            return header.subtitle().text;
         case(PlaylistItem::Role::Info):
-            return QVariant::fromValue(header.info().text);
+            return header.info().text;
         case(PlaylistItem::Role::Right):
-            return QVariant::fromValue(header.sideText().text);
+            return header.sideText().text;
         case(Qt::DecorationRole): {
             if(m_currentPreset.header.simple || !m_currentPreset.header.showCover) {
                 return {};
@@ -1497,9 +1532,9 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
 
     switch(role) {
         case(PlaylistItem::Role::Title):
-            return QVariant::fromValue(header.title().text);
+            return header.title().text;
         case(PlaylistItem::Role::Subtitle):
-            return QVariant::fromValue(header.subtitle().text);
+            return header.subtitle().text;
         default:
             break;
     }
@@ -1953,7 +1988,7 @@ bool PlaylistModel::insertPlaylistRows(const QModelIndex& target, int firstRow, 
                                        const PlaylistItemList& children)
 {
     const int diff = firstRow == lastRow ? 1 : lastRow - firstRow + 1;
-    if(static_cast<int>(children.size()) != diff) {
+    if(std::cmp_not_equal(children.size(), diff)) {
         return false;
     }
 
@@ -1974,7 +2009,7 @@ bool PlaylistModel::movePlaylistRows(const QModelIndex& source, int firstRow, in
                                      int row, const PlaylistItemList& children)
 {
     const int diff = firstRow == lastRow ? 1 : lastRow - firstRow + 1;
-    if(static_cast<int>(children.size()) != diff) {
+    if(std::cmp_not_equal(children.size(), diff)) {
         return false;
     }
 
@@ -2218,6 +2253,20 @@ std::vector<int> PlaylistModel::pixmapColumns() const
     return columns;
 }
 
+std::set<int> PlaylistModel::columnsNeedUpdating() const
+{
+    std::set<int> columns;
+
+    for(int i{0}; const auto& column : m_columns) {
+        if(column.field == "%list_index%"_L1) {
+            columns.emplace(i);
+        }
+        ++i;
+    }
+
+    return columns;
+}
+
 void PlaylistModel::coverUpdated(const Track& track)
 {
     if(!m_trackParents.contains(track.id())) {
@@ -2321,7 +2370,7 @@ PlaylistModel::TrackItemResult PlaylistModel::itemForTrackIndex(int index)
     if(m_trackIndexes.contains(index)) {
         const auto& key = m_trackIndexes.at(index);
         if(m_nodes.contains(key)) {
-            return {&m_nodes.at(key), false};
+            return {.item = &m_nodes.at(key), .endOfPlaylist = false};
         }
     }
 
@@ -2330,7 +2379,7 @@ PlaylistModel::TrackItemResult PlaylistModel::itemForTrackIndex(int index)
     while(current->childCount() > 0) {
         current = current->child(current->childCount() - 1);
     }
-    return {current, true};
+    return {.item = current, .endOfPlaylist = true};
 }
 } // namespace Fooyin
 

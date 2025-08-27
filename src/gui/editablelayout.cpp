@@ -30,7 +30,6 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
-#include <gui/widgetcontainer.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/overlaywidget.h>
 #include <utils/actions/actioncontainer.h>
@@ -47,8 +46,6 @@
 #include <QMouseEvent>
 #include <QStyle>
 #include <QUndoStack>
-
-#include <stack>
 
 using namespace Qt::StringLiterals;
 
@@ -608,6 +605,11 @@ FyLayout EditableLayout::saveCurrentToLayout(const QString& name)
     }
 
     return layout;
+}
+
+FyWidget* EditableLayout::root() const
+{
+    return p->m_root;
 }
 
 FyWidget* EditableLayout::findWidget(const Id& id) const

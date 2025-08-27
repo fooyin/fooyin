@@ -22,8 +22,11 @@
 #include "fygui_export.h"
 
 #include <gui/fywidget.h>
+#include <gui/widgetcontainer.h>
 
 #include <QWidget>
+
+#include <stack>
 
 namespace Fooyin {
 class ActionManager;
@@ -46,9 +49,46 @@ public:
     void initialise();
     FyLayout saveCurrentToLayout(const QString& name);
 
+    [[nodiscard]] FyWidget* root() const;
+
     [[nodiscard]] FyWidget* findWidget(const Id& id) const;
     [[nodiscard]] WidgetList findWidgetsByName(const QString& name) const;
     [[nodiscard]] WidgetList findWidgetsByFeatures(const FyWidget::Features& features) const;
+
+    template <typename T>
+    [[nodiscard]] std::vector<T*> findWidgetsByType() const
+    {
+        if(!root()) {
+            return {};
+        }
+
+        std::vector<T*> widgets;
+
+        std::stack<FyWidget*> widgetsToCheck;
+        widgetsToCheck.push(root());
+
+        while(!widgetsToCheck.empty()) {
+            auto* current = widgetsToCheck.top();
+            widgetsToCheck.pop();
+
+            if(!current) {
+                continue;
+            }
+
+            if(auto* w = qobject_cast<T*>(current)) {
+                widgets.push_back(w);
+            }
+
+            if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
+                const auto containerWidgets = container->widgets();
+                for(FyWidget* containerWidget : containerWidgets) {
+                    widgetsToCheck.push(containerWidget);
+                }
+            }
+        }
+
+        return widgets;
+    }
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 

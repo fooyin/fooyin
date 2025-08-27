@@ -19,9 +19,10 @@
 
 #include <gui/trackselectioncontroller.h>
 
-#include "core/library/libraryutils.h"
+#include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
 
+#include <core/library/libraryutils.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -59,7 +60,8 @@ class TrackSelectionControllerPrivate : public QObject
 
 public:
     TrackSelectionControllerPrivate(TrackSelectionController* self, ActionManager* actionManager,
-                                    SettingsManager* settings, PlaylistController* playlistController);
+                                    AudioLoader* audioLoader, SettingsManager* settings,
+                                    PlaylistController* playlistController);
 
     void setupMenu();
 
@@ -86,6 +88,7 @@ public:
     TrackSelectionController* m_self;
 
     ActionManager* m_actionManager;
+    AudioLoader* m_audioLoader;
     SettingsManager* m_settings;
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
@@ -108,16 +111,20 @@ public:
     QAction* m_queueNext;
     QAction* m_removeFromQueue;
     QAction* m_openFolder;
+    QAction* m_searchArtwork;
+    QAction* m_searchArtworkQuick;
+    QAction* m_removeArtwork;
     QAction* m_openProperties;
 };
 
 TrackSelectionControllerPrivate::TrackSelectionControllerPrivate(TrackSelectionController* self,
-                                                                 ActionManager* actionManager,
+                                                                 ActionManager* actionManager, AudioLoader* audioLoader,
                                                                  SettingsManager* settings,
                                                                  PlaylistController* playlistController)
     : QObject{self}
     , m_self{self}
     , m_actionManager{actionManager}
+    , m_audioLoader{audioLoader}
     , m_settings{settings}
     , m_playlistController{playlistController}
     , m_playlistHandler{m_playlistController->playlistHandler()}
@@ -132,6 +139,9 @@ TrackSelectionControllerPrivate::TrackSelectionControllerPrivate(TrackSelectionC
     , m_queueNext{new QAction(tr("Queue to play next"), m_tracksMenu)}
     , m_removeFromQueue{new QAction(tr("Remove from playback queue"), m_tracksMenu)}
     , m_openFolder{new QAction(tr("Open containing folder"), m_tracksMenu)}
+    , m_searchArtwork{new QAction(tr("Search for artwork…"), m_tracksMenu)}
+    , m_searchArtworkQuick{new QAction(tr("Quicksearch for artwork"), m_tracksMenu)}
+    , m_removeArtwork{new QAction(tr("Remove all artwork"), m_tracksMenu)}
     , m_openProperties{new QAction(tr("Properties"), m_tracksMenu)}
 {
     setupMenu();
@@ -236,6 +246,43 @@ void TrackSelectionControllerPrivate::setupMenu()
         }
     });
     m_tracksMenu->addAction(openFolderCmd);
+
+    auto* artworkMenu = m_actionManager->createMenu(Constants::Menus::Context::Artwork);
+    artworkMenu->menu()->setTitle(TrackSelectionController::tr("Artwork"));
+    m_tracksMenu->addMenu(artworkMenu);
+
+    m_searchArtwork->setStatusTip(tr("Search for artwork for the selected tracks"));
+    auto* searchArtworkCmd = m_actionManager->registerAction(m_searchArtwork, Constants::Actions::SearchArtwork);
+    searchArtworkCmd->setCategories(tracksCategory);
+    QObject::connect(m_searchArtwork, &QAction::triggered, m_tracksMenu, [this]() {
+        if(hasTracks()) {
+            emit m_self->requestArtworkSearch(m_self->selectedTracks(), false);
+        }
+    });
+    artworkMenu->addAction(searchArtworkCmd);
+
+    // m_searchArtworkQuick->setStatusTip(tr("Search for artwork for the selected files, automatically choosing the best
+    // "
+    //                                       "artwork based on the current settings"));
+    // auto* searchArtworkQuickCmd
+    //     = m_actionManager->registerAction(m_searchArtworkQuick, Constants::Actions::SearchArtworkQuick);
+    // searchArtworkQuickCmd->setCategories(tracksCategory);
+    // QObject::connect(m_searchArtworkQuick, &QAction::triggered, m_tracksMenu, [this]() {
+    //     if(hasTracks()) {
+    //         emit m_self->requestArtworkSearch(m_self->selectedTracks(), true);
+    //     }
+    // });
+    // artworkMenu->addAction(searchArtworkQuickCmd);
+
+    m_removeArtwork->setStatusTip(tr("Remove all artwork associated with the selected tracks (embedded, directory)"));
+    auto* removeArtworkCmd = m_actionManager->registerAction(m_removeArtwork, Constants::Actions::RemoveArtwork);
+    removeArtworkCmd->setCategories(tracksCategory);
+    QObject::connect(m_removeArtwork, &QAction::triggered, m_tracksMenu, [this]() {
+        if(hasTracks()) {
+            emit m_self->requestArtworkRemoval(m_self->selectedTracks());
+        }
+    });
+    artworkMenu->addAction(removeArtworkCmd);
 
     m_tracksMenu->addSeparator(Actions::Groups::Three);
 
@@ -485,7 +532,7 @@ void TrackSelectionControllerPrivate::updateActionState()
 {
     const bool haveTracks = hasTracks();
 
-    auto canDequeue = [this]() {
+    const auto canDequeue = [this]() {
         const auto selection = m_self->selectedTracks();
         std::set<Track> selectedTracks;
         for(const Track& track : selection) {
@@ -497,7 +544,7 @@ void TrackSelectionControllerPrivate::updateActionState()
         });
     };
 
-    auto allTracksInSameFolder = [this]() {
+    const auto allTracksInSameFolder = [this]() {
         const auto selection    = m_self->selectedTracks();
         const Track& firstTrack = selection.front();
         const QString firstPath = firstTrack.isInArchive() ? firstTrack.archivePath() : firstTrack.path();
@@ -507,21 +554,40 @@ void TrackSelectionControllerPrivate::updateActionState()
                                    [&firstPath](const QString& folderPath) { return folderPath == firstPath; });
     };
 
+    const auto canWrite = [this]() {
+        return std::ranges::all_of(m_self->selectedTracks(), [this](const Track& track) {
+            return !track.hasCue() && !track.isInArchive() && m_audioLoader->canWriteMetadata(track);
+        });
+    };
+
+    const auto canWriteCover = [this, canWrite]() {
+        return canWrite()
+            || m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>()
+                       .value<ArtworkSaveMethods>()
+                       .value(Track::Cover::Front)
+                       .method
+                   == ArtworkSaveMethod::Directory;
+    };
+
     m_addCurrent->setEnabled(haveTracks);
     m_addActive->setEnabled(haveTracks && m_playlistHandler->activePlaylist());
     m_sendCurrent->setEnabled(haveTracks);
     m_sendNew->setEnabled(haveTracks);
     m_openFolder->setEnabled(haveTracks && allTracksInSameFolder());
+    m_searchArtwork->setEnabled(haveTracks && canWriteCover());
+    m_searchArtworkQuick->setEnabled(haveTracks && canWriteCover());
     m_openProperties->setEnabled(haveTracks);
     m_addToQueue->setEnabled(haveTracks);
     m_queueNext->setEnabled(haveTracks);
     m_removeFromQueue->setVisible(haveTracks && canDequeue());
 }
 
-TrackSelectionController::TrackSelectionController(ActionManager* actionManager, SettingsManager* settings,
-                                                   PlaylistController* playlistController, QObject* parent)
+TrackSelectionController::TrackSelectionController(ActionManager* actionManager, AudioLoader* audioLoader,
+                                                   SettingsManager* settings, PlaylistController* playlistController,
+                                                   QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<TrackSelectionControllerPrivate>(this, actionManager, settings, playlistController)}
+    , p{std::make_unique<TrackSelectionControllerPrivate>(this, actionManager, audioLoader, settings,
+                                                          playlistController)}
 {
     QObject::connect(qApp, &QApplication::focusChanged, this,
                      [this](QWidget* /*old*/, QWidget* now) { p->updateActiveContext(now); });

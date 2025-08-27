@@ -552,8 +552,8 @@ ScriptResult ScriptRegistry::value(const QString& var, const Playlist& playlist)
         return calculateResult(p->m_listProperties.at(variable)(tracks));
     }
 
-    if(!tracks.empty()) {
-        return value(var, playlist.currentTrack());
+    if(auto track = playlist.track(playlist.currentTrackIndex())) {
+        return value(var, track.value());
     }
 
     return {};

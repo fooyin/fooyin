@@ -434,8 +434,9 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
 
         m_currCoverKey = coverKey;
         QFile file{currentCoverPath()};
-        file.open(QIODevice::WriteOnly);
-        cover.save(&file, "JPG", 85);
+        if(file.open(QIODevice::WriteOnly)) {
+            cover.save(&file, "JPG", 85);
+        }
     }
 
     m_currentMetaData[u"mpris:artUrl"_s] = QUrl::fromLocalFile(currentCoverPath()).toString();

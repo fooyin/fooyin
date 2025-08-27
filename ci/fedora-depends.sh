@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/sh -eux
 
 dnf -y update
 dnf -y upgrade
@@ -31,4 +31,5 @@ dnf -y install --skip-broken \
      game-music-emu-devel \
      libarchive-devel \
      libsndfile-devel \
-     libebur128-devel
+     libebur128-devel \
+     gtest-devel

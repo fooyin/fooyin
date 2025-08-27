@@ -61,7 +61,7 @@ TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     verticalHeader()->setVisible(false);
 }
 
-void TagEditorView::setTagEditTriggers(EditTrigger triggers)
+void TagEditorView::setTagEditTriggers(EditTriggers triggers)
 {
     m_editTrigger = triggers;
     setEditTriggers(triggers);
@@ -148,6 +148,9 @@ void TagEditorView::mousePressEvent(QMouseEvent* event)
     if(event->button() == Qt::RightButton || (index.isValid() && index.row() == m_ratingRow)) {
         // Don't start editing on right-click
         setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+    else if(index.column() == 1) {
+        setEditTriggers(m_editTrigger | QAbstractItemView::CurrentChanged);
     }
     else {
         setEditTriggers(m_editTrigger);

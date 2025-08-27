@@ -91,6 +91,12 @@ void ExtendableTableModel::moveRowsUp(const QModelIndexList& /*indexes*/) { }
 
 void ExtendableTableModel::moveRowsDown(const QModelIndexList& /*indexes*/) { }
 
+void ExtendableTableModel::invalidateData()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 class ExtendableTableViewPrivate
 {
 public:

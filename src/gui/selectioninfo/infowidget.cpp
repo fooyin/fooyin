@@ -196,7 +196,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* showHeaders = new QAction(tr("Show header"), this);
+    auto* showHeaders = new QAction(tr("Show header"), menu);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!m_view->isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
@@ -213,7 +213,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     });
     menu->addAction(showScrollBar);
 
-    auto* altColours = new QAction(tr("Alternating row colours"), this);
+    auto* altColours = new QAction(tr("Alternating row colours"), menu);
     altColours->setCheckable(true);
     altColours->setChecked(m_view->alternatingRowColors());
     QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
@@ -223,7 +223,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
 
     const auto options = m_model->options();
 
-    auto* showMetadata = new QAction(tr("Metadata"), this);
+    auto* showMetadata = new QAction(tr("Metadata"), menu);
     showMetadata->setCheckable(true);
     showMetadata->setChecked(options & InfoItem::Metadata);
     QAction::connect(showMetadata, &QAction::triggered, this, [this](bool checked) {
@@ -231,7 +231,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
-    auto* showExtendedMetadata = new QAction(tr("Extended metadata"), this);
+    auto* showExtendedMetadata = new QAction(tr("Extended metadata"), menu);
     showExtendedMetadata->setCheckable(true);
     showExtendedMetadata->setChecked(options & InfoItem::ExtendedMetadata);
     QAction::connect(showExtendedMetadata, &QAction::triggered, this, [this](bool checked) {
@@ -239,7 +239,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
-    auto* showLocation = new QAction(tr("Location"), this);
+    auto* showLocation = new QAction(tr("Location"), menu);
     showLocation->setCheckable(true);
     showLocation->setChecked(options & InfoItem::Location);
     QAction::connect(showLocation, &QAction::triggered, this, [this](bool checked) {
@@ -247,7 +247,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
-    auto* showGeneral = new QAction(tr("General"), this);
+    auto* showGeneral = new QAction(tr("General"), menu);
     showGeneral->setCheckable(true);
     showGeneral->setChecked(options & InfoItem::General);
     QAction::connect(showGeneral, &QAction::triggered, this, [this](bool checked) {
@@ -255,7 +255,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
-    auto* showReplayGain = new QAction(tr("ReplayGain"), this);
+    auto* showReplayGain = new QAction(tr("ReplayGain"), menu);
     showReplayGain->setCheckable(true);
     showReplayGain->setChecked(options & InfoItem::ReplayGain);
     QAction::connect(showReplayGain, &QAction::triggered, this, [this](bool checked) {
@@ -263,7 +263,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
-    auto* showOther = new QAction(tr("Other"), this);
+    auto* showOther = new QAction(tr("Other"), menu);
     showOther->setCheckable(true);
     showOther->setChecked(options & InfoItem::Other);
     QAction::connect(showOther, &QAction::triggered, this, [this](bool checked) {

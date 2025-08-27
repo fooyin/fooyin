@@ -37,7 +37,7 @@ public:
     using ScriptRegistry::isVariable;
     using ScriptRegistry::value;
 
-    void setup(const UId& playlistId, const PlaybackQueue& queue);
+    void setup(Playlist* playlist, const PlaybackQueue& queue);
     void setTrackProperties(int index, int depth);
 
     [[nodiscard]] bool isVariable(const QString& var, const Track& track) const override;

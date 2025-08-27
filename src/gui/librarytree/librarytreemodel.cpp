@@ -89,9 +89,7 @@ Fooyin::LibraryTreeItem* treeItem(const QModelIndex& index)
 namespace Fooyin {
 LibraryTreeSortModel::LibraryTreeSortModel(QObject* parent)
     : QSortFilterProxyModel{parent}
-{
-    m_collator.setNumericMode(true);
-}
+{ }
 
 bool LibraryTreeSortModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
@@ -435,7 +433,7 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
 
     p->m_settings->subscribe<Settings::Gui::Internal::LibTreeIconSize>(this, [this](const auto& size) {
         p->m_iconSize = CoverProvider::findThumbnailSize(size.toSize());
-        emit dataChanged({}, {}, {Qt::DecorationRole});
+        invalidateData();
     });
 }
 
@@ -450,7 +448,7 @@ void LibraryTreeModel::resetPalette()
 {
     p->m_playingColour = QApplication::palette().highlight().color();
     p->m_playingColour.setAlpha(90);
-    emit dataChanged({}, {}, {Qt::BackgroundRole});
+    invalidateData();
 }
 
 void LibraryTreeModel::setRowHeight(int height)

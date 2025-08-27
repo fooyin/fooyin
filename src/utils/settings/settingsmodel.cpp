@@ -21,8 +21,7 @@
 
 #include <utils/settings/settingsmanager.h>
 #include <utils/settings/settingspage.h>
-
-#include <QCollator>
+#include <utils/stringcollator.h>
 
 namespace Fooyin {
 SettingsItem::SettingsItem()
@@ -55,10 +54,9 @@ void SettingsItem::sort()
         return;
     }
 
-    QCollator collator;
-    collator.setNumericMode(true);
+    StringCollator collator;
 
-    std::ranges::sort(m_children, [collator](const SettingsItem* lhs, const SettingsItem* rhs) {
+    std::ranges::sort(m_children, [&collator](const SettingsItem* lhs, const SettingsItem* rhs) {
         const auto cmp = collator.compare(lhs->m_data->name, rhs->m_data->name);
         if(cmp == 0) {
             return false;

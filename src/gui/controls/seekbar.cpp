@@ -344,14 +344,14 @@ void SeekBar::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* showLabels = new QAction(tr("Show labels"), this);
+    auto* showLabels = new QAction(tr("Show labels"), menu);
     showLabels->setCheckable(true);
     showLabels->setChecked(m_container->labelsEnabled());
     QObject::connect(showLabels, &QAction::triggered, this,
                      [this](bool checked) { m_container->setLabelsEnabled(checked); });
     menu->addAction(showLabels);
 
-    auto* showElapsed = new QAction(tr("Show elapsed total"), this);
+    auto* showElapsed = new QAction(tr("Show elapsed total"), menu);
     showElapsed->setCheckable(true);
     showElapsed->setChecked(m_container->elapsedTotal());
     QObject::connect(showElapsed, &QAction::triggered, this,

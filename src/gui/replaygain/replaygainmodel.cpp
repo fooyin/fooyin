@@ -68,7 +68,8 @@ TrackList ReplayGainModel::applyChanges()
         }
     }
 
-    emit dataChanged({}, {}, {Qt::FontRole});
+    beginResetModel();
+    endResetModel();
 
     return tracks;
 }

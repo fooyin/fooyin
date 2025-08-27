@@ -23,6 +23,7 @@
 
 #include <core/track.h>
 
+#include <QFuture>
 #include <QObject>
 
 #include <memory>
@@ -69,6 +70,9 @@ public:
      */
     void setUsePlaceholder(bool enabled);
 
+    /** Returns @c true if @p track has a cover of the specific @p type. */
+    [[nodiscard]] QFuture<bool> trackHasCover(const Track& track, Track::Cover type = Track::Cover::Front) const;
+
     /*!
      * This will return the picture of @p type for the @p track if it exists in the cache.
      * If not, it will return a QPixmap representing 'no cover', and the coverAdded signal
@@ -104,6 +108,9 @@ public:
      */
     [[nodiscard]] QPixmap trackCoverThumbnail(const Track& track, const QSize& size,
                                               Track::Cover type = Track::Cover::Front) const;
+
+    // Returns the placeholder cover used if a track doesn't have any artwork
+    [[nodiscard]] QPixmap placeholderCover() const;
 
     /** Returns an equivalent thumbnail size for the given @p size */
     static ThumbnailSize findThumbnailSize(const QSize& size);

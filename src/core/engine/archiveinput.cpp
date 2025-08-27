@@ -61,17 +61,17 @@ std::optional<AudioFormat> ArchiveDecoder::init(const AudioSource& /*source*/, c
                                                 DecoderOptions options)
 {
     const QString archivePath = track.archivePath();
-    auto* reader              = m_audioLoader->archiveReaderForFile(archivePath);
-    if(!reader) {
+    m_archiveReader           = m_audioLoader->archiveReaderForFile(archivePath);
+    if(!m_archiveReader) {
         return {};
     }
 
-    if(!reader->init(archivePath)) {
+    if(!m_archiveReader->init(archivePath)) {
         return {};
     }
 
     const QString filepath = track.pathInArchive();
-    m_device               = reader->entry(filepath);
+    m_device               = m_archiveReader->entry(filepath);
     if(!m_device) {
         return {};
     }
@@ -84,7 +84,7 @@ std::optional<AudioFormat> ArchiveDecoder::init(const AudioSource& /*source*/, c
     AudioSource aSource;
     aSource.filepath      = filepath;
     aSource.device        = m_device.get();
-    aSource.archiveReader = reader;
+    aSource.archiveReader = m_archiveReader.get();
 
     return m_decoder->init(aSource, track, options);
 }
@@ -181,7 +181,7 @@ bool GeneralArchiveReader::init(const AudioSource& source)
     AudioSource aSource;
     aSource.filepath      = filepath;
     aSource.device        = m_device.get();
-    aSource.archiveReader = m_archiveReader;
+    aSource.archiveReader = m_archiveReader.get();
 
     return m_reader->init(aSource);
 }
@@ -199,7 +199,7 @@ bool GeneralArchiveReader::readTrack(const AudioSource& source, Track& track)
         const QDateTime modifiedTime = QFileInfo{track.archivePath()}.lastModified();
         track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
     }
-    trackSource.archiveReader = m_archiveReader;
+    trackSource.archiveReader = m_archiveReader.get();
     return m_reader && m_reader->readTrack(trackSource, track);
 }
 
@@ -210,7 +210,7 @@ QByteArray GeneralArchiveReader::readCover(const AudioSource& /*source*/, const 
         AudioSource coverSource;
         coverSource.filepath      = track.filepath();
         coverSource.device        = m_device.get();
-        coverSource.archiveReader = m_archiveReader;
+        coverSource.archiveReader = m_archiveReader.get();
         coverData                 = m_reader->readCover(coverSource, track, cover);
     }
     if(coverData.isEmpty() && m_archiveReader && m_archiveReader->init(track.archivePath())) {
@@ -228,7 +228,7 @@ bool GeneralArchiveReader::writeTrack(const AudioSource& /*source*/, const Track
     AudioSource trackSource;
     trackSource.filepath      = track.filepath();
     trackSource.device        = m_device.get();
-    trackSource.archiveReader = m_archiveReader;
+    trackSource.archiveReader = m_archiveReader.get();
     return m_reader->writeTrack(trackSource, track, options);
 }
 } // namespace Fooyin
