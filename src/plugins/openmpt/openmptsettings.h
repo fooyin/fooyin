@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QDialog>
+#include <QSpinBox>
 
 class QCheckBox;
 class QComboBox;
@@ -50,6 +51,7 @@ private:
     SliderEditor* m_volRamping;
     QCheckBox* m_amigaResampler;
     QComboBox* m_interpolationFilter;
+    QSpinBox* m_loopCount;
 };
 } // namespace OpenMpt
 } // namespace Fooyin

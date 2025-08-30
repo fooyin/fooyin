@@ -60,6 +60,7 @@ void setupModule(Fooyin::SettingsManager* settings, openmpt::module* module)
                              settings->value<InterpolationFilter>());
     module->set_render_param(openmpt::module::RENDER_VOLUMERAMPING_STRENGTH, settings->value<VolumeRamping>());
     module->ctl_set_boolean("render.resampler.emulate_amiga", settings->value<EmulateAmiga>());
+    module->set_repeat_count(settings->value<LoopCount>());
 }
 } // namespace
 

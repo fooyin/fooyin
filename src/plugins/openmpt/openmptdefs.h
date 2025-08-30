@@ -32,6 +32,7 @@ enum OpenMptSettings : uint32_t
     VolumeRamping       = 3 | Type::Int,
     InterpolationFilter = 4 | Type::Int,
     EmulateAmiga        = 5 | Type::Bool,
+    LoopCount           = 6 | Type::Int,
 };
 Q_ENUM_NS(OpenMptSettings)
 } // namespace Settings::OpenMpt
