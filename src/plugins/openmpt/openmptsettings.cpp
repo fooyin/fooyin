@@ -32,6 +32,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
 
 using namespace Qt::StringLiterals;
 
@@ -44,6 +45,7 @@ OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
     , m_volRamping{new SliderEditor(tr("Volume ramping"), this)}
     , m_amigaResampler{new QCheckBox(tr("Use Amiga resampler"), this)}
     , m_interpolationFilter{new QComboBox(this)}
+    , m_loopCount{new QSpinBox(this)}
 {
     setWindowTitle(tr("%1 Settings").arg(u"OpenMPT"_s));
     setModal(true);
@@ -66,6 +68,13 @@ OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
     m_volRamping->addSpecialValue(-1, tr("Default"));
     m_volRamping->addSpecialValue(0, tr("Off"));
 
+    auto* loopLabel = new QLabel(tr("Loop (-1 is infinite)") + ":"_L1, this);
+    
+    m_loopCount->setRange(-1, 16); //OpenMPT uses -1 for infinite not 0...
+    m_loopCount->setSingleStep(1);
+    m_loopCount->setSuffix(u" "_s + tr("times"));
+    
+
     auto* filterLabel = new QLabel(tr("Interpolation") + ":"_L1, this);
 
     m_interpolationFilter->addItem(tr("Default"), 0);
@@ -84,6 +93,8 @@ OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
     layout->addWidget(filterLabel, row, 0);
     layout->addWidget(m_interpolationFilter, row++, 1, 1, 4);
     layout->addWidget(m_amigaResampler, row++, 0, 1, 4);
+    layout->addWidget(loopLabel, row, 0);
+    layout->addWidget(m_loopCount, row++, 1,1,4);
     layout->addWidget(buttons, row++, 0, 1, 4, Qt::AlignBottom);
     layout->setColumnStretch(2, 1);
 
@@ -97,6 +108,7 @@ void OpenMptSettings::accept()
     m_settings->set<Settings::OpenMpt::VolumeRamping>(m_volRamping->value());
     m_settings->set<Settings::OpenMpt::InterpolationFilter>(m_interpolationFilter->currentData().toInt());
     m_settings->set<Settings::OpenMpt::EmulateAmiga>(m_amigaResampler->isChecked());
+    m_settings->set<Settings::OpenMpt::LoopCount>(m_loopCount->value());
 
     done(Accepted);
 }
@@ -109,6 +121,7 @@ void OpenMptSettings::load()
     m_interpolationFilter->setCurrentIndex(
         m_interpolationFilter->findData(m_settings->value<Settings::OpenMpt::InterpolationFilter>()));
     m_amigaResampler->setChecked(m_settings->value<Settings::OpenMpt::EmulateAmiga>());
+    m_loopCount->setValue(m_settings->value<Settings::OpenMpt::LoopCount>());
 }
 
 void OpenMptSettings::reset()
@@ -118,6 +131,7 @@ void OpenMptSettings::reset()
     m_settings->reset<Settings::OpenMpt::VolumeRamping>();
     m_settings->reset<Settings::OpenMpt::InterpolationFilter>();
     m_settings->reset<Settings::OpenMpt::EmulateAmiga>();
+    m_settings->reset<Settings::OpenMpt::LoopCount>();
 
     load();
 }
