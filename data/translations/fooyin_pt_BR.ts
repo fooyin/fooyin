@@ -302,7 +302,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="164"/>
         <source>%1 of %2 files have artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 de %2 arquivos tem capa</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="248"/>
@@ -2047,7 +2047,7 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="67"/>
         <source>times</source>
-        <translation type="unfinished"></translation>
+        <translation>tempos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="73"/>
@@ -2635,12 +2635,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="220"/>
         <source>Seek step</source>
-        <translation type="unfinished"></translation>
+        <translation>Passo de busca</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="222"/>
         <source>Volume step</source>
-        <translation type="unfinished"></translation>
+        <translation>Passo de volume</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="226"/>
@@ -2696,22 +2696,22 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
         <source>S&amp;earching help</source>
-        <translation type="unfinished"></translation>
+        <translation>Pes&amp;quisando ajuda</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
         <source>Open the search documentation</source>
-        <translation type="unfinished"></translation>
+        <translation>Abre a documentação de pesquisa</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="68"/>
         <source>&amp;Frequently asked questions</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Perguntas frequentes</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
         <source>Open the FAQ</source>
-        <translation type="unfinished"></translation>
+        <translation>Abre o FAQ</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="73"/>
@@ -2721,7 +2721,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
         <source>Open the about dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Abre a caixa de diálogo de sobre</translation>
     </message>
 </context>
 <context>
@@ -2744,12 +2744,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="134"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Ganho de repetição</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="137"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Outro</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="149"/>
@@ -2814,7 +2814,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="180"/>
         <source>Subsong Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Índice de subsons</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
@@ -2884,22 +2884,22 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="230"/>
         <source>Codec Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Perfil do Codec</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="232"/>
         <source>Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramenta</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="233"/>
         <source>Tag Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipos de tags</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="247"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Ganho de trilha</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="252"/>
