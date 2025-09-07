@@ -1672,7 +1672,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="521"/>
         <source>Manage groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarządzanie grupami</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="716"/>
@@ -1692,7 +1692,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="227"/>
         <source>Filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia filtrów</translation>
     </message>
 </context>
 <context>
@@ -1979,12 +1979,12 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Config Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz folder z plikami konfiguracyjnymi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Share Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz folder z zasobami programu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -2104,12 +2104,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="470"/>
         <source>Volume up</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwiększ głośność</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="477"/>
         <source>Volume down</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmniejsz głośność</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="484"/>
@@ -2119,7 +2119,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="507"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń playliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="509"/>
@@ -2129,7 +2129,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="520"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Odczytywanie ścieżek…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="520"/>
@@ -2139,33 +2139,33 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="544"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>Obecny plik</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="553"/>
         <location filename="../../src/gui/guiapplication.cpp" line="583"/>
         <source>Tagging</source>
-        <translation>Oznacznie</translation>
+        <translation>Tagowanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="556"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Odśwież tagi z plików</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="557"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished"></translation>
+        <translation>Odśwież tagi ze zmodyfikowanych plików</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="559"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastąp tagi w wybranych utworach z plików</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="561"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastąp tagi w wybranych utworach z plików jeśli były modyfikowane</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="586"/>
@@ -2206,22 +2206,22 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="801"/>
         <source>Reload Required</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymagane odświeżenie</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="802"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Z powodu zmian w bazie danych, utwory powinny być odświeżone z dysku aby zaktualizować ich zapisane metadane.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="807"/>
         <source>Reload Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Odśwież teraz</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="809"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="874"/>
@@ -2236,12 +2236,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1170"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyszukiwanie okładek…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyszukiwanie okładek zakończone</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="899"/>
@@ -2251,7 +2251,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="643"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzia</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="901"/>
@@ -2324,7 +2324,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>Domyślne systemowe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
