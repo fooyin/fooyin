@@ -287,7 +287,6 @@ void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
 {
     if(!track.isValid()) {
         reset();
-        stop();
     }
 
     p->changeTrack(track);
