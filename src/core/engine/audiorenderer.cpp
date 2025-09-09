@@ -136,6 +136,7 @@ void AudioRenderer::stop()
 void AudioRenderer::closeOutput()
 {
     if(validOutputState()) {
+        drainOutput();
         m_audioOutput->uninit();
     }
     emit outputClosed();

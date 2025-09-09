@@ -64,7 +64,7 @@ signals:
     void initialised(bool success);
     void paused(uint64_t delay);
     void outputClosed();
-    void outputStateChanged(AudioOutput::State state);
+    void outputStateChanged(Fooyin::AudioOutput::State state);
     void requestOutputReload();
     void bufferProcessed(const Fooyin::AudioBuffer& buffer);
     void error(const QString& error);
