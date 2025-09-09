@@ -87,7 +87,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        debian_version: [ 'bookworm', 'trixie' ]
+        debian_version: [ 'bookworm', 'trixie', 'forky' ]
     container:
       image: debian:${{matrix.debian_version}}
     steps:
@@ -136,7 +136,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ubuntu_version: [ 'noble', 'plucky' ]
+        ubuntu_version: [ 'noble', 'plucky', 'questing' ]
     container:
       image: ubuntu:${{matrix.ubuntu_version}}
     steps:
