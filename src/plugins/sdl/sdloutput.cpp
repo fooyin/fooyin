@@ -148,7 +148,13 @@ void SdlOutput::start()
     }
 }
 
-void SdlOutput::drain() { }
+void SdlOutput::drain()
+{
+    while(SDL_GetQueuedAudioSize(m_audioDeviceId) > 0) {
+        checkEvents();
+        SDL_Delay(1000);
+    }
+}
 
 bool SdlOutput::initialised() const
 {
