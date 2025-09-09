@@ -74,6 +74,11 @@ public:
      */
     [[nodiscard]] virtual bool isSeekable() const = 0;
     /*!
+     * Returns @c true if the current track is being repeated/looped forever.
+     * @note this will only be called after a valid AudioFormat is returned from @fn init.
+     */
+    [[nodiscard]] virtual bool isRepeatingTrack() const;
+    /*!
      * Returns @c true if the track passed to @fn init has changed in some way.
      * Useful for properties like duration which may change due to loop count.
      * @note this will only be called after a valid AudioFormat is returned from @fn init.
@@ -159,6 +164,11 @@ public:
      * @note the base class implementation of this function returns 1/no subsongs.
      */
     [[nodiscard]] virtual int subsongCount() const;
+    /*!
+     * Returns @c true if the current track is being repeated/looped forever.
+     * @note this will only be called after @fn init returns @c true.
+     */
+    [[nodiscard]] virtual bool isRepeatingTrack() const;
 
     /*!
      * Prepares the audio source @p source for reading.

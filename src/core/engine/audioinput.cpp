@@ -19,9 +19,28 @@
 
 #include <core/engine/audioinput.h>
 
+#include <core/coresettings.h>
+#include <core/playlist/playlist.h>
+
 #include <QUrl>
 
+using namespace Qt::StringLiterals;
+
+namespace {
+bool isRepeatTrackMode()
+{
+    const Fooyin::FySettings settings;
+    const auto playMode = settings.value(Fooyin::Settings::Core::PlayModeKey).value<Fooyin::Playlist::PlayModes>();
+    return playMode & Fooyin::Playlist::PlayMode::RepeatTrack;
+}
+} // namespace
+
 namespace Fooyin {
+bool AudioDecoder::isRepeatingTrack() const
+{
+    return isRepeatTrackMode();
+}
+
 bool AudioDecoder::trackHasChanged() const
 {
     return false;
@@ -47,6 +66,11 @@ bool AudioReader::canWriteCover() const
 int AudioReader::subsongCount() const
 {
     return 1;
+}
+
+bool AudioReader::isRepeatingTrack() const
+{
+    return isRepeatTrackMode();
 }
 
 bool AudioReader::init(const AudioSource& /*source*/)

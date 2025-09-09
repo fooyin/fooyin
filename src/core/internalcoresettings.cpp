@@ -51,7 +51,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->createTempSetting<FirstRun>(true);
     m_settings->createTempSetting<Version>(QString::fromLatin1(VERSION));
-    m_settings->createSetting<PlayMode>(0, u"Player/PlayMode"_s);
+    m_settings->createSetting<PlayMode>(0, QString::fromLatin1(PlayModeKey));
     m_settings->createSetting<AutoRefresh>(true, u"Library/AutoRefresh"_s);
     m_settings->createSetting<LibrarySortScript>(
         u"%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"_s, u"Library/SortScript"_s);
