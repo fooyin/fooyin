@@ -63,20 +63,22 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Se
     auto* layout = new QGridLayout(this);
 
     auto* operationGroup  = new QGroupBox(tr("Operation"), this);
-    auto* operationLayout = new QHBoxLayout(operationGroup);
+    auto* operationLayout = new QGridLayout(operationGroup);
 
-    operationLayout->addWidget(m_playPause);
-    operationLayout->addWidget(m_seek);
-    operationLayout->addWidget(m_reset);
+    int row{0};
+    operationLayout->addWidget(m_playPause, row, 0);
+    operationLayout->addWidget(m_seek, row++, 1);
+    operationLayout->addWidget(m_reset, row, 0, 1, 2);
 
     auto* timestampsGroup  = new QGroupBox(tr("Timestamps"), this);
-    auto* timestampsLayout = new QHBoxLayout(timestampsGroup);
+    auto* timestampsLayout = new QGridLayout(timestampsGroup);
 
-    timestampsLayout->addWidget(m_insert);
-    timestampsLayout->addWidget(m_rewind);
-    timestampsLayout->addWidget(m_forward);
-    timestampsLayout->addWidget(m_remove);
-    timestampsLayout->addWidget(m_removeAll);
+    row = 0;
+    timestampsLayout->addWidget(m_insert, row++, 0, 1, 2);
+    timestampsLayout->addWidget(m_rewind, row, 0);
+    timestampsLayout->addWidget(m_forward, row++, 1);
+    timestampsLayout->addWidget(m_remove, row, 0);
+    timestampsLayout->addWidget(m_removeAll, row, 1);
 
     auto* buttonBox
         = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, this);
@@ -84,10 +86,11 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Se
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    layout->addWidget(operationGroup, 0, 0);
-    layout->addWidget(timestampsGroup, 0, 1);
-    layout->addWidget(m_lyricsText, 1, 0, 1, 2);
-    layout->addWidget(buttonBox, 2, 0, 1, 2);
+    row = 0;
+    layout->addWidget(operationGroup, row, 0);
+    layout->addWidget(timestampsGroup, row++, 1);
+    layout->addWidget(m_lyricsText, row++, 0, 1, 2);
+    layout->addWidget(buttonBox, row, 0, 1, 2);
     layout->setRowStretch(1, 1);
 
     reset();
@@ -144,7 +147,6 @@ void LyricsEditor::seek()
         m_playerController->seek(pos);
     }
 }
-
 
 void LyricsEditor::updateButtons()
 {
@@ -211,16 +213,24 @@ void LyricsEditor::adjustTimestamp()
 
     if(match.hasMatch()) {
         uint64_t pos = timestampToMs(match.captured(0)) + m_lyrics.offset;
-        if(sender() == m_rewind) {pos > 100 ? pos -= 100 : pos = 0;}
-        else                     {pos < trackDuration - 100 ? pos += 100 : pos = trackDuration;}
+        if(sender() == m_rewind) {
+            pos > 100 ? pos -= 100 : pos = 0;
+        }
+        else {
+            pos < trackDuration - 100 ? pos += 100 : pos = trackDuration;
+        }
 
         const QString newTimeStamp = u"[%1]"_s.arg(formatTimestamp(pos));
         currentLine.replace(regex, newTimeStamp);
 
-        //to avoid skipping to next track in playlist during corrections near the end of a track.
-        //alternative solutions are welcome.
-        if(pos > trackDuration - 1000) {m_playerController->pause();}
-        else                           {m_playerController->seek(pos);}
+        // to avoid skipping to next track in playlist during corrections near the end of a track.
+        // alternative solutions are welcome.
+        if(pos > trackDuration - 1000) {
+            m_playerController->pause();
+        }
+        else {
+            m_playerController->seek(pos);
+        }
     }
     cursor.insertText(currentLine);
 }
