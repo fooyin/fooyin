@@ -22,6 +22,7 @@
 #include <QBuffer>
 #include <QLoggingCategory>
 
+#include <algorithm>
 #include <set>
 
 Q_LOGGING_CATEGORY(PARSER, "fy.lyricsparser")
@@ -58,7 +59,19 @@ struct LineContext
 
     [[nodiscard]] bool isAtEnd() const
     {
-        return *current == u'\0';
+        return *current == nullptr;
+    }
+
+    [[nodiscard]] bool isSpace() const
+    {
+        const QChar* ptr{start};
+        while(ptr && *ptr != '\0'_L1) {
+            if(!ptr->isSpace()) {
+                return false;
+            }
+            std::advance(ptr, 1);
+        }
+        return true;
     }
 
     [[nodiscard]] QChar peek() const
@@ -92,7 +105,7 @@ bool isLiteral(QChar ch)
     }
 }
 
-void parseTag(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
+bool parseTag(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
 {
     while(context.peek() != u']' && !context.isAtEnd()) {
         context.advance();
@@ -101,12 +114,12 @@ void parseTag(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
     const auto tag = QStringView{context.start, context.current - context.start}.toString();
 
     if(context.advance() != u']') {
-        return;
+        return false;
     }
 
     const QStringList parts = tag.split(u':');
     if(parts.size() < 2) {
-        return;
+        return false;
     }
 
     const QString& field = parts.at(0);
@@ -143,6 +156,11 @@ void parseTag(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
     else if(field == "ve"_L1) {
         lyrics.metadata.version = value;
     }
+    else {
+        return false;
+    }
+
+    return true;
 }
 
 Token makeToken(LineContext& context, TokenType type)
@@ -185,13 +203,22 @@ Token timestamp(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
         milliseconds *= 10;
     }
 
-    uint64_t time = (minutes * 60 + seconds) * 1000 + milliseconds;
+    uint64_t time = ((minutes * 60 + seconds) * 1000) + milliseconds;
     time += lyrics.offset;
 
     Token token;
     token.type      = isWord ? TokWordTimestamp : TokTimestamp;
     token.timestamp = time;
     return token;
+}
+
+Token text(LineContext& context)
+{
+    while(isLiteral(context.peek()) && !context.isAtEnd()) {
+        context.advance();
+    }
+
+    return makeToken(context, TokText);
 }
 
 Token block(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
@@ -202,18 +229,12 @@ Token block(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
         return timestamp(lyrics, context);
     }
 
-    parseTag(lyrics, context);
-
-    return {};
-}
-
-Token text(LineContext& context)
-{
-    while(isLiteral(context.peek()) && !context.isAtEnd()) {
-        context.advance();
+    if(parseTag(lyrics, context)) {
+        return {};
     }
 
-    return makeToken(context, TokText);
+    std::advance(context.start, -1);
+    return text(context);
 }
 
 Token scanNext(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
@@ -237,18 +258,17 @@ Token scanNext(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
 
 void sortWordsByTimestamp(std::vector<Fooyin::Lyrics::ParsedWord>& words)
 {
-    std::stable_sort(words.begin(), words.end(),
-                     [](const Fooyin::Lyrics::ParsedWord& a, const Fooyin::Lyrics::ParsedWord& b) {
-                         return a.timestamp < b.timestamp;
-                     });
+    std::ranges::stable_sort(words, [](const Fooyin::Lyrics::ParsedWord& a, const Fooyin::Lyrics::ParsedWord& b) {
+        return a.timestamp < b.timestamp;
+    });
 }
 
 void sortLinesByTimestamp(Fooyin::Lyrics::Lyrics& lyrics)
 {
-    std::stable_sort(lyrics.lines.begin(), lyrics.lines.end(),
-                     [](const Fooyin::Lyrics::ParsedLine& a, const Fooyin::Lyrics::ParsedLine& b) {
-                         return a.timestamp < b.timestamp;
-                     });
+    std::ranges::stable_sort(lyrics.lines,
+                             [](const Fooyin::Lyrics::ParsedLine& a, const Fooyin::Lyrics::ParsedLine& b) {
+                                 return a.timestamp < b.timestamp;
+                             });
 
     for(auto& line : lyrics.lines) {
         sortWordsByTimestamp(line.words);
@@ -315,20 +335,19 @@ Fooyin::Lyrics::ParsedLine splitLine(Fooyin::Lyrics::ParsedLine& parsedLine, Foo
 
 void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
 {
-    LineContext context{line.cbegin(), line.cbegin()};
+    LineContext context{.start = line.cbegin(), .current = line.cbegin()};
 
     std::vector<Token> tokens;
+
+    if(context.isSpace()) {
+        tokens.emplace_back(TokText);
+    }
 
     while(!context.isAtEnd()) {
         const Token token = scanNext(lyrics, context);
         if(token.type != TokError && token.type != TokEos) {
             tokens.emplace_back(token);
         }
-    }
-
-    if(tokens.empty()) {
-        // Most likely unsynced lyrics
-        tokens.emplace_back(TokText);
     }
 
     if(tokens.empty()) {
