@@ -78,6 +78,7 @@ public:
     void pause();
     void previous();
     void next();
+    void nextAuto();
     void stop();
 
     /** Stops playback and clears position and current track. */
@@ -124,7 +125,7 @@ public:
     void setPlaylistHandler(PlaylistHandler* handler);
 
 signals:
-    void playStateChanged(Player::PlayState state);
+    void playStateChanged(Fooyin::Player::PlayState state);
     void playModeChanged(Fooyin::Playlist::PlayModes mode);
 
     void positionChanged(uint64_t ms);

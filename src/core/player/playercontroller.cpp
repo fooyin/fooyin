@@ -177,6 +177,10 @@ void PlayerController::previous()
         return;
     }
 
+    // Temporarily disable repeating track when user clicks 'previous'.
+    const auto playMode = p->m_playMode;
+    p->m_playMode &= ~Playlist::RepeatTrack;
+
     if(p->m_playlistHandler) {
         const PlaylistTrack track = p->m_playlistHandler->changePreviousTrack();
         changeCurrentTrack(track);
@@ -188,9 +192,20 @@ void PlayerController::previous()
     if(p->m_currentTrack.isValid()) {
         play();
     }
+
+    p->m_playMode = playMode;
 }
 
 void PlayerController::next()
+{
+    // Temporarily disable repeating track when user clicks 'next'.
+    const auto playMode = p->m_playMode;
+    p->m_playMode &= ~Playlist::RepeatTrack;
+    nextAuto();
+    p->m_playMode = playMode;
+}
+
+void PlayerController::nextAuto()
 {
     if(p->m_settings->value<Settings::Core::StopAfterCurrent>()) {
         p->m_settings->set<Settings::Core::StopAfterCurrent>(false);

@@ -135,7 +135,7 @@ void EngineHandlerPrivate::handleTrackStatus(AudioEngine::TrackStatus status) co
 {
     switch(status) {
         case(AudioEngine::TrackStatus::End):
-            m_playerController->next();
+            m_playerController->nextAuto();
             break;
         case(AudioEngine::TrackStatus::NoTrack):
             m_playerController->stop();
