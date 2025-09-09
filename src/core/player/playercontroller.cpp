@@ -129,20 +129,20 @@ void PlayerController::play()
             const auto nextTrack = p->m_queue.nextTrack();
 
             if(p->m_playlistHandler) {
-                Playlist* playlist = p->m_playlistHandler->activePlaylist();
+                if(Playlist* playlist = p->m_playlistHandler->activePlaylist()) {
+                    if(p->m_queue.trackCount() == 1 && p->m_settings->value<Settings::Core::FollowPlaybackQueue>()) {
+                        if(playlist->id() != nextTrack.playlistId && nextTrack.playlistId.isValid()) {
+                            p->m_playlistHandler->changeActivePlaylist(nextTrack.playlistId);
+                        }
 
-                if(p->m_queue.trackCount() == 1 && p->m_settings->value<Settings::Core::FollowPlaybackQueue>()) {
-                    if(playlist && playlist->id() != nextTrack.playlistId && nextTrack.playlistId.isValid()) {
-                        p->m_playlistHandler->changeActivePlaylist(nextTrack.playlistId);
-                    }
+                        const int index = nextTrack.indexInPlaylist;
+                        if(playlist->id() != nextTrack.playlistId) {
+                            playlist = p->m_playlistHandler->playlistById(nextTrack.playlistId);
+                        }
 
-                    const auto index = nextTrack.indexInPlaylist;
-                    if(playlist->id() != nextTrack.playlistId) {
-                        playlist = p->m_playlistHandler->playlistById(nextTrack.playlistId);
-                    }
-
-                    if(playlist && index != -1) {
-                        playlist->changeCurrentIndex(index);
+                        if(index != -1) {
+                            playlist->changeCurrentIndex(index);
+                        }
                     }
                 }
             }
