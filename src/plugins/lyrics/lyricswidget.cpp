@@ -187,13 +187,13 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     });
     menu->addAction(searchLyrics);
 
-    if(m_lyricsArea->lyrics().isValid()) {
-        auto* editLyrics = new QAction(tr("Edit lyrics"), menu);
-        editLyrics->setStatusTip(tr("Open editor for the current lyrics"));
-        QObject::connect(editLyrics, &QAction::triggered, this, [this]() { openEditor(m_lyricsArea->lyrics()); });
-        editLyrics->setEnabled(!m_currentTrack.isInArchive());
-        menu->addAction(editLyrics);
+    auto* editLyrics = new QAction(tr("Edit lyrics"), menu);
+    editLyrics->setStatusTip(tr("Open editor for the current lyrics"));
+    QObject::connect(editLyrics, &QAction::triggered, this, [this]() { openEditor(m_lyricsArea->lyrics()); });
+    editLyrics->setEnabled(!m_currentTrack.isInArchive());
+    menu->addAction(editLyrics);
 
+    if(m_lyricsArea->lyrics().isValid()) {
         auto* saveLyrics = new QAction(tr("Save lyrics"), menu);
         saveLyrics->setStatusTip(tr("Save lyrics using current settings"));
         QObject::connect(saveLyrics, &QAction::triggered, this,
@@ -302,6 +302,11 @@ void LyricsWidget::changeLyrics(const Lyrics& lyrics)
 
     if(!lyrics.isLocal) {
         m_lyricsSaver->autoSaveLyrics(lyrics, m_currentTrack);
+    }
+
+    if(!lyrics.isValid()) {
+        const auto script = m_settings->value<Settings::Lyrics::NoLyricsScript>();
+        m_lyricsArea->setDisplayString(m_parser.evaluate(script, m_currentTrack));
     }
 }
 
