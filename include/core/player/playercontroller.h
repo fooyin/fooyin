@@ -97,6 +97,8 @@ public:
     void updateCurrentTrackPlaylist(const UId& playlistId);
     void updateCurrentTrackIndex(int index);
 
+    void scheduleNextTrack(const PlaylistTrack& track);
+
     [[nodiscard]] Track upcomingTrack() const;
 
     [[nodiscard]] PlaybackQueue playbackQueue() const;

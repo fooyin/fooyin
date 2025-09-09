@@ -701,7 +701,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
 
     TrackList tracks;
     std::set<int> trackIndexes;
-    int firstIndex{-1};
+    PlaylistTrack firstTrack;
 
     QModelIndexList indexes = filterSelectedIndexes(m_playlistView);
     std::ranges::sort(indexes, Utils::sortModelIndexes);
@@ -709,18 +709,20 @@ void PlaylistWidgetPrivate::selectionChanged() const
     for(const QModelIndex& index : std::as_const(indexes)) {
         const auto type = index.data(PlaylistItem::Type).toInt();
         if(type == PlaylistItem::Track) {
-            tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<PlaylistTrack>().track);
+            const auto track = index.data(PlaylistItem::Role::ItemData).value<PlaylistTrack>();
+            tracks.push_back(track.track);
             const int trackIndex = index.data(PlaylistItem::Role::Index).toInt();
             trackIndexes.emplace(trackIndex);
-            firstIndex = firstIndex >= 0 ? std::min(firstIndex, trackIndex) : trackIndex;
+
+            if(m_mode != PlaylistWidget::Mode::DetachedLibrary) {
+                if(!firstTrack.isValid() || trackIndex > firstTrack.indexInPlaylist) {
+                    firstTrack = track;
+                }
+            }
         }
     }
 
-    if(m_mode == PlaylistWidget::Mode::DetachedLibrary) {
-        firstIndex = 0;
-    }
-
-    m_selectionController->changeSelectedTracks(m_playlistContext, firstIndex, tracks);
+    m_selectionController->changeSelectedTracks(m_playlistContext, firstTrack.indexInPlaylist, tracks);
 
     if(tracks.empty()) {
         m_removeTrackAction->setEnabled(false);
@@ -731,14 +733,8 @@ void PlaylistWidgetPrivate::selectionChanged() const
     }
 
     if(m_settings->value<Settings::Gui::PlaybackFollowsCursor>()) {
-        if(m_playlistController->currentPlaylist()->currentTrackIndex() != firstIndex) {
-            if(m_playlistController->playState() != Player::PlayState::Playing) {
-                m_playlistController->currentPlaylist()->changeCurrentIndex(firstIndex);
-            }
-            else {
-                m_playlistController->currentPlaylist()->scheduleNextIndex(firstIndex);
-            }
-            m_playlistController->playlistHandler()->schedulePlaylist(m_playlistController->currentPlaylist());
+        if(m_playlistController->currentPlaylist()->currentTrackIndex() != firstTrack.indexInPlaylist) {
+            m_playerController->scheduleNextTrack(firstTrack);
         }
     }
 
@@ -782,8 +778,6 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex)
             m_selectionController->changeSelectedTracks(m_playlistContext, firstIndex, selectedTracks);
         }
     }
-
-    m_playlistController->playlistHandler()->clearSchedulePlaylist();
 
     m_playlistController->aboutToChangeTracks();
     m_playerController->updateCurrentTrackIndex(playingIndex);
@@ -918,8 +912,6 @@ void PlaylistWidgetPrivate::tracksRemoved() const
     if(!m_playlistController->currentPlaylist()) {
         return;
     }
-
-    m_playlistController->playlistHandler()->clearSchedulePlaylist();
 
     const auto selected = filterSelectedIndexes(m_playlistView);
 
@@ -1348,8 +1340,6 @@ void PlaylistWidgetPrivate::cropSelection() const
     if(!m_playlistController->currentPlaylist()) {
         return;
     }
-
-    m_playlistController->playlistHandler()->clearSchedulePlaylist();
 
     const auto selected = filterSelectedIndexes(m_playlistView);
 

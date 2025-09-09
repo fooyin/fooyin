@@ -90,7 +90,6 @@ public:
     std::vector<std::unique_ptr<Playlist>> m_removedPlaylists;
 
     Playlist* m_activePlaylist{nullptr};
-    Playlist* m_scheduledPlaylist{nullptr};
 };
 
 PlaylistHandlerPrivate::PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool,
@@ -212,11 +211,6 @@ void PlaylistHandlerPrivate::startNextTrack(const Track& track, int index) const
 
 PlaylistTrack PlaylistHandlerPrivate::nextTrackChange(int delta)
 {
-    if(m_scheduledPlaylist) {
-        m_self->changeActivePlaylist(m_scheduledPlaylist);
-        m_scheduledPlaylist = nullptr;
-    }
-
     if(!m_activePlaylist) {
         return {};
     }
@@ -238,11 +232,6 @@ PlaylistTrack PlaylistHandlerPrivate::nextTrackChange(int delta)
 
 PlaylistTrack PlaylistHandlerPrivate::nextTrack(int delta)
 {
-    auto* playlist = m_scheduledPlaylist ? m_scheduledPlaylist : m_activePlaylist;
-    if(!playlist) {
-        return {};
-    }
-
     Track nextTrk = m_activePlaylist->nextTrack(delta, m_playerController->playMode());
 
     if(nextTrk.isValid() && !nextTrk.metadataWasRead()) {
@@ -761,25 +750,6 @@ void PlaylistHandler::changeActivePlaylist(Playlist* playlist)
 {
     p->m_activePlaylist = playlist;
     emit activePlaylistChanged(playlist);
-}
-
-void PlaylistHandler::schedulePlaylist(const UId& id)
-{
-    const auto playlist
-        = std::ranges::find_if(std::as_const(p->m_playlists), [id](const auto& pl) { return pl->id() == id; });
-    if(playlist != p->m_playlists.cend()) {
-        p->m_scheduledPlaylist = playlist->get();
-    }
-}
-
-void PlaylistHandler::schedulePlaylist(Playlist* playlist)
-{
-    p->m_scheduledPlaylist = playlist;
-}
-
-void PlaylistHandler::clearSchedulePlaylist()
-{
-    p->m_scheduledPlaylist = nullptr;
 }
 
 PlaylistTrack PlaylistHandler::nextTrack()

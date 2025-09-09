@@ -48,6 +48,19 @@ public:
             m_playedThreshold = static_cast<uint64_t>(static_cast<double>(m_totalDuration - 200)
                                                       * m_settings->value<Settings::Core::PlayedThreshold>());
         }
+
+        m_scheduledTrack = {};
+    }
+
+    void loadScheduledTrack() const
+    {
+        if(m_playlistHandler) {
+            if(auto* playlist = m_playlistHandler->playlistById(m_scheduledTrack.playlistId)) {
+                m_playlistHandler->changeActivePlaylist(playlist);
+                playlist->changeCurrentIndex(m_scheduledTrack.indexInPlaylist);
+            }
+        }
+        m_self->changeCurrentTrack(m_scheduledTrack);
     }
 
     void updatePosition(uint64_t pos)
@@ -80,6 +93,7 @@ public:
     bool m_isQueueTrack{false};
 
     PlaybackQueue m_queue;
+    PlaylistTrack m_scheduledTrack;
 };
 
 PlayerController::PlayerController(SettingsManager* settings, QObject* parent)
@@ -108,7 +122,10 @@ void PlayerController::reset()
 void PlayerController::play()
 {
     if(!p->m_currentTrack.isValid()) {
-        if(!p->m_queue.empty()) {
+        if(p->m_scheduledTrack.isValid()) {
+            p->loadScheduledTrack();
+        }
+        else if(!p->m_queue.empty()) {
             const auto& nextTrack = p->m_queue.nextTrack();
             Playlist* playlist{nullptr};
 
@@ -213,7 +230,10 @@ void PlayerController::nextAuto()
         return;
     }
 
-    if(p->m_queue.empty() && p->m_playlistHandler) {
+    if(p->m_scheduledTrack.isValid()) {
+        p->loadScheduledTrack();
+    }
+    else if(p->m_queue.empty() && p->m_playlistHandler) {
         p->m_isQueueTrack         = false;
         const PlaylistTrack track = p->m_playlistHandler->changeNextTrack();
         changeCurrentTrack(track);
@@ -293,10 +313,19 @@ void PlayerController::updateCurrentTrackIndex(int index)
     }
 }
 
+void PlayerController::scheduleNextTrack(const PlaylistTrack& track)
+{
+    p->m_scheduledTrack = track;
+}
+
 Track PlayerController::upcomingTrack() const
 {
     if(p->m_settings->value<Settings::Core::StopAfterCurrent>()) {
         return {};
+    }
+
+    if(p->m_scheduledTrack.isValid()) {
+        return p->m_scheduledTrack.track;
     }
 
     if(p->m_queue.empty() && p->m_playlistHandler) {

@@ -126,12 +126,6 @@ public:
     /** Regenerates this autoplaylist using the tracks @p tracks. */
     bool regenerateTracks(const TrackList& tracks);
 
-    /*!
-     * Schedules the track to be played after the current track is finished.
-     * @note this will be cancelled if tracks are replaced using @fn replaceTracks.
-     */
-    void scheduleNextIndex(int index);
-
     int nextIndex(int delta, PlayModes mode);
     /*!
      * Returns the next track to be played based on the @p delta from the current

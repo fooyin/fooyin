@@ -98,12 +98,6 @@ public:
     void changeActivePlaylist(const UId& id);
     void changeActivePlaylist(Playlist* playlist);
 
-    /** Schedules the playlist with @p id to be played once the current track is finished. */
-    void schedulePlaylist(const UId& id);
-    /** Schedules @p playlist to be played once the current track is finished. */
-    void schedulePlaylist(Playlist* playlist);
-    /** Clears any scheduled playlist. */
-    void clearSchedulePlaylist();
     /** Returns the next track to be played, or an invalid track if the playlist will end. */
     PlaylistTrack nextTrack();
     /** Returns the next track to be played, or an invalid track if the playlist will end. */

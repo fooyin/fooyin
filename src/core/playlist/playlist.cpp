@@ -145,7 +145,6 @@ public:
     TrackSorter m_sorter;
 
     int m_currentTrackIndex{-1};
-    int m_nextTrackIndex{-1};
 
     int m_trackShuffleIndex{-1};
     std::vector<int> m_trackShuffleOrder;
@@ -397,10 +396,6 @@ int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool only
         return -1;
     }
 
-    if(m_nextTrackIndex >= 0) {
-        return onlyCheck ? m_nextTrackIndex : std::exchange(m_nextTrackIndex, -1);
-    }
-
     if(mode & Playlist::RepeatTrack) {
         return m_currentTrackIndex;
     }
@@ -551,10 +546,6 @@ int Playlist::currentTrackIndex() const
 
 Track Playlist::currentTrack() const
 {
-    if(p->m_nextTrackIndex >= 0 && p->m_nextTrackIndex < trackCount()) {
-        return p->m_tracks.at(p->m_nextTrackIndex);
-    }
-
     if(p->m_currentTrackIndex >= 0 && p->m_currentTrackIndex < trackCount()) {
         return p->m_tracks.at(p->m_currentTrackIndex);
     }
@@ -603,13 +594,6 @@ bool Playlist::regenerateTracks(const TrackList& tracks)
     }
 
     return false;
-}
-
-void Playlist::scheduleNextIndex(int index)
-{
-    if(index >= 0 && index < trackCount()) {
-        p->m_nextTrackIndex = index;
-    }
 }
 
 int Playlist::nextIndex(int delta, PlayModes mode)
@@ -727,7 +711,6 @@ void Playlist::replaceTracks(const TrackList& tracks)
         p->m_tracksModified = true;
         p->m_trackShuffleOrder.clear();
         p->m_albumShuffleOrder.clear();
-        p->m_nextTrackIndex = -1;
     }
 }
 
@@ -799,9 +782,6 @@ std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
 
     std::erase_if(p->m_trackShuffleOrder, [](int num) { return num < 0; });
     changeCurrentIndex(adjustedTrackIndex);
-    if(indexesToRemove.contains(p->m_nextTrackIndex)) {
-        p->m_nextTrackIndex = -1;
-    }
 
     p->m_tracksModified = true;
 
