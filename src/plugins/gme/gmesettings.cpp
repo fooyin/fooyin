@@ -59,10 +59,9 @@ GmeSettings::GmeSettings(QWidget* parent)
     m_maxLength->setSingleStep(0.5);
     m_maxLength->setSuffix(u" "_s + tr("minutes"));
 
-    auto* loopLabel     = new QLabel(tr("Loop count") + u":"_s, this);
-    auto* loopHintLabel = new QLabel(tr("(0 = infinite)"), this);
+    auto* loopLabel = new QLabel(tr("Loop count") + u":"_s, this);
 
-    m_loopCount->setRange(0, 16);
+    m_loopCount->setRange(1, 16);
     m_loopCount->setSingleStep(1);
     m_loopCount->setSuffix(u" "_s + tr("times"));
 
@@ -77,7 +76,6 @@ GmeSettings::GmeSettings(QWidget* parent)
     lengthLayout->addWidget(m_maxLength, row++, 1);
     lengthLayout->addWidget(loopLabel, row, 0);
     lengthLayout->addWidget(m_loopCount, row, 1);
-    lengthLayout->addWidget(loopHintLabel, row++, 2);
     lengthLayout->addWidget(fadeLabel, row, 0);
     lengthLayout->addWidget(m_fadeLength, row++, 1);
     lengthLayout->setColumnStretch(3, 1);

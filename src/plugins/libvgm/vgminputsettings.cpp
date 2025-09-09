@@ -53,10 +53,9 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     auto* lengthGroup  = new QGroupBox(tr("Length"), this);
     auto* lengthLayout = new QGridLayout(lengthGroup);
 
-    auto* loopLabel     = new QLabel(tr("Loop count") + u":"_s, this);
-    auto* loopHintLabel = new QLabel(tr("(0 = infinite)"), this);
+    auto* loopLabel = new QLabel(tr("Loop count") + u":"_s, this);
 
-    m_loopCount->setRange(0, 16);
+    m_loopCount->setRange(1, 16);
     m_loopCount->setSingleStep(1);
     m_loopCount->setSuffix(u" "_s + tr("times"));
 
@@ -75,7 +74,6 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     int row{0};
     lengthLayout->addWidget(loopLabel, row, 0);
     lengthLayout->addWidget(m_loopCount, row, 1);
-    lengthLayout->addWidget(loopHintLabel, row++, 2);
     lengthLayout->addWidget(fadeLabel, row, 0);
     lengthLayout->addWidget(m_fadeLength, row++, 1);
     lengthLayout->addWidget(silenceLabel, row, 0);

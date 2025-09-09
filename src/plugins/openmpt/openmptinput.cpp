@@ -31,10 +31,9 @@ Q_LOGGING_CATEGORY(OPENMPT, "fy.openmpt")
 using namespace Qt::StringLiterals;
 
 // TODO: Make configurable
-constexpr auto SampleRate  = 44100;
-constexpr auto Channels    = 2;
-constexpr auto BufferLen   = 1024UL;
-constexpr auto RepeatCount = 0;
+constexpr auto SampleRate = 44100;
+constexpr auto Channels   = 2;
+constexpr auto BufferLen  = 1024UL;
 
 namespace {
 QStringList fileExtensions()
@@ -60,7 +59,6 @@ void setupModule(Fooyin::SettingsManager* settings, openmpt::module* module)
                              settings->value<InterpolationFilter>());
     module->set_render_param(openmpt::module::RENDER_VOLUMERAMPING_STRENGTH, settings->value<VolumeRamping>());
     module->ctl_set_boolean("render.resampler.emulate_amiga", settings->value<EmulateAmiga>());
-    module->set_repeat_count(settings->value<LoopCount>());
 }
 } // namespace
 
@@ -95,11 +93,15 @@ std::optional<AudioFormat> OpenMptDecoder::init(const AudioSource& source, const
 
         m_module = std::make_unique<openmpt::module>(data, std::clog, ctls);
 
-        int repeat = RepeatCount;
+        int repeat = m_settings->value<Settings::OpenMpt::LoopCount>();
         if(options & NoLooping || options & NoInfiniteLooping) {
             repeat = 0;
         }
+        else if(isRepeatingTrack()) {
+            repeat = -1;
+        }
         m_module->set_repeat_count(repeat);
+
         setupModule(m_settings, m_module.get());
         m_module->select_subsong(track.subsong());
     }

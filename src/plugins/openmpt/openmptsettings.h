@@ -20,10 +20,10 @@
 #pragma once
 
 #include <QDialog>
-#include <QSpinBox>
 
 class QCheckBox;
 class QComboBox;
+class QSpinBox;
 
 namespace Fooyin {
 class DoubleSliderEditor;

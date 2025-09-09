@@ -68,12 +68,11 @@ OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
     m_volRamping->addSpecialValue(-1, tr("Default"));
     m_volRamping->addSpecialValue(0, tr("Off"));
 
-    auto* loopLabel = new QLabel(tr("Loop (-1 is infinite)") + ":"_L1, this);
-    
-    m_loopCount->setRange(-1, 16); //OpenMPT uses -1 for infinite not 0...
+    auto* loopLabel = new QLabel(tr("Loop count") + ":"_L1, this);
+
+    m_loopCount->setRange(1, 16);
     m_loopCount->setSingleStep(1);
     m_loopCount->setSuffix(u" "_s + tr("times"));
-    
 
     auto* filterLabel = new QLabel(tr("Interpolation") + ":"_L1, this);
 
@@ -94,7 +93,7 @@ OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
     layout->addWidget(m_interpolationFilter, row++, 1, 1, 4);
     layout->addWidget(m_amigaResampler, row++, 0, 1, 4);
     layout->addWidget(loopLabel, row, 0);
-    layout->addWidget(m_loopCount, row++, 1,1,4);
+    layout->addWidget(m_loopCount, row++, 1, 1, 4);
     layout->addWidget(buttons, row++, 0, 1, 4, Qt::AlignBottom);
     layout->setColumnStretch(2, 1);
 

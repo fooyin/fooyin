@@ -59,7 +59,7 @@ QString findM3u(const QString& filepath)
     return files.front().absoluteFilePath();
 }
 
-uint64_t getDuration(const gme_info_t* info, Fooyin::AudioDecoder::DecoderOptions options = {})
+uint64_t getDuration(const gme_info_t* info, bool repeatTrack, Fooyin::AudioDecoder::DecoderOptions options = {})
 {
     if(info->length > 0) {
         return info->length;
@@ -76,7 +76,7 @@ uint64_t getDuration(const gme_info_t* info, Fooyin::AudioDecoder::DecoderOption
         loopCount = 1;
     }
 
-    if(info->loop_length <= 0 || loopCount <= 0) {
+    if(info->loop_length <= 0 || repeatTrack) {
         return static_cast<uint64_t>(maxLength * 60.0 * 1000);
     }
 
@@ -150,7 +150,7 @@ std::optional<AudioFormat> GmeDecoder::init(const AudioSource& source, const Tra
     if(!gme_track_info(m_emu.get(), &gmeInfo, m_subsong) && gmeInfo) {
         const GmeInfoPtr info{gmeInfo};
 
-        const auto duration = getDuration(gmeInfo, options);
+        const auto duration = getDuration(gmeInfo, isRepeatingTrack(), options);
 
         if(options & UpdateTracks) {
             if(track.duration() != duration) {
@@ -192,8 +192,7 @@ AudioBuffer GmeDecoder::readBuffer(size_t /*bytes*/)
         return {};
     }
 
-    const int loopCount = m_settings.value(LoopCount, DefaultLoopCount).toInt();
-    if(m_loopLength > 0 && !(m_options & NoInfiniteLooping) && loopCount == 0) {
+    if(m_loopLength > 0 && !(m_options & NoInfiniteLooping) && isRepeatingTrack()) {
         gme_set_fade(m_emu.get(), -1);
     }
     else {
@@ -211,7 +210,7 @@ AudioBuffer GmeDecoder::readBuffer(size_t /*bytes*/)
     buffer.resize(m_format.bytesForFrames(BufferLen));
 
     const int frames = BufferLen * 2;
-    const auto* err  = gme_play(m_emu.get(), frames, std::bit_cast<int16_t*>(buffer.data()));
+    const auto* err  = gme_play(m_emu.get(), frames, reinterpret_cast<int16_t*>(buffer.data()));
     if(err) {
         qCDebug(GME) << err;
         return {};
@@ -295,7 +294,7 @@ bool GmeReader::readTrack(const AudioSource& source, Track& track)
     }
     GmeInfoPtr info{gmeInfo};
 
-    track.setDuration(getDuration(info.get()));
+    track.setDuration(getDuration(info.get(), isRepeatingTrack()));
     track.setSampleRate(SampleRate);
     track.setBitDepth(Bps);
     track.setEncoding(u"Synthesized"_s);

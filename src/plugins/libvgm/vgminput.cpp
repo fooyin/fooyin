@@ -178,7 +178,7 @@ std::optional<AudioFormat> VgmDecoder::init(const AudioSource& source, const Tra
     if(options & NoLooping) {
         loopCount = 1;
     }
-    if(options & NoInfiniteLooping && loopCount == 0) {
+    else if(options & NoInfiniteLooping && isRepeatingTrack()) {
         loopCount = DefaultLoopCount;
     }
 
@@ -187,7 +187,8 @@ std::optional<AudioFormat> VgmDecoder::init(const AudioSource& source, const Tra
         return {};
     }
 
-    m_loader.reset(MemoryLoader_Init(std::bit_cast<const uint8_t*>(data.data()), static_cast<uint32_t>(data.size())));
+    m_loader.reset(
+        MemoryLoader_Init(reinterpret_cast<const uint8_t*>(data.data()), static_cast<uint32_t>(data.size())));
     if(!m_loader) {
         return {};
     }
@@ -295,7 +296,7 @@ bool VgmReader::readTrack(const AudioSource& source, Track& track)
         return false;
     }
 
-    const DataLoaderPtr loader{MemoryLoader_Init(std::bit_cast<uint8_t*>(data.constData()), data.size())};
+    const DataLoaderPtr loader{MemoryLoader_Init(reinterpret_cast<const uint8_t*>(data.constData()), data.size())};
     if(!loader) {
         return false;
     }
@@ -312,7 +313,7 @@ bool VgmReader::readTrack(const AudioSource& source, Track& track)
     const FySettings settings;
 
     int loopCount = settings.value(LoopCountSetting).toInt();
-    if(loopCount == 0) {
+    if(isRepeatingTrack()) {
         loopCount = DefaultLoopCount;
     }
 
