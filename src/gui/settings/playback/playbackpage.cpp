@@ -58,6 +58,7 @@ private:
     QCheckBox* m_rewindPrevious;
     QCheckBox* m_followPlaybackQueue;
     QCheckBox* m_skipUnavailable;
+    QCheckBox* m_stopIfActiveDeleted;
     SliderEditor* m_playedSlider;
     ScriptLineEdit* m_shuffleAlbumsGroup;
     ScriptLineEdit* m_shuffleAlbumsSort;
@@ -71,6 +72,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
     , m_followPlaybackQueue{new QCheckBox(tr("Follow last playback queue track"), this)}
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
+    , m_stopIfActiveDeleted{new QCheckBox(tr("Stop playback if the active playlist is deleted"), this)}
     , m_playedSlider{new SliderEditor(tr("Played threshold"), this)}
     , m_shuffleAlbumsGroup{new ScriptLineEdit(this)}
     , m_shuffleAlbumsSort{new ScriptLineEdit(this)}
@@ -80,8 +82,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     m_restorePlayback->setToolTip(tr("Save playback state on exit and restore it on next startup"));
     m_rewindPrevious->setToolTip(tr(
         "If the current track has been playing for more than 5s, restart it instead of moving to the previous track"));
-    m_followPlaybackQueue->setToolTip(tr(
-        "Once the playback queue has finished, start playback from the tracks following the last queued track"));
+    m_followPlaybackQueue->setToolTip(
+        tr("Once the playback queue has finished, start playback from the tracks following the last queued track"));
     m_skipUnavailable->setToolTip(
         tr("If the current track in a playlist is unavailable, silently continue to the next track"));
 
@@ -103,6 +105,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     generalGroupLayout->addWidget(m_followPlaybackQueue, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_rewindPrevious, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 2);
 
     auto* shuffleGroup       = new QGroupBox(tr("Shuffle"), this);
@@ -128,6 +131,7 @@ void PlaybackPageWidget::load()
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
     m_skipUnavailable->setChecked(
         m_settings->fileValue(Settings::Core::Internal::PlaylistSkipUnavailable, false).toBool());
+    m_stopIfActiveDeleted->setChecked(m_settings->value<Settings::Core::StopIfActivePlaylistDeleted>());
 
     const double playedThreshold = m_settings->value<Settings::Core::PlayedThreshold>();
     const auto playedPercent     = static_cast<int>(playedThreshold * 100);
@@ -145,6 +149,7 @@ void PlaybackPageWidget::apply()
     m_settings->set<Settings::Core::FollowPlaybackQueue>(m_followPlaybackQueue->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
     m_settings->fileSet(Settings::Core::Internal::PlaylistSkipUnavailable, m_skipUnavailable->isChecked());
+    m_settings->set<Settings::Core::StopIfActivePlaylistDeleted>(m_stopIfActiveDeleted->isChecked());
 
     const int playedPercent    = m_playedSlider->value();
     const auto playedThreshold = static_cast<double>(playedPercent) / 100;
@@ -162,6 +167,7 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->fileRemove(Settings::Core::Internal::PlaylistSkipUnavailable);
+    m_settings->reset<Settings::Core::StopIfActivePlaylistDeleted>();
     m_settings->reset<Settings::Core::PlayedThreshold>();
     m_settings->reset<Settings::Core::ShuffleAlbumsGroupScript>();
     m_settings->reset<Settings::Core::ShuffleAlbumsSortScript>();

@@ -821,6 +821,10 @@ void PlaylistHandler::removePlaylist(const UId& id)
     if(playlist == p->m_activePlaylist) {
         p->m_activePlaylist = nullptr;
         emit activePlaylistChanged(nullptr);
+
+        if(p->m_settings->value<Settings::Core::StopIfActivePlaylistDeleted>()) {
+            p->m_playerController->stop();
+        }
     }
 
     const int index = p->indexFromName(playlist->name());
