@@ -232,6 +232,10 @@ PlaylistTrack PlaylistHandlerPrivate::nextTrackChange(int delta)
 
 PlaylistTrack PlaylistHandlerPrivate::nextTrack(int delta)
 {
+    if(!m_activePlaylist) {
+        return {};
+    }
+
     Track nextTrk = m_activePlaylist->nextTrack(delta, m_playerController->playMode());
 
     if(nextTrk.isValid() && !nextTrk.metadataWasRead()) {
