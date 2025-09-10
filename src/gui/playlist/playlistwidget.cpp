@@ -715,7 +715,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
             trackIndexes.emplace(trackIndex);
 
             if(m_mode != PlaylistWidget::Mode::DetachedLibrary) {
-                if(!firstTrack.isValid() || trackIndex > firstTrack.indexInPlaylist) {
+                if(!firstTrack.isValid() || trackIndex < firstTrack.indexInPlaylist) {
                     firstTrack = track;
                 }
             }
