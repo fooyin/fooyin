@@ -76,6 +76,7 @@ public:
 
     void changePlaylist(Playlist* prevPlaylist, Playlist* playlist);
 
+    void handleAboutToBeReset();
     void resetTree();
     [[nodiscard]] PlaylistViewState getState(Playlist* playlist) const;
     void saveState(Playlist* playlist) const;
@@ -193,5 +194,6 @@ public:
     int m_dropIndex;
     QString m_search;
     PlaylistTrackList m_filteredTracks;
+    int m_currentIndex;
 };
 } // namespace Fooyin

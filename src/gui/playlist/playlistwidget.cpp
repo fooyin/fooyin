@@ -195,6 +195,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_showPlaying{false}
     , m_pendingFocus{false}
     , m_dropIndex{-1}
+    , m_currentIndex{-1}
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
 
@@ -236,7 +237,7 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &PlaylistWidgetPrivate::selectionChanged);
     QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library, [this](const TrackList& tracks) { m_library->updateTrackStats(tracks); });
     QObject::connect(m_playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidgetPrivate::doubleClicked);
-    QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlistView, &QAbstractItemView::clearSelection);
+    QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, this, &PlaylistWidgetPrivate::handleAboutToBeReset);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksPlayed, m_model,[this](const std::vector<int>& indexes){m_model->refreshTracks(indexes);});
 
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this, &PlaylistWidgetPrivate::onColumnRemoved);
@@ -494,9 +495,27 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* pla
     }
 }
 
-void PlaylistWidgetPrivate::resetTree()
+void PlaylistWidgetPrivate::handleAboutToBeReset()
 {
     if(m_model->isDirty()) {
+        const auto currIdx = m_playlistView->currentIndex();
+        if(currIdx.isValid()) {
+            m_currentIndex = m_playlistView->currentIndex().data(PlaylistItem::Index).toInt();
+        }
+    }
+    else {
+        m_playlistView->clearSelection();
+    }
+}
+
+void PlaylistWidgetPrivate::resetTree()
+{
+    if(m_model->isDirty() && m_currentIndex >= 0) {
+        const auto currIdx = m_model->indexAtPlaylistIndex(m_currentIndex);
+        if(currIdx.isValid()) {
+            m_playlistView->setCurrentIndex(currIdx);
+        }
+        m_currentIndex = -1;
         return;
     }
 
@@ -1845,7 +1864,6 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* event)
     }
     else if(key == Qt::Key_Enter || key == Qt::Key_Return) {
         startPlayback();
-        p->m_playlistView->clearSelection();
     }
 
     QWidget::keyPressEvent(event);
