@@ -153,7 +153,7 @@ signals:
 
 public slots:
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
-    void playStateChanged(Player::PlayState state);
+    void playStateChanged(Fooyin::Player::PlayState state);
 
 private:
     QModelIndex rightIndex(const QModelIndex& index) const;

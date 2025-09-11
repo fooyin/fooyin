@@ -1615,8 +1615,11 @@ bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, in
     }
 
     PlaylistTrackList playlistTracks;
+    playlistTracks.reserve(tracks.size());
+
     for(const auto& track : tracks) {
-        playlistTracks.emplace_back(track);
+        PlaylistTrack playlistTrack{.track = track, .playlistId = m_currentPlaylist ? m_currentPlaylist->id() : UId{}};
+        playlistTracks.push_back(playlistTrack);
     }
 
     const TrackGroups groups{{dropIndex, playlistTracks}};
@@ -2316,9 +2319,12 @@ void PlaylistModel::coverUpdated(const Track& track)
 
 bool PlaylistModel::trackIsPlaying(const Track& track, int index) const
 {
-    return m_currentPlayState != Player::PlayState::Stopped && m_currentPlaylist
-        && m_playingTrack.playlistId == m_currentPlaylist->id() && m_playingTrack.track.id() == track.id()
-        && m_playingTrack.indexInPlaylist == index;
+    const bool isPlaying    = m_currentPlayState != Player::PlayState::Stopped;
+    const bool samePlaylist = m_currentPlaylist && m_playingTrack.playlistId == m_currentPlaylist->id();
+    const bool sameTrack    = m_playingTrack.track.id() == track.id();
+    const bool sameIndex    = m_playingTrack.indexInPlaylist == index;
+
+    return isPlaying && samePlaylist && sameTrack && sameIndex;
 }
 
 ParentChildRangesList PlaylistModel::determineRowGroups(const QModelIndexList& indexes)
