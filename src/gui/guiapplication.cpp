@@ -487,6 +487,38 @@ void GuiApplicationPrivate::registerActions()
     muteCmd->setCategories(volumeCategory);
     QObject::connect(muteAction, &QAction::triggered, m_mainWindow.get(), [this]() { mute(); });
 
+    const QStringList seekCategory = {GuiApplication::tr("Playback")};
+
+    auto* seekForwardSmall    = new QAction(GuiApplication::tr("Seek forward (small step)"), m_mainWindow.get());
+    auto* seekForwardSmallCmd = m_actionManager->registerAction(seekForwardSmall, Constants::Actions::SeekForwardSmall);
+    seekForwardSmallCmd->setCategories(seekCategory);
+    seekForwardSmallCmd->setDefaultShortcut(QKeySequence{Qt::ALT | Qt::Key_Right});
+    QObject::connect(seekForwardSmall, &QAction::triggered, m_mainWindow.get(),
+                     [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStepSmall>()); });
+
+    auto* seekForwardLarge    = new QAction(GuiApplication::tr("Seek forward (large step)"), m_mainWindow.get());
+    auto* seekForwardLargeCmd = m_actionManager->registerAction(seekForwardLarge, Constants::Actions::SeekForwardLarge);
+    seekForwardLargeCmd->setCategories(seekCategory);
+    seekForwardLargeCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_Right});
+    QObject::connect(seekForwardLarge, &QAction::triggered, m_mainWindow.get(),
+                     [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStepLarge>()); });
+
+    auto* seekBackwardSmall = new QAction(GuiApplication::tr("Seek backward (small step)"), m_mainWindow.get());
+    auto* seekBackwardSmallCmd
+        = m_actionManager->registerAction(seekBackwardSmall, Constants::Actions::SeekBackwardSmall);
+    seekBackwardSmallCmd->setCategories(seekCategory);
+    seekBackwardSmallCmd->setDefaultShortcut(QKeySequence{Qt::ALT | Qt::Key_Left});
+    QObject::connect(seekBackwardSmall, &QAction::triggered, m_mainWindow.get(),
+                     [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStepSmall>()); });
+
+    auto* seekBackwardLarge = new QAction(GuiApplication::tr("Seek backward (large step)"), m_mainWindow.get());
+    auto* seekBackwardLargeCmd
+        = m_actionManager->registerAction(seekBackwardLarge, Constants::Actions::SeekBackwardLarge);
+    seekBackwardLargeCmd->setCategories(seekCategory);
+    seekBackwardLargeCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_Left});
+    QObject::connect(seekBackwardLarge, &QAction::triggered, m_mainWindow.get(),
+                     [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStepLarge>()); });
+
     auto setSavePlaylistState = [this]() {
         if(auto* savePlaylistCommand = m_actionManager->command(Constants::Actions::SavePlaylist)) {
             if(const auto* playlist = m_playlistController->currentPlaylist()) {

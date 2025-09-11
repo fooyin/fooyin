@@ -239,7 +239,7 @@ void TrackSlider::updateSeekPosition(const QPointF& pos)
         seekPoint.setX(std::clamp(seekPoint.x(), 0, width() - m_toolTip->width()));
 
         if(displayAbove) {
-            seekPoint.setY(rect().y() - m_toolTip->height() / 4);
+            seekPoint.setY(rect().y() - (m_toolTip->height() / 4));
         }
         else {
             seekPoint.setY(rect().bottom() + (height() + m_toolTip->height()));
@@ -296,9 +296,9 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
 
     QObject::connect(m_slider, &TrackSlider::sliderDropped, playerController, &PlayerController::seek);
     QObject::connect(m_slider, &TrackSlider::seekForward, this,
-                     [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStep>()); });
+                     [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStepSmall>()); });
     QObject::connect(m_slider, &TrackSlider::seekBackward, this,
-                     [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStep>()); });
+                     [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStepSmall>()); });
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &SeekBar::stateChanged);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &SeekBar::trackChanged);

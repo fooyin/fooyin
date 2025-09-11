@@ -28,6 +28,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -59,6 +60,11 @@ private:
     QCheckBox* m_followPlaybackQueue;
     QCheckBox* m_skipUnavailable;
     QCheckBox* m_stopIfActiveDeleted;
+
+    QSpinBox* m_seekStep;
+    QSpinBox* m_seekStepLarge;
+    QDoubleSpinBox* m_volumeStep;
+
     SliderEditor* m_playedSlider;
     ScriptLineEdit* m_shuffleAlbumsGroup;
     ScriptLineEdit* m_shuffleAlbumsSort;
@@ -73,6 +79,9 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_followPlaybackQueue{new QCheckBox(tr("Follow last playback queue track"), this)}
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
     , m_stopIfActiveDeleted{new QCheckBox(tr("Stop playback if the active playlist is deleted"), this)}
+    , m_seekStep{new QSpinBox(this)}
+    , m_seekStepLarge{new QSpinBox(this)}
+    , m_volumeStep{new QDoubleSpinBox(this)}
     , m_playedSlider{new SliderEditor(tr("Played threshold"), this)}
     , m_shuffleAlbumsGroup{new ScriptLineEdit(this)}
     , m_shuffleAlbumsSort{new ScriptLineEdit(this)}
@@ -108,6 +117,27 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 2);
 
+    auto* controlsGroup  = new QGroupBox(tr("Controls"), this);
+    auto* controlsLayout = new QGridLayout(controlsGroup);
+
+    m_seekStep->setRange(100, 30000);
+    m_seekStep->setSuffix(u" ms"_s);
+
+    m_seekStepLarge->setRange(100, 60000);
+    m_seekStepLarge->setSuffix(u" ms"_s);
+
+    m_volumeStep->setRange(1, 5);
+    m_volumeStep->setSuffix(u" dB"_s);
+
+    row = 0;
+    controlsLayout->addWidget(new QLabel(tr("Seek step (small)") + ":"_L1, this), row, 0);
+    controlsLayout->addWidget(m_seekStep, row++, 1);
+    controlsLayout->addWidget(new QLabel(tr("Seek step (large)") + ":"_L1, this), row, 0);
+    controlsLayout->addWidget(m_seekStepLarge, row++, 1);
+    controlsLayout->addWidget(new QLabel(tr("Volume step") + ":"_L1, this), row, 0);
+    controlsLayout->addWidget(m_volumeStep, row++, 1);
+    controlsLayout->setColumnStretch(2, 1);
+
     auto* shuffleGroup       = new QGroupBox(tr("Shuffle"), this);
     auto* shuffleGroupLayout = new QGridLayout(shuffleGroup);
 
@@ -117,9 +147,11 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     shuffleGroupLayout->addWidget(m_shuffleAlbumsSort, 1, 1);
     shuffleGroupLayout->setColumnStretch(1, 1);
 
-    layout->addWidget(generalGroup, 0, 0);
-    layout->addWidget(shuffleGroup, 1, 0);
-    layout->setRowStretch(2, 1);
+    row = 0;
+    layout->addWidget(generalGroup, row++, 0);
+    layout->addWidget(controlsGroup, row++, 0);
+    layout->addWidget(shuffleGroup, row++, 0);
+    layout->setRowStretch(row, 1);
 }
 
 void PlaybackPageWidget::load()
@@ -132,6 +164,10 @@ void PlaybackPageWidget::load()
     m_skipUnavailable->setChecked(
         m_settings->fileValue(Settings::Core::Internal::PlaylistSkipUnavailable, false).toBool());
     m_stopIfActiveDeleted->setChecked(m_settings->value<Settings::Core::StopIfActivePlaylistDeleted>());
+
+    m_seekStep->setValue(m_settings->value<Settings::Gui::SeekStepSmall>());
+    m_seekStepLarge->setValue(m_settings->value<Settings::Gui::SeekStepLarge>());
+    m_volumeStep->setValue(m_settings->value<Settings::Gui::VolumeStep>());
 
     const double playedThreshold = m_settings->value<Settings::Core::PlayedThreshold>();
     const auto playedPercent     = static_cast<int>(playedThreshold * 100);
@@ -151,6 +187,10 @@ void PlaybackPageWidget::apply()
     m_settings->fileSet(Settings::Core::Internal::PlaylistSkipUnavailable, m_skipUnavailable->isChecked());
     m_settings->set<Settings::Core::StopIfActivePlaylistDeleted>(m_stopIfActiveDeleted->isChecked());
 
+    m_settings->set<Settings::Gui::SeekStepSmall>(m_seekStep->value());
+    m_settings->set<Settings::Gui::SeekStepLarge>(m_seekStepLarge->value());
+    m_settings->set<Settings::Gui::VolumeStep>(m_volumeStep->value());
+
     const int playedPercent    = m_playedSlider->value();
     const auto playedThreshold = static_cast<double>(playedPercent) / 100;
     m_settings->set<Settings::Core::PlayedThreshold>(playedThreshold);
@@ -168,6 +208,9 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->fileRemove(Settings::Core::Internal::PlaylistSkipUnavailable);
     m_settings->reset<Settings::Core::StopIfActivePlaylistDeleted>();
+    m_settings->reset<Settings::Gui::SeekStepSmall>();
+    m_settings->reset<Settings::Gui::SeekStepLarge>();
+    m_settings->reset<Settings::Gui::VolumeStep>();
     m_settings->reset<Settings::Core::PlayedThreshold>();
     m_settings->reset<Settings::Core::ShuffleAlbumsGroupScript>();
     m_settings->reset<Settings::Core::ShuffleAlbumsSortScript>();

@@ -73,9 +73,9 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
         }
     });
     QObject::connect(m_seekbar, &WaveSeekBar::seekForward, playerController,
-                     [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStep>()); });
+                     [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStepSmall>()); });
     QObject::connect(m_seekbar, &WaveSeekBar::seekBackward, playerController,
-                     [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStep>()); });
+                     [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStepSmall>()); });
 
     QObject::connect(m_container, &SeekContainer::totalClicked, this, [this]() {
         rescaleWaveform(); // Switching to elapsed total may change the width

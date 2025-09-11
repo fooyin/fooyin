@@ -80,7 +80,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<StarRatingSize>(17, u"Interface/StarRatingSize"_s);
     m_settings->createSetting<Style>(QString{}, u"Interface/Style"_s);
     m_settings->createTempSetting<MainWindowPixelRatio>(1.0);
-    m_settings->createSetting<SeekStep>(4000, u"Interface/SeekIncrement"_s);
+    m_settings->createSetting<SeekStepSmall>(4000, u"Interface/SeekIncrement"_s);
+    m_settings->createSetting<SeekStepLarge>(30000, u"Interface/SeekIncrementLarge"_s);
     m_settings->createSetting<ShowStatusTips>(true, u"Interface/ShowStatusTips"_s);
     m_settings->createTempSetting<Theme>(QVariant{});
     m_settings->createSetting<ShowSplitterHandles>(false, u"Interface/SplitterHandles"_s);
