@@ -49,6 +49,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     setSelectBeforeDrag(true);
     setUniformHeightRole(PlaylistItem::Type);
     viewport()->setAcceptDrops(true);
+    setSelectIgnoreParents(true);
 }
 
 void PlaylistView::setEmptyText(const QString& text)

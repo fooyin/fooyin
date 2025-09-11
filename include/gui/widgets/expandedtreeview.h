@@ -76,6 +76,9 @@ public:
     [[nodiscard]] int uniformHeightRole() const;
     void setUniformHeightRole(int role);
 
+    [[nodiscard]] bool selectIgnoreParents() const;
+    void setSelectIgnoreParents(bool enabled);
+
     [[nodiscard]] int indentation() const;
     void setIndentation(int indent);
     void resetIndentation();
@@ -102,7 +105,7 @@ public:
     void selectAll() override;
 
 signals:
-    void viewModeChanged(ViewMode mode);
+    void viewModeChanged(ExpandedTreeView::ViewMode mode);
     void middleClicked(const QModelIndex& index);
 
 protected:

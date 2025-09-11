@@ -192,6 +192,7 @@ public:
     CaptionDisplay m_captionDisplay{CaptionDisplay::Bottom};
     bool m_uniformRowHeights{false};
     bool m_selectBeforeDrag{false};
+    bool m_selectIgnoreParents{false};
 
     mutable bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
@@ -555,7 +556,7 @@ int BaseView::findValidItem(int item, int step) const
 {
     int newItem{item + step};
     while(newItem >= 0 && newItem < itemCount()) {
-        if(!m_p->isItemDisabled(newItem)) {
+        if(!m_p->isItemDisabled(newItem) && (!m_view->selectIgnoreParents() || !viewItem(newItem).hasChildren)) {
             return newItem;
         }
         newItem += step;
@@ -3154,6 +3155,16 @@ int ExpandedTreeView::uniformHeightRole() const
 void ExpandedTreeView::setUniformHeightRole(int role)
 {
     p->m_uniformHeightRole = role;
+}
+
+bool ExpandedTreeView::selectIgnoreParents() const
+{
+    return p->m_selectIgnoreParents;
+}
+
+void ExpandedTreeView::setSelectIgnoreParents(bool enabled)
+{
+    p->m_selectIgnoreParents = enabled;
 }
 
 int ExpandedTreeView::indentation() const
