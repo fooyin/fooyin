@@ -85,6 +85,8 @@ public:
                   QObject* parent = nullptr);
     ~PlaylistModel() override;
 
+    void invalidateData() override;
+
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     bool setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role) override;

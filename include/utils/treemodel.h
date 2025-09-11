@@ -29,7 +29,6 @@ public:
     explicit TreeModel(QObject* parent = nullptr)
         : QAbstractItemModel{parent}
         , m_root{std::make_unique<Item>()}
-        , m_dirty{false}
     { }
 
     ~TreeModel() override = default;
@@ -114,7 +113,7 @@ protected:
         m_root = std::make_unique<Item>();
     }
 
-    void invalidateData()
+    virtual void invalidateData()
     {
         m_dirty = true;
         beginResetModel();
@@ -122,8 +121,9 @@ protected:
         m_dirty = false;
     }
 
+    bool m_dirty{false};
+
 private:
     std::unique_ptr<Item> m_root;
-    bool m_dirty;
 };
 } // namespace Fooyin

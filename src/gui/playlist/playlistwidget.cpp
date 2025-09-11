@@ -21,7 +21,6 @@
 
 #include "internalguisettings.h"
 #include "playlist/playlistinteractor.h"
-#include "playlist/playlistscriptregistry.h"
 #include "playlistcolumnregistry.h"
 #include "playlistcommands.h"
 #include "playlistcontroller.h"
@@ -794,16 +793,10 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex)
     m_sorting = false;
 }
 
-void PlaylistWidgetPrivate::stopAfterTrack()
+void PlaylistWidgetPrivate::stopAfterTrack() const
 {
     const auto index = m_playlistView->currentIndex();
-
-    for(int col{0}; const auto& column : m_columns) {
-        if(column.field == QLatin1String{PlayingIcon}) {
-            m_model->stopAfterTrack(index.siblingAtColumn(col));
-        }
-        ++col;
-    }
+    m_model->stopAfterTrack(index);
 }
 
 void PlaylistWidgetPrivate::playSelectedTracks() const

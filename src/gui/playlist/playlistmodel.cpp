@@ -552,6 +552,24 @@ PlaylistModel::~PlaylistModel()
     m_populatorThread.wait();
 }
 
+void PlaylistModel::invalidateData()
+{
+    const int playingIndex = m_playingIndex.isValid() ? m_playingIndex.data(PlaylistItem::Index).toInt() : -1;
+    const int stopAtIndex  = m_stopAtIndex.isValid() ? m_stopAtIndex.data(PlaylistItem::Index).toInt() : -1;
+
+    m_dirty = true;
+    beginResetModel();
+    endResetModel();
+    m_dirty = false;
+
+    if(const auto pIndex = indexAtPlaylistIndex(playingIndex); pIndex.isValid()) {
+        m_playingIndex = pIndex;
+    }
+    if(const auto sIndex = indexAtPlaylistIndex(stopAtIndex); sIndex.isValid()) {
+        m_stopAtIndex = sIndex;
+    }
+}
+
 Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
