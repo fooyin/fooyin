@@ -62,6 +62,7 @@ public:
     WriteRequest writeUpdatedTracks(const TrackList& tracks);
     WriteRequest writeTrackCovers(const TrackCoverData& tracks);
     void saveUpdatedTrackStats(const TrackList& tracks);
+    void saveUpdatedTrackPlaycounts(const TrackList& tracks);
 
     void cleanupTracks();
     void libraryRemoved(int id);

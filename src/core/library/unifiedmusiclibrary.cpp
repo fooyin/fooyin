@@ -454,7 +454,7 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
         }
     }
 
-    p->m_threadHandler.saveUpdatedTrackStats(tracksToUpdate);
+    p->m_threadHandler.saveUpdatedTrackPlaycounts(tracksToUpdate);
 }
 
 void UnifiedMusicLibrary::cleanupTracks()

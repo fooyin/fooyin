@@ -103,6 +103,8 @@ public:
     TrackList m_tracksPendingWrite;
     QBasicTimer m_updateTimer;
     TrackList m_tracksPendingUpdate;
+    QBasicTimer m_playcountTimer;
+    TrackList m_tracksPendingPlaycountUpdate;
 
     std::deque<LibraryScanRequest> m_scanRequests;
     int m_currentRequestId{-1};
@@ -508,6 +510,12 @@ void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks)
     p->m_updateTimer.start(UpdateInterval, this);
 }
 
+void LibraryThreadHandler::saveUpdatedTrackPlaycounts(const TrackList& tracks)
+{
+    p->m_tracksPendingPlaycountUpdate.insert(p->m_tracksPendingPlaycountUpdate.end(), tracks.cbegin(), tracks.cend());
+    p->m_playcountTimer.start(UpdateInterval, this);
+}
+
 void LibraryThreadHandler::cleanupTracks()
 {
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager, &TrackDatabaseManager::cleanupTracks);
@@ -540,9 +548,16 @@ void LibraryThreadHandler::timerEvent(QTimerEvent* event)
     else if(event->timerId() == p->m_updateTimer.timerId()) {
         p->m_updateTimer.stop();
         QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, tracks = p->m_tracksPendingUpdate]() {
-            p->m_trackDatabaseManager.updateTrackStats(tracks);
+            p->m_trackDatabaseManager.updateTrackStats(tracks, false);
         });
         p->m_tracksPendingUpdate.clear();
+    }
+    else if(event->timerId() == p->m_playcountTimer.timerId()) {
+        p->m_playcountTimer.stop();
+        QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, tracks = p->m_tracksPendingPlaycountUpdate]() {
+            p->m_trackDatabaseManager.updateTrackStats(tracks, true);
+        });
+        p->m_tracksPendingPlaycountUpdate.clear();
     }
 
     QObject::timerEvent(event);

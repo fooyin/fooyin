@@ -41,8 +41,7 @@ TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shar
     , m_dbPool{std::move(dbPool)}
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
-{
-}
+{ }
 
 void TrackDatabaseManager::initialiseThread()
 {
@@ -115,7 +114,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
     setState(Idle);
 }
 
-void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
+void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, bool onlyPlaycount)
 {
     setState(Running);
 
@@ -130,7 +129,8 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
         options |= AudioReader::Playcount;
     }
 
-    const bool writeToFile = options & AudioReader::Rating || options & AudioReader::Playcount;
+    const bool writeToFile = onlyPlaycount ? (options & AudioReader::Playcount)
+                                           : (options & (AudioReader::Playcount | AudioReader::Rating));
 
     for(const Track& track : std::as_const(tracksToUpdate)) {
         if(!mayRun()) {

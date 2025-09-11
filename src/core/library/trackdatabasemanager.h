@@ -48,7 +48,7 @@ signals:
 public slots:
     void getAllTracks();
     void updateTracks(const Fooyin::TrackList& tracks, bool write);
-    void updateTrackStats(const Fooyin::TrackList& track);
+    void updateTrackStats(const Fooyin::TrackList& track, bool onlyPlaycount);
     void writeCovers(const Fooyin::TrackCoverData& tracks);
     void cleanupTracks();
 
