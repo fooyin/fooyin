@@ -65,5 +65,6 @@ private:
     QAction* m_random;
 
     QAction* m_stopAfterCurrent;
+    QAction* m_resetStopAfterCurrent;
 };
 } // namespace Fooyin

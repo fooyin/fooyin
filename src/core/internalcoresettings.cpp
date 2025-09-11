@@ -68,7 +68,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PlayedThreshold>(0.5, u"Playback/PlayedThreshold"_s);
     m_settings->createSetting<ExternalSortScript>(u"%filepath%"_s, u"Library/ExternalSortScript"_s);
     m_settings->createTempSetting<Shutdown>(false);
-    m_settings->createTempSetting<StopAfterCurrent>(false);
+    m_settings->createSetting<StopAfterCurrent>(false, u"Playback/StopAfterCurrent"_s);
     m_settings->createSetting<RGMode>(0, u"Engine/ReplayGainMode"_s);
     m_settings->createSetting<RGType>(static_cast<int>(ReplayGainType::Track), u"Engine/ReplayGainType"_s);
     m_settings->createSetting<RGPreAmp>(0.0F, u"Engine/ReplayGainPreAmp"_s);
@@ -84,6 +84,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<ActiveTrackId>(-2);
     m_settings->createSetting<FollowPlaybackQueue>(false, u"Playback/FollowPlaybackQueue"_s);
     m_settings->createSetting<StopIfActivePlaylistDeleted>(false, u"Playback/StopIfActivePlaylistDeleted"_s);
+    m_settings->createSetting<ResetStopAfterCurrent>(false, u"Playback/ResetStopAfterCurrent"_s);
 
     m_settings->createSetting<Internal::MonitorLibraries>(true, u"Library/MonitorLibraries"_s);
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());

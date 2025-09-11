@@ -91,6 +91,7 @@ public:
     bool m_seeking{false};
     bool m_counted{false};
     bool m_isQueueTrack{false};
+    bool m_stopCurrentSkip{false};
 
     PlaybackQueue m_queue;
     PlaylistTrack m_scheduledTrack;
@@ -215,17 +216,23 @@ void PlayerController::previous()
 
 void PlayerController::next()
 {
-    // Temporarily disable repeating track when user clicks 'next'.
+    // Temporarily disable repeating track and 'stop after current' when user clicks 'next'.
     const auto playMode = p->m_playMode;
     p->m_playMode &= ~Playlist::RepeatTrack;
+    p->m_stopCurrentSkip = true;
+
     nextAuto();
-    p->m_playMode = playMode;
+
+    p->m_playMode        = playMode;
+    p->m_stopCurrentSkip = false;
 }
 
 void PlayerController::nextAuto()
 {
-    if(p->m_settings->value<Settings::Core::StopAfterCurrent>()) {
-        p->m_settings->set<Settings::Core::StopAfterCurrent>(false);
+    if(!p->m_stopCurrentSkip && p->m_settings->value<Settings::Core::StopAfterCurrent>()) {
+        if(p->m_settings->value<Settings::Core::ResetStopAfterCurrent>()) {
+            p->m_settings->set<Settings::Core::StopAfterCurrent>(false);
+        }
         reset();
         return;
     }

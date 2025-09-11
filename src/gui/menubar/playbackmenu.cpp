@@ -54,6 +54,7 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     , m_shuffleAlbums{new QAction(tr("Shu&ffle albums"), this)}
     , m_random{new QAction(tr("&Random"), this)}
     , m_stopAfterCurrent{new QAction(tr("Stop &after current"), this)}
+    , m_resetStopAfterCurrent{new QAction(tr("&Reset the above after stopping"), this)}
 {
     auto* playbackMenu = m_actionManager->actionContainer(Constants::Menus::Playback);
 
@@ -178,16 +179,26 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     stopCurrentCmd->setCategories(playbackCategory);
     stopCurrentCmd->setAttribute(ProxyAction::UpdateText);
 
+    m_resetStopAfterCurrent->setStatusTip(tr("Reset 'Stop after current' after stopping"));
+    auto* resetStopCurrentCmd
+        = actionManager->registerAction(m_resetStopAfterCurrent, Constants::Actions::StopAfterCurrentReset);
+    resetStopCurrentCmd->setCategories(playbackCategory);
+    resetStopCurrentCmd->setAttribute(ProxyAction::UpdateText);
+
     m_stopAfterCurrent->setCheckable(true);
+    m_resetStopAfterCurrent->setCheckable(true);
     followPlayback->setCheckable(true);
     followCursor->setCheckable(true);
 
     m_stopAfterCurrent->setChecked(m_settings->value<Settings::Core::StopAfterCurrent>());
+    m_resetStopAfterCurrent->setChecked(m_settings->value<Settings::Core::ResetStopAfterCurrent>());
     followPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     followCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
 
     QObject::connect(m_stopAfterCurrent, &QAction::triggered, this,
                      [this](bool enabled) { m_settings->set<Settings::Core::StopAfterCurrent>(enabled); });
+    QObject::connect(m_resetStopAfterCurrent, &QAction::triggered, this,
+                     [this](bool enabled) { m_settings->set<Settings::Core::ResetStopAfterCurrent>(enabled); });
     QObject::connect(followPlayback, &QAction::triggered, this,
                      [this](bool enabled) { m_settings->set<Settings::Gui::CursorFollowsPlayback>(enabled); });
     QObject::connect(followCursor, &QAction::triggered, this,
@@ -195,14 +206,18 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
 
     m_settings->subscribe<Settings::Core::StopAfterCurrent>(
         this, [this](bool enabled) { m_stopAfterCurrent->setChecked(enabled); });
+    m_settings->subscribe<Settings::Core::ResetStopAfterCurrent>(
+        this, [this](bool enabled) { m_resetStopAfterCurrent->setChecked(enabled); });
     m_settings->subscribe<Settings::Gui::CursorFollowsPlayback>(
         this, [followPlayback](bool enabled) { followPlayback->setChecked(enabled); });
     m_settings->subscribe<Settings::Gui::PlaybackFollowsCursor>(
         this, [followCursor](bool enabled) { followCursor->setChecked(enabled); });
 
-    playbackMenu->addAction(stopCurrentCmd->action());
     playbackMenu->addAction(followPlayback);
     playbackMenu->addAction(followCursor);
+    playbackMenu->addSeparator();
+    playbackMenu->addAction(stopCurrentCmd->action());
+    playbackMenu->addAction(resetStopCurrentCmd->action());
 
     updatePlayPause(m_playerController->playState());
     updatePlayMode(m_playerController->playMode());

@@ -79,6 +79,7 @@ enum CoreSettings : uint32_t
     ActiveTrackId               = 30 | Type::Int,
     FollowPlaybackQueue         = 31 | Type::Bool,
     StopIfActivePlaylistDeleted = 32 | Type::Bool,
+    ResetStopAfterCurrent       = 33 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core
