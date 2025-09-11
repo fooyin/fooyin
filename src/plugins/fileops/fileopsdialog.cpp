@@ -453,10 +453,6 @@ void FileOpsDialogPrivate::modelUpdated()
         m_status->setText(FileOpsDialog::tr("Nothing to do"));
         m_runButton->setEnabled(false);
     }
-    else if(m_operation != Operation::Rename && !QFileInfo{m_destination->text()}.isWritable()) {
-        m_status->setText(FileOpsDialog::tr("Cannot write to %1").arg(m_destination->text()));
-        m_runButton->setEnabled(false);
-    }
     else {
         m_status->setText(FileOpsDialog::tr("Pending operations") + u": %1"_s.arg(opCount));
         m_runButton->setEnabled(true);
