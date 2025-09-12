@@ -487,7 +487,7 @@ void GuiApplicationPrivate::registerActions()
     muteCmd->setCategories(volumeCategory);
     QObject::connect(muteAction, &QAction::triggered, m_mainWindow.get(), [this]() { mute(); });
 
-    const QStringList seekCategory = {GuiApplication::tr("Playback")};
+    const QStringList seekCategory = {GuiApplication::tr("Playback"), GuiApplication::tr("Seek")};
 
     auto* seekForwardSmall    = new QAction(GuiApplication::tr("Seek forward (small step)"), m_mainWindow.get());
     auto* seekForwardSmallCmd = m_actionManager->registerAction(seekForwardSmall, Constants::Actions::SeekForwardSmall);
