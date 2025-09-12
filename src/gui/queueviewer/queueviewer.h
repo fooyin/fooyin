@@ -58,6 +58,7 @@ private:
     void handleTracksDropped(int row, const QByteArray& mimeData) const;
     void handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const;
     void handleQueueChanged();
+    void handleQueueDoubleClicked(const QModelIndex& index) const;
 
     ActionManager* m_actionManager;
     PlaylistInteractor* m_playlistInteractor;

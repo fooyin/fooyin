@@ -552,7 +552,7 @@ void PlayerController::dequeueTracks(const std::vector<int>& indexes)
     PlaylistIndexes dequeuedIndexes;
 
     std::vector<int> sortedIndexes{indexes};
-    std::sort(sortedIndexes.rbegin(), sortedIndexes.rend());
+    std::ranges::sort(sortedIndexes, std::greater{}); // Reverse sort
 
     auto tracks      = p->m_queue.tracks();
     const auto count = static_cast<int>(tracks.size());

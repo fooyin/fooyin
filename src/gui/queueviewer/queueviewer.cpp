@@ -144,6 +144,7 @@ void QueueViewer::setupConnections()
     QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, this, [this](const QSize& size) {
         m_settings->set<Settings::Gui::Internal::QueueViewerIconSize>(size);
     });
+    QObject::connect(m_view, &QAbstractItemView::doubleClicked, this, &QueueViewer::handleQueueDoubleClicked);
 
     m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowIcon>(m_view, [this]() {
         QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
@@ -213,5 +214,24 @@ void QueueViewer::handleQueueChanged()
     m_changingQueue = true;
     m_playerController->replaceTracks(tracks);
     m_changingQueue = false;
+}
+
+void QueueViewer::handleQueueDoubleClicked(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return;
+    }
+
+    const int queueIndex = index.row();
+
+    std::vector<int> indexes;
+    indexes.reserve(queueIndex);
+
+    std::ranges::copy(std::views::iota(0, queueIndex), std::back_inserter(indexes));
+
+    m_playerController->dequeueTracks(indexes);
+    m_model->removeIndexes(indexes);
+
+    m_playerController->next();
 }
 } // namespace Fooyin
