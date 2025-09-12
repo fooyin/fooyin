@@ -513,7 +513,7 @@ void PlaylistWidgetPrivate::resetTree()
     if(m_model->isDirty() && m_currentIndex >= 0) {
         const auto currIdx = m_model->indexAtPlaylistIndex(m_currentIndex);
         if(currIdx.isValid()) {
-            m_playlistView->setCurrentIndex(currIdx);
+            m_playlistView->selectionModel()->setCurrentIndex(currIdx, QItemSelectionModel::NoUpdate);
         }
         m_currentIndex = -1;
         return;
