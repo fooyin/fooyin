@@ -421,7 +421,7 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
         emit reloadMetadata();
     };
 
-    const QString coverKey = Utils::generateHash(u"MPRIS"_s, track.albumHash());
+    const QString coverKey = Utils::generateHash(u"MPRIS"_s, track.hash());
     if(m_currCoverKey != coverKey) {
         QFile::remove(currentCoverPath());
 
