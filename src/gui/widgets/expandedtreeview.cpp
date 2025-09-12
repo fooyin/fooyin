@@ -19,6 +19,7 @@
 
 #include <gui/widgets/expandedtreeview.h>
 
+#include <utils/treemodel.h>
 #include <utils/utils.h>
 
 #include <QDrag>
@@ -3224,6 +3225,13 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
 {
     if(!p->isIndexValid(index)) {
         return;
+    }
+
+    if(auto* treeModel = qobject_cast<TreeModelBase*>(p->m_model)) {
+        // Prevent scrolling when invalidating model
+        if(treeModel->isDirty()) {
+            return;
+        }
     }
 
     if(state() == QAbstractItemView::DraggingState || state() == QAbstractItemView::DragSelectingState) {

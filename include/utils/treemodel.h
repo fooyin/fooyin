@@ -19,24 +19,36 @@
 
 #pragma once
 
+#include "fyutils_export.h"
+
 #include <QAbstractItemModel>
 
 namespace Fooyin {
+class FYUTILS_EXPORT TreeModelBase : public QAbstractItemModel
+{
+    Q_OBJECT
+
+public:
+    using QAbstractItemModel::QAbstractItemModel;
+
+    [[nodiscard]] bool isDirty() const;
+
+protected:
+    virtual void invalidateData();
+
+    bool m_dirty{false};
+};
+
 template <class Item>
-class TreeModel : public QAbstractItemModel
+class TreeModel : public TreeModelBase
 {
 public:
     explicit TreeModel(QObject* parent = nullptr)
-        : QAbstractItemModel{parent}
+        : TreeModelBase{parent}
         , m_root{std::make_unique<Item>()}
     { }
 
     ~TreeModel() override = default;
-
-    [[nodiscard]] bool isDirty() const
-    {
-        return m_dirty;
-    }
 
     [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override
     {
@@ -112,16 +124,6 @@ protected:
     {
         m_root = std::make_unique<Item>();
     }
-
-    virtual void invalidateData()
-    {
-        m_dirty = true;
-        beginResetModel();
-        endResetModel();
-        m_dirty = false;
-    }
-
-    bool m_dirty{false};
 
 private:
     std::unique_ptr<Item> m_root;

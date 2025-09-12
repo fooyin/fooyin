@@ -59,6 +59,7 @@ set(SOURCES
     stringutils.cpp
     timer.cpp
     tooltipfilter.cpp
+    treemodel.cpp
     utils.cpp
     worker.cpp
     actions/actioncontainer.cpp
