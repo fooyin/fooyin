@@ -115,10 +115,12 @@ void CoverWidget::reloadCover()
         return;
     }
 
-    m_cover = m_coverProvider->trackCover(m_track, m_coverType);
-    // Delay showing cover so we don't display the placeholder if still loading
-    // TODO: Implement fading between cover changes
-    QTimer::singleShot(200, this, &CoverWidget::rescaleCover);
+    m_coverProvider->trackCoverFull(m_track, m_coverType).then([this](const QPixmap& cover) {
+        m_cover = cover;
+        // Delay showing cover so we don't display the placeholder if still loading
+        // TODO: Implement fading between cover changes
+        QTimer::singleShot(200, this, &CoverWidget::rescaleCover);
+    });
 }
 
 QString CoverWidget::name() const

@@ -93,6 +93,8 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this, &MprisPlugin::trackChanged);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
                      [this](uint64_t ms) { emit Seeked(static_cast<int64_t>(ms) * 1000); });
+
+    QObject::connect(this, &MprisPlugin::reloadMetadata, this, [this]() { notify(u"Metadata"_s, metadata()); });
 }
 
 void MprisPlugin::initialise(const GuiPluginContext& context)
@@ -104,14 +106,6 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
 
     QObject::connect(m_windowController, &WindowController::isFullScreenChanged, this,
                      [this]() { notify(u"Fullscreen"_s, fullscreen()); });
-
-    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
-        const auto currentTrack = m_playerController->currentPlaylistTrack();
-        if(track.id() == currentTrack.track.id()) {
-            loadMetaData(currentTrack);
-            notify(u"Metadata"_s, metadata());
-        }
-    });
 
     new MprisRoot(this);
     new MprisPlayer(this);
@@ -390,7 +384,6 @@ void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
 
     if(playlistTrack.isValid()) {
         loadMetaData(playlistTrack);
-        notify(u"Metadata"_s, metadata());
         notify(u"CanSeek"_s, canSeek());
         notify(u"CanGoNext"_s, canGoNext());
         notify(u"CanGoPrevious"_s, canGoPrevious());
@@ -423,23 +416,31 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
         return;
     }
 
+    const auto loadArtAndReload = [this]() {
+        m_currentMetaData[u"mpris:artUrl"_s] = QUrl::fromLocalFile(currentCoverPath()).toString();
+        emit reloadMetadata();
+    };
+
     const QString coverKey = Utils::generateHash(u"MPRIS"_s, track.albumHash());
     if(m_currCoverKey != coverKey) {
         QFile::remove(currentCoverPath());
 
-        const QPixmap cover = m_coverProvider->trackCover(track, Track::Cover::Front);
-        if(cover.isNull()) {
-            return;
-        }
+        m_coverProvider->trackCoverFull(track, Track::Cover::Front)
+            .then([this, coverKey, loadArtAndReload](const QPixmap& cover) {
+                if(!cover.isNull()) {
+                    m_currCoverKey = coverKey;
+                    QFile file{currentCoverPath()};
+                    if(file.open(QIODevice::WriteOnly)) {
+                        cover.save(&file, "JPG", 85);
 
-        m_currCoverKey = coverKey;
-        QFile file{currentCoverPath()};
-        if(file.open(QIODevice::WriteOnly)) {
-            cover.save(&file, "JPG", 85);
-        }
+                        loadArtAndReload();
+                    }
+                }
+            });
     }
-
-    m_currentMetaData[u"mpris:artUrl"_s] = QUrl::fromLocalFile(currentCoverPath()).toString();
+    else {
+        loadArtAndReload();
+    }
 }
 } // namespace Fooyin::Mpris
 

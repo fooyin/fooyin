@@ -125,6 +125,8 @@ signals:
     void loopStatusChanged(const QString& status);
     void shuffleChanged(bool shuffle);
 
+    void reloadMetadata();
+
 private:
     QString currentCoverPath() const;
     void notify(const QString& name, const QVariant& value);

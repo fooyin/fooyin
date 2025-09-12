@@ -318,9 +318,11 @@ public:
 
     QPixmap loadNoCover();
     void processCoverResult(const CoverLoader& loader);
+    static QPixmap processLoadResult(const CoverLoader& loader);
     void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail,
                     CoverProvider::ThumbnailSize size = CoverProvider::None);
-    QFuture<bool> hasCover(const QString& key, const Track& track, Track::Cover type);
+    QFuture<QPixmap> loadCover(const Track& track, Track::Cover type) const;
+    QFuture<bool> hasCover(const QString& key, const Track& track, Track::Cover type) const;
 
     CoverProvider* m_self;
     std::shared_ptr<AudioLoader> m_audioLoader;
@@ -380,6 +382,18 @@ void CoverProvider::CoverProviderPrivate::processCoverResult(const CoverLoader& 
     emit m_self->coverAdded(loader.track);
 }
 
+QPixmap CoverProvider::CoverProviderPrivate::processLoadResult(const CoverLoader& loader)
+{
+    if(loader.cover.isNull()) {
+        return {};
+    }
+
+    QPixmap cover = QPixmap::fromImage(loader.cover);
+    cover.setDevicePixelRatio(Utils::windowDpr());
+
+    return cover;
+}
+
 void CoverProvider::CoverProviderPrivate::fetchCover(const QString& key, const Track& track, Track::Cover type,
                                                      bool thumbnail, CoverProvider::ThumbnailSize size)
 {
@@ -399,7 +413,22 @@ void CoverProvider::CoverProviderPrivate::fetchCover(const QString& key, const T
     loaderResult.then(m_self, [this, key, track](const CoverLoader& result) { processCoverResult(result); });
 }
 
-QFuture<bool> CoverProvider::CoverProviderPrivate::hasCover(const QString& key, const Track& track, Track::Cover type)
+QFuture<QPixmap> CoverProvider::CoverProviderPrivate::loadCover(const Track& track, Track::Cover type) const
+{
+    CoverLoader loader;
+    loader.track       = track;
+    loader.type        = type;
+    loader.audioLoader = m_audioLoader;
+    loader.paths       = m_paths;
+
+    auto loaderResult = Utils::asyncExec([loader]() -> CoverLoader {
+        auto result = loadCoverImage(loader);
+        return result;
+    });
+    return loaderResult.then(m_self, [this, track](const CoverLoader& result) { return processLoadResult(result); });
+}
+
+QFuture<bool> CoverProvider::CoverProviderPrivate::hasCover(const QString& key, const Track& track, Track::Cover type) const
 {
     CoverLoader loader;
     loader.key         = key;
@@ -461,6 +490,15 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
     }
 
     return p->m_usePlacerholder ? p->loadNoCover() : QPixmap{};
+}
+
+QFuture<QPixmap> CoverProvider::trackCoverFull(const Track& track, Track::Cover type) const
+{
+    if(!track.isValid()) {
+        return Utils::asyncExec([] { return QPixmap{}; });
+    }
+
+    return p->loadCover(track, type);
 }
 
 QPixmap CoverProvider::trackCoverThumbnail(const Track& track, ThumbnailSize size, Track::Cover type) const
