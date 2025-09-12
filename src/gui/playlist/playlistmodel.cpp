@@ -1215,6 +1215,7 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
     if(m_stopAtIndex.isValid()
        && m_playingIndex == m_stopAtIndex.sibling(m_stopAtIndex.row(), m_playingIndex.column())) {
         m_settings->set<Settings::Core::StopAfterCurrent>(true);
+        m_stopAtIndex = QPersistentModelIndex{};
     }
 }
 
