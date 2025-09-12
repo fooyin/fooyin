@@ -45,8 +45,8 @@ void InfoView::resizeView()
     if(!m_elideText) {
         const int geometryWidth = geometry().width();
 
-        header()->resizeSection(lastColumn, geometryWidth);
         header()->setSectionResizeMode(lastColumn, QHeaderView::Fixed);
+        header()->resizeSection(lastColumn, static_cast<int>(static_cast<double>(geometryWidth) * 1.25));
         header()->setStretchLastSection(false);
     }
     else {
