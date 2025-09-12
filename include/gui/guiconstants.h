@@ -188,6 +188,7 @@ constexpr auto SearchArtwork         = "Tracks.SearchArtwork";
 constexpr auto SearchArtworkQuick    = "Tracks.SearchArtworkQuick";
 constexpr auto RemoveArtwork         = "Tracks.RemoveArtwork";
 constexpr auto OpenProperties        = "Tracks.OpenProperties";
+constexpr auto ToggleMenubar         = "View.ToggleMenubar";
 } // namespace Actions
 
 namespace Mime {

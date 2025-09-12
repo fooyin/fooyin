@@ -545,6 +545,14 @@ void GuiApplicationPrivate::registerActions()
             m_core->playlistHandler()->removePlaylist(currentPlaylist->id());
         }
     });
+
+    auto* toggleMenubar    = new QAction(GuiApplication::tr("Toggle Menubar"), m_mainWindow.get());
+    auto* toggleMenubarCmd = m_actionManager->registerAction(toggleMenubar, Constants::Actions::ToggleMenubar);
+    toggleMenubarCmd->setCategories({GuiApplication::tr("View")});
+    toggleMenubarCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_M});
+    QObject::connect(toggleMenubar, &QAction::triggered, m_mainWindow.get(), [this]() {
+        m_settings->set<Settings::Gui::ShowMenuBar>(!m_settings->value<Settings::Gui::ShowMenuBar>());
+    });
 }
 
 void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModified) const
