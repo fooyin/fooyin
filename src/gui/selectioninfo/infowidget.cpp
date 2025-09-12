@@ -72,7 +72,8 @@ InfoWidget::InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, 
     , m_displayOption{SelectionDisplay::PreferSelection}
     , m_scrollPos{-1}
     , m_showHeader{true}
-    , m_showScrollbar{true}
+    , m_showVerticalScrollbar{true}
+    , m_showHorizontalScrollbar{false}
     , m_alternatingColours{true}
 {
     setObjectName(InfoWidget::name());
@@ -102,7 +103,8 @@ InfoWidget::InfoWidget(Application* app, TrackSelectionController* selectionCont
     , m_displayOption{static_cast<SelectionDisplay>(m_settings->value<Settings::Gui::Internal::InfoDisplayPrefer>())}
     , m_scrollPos{-1}
     , m_showHeader{true}
-    , m_showScrollbar{true}
+    , m_showVerticalScrollbar{true}
+    , m_showHorizontalScrollbar{false}
     , m_alternatingColours{true}
 {
     setObjectName(InfoWidget::name());
@@ -145,11 +147,12 @@ QString InfoWidget::layoutName() const
 
 void InfoWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout["Options"_L1]         = static_cast<int>(m_model->options());
-    layout["ShowHeader"_L1]      = m_showHeader;
-    layout["ShowScrollbar"_L1]   = m_showScrollbar;
-    layout["AlternatingRows"_L1] = m_alternatingColours;
-    layout["State"_L1]           = QString::fromUtf8(m_view->header()->saveState().toBase64());
+    layout["Options"_L1]                 = static_cast<int>(m_model->options());
+    layout["ShowHeader"_L1]              = m_showHeader;
+    layout["ShowVerticalScrollbar"_L1]   = m_showVerticalScrollbar;
+    layout["ShowHorizontalScrollbar"_L1] = m_showHorizontalScrollbar;
+    layout["AlternatingRows"_L1]         = m_alternatingColours;
+    layout["State"_L1]                   = QString::fromUtf8(m_view->header()->saveState().toBase64());
 }
 
 void InfoWidget::loadLayoutData(const QJsonObject& layout)
@@ -161,8 +164,11 @@ void InfoWidget::loadLayoutData(const QJsonObject& layout)
     if(layout.contains("ShowHeader"_L1)) {
         m_showHeader = layout.value("ShowHeader"_L1).toBool();
     }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        m_showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
+    if(layout.contains("ShowVerticalScrollbar"_L1)) {
+        m_showVerticalScrollbar = layout.value("ShowVerticalScrollbar"_L1).toBool();
+    }
+    if(layout.contains("ShowHorizontalScrollbar"_L1)) {
+        m_showHorizontalScrollbar = layout.value("ShowHorizontalScrollbar"_L1).toBool();
     }
     if(layout.contains("AlternatingRows"_L1)) {
         m_alternatingColours = layout.value("AlternatingRows"_L1).toBool();
@@ -176,7 +182,9 @@ void InfoWidget::loadLayoutData(const QJsonObject& layout)
 void InfoWidget::finalise()
 {
     m_view->setHeaderHidden(!m_showHeader);
-    m_view->setVerticalScrollBarPolicy(m_showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_view->setVerticalScrollBarPolicy(m_showVerticalScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_view->setHorizontalScrollBarPolicy(m_showHorizontalScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_view->setElideText(!m_showHorizontalScrollbar);
     m_view->setAlternatingRowColors(m_alternatingColours);
 }
 
@@ -204,14 +212,23 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         finalise();
     });
 
-    auto* showScrollBar = new QAction(tr("Show scrollbar"), menu);
-    showScrollBar->setCheckable(true);
-    showScrollBar->setChecked(m_view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
-    QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
-        m_showScrollbar = checked;
+    auto* showVerticalScrollBar = new QAction(tr("Show scrollbar (vertical)"), menu);
+    showVerticalScrollBar->setCheckable(true);
+    showVerticalScrollBar->setChecked(m_view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
+    QAction::connect(showVerticalScrollBar, &QAction::triggered, this, [this](bool checked) {
+        m_showVerticalScrollbar = checked;
         finalise();
     });
-    menu->addAction(showScrollBar);
+    menu->addAction(showVerticalScrollBar);
+
+    auto* showHorizontalScrollBar = new QAction(tr("Show scrollbar (horizontal)"), menu);
+    showHorizontalScrollBar->setCheckable(true);
+    showHorizontalScrollBar->setChecked(m_view->horizontalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
+    QAction::connect(showHorizontalScrollBar, &QAction::triggered, this, [this](bool checked) {
+        m_showHorizontalScrollbar = checked;
+        finalise();
+    });
+    menu->addAction(showHorizontalScrollBar);
 
     auto* altColours = new QAction(tr("Alternating row colours"), menu);
     altColours->setCheckable(true);
@@ -272,7 +289,8 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     });
 
     menu->addAction(showHeaders);
-    menu->addAction(showScrollBar);
+    menu->addAction(showVerticalScrollBar);
+    menu->addAction(showHorizontalScrollBar);
     menu->addAction(altColours);
     menu->addSeparator();
     menu->addAction(showMetadata);

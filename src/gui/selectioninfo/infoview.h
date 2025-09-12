@@ -29,7 +29,14 @@ class InfoView : public ExpandedTreeView
 public:
     explicit InfoView(QWidget* parent = nullptr);
 
+    void resizeView();
+    void setElideText(bool enabled);
+
 protected:
+    void resizeEvent(QResizeEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
+
+private:
+    bool m_elideText;
 };
 } // namespace Fooyin

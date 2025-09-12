@@ -27,6 +27,7 @@
 namespace Fooyin {
 InfoView::InfoView(QWidget* parent)
     : ExpandedTreeView{parent}
+    , m_elideText{true}
 {
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
@@ -35,7 +36,37 @@ InfoView::InfoView(QWidget* parent)
     setAlternatingRowColors(true);
     setIndentation(5);
     setUniformHeightRole(InfoItem::Role::Type);
-    header()->setStretchLastSection(true);
+}
+
+void InfoView::resizeView()
+{
+    const int lastColumn = model()->columnCount() - 1;
+
+    if(!m_elideText) {
+        const int geometryWidth = geometry().width();
+
+        header()->resizeSection(lastColumn, geometryWidth);
+        header()->setSectionResizeMode(lastColumn, QHeaderView::Fixed);
+        header()->setStretchLastSection(false);
+    }
+    else {
+        header()->setSectionResizeMode(lastColumn, QHeaderView::Stretch);
+        header()->adjustSize();
+        header()->setStretchLastSection(true);
+    }
+}
+
+void InfoView::setElideText(bool enabled)
+{
+    if(std::exchange(m_elideText, enabled) != enabled) {
+        resizeView();
+    }
+}
+
+void InfoView::resizeEvent(QResizeEvent* event)
+{
+    ExpandedTreeView::resizeEvent(event);
+    resizeView();
 }
 
 void InfoView::paintEvent(QPaintEvent* event)

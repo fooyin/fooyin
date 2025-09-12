@@ -73,7 +73,8 @@ private:
     int m_scrollPos;
 
     bool m_showHeader;
-    bool m_showScrollbar;
+    bool m_showVerticalScrollbar;
+    bool m_showHorizontalScrollbar;
     bool m_alternatingColours;
 };
 } // namespace Fooyin
