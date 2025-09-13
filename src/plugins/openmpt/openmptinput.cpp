@@ -93,6 +93,8 @@ std::optional<AudioFormat> OpenMptDecoder::init(const AudioSource& source, const
 
         m_module = std::make_unique<openmpt::module>(data, std::clog, ctls);
 
+        m_module->select_subsong(track.subsong());
+
         int repeat = m_settings->value<Settings::OpenMpt::LoopCount>();
         if(options & NoLooping || options & NoInfiniteLooping) {
             repeat = 0;
@@ -103,7 +105,6 @@ std::optional<AudioFormat> OpenMptDecoder::init(const AudioSource& source, const
         m_module->set_repeat_count(repeat);
 
         setupModule(m_settings, m_module.get());
-        m_module->select_subsong(track.subsong());
     }
     catch(...) {
         qCWarning(OPENMPT) << "Failed to open" << track.filepath();

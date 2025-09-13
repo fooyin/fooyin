@@ -75,7 +75,7 @@ GmeSettings::GmeSettings(QWidget* parent)
     lengthLayout->addWidget(maxLengthLabel, row, 0);
     lengthLayout->addWidget(m_maxLength, row++, 1);
     lengthLayout->addWidget(loopLabel, row, 0);
-    lengthLayout->addWidget(m_loopCount, row, 1);
+    lengthLayout->addWidget(m_loopCount, row++, 1);
     lengthLayout->addWidget(fadeLabel, row, 0);
     lengthLayout->addWidget(m_fadeLength, row++, 1);
     lengthLayout->setColumnStretch(3, 1);

@@ -56,7 +56,7 @@ public:
     AudioBuffer readBuffer(size_t bytes) override;
 
 private:
-    DecoderOptions m_options;
+    bool m_repeatTrack;
     FySettings m_settings;
     AudioFormat m_format;
     MusicEmuPtr m_emu;

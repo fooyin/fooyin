@@ -73,7 +73,7 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
 
     int row{0};
     lengthLayout->addWidget(loopLabel, row, 0);
-    lengthLayout->addWidget(m_loopCount, row, 1);
+    lengthLayout->addWidget(m_loopCount, row++, 1);
     lengthLayout->addWidget(fadeLabel, row, 0);
     lengthLayout->addWidget(m_fadeLength, row++, 1);
     lengthLayout->addWidget(silenceLabel, row, 0);

@@ -70,7 +70,7 @@ OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
 
     auto* loopLabel = new QLabel(tr("Loop count") + ":"_L1, this);
 
-    m_loopCount->setRange(1, 16);
+    m_loopCount->setRange(0, 16);
     m_loopCount->setSingleStep(1);
     m_loopCount->setSuffix(u" "_s + tr("times"));
 
