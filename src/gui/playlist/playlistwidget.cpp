@@ -1313,10 +1313,6 @@ void PlaylistWidgetPrivate::middleClicked(const QModelIndex& /*index*/) const
 
 void PlaylistWidgetPrivate::followCurrentTrack() const
 {
-    if(m_playlistController->playState() != Player::PlayState::Playing) {
-        return;
-    }
-
     const auto [track, playlistId, index] = m_model->playingTrack();
 
     if(!track.isValid() || playlistId != m_playlistController->currentPlaylistId()) {
