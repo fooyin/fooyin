@@ -39,7 +39,7 @@ function(create_fooyin_library name)
         BASE_NAME
         fy${base_name}
         EXPORT_FILE_NAME
-        export/fy${base_name}_export.h
+        ${CMAKE_CURRENT_BINARY_DIR}/fy${base_name}_export.h
     )
 
     if(NOT BUILD_SHARED_LIBS)
@@ -50,10 +50,12 @@ function(create_fooyin_library name)
         set_target_properties(${name} PROPERTIES POSITION_INDEPENDENT_CODE ON)
     endif()
 
+    # Plugins can include headers like:
+    # #include <core/file.h>
+    # #include <fooyin/core/file.h>
     set(${base_name}_paths
         "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}/.."
         "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}"
-        "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}/${base_name}"
     )
 
     target_include_directories(
@@ -128,8 +130,8 @@ function(create_fooyin_library name)
 
         if(INSTALL_HEADERS)
             install(
-                DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/export/"
-                DESTINATION "${INCLUDE_INSTALL_DIR}/${base_name}"
+                FILES "${CMAKE_CURRENT_BINARY_DIR}/fy${base_name}_export.h"
+                DESTINATION "${INCLUDE_INSTALL_DIR}"
                 COMPONENT fooyin_development
             )
             install(TARGETS ${name} LIBRARY DESTINATION ${LIB_INSTALL_DIR}
