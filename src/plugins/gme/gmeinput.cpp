@@ -130,7 +130,7 @@ Track GmeDecoder::changedTrack() const
 
 std::optional<AudioFormat> GmeDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
-    m_options = options;
+    m_repeatTrack = !(options & NoInfiniteLooping) && isRepeatingTrack();
 
     const QByteArray data = source.device->readAll();
     if(data.isEmpty()) {
@@ -171,6 +171,18 @@ std::optional<AudioFormat> GmeDecoder::init(const AudioSource& source, const Tra
 void GmeDecoder::start()
 {
     gme_start_track(m_emu.get(), m_subsong);
+
+    if(m_loopLength != 0 && m_repeatTrack) {
+        gme_set_fade(m_emu.get(), -1);
+    }
+    else {
+#if defined(GME_VERSION) && GME_VERSION >= 0x000604
+        const int fadeLength = m_settings.value(FadeLength, DefaultFadeLength).toInt();
+        gme_set_fade_msecs(m_emu.get(), m_duration - fadeLength, fadeLength);
+#else
+        gme_set_fade(m_emu.get(), m_duration - 8000);
+#endif
+    }
 }
 
 void GmeDecoder::stop()
@@ -190,18 +202,6 @@ AudioBuffer GmeDecoder::readBuffer(size_t /*bytes*/)
 {
     if(gme_track_ended(m_emu.get())) {
         return {};
-    }
-
-    if(m_loopLength > 0 && !(m_options & NoInfiniteLooping) && isRepeatingTrack()) {
-        gme_set_fade(m_emu.get(), -1);
-    }
-    else {
-#if defined(GME_VERSION) && GME_VERSION >= 0x000604
-        const int fadeLength = m_settings.value(FadeLength, DefaultFadeLength).toInt();
-        gme_set_fade_msecs(m_emu.get(), m_duration - fadeLength, fadeLength);
-#else
-        gme_set_fade(m_emu.get(), m_duration - 8000);
-#endif
     }
 
     const auto startTime = static_cast<uint64_t>(gme_tell(m_emu.get()));

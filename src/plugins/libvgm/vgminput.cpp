@@ -181,6 +181,9 @@ std::optional<AudioFormat> VgmDecoder::init(const AudioSource& source, const Tra
     else if(options & NoInfiniteLooping && isRepeatingTrack()) {
         loopCount = DefaultLoopCount;
     }
+    else if(!(options & NoInfiniteLooping) && isRepeatingTrack()) {
+        loopCount = 0;
+    }
 
     const QByteArray data = source.device->readAll();
     if(data.isEmpty()) {
