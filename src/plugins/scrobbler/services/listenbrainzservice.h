@@ -22,38 +22,37 @@
 #include "scrobblerservice.h"
 
 namespace Fooyin::Scrobbler {
-class LastFmService : public ScrobblerService
+class ScrobblerAuthSession;
+class ScrobblerCache;
+
+class ListenBrainzService : public ScrobblerService
 {
 public:
-    LastFmService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent = nullptr);
+    using ScrobblerService::ScrobblerService;
 
-    [[nodiscard]] QString name() const override;
     [[nodiscard]] QUrl url() const override;
-    [[nodiscard]] QUrl authUrl() const override;
-    [[nodiscard]] QString username() const override;
-    [[nodiscard]] bool isAuthenticated() const override;
+    [[nodiscard]] bool requiresAuthentication() const override;
 
+    void saveSession() override;
     void loadSession() override;
-    void logout() override;
+    void deleteSession() override;
 
+    void testApi() override;
     void updateNowPlaying() override;
     void submit() override;
 
-protected:
-    void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query) override;
-    void requestAuth(const QString& token) override;
-    void authFinished(QNetworkReply* reply) override;
-
-    ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) override;
+    [[nodiscard]] QString tokenSetting() const override;
+    [[nodiscard]] QUrl tokenUrl() const override;
 
 private:
-    QNetworkReply* createRequest(const std::map<QString, QString>& params);
+    QNetworkReply* createRequest(const QUrl& url, const QJsonDocument& json);
+    ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) override;
+    [[nodiscard]] QJsonObject getTrackMetadata(const Metadata& metadata) const;
+
+    void testFinished(QNetworkReply* reply);
     void updateNowPlayingFinished(QNetworkReply* reply);
     void scrobbleFinished(QNetworkReply* reply, const CacheItemList& items);
 
-    QString m_apiKey;
-    QString m_secret;
-    QString m_username;
-    QString m_sessionKey;
+    [[nodiscard]] QString userToken() const;
 };
 } // namespace Fooyin::Scrobbler

@@ -40,8 +40,8 @@ void ScrobblerPlugin::initialise(const CorePluginContext& context)
     m_networkAccess    = context.networkAccess;
     m_settings         = context.settingsManager;
 
-    m_scrobbler         = std::make_unique<Scrobbler>(m_playerController, m_networkAccess, m_settings);
     m_scrobblerSettings = std::make_unique<ScrobblerSettings>(m_settings);
+    m_scrobbler         = std::make_unique<Scrobbler>(m_playerController, m_networkAccess, m_settings);
 }
 
 void ScrobblerPlugin::initialise(const GuiPluginContext& context)

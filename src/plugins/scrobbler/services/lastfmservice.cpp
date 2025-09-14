@@ -77,16 +77,12 @@ enum class ScrobbleError : uint8_t
 }
 
 namespace Fooyin::Scrobbler {
-LastFmService::LastFmService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent)
-    : ScrobblerService{network, settings, parent}
+LastFmService::LastFmService(ServiceDetails service, NetworkAccessManager* network, SettingsManager* settings,
+                             QObject* parent)
+    : ScrobblerService{std::move(service), network, settings, parent}
     , m_apiKey{QString::fromLatin1(QByteArray::fromBase64(ApiKey))}
     , m_secret{QString::fromLatin1(QByteArray::fromBase64(ApiSecret))}
 { }
-
-QString LastFmService::name() const
-{
-    return u"LastFM"_s;
-}
 
 QUrl LastFmService::url() const
 {
@@ -103,17 +99,50 @@ QString LastFmService::username() const
     return m_username;
 }
 
+bool LastFmService::requiresAuthentication() const
+{
+    return true;
+}
+
 bool LastFmService::isAuthenticated() const
 {
     return !m_username.isEmpty() && !m_sessionKey.isEmpty();
 }
 
+void LastFmService::saveSession()
+{
+    FySettings settings;
+    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+
+    settings.setValue("IsEnabled", details().isEnabled);
+    settings.setValue("Username", m_username);
+    settings.setValue("SessionKey", m_sessionKey);
+
+    settings.endGroup();
+}
+
 void LastFmService::loadSession()
 {
     FySettings settings;
-    settings.beginGroup(name());
+    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+
+    if(settings.contains("IsEnabled")) {
+        detailsRef().isEnabled = settings.value("IsEnabled").toBool();
+    }
     m_username   = settings.value("Username").toString();
     m_sessionKey = settings.value("SessionKey").toString();
+
+    settings.endGroup();
+}
+
+void LastFmService::deleteSession()
+{
+    FySettings settings;
+    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+
+    settings.remove("Username");
+    settings.remove("SessionKey");
+
     settings.endGroup();
 }
 
@@ -122,11 +151,12 @@ void LastFmService::logout()
     m_username.clear();
     m_sessionKey.clear();
 
-    FySettings settings;
-    settings.beginGroup(name());
-    settings.remove("Username");
-    settings.remove("SessionKey");
-    settings.endGroup();
+    deleteSession();
+}
+
+void LastFmService::testApi()
+{
+    // TODO
 }
 
 void LastFmService::updateNowPlaying()
@@ -283,11 +313,7 @@ void LastFmService::authFinished(QNetworkReply* reply)
     m_username   = obj.value("name"_L1).toString();
     m_sessionKey = obj.value("key"_L1).toString();
 
-    FySettings settings;
-    settings.beginGroup(name());
-    settings.setValue("Username", m_username);
-    settings.setValue("SessionKey", m_sessionKey);
-    settings.endGroup();
+    saveSession();
 
     emit authenticationFinished(true);
     cleanupAuth();

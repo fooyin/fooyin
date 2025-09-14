@@ -22,50 +22,42 @@
 #include "scrobblerservice.h"
 
 namespace Fooyin::Scrobbler {
-class ScrobblerAuthSession;
-class ScrobblerCache;
-
-class ListenBrainzService : public ScrobblerService
+class LastFmService : public ScrobblerService
 {
 public:
-    ListenBrainzService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent = nullptr);
+    LastFmService(ServiceDetails service, NetworkAccessManager* network, SettingsManager* settings,
+                  QObject* parent = nullptr);
 
-    [[nodiscard]] QString name() const override;
     [[nodiscard]] QUrl url() const override;
     [[nodiscard]] QUrl authUrl() const override;
+    [[nodiscard]] QString username() const override;
+    [[nodiscard]] bool requiresAuthentication() const override;
     [[nodiscard]] bool isAuthenticated() const override;
 
-    void authenticate() override;
+    void saveSession() override;
     void loadSession() override;
+    void deleteSession() override;
     void logout() override;
 
+    void testApi() override;
     void updateNowPlaying() override;
     void submit() override;
-
-    [[nodiscard]] QString tokenSetting() const override;
-    [[nodiscard]] QUrl tokenUrl() const override;
 
 protected:
     void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query) override;
     void requestAuth(const QString& token) override;
     void authFinished(QNetworkReply* reply) override;
 
-    void timerEvent(QTimerEvent* event) override;
+    ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) override;
 
 private:
-    QNetworkReply* createRequest(const QUrl& url, const QJsonDocument& json);
-    ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) override;
-    [[nodiscard]] QJsonObject getTrackMetadata(const Metadata& metadata) const;
-
+    QNetworkReply* createRequest(const std::map<QString, QString>& params);
     void updateNowPlayingFinished(QNetworkReply* reply);
     void scrobbleFinished(QNetworkReply* reply, const CacheItemList& items);
 
-    QString m_userToken;
-    QString m_accessToken;
-    qint64 m_expiresIn;
-    quint64 m_loginTime;
-    QString m_tokenType;
-    QString m_refreshToken;
-    QBasicTimer m_loginTimer;
+    QString m_apiKey;
+    QString m_secret;
+    QString m_username;
+    QString m_sessionKey;
 };
 } // namespace Fooyin::Scrobbler
