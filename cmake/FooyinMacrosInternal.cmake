@@ -68,7 +68,7 @@ function(create_fooyin_library name)
 
     target_include_directories(
         ${name} SYSTEM
-        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/export>
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     )
 
     set_target_properties(
