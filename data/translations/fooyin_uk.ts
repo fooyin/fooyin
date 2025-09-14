@@ -70,12 +70,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="65"/>
         <source>Search</source>
-        <translation>Пошук&apos;</translation>
+        <translation>Пошук</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="67"/>
         <source>Artwork Finder</source>
-        <translation>Пошук творів мистецтва</translation>
+        <translation>Пошук обкладинки</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="69"/>
@@ -102,7 +102,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="222"/>
         <source>No artwork found</source>
-        <translation>Не знайдено жодного твору мистецтва</translation>
+        <translation>Обкладинку не знайдено</translation>
     </message>
 </context>
 <context>
@@ -115,12 +115,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
         <source>Interface</source>
-        <translation>Інтерфейс</translation>
+        <translation>Вигляд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
         <source>Artwork</source>
-        <translation>Ілюстрації</translation>
+        <translation>Обкладинка</translation>
     </message>
 </context>
 <context>
@@ -138,12 +138,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
         <source>Front Cover</source>
-        <translation>Передня Обкладинка&apos;&apos;&apos;</translation>
+        <translation>Передня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="96"/>
         <source>Back Cover</source>
-        <translation>Задня Обкладинка</translation>
+        <translation>Задня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="97"/>
@@ -153,17 +153,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Save Method</source>
-        <translation>Зберегти метод</translation>
+        <translation>Метод збереження</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Save Location</source>
-        <translation>Зберегти місцезнаходження</translation>
+        <translation>Місце збереження</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="114"/>
         <source>Directory</source>
-        <translation>Довідник</translation>
+        <translation>Каталог</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
@@ -173,7 +173,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="187"/>
         <source>Select Directory</source>
-        <translation>Виберіть каталог</translation>
+        <translation>Вибрати каталог</translation>
     </message>
 </context>
 <context>
@@ -186,12 +186,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="154"/>
         <source>Interface</source>
-        <translation>Інтерфейс</translation>
+        <translation>Вигляд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="154"/>
         <source>Artwork</source>
-        <translation>Ілюстрації</translation>
+        <translation>Обкладинка</translation>
     </message>
 </context>
 <context>
@@ -199,7 +199,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="69"/>
         <source>Prefer currently playing track</source>
-        <translation>Надавати перевагу поточній композиції</translation>
+        <translation>Надавати перевагу поточній доріжці</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="70"/>
@@ -237,12 +237,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="45"/>
         <source>Front Cover</source>
-        <translation>Передня Обкладинка&apos;</translation>
+        <translation>Передня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="46"/>
         <source>Back Cover</source>
-        <translation>Задня Обкладинка</translation>
+        <translation>Задня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="47"/>
@@ -262,7 +262,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="161"/>
         <source>Saving artwork to files…</source>
-        <translation>Збереження обкладинки до файлу…</translation>
+        <translation>Збереження обкладинки у файл…</translation>
     </message>
 </context>
 <context>
@@ -276,7 +276,7 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="49"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="254"/>
         <source>Remove</source>
-        <translation>Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"/>
@@ -320,17 +320,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation>Пошукаю</translation>
+        <translation>Пошук...</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
         <source>Interface</source>
-        <translation>Інтерфейс</translation>
+        <translation>Вигляд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
         <source>Artwork</source>
-        <translation>Ілюстрації</translation>
+        <translation>Обкладинка</translation>
     </message>
 </context>
 <context>
@@ -338,7 +338,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation>Автоматичний пошук відсутніх ілюстрацій під час початку відтворення</translation>
+        <translation>Автоматично шукати відсутні обкладинки під час початку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
@@ -368,12 +368,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="85"/>
         <source>Finder thumbnail size</source>
-        <translation>Розмір мініатюр Finder</translation>
+        <translation>Розмір мініатюр в інструменті пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="91"/>
         <source>Size of thumbnails in Artwork Finder when searching for artwork</source>
-        <translation>Розмір мініатюр у Пошуку творів мистецтва під час пошуку творів мистецтва</translation>
+        <translation>Розмір мініатюр в інструменті пошуку обкладинок під час пошуку</translation>
     </message>
 </context>
 <context>
@@ -386,12 +386,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="156"/>
         <source>Interface</source>
-        <translation>Інтерфейс</translation>
+        <translation>Вигляд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="156"/>
         <source>Artwork</source>
-        <translation>Ілюстрації</translation>
+        <translation>Обкладинка</translation>
     </message>
 </context>
 <context>
@@ -399,12 +399,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="83"/>
         <source>Front Cover</source>
-        <translation>Передня Обкладинка&apos;&apos;</translation>
+        <translation>Передня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="84"/>
         <source>Back Cover</source>
-        <translation>Задня Обкладинка</translation>
+        <translation>Задня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="85"/>
@@ -414,17 +414,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="91"/>
         <source>Local paths</source>
-        <translation>Місцеві шляхи</translation>
+        <translation>Локальні шляхи</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="93"/>
         <source>Download sources</source>
-        <translation>Завантажити джерела</translation>
+        <translation>Джерела для завантаження</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="95"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation>Пошук творів мистецтва здійснюватиметься у вищезазначеному порядку.</translation>
+        <translation>Пошук обкладинок буде здійснюватися у зазначеному вище порядку.</translation>
     </message>
 </context>
 <context>
@@ -576,7 +576,7 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="204"/>
         <source>Front cover</source>
-        <translation>Передня обкладинка&apos;</translation>
+        <translation>Передня обкладинка</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="205"/>
@@ -591,17 +591,17 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="248"/>
         <source>Search for artwork…</source>
-        <translation>Пошук творів мистецтва…</translation>
+        <translation>Пошук обкладинки…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="249"/>
         <source>Quicksearch for artwork</source>
-        <translation>Швидкий пошук творів мистецтва</translation>
+        <translation>Швидкий пошук обкладинок</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="250"/>
         <source>Remove artwork</source>
-        <translation>Вилучити ілюстрацію</translation>
+        <translation>Видалити обкладинку</translation>
     </message>
 </context>
 <context>
@@ -696,7 +696,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
         <source>Queue to play next</source>
-        <translation>Додати наступним у черзі</translation>
+        <translation>Додати до черги наступним</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
@@ -766,7 +766,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="243"/>
         <source>Go back</source>
-        <translation>Назад до</translation>
+        <translation>Назад</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="244"/>
@@ -823,7 +823,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show icons</source>
-        <translation>Показувати іконки</translation>
+        <translation>Показувати піктограми</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="79"/>
@@ -1026,7 +1026,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="410"/>
         <source>Paste (Insert)</source>
-        <translation>Вставити (Вставити)</translation>
+        <translation>Вставити</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
@@ -1087,7 +1087,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="481"/>
         <source>Remove</source>
-        <translation>Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
 </context>
 <context>
@@ -1100,7 +1100,7 @@
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Edit %1 Name</source>
-        <translation>Редагувати %1 Ім&apos;я</translation>
+        <translation>Редагувати %1 ім&apos;я</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="73"/>
@@ -1217,7 +1217,7 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="146"/>
         <source>Remove</source>
-        <translation>Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="186"/>
@@ -1305,7 +1305,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="87"/>
         <source>Save the current playlist to the specified file</source>
-        <translation>Зберегти поточний список відтворення до вказаного файлу</translation>
+        <translation>Зберегти поточний список відтворення у вказаний файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
@@ -1338,7 +1338,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="124"/>
         <source>Remove empty source folders</source>
-        <translation>Вилучити порожні вихідні каталоги</translation>
+        <translation>Видалити порожні вихідні каталоги</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="126"/>
@@ -1481,7 +1481,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Remove</source>
-        <translation>Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
@@ -1499,12 +1499,12 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="49"/>
         <source>&amp;Copy to…</source>
-        <translation>&amp;Копіювати до…</translation>
+        <translation>&amp;Копіювати в…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="50"/>
         <source>&amp;Move to…</source>
-        <translation>&amp;Перемістити до…</translation>
+        <translation>&amp;Перемістити в…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="51"/>
@@ -1564,7 +1564,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
         <source>Remove</source>
-        <translation>Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
@@ -1652,17 +1652,17 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="737"/>
         <source>Show header</source>
-        <translation type="unfinished">Показати заголовок</translation>
+        <translation>Показувати заголовок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="745"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Показати смугу прокручування</translation>
+        <translation>Показувати смугу прокручування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="753"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Чергування кольорів рядків</translation>
+        <translation>Чергування кольорів рядків</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="498"/>
@@ -1692,7 +1692,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="227"/>
         <source>Filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметри фільтра</translation>
     </message>
 </context>
 <context>
@@ -1944,17 +1944,17 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Wait for tracks</source>
-        <translation>Очікувати доріжки</translation>
+        <translation>Очікувати на доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
         <source>Show system tray icon</source>
-        <translation>Показати значок у системному лотку</translation>
+        <translation>Показати піктограму у системному лотку</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="94"/>
         <source>Minimise to tray on close</source>
-        <translation>Згорнути до лотка при закритті</translation>
+        <translation>Згорнути в лоток при закритті</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="103"/>
@@ -1979,7 +1979,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Open Config Directory</source>
-        <translation>Відкрити каталог конфігурації</translation>
+        <translation>Відкрити каталог налаштувань</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
@@ -2492,7 +2492,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="423"/>
         <source>Interface</source>
-        <translation>Інтерфейс</translation>
+        <translation>Вигляд</translation>
     </message>
 </context>
 <context>
@@ -2515,7 +2515,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="114"/>
         <source>Use system icons</source>
-        <translation>Використовувати системні значки</translation>
+        <translation>Використовувати системні піктограми</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="118"/>
@@ -2600,7 +2600,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
         <source>Icons</source>
-        <translation>Значки</translation>
+        <translation>Піктограми</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="161"/>
@@ -2663,7 +2663,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Interface</source>
-        <translation>Інтерфейс</translation>
+        <translation>Вигляд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
@@ -2676,32 +2676,32 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="52"/>
         <source>&amp;Quick start</source>
-        <translation>&amp;Швидкий старт</translation>
+        <translation>&amp;Швидкий початок</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="53"/>
         <source>Open the quick start guide</source>
-        <translation>Відкрийте короткий посібник із початку роботи</translation>
+        <translation>Відкрити короткий посібник користувача</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="58"/>
         <source>&amp;Scripting help</source>
-        <translation>&amp;Допомога зі скриптами</translation>
+        <translation>&amp;Довідка щодо сценаріїв</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="59"/>
         <source>Open the scripting documentation</source>
-        <translation>Відкрийте документацію зі скриптів</translation>
+        <translation>Відкрити документацію зі створення сценаріїв</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
         <source>S&amp;earching help</source>
-        <translation>Довідка з пошуку</translation>
+        <translation>&amp;Довідка з пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
         <source>Open the search documentation</source>
-        <translation>Відкрити документацію пошуку</translation>
+        <translation>Відкрити документацію з пошуку</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="68"/>
@@ -2711,17 +2711,17 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
         <source>Open the FAQ</source>
-        <translation>Відкрити розділ поширених запитань</translation>
+        <translation>Відкрити сторінку частих запитань</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="73"/>
         <source>&amp;About</source>
-        <translation>&amp;Про нас</translation>
+        <translation>&amp;Про програму</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
         <source>Open the about dialog</source>
-        <translation>Відкрити діалогове вікно «Про нас»</translation>
+        <translation>Відкрити довідку про програму</translation>
     </message>
 </context>
 <context>
@@ -2744,7 +2744,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="134"/>
         <source>ReplayGain</source>
-        <translation>ReplayGain&apos;</translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="137"/>
@@ -2784,7 +2784,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="157"/>
         <source>Track Number</source>
-        <translation>Номер треку</translation>
+        <translation>Номер доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
@@ -2794,17 +2794,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
         <source>File Name</source>
-        <translation>Ім&apos;я Файлу</translation>
+        <translation>Ім&apos;я файлу</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="174"/>
         <source>Folder Names</source>
-        <translation>Назви папок</translation>
+        <translation>Назви каталогів</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="174"/>
         <source>Folder Name</source>
-        <translation>Назва папки</translation>
+        <translation>Назва каталогу</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="178"/>
@@ -2814,7 +2814,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="180"/>
         <source>Subsong Index</source>
-        <translation>Індекс підпісень</translation>
+        <translation>Індекс підпісні</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
@@ -2829,7 +2829,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="190"/>
         <source>Last Modified</source>
-        <translation>Остання зміна</translation>
+        <translation>Востаннє змінено</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="195"/>
@@ -2844,7 +2844,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="208"/>
         <source>Tracks</source>
-        <translation>Треки</translation>
+        <translation>Доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="211"/>
@@ -2859,7 +2859,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="217"/>
         <source>Bit Depth</source>
-        <translation>Глибина бітів</translation>
+        <translation>Розрядність</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
@@ -2899,17 +2899,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="247"/>
         <source>Track Gain</source>
-        <translation>Підсилення треку</translation>
+        <translation>Підсилення доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="252"/>
         <source>Track Peak</source>
-        <translation>Трек Пік</translation>
+        <translation>Пік доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="257"/>
         <source>Album Gain</source>
-        <translation>Посилення альбому</translation>
+        <translation>Підсилення альбому</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="262"/>
@@ -2927,7 +2927,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infoview.cpp" line="45"/>
         <source>No Selection</source>
-        <translation>Без вибору</translation>
+        <translation>Немає вибраних</translation>
     </message>
 </context>
 <context>
@@ -2935,17 +2935,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="138"/>
         <source>Selection Info</source>
-        <translation>Інформація про вибір</translation>
+        <translation>Інформація про вибране</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="199"/>
         <source>Show header</source>
-        <translation>Показати заголовок</translation>
+        <translation>Показувати заголовок</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="207"/>
         <source>Show scrollbar</source>
-        <translation>Показати смугу прокручування</translation>
+        <translation>Показувати смугу прокручування</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="216"/>
@@ -2975,7 +2975,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="258"/>
         <source>ReplayGain</source>
-        <translation>ReplayGain&apos;</translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="266"/>
@@ -2999,17 +2999,17 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="61"/>
         <source>Toggle layout editing mode</source>
-        <translation>Перемикання режиму редагування макета</translation>
+        <translation>Увімкнути режим редагування макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="72"/>
         <source>Loc&amp;k splitters</source>
-        <translation>Розгалужувачі Lock&amp;k</translation>
+        <translation>Зафіксувати &amp;розгалужувачі</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
         <source>Prevent manual resizing of splitters when not in layout editing mode</source>
-        <translation>Запобігти ручній зміні розміру роздільників, коли вони не перебувають у режимі редагування макета</translation>
+        <translation>Запобігати зміненню розміру роздільників коли режим редагування макета вимкнено</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
@@ -3024,12 +3024,12 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="86"/>
         <source>E&amp;xport layout…</source>
-        <translation>Експортувати макет…</translation>
+        <translation>&amp;Експортувати макет…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="87"/>
         <source>Save the current layout to the specified file</source>
-        <translation>Зберегти поточний макет у вказаному файлі</translation>
+        <translation>Зберегти поточний макет у вказаний файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
@@ -3072,7 +3072,7 @@
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="262"/>
         <source>Unless exported, the current layout will be lost.</source>
-        <translation>Якщо не експортувати, поточний макет буде втрачено.</translation>
+        <translation>Поточний макет буде втрачено якщо його не експортувати.</translation>
     </message>
 </context>
 <context>
@@ -3098,27 +3098,27 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="128"/>
         <source>Monitor libraries</source>
-        <translation>Бібліотеки монітора</translation>
+        <translation>Відстежувати зміни бібліотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="129"/>
         <source>Mark unavailable tracks on playback</source>
-        <translation>Позначення недоступних треків під час відтворення</translation>
+        <translation>Позначити недоступні доріжки під час відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="130"/>
         <source>Mark unavailable tracks on startup</source>
-        <translation>Позначати недоступні треки під час запуску</translation>
+        <translation>Позначати недоступні доріжки під час запуску</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="131"/>
         <source>Use &apos;Various Artists&apos; for compilations</source>
-        <translation>Використовуйте «Різні виконавці» для компіляцій</translation>
+        <translation>Використовувати тег &quot;Різні виконавці&quot; для добірок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="132"/>
         <source>Save ratings to file metadata</source>
-        <translation>Зберегти оцінки у файл метаданих</translation>
+        <translation>Зберігати оцінки у метадані файлу</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="133"/>
@@ -3128,12 +3128,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="144"/>
         <source>Scan libraries for changes on startup</source>
-        <translation>Сканування бібліотек на наявність змін під час запуску</translation>
+        <translation>Сканувати бібліотеки на наявність змін під час запуску</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
         <source>Monitor libraries for external changes</source>
-        <translation>Моніторинг бібліотек на наявність зовнішніх змін</translation>
+        <translation>Відстежувати бібліотеки на наявність зовнішніх змін</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="147"/>
@@ -3153,7 +3153,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="233"/>
         <source>Directory</source>
-        <translation>Довідник</translation>
+        <translation>Каталог</translation>
     </message>
 </context>
 <context>
@@ -3171,7 +3171,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
         <source>&amp;Clean</source>
-        <translation>&amp;Чистий</translation>
+        <translation>&amp;Очистити</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
