@@ -258,7 +258,7 @@ QJsonObject ListenBrainzService::getTrackMetadata(const Metadata& metadata) cons
     QJsonObject infoObj;
 
     if(metadata.duration > 0) {
-        infoObj.insert(u"duration_ms"_s, QString::number(metadata.duration * 1000));
+        infoObj.insert(u"duration_ms"_s, static_cast<qint64>(metadata.duration) * 1000);
     }
     if(!metadata.trackNum.isEmpty()) {
         infoObj.insert(u"tracknumber"_s, metadata.trackNum);
