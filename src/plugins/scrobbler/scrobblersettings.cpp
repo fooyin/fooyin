@@ -33,5 +33,6 @@ ScrobblerSettings::ScrobblerSettings(SettingsManager* settings)
     settings->createSetting<PreferAlbumArtist>(false, u"Scrobbling/PreferAlbumArtist"_s);
     settings->createSetting<EnableScrobbleFilter>(false, u"Scrobbling/EnableScrobbleFilter"_s);
     settings->createSetting<ScrobbleFilter>(u""_s, u"Scrobbling/Filter"_s);
+    settings->createSetting<ServicesData>(QByteArray{}, u"Scrobbling/ServicesData"_s);
 }
 } // namespace Fooyin::Scrobbler

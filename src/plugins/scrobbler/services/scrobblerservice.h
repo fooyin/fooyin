@@ -20,6 +20,7 @@
 #pragma once
 
 #include "scrobblercache.h"
+#include "servicedetails.h"
 
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
@@ -48,24 +49,34 @@ class ScrobblerService : public QObject
     Q_OBJECT
 
 public:
-    explicit ScrobblerService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent = nullptr);
+    ScrobblerService(ServiceDetails details, NetworkAccessManager* network, SettingsManager* settings,
+                     QObject* parent = nullptr);
     ~ScrobblerService() override;
 
-    [[nodiscard]] virtual QString name() const = 0;
-    [[nodiscard]] virtual QUrl url() const = 0;
-    [[nodiscard]] virtual QUrl authUrl() const = 0;
+    [[nodiscard]] bool isEnabled() const;
+    [[nodiscard]] QString name() const;
+    [[nodiscard]] virtual QUrl url() const;
+    [[nodiscard]] virtual QUrl authUrl() const;
     [[nodiscard]] virtual QString username() const;
-    [[nodiscard]] virtual bool isAuthenticated() const = 0;
+    [[nodiscard]] virtual bool requiresAuthentication() const;
+    [[nodiscard]] virtual bool isAuthenticated() const;
+
+    [[nodiscard]] bool isCustom() const;
+    [[nodiscard]] ServiceDetails details() const;
+    void updateDetails(const ServiceDetails& service);
 
     void initialise();
     virtual void authenticate();
-    virtual void loadSession() = 0;
-    virtual void logout()      = 0;
+    virtual void saveSession();
+    virtual void loadSession();
+    virtual void deleteSession();
+    virtual void logout();
     void saveCache();
 
     void updateNowPlaying(const Track& track);
     void scrobble(const Track& track);
 
+    virtual void testApi()          = 0;
     virtual void updateNowPlaying() = 0;
     virtual void submit()           = 0;
 
@@ -73,18 +84,21 @@ public:
     [[nodiscard]] virtual QUrl tokenUrl() const;
 
 signals:
+    void testApiFinished(bool success, const QString& error = {});
     void authenticationFinished(bool success, const QString& error = {});
 
 protected:
-    virtual void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query) = 0;
-    virtual void requestAuth(const QString& token)                               = 0;
-    virtual void authFinished(QNetworkReply* reply)                              = 0;
+    virtual void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query);
+    virtual void requestAuth(const QString& token);
+    virtual void authFinished(QNetworkReply* reply);
 
     [[nodiscard]] Track currentTrack() const;
     [[nodiscard]] NetworkAccessManager* network() const;
     [[nodiscard]] ScrobblerAuthSession* authSession() const;
     [[nodiscard]] ScrobblerCache* cache() const;
     [[nodiscard]] SettingsManager* settings() const;
+
+    ServiceDetails& detailsRef();
 
     QNetworkReply* addReply(QNetworkReply* reply);
     bool removeReply(QNetworkReply* reply);
@@ -100,6 +114,7 @@ protected:
     virtual ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) = 0;
     bool extractJsonObj(const QByteArray& data, QJsonObject* obj, QString* errorDesc);
 
+    void handleTestError(const char* error);
     void handleAuthError(const char* error);
     void cleanupAuth();
     void deleteAll();
@@ -116,6 +131,8 @@ private:
     SettingsManager* m_settings;
 
     ScriptParser m_scriptParser;
+
+    ServiceDetails m_details;
 
     ScrobblerAuthSession* m_authSession;
     std::vector<QNetworkReply*> m_replies;

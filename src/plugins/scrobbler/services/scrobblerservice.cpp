@@ -54,11 +54,13 @@ bool canBeScrobbled(const Fooyin::Track& track)
 } // namespace
 
 namespace Fooyin::Scrobbler {
-ScrobblerService::ScrobblerService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent)
+ScrobblerService::ScrobblerService(ServiceDetails details, NetworkAccessManager* network, SettingsManager* settings,
+                                   QObject* parent)
     : QObject{parent}
     , m_network{network}
     , m_settings{settings}
     , m_scriptParser{new ScriptRegistry()}
+    , m_details{std::move(details)}
     , m_authSession{nullptr}
     , m_cache{nullptr}
     , m_submitError{false}
@@ -72,9 +74,57 @@ ScrobblerService::~ScrobblerService()
     deleteAll();
 }
 
+bool ScrobblerService::isEnabled() const
+{
+    return m_details.isEnabled;
+}
+
+QString ScrobblerService::name() const
+{
+    return m_details.name;
+}
+
+QUrl ScrobblerService::url() const
+{
+    return m_details.url;
+}
+
+QUrl ScrobblerService::authUrl() const
+{
+    return {};
+}
+
 QString ScrobblerService::username() const
 {
     return {};
+}
+
+bool ScrobblerService::requiresAuthentication() const
+{
+    return false;
+}
+
+bool ScrobblerService::isAuthenticated() const
+{
+    return true;
+}
+
+bool ScrobblerService::isCustom() const
+{
+    return m_details.isCustom();
+}
+
+ServiceDetails ScrobblerService::details() const
+{
+    return m_details;
+}
+
+void ScrobblerService::updateDetails(const ServiceDetails& details)
+{
+    if(isCustom() && details.name != m_details.name) {
+        deleteSession();
+    }
+    m_details = details;
 }
 
 void ScrobblerService::initialise()
@@ -137,9 +187,19 @@ void ScrobblerService::authenticate()
     message->show();
 }
 
+void ScrobblerService::saveSession() { }
+
+void ScrobblerService::loadSession() { }
+
+void ScrobblerService::deleteSession() { }
+
+void ScrobblerService::logout() { }
+
 void ScrobblerService::saveCache()
 {
-    m_cache->writeCache();
+    if(m_cache) {
+        m_cache->writeCache();
+    }
 }
 
 void ScrobblerService::updateNowPlaying(const Track& track)
@@ -205,6 +265,12 @@ QUrl ScrobblerService::tokenUrl() const
     return {};
 }
 
+void ScrobblerService::setupAuthQuery(ScrobblerAuthSession* /*session*/, QUrlQuery& /*query*/) { }
+
+void ScrobblerService::requestAuth(const QString& /*token*/) { }
+
+void ScrobblerService::authFinished(QNetworkReply* /*reply*/) { }
+
 Track ScrobblerService::currentTrack() const
 {
     return m_currentTrack;
@@ -230,6 +296,11 @@ SettingsManager* ScrobblerService::settings() const
     return m_settings;
 }
 
+ServiceDetails& ScrobblerService::detailsRef()
+{
+    return m_details;
+}
+
 QNetworkReply* ScrobblerService::addReply(QNetworkReply* reply)
 {
     return m_replies.emplace_back(reply);
@@ -248,7 +319,7 @@ bool ScrobblerService::removeReply(QNetworkReply* reply)
 
 bool ScrobblerService::allowedByFilter(const Track& track)
 {
-    const QString query   = m_settings->value<Settings::Scrobbler::ScrobbleFilter>();
+    const QString query = m_settings->value<Settings::Scrobbler::ScrobbleFilter>();
     return m_scriptParser.filter(query, {track}).empty();
 }
 
@@ -269,16 +340,10 @@ bool ScrobblerService::extractJsonObj(const QByteArray& data, QJsonObject* obj, 
     return true;
 }
 
-void ScrobblerService::deleteAll()
+void ScrobblerService::handleTestError(const char* error)
 {
-    for(auto* reply : m_replies) {
-        QObject::disconnect(reply, nullptr, this, nullptr);
-        reply->abort();
-        reply->deleteLater();
-    }
-
-    m_replies.clear();
-    cleanupAuth();
+    qCWarning(SCROBBLER) << error;
+    emit testApiFinished(false, QString::fromUtf8(error));
 }
 
 void ScrobblerService::handleAuthError(const char* error)
@@ -295,6 +360,18 @@ void ScrobblerService::cleanupAuth()
         m_authSession->deleteLater();
         m_authSession = nullptr;
     }
+}
+
+void ScrobblerService::deleteAll()
+{
+    for(auto* reply : m_replies) {
+        QObject::disconnect(reply, nullptr, this, nullptr);
+        reply->abort();
+        reply->deleteLater();
+    }
+
+    m_replies.clear();
+    cleanupAuth();
 }
 
 void ScrobblerService::doDelayedSubmit(bool initial)

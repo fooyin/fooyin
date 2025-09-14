@@ -17,24 +17,17 @@
  *
  */
 
-#include "librefmservice.h"
+#pragma once
 
-using namespace Qt::StringLiterals;
+#include "lastfmservice.h"
 
-constexpr auto ApiUrl  = "https://libre.fm/2.0/";
-constexpr auto AuthUrl = "https://www.libre.fm/api/auth/";
-
-QString Fooyin::Scrobbler::LibreFmService::name() const
+namespace Fooyin::Scrobbler {
+class LibreFmService : public LastFmService
 {
-    return u"LibreFM"_s;
-}
+public:
+    using LastFmService::LastFmService;
 
-QUrl Fooyin::Scrobbler::LibreFmService::url() const
-{
-    return QString::fromLatin1(ApiUrl);
-}
-
-QUrl Fooyin::Scrobbler::LibreFmService::authUrl() const
-{
-    return QString::fromLatin1(AuthUrl);
-}
+    [[nodiscard]] QUrl url() const override;
+    [[nodiscard]] QUrl authUrl() const override;
+};
+} // namespace Fooyin::Scrobbler

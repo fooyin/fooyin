@@ -3,12 +3,8 @@ create_fooyin_plugin_internal(
     DEPENDS Fooyin::Core
             Fooyin::Gui
             Qt6::Network
-    SOURCES lastfmservice.cpp
-            lastfmservice.h
-            librefmservice.h
-            librefmservice.cpp
-            listenbrainzservice.cpp
-            listenbrainzservice.h
+    SOURCES customservicedialog.cpp
+            customservicedialog.h
             scrobbler.cpp
             scrobbler.h
             scrobblerauthsession.cpp
@@ -19,10 +15,18 @@ create_fooyin_plugin_internal(
             scrobblerpage.h
             scrobblerplugin.cpp
             scrobblerplugin.h
-            scrobblerservice.cpp
-            scrobblerservice.h
             scrobblersettings.cpp
             scrobblersettings.h
             scrobblertoggle.cpp
             scrobblertoggle.h
+            services/servicedetails.cpp
+            services/servicedetails.h
+            services/lastfmservice.cpp
+            services/lastfmservice.h
+            services/librefmservice.h
+            services/librefmservice.cpp
+            services/listenbrainzservice.cpp
+            services/listenbrainzservice.h
+            services/scrobblerservice.cpp
+            services/scrobblerservice.h
 )

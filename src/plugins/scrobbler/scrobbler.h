@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include "scrobblerservice.h"
+#include "services/scrobblerservice.h"
+#include "services/servicedetails.h"
 
 #include <memory>
 #include <vector>
@@ -32,18 +33,34 @@ class PlayerController;
 class SettingsManager;
 
 namespace Scrobbler {
-class Scrobbler
+struct ServiceDetails;
+
+class Scrobbler : public QObject
 {
+    Q_OBJECT
+
 public:
     Scrobbler(PlayerController* playerController, std::shared_ptr<NetworkAccessManager> network,
               SettingsManager* settings);
+    ~Scrobbler() override;
 
     [[nodiscard]] std::vector<ScrobblerService*> services() const;
     [[nodiscard]] ScrobblerService* service(const QString& name) const;
 
+    void updateNowPlaying(const Track& track);
+    void scrobble(const Track& track);
+
+    std::unique_ptr<ScrobblerService> createCustomService(const ServiceDetails& details);
+    ScrobblerService* addCustomService(const ServiceDetails& details, bool init = true);
+    bool removeCustomService(ScrobblerService* service);
+
     void saveCache();
 
 private:
+    void addDefaultServices();
+    void saveServices();
+    void restoreServices();
+
     PlayerController* m_playerController;
     std::shared_ptr<NetworkAccessManager> m_network;
     SettingsManager* m_settings;
