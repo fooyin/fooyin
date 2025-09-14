@@ -97,13 +97,9 @@ void ListenBrainzService::deleteSession()
 
 void ListenBrainzService::testApi()
 {
-    QJsonObject object;
-    object.insert(u"token"_s, userToken());
-
-    const QJsonDocument doc{object};
     const QUrl reqUrl{u"%1/1/validate-token"_s.arg(QString::fromUtf8(url().toEncoded()))};
 
-    QNetworkReply* reply = createRequest(RequestType::Get, reqUrl, doc);
+    QNetworkReply* reply = createRequest(RequestType::Get, reqUrl);
     QObject::connect(reply, &QNetworkReply::finished, this, [this, reply]() { testFinished(reply); });
 }
 
@@ -192,7 +188,7 @@ QNetworkReply* ListenBrainzService::createRequest(RequestType type, const QUrl& 
 
     switch(type) {
         case RequestType::Get:
-            return addReply(network()->get(req, json.toJson()));
+            return addReply(network()->get(req));
         case RequestType::Post:
             return addReply(network()->post(req, json.toJson()));
     }
