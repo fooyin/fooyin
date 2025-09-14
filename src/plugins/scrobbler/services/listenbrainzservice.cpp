@@ -142,7 +142,7 @@ void ListenBrainzService::submit()
         sentItems.emplace_back(item);
 
         QJsonObject obj;
-        obj.insert(u"listened_at"_s, QString::number(item->timestamp));
+        obj.insert(u"listened_at"_s, static_cast<qint64>(item->timestamp));
         obj.insert(u"track_metadata"_s, getTrackMetadata(item->metadata));
         array.append(obj);
 
