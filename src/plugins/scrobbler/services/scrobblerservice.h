@@ -44,6 +44,12 @@ namespace Scrobbler {
 class ScrobblerAuthSession;
 class ScrobblerCache;
 
+enum class RequestType : uint8_t
+{
+    Get = 0,
+    Post
+};
+
 class ScrobblerService : public QObject
 {
     Q_OBJECT

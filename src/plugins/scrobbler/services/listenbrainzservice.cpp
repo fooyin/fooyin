@@ -103,7 +103,7 @@ void ListenBrainzService::testApi()
     const QJsonDocument doc{object};
     const QUrl reqUrl{u"%1/1/validate-token"_s.arg(QString::fromUtf8(url().toEncoded()))};
 
-    QNetworkReply* reply = createRequest(reqUrl, doc);
+    QNetworkReply* reply = createRequest(RequestType::Get, reqUrl, doc);
     QObject::connect(reply, &QNetworkReply::finished, this, [this, reply]() { testFinished(reply); });
 }
 
@@ -123,7 +123,7 @@ void ListenBrainzService::updateNowPlaying()
     const QJsonDocument doc{object};
     const QUrl reqUrl{u"%1/1/submit-listens"_s.arg(QString::fromUtf8(url().toEncoded()))};
 
-    QNetworkReply* reply = createRequest(reqUrl, doc);
+    QNetworkReply* reply = createRequest(RequestType::Post, reqUrl, doc);
     QObject::connect(reply, &QNetworkReply::finished, this, [this, reply]() { updateNowPlayingFinished(reply); });
 }
 
@@ -168,7 +168,7 @@ void ListenBrainzService::submit()
 
     const QJsonDocument doc{object};
     const QUrl reqUrl{u"%1/1/submit-listens"_s.arg(QString::fromUtf8(url().toEncoded()))};
-    QNetworkReply* reply = createRequest(reqUrl, doc);
+    QNetworkReply* reply = createRequest(RequestType::Post, reqUrl, doc);
     QObject::connect(reply, &QNetworkReply::finished, this,
                      [this, reply, sentItems]() { scrobbleFinished(reply, sentItems); });
 }
@@ -183,14 +183,21 @@ QUrl ListenBrainzService::tokenUrl() const
     return u"https://listenbrainz.org/profile/"_s;
 }
 
-QNetworkReply* ListenBrainzService::createRequest(const QUrl& url, const QJsonDocument& json)
+QNetworkReply* ListenBrainzService::createRequest(RequestType type, const QUrl& url, const QJsonDocument& json)
 {
     QNetworkRequest req{url};
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/json"_s);
     req.setRawHeader("Authorization", u"Token %1"_s.arg(userToken()).toUtf8());
 
-    return addReply(network()->post(req, json.toJson()));
+    switch(type) {
+        case RequestType::Get:
+            return addReply(network()->get(req, json.toJson()));
+        case RequestType::Post:
+            return addReply(network()->post(req, json.toJson()));
+    }
+
+    return nullptr;
 }
 
 ScrobblerService::ReplyResult ListenBrainzService::getJsonFromReply(QNetworkReply* reply, QJsonObject* obj,

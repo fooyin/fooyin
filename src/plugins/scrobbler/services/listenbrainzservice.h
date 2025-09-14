@@ -45,7 +45,7 @@ public:
     [[nodiscard]] QUrl tokenUrl() const override;
 
 private:
-    QNetworkReply* createRequest(const QUrl& url, const QJsonDocument& json);
+    QNetworkReply* createRequest(RequestType type, const QUrl& url, const QJsonDocument& json);
     ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) override;
     [[nodiscard]] QJsonObject getTrackMetadata(const Metadata& metadata) const;
 
