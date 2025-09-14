@@ -76,12 +76,13 @@ QString coverThumbnailPath(const QString& key)
     return Fooyin::Gui::coverPath() + key + u".jpg"_s;
 }
 
-void saveThumbnail(const QImage& cover, const QString& key)
+bool saveThumbnail(const QImage& cover, const QString& key)
 {
     QFile file{coverThumbnailPath(key)};
     if(file.open(QIODevice::WriteOnly)) {
-        cover.save(&file, "JPG", 85);
+        return cover.save(&file, "JPG", 85);
     }
+    return false;
 }
 
 QSize calculateScaledSize(const QSize& originalSize, int maxSize)
@@ -271,7 +272,9 @@ QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath
     QImage cover = readImage(coverData);
 
     if(loader.isThumb && !cover.isNull() && !QFileInfo::exists(cachePath)) {
-        saveThumbnail(cover, loader.key);
+        if(!saveThumbnail(cover, loader.key)) {
+            qCInfo(COV_PROV) << "Failed to save cover thumbnail for track:" << loader.track.filepath();
+        }
         cover = Fooyin::Utils::scaleImage(cover, loader.size, Fooyin::Utils::windowDpr());
     }
 
@@ -280,7 +283,7 @@ QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath
 
 bool hasCoverImage(CoverLoader loader)
 {
-    CoverLoader result{loader};
+    const CoverLoader result{loader};
     return (hasImageInDirectory(loader) || hasEmbeddedCover(loader));
 }
 
@@ -321,8 +324,8 @@ public:
     static QPixmap processLoadResult(const CoverLoader& loader);
     void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail,
                     CoverProvider::ThumbnailSize size = CoverProvider::None);
-    QFuture<QPixmap> loadCover(const Track& track, Track::Cover type) const;
-    QFuture<bool> hasCover(const QString& key, const Track& track, Track::Cover type) const;
+    [[nodiscard]] QFuture<QPixmap> loadCover(const Track& track, Track::Cover type) const;
+    [[nodiscard]] QFuture<bool> hasCover(const QString& key, const Track& track, Track::Cover type) const;
 
     CoverProvider* m_self;
     std::shared_ptr<AudioLoader> m_audioLoader;
@@ -425,10 +428,11 @@ QFuture<QPixmap> CoverProvider::CoverProviderPrivate::loadCover(const Track& tra
         auto result = loadCoverImage(loader);
         return result;
     });
-    return loaderResult.then(m_self, [this, track](const CoverLoader& result) { return processLoadResult(result); });
+    return loaderResult.then(m_self, [track](const CoverLoader& result) { return processLoadResult(result); });
 }
 
-QFuture<bool> CoverProvider::CoverProviderPrivate::hasCover(const QString& key, const Track& track, Track::Cover type) const
+QFuture<bool> CoverProvider::CoverProviderPrivate::hasCover(const QString& key, const Track& track,
+                                                            Track::Cover type) const
 {
     CoverLoader loader;
     loader.key         = key;

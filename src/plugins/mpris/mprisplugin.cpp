@@ -418,6 +418,7 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
 
     const auto loadArtAndReload = [this]() {
         m_currentMetaData[u"mpris:artUrl"_s] = QUrl::fromLocalFile(currentCoverPath()).toString();
+        qCDebug(MPRIS) << "Sending MPRIS data:" << m_currentMetaData;
         emit reloadMetadata();
     };
 
@@ -426,16 +427,17 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
         QFile::remove(currentCoverPath());
 
         m_coverProvider->trackCoverFull(track, Track::Cover::Front)
-            .then([this, coverKey, loadArtAndReload](const QPixmap& cover) {
+            .then([this, coverKey, track, loadArtAndReload](const QPixmap& cover) {
                 if(!cover.isNull()) {
                     m_currCoverKey = coverKey;
                     QFile file{currentCoverPath()};
                     if(file.open(QIODevice::WriteOnly)) {
-                        cover.save(&file, "JPG", 85);
-
-                        loadArtAndReload();
+                        if(!cover.save(&file, "JPG", 85)) {
+                            qCInfo(MPRIS) << "Failed to save MPRIS cover for track:" << track.filepath();
+                        }
                     }
                 }
+                loadArtAndReload();
             });
     }
     else {
