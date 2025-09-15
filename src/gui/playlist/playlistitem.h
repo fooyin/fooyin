@@ -90,7 +90,7 @@ public:
 
     void appendChild(PlaylistItem* child) override;
     void insertChild(int row, PlaylistItem* child) override;
-    void removeChild(int index) override;
+    bool removeChild(int index) override;
 
 private:
     bool m_pending;

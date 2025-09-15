@@ -132,9 +132,12 @@ void PlaylistItem::insertChild(int row, PlaylistItem* child)
     m_state = State::Update;
 }
 
-void PlaylistItem::removeChild(int index)
+bool PlaylistItem::removeChild(int index)
 {
-    TreeItem::removeChild(index);
-    m_state = childCount() == 0 ? State::Delete : State::Update;
+    if(TreeItem::removeChild(index)) {
+        m_state = childCount() == 0 ? State::Delete : State::Update;
+        return true;
+    }
+    return false;
 }
 } // namespace Fooyin

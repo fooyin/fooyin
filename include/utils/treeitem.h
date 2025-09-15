@@ -70,12 +70,13 @@ public:
         }
     }
 
-    virtual void removeChild(int index)
+    virtual bool removeChild(int index)
     {
         if(index < 0 || index >= childCount()) {
-            return;
+            return false;
         }
         m_children.erase(m_children.cbegin() + index);
+        return true;
     }
 
     virtual void clearChildren()
