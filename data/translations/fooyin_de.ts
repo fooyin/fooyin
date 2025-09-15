@@ -3754,7 +3754,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="61"/>
         <source>Lyrics Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Songtext-Editor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="65"/>
@@ -3825,7 +3825,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="78"/>
         <source>This will only function with synced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das funktioniert nur mit synchronisiertem Songtext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="80"/>
