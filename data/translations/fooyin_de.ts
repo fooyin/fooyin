@@ -2510,7 +2510,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="315"/>
         <source>Theme already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil existiert bereits</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="316"/>
