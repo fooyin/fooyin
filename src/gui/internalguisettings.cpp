@@ -157,6 +157,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::QueueViewerLeftScript>(u"%title%$crlf()%album%"_s,
                                                                u"PlaybackQueue/LeftScript"_s);
     m_settings->createSetting<Internal::QueueViewerRightScript>(u"%duration%"_s, u"PlaybackQueue/RightScript"_s);
+    m_settings->createSetting<Internal::QueueViewerShowCurrent>(true, u"PlaybackQueue/ShowCurrent"_s);
     m_settings->createSetting<Internal::PlaylistMiddleClick>(0, u"PlaylistWidget/MiddleClickBehaviour"_s);
     m_settings->createSetting<Internal::InfoDisplayPrefer>(0, u"SelectionInfo/PreferDisplay"_s);
     m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());

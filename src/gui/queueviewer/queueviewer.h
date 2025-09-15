@@ -53,6 +53,8 @@ private:
 
     void resetModel() const;
 
+    [[nodiscard]] bool canRemoveSelected() const;
+
     void handleRowsChanged() const;
     void removeSelectedTracks() const;
     void handleTracksDropped(int row, const QByteArray& mimeData) const;

@@ -147,6 +147,8 @@ void PlayerController::play()
                     }
                 }
             }
+
+            p->m_isQueueTrack = true;
             changeCurrentTrack(p->m_queue.nextTrackChange());
             emit tracksDequeued({p->m_currentTrack});
         }
@@ -344,6 +346,11 @@ Track PlayerController::upcomingTrack() const
 PlaybackQueue PlayerController::playbackQueue() const
 {
     return p->m_queue;
+}
+
+int PlayerController::queuedTracksCount() const
+{
+    return p->m_queue.trackCount();
 }
 
 void PlayerController::setPlayMode(Playlist::PlayModes mode)

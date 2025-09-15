@@ -102,6 +102,7 @@ public:
     [[nodiscard]] Track upcomingTrack() const;
 
     [[nodiscard]] PlaybackQueue playbackQueue() const;
+    [[nodiscard]] int queuedTracksCount() const;
 
     /** Queues the @p track to be played at the end of the current track. */
     void queueTrack(const Track& track);

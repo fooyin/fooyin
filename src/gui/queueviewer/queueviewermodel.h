@@ -34,8 +34,8 @@ class QueueViewerModel : public TreeModel<QueueViewerItem>
     Q_OBJECT
 
 public:
-    explicit QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
-                              QObject* parent = nullptr);
+    explicit QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, PlayerController* playerController,
+                              SettingsManager* settings, QObject* parent = nullptr);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
@@ -58,6 +58,10 @@ public:
     void reset(const QueueTracks& tracks);
     QueueTracks queueTracks() const;
 
+    void playbackStateChanged();
+    void currentTrackChanged();
+    [[nodiscard]] int queueIndex(const QModelIndex& index) const;
+
 signals:
     void queueChanged();
     void tracksDropped(int row, const QByteArray& data);
@@ -66,7 +70,9 @@ signals:
 private:
     void regenerateTitles();
     void moveTracks(int row, const QModelIndexList& indexes);
+    void updateShowCurrent();
 
+    PlayerController* m_playerController;
     SettingsManager* m_settings;
 
     CoverProvider m_coverProvider;
@@ -75,5 +81,7 @@ private:
     std::unordered_map<QString, std::vector<QueueViewerItem*>> m_trackParents;
     bool m_showIcon;
     CoverProvider::ThumbnailSize m_iconSize;
+
+    std::unique_ptr<QueueViewerItem> m_currentTrackItem;
 };
 } // namespace Fooyin

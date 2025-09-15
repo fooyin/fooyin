@@ -53,6 +53,7 @@ private:
     QCheckBox* m_headers;
     QCheckBox* m_scrollBars;
     QCheckBox* m_altRowColours;
+    QCheckBox* m_showCurrent;
     QGroupBox* m_showIcon;
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
@@ -65,6 +66,7 @@ PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
     , m_headers{new QCheckBox(tr("Show header"), this)}
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_altRowColours{new QCheckBox(tr("Alternating row colours"), this)}
+    , m_showCurrent{new QCheckBox(tr("Show playing queue track"), this)}
     , m_showIcon{new QGroupBox(tr("Icon"), this)}
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
@@ -108,6 +110,7 @@ PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
     appearanceLayout->addWidget(m_headers, row++, 0);
     appearanceLayout->addWidget(m_scrollBars, row++, 0);
     appearanceLayout->addWidget(m_altRowColours, row++, 0);
+    appearanceLayout->addWidget(m_showCurrent, row++, 0);
     appearanceLayout->addWidget(m_showIcon, row++, 0);
 
     auto* layout = new QGridLayout(this);
@@ -122,6 +125,7 @@ void PlaybackQueuePageWidget::load()
 {
     m_titleScript->setText(m_settings->value<Settings::Gui::Internal::QueueViewerLeftScript>());
     m_subtitleScript->setText(m_settings->value<Settings::Gui::Internal::QueueViewerRightScript>());
+    m_showCurrent->setChecked(m_settings->value<Settings::Gui::Internal::QueueViewerShowCurrent>());
     m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::QueueViewerShowIcon>());
     const auto iconSize = m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize();
     m_iconWidth->setValue(iconSize.width());
@@ -135,6 +139,7 @@ void PlaybackQueuePageWidget::apply()
 {
     m_settings->set<Settings::Gui::Internal::QueueViewerLeftScript>(m_titleScript->text());
     m_settings->set<Settings::Gui::Internal::QueueViewerRightScript>(m_subtitleScript->text());
+    m_settings->set<Settings::Gui::Internal::QueueViewerShowCurrent>(m_showCurrent->isChecked());
     m_settings->set<Settings::Gui::Internal::QueueViewerShowIcon>(m_showIcon->isChecked());
     const QSize iconSize{m_iconWidth->value(), m_iconHeight->value()};
     m_settings->set<Settings::Gui::Internal::QueueViewerIconSize>(iconSize);
@@ -147,6 +152,7 @@ void PlaybackQueuePageWidget::reset()
 {
     m_settings->reset<Settings::Gui::Internal::QueueViewerLeftScript>();
     m_settings->reset<Settings::Gui::Internal::QueueViewerRightScript>();
+    m_settings->reset<Settings::Gui::Internal::QueueViewerShowCurrent>();
     m_settings->reset<Settings::Gui::Internal::QueueViewerShowIcon>();
     m_settings->reset<Settings::Gui::Internal::QueueViewerIconSize>();
     m_settings->reset<Settings::Gui::Internal::QueueViewerHeader>();
