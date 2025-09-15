@@ -414,7 +414,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="91"/>
         <source>Local paths</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokale Pfade</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="93"/>
@@ -505,7 +505,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="89"/>
         <source>Query</source>
-        <translation type="unfinished"></translation>
+        <translation>Abfrage</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="160"/>
@@ -706,7 +706,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="282"/>
         <source>Go up to the parent directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Zum übergeordneten Verzeichnis gehen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="287"/>
@@ -726,7 +726,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="311"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>An aktuelle Wiedergabeliste anhängen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="318"/>
@@ -1123,7 +1123,7 @@
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="143"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Berechnung</translation>
     </message>
 </context>
 <context>
