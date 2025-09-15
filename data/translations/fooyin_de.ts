@@ -2008,7 +2008,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="138"/>
         <source>Remember from last run</source>
-        <translation type="unfinished"></translation>
+        <translation>Von letzter Instanz merken</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="165"/>
