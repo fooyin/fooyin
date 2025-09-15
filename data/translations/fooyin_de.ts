@@ -2065,7 +2065,7 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="68"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Überblendlänge</translation>
     </message>
 </context>
 <context>
@@ -2365,7 +2365,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Stile</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="110"/>
