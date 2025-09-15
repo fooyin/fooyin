@@ -105,7 +105,7 @@ Qt::ItemFlags QueueViewerModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 
-    if(index.isValid()) {
+    if(index.isValid() && (!m_currentTrackItem || index.row() > 0)) {
         flags |= Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren;
     }
     else {
