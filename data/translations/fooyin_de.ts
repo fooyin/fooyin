@@ -3873,7 +3873,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="367"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Songtext</translation>
+        <translation>Songtexte</translation>
     </message>
 </context>
 <context>
