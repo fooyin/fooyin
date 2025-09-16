@@ -37,10 +37,10 @@ constexpr auto ToolTipDelay = 5;
 namespace {
 QColor blendColors(const QColor& color1, const QColor& color2, double ratio)
 {
-    const int r = static_cast<int>(color1.red() * (1.0 - ratio) + color2.red() * ratio);
-    const int g = static_cast<int>(color1.green() * (1.0 - ratio) + color2.green() * ratio);
-    const int b = static_cast<int>(color1.blue() * (1.0 - ratio) + color2.blue() * ratio);
-    const int a = static_cast<int>(color1.alpha() * (1.0 - ratio) + color2.alpha() * ratio);
+    const int r = static_cast<int>((color1.red() * (1.0 - ratio)) + (color2.red() * ratio));
+    const int g = static_cast<int>((color1.green() * (1.0 - ratio)) + (color2.green() * ratio));
+    const int b = static_cast<int>((color1.blue() * (1.0 - ratio)) + (color2.blue() * ratio));
+    const int a = static_cast<int>((color1.alpha() * (1.0 - ratio)) + (color2.alpha() * ratio));
 
     return {r, g, b, a};
 }
@@ -199,7 +199,7 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     rect.setHeight(contentsRect().height());
 
     const auto first  = static_cast<int>(static_cast<double>(rect.left() / m_scale) / m_sampleWidth);
-    const auto last   = static_cast<int>(static_cast<double>(rect.right() + 1 / m_scale));
+    const auto last   = static_cast<int>(static_cast<double>(rect.right() + (1 / m_scale)));
     const double posX = positionFromValue(m_position) / m_scale;
 
     painter.fillRect(rect, m_colours.bgUnplayed);
@@ -363,6 +363,9 @@ void WaveSeekBar::updateRange(int first, int last)
 void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int first, int last, int y)
 {
     const auto& [max, min, rms] = m_data.channelData.at(channel);
+    if(max.empty() || min.empty() || rms.empty()) {
+        return;
+    }
 
     const double maxScale = (height / 2) * m_maxScale;
     const double minScale = height - maxScale;
