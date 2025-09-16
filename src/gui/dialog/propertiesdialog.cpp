@@ -197,7 +197,9 @@ PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialo
     layout->addLayout(bottomLayout);
 
     for(const auto& tab : m_tabs) {
-        tabWidget->insertTab(tab.index(), tab.widget(m_tracks), tab.title());
+        if(auto* tabPage = tab.widget(m_tracks)) {
+            tabWidget->insertTab(tab.index(), tabPage, tab.title());
+        }
     }
 }
 
