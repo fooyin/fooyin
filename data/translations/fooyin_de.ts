@@ -480,12 +480,12 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="54"/>
         <source>&amp;Delete</source>
-        <translation>&amp;Löschen</translation>
+        <translation>L&amp;öschen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>&amp;Restore Defaults</source>
-        <translation>&amp;Setze Einstellungen zurück</translation>
+        <translation>Setze &amp;Einstellungen zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
@@ -3257,7 +3257,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="82"/>
         <source>&amp;Quick Search</source>
-        <translation>&amp;Schnellsuche</translation>
+        <translation>Sch&amp;nellsuche</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="83"/>
@@ -3681,7 +3681,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="53"/>
         <source>&amp;Clear</source>
-        <translation>L&amp;eeren</translation>
+        <translation>&amp;Leeren</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="55"/>
@@ -4009,7 +4009,7 @@
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="60"/>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="62"/>
         <source>Lyrics</source>
-        <translation>Songtext</translation>
+        <translation>Songtexte</translation>
     </message>
 </context>
 <context>
@@ -4022,7 +4022,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="281"/>
         <source>Lyrics</source>
-        <translation>Songtext</translation>
+        <translation>Songtexte</translation>
     </message>
 </context>
 <context>
@@ -4138,7 +4138,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="136"/>
         <source>Lyrics</source>
-        <translation>Songtext</translation>
+        <translation>Songtexte</translation>
     </message>
 </context>
 <context>
@@ -4199,7 +4199,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="141"/>
         <source>Lyrics</source>
-        <translation>Songtext</translation>
+        <translation>Songtexte</translation>
     </message>
 </context>
 <context>
@@ -4245,7 +4245,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="145"/>
         <source>Lyrics</source>
-        <translation>Songtext</translation>
+        <translation>Songtexte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="169"/>
@@ -5644,7 +5644,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="184"/>
         <source>Cu&amp;t</source>
-        <translation>&amp;Ausschneiden</translation>
+        <translation>A&amp;usschneiden</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="185"/>
