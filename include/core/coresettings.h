@@ -80,6 +80,7 @@ enum CoreSettings : uint32_t
     FollowPlaybackQueue         = 31 | Type::Bool,
     StopIfActivePlaylistDeleted = 32 | Type::Bool,
     ResetStopAfterCurrent       = 33 | Type::Bool,
+    PreserveTimestamps          = 34 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

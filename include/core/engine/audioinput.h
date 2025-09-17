@@ -141,6 +141,8 @@ public:
         Rating = 1 << 0,
         // Write playcount to file (if supported)
         Playcount = 1 << 1,
+        // Preserve file timestamps (atime, mtime)
+        PreserveTimestamps = 1 << 2,
     };
     Q_DECLARE_FLAGS(WriteOptions, WriteFlag)
     Q_FLAG(WriteOptions)
@@ -202,7 +204,8 @@ public:
      * Will only be called after a successful @fn init call.
      * @returns whether the cover was written successfully.
      */
-    [[nodiscard]] virtual bool writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers);
+    [[nodiscard]] virtual bool writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers,
+                                          WriteOptions options);
 };
 using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 

@@ -88,7 +88,8 @@ bool AudioReader::writeTrack(const AudioSource& /*source*/, const Track& /*track
     return false;
 }
 
-bool AudioReader::writeCover(const AudioSource& /*source*/, const Track& /*track*/, const TrackCovers& /*covers*/)
+bool AudioReader::writeCover(const AudioSource& /*source*/, const Track& /*track*/, const TrackCovers& /*covers*/,
+                             WriteOptions /*options*/)
 {
     return false;
 }

@@ -82,6 +82,9 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
         if(m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
             options |= AudioReader::Playcount;
         }
+        if(m_settings->value<Settings::Core::PreserveTimestamps>()) {
+            options |= AudioReader::PreserveTimestamps;
+        }
     }
 
     for(const Track& track : std::as_const(tracksToUpdate)) {
@@ -128,6 +131,9 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, bool onlyPl
     if(m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
         options |= AudioReader::Playcount;
     }
+    if(m_settings->value<Settings::Core::PreserveTimestamps>()) {
+        options |= AudioReader::PreserveTimestamps;
+    }
 
     const bool writeToFile = onlyPlaycount ? (options & AudioReader::Playcount)
                                            : (options & (AudioReader::Playcount | AudioReader::Rating));
@@ -166,6 +172,11 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
     TrackList tracksToUpdate{tracks.tracks};
     TrackList tracksUpdated;
 
+    AudioReader::WriteOptions options;
+    if(m_settings->value<Settings::Core::PreserveTimestamps>()) {
+        options |= AudioReader::PreserveTimestamps;
+    }
+
     for(const auto& track : std::as_const(tracksToUpdate)) {
         if(!mayRun()) {
             break;
@@ -176,7 +187,7 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
         }
 
         Track updatedTrack{track};
-        if(m_audioLoader->writeTrackCover(updatedTrack, tracks.coverData)) {
+        if(m_audioLoader->writeTrackCover(updatedTrack, tracks.coverData, options)) {
             const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
             updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
 

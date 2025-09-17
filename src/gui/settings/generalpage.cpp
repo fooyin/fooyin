@@ -84,6 +84,8 @@ private:
 
     QComboBox* m_language;
     std::map<QString, QString, SortLanguages> m_languageMap;
+
+    QCheckBox* m_preserveTimestamps;
 };
 
 GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
@@ -93,6 +95,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     , m_showTray{new QCheckBox(tr("Show system tray icon"), this)}
     , m_minimiseToTray{new QCheckBox(tr("Minimise to tray on close"), this)}
     , m_language{new QComboBox(this)}
+    , m_preserveTimestamps{new QCheckBox(tr("Preserve timestamps"), this)}
 {
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
 
@@ -115,6 +118,14 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     dirGroupLayout->addWidget(openConfig, row, 0);
     dirGroupLayout->addWidget(openShare, row++, 1);
 
+    auto* taggingGroup       = new QGroupBox(tr("Tagging"), this);
+    auto* taggingGroupLayout = new QGridLayout(taggingGroup);
+
+    m_preserveTimestamps->setToolTip(tr("Preserve file timestamps when updating tags"));
+
+    row = 0;
+    taggingGroupLayout->addWidget(m_preserveTimestamps, row++, 0);
+
     auto* mainLayout = new QGridLayout(this);
 
     row = 0;
@@ -124,6 +135,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     mainLayout->addWidget(m_minimiseToTray, row++, 0, 1, 2);
     mainLayout->addWidget(startupGroup, row++, 0, 1, 2);
     mainLayout->addWidget(dirGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(taggingGroup, row++, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -153,6 +165,8 @@ void GeneralPageWidget::load()
 
     m_showTray->setEnabled(QSystemTrayIcon::isSystemTrayAvailable());
     m_minimiseToTray->setEnabled(QSystemTrayIcon::isSystemTrayAvailable() && m_showTray->isChecked());
+
+    m_preserveTimestamps->setChecked(m_settings->value<Settings::Core::PreserveTimestamps>());
 }
 
 void GeneralPageWidget::apply()
@@ -174,6 +188,7 @@ void GeneralPageWidget::apply()
     m_settings->set<Settings::Gui::WaitForTracks>(m_waitForTracks->isChecked());
     m_settings->set<Settings::Gui::Internal::ShowTrayIcon>(m_showTray->isChecked());
     m_settings->set<Settings::Gui::Internal::TrayOnClose>(m_minimiseToTray->isChecked());
+    m_settings->set<Settings::Core::PreserveTimestamps>(m_preserveTimestamps->isChecked());
 }
 
 void GeneralPageWidget::reset()
@@ -183,6 +198,7 @@ void GeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::WaitForTracks>();
     m_settings->reset<Settings::Gui::Internal::ShowTrayIcon>();
     m_settings->reset<Settings::Gui::Internal::TrayOnClose>();
+    m_settings->reset<Settings::Core::PreserveTimestamps>();
 }
 
 void GeneralPageWidget::loadLanguage()

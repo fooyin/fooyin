@@ -2672,6 +2672,14 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
         return false;
     }
 
+    QDateTime atime;
+    QDateTime mtime;
+    if(options & PreserveTimestamps) {
+        const QFileInfo info{source.filepath};
+        atime = info.lastRead();
+        mtime = info.lastModified();
+    }
+
     const auto writeProperties = [&track](TagLib::File& file, bool skipExtra = false) {
         auto savedProperties = file.properties();
         writeGenericProperties(savedProperties, track, skipExtra);
@@ -2830,14 +2838,30 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
         return false;
     }
 
+    if(atime.isValid() || mtime.isValid()) {
+        if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
+            fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
+            fileDev->setFileTime(atime, QFileDevice::FileAccessTime);
+        }
+    }
+
     return true;
 }
 
-bool TagLibReader::writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers)
+bool TagLibReader::writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers,
+                              WriteOptions options)
 {
     IODeviceStream stream{source.device, track.filepath()};
     if(!stream.isOpen() || stream.readOnly()) {
         return false;
+    }
+
+    QDateTime atime;
+    QDateTime mtime;
+    if(options & PreserveTimestamps) {
+        const QFileInfo info{source.filepath};
+        atime = info.lastRead();
+        mtime = info.lastModified();
     }
 
     const QMimeDatabase mimeDb;
@@ -2966,6 +2990,13 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
     else {
         qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
         return false;
+    }
+
+    if(atime.isValid() || mtime.isValid()) {
+        if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
+            fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
+            fileDev->setFileTime(atime, QFileDevice::FileAccessTime);
+        }
     }
 
     return true;

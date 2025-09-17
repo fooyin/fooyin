@@ -370,7 +370,8 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
     return reader->writeTrack(source, track, options);
 }
 
-bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverData) const
+bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverData,
+                                  AudioReader::WriteOptions options) const
 {
     if(track.isInArchive()) {
         return false;
@@ -392,7 +393,7 @@ bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverDa
     }
     source.device = &file;
 
-    return reader->writeCover(source, track, coverData);
+    return reader->writeCover(source, track, coverData, options);
 }
 
 void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator, int priority)
