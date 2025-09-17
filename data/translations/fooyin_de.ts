@@ -153,7 +153,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Save Method</source>
-        <translation>Methode speichern</translation>
+        <translation>Speichermethode</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
@@ -191,7 +191,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="154"/>
         <source>Artwork</source>
-        <translation>Albumcover</translation>
+        <translation>Artwork</translation>
     </message>
 </context>
 <context>
@@ -199,12 +199,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="69"/>
         <source>Prefer currently playing track</source>
-        <translation>Aktuell spielendes Lied bevorzugen</translation>
+        <translation>Bevorzuge aktuell spielendes Lied</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="70"/>
         <source>Prefer current selection</source>
-        <translation>Aktuelle Auswahl bevorzugen</translation>
+        <translation>Bevorzuge aktuelle Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="74"/>
@@ -229,7 +229,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="146"/>
         <source>Disk cache usage</source>
-        <translation>Festplattennutzung</translation>
+        <translation>Festplattencache-Nutzung</translation>
     </message>
 </context>
 <context>
@@ -257,12 +257,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="157"/>
         <source>Loading artwork…</source>
-        <translation>Artwork wird geladen…</translation>
+        <translation>Lade Artwork…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="161"/>
         <source>Saving artwork to files…</source>
-        <translation>Artwork wird in Datei gespeichert…</translation>
+        <translation>Speichere Artwork in Datei…</translation>
     </message>
 </context>
 <context>
@@ -307,12 +307,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="248"/>
         <source>Replace image</source>
-        <translation>Bild ersetzen</translation>
+        <translation>Ersetze Bild</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="248"/>
         <source>Add image</source>
-        <translation>Bild hinzufügen</translation>
+        <translation>Füge Bild hinzu</translation>
     </message>
 </context>
 <context>
@@ -368,7 +368,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="85"/>
         <source>Finder thumbnail size</source>
-        <translation>Vorschaugröße Suchdialog</translation>
+        <translation>Suchdialog Vorschaugröße</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="91"/>
@@ -424,7 +424,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="95"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation>Artwork wird in oben gennanter Reihenfolge gesucht.</translation>
+        <translation>Artwork wird in oben eingestellter Reihenfolge gesucht.</translation>
     </message>
 </context>
 <context>
@@ -432,17 +432,17 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="482"/>
         <source>Auto-size sections</source>
-        <translation>Kategoriegröße automatisch einstellen</translation>
+        <translation>Spaltengröße automatisch einstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="490"/>
         <source>Show hidden</source>
-        <translation>Versteckte Dateien anzeigen</translation>
+        <translation>Zeige versteckte Spalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="499"/>
         <source>Hide %1</source>
-        <translation>%1 Verstecken</translation>
+        <translation>Verstecke %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="523"/>
@@ -485,17 +485,17 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>&amp;Restore Defaults</source>
-        <translation>&amp;Einstellungen zurücksetzen</translation>
+        <translation>&amp;Setze Einstellungen zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Edit Autoplaylist</source>
-        <translation>Automatische Wiedergabeliste bearbeiten</translation>
+        <translation>Bearbeite automatische Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>Create New Autoplaylist</source>
-        <translation>Neue automatische Wiedergabeliste erstellen</translation>
+        <translation>Erstelle neue automatische Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
@@ -530,7 +530,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="281"/>
         <source>Last Played 2 Weeks</source>
-        <translation>Zuletzt vor 2 Wochen gespielt</translation>
+        <translation>In den letzten zwei Wochen gespielt</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="282"/>
@@ -576,12 +576,12 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="206"/>
         <source>Front cover</source>
-        <translation>Vorderseite</translation>
+        <translation>Albumcover (Vorderseite)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="207"/>
         <source>Back cover</source>
-        <translation>Rückseite</translation>
+        <translation>Albumcover (Rückseite)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="208"/>
@@ -671,17 +671,17 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="249"/>
         <source>Add to &amp;current playlist</source>
-        <translation>Zur &amp;aktuellen Wiedergabeliste hinzufügen</translation>
+        <translation>Füge zur a&amp;ktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="250"/>
         <source>Add to &amp;active playlist</source>
-        <translation>Zur &amp;aktiven Wiedergabeliste hinzufügen</translation>
+        <translation>Füge zur &amp;aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
         <source>&amp;Send to current playlist</source>
-        <translation>An aktuelle Wiedergabeliste &amp;senden</translation>
+        <translation>&amp;Sende an aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="252"/>
@@ -696,27 +696,27 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="254"/>
         <source>Queue to play next</source>
-        <translation>Zum Anfang der Wiedergabeliste hinzufügen</translation>
+        <translation>Gebe als nächstes wieder</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="255"/>
         <source>Send to playback q&amp;ueue</source>
-        <translation>Sende an Wiedergabeschlange</translation>
+        <translation>Sende an &amp;Wiedergabeschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="282"/>
         <source>Go up to the parent directory</source>
-        <translation>Zum übergeordneten Verzeichnis gehen</translation>
+        <translation>Gehe zum übergeordneten Verzeichnis</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="287"/>
         <source>Return to the previous directory</source>
-        <translation>Zum vorherigen Verzeichnis zurückkehren</translation>
+        <translation>Kehre zum vorherigen Verzeichnis zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="296"/>
         <source>Undo a Go-&gt;Back action</source>
-        <translation>Eine Zurück-Aktion rückgängig machen</translation>
+        <translation>Mache eine Zurück-Aktion rückgängig</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="306"/>
@@ -726,22 +726,22 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="311"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation>An aktuelle Wiedergabeliste anhängen</translation>
+        <translation>Hänge die ausgewählten Titel an die aktuelle Wiedergabeliste an</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="318"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation>Ausgewählte Titel an die aktive Wiedergabeliste anhängen</translation>
+        <translation>Hänge die ausgewählten Titel an die aktive Wiedergabeliste an</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="325"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation>Den Inhalt der aktuellen Wiedergabeliste mit den ausgewählten Titeln ersetzen</translation>
+        <translation>Ersetze den Inhalt der aktuellen Wiedergabeliste mit den ausgewählten Titeln</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="332"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation>Neue Wiedergabeliste mit den ausgewählten Titeln erstellen</translation>
+        <translation>Erstelle eine neue Wiedergabeliste mit den ausgewählten Titeln</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="338"/>
@@ -823,7 +823,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show icons</source>
-        <translation>Icons anzeigen</translation>
+        <translation>Zeige Icons</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="79"/>
@@ -838,17 +838,17 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="81"/>
         <source>Show controls</source>
-        <translation>Steuerung anzeigen</translation>
+        <translation>Zeige Steuerung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="82"/>
         <source>Show location</source>
-        <translation>Verzeichnis anzeigen</translation>
+        <translation>Zeige Verzeichnis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="85"/>
         <source>Start playback on send</source>
-        <translation>Abspielen nach dem Senden</translation>
+        <translation>Starte Wiedergabe nach dem Senden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
@@ -884,25 +884,25 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="135"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="144"/>
         <source>Add to current playlist</source>
-        <translation>Zur aktuellen Playlist hinzufügen</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="136"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="145"/>
         <source>Add to active playlist</source>
-        <translation>Zur aktiven Playlist hinzufügen</translation>
+        <translation>Füge zur aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="137"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="146"/>
         <source>Send to current playlist</source>
-        <translation>Zur aktuellen Playlist senden</translation>
+        <translation>Sende zur aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="138"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="147"/>
         <source>Send to new playlist</source>
-        <translation>An neue Playlist senden</translation>
+        <translation>Sende zu neuer Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
@@ -935,7 +935,7 @@
         <location filename="../../src/gui/widgets/dummy.cpp" line="67"/>
         <source>Dummy</source>
         <extracomment>Represents a dummy/placeholder widget</extracomment>
-        <translation>Dummy</translation>
+        <translation>Platzhalter</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="99"/>
@@ -950,7 +950,7 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="105"/>
         <source>Enter layout editing mode to edit</source>
-        <translation>Layoutbearbeitungsmodus aktivieren zum Bearbeiten</translation>
+        <translation>Aktiviere Layoutbearbeitungsmodus zum Bearbeiten</translation>
     </message>
 </context>
 <context>
@@ -968,7 +968,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
         <source>Search the current playlist</source>
-        <translation>Aktuelle Wiedergabeliste durchsuchen</translation>
+        <translation>Durchsuche aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="50"/>
@@ -1046,7 +1046,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="550"/>
         <source>&amp;Undo</source>
-        <translation>&amp;Rückgängig machen</translation>
+        <translation>&amp;Rückgängig</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="551"/>
@@ -1189,12 +1189,12 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="111"/>
         <source>Failed to save the current layout</source>
-        <translation>Layout konnte nicht gespeichert werden</translation>
+        <translation>Konnte Layout nicht speichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="143"/>
         <source>Failed to export layout</source>
-        <translation>Layout konnte nicht exportiert werden</translation>
+        <translation>Konnte Layout nicht exportieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="150"/>
@@ -1235,12 +1235,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="47"/>
         <source>Add &amp;files…</source>
-        <translation>&amp;Dateien hinzufügen…</translation>
+        <translation>&amp;Füge Dateien hinzu…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="48"/>
         <source>Add the specified files to the current playlist</source>
-        <translation>Angegebene Dateien zur aktuellen Wiedergabelsite hinzufügen</translation>
+        <translation>Füge die ausgewählten Dateien zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="54"/>
@@ -1255,7 +1255,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="63"/>
         <source>&amp;New playlist</source>
-        <translation>&amp;Neue Playlist</translation>
+        <translation>&amp;Neue Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="64"/>
@@ -1290,7 +1290,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="103"/>
         <source>Quit %1</source>
-        <translation>Verlassen %1</translation>
+        <translation>Verlasse %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="80"/>
@@ -1305,7 +1305,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="87"/>
         <source>Save the current playlist to the specified file</source>
-        <translation>Aktuelle Wiedergabeliste in angegebener Datei speichern</translation>
+        <translation>Speichere die aktuelle Wiedergabeliste in die ausgewählte Datei</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
@@ -1315,7 +1315,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
         <source>Save all playlists to the specified location</source>
-        <translation>Alle Wiedergabelisten in angegebenem Ort speichern</translation>
+        <translation>Alle Wiedergabelisten in dem angegebenen Ort speichern</translation>
     </message>
 </context>
 <context>
@@ -1338,7 +1338,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="124"/>
         <source>Remove empty source folders</source>
-        <translation>Leere Quellenordner entfernen</translation>
+        <translation>Entferne leere Quellenordner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="126"/>
@@ -1377,7 +1377,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="465"/>
         <source>Select Directory</source>
-        <translation>Pfad auswählen</translation>
+        <translation>Wähle Verzeichnis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="483"/>
@@ -1417,12 +1417,12 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="239"/>
         <source>Copy entire source folder contents</source>
-        <translation>Gesamten Quellordnerinhalt kopieren</translation>
+        <translation>Kopiere den gesamten Quellordnerinhalt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="240"/>
         <source>Move entire source folder contents</source>
-        <translation>Gesamten Quellordnerinhalt verschieben</translation>
+        <translation>Verschiebe den gesamten Quellordnerinhalt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="273"/>
@@ -1437,7 +1437,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="439"/>
         <source>&amp;Abort</source>
-        <translation>%Abbrechen</translation>
+        <translation>&amp;Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -1521,7 +1521,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Album Artist</source>
-        <translation>Albenkünstler</translation>
+        <translation>Albumkünstler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="41"/>
@@ -1641,22 +1641,22 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="714"/>
         <source>Front cover</source>
-        <translation>Albencover (Front)</translation>
+        <translation>Albumcover (Vorderseite)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="715"/>
         <source>Back cover</source>
-        <translation>Albencover (Rückseite)</translation>
+        <translation>Albumcover (Rückseite)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="737"/>
         <source>Show header</source>
-        <translation>Überschrift anzeigen</translation>
+        <translation>Zeige Überschrift</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="745"/>
         <source>Show scrollbar</source>
-        <translation>Bildlaufleiste anzeigen</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="753"/>
@@ -1686,7 +1686,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="261"/>
         <source>Library Filter</source>
-        <translation>Bibliothekfilter</translation>
+        <translation>Bibliotheksfilter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="227"/>
@@ -1761,7 +1761,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="68"/>
         <source>Start playback on send</source>
-        <translation>Abspielen nach Senden</translation>
+        <translation>Starte Wiedergabe nach Senden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="69"/>
@@ -1818,25 +1818,25 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="124"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="133"/>
         <source>Add to current playlist</source>
-        <translation>Zur aktuellen Playlist hinzufügen</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="125"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="134"/>
         <source>Add to active playlist</source>
-        <translation>Zur aktiven Playlist hinzufügen</translation>
+        <translation>Füge zur aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="126"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="135"/>
         <source>Send to current playlist</source>
-        <translation>Zur aktuellen Playlist senden</translation>
+        <translation>Sende zur aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="127"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="136"/>
         <source>Send to new playlist</source>
-        <translation>Zur neuen Playlist senden</translation>
+        <translation>Sende zu neuer Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="128"/>
@@ -1913,7 +1913,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="54"/>
         <source>Library Filter</source>
-        <translation>Bibliothekfilter</translation>
+        <translation>Bibliotheksfilter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="55"/>
@@ -1943,7 +1943,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Wait for tracks</source>
-        <translation>Warten auf Songs</translation>
+        <translation>Warte auf Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
@@ -1953,7 +1953,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="94"/>
         <source>Minimise to tray on close</source>
-        <translation>&apos;Schließen&apos; minimiert Programm auf Leiste</translation>
+        <translation>Minimiere beim Schließen in Systemleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="103"/>
@@ -1963,7 +1963,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="97"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation>Starten von Fooyin verzögern, bis alle Titel geladen worden sind</translation>
+        <translation>&quot;Verzögere Fooyin-Start</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="99"/>
@@ -1983,7 +1983,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Open Share Directory</source>
-        <translation>Freigabeverzeichnis öffnen</translation>
+        <translation>Öffne Freigabeverzeichnis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
@@ -1998,17 +1998,17 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="136"/>
         <source>Start maximised</source>
-        <translation>Maximiert starten</translation>
+        <translation>Starte maximiert</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="137"/>
         <source>Start hidden to tray</source>
-        <translation>Starte in Symbolleiste</translation>
+        <translation>Starte versteckt in Systemleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="138"/>
         <source>Remember from last run</source>
-        <translation>Von letzter Ausführung merken</translation>
+        <translation>Merke von letzter Ausführung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="165"/>
@@ -2046,7 +2046,7 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="66"/>
         <source>times</source>
-        <translation>Zeiten</translation>
+        <translation>Mal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="72"/>
@@ -2078,7 +2078,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="375"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation>Für die volle Funktionalität sind einige Plugins erforderlich.</translation>
+        <translation>Einige Plugins sind für die volle Funktionalität erforderlich.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="376"/>
@@ -2203,37 +2203,37 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="601"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation>Ersetze Tags in ausgewählten Titeln durch Tags aus den Dateien, sofern bearbeitet</translation>
+        <translation>&quot;Ersetze Tags in ausgewählten Titeln durch Tags aus den Dateien</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="626"/>
         <source>Rate 0</source>
-        <translation>Mit 0 bewerten</translation>
+        <translation>Bewerte mit 0</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="627"/>
         <source>Rate 1</source>
-        <translation>Mit 1 bewerten</translation>
+        <translation>Bewerte mit 1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="628"/>
         <source>Rate 2</source>
-        <translation>Mit 2 bewerten</translation>
+        <translation>Bewerte mit 2</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="629"/>
         <source>Rate 3</source>
-        <translation>Mit 3 bewerten</translation>
+        <translation>Bewerte mit 3</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="630"/>
         <source>Rate 4</source>
-        <translation>Mit 4 bewerten</translation>
+        <translation>Bewerte mit 4</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="631"/>
         <source>Rate 5</source>
-        <translation>Mit 5 bewerten</translation>
+        <translation>Bewerte mit 5</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="633"/>
@@ -2249,7 +2249,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="842"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation>Aufgrund einer Datenbankänderung müssen Titel vom Datenträger neugeladen werden, um die gespeicherten Metadaten zu aktualisieren.</translation>
+        <translation>Aufgrund einer Datenbankänderung sollten Titel vom Datenträger neugeladen werden, um die gespeicherten Metadaten zu aktualisieren.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="847"/>
@@ -2299,7 +2299,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="945"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation>Bei nicht verfügbarem Titel Wiedergabe immer fortsetzen</translation>
+        <translation>&quot;Immer weiterspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="972"/>
@@ -2319,12 +2319,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1013"/>
         <source>Add Files</source>
-        <translation>Dateien hinzufügen</translation>
+        <translation>Füge Dateien hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1027"/>
         <source>Add Folders</source>
-        <translation>Ordner hinzufügen</translation>
+        <translation>Füge Ordner hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1055"/>
@@ -2334,12 +2334,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1065"/>
         <source>Load Playlist</source>
-        <translation>Wiedergabeliste laden</translation>
+        <translation>Lade Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1101"/>
         <source>Save Playlist</source>
-        <translation>Wiedergabeliste speichern</translation>
+        <translation>Speichere Wiedergabeliste</translation>
     </message>
 </context>
 <context>
@@ -2362,7 +2362,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation>System Voreinstellung</translation>
+        <translation>System-Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
@@ -2392,7 +2392,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="114"/>
         <source>Placeholder text</source>
-        <translation>Platzhalter Text</translation>
+        <translation>Platzhaltertext</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="115"/>
@@ -2452,12 +2452,12 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="133"/>
         <source>ToolTip (Background)</source>
-        <translation>Tooltipp (Hintergrund)</translation>
+        <translation>Tooltip (Hintergrund)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="134"/>
         <source>ToolTip (Foreground)</source>
-        <translation>Tooltipp (Vordergrund)</translation>
+        <translation>Tooltip (Vordergrund)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="135"/>
@@ -2553,12 +2553,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="112"/>
         <source>Use system icons</source>
-        <translation>Systemicons benutzen</translation>
+        <translation>Benutze Systemicons</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="116"/>
         <source>Show splitter handles</source>
-        <translation>Splitter-Griffe anzeigen</translation>
+        <translation>Zeige Teilergriffe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="114"/>
@@ -2568,7 +2568,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="113"/>
         <source>Show menu bar</source>
-        <translation>Menüleiste anzeigen</translation>
+        <translation>Zeige Menüleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="117"/>
@@ -2578,7 +2578,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="118"/>
         <source>Override splitter handle size</source>
-        <translation>Splitter-Griffgröße überschreiben</translation>
+        <translation>Überschreibe Teilergriff-Größe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="120"/>
@@ -2593,32 +2593,32 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="124"/>
         <source>Prefer currently playing track</source>
-        <translation>Aktuell spielendes Lied bevorzugen</translation>
+        <translation>Bevorzuge aktuell spielendes Lied</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="125"/>
         <source>Prefer current selection</source>
-        <translation>Aktuelle Auswahl bevorzugen</translation>
+        <translation>Bevorzuge aktuelle Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="128"/>
         <source>Setup</source>
-        <translation>Setup</translation>
+        <translation>Einrichtung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
         <source>Quick Setup</source>
-        <translation>Schnellsetup</translation>
+        <translation>Schnelleinrichtung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="131"/>
         <source>Import Layout</source>
-        <translation>Layout importieren</translation>
+        <translation>Importiere Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="132"/>
         <source>Export Layout</source>
-        <translation>Layout exportieren</translation>
+        <translation>Exportiere Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="138"/>
@@ -2648,7 +2648,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="176"/>
         <source>Tool Buttons</source>
-        <translation>Toolschaltflächen</translation>
+        <translation>Werkzeugschaltflächen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
@@ -2708,7 +2708,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="53"/>
         <source>Open the quick start guide</source>
-        <translation>Kurzanleitung öffnen</translation>
+        <translation>Öffne Schnellstart-Anleitung</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="58"/>
@@ -2748,7 +2748,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
         <source>Open the about dialog</source>
-        <translation>Öffne den &quot;Über&quot;-Dialog</translation>
+        <translation>&quot;Öffne den &quot;&quot;Über&quot;&quot;-Dialog&quot;</translation>
     </message>
 </context>
 <context>
@@ -2806,12 +2806,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="154"/>
         <source>Album Artist</source>
-        <translation>Albenkünstler</translation>
+        <translation>Albumkünstler</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="157"/>
         <source>Track Number</source>
-        <translation>Liednummer</translation>
+        <translation>Titelnummer</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
@@ -2891,7 +2891,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
         <source>Avg. Bitrate</source>
-        <translation>Durchs. Bitrate</translation>
+        <translation>Ø Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
@@ -2931,7 +2931,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="252"/>
         <source>Track Peak</source>
-        <translation>Titelspitze</translation>
+        <translation>Titelspitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="257"/>
@@ -2941,12 +2941,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="262"/>
         <source>Album Peak</source>
-        <translation>Albumspitze</translation>
+        <translation>Albumspitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="267"/>
         <source>Total Peak</source>
-        <translation>Gesamtspitze</translation>
+        <translation>Gesamtspitzenwert</translation>
     </message>
 </context>
 <context>
@@ -3045,7 +3045,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
         <source>Prevent manual resizing of splitters when not in layout editing mode</source>
-        <translation>Verhindere manuelles Verstellen von Teilern, solange nicht im Layout-Bearbeitungsmodus</translation>
+        <translation>&quot;Verhindere manuelles Verstellen von Teilern</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
@@ -3103,7 +3103,7 @@
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="261"/>
         <source>Replace existing layout?</source>
-        <translation>Existierendes Layout überschreiben?</translation>
+        <translation>Überschreibe existierendes Layout?</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="262"/>
@@ -3129,22 +3129,22 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="127"/>
         <source>Auto refresh on startup</source>
-        <translation>Automatisch neuladen nach Start</translation>
+        <translation>Automatisch Neuladen nach Start</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="128"/>
         <source>Monitor libraries</source>
-        <translation>Bibliotheken überwachen</translation>
+        <translation>Überwache Bibliotheken</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="129"/>
         <source>Mark unavailable tracks on playback</source>
-        <translation>Nicht-verfügbare Titel bei Abspielen markieren</translation>
+        <translation>Markiere nicht-verfügbare Titel bei Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="130"/>
         <source>Mark unavailable tracks on startup</source>
-        <translation>Nicht-verfügbare Titel bei Start markieren</translation>
+        <translation>Markiere nicht-verfügbare Titel bei Start</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="131"/>
@@ -3154,22 +3154,22 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="132"/>
         <source>Save ratings to file metadata</source>
-        <translation>Bewertungen in Metadaten speichern</translation>
+        <translation>Speichere Bewertungen in Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="133"/>
         <source>Save playcount to file metadata</source>
-        <translation>Abspielzähler in Metadaten speichern</translation>
+        <translation>Speichere Wiedergabeanzahl in Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="144"/>
         <source>Scan libraries for changes on startup</source>
-        <translation>Bibliotheken bei Programmstart auf Änderungen überprüfen</translation>
+        <translation>Überprüfe Bibliotheken bei Programmstart auf Änderungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
         <source>Monitor libraries for external changes</source>
-        <translation>Bibliotheken auf externe Änderungen überwachen</translation>
+        <translation>Überwache Bibliotheken auf externe Änderungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="147"/>
@@ -3212,7 +3212,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation>Entferne nicht in der Bibliothek enthaltene Titel, die in keiner Wiedergabeliste oder abgelaufenen Wiedergabestatistik enthalten sind</translation>
+        <translation>&quot;Entferne Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -3227,22 +3227,22 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="63"/>
         <source>&amp;Scan for changes</source>
-        <translation>&amp;Auf Änderungen überprüfen</translation>
+        <translation>&amp;Überprüfe auf Änderungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
         <source>Update tracks in libraries which have been modified on disk</source>
-        <translation>Titel in Bibliotheken updaten, die auf dem Datenträger modifiziert wurden</translation>
+        <translation>&quot;Aktualisiere Titel in Bibliotheken</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="70"/>
         <source>&amp;Reload tracks</source>
-        <translation>&amp;Titel neuladen</translation>
+        <translation>&amp;Lade Titel neu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
         <source>Reload metadata from files for all tracks in libraries</source>
-        <translation>Metadaten von Dateien für alle Titel in Bibliothek neuladen</translation>
+        <translation>Lade Metadaten von Dateien für alle Titel in Bibliotheken neu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="76"/>
@@ -3252,7 +3252,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="77"/>
         <source>Search all libraries</source>
-        <translation>Alle Bibliotheken durchsuchen</translation>
+        <translation>Durchsuche alle Bibliotheken</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="82"/>
@@ -3272,12 +3272,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="89"/>
         <source>Open the library page in the settings dialog</source>
-        <translation>Öffne die Seite &quot;Bibliothek&quot; im Einstellungs-Dialog</translation>
+        <translation>&quot;Öffne die Seite &quot;&quot;Bibliothek&quot;&quot; im Einstellungs-Dialog&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="108"/>
         <source>Optimising database…</source>
-        <translation>Datenbank wird optimiert…</translation>
+        <translation>Optimierte Datenbank…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="118"/>
@@ -3287,7 +3287,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="123"/>
         <source>Cleaning database…</source>
-        <translation>Datenbank wird gesäubert…</translation>
+        <translation>Säubere Datenbank…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="133"/>
@@ -3350,12 +3350,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="72"/>
         <source>&amp;Scan for changes</source>
-        <translation>&amp;Auf Änderungen überprüfen</translation>
+        <translation>&amp;Überprüfe auf Änderungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="76"/>
         <source>&amp;Reload tracks</source>
-        <translation>&amp;Titel neuladen</translation>
+        <translation>&amp;Lade Titel neu</translation>
     </message>
 </context>
 <context>
@@ -3399,7 +3399,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="134"/>
         <source>Library Tree</source>
-        <translation>Baumbibliothek</translation>
+        <translation>Bibliotheksbaum</translation>
     </message>
 </context>
 <context>
@@ -3433,7 +3433,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="494"/>
         <source>Library Tree</source>
-        <translation>Baumbibliothek</translation>
+        <translation>Bibliotheksbaum</translation>
     </message>
 </context>
 <context>
@@ -3451,7 +3451,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="301"/>
         <source>Library Tree</source>
-        <translation>Baumbibliothek</translation>
+        <translation>Bibliotheksbaum</translation>
     </message>
 </context>
 <context>
@@ -3469,7 +3469,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="88"/>
         <source>Show scrollbar</source>
-        <translation>Scrollleiste anzeigen</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="89"/>
@@ -3484,7 +3484,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="108"/>
         <source>Library Selection Playlist</source>
-        <translation>Bibliotheksauswahlplaylist</translation>
+        <translation>Bibliotheksauswahl-Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="98"/>
@@ -3494,7 +3494,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="80"/>
         <source>Start playback on send</source>
-        <translation>Abspielen nach Senden</translation>
+        <translation>Starte Wiedergabe nach Senden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="83"/>
@@ -3504,7 +3504,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="85"/>
         <source>Restore state on startup</source>
-        <translation>Nach Start Status wiederherstellen</translation>
+        <translation>Stelle Status nach Start wieder her</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="86"/>
@@ -3514,12 +3514,12 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="87"/>
         <source>Show header</source>
-        <translation>Header anzeigen</translation>
+        <translation>Zeige Überschrift</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="90"/>
         <source>Override row height</source>
-        <translation>Zeilenhöhe überschreiben</translation>
+        <translation>Überschreibe Zeilenhöhe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="99"/>
@@ -3575,25 +3575,25 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="197"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="206"/>
         <source>Add to current playlist</source>
-        <translation>Zur aktuellen Playlist hinzufügen</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="198"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="207"/>
         <source>Add to active playlist</source>
-        <translation>Zur aktiven Playlist hinzufügen</translation>
+        <translation>Füge zur aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="199"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="208"/>
         <source>Send to current playlist</source>
-        <translation>Zur aktuellen Playlist senden</translation>
+        <translation>Sende zur aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="200"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="209"/>
         <source>Send to new playlist</source>
-        <translation>Zur neuen Playlist senden</translation>
+        <translation>Sende zu neuer Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="201"/>
@@ -3625,7 +3625,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="103"/>
         <source>Loading Library…</source>
-        <translation>Bibliothek laden…</translation>
+        <translation>Lade Bibliothek…</translation>
     </message>
 </context>
 <context>
@@ -3643,7 +3643,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="263"/>
         <source>&amp;Queue to play next</source>
-        <translation>&amp;Als nächstes abspielen</translation>
+        <translation>&amp;Gebe als nächstes wieder</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="264"/>
@@ -3658,17 +3658,17 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="296"/>
         <source>Start playback of the selected tracks</source>
-        <translation>Ausgewählte Titel wiedergeben</translation>
+        <translation>Starte Wiedergabe der ausgewählten Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="480"/>
         <source>Open folder</source>
-        <translation>Ordner öffnen</translation>
+        <translation>Öffne Ordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="925"/>
         <source>Library Tree</source>
-        <translation>Baumbibliothek</translation>
+        <translation>Bibliotheksbaum</translation>
     </message>
 </context>
 <context>
@@ -3676,7 +3676,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="51"/>
         <source>Log</source>
-        <translation>Log</translation>
+        <translation>Protokoll</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="53"/>
@@ -3686,7 +3686,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="55"/>
         <source>&amp;Save Log</source>
-        <translation>&amp;Log speichern</translation>
+        <translation>&amp;Speichere Protokoll</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="62"/>
@@ -3711,7 +3711,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="108"/>
         <source>Save Log</source>
-        <translation>Log speichern</translation>
+        <translation>Speichere Protokoll</translation>
     </message>
 </context>
 <context>
@@ -3724,7 +3724,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="50"/>
         <source>Reset Changes</source>
-        <translation>Änderungen zurücksetzen</translation>
+        <translation>Setze Änderungen zurück</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="51"/>
@@ -3830,7 +3830,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="80"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation>Dies wird angezeigt, wenn der Songtext des aktuellen Titels nicht gefunden werden kann.</translation>
+        <translation>&quot;Dies wird angezeigt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="85"/>
@@ -3881,7 +3881,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="91"/>
         <source>Show scrollbar</source>
-        <translation>Bildlaufleiste anzeigen</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsguipage.cpp" line="98"/>
@@ -4055,7 +4055,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="86"/>
         <source>Save all</source>
-        <translation>Alles speichern</translation>
+        <translation>Speichere Alles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="87"/>
@@ -4075,7 +4075,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="94"/>
         <source>Save metadata</source>
-        <translation>Metadaten speichern</translation>
+        <translation>Speichere Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="96"/>
@@ -4085,17 +4085,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="104"/>
         <source>Save Method</source>
-        <translation>Methode speichern</translation>
+        <translation>Speichermethode</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="111"/>
         <source>Autosave Preference</source>
-        <translation>Präferenz automatisch speichern</translation>
+        <translation>Automatisches Speichern-Einstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="119"/>
         <source>Save Location</source>
-        <translation>Ort speichern</translation>
+        <translation>Speicherort</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="122"/>
@@ -4146,17 +4146,17 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="64"/>
         <source>Automatically search for lyrics on starting playback</source>
-        <translation>Bei Wiedergabe automatisch nach Songtext suchen</translation>
+        <translation>Suche automatisch nach Songtext bei Start der Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="65"/>
         <source>Skip remaining sources when lyrics are found</source>
-        <translation>Restliche Quellen überspringen, wenn Songtext gefunden wurde</translation>
+        <translation>&quot;Überspringe restliche Quellen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="66"/>
         <source>Skip external sources if local lyrics are found</source>
-        <translation>Externe Quellen überspringen, wenn lokaler Songtext gefunden wurde</translation>
+        <translation>&quot;Überspringe externe Quellen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="70"/>
@@ -4186,7 +4186,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="86"/>
         <source>Only local lyrics will be used if unchecked</source>
-        <translation>Wenn nicht angehakt, werden nur lokale Songtexte gesucht</translation>
+        <translation>&quot;Wenn dies nicht angehakt ist</translation>
     </message>
 </context>
 <context>
@@ -4217,7 +4217,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="85"/>
         <source>Metadata tags</source>
-        <translation>Metadata-Tags</translation>
+        <translation>Metadaten-Tags</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="87"/>
@@ -4250,42 +4250,42 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="169"/>
         <source>Select lyrics</source>
-        <translation>Songtext wählen</translation>
+        <translation>Wähle Songtext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="179"/>
         <source>Search for lyrics</source>
-        <translation>Nach Songtext suchen</translation>
+        <translation>Suche nach Songtexten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="180"/>
         <source>Search for lyrics for the current track</source>
-        <translation>Nach Songtext für aktuelle Wiedergabe suchen</translation>
+        <translation>Suche nach Songtexten für den aktuell wiedergegebenen Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="190"/>
         <source>Edit lyrics</source>
-        <translation>Songtext bearbeiten</translation>
+        <translation>Bearbeite Songtext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="191"/>
         <source>Open editor for the current lyrics</source>
-        <translation>Editor für aktuellen Songtext öffnen</translation>
+        <translation>Öffne den Editor für den aktuellen Songtext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="197"/>
         <source>Save lyrics</source>
-        <translation>Songtext speichern</translation>
+        <translation>Speichere Songtext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="198"/>
         <source>Save lyrics using current settings</source>
-        <translation>Songtext mit aktuellen Einstellungen speichern</translation>
+        <translation>Speichere den Songtext mit den aktuellen Einstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="207"/>
         <source>Show scrollbar</source>
-        <translation>Bildlaufleiste anzeigen</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="213"/>
@@ -4331,7 +4331,7 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="183"/>
         <source>Networking</source>
-        <translation>Netzanschluss</translation>
+        <translation>Vernetzung</translation>
     </message>
 </context>
 <context>
@@ -4402,7 +4402,7 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="45"/>
         <source>Volume ramping</source>
-        <translation type="unfinished"></translation>
+        <translation>Volume Ramping</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="46"/>
@@ -4433,7 +4433,7 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="75"/>
         <source>times</source>
-        <translation>Zeiten</translation>
+        <translation>Mal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="77"/>
@@ -4458,7 +4458,7 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="83"/>
         <source>Sinc</source>
-        <translation type="unfinished"></translation>
+        <translation>Sinc</translation>
     </message>
 </context>
 <context>
@@ -4484,12 +4484,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="76"/>
         <source>Gapless playback</source>
-        <translation>Spaltfreie Wiedergabe</translation>
+        <translation>Unterbrechungsfreie Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="78"/>
         <source>Fading</source>
-        <translation>Ein-/Ausblenden</translation>
+        <translation>Überblenden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="131"/>
@@ -4509,7 +4509,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="88"/>
         <source>Try to play consecutive tracks with no silence or disruption at the point of file change</source>
-        <translation>Versuche das Abspielen mehrerer Titel ohne Unterbrechungen oder Stille bei Dateiänderungen</translation>
+        <translation>&quot;Versuche</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="97"/>
@@ -4558,12 +4558,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
         <source>Repeat &amp;playlist</source>
-        <translation>&amp;Playlist wiederholen</translation>
+        <translation>&amp;Wiederhole Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="53"/>
         <source>&amp;Shuffle tracks</source>
-        <translation>Titel &amp;durchmischen</translation>
+        <translation>Mische &amp;Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="54"/>
@@ -4588,7 +4588,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="61"/>
         <source>Playback</source>
-        <translation>Abspielen</translation>
+        <translation>Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="68"/>
@@ -4603,12 +4603,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="83"/>
         <source>Start playing the next track in the current playlist</source>
-        <translation>Spiele den nächsten Titel in der aktuelle Wiedergabeliste ab</translation>
+        <translation>Starte die Wiedergabe des nächsten Titels der aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="89"/>
         <source>Start playing the previous track in the current playlist</source>
-        <translation>Beginne, den vorherigen Titel in der aktuellen Wiedergabeliste abzuspielen</translation>
+        <translation>Starte die Wiedergabe des vorherigen Titels in der aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="103"/>
@@ -4629,47 +4629,47 @@
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="123"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="147"/>
         <source>Set playback order to shuffle tracks in the current playlist</source>
-        <translation>Stelle die Wiedergabereihenfolge so ein, dass Titel der aktuellen Wiedergabeliste in gemischter Reihenfolge abgespielt werden</translation>
+        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="129"/>
         <source>Set playback order to repeat the current album</source>
-        <translation>Stelle die Widergabereihenfolge so ein, dass das aktuelle Album wiederholt wird</translation>
+        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="135"/>
         <source>Set playback order to repeat the current playlist</source>
-        <translation>Stelle die Wiedergabereihenfolge so ein, dass die aktuelle Wiedergabeliste wiederholt wird</translation>
+        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="141"/>
         <source>Set playback order to shuffle albums in the current playlist</source>
-        <translation>Stelle die Wiedergabereihenfolge so ein, dass Alben der aktuellen Wiedergabeliste in gemischter Reihenfolge abgespielt werden</translation>
+        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="153"/>
         <source>Set playback order to play a random track in the current playlist</source>
-        <translation>Stelle die Wiedergabereihenfolge so ein, dass ein zufälliger Titel der aktuellen Wiedergabeliste abgespielt wird</translation>
+        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="172"/>
         <source>Cursor follows play&amp;back</source>
-        <translation>&amp;Cursor folgt Abspielen</translation>
+        <translation>&amp;Auswahlmarker folgt Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="173"/>
         <source>Select the currently playing track when changed</source>
-        <translation>Wähle den derzeit abgespielten Titel an, wenn dieser wechselt</translation>
+        <translation>&quot;Wähle den derzeit abgespielten Titel aus</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
         <source>Playback follows &amp;cursor</source>
-        <translation>&amp;Abspielen folgt Cursor</translation>
+        <translation>&amp;Abspielen folgt Auswahlmarker</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
         <source>Reset &apos;Stop after current&apos; after stopping</source>
-        <translation>Setze &quot;Stoppe nach diesem Titel&quot; nach dem Stoppen zurück</translation>
+        <translation>&quot;Setze &quot;&quot;Stoppe nach diesem Titel&quot;&quot; nach dem Stoppen zurück&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="229"/>
@@ -4699,12 +4699,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="175"/>
         <source>Start playback of the currently selected track on next</source>
-        <translation>Spiele den derzeit ausgewählten Titel bei &quot;Weiter&quot; ab</translation>
+        <translation>&quot;Starte die Wiedergabe des derzeit ausgewählten Titels bei &quot;&quot;Weiter&quot;&quot;&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="177"/>
         <source>Stop playback at the end of the current track</source>
-        <translation>Stoppe Wiedergabe am Ende des aktuellen Titels</translation>
+        <translation>Stoppe die Wiedergabe am Ende des aktuellen Titels</translation>
     </message>
 </context>
 <context>
@@ -4725,22 +4725,22 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="82"/>
         <source>Save/restore playback state</source>
-        <translation>Abspielstatus speichern/widerherstellen</translation>
+        <translation>Wiedergabestatus speichern/widerherstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Cursor follows playback</source>
-        <translation>Cursor folgt Abspielen</translation>
+        <translation>Auswahlmarker folgt Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="84"/>
         <source>Playback follows cursor</source>
-        <translation>Abspielen folgt Cursor</translation>
+        <translation>Abspielen folgt Auswahlmarker</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="88"/>
         <source>Rewind track on previous</source>
-        <translation>Spule Titel bei &quot;Zurück&quot; zurück</translation>
+        <translation>&quot;Spule Titel bei &quot;&quot;Zurück&quot;&quot; zurück&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="87"/>
@@ -4760,17 +4760,17 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="89"/>
         <source>Skip unavailable tracks</source>
-        <translation>Überspringe nicht-verfügbare Titel</translation>
+        <translation>Überspringe nicht verfügbare Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="90"/>
         <source>Stop playback if the active playlist is deleted</source>
-        <translation>Stoppe Wiedergabe, wenn die aktive Wiedergabeliste gelöscht wird</translation>
+        <translation>&quot;Stoppe Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="100"/>
         <source>Save playback state on exit and restore it on next startup</source>
-        <translation>Abspielstatus beim Beenden speichern und beim Programmstart wiederherstellen</translation>
+        <translation>Speichere Wiedergabestatus beim Beenden und stelle ihn beim Programmstart wieder her</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="101"/>
@@ -4820,12 +4820,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="162"/>
         <source>Album grouping pattern</source>
-        <translation>Alben Gruppierungsmuster</translation>
+        <translation>Album Gruppierungsmuster</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="164"/>
         <source>Album sorting pattern</source>
-        <translation>Alben Sortierungsmuster</translation>
+        <translation>Album Sortierungsmuster</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="94"/>
@@ -4835,7 +4835,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="112"/>
         <source>The percentage of a track that must be listened to before it is counted as &apos;played&apos;</source>
-        <translation>Wie viel Prozent eines Titels gehört werden müssen, damit dieser als &quot;Gespielt&quot; gilt</translation>
+        <translation>&quot;Wie viel Prozent eines Titels gehört werden müssen</translation>
     </message>
 </context>
 <context>
@@ -4861,12 +4861,12 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="66"/>
         <source>Show header</source>
-        <translation>Überschrift anzeigen</translation>
+        <translation>Zeige Überschrift</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="67"/>
         <source>Show scrollbar</source>
-        <translation>Bildlaufleiste anzeigen</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="68"/>
@@ -4940,7 +4940,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="165"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Index</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="167"/>
@@ -4950,7 +4950,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="169"/>
         <source>Field</source>
-        <translation>Bereich</translation>
+        <translation>Felder</translation>
     </message>
 </context>
 <context>
@@ -4959,7 +4959,7 @@
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="130"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="131"/>
         <source>Columns</source>
-        <translation>Spalten</translation>
+        <translation>Feld</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="131"/>
@@ -5172,32 +5172,32 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
         <source>Show scrollbar</source>
-        <translation>Bildlaufleiste anzeigen</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="90"/>
         <source>Show header</source>
-        <translation>Überschrift anzeigen</translation>
+        <translation>Zeige Überschrift</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="92"/>
         <source>Expand tabs to fill empty space</source>
-        <translation>Erweitere Reiter, um leeren Raum zu füllen</translation>
+        <translation>&quot;Erweitere Reiter</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="93"/>
         <source>Show add button</source>
-        <translation>Zeige &quot;Hinzufügen&quot;-Knopf</translation>
+        <translation>&quot;Zeige &quot;&quot;Hinzufügen&quot;&quot;-Knopf&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="94"/>
         <source>Show clear button</source>
-        <translation>Zeige &quot;Leeren&quot;-Knopf</translation>
+        <translation>&quot;Zeige &quot;&quot;Leeren&quot;&quot;-Knopf&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
         <source>Show delete button on tabs</source>
-        <translation>Zeige &quot;Löschen&quot;-Knöpfe auf Reitern</translation>
+        <translation>&quot;Zeige &quot;&quot;Löschen&quot;&quot;-Knopf auf Reitern&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="96"/>
@@ -5242,12 +5242,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="134"/>
         <source>Location</source>
-        <translation>Verzeichnis</translation>
+        <translation>Ort</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="136"/>
         <source>Export and synchronise playlists in the specified format and location</source>
-        <translation>Exportiere und synchronisiere Wiedergabelisten in den angegebenen Formaten und Verzeichnissen</translation>
+        <translation>Exportiere und synchronisiere Wiedergabelisten im angegebenen Format und Verzeichnis</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="173"/>
@@ -5272,7 +5272,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="212"/>
         <source>Send to playback queue</source>
-        <translation>Sende zur Wiedergabeliste</translation>
+        <translation>Sende zur Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="301"/>
@@ -5593,7 +5593,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="366"/>
         <source>%1 contents</source>
-        <translation>%1 Inhalte</translation>
+        <translation>%1-Inhalte</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="151"/>
@@ -5639,7 +5639,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="321"/>
         <source>Undo the previous playlist change</source>
-        <translation>Mache die vorherige Wiedergabelistenänderung rückgängig</translation>
+        <translation>Mache die letzte Wiedergabelistenänderung rückgängig</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="184"/>
@@ -5699,7 +5699,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="334"/>
         <source>Redo the previous playlist change</source>
-        <translation>Stelle die vorherige Wiedergabelistenänderung wieder her</translation>
+        <translation>Stelle die letzte Wiedergabelistenänderung wieder her</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="348"/>
@@ -5806,7 +5806,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1285"/>
         <source>Single-column mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein-Spalten-Modus</translation>
     </message>
 </context>
 <context>
@@ -5906,7 +5906,7 @@
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="172"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="233"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation>Neustart zur Anwendung der Änderungen erforderlich. Jetzt neustarten?</translation>
+        <translation>Neustart zum Anwenden der Änderungen erforderlich. Jetzt neustarten?</translation>
     </message>
 </context>
 <context>
@@ -5990,7 +5990,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="104"/>
         <source>Show playing queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige aktuellen Titel der Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="132"/>
@@ -6031,7 +6031,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerview.cpp" line="53"/>
         <source>Empty Queue</source>
-        <translation>Leere Warteschlange</translation>
+        <translation>Leere Wiedergabewarteschlange</translation>
     </message>
 </context>
 <context>
@@ -6090,12 +6090,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="52"/>
         <source>Track Peak</source>
-        <translation>Titel-Peak</translation>
+        <translation>Titel-Spitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="54"/>
         <source>Album Peak</source>
-        <translation>Album-Peak</translation>
+        <translation>Album-Spitzenwert</translation>
     </message>
 </context>
 <context>
@@ -6121,12 +6121,12 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="59"/>
         <source>Use sample peak for calculating peaks</source>
-        <translation>Nutze Sample Peak zur Berechnung von Peaks</translation>
+        <translation>Nutze Sample Peak zur Berechnung von Spitzenwerten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="60"/>
         <source>Use true peak for calculating peaks</source>
-        <translation>Nutze True Peak zur Berechnung von Peaks</translation>
+        <translation>Nutze True Peak zur Berechnung von Spitzenwerten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="63"/>
@@ -6141,7 +6141,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="82"/>
         <source>Album grouping pattern</source>
-        <translation>Albengruppierungs-Muster</translation>
+        <translation>Album Gruppierungsmuster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="85"/>
@@ -6253,7 +6253,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="113"/>
         <source>Track Peak</source>
-        <translation>Titel-Peak</translation>
+        <translation>Titel-Spitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="115"/>
@@ -6263,7 +6263,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="117"/>
         <source>Album Peak</source>
-        <translation>Album-Peak</translation>
+        <translation>Album-Spitzenwert</translation>
     </message>
 </context>
 <context>
@@ -6299,12 +6299,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="69"/>
         <source>Apply gain and prevent clipping according to peak</source>
-        <translation>Wende Verstärkung an und verhindere Clipping gemäß Peak</translation>
+        <translation>Wende Verstärkung an und verhindere Clipping gemäß Spitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="70"/>
         <source>Only prevent clipping according to peak</source>
-        <translation>Verhindere nur Clipping gemäß Peak</translation>
+        <translation>Verhindere nur Clipping gemäß Spitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="71"/>
@@ -6364,12 +6364,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="123"/>
         <source>Amount of gain to apply in combination with ReplayGain</source>
-        <translation>Menge der Verstärkung, die in Kombination mit ReplayGain angewandt werden soll</translation>
+        <translation>&quot;Menge der Verstärkung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="126"/>
         <source>Amount of gain to apply for tracks without ReplayGain info</source>
-        <translation>Menge der Verstärkung, die auf Titel ohne ReplayGain-Information angewandt werden soll</translation>
+        <translation>&quot;Menge der Verstärkung</translation>
     </message>
 </context>
 <context>
@@ -6393,7 +6393,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="125"/>
         <source>Track Peak</source>
-        <translation>Titel-Peak</translation>
+        <translation>Titel-Spitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="127"/>
@@ -6404,7 +6404,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="129"/>
         <source>Album Peak</source>
-        <translation>Album-Peak</translation>
+        <translation>Album-Spitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="167"/>
@@ -6538,12 +6538,12 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="437"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation>Vernetzung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="437"/>
         <source>Scrobbling</source>
-        <translation>Scrobbeln</translation>
+        <translation>Scrobbling</translation>
     </message>
 </context>
 <context>
@@ -6551,7 +6551,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="106"/>
         <source>Enable scrobbling</source>
-        <translation>Aktiviere Scrobbeln</translation>
+        <translation>Aktiviere Scrobbling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="107"/>
@@ -6581,7 +6581,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="118"/>
         <source>Scrobble delay</source>
-        <translation>Scrobble-Verzögerung</translation>
+        <translation>Scrobbling-Verzögerung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="119"/>
@@ -6601,7 +6601,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="128"/>
         <source>Enter a query - tracks that match the query will NOT be scrobbled</source>
-        <translation>Anfrage eingeben: Titel, die der Anfrage entsprechen, werden NICHT gescrobbelt</translation>
+        <translation>&quot;Anfrage eingeben: Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="327"/>
@@ -6626,7 +6626,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="370"/>
         <source>You can find your token here</source>
-        <translation>Das Token kann hier angezeigt werden</translation>
+        <translation>Das Token kann hier gefunden werden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="111"/>
@@ -6664,7 +6664,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="51"/>
         <source>Toggle scrobbling</source>
-        <translation>Scrobbeln umschalten</translation>
+        <translation>Scrobbling umschalten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="57"/>
@@ -6674,7 +6674,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="61"/>
         <source>Scrobble Toggle</source>
-        <translation>Scrobble-Umschalter</translation>
+        <translation>Scrobbling-Umschalter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="62"/>
@@ -6710,7 +6710,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="64"/>
         <source>Scrobble Toggle</source>
-        <translation>Scrobble-Umschalter</translation>
+        <translation>Scrobbling-Umschalter</translation>
     </message>
 </context>
 <context>
@@ -6768,7 +6768,7 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
         <source>Start typing to search</source>
-        <translation>Tippe um zu suchen</translation>
+        <translation>&quot;Tippe</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
@@ -6786,7 +6786,7 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="141"/>
         <source>Auto-select on search</source>
-        <translation>Suchergebnisse automatisch auswählen</translation>
+        <translation>Automatisches Auswählen der Suchergebnisse</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="151"/>
@@ -6842,12 +6842,12 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="75"/>
         <source>Error background</source>
-        <translation>Fehlerhintergrund</translation>
+        <translation>Fehler-Hintergrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="77"/>
         <source>Error foreground</source>
-        <translation>Fehler Vordergrund</translation>
+        <translation>Fehler-Vordergrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="80"/>
@@ -6877,7 +6877,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="89"/>
         <source>These settings will only apply if autosearch is disabled.</source>
-        <translation>Diese Einstellungen werden nur angewandt, wenn die automatische Suche deaktiviert ist.</translation>
+        <translation>&quot;Diese Einstellungen werden nur angewandt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
@@ -6936,7 +6936,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="438"/>
         <source>Force new results playlist using the current playlist as the source</source>
-        <translation>Erzwinge aktuelle Wiedergabeliste als Quelle für die Wiedergabeliste für neue Ergebnisse</translation>
+        <translation>Erzwinge aktuelle Wiedergabeliste als Quelle der Wiedergabeliste für neue Ergebnisse</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="439"/>
@@ -7000,7 +7000,7 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="311"/>
         <source>Seekbar</source>
-        <translation>Fortschrittsbalken</translation>
+        <translation>Fortschrittsleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="347"/>
@@ -7010,7 +7010,7 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="354"/>
         <source>Show elapsed total</source>
-        <translation>Zeige verstrichene Zeit</translation>
+        <translation>Zeige verstrichene Gesamtzeit</translation>
     </message>
 </context>
 <context>
@@ -7143,7 +7143,7 @@
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="162"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Index</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="164"/>
@@ -7256,7 +7256,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="61"/>
         <source>Show icon</source>
-        <translation>Zeige Icon</translation>
+        <translation>Zeige Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="62"/>
@@ -7395,7 +7395,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="54"/>
         <source>Total Tracks</source>
-        <translation>Gesamtzahl der titel</translation>
+        <translation>Gesamtzahl der Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="55"/>
@@ -7423,7 +7423,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="177"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Index</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="179"/>
@@ -7485,7 +7485,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="61"/>
         <source>&amp;Change default fields…</source>
-        <translation>&amp;Ändere Standardfelder…</translation>
+        <translation>Ändere &amp;Standardfelder…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="199"/>
@@ -7505,7 +7505,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="60"/>
         <source>Auto &amp;track number</source>
-        <translation>Titelnummer &amp;automatisch einfügen</translation>
+        <translation>&amp;Titelnummer automatisch erstellen</translation>
     </message>
 </context>
 <context>
@@ -7546,7 +7546,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="139"/>
         <source>Queue to play next</source>
-        <translation>Spiele als nächstes ab</translation>
+        <translation>Gebe als nächstes wieder</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="140"/>
@@ -7664,7 +7664,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="62"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein-/Ausblendungslänge</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="46"/>
@@ -7674,7 +7674,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="60"/>
         <source>times</source>
-        <translation>Zeiten</translation>
+        <translation>Mal</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="66"/>
@@ -7700,7 +7700,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
         <source>Certain files %1 require their system&apos;s ROM to play %2. Provide a directory where these can be found here.</source>
-        <translation>Bestimmte Dateien %1 benötigen zum Abspielen das ROM ihres Systems %2. Gib hier einen Ort an, an dem diese gefunden werden können.</translation>
+        <translation>&quot;Bestimmte Dateien %1 benötigen zum Abspielen das ROM ihres Systems %2. Gib hier einen Ort an</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="95"/>
@@ -7728,7 +7728,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="42"/>
         <source>Open the quick setup dialog</source>
-        <translation>Öffnet den Schnelleinrichtungs-Dialog</translation>
+        <translation>Öffne den Schnelleinrichtungs-Dialog</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="48"/>
@@ -7738,7 +7738,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
         <source>Open the log dialog</source>
-        <translation>Öffnet den Protokoll-Dialog</translation>
+        <translation>Öffne den Protokoll-Dialog</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="55"/>
@@ -7748,7 +7748,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="56"/>
         <source>Open the script editor dialog</source>
-        <translation>Öffnet den Skript-Editor-Dialog</translation>
+        <translation>Öffne den Skript-Editor-Dialog</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="64"/>
@@ -7808,7 +7808,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="220"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>vu-Meter</translation>
     </message>
 </context>
 <context>
@@ -7826,12 +7826,12 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="95"/>
         <source>Peak hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Spitzenwert-Haltezeit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="97"/>
         <source>Falloff time</source>
-        <translation type="unfinished"></translation>
+        <translation>Rückgangszeit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="90"/>
@@ -7846,22 +7846,22 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="101"/>
         <source>Dimension</source>
-        <translation type="unfinished"></translation>
+        <translation>Abmessungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="119"/>
         <source>Channel spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanalabstand</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="121"/>
         <source>Bar size</source>
-        <translation type="unfinished"></translation>
+        <translation>Balkengröße</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="123"/>
         <source>Bar spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Balkenabstand</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="127"/>
@@ -7881,7 +7881,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="139"/>
         <source>Peak colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Spitzenwertfarbe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="141"/>
@@ -7894,17 +7894,17 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="625"/>
         <source>Peak Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>Spitzenwert-Meter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="625"/>
         <source>VU Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>vu-Meter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="802"/>
         <source>Show peaks</source>
-        <translation>Zeige Peaks</translation>
+        <translation>Zeige Spitzenwerte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="807"/>
@@ -7914,7 +7914,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="812"/>
         <source>Orientation</source>
-        <translation>Orientierung</translation>
+        <translation>Ausrichtung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="815"/>
@@ -7947,7 +7947,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="200"/>
         <source>WaveBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Wellenformleiste</translation>
     </message>
 </context>
 <context>
@@ -7980,37 +7980,37 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="103"/>
         <source>Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Max.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="107"/>
         <source>Min</source>
-        <translation type="unfinished"></translation>
+        <translation>Min.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="111"/>
         <source>RMS Max</source>
-        <translation type="unfinished"></translation>
+        <translation>QMW Max.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="115"/>
         <source>RMS Min</source>
-        <translation type="unfinished"></translation>
+        <translation>QMW Min.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="119"/>
         <source>Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="120"/>
         <source>Seeking</source>
-        <translation type="unfinished"></translation>
+        <translation>Suchen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="121"/>
         <source>Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortschrittsmarker</translation>
     </message>
 </context>
 <context>
@@ -8018,7 +8018,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="96"/>
         <source>Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Wellenform-Fortschrittsleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="97"/>
@@ -8048,7 +8048,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="112"/>
         <source>Generate waveform data for the selected tracks if missing</source>
-        <translation>Generiere Wellenform-Daten für die ausgewählten Titel, falls sie fehlen</translation>
+        <translation>&quot;Generiere Wellenform-Daten für die ausgewählten Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="116"/>
@@ -8086,7 +8086,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="316"/>
         <source>WaveBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Wellenformleiste</translation>
     </message>
 </context>
 <context>
@@ -8094,7 +8094,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
         <source>RMS</source>
-        <translation>RMS</translation>
+        <translation>QMW</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="86"/>
@@ -8114,7 +8114,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="83"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Min./Max.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="85"/>
@@ -8124,32 +8124,32 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="89"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Fortschrittsmarker</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="154"/>
         <source>Cursor width</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortschrittsmarker-Breite</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="172"/>
         <source>Bar width</source>
-        <translation type="unfinished"></translation>
+        <translation>Balkendicke</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="174"/>
         <source>Bar gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Balkenabstand</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="164"/>
         <source>Max scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximalskalierung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="176"/>
         <source>Centre gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Mittelabstand</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="129"/>
@@ -8159,32 +8159,32 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="132"/>
         <source>Draw a line in place of silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeichne eine Linie an stillen Stellen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="162"/>
         <source>Channel scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal-Skalierung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="138"/>
         <source>Downmix</source>
-        <translation type="unfinished"></translation>
+        <translation>Downmix</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="150"/>
         <source>Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortschrittsmarker</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="158"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalierung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="168"/>
         <source>Dimension</source>
-        <translation type="unfinished"></translation>
+        <translation>Abmessungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="180"/>
@@ -8223,17 +8223,17 @@ erhöhter Festplattencache-Nutzung.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="149"/>
         <source>Show cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Fortschrittsmarker</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="155"/>
         <source>Show labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Beschriftungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="164"/>
         <source>Show elapsed total</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige verstrichene Gesamtzeit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="172"/>
@@ -8243,12 +8243,12 @@ erhöhter Festplattencache-Nutzung.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="174"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Min./Max.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="175"/>
         <source>RMS</source>
-        <translation>RMS</translation>
+        <translation>QMW</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="176"/>
@@ -8258,7 +8258,7 @@ erhöhter Festplattencache-Nutzung.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="209"/>
         <source>Downmix</source>
-        <translation type="unfinished"></translation>
+        <translation>Downmix</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="212"/>
@@ -8363,7 +8363,7 @@ erhöhter Festplattencache-Nutzung.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="192"/>
         <source>Seekbar</source>
-        <translation>Fortschrittsbalken</translation>
+        <translation>Fortschrittsleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="197"/>
