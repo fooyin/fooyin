@@ -123,22 +123,22 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 
     int row{0};
     generalGroupLayout->addWidget(m_restoreActivePlaylistState, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(), row, 0, 1, 1);
+    generalGroupLayout->addWidget(new Spacer(this), row, 0, 1, 1);
     generalGroupLayout->addWidget(m_restorePlaybackState, row++, 1, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(), row++, 0, 1, 2);
+    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_cursorFollowsPlayback, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playbackFollowsCursor, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_followPlaybackQueue, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(), row++, 0, 1, 2);
+    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_stopAfterCurrent, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(), row, 0, 1, 1);
+    generalGroupLayout->addWidget(new Spacer(this), row, 0, 1, 1);
     generalGroupLayout->addWidget(m_resetStopAfterCurrent, row++, 1, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(), row++, 0, 1, 2);
+    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_rewindPrevious, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(), row++, 0, 1, 2);
+    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(), row++, 0, 1, 2);
+    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 2);
     generalGroupLayout->setColumnStretch(1, 1);
 
