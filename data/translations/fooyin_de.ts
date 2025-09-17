@@ -1963,7 +1963,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="97"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation>&quot;Verzögere Fooyin-Start</translation>
+        <translation>Verzögere Fooyin-Start</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="99"/>
@@ -2203,7 +2203,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="601"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation>&quot;Ersetze Tags in ausgewählten Titeln durch Tags aus den Dateien</translation>
+        <translation>Ersetze Tags in ausgewählten Titeln durch Tags aus den Dateien, sofern bearbeitet</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="626"/>
@@ -2299,7 +2299,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="945"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation>&quot;Immer weiterspielen</translation>
+        <translation>Immer weiterspielen, wenn Titel nicht verfügbar ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="972"/>
@@ -2748,7 +2748,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
         <source>Open the about dialog</source>
-        <translation>&quot;Öffne den &quot;&quot;Über&quot;&quot;-Dialog&quot;</translation>
+        <translation>Öffne den &quot;Über&quot;-Dialog</translation>
     </message>
 </context>
 <context>
@@ -3045,7 +3045,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
         <source>Prevent manual resizing of splitters when not in layout editing mode</source>
-        <translation>&quot;Verhindere manuelles Verstellen von Teilern</translation>
+        <translation>Verhindere manuelles Verstellen von Teilern, solange nicht im Layout-Bearbeitungsmodus</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
@@ -3108,7 +3108,7 @@
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="262"/>
         <source>Unless exported, the current layout will be lost.</source>
-        <translation>Falls nicht exportiert, wird das aktuelle Layout verloren.</translation>
+        <translation>Falls nicht exportiert, geht das aktuelle Layout verloren.</translation>
     </message>
 </context>
 <context>
@@ -3212,7 +3212,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation>&quot;Entferne Titel</translation>
+        <translation>Entferne Titel, die nicht in irgendeiner Bibliothek, Wiedergabeliste oder abgelaufenen Wiedergabestatistik enthalten sind</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -3232,7 +3232,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
         <source>Update tracks in libraries which have been modified on disk</source>
-        <translation>&quot;Aktualisiere Titel in Bibliotheken</translation>
+        <translation>Aktualisiere Titel in Bibliotheken, die auf dem Datenträger verändert wurden</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="70"/>
@@ -3272,7 +3272,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="89"/>
         <source>Open the library page in the settings dialog</source>
-        <translation>&quot;Öffne die Seite &quot;&quot;Bibliothek&quot;&quot; im Einstellungs-Dialog&quot;</translation>
+        <translation>Öffne die Seite &quot;Bibliothek&quot; im Einstellungs-Dialog</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="108"/>
@@ -3830,7 +3830,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="80"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation>&quot;Dies wird angezeigt</translation>
+        <translation>Dies wird angezeigt, wenn der Songtext des aktuellen Titels nicht gefunden werden kann.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="85"/>
@@ -4151,12 +4151,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="65"/>
         <source>Skip remaining sources when lyrics are found</source>
-        <translation>&quot;Überspringe restliche Quellen</translation>
+        <translation>Überspringe restliche Quellen, wenn Songtext gefunden wurde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="66"/>
         <source>Skip external sources if local lyrics are found</source>
-        <translation>&quot;Überspringe externe Quellen</translation>
+        <translation>Überspringe externe Quellen, wenn lokaler Songtext gefunden wurde</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="70"/>
@@ -4186,7 +4186,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="86"/>
         <source>Only local lyrics will be used if unchecked</source>
-        <translation>&quot;Wenn dies nicht angehakt ist</translation>
+        <translation>Wenn dies nicht angehakt ist, werden nur lokale Songtexte verwendet</translation>
     </message>
 </context>
 <context>
@@ -4509,7 +4509,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="88"/>
         <source>Try to play consecutive tracks with no silence or disruption at the point of file change</source>
-        <translation>&quot;Versuche</translation>
+        <translation>Versuche, aufeinanderfolgende Titel ohne Stille oder Unterbrechung beim Dateiwechsel abzuspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="97"/>
@@ -4629,27 +4629,27 @@
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="123"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="147"/>
         <source>Set playback order to shuffle tracks in the current playlist</source>
-        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
+        <translation>Stelle die Wiedergabereihenfolge so ein, dass Titel der aktuellen Wiedergabeliste in gemischter Reihenfolge abgespielt werden</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="129"/>
         <source>Set playback order to repeat the current album</source>
-        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
+        <translation>Stelle die Wiedergabereihenfolge so ein, dass das aktuelle Album wiederholt wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="135"/>
         <source>Set playback order to repeat the current playlist</source>
-        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
+        <translation>Stelle die Wiedergabereihenfolge so ein, dass die aktuelle Wiedergabeliste wiederholt wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="141"/>
         <source>Set playback order to shuffle albums in the current playlist</source>
-        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
+        <translation>Stelle die Wiedergabereihenfolge so ein, dass Alben der aktuellen Wiedergabeliste in gemischter Reihenfolge abgespielt werden</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="153"/>
         <source>Set playback order to play a random track in the current playlist</source>
-        <translation>&quot;Stelle die Wiedergabereihenfolge so ein</translation>
+        <translation>Stelle die Wiedergabereihenfolge so ein, dass ein zufälliger Titel der aktuellen Wiedergabeliste abgespielt wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="172"/>
@@ -4659,7 +4659,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="173"/>
         <source>Select the currently playing track when changed</source>
-        <translation>&quot;Wähle den derzeit abgespielten Titel aus</translation>
+        <translation>Wähle den derzeit abgespielten Titel aus, wenn dieser wechselt</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
@@ -4669,7 +4669,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
         <source>Reset &apos;Stop after current&apos; after stopping</source>
-        <translation>&quot;Setze &quot;&quot;Stoppe nach diesem Titel&quot;&quot; nach dem Stoppen zurück&quot;</translation>
+        <translation>Setze &quot;Stoppe nach diesem Titel&quot; nach dem Stoppen zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="229"/>
@@ -4699,7 +4699,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="175"/>
         <source>Start playback of the currently selected track on next</source>
-        <translation>&quot;Starte die Wiedergabe des derzeit ausgewählten Titels bei &quot;&quot;Weiter&quot;&quot;&quot;</translation>
+        <translation>Starte die Wiedergabe des derzeit ausgewählten Titels bei &quot;Weiter&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="177"/>
@@ -4740,7 +4740,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="88"/>
         <source>Rewind track on previous</source>
-        <translation>&quot;Spule Titel bei &quot;&quot;Zurück&quot;&quot; zurück&quot;</translation>
+        <translation>Spule Titel bei &quot;Zurück&quot; zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="87"/>
@@ -4765,7 +4765,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="90"/>
         <source>Stop playback if the active playlist is deleted</source>
-        <translation>&quot;Stoppe Wiedergabe</translation>
+        <translation>Stoppe Wiedergabe, wenn die aktive Wiedergabeliste gelöscht wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="100"/>
@@ -4775,17 +4775,17 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="101"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
-        <translation>Falls der aktuelle Titel länger als 5s läuft, starte ihn neu, anstatt zum vorherigen Titel zu wechseln</translation>
+        <translation>Falls der aktuelle Titel seit mehr als 5s läuft, starte ihn neu, anstatt zum vorherigen Titel zu wechseln</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="104"/>
         <source>Once the playback queue has finished, start playback from the tracks following the last queued track</source>
-        <translation>Sobald die Wiedergabewarteschlange fertig ist, spiele die Titel, die auf den letzten Titel der Wiedergabewarteschlange folgen</translation>
+        <translation>Sobald die Wiedergabewarteschlange fertig ist, spiele die Titel, die auf den zuletzt eingereihten Titel folgen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="106"/>
         <source>If the current track in a playlist is unavailable, silently continue to the next track</source>
-        <translation>Falls der aktuelle Titel in einer Playlist nicht verfügbar ist, wähle den Nächsten aus</translation>
+        <translation>Falls der aktuelle Titel einer Wiedergabeliste nicht verfügbar ist, fahre stumm mit dem nächsten Titel fort</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="108"/>
@@ -4835,7 +4835,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="112"/>
         <source>The percentage of a track that must be listened to before it is counted as &apos;played&apos;</source>
-        <translation>&quot;Wie viel Prozent eines Titels gehört werden müssen</translation>
+        <translation>Wie viel Prozent eines Titels gehört werden müssen, damit dieser als &quot;Gespielt&quot; gilt</translation>
     </message>
 </context>
 <context>
@@ -4950,7 +4950,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="169"/>
         <source>Field</source>
-        <translation>Felder</translation>
+        <translation>Feld</translation>
     </message>
 </context>
 <context>
@@ -5182,22 +5182,22 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="92"/>
         <source>Expand tabs to fill empty space</source>
-        <translation>&quot;Erweitere Reiter</translation>
+        <translation>Erweitere Reiter, um leeren Raum zu füllen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="93"/>
         <source>Show add button</source>
-        <translation>&quot;Zeige &quot;&quot;Hinzufügen&quot;&quot;-Knopf&quot;</translation>
+        <translation>Zeige &quot;Hinzufügen&quot;-Knopf</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="94"/>
         <source>Show clear button</source>
-        <translation>&quot;Zeige &quot;&quot;Leeren&quot;&quot;-Knopf&quot;</translation>
+        <translation>Zeige &quot;Leeren&quot;-Knopf</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
         <source>Show delete button on tabs</source>
-        <translation>&quot;Zeige &quot;&quot;Löschen&quot;&quot;-Knopf auf Reitern&quot;</translation>
+        <translation>Zeige &quot;Löschen&quot;-Knopf auf Reitern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="96"/>
@@ -6364,12 +6364,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="123"/>
         <source>Amount of gain to apply in combination with ReplayGain</source>
-        <translation>&quot;Menge der Verstärkung</translation>
+        <translation>Menge der Verstärkung, die in Kombination mit ReplayGain angewandt werden soll</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="126"/>
         <source>Amount of gain to apply for tracks without ReplayGain info</source>
-        <translation>&quot;Menge der Verstärkung</translation>
+        <translation>Menge der Verstärkung, die auf Titel ohne ReplayGain-Information angewandt werden soll</translation>
     </message>
 </context>
 <context>
@@ -6601,7 +6601,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="128"/>
         <source>Enter a query - tracks that match the query will NOT be scrobbled</source>
-        <translation>&quot;Anfrage eingeben: Titel</translation>
+        <translation>Anfrage eingeben: Titel, die der Anfrage entsprechen, werden NICHT gescrobbelt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="327"/>
@@ -6768,7 +6768,7 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
         <source>Start typing to search</source>
-        <translation>&quot;Tippe</translation>
+        <translation>Tippe, um zu suchen</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
@@ -6877,7 +6877,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="89"/>
         <source>These settings will only apply if autosearch is disabled.</source>
-        <translation>&quot;Diese Einstellungen werden nur angewandt</translation>
+        <translation>Diese Einstellungen werden nur angewandt, wenn die automatische Suche deaktiviert ist.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="102"/>
@@ -7700,7 +7700,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
         <source>Certain files %1 require their system&apos;s ROM to play %2. Provide a directory where these can be found here.</source>
-        <translation>&quot;Bestimmte Dateien %1 benötigen zum Abspielen das ROM ihres Systems %2. Gib hier einen Ort an</translation>
+        <translation>Bestimmte Dateien %1 benötigen zum Abspielen das ROM ihres Systems %2. Gib hier einen Ort an, an dem diese gefunden werden können.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="95"/>
@@ -8005,7 +8005,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="120"/>
         <source>Seeking</source>
-        <translation>Suchen</translation>
+        <translation>Spulen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="121"/>
@@ -8048,7 +8048,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="112"/>
         <source>Generate waveform data for the selected tracks if missing</source>
-        <translation>&quot;Generiere Wellenform-Daten für die ausgewählten Titel</translation>
+        <translation>Generiere Wellenform-Daten für die ausgewählten Titel, falls sie fehlen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="116"/>
@@ -8139,7 +8139,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="174"/>
         <source>Bar gap</source>
-        <translation>Balkenabstand</translation>
+        <translation>Balkenlücke</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="164"/>
@@ -8149,7 +8149,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="176"/>
         <source>Centre gap</source>
-        <translation>Mittelabstand</translation>
+        <translation>Mittellücke</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="129"/>
