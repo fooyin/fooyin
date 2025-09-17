@@ -54,7 +54,8 @@ public:
 private:
     SettingsManager* m_settings;
 
-    QCheckBox* m_restorePlayback;
+    QCheckBox* m_restoreActivePlaylistState;
+    QCheckBox* m_restorePlaybackState;
 
     QCheckBox* m_cursorFollowsPlayback;
     QCheckBox* m_playbackFollowsCursor;
@@ -79,7 +80,8 @@ private:
 
 PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_restorePlayback{new QCheckBox(tr("Save/restore playback state"), this)}
+    , m_restoreActivePlaylistState{new QCheckBox(tr("Save/restore active playlist state"), this)}
+    , m_restorePlaybackState{new QCheckBox(tr("Save/restore playback state"), this)}
     , m_cursorFollowsPlayback{new QCheckBox(tr("Cursor follows playback"), this)}
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_stopAfterCurrent{new QCheckBox(tr("Stop playback after the current track"), this)}
@@ -97,7 +99,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 {
     auto* layout = new QGridLayout(this);
 
-    m_restorePlayback->setToolTip(tr("Save playback state on exit and restore it on next startup"));
+    m_restoreActivePlaylistState->setToolTip(tr("Save active playlist state on exit and restore it on next startup"));
+    m_restorePlaybackState->setToolTip(tr("Save playback state on exit and restore it on next startup"));
     m_rewindPrevious->setToolTip(tr(
         "If the current track has been playing for more than 5s, restart it instead of moving to the previous track"));
     m_followPlaybackQueue->setToolTip(
@@ -117,7 +120,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     m_playedSlider->setSuffix(u" %"_s);
 
     int row{0};
-    generalGroupLayout->addWidget(m_restorePlayback, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_restoreActivePlaylistState, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_restorePlaybackState, row++, 0, 1, 2);
     generalGroupLayout->addWidget(new Spacer(), row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_cursorFollowsPlayback, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playbackFollowsCursor, row++, 0, 1, 2);
@@ -174,7 +178,10 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 
 void PlaybackPageWidget::load()
 {
-    m_restorePlayback->setChecked(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool());
+    m_restoreActivePlaylistState->setChecked(
+        m_settings->fileValue(Settings::Core::Internal::SaveActivePlaylistState, false).toBool());
+    m_restorePlaybackState->setChecked(
+        m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool());
     m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
     m_followPlaybackQueue->setChecked(m_settings->value<Settings::Core::FollowPlaybackQueue>());
@@ -199,7 +206,8 @@ void PlaybackPageWidget::load()
 
 void PlaybackPageWidget::apply()
 {
-    m_settings->fileSet(Settings::Core::Internal::SavePlaybackState, m_restorePlayback->isChecked());
+    m_settings->fileSet(Settings::Core::Internal::SaveActivePlaylistState, m_restoreActivePlaylistState->isChecked());
+    m_settings->fileSet(Settings::Core::Internal::SavePlaybackState, m_restorePlaybackState->isChecked());
     m_settings->set<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
     m_settings->set<Settings::Core::FollowPlaybackQueue>(m_followPlaybackQueue->isChecked());
@@ -223,6 +231,7 @@ void PlaybackPageWidget::apply()
 
 void PlaybackPageWidget::reset()
 {
+    m_settings->fileRemove(Settings::Core::Internal::SaveActivePlaylistState);
     m_settings->fileRemove(Settings::Core::Internal::SavePlaybackState);
     m_settings->reset<Settings::Gui::CursorFollowsPlayback>();
     m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
