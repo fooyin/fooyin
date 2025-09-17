@@ -29,7 +29,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation>La&amp;yout</translation>
+        <translation>&amp;Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
@@ -39,7 +39,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Library</source>
-        <translation>&amp;Bibliothek</translation>
+        <translation>B&amp;ibliothek</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="71"/>
@@ -133,7 +133,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="78"/>
         <source>Save to directory</source>
-        <translation>Speichern unter</translation>
+        <translation>In Verzeichnis Speichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
@@ -963,7 +963,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="42"/>
         <source>S&amp;earch</source>
-        <translation>S&amp;uche</translation>
+        <translation>&amp;Suche</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
@@ -1245,7 +1245,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="54"/>
         <source>Ad&amp;d folders…</source>
-        <translation>Ordner hinzu&amp;fügen…</translation>
+        <translation>&amp;Ordner hinzufügen…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="55"/>
@@ -1265,7 +1265,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>&amp;New autoplaylist</source>
-        <translation>&amp;Neue automatische Wiedergabeliste</translation>
+        <translation>Neue &amp;automatische Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="72"/>
@@ -1310,7 +1310,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
         <source>Save &amp;all playlists…</source>
-        <translation>&amp;Alle Wiedergabelisten speichern…</translation>
+        <translation>Alle &amp;Wiedergabelisten speichern…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
@@ -2447,7 +2447,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="132"/>
         <source>Button Text (Disabled)</source>
-        <translation>Schaltflächentext (Deaktiviert)</translation>
+        <translation>Knopftexte (Deaktiviert)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="133"/>
@@ -2583,12 +2583,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="120"/>
         <source>Raise</source>
-        <translation>Anheben</translation>
+        <translation>Hervorheben</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="121"/>
         <source>Stretch</source>
-        <translation>Strecken</translation>
+        <translation>Ausdehnen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="124"/>
@@ -2648,7 +2648,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="176"/>
         <source>Tool Buttons</source>
-        <translation>Werkzeugschaltflächen</translation>
+        <translation>Werkzeugknöpfe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
@@ -2733,7 +2733,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="68"/>
         <source>&amp;Frequently asked questions</source>
-        <translation>&amp;Häufig gestellte Fragen</translation>
+        <translation>Häufig gestellte &amp;Fragen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
@@ -3040,7 +3040,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="72"/>
         <source>Loc&amp;k splitters</source>
-        <translation>Sperr&amp;e Teiler</translation>
+        <translation>&amp;Sperre Teiler</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
@@ -3050,7 +3050,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
         <source>&amp;Import layout…</source>
-        <translation>&amp;Layout importieren…</translation>
+        <translation>Layout &amp;importieren…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
@@ -3247,7 +3247,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="76"/>
         <source>S&amp;earch</source>
-        <translation>S&amp;uche</translation>
+        <translation>&amp;Suche</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="77"/>
@@ -3681,7 +3681,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="53"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Leeren</translation>
+        <translation>L&amp;eeren</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="55"/>
@@ -3787,7 +3787,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="166"/>
         <source>Lyrics</source>
-        <translation>Songtext</translation>
+        <translation>Songtexte</translation>
     </message>
 </context>
 <context>
@@ -4558,7 +4558,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
         <source>Repeat &amp;playlist</source>
-        <translation>&amp;Wiederhole Wiedergabeliste</translation>
+        <translation>Wiederhole Wiedergabe&amp;liste</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="53"/>
@@ -4568,7 +4568,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="54"/>
         <source>Shu&amp;ffle albums</source>
-        <translation>Mische &amp;Alben</translation>
+        <translation>&amp;Mische Alben</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
@@ -4578,12 +4578,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="56"/>
         <source>Stop &amp;after current</source>
-        <translation>&amp;Stoppe nach diesem Titel</translation>
+        <translation>Stoppe &amp;nach diesem Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="57"/>
         <source>&amp;Reset the above after stopping</source>
-        <translation>&amp;Setze Obiges nach Stopp zurück</translation>
+        <translation>Setze &amp;Obiges nach Stopp zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="61"/>
@@ -4654,7 +4654,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="172"/>
         <source>Cursor follows play&amp;back</source>
-        <translation>&amp;Auswahlmarker folgt Abspielen</translation>
+        <translation>A&amp;uswahlmarker folgt Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="173"/>
@@ -4664,7 +4664,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
         <source>Playback follows &amp;cursor</source>
-        <translation>&amp;Abspielen folgt Auswahlmarker</translation>
+        <translation>A&amp;bspielen folgt Auswahlmarker</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
@@ -4684,7 +4684,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Repeat &amp;track</source>
-        <translation>Wiederhole &amp;Titel</translation>
+        <translation>&amp;Wiederhole Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
@@ -5644,7 +5644,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="184"/>
         <source>Cu&amp;t</source>
-        <translation>Ausschneid&amp;en</translation>
+        <translation>&amp;Ausschneiden</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="185"/>
@@ -5654,7 +5654,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="186"/>
         <source>&amp;Paste</source>
-        <translation>&amp;Einfügen</translation>
+        <translation>E&amp;infügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="187"/>
@@ -5985,7 +5985,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="60"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Leeren</translation>
+        <translation>L&amp;eeren</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="104"/>
@@ -6108,7 +6108,7 @@
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="144"/>
         <source>Playback</source>
-        <translation>Abspielen</translation>
+        <translation>Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="144"/>
@@ -7723,7 +7723,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="41"/>
         <source>&amp;Quick setup</source>
-        <translation>&amp;Schnelleinrichtung</translation>
+        <translation>Schnell&amp;einrichtung</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="42"/>
