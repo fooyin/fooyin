@@ -120,7 +120,7 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     defaultCmd->setAttribute(ProxyAction::UpdateText);
     orderMenu->addAction(defaultCmd);
 
-    m_repeatTrack->setStatusTip(tr("Set playback order to shuffle tracks in the current playlist"));
+    m_repeatTrack->setStatusTip(tr("Set playback order to repeat the current track"));
     auto* repeatTrackCmd = actionManager->registerAction(m_repeatTrack, Constants::Actions::RepeatTrack);
     repeatTrackCmd->setCategories(orderCategory);
     repeatTrackCmd->setAttribute(ProxyAction::UpdateText);
