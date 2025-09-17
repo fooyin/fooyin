@@ -100,7 +100,7 @@ public:
     void exportAllPlaylists();
 
     void saveActivePlaylistState() const;
-    void loadActivePlaylistState() const;
+    bool loadActivePlaylistState() const;
 
     void savePlaybackState() const;
     void loadPlaybackState() const;
@@ -339,16 +339,16 @@ void ApplicationPrivate::saveActivePlaylistState() const
     }
 }
 
-void ApplicationPrivate::loadActivePlaylistState() const
+bool ApplicationPrivate::loadActivePlaylistState() const
 {
     const FyStateSettings stateSettings;
 
     if(!m_playerController->currentTrack().isValid()) {
-        return;
+        return false;
     }
 
     if(!m_settings->fileValue(Settings::Core::Internal::SaveActivePlaylistState, false).toBool()) {
-        return;
+        return false;
     }
 
     const auto lastPos = stateSettings.value(LastPlaybackPosition).value<uint64_t>();
@@ -357,6 +357,8 @@ void ApplicationPrivate::loadActivePlaylistState() const
         QMetaObject::invokeMethod(
             m_playerController, [this, lastPos]() { m_playerController->seek(lastPos); }, Qt::QueuedConnection);
     }
+
+    return true;
 }
 
 void ApplicationPrivate::savePlaybackState() const
@@ -444,8 +446,9 @@ Application::Application(QObject* parent)
                                                   [this](const AudioEngine::TrackStatus status) {
                                                       if(status == AudioEngine::TrackStatus::Loaded) {
                                                           QObject::disconnect(p->m_trackLoadedConnection);
-                                                          p->loadActivePlaylistState();
-                                                          p->loadPlaybackState();
+                                                          if(p->loadActivePlaylistState()) {
+                                                              p->loadPlaybackState();
+                                                          }
                                                       }
                                                   });
 
