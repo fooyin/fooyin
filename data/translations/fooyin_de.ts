@@ -2018,7 +2018,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="166"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation>Neustarten, um Änderungen anzuwenden. Jetzt neustarten?</translation>
+        <translation>Neustart zur Anwendung der Änderungen erforderlich. Jetzt neustarten?</translation>
     </message>
 </context>
 <context>
@@ -5906,7 +5906,7 @@
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="172"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="233"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation>Neustart zum Anwenden der Änderungen erforderlich. Jetzt neustarten?</translation>
+        <translation>Neustart zur Anwendung der Änderungen erforderlich. Jetzt neustarten?</translation>
     </message>
 </context>
 <context>
