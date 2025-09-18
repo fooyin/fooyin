@@ -376,8 +376,7 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
         }
 
         if(track.isValid() && !sheet.addedTrack && sheet.hasValidIndex) {
-            finaliseTrack(sheet, track);
-            tracks.emplace_back(track);
+            finaliseLastTrack(sheet, track, trackPath, tracks);
             track            = {};
             sheet.addedTrack = true;
         }
