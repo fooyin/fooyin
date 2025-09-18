@@ -89,8 +89,11 @@ QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExte
     QFileInfoList files;
 
     QStringList nameFilters{restrictExtensions};
+    QStringList playlistFilters{playlistExtensions};
+
     for(const auto& ext : excludeExtensions) {
         nameFilters.removeAll(ext);
+        playlistFilters.removeAll(ext);
     }
 
     for(const QString& path : paths) {
@@ -114,7 +117,7 @@ QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExte
             }
         }
         else {
-            if(playlistExtensions.contains(suffix)) {
+            if(playlistFilters.contains(suffix)) {
                 files.emplace_back(file.absoluteFilePath());
             }
             else if(nameFilters.contains(suffix)) {
