@@ -169,6 +169,7 @@ enum GuiInternalSettings : uint32_t
     ArtworkMatchThreshold     = 66 | Type::Int,
     ArtworkDownloadThumbSize  = 67 | Type::Int,
     ImageAllocationLimit      = 68 | Type::Int,
+    PlaylistTrackPreloadCount = 69 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

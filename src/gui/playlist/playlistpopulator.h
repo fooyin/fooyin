@@ -74,6 +74,7 @@ public:
 
     void setFont(const QFont& font);
     void setUseVarious(bool enabled);
+    void setPreloadCount(int count);
 
     void run(Playlist* playlist, const PlaylistPreset& preset, const PlaylistColumnList& columns,
              const PlaylistTrackList& tracks);

@@ -176,5 +176,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ArtworkDownloadThumbSize>(150, u"Artwork/DownloadThumbSize"_s);
     m_settings->createSetting<Internal::ImageAllocationLimit>(QImageReader::allocationLimit(),
                                                               u"Interface/ImageAllocationLimit"_s);
+    m_settings->createSetting<Internal::PlaylistTrackPreloadCount>(2000, u"Playlist/TrackPreloadCount"_s);
 }
 } // namespace Fooyin

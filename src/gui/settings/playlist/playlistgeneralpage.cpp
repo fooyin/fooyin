@@ -60,6 +60,8 @@ private:
     QStringList m_playlistExtensions;
     SettingsManager* m_settings;
 
+    QSpinBox* m_preloadCount;
+
     QComboBox* m_middleClick;
 
     QCheckBox* m_scrollBars;
@@ -85,6 +87,7 @@ private:
 PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlistExtensions, SettingsManager* settings)
     : m_playlistExtensions{playlistExtensions}
     , m_settings{settings}
+    , m_preloadCount{new QSpinBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show header"), this)}
@@ -102,13 +105,33 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     , m_autoExportType{new QComboBox(this)}
     , m_autoExportPath{new QLineEdit(this)}
 {
+    auto* behaviour       = new QGroupBox(tr("Behaviour"), this);
+    auto* behaviourLayout = new QGridLayout(behaviour);
+
+    auto* preloadCountLabel = new QLabel(tr("Preload count") + ":"_L1, this);
+    const auto preloadTooltip
+        = tr("Number of tracks used to preload the playlist before loading the rest of the playlist");
+    preloadCountLabel->setToolTip(preloadTooltip);
+    m_preloadCount->setToolTip(preloadTooltip);
+
+    m_preloadCount->setMinimum(0);
+    m_preloadCount->setMaximum(10000);
+    m_preloadCount->setSuffix(tr(" tracks"));
+
+    int row{0};
+    behaviourLayout->addWidget(preloadCountLabel, row, 0);
+    behaviourLayout->addWidget(m_preloadCount, row++, 1);
+    behaviourLayout->addWidget(new QLabel(u"🛈 "_s + tr("Set to '0' to disable preloading."), this), row++, 0, 1, 2);
+    behaviourLayout->setColumnStretch(behaviourLayout->columnCount(), 1);
+
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
     auto* middleClickLabel = new QLabel(tr("Middle-click") + ":"_L1, this);
 
-    clickBehaviourLayout->addWidget(middleClickLabel, 0, 0);
-    clickBehaviourLayout->addWidget(m_middleClick, 0, 1);
+    row = 0;
+    clickBehaviourLayout->addWidget(middleClickLabel, row, 0);
+    clickBehaviourLayout->addWidget(m_middleClick, row++, 1);
     clickBehaviourLayout->setColumnStretch(clickBehaviourLayout->columnCount(), 1);
 
     m_imagePadding->setMinimum(0);
@@ -124,7 +147,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
 
     auto* pathTypeLabel = new QLabel(tr("Path type") + ":"_L1, this);
 
-    int row{0};
+    row = 0;
     savingLayout->addWidget(pathTypeLabel, row, 0);
     savingLayout->addWidget(m_exportPathType, row++, 1);
     savingLayout->addWidget(m_exportMetadata, row++, 0, 1, 2);
@@ -183,6 +206,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     auto* mainLayout = new QGridLayout(this);
 
     row = 0;
+    mainLayout->addWidget(behaviour, row++, 0);
     mainLayout->addWidget(clickBehaviour, row++, 0);
     mainLayout->addWidget(saving, row++, 0);
     mainLayout->addWidget(m_autoExporting, row++, 0);
@@ -197,6 +221,8 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
 
 void PlaylistGeneralPageWidget::load()
 {
+    m_preloadCount->setValue(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
+
     using ActionIndexMap = std::map<int, int>;
     ActionIndexMap middleActions;
 
@@ -246,6 +272,8 @@ void PlaylistGeneralPageWidget::load()
 
 void PlaylistGeneralPageWidget::apply()
 {
+    m_settings->set<Settings::Gui::Internal::PlaylistTrackPreloadCount>(m_preloadCount->value());
+
     m_settings->set<Settings::Gui::Internal::PlaylistMiddleClick>(m_middleClick->currentData().toInt());
 
     m_settings->fileSet(Settings::Core::Internal::PlaylistSavePathType, m_exportPathType->currentIndex());
@@ -271,6 +299,8 @@ void PlaylistGeneralPageWidget::apply()
 
 void PlaylistGeneralPageWidget::reset()
 {
+    m_settings->reset<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
+
     m_settings->reset<Settings::Gui::Internal::PlaylistMiddleClick>();
 
     m_settings->fileRemove(Settings::Core::Internal::PlaylistSavePathType);

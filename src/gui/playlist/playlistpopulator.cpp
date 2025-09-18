@@ -29,8 +29,6 @@
 
 #include <ranges>
 
-constexpr int TrackPreloadSize = 2000;
-
 namespace Fooyin {
 class PlaylistPopulatorPrivate
 {
@@ -67,6 +65,7 @@ public:
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
 
+    int m_preloadCount{2000};
     int m_trackDepth{0};
     Md5Hash m_prevBaseHeaderKey;
     UId m_prevHeaderKey;
@@ -296,7 +295,7 @@ PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track,
 void PlaylistPopulatorPrivate::runBatch(int size, int index)
 {
     if(size <= 0) {
-        return;
+        size = static_cast<int>(m_pendingTracks.size());
     }
 
     auto tracksBatch = std::ranges::views::take(m_pendingTracks, size);
@@ -373,6 +372,11 @@ void PlaylistPopulator::setUseVarious(bool enabled)
     p->m_registry->setUseVariousArtists(enabled);
 }
 
+void PlaylistPopulator::setPreloadCount(int count)
+{
+    p->m_preloadCount = count;
+}
+
 void PlaylistPopulator::run(Playlist* playlist, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                             const PlaylistTrackList& tracks)
 {
@@ -388,7 +392,7 @@ void PlaylistPopulator::run(Playlist* playlist, const PlaylistPreset& preset, co
     p->m_pendingTracks = tracks;
     p->m_registry->setup(playlist, p->m_playerController->playbackQueue());
 
-    p->runBatch(TrackPreloadSize, 0);
+    p->runBatch(p->m_preloadCount, 0);
 
     emit finished();
 

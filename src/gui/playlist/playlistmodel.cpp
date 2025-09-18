@@ -502,6 +502,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     m_disabledColour.setAlpha(50);
 
     m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
+    m_populator.setPreloadCount(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
     m_populator.moveToThread(&m_populatorThread);
     m_populatorThread.start();
 
@@ -907,6 +908,7 @@ void PlaylistModel::reset(const PlaylistTrackList& tracks)
 
     QMetaObject::invokeMethod(&m_populator, [this, tracks] {
         m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
+        m_populator.setPreloadCount(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
         m_populator.run(m_currentPlaylist, m_currentPreset, m_columns, tracks);
     });
 }
