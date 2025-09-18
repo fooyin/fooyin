@@ -86,6 +86,7 @@
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QImageReader>
 #include <QLoggingCategory>
 #include <QMessageBox>
 #include <QMimeDatabase>
@@ -248,6 +249,8 @@ void GuiApplicationPrivate::initialise()
     setIconTheme();
     registerLayouts();
 
+    QImageReader::setAllocationLimit(m_settings->value<Settings::Gui::Internal::ImageAllocationLimit>());
+
     m_widgets->registerWidgets();
     m_widgets->registerPages();
     m_widgets->registerPropertiesTabs();
@@ -354,6 +357,8 @@ void GuiApplicationPrivate::setupConnections()
         setTheme();
         setIconTheme();
     });
+
+    m_settings->subscribe<Settings::Gui::Internal::ImageAllocationLimit>(m_settings, &QImageReader::setAllocationLimit);
 }
 
 void GuiApplicationPrivate::initialisePlugins()

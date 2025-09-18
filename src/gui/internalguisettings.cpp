@@ -28,6 +28,7 @@
 
 #include <QApplication>
 #include <QIcon>
+#include <QImageReader>
 #include <QPalette>
 #include <QStyle>
 
@@ -173,5 +174,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ArtworkArtistField>(u"%albumartist%"_s, u"Artwork/ArtistField"_s);
     m_settings->createSetting<Internal::ArtworkMatchThreshold>(40, u"Artwork/MatchThreshold"_s);
     m_settings->createSetting<Internal::ArtworkDownloadThumbSize>(150, u"Artwork/DownloadThumbSize"_s);
+    m_settings->createSetting<Internal::ImageAllocationLimit>(QImageReader::allocationLimit(),
+                                                              u"Interface/ImageAllocationLimit"_s);
 }
 } // namespace Fooyin

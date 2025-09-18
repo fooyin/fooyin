@@ -88,6 +88,8 @@ private:
     QCheckBox* m_overrideSplitterHandle;
     QSpinBox* m_splitterHandleGap;
 
+    QSpinBox* m_allocationSize;
+
     QCheckBox* m_buttonRaise;
     QCheckBox* m_buttonStretch;
 
@@ -117,6 +119,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_lockSplitters{new QCheckBox(tr("Lock splitters"), this)}
     , m_overrideSplitterHandle{new QCheckBox(tr("Override splitter handle size") + u":"_s, this)}
     , m_splitterHandleGap{new QSpinBox(this)}
+    , m_allocationSize{new QSpinBox(this)}
     , m_buttonRaise{new QCheckBox(tr("Raise"), this)}
     , m_buttonStretch{new QCheckBox(tr("Stretch"), this)}
     , m_titleScript{new ScriptLineEdit(this)}
@@ -179,6 +182,21 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     toolButtonGroupLayout->addWidget(m_buttonRaise);
     toolButtonGroupLayout->addWidget(m_buttonStretch);
 
+    auto* imagesGroupBox       = new QGroupBox(tr("Images"), this);
+    auto* imagesGroupBoxLayout = new QGridLayout(imagesGroupBox);
+
+    auto* allocationSizeLabel = new QLabel(tr("Image allocation limit") + u":"_s, this);
+    auto* allocationSizeHint  = new QLabel(u"🛈 "_s + tr("Set to '0' to disable the limit."), this);
+
+    m_allocationSize->setMinimum(0);
+    m_allocationSize->setMaximum(1024);
+    m_allocationSize->setSuffix(u" MB"_s);
+
+    imagesGroupBoxLayout->addWidget(allocationSizeLabel, row, 0);
+    imagesGroupBoxLayout->addWidget(m_allocationSize, row++, 1);
+    imagesGroupBoxLayout->addWidget(allocationSizeHint, row++, 0, 1, 2);
+    imagesGroupBoxLayout->setColumnStretch(2, 1);
+
     auto* playbackGroup       = new QGroupBox(tr("Playback"), this);
     auto* playbackGroupLayout = new QGridLayout(playbackGroup);
 
@@ -220,6 +238,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     mainLayout->addWidget(themeBox, row++, 0, 1, 2);
     mainLayout->addWidget(layoutGroup, row++, 0, 1, 2);
     mainLayout->addWidget(toolButtonGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(imagesGroupBox, row++, 0, 1, 2);
     mainLayout->addWidget(playbackGroup, row++, 0, 1, 2);
     mainLayout->addWidget(selectionGroupBox, row++, 0, 1, 2);
     mainLayout->addWidget(ratingGroupBox, row++, 0, 1, 2);
@@ -286,6 +305,8 @@ void GuiGeneralPageWidget::load()
     m_buttonRaise->setChecked(buttonOptions & Raise);
     m_buttonStretch->setChecked(buttonOptions & Stretch);
 
+    m_allocationSize->setValue(m_settings->value<Settings::Gui::Internal::ImageAllocationLimit>());
+
     m_titleScript->setText(m_settings->value<WindowTitleTrackScript>());
     m_vbrInterval->setValue(m_settings->value<Settings::Core::Internal::VBRUpdateInterval>());
 
@@ -338,6 +359,8 @@ void GuiGeneralPageWidget::apply()
         m_settings->reset<SplitterHandleSize>();
     }
 
+    m_settings->set<Settings::Gui::Internal::ImageAllocationLimit>(m_allocationSize->value());
+
     ToolButtonOptions buttonOptions;
     buttonOptions.setFlag(Raise, m_buttonRaise->isChecked());
     buttonOptions.setFlag(Stretch, m_buttonStretch->isChecked());
@@ -363,6 +386,7 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<LockSplitterHandles>();
     m_settings->reset<EditableLayoutMargin>();
     m_settings->reset<SplitterHandleSize>();
+    m_settings->reset<ImageAllocationLimit>();
     m_settings->reset<WindowTitleTrackScript>();
     m_settings->reset<Settings::Core::Internal::VBRUpdateInterval>();
     m_settings->reset<InfoDisplayPrefer>();
