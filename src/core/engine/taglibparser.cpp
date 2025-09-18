@@ -1850,12 +1850,19 @@ bool writeXiphCover(auto* file, const Fooyin::TrackCovers& covers)
 
     bool modified{false};
 
-    const auto pictures = file->pictureList();
-    for(const auto& picture : pictures) {
-        if(covers.contains(toCoverType(picture->type()))) {
-            file->removePicture(picture);
-            modified = true;
+    std::vector<TagLib::FLAC::Picture*> picsToRemove;
+    {
+        const auto pictures = file->pictureList();
+        for(auto* picture : pictures) {
+            if(covers.contains(toCoverType(picture->type()))) {
+                picsToRemove.push_back(picture);
+            }
         }
+    }
+
+    for(auto* picture : picsToRemove) {
+        file->removePicture(picture);
+        modified = true;
     }
 
     for(const auto& [type, cover] : covers) {
