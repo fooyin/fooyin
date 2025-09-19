@@ -295,7 +295,7 @@ PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track,
 void PlaylistPopulatorPrivate::runBatch(int size, int index)
 {
     if(size <= 0) {
-        size = static_cast<int>(m_pendingTracks.size());
+        return;
     }
 
     auto tracksBatch = std::ranges::views::take(m_pendingTracks, size);
@@ -392,7 +392,8 @@ void PlaylistPopulator::run(Playlist* playlist, const PlaylistPreset& preset, co
     p->m_pendingTracks = tracks;
     p->m_registry->setup(playlist, p->m_playerController->playbackQueue());
 
-    p->runBatch(p->m_preloadCount, 0);
+    const int preloadCount = p->m_preloadCount > 0 ? p->m_preloadCount : static_cast<int>(tracks.size());
+    p->runBatch(preloadCount, 0);
 
     emit finished();
 
