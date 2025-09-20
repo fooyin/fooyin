@@ -31,6 +31,7 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QFileInfo>
 #include <QLoggingCategory>
 
 #include <ranges>
@@ -728,6 +729,63 @@ void PlaylistHandler::removePlaylistTracks(const UId& id, const std::vector<int>
 void PlaylistHandler::clearPlaylistTracks(const UId& id)
 {
     replacePlaylistTracks(id, TrackList{});
+}
+
+std::vector<int> PlaylistHandler::duplicateTrackIndexes(const UId& id) const
+{
+    if(auto* playlist = playlistById(id)) {
+        const TrackList tracks = playlist->tracks();
+        if(tracks.empty()) {
+            return {};
+        }
+
+        std::unordered_set<QString> seen;
+        std::vector<int> duplicateIndexes;
+
+        const auto count = static_cast<int>(tracks.size());
+        for(int i{0}; i < count; ++i) {
+            const QString& key = tracks.at(i).hash();
+            if(!seen.insert(key).second) {
+                duplicateIndexes.push_back(i);
+            }
+        }
+
+        return duplicateIndexes;
+    }
+
+    return {};
+}
+
+std::vector<int> PlaylistHandler::deadTrackIndexes(const UId& id) const
+{
+    if(auto* playlist = playlistById(id)) {
+        const TrackList tracks = playlist->tracks();
+        if(tracks.empty()) {
+            return {};
+        }
+
+        std::vector<int> deadIndexes;
+
+        const auto count = static_cast<int>(tracks.size());
+        for(int i{0}; i < count; ++i) {
+            const Track& track = tracks.at(i);
+
+            if(!track.isInArchive()) {
+                if(!QFileInfo::exists(track.filepath())) {
+                    deadIndexes.emplace_back(i);
+                }
+            }
+            else {
+                if(!QFileInfo::exists(track.archivePath())) {
+                    deadIndexes.emplace_back(i);
+                }
+            }
+        }
+
+        return deadIndexes;
+    }
+
+    return {};
 }
 
 void PlaylistHandler::changePlaylistIndex(const UId& id, int index)

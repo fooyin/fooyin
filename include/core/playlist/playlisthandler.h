@@ -93,6 +93,10 @@ public:
     void removePlaylistTracks(const UId& id, const std::vector<int>& indexes);
     /** Clears all tracks of the playlist with @p id if found. */
     void clearPlaylistTracks(const UId& id);
+    /** Returns the indexes of all duplicate tracks in the playlist with @p id. */
+    [[nodiscard]] std::vector<int> duplicateTrackIndexes(const UId& id) const;
+    /** Returns the indexes of all dead tracks in the playlist with @p id. */
+    [[nodiscard]] std::vector<int> deadTrackIndexes(const UId& id) const;
 
     void changePlaylistIndex(const UId& id, int index);
     void changeActivePlaylist(const UId& id);
