@@ -46,7 +46,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 endif()
 
-set(FOOYIN_REQUIRED_CXX_FEATURES cxx_std_20)
+set(FOOYIN_REQUIRED_CXX_FEATURES cxx_std_23)
 
 include(FooyinMacrosInternal)
 

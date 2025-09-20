@@ -5,7 +5,7 @@
 To build Fooyin you will need *at least*:
 
 - CMake (3.18+)
-- a C++ compiler with C++20 support
+- a C++ compiler with C++23 support
 
 The following libraries are required:
 
