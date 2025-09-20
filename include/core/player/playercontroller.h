@@ -94,6 +94,7 @@ public:
 
     void changeCurrentTrack(const Track& track);
     void changeCurrentTrack(const PlaylistTrack& track);
+    void updateCurrentTrack(const Track& track);
     void updateCurrentTrackPlaylist(const UId& playlistId);
     void updateCurrentTrackIndex(int index);
 
@@ -135,6 +136,7 @@ signals:
     void positionMoved(uint64_t ms);
 
     void currentTrackChanged(const Fooyin::Track& track);
+    void currentTrackUpdated(const Fooyin::Track& track);
     void playlistTrackChanged(const Fooyin::PlaylistTrack& track);
     void trackPlayed(const Fooyin::Track& track);
 

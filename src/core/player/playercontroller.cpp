@@ -307,6 +307,15 @@ void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
     emit playlistTrackChanged(p->m_currentTrack);
 }
 
+void PlayerController::updateCurrentTrack(const Track& track)
+{
+    if(track.uniqueFilepath() == p->m_currentTrack.track.uniqueFilepath()
+       && track.duration() == p->m_currentTrack.track.duration()) {
+        p->m_currentTrack.track = track;
+        emit currentTrackUpdated(track);
+    }
+}
+
 void PlayerController::updateCurrentTrackPlaylist(const UId& playlistId)
 {
     if(std::exchange(p->m_currentTrack.playlistId, playlistId) != playlistId) {

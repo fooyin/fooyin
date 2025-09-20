@@ -94,6 +94,7 @@ public:
 
     void setupConnections();
     void markTrack(const Track& track) const;
+    void tracksWereUpdated(const TrackList& tracks) const;
     void loadPlugins();
 
     void startSaveTimer();
@@ -238,6 +239,16 @@ void ApplicationPrivate::markTrack(const Track& track) const
     else if(track.isEnabled() && m_settings->fileValue(Settings::Core::Internal::MarkUnavailable).toBool()
             && !track.exists()) {
         updateTrack(false);
+    }
+}
+
+void ApplicationPrivate::tracksWereUpdated(const TrackList& tracks) const
+{
+    const Track currentTrack = m_playerController->currentTrack();
+    const auto trackIt       = std::ranges::find_if(
+        tracks, [&currentTrack](const Track& t) { return t.uniqueFilepath() == currentTrack.uniqueFilepath(); });
+    if(trackIt != tracks.cend()) {
+        m_playerController->updateCurrentTrack(*trackIt);
     }
 }
 
@@ -452,6 +463,8 @@ Application::Application(QObject* parent)
                                                       }
                                                   });
 
+    QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this,
+                     [this](const TrackList& tracks) { p->tracksWereUpdated(tracks); });
     QObject::connect(p->m_playerController, &PlayerController::trackPlayed, p->m_library,
                      &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
