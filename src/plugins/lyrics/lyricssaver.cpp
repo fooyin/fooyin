@@ -155,7 +155,7 @@ void LyricsSaver::autoSaveLyrics(const Lyrics& lyrics, const Track& track)
         m_autosaveTimer->deleteLater();
     }
 
-    if(!lyrics.isValid() || track.isInArchive()) {
+    if(track.isInArchive()) {
         return;
     }
 
@@ -203,7 +203,7 @@ void LyricsSaver::saveLyrics(const Lyrics& lyrics, const Track& track)
         m_autosaveTimer->deleteLater();
     }
 
-    if(!lyrics.isValid() || track.isInArchive()) {
+    if(track.isInArchive()) {
         return;
     }
 
@@ -220,7 +220,7 @@ void LyricsSaver::saveLyrics(const Lyrics& lyrics, const Track& track)
 
 void LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
 {
-    if(!lyrics.isValid() || track.isInArchive()) {
+    if(track.isInArchive()) {
         return;
     }
 
@@ -241,7 +241,7 @@ void LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
 
 void LyricsSaver::saveLyricsToTag(const Lyrics& lyrics, const Track& track)
 {
-    if(!lyrics.isValid() || track.isInArchive()) {
+    if(track.isInArchive()) {
         return;
     }
 
@@ -254,9 +254,6 @@ void LyricsSaver::saveLyricsToTag(const Lyrics& lyrics, const Track& track)
 
     const QString lrc
         = lyricsToLrc(lyrics, static_cast<SaveOptions>(m_settings->value<Settings::Lyrics::SaveOptions>()));
-    if(lrc.isEmpty()) {
-        return;
-    }
 
     Track updatedTrack{track};
     updatedTrack.replaceExtraTag(tag, lrc);
