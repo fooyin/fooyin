@@ -31,6 +31,7 @@
 #include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QScreen>
+#include <QSettings>
 #include <QWidget>
 #include <QWindow>
 
@@ -318,6 +319,31 @@ std::vector<int> logicalIndexOrder(const QHeaderView* headerView)
     }
 
     return indexes;
+}
+
+void saveState(QWidget* widget, QSettings& settings, const QString& name)
+{
+    const QString keyGroup    = !name.isEmpty() ? name : widget->windowTitle().remove(" "_L1);
+    const QString geometryKey = QStringLiteral("%1/Geometry").arg(keyGroup);
+    const QString sizeKey     = QStringLiteral("%1/Size").arg(keyGroup);
+
+    settings.setValue(geometryKey, widget->saveGeometry());
+    settings.setValue(sizeKey, widget->size());
+}
+
+void restoreState(QWidget* widget, const QSettings& settings, const QString& name)
+{
+    const QString keyGroup    = !name.isEmpty() ? name : widget->windowTitle().remove(" "_L1);
+    const QString geometryKey = QStringLiteral("%1/Geometry").arg(keyGroup);
+    const QString sizeKey     = QStringLiteral("%1/Size").arg(keyGroup);
+
+    const QByteArray geometry = settings.value(geometryKey).toByteArray();
+    if(!geometry.isEmpty()) {
+        widget->restoreGeometry(geometry);
+    }
+
+    const QSize size = settings.value(sizeKey).toSize();
+    widget->resize(size.isValid() ? size : widget->sizeHint());
 }
 
 bool isDarkMode()

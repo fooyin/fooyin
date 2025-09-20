@@ -35,8 +35,6 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto DialogGeometry = "Interface/PropertiesDialogGeometry";
-
 namespace Fooyin {
 bool PropertiesTabWidget::canApply() const
 {
@@ -126,18 +124,13 @@ public:
     void saveState()
     {
         FyStateSettings stateSettings;
-        stateSettings.setValue(DialogGeometry, saveGeometry());
+        Utils::saveState(this, stateSettings, u"PropertiesDialog"_s);
     }
 
     void restoreState()
     {
         const FyStateSettings stateSettings;
-        if(stateSettings.contains(QLatin1String{DialogGeometry})) {
-            const auto geometry = stateSettings.value(DialogGeometry).toByteArray();
-            if(!geometry.isEmpty()) {
-                restoreGeometry(geometry);
-            }
-        }
+        Utils::restoreState(this, stateSettings, u"PropertiesDialog"_s);
     }
 
 private:
@@ -310,7 +303,7 @@ void PropertiesDialog::show(const TrackList& tracks)
 
     dialog->show();
 
-    // dialog->restoreState();
+    dialog->restoreState();
 }
 } // namespace Fooyin
 
