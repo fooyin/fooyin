@@ -342,6 +342,7 @@ set(SOURCES
     widgets/elapsedprogressdialog.cpp
     widgets/expandableinputbox.cpp
     widgets/expandedtreeview.cpp
+    widgets/expandedtreeview_p.h
     widgets/expandingcombobox.cpp
     widgets/extendabletableview.cpp
     widgets/fontbutton.cpp
