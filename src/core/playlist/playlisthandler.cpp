@@ -28,6 +28,7 @@
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
+#include <utils/crypto.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -733,6 +734,16 @@ void PlaylistHandler::clearPlaylistTracks(const UId& id)
 
 std::vector<int> PlaylistHandler::duplicateTrackIndexes(const UId& id) const
 {
+    const auto genHash = [](const Track& track) {
+        QString title = track.title();
+        if(title.isEmpty()) {
+            title = track.directory() + track.filename();
+        }
+
+        return Utils::generateHash(track.artist(), track.album(), track.discNumber(), track.trackNumber(), title,
+                                   QString::number(track.subsong()), QString::number(track.duration()));
+    };
+
     if(auto* playlist = playlistById(id)) {
         const TrackList tracks = playlist->tracks();
         if(tracks.empty()) {
@@ -744,7 +755,7 @@ std::vector<int> PlaylistHandler::duplicateTrackIndexes(const UId& id) const
 
         const auto count = static_cast<int>(tracks.size());
         for(int i{0}; i < count; ++i) {
-            const QString& key = tracks.at(i).hash();
+            const QString& key = genHash(tracks.at(i));
             if(!seen.insert(key).second) {
                 duplicateIndexes.push_back(i);
             }
