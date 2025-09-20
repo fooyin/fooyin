@@ -21,6 +21,9 @@
 
 #include "lyrics.h"
 
+#include <core/network/networkaccessmanager.h>
+#include <gui/propertiesdialog.h>
+
 #include <QDialog>
 
 class QTextEdit;
@@ -30,16 +33,25 @@ class PlayerController;
 class SettingsManager;
 
 namespace Lyrics {
-class LyricsEditor : public QDialog
+class LyricsFinder;
+class LyricsSaver;
+
+class LyricsEditor : public PropertiesTabWidget
 {
     Q_OBJECT
 
 public:
-    explicit LyricsEditor(Lyrics lyrics, PlayerController* playerController, SettingsManager* settings,
-                          QWidget* parent = nullptr);
+    LyricsEditor(const Track& track, std::shared_ptr<NetworkAccessManager> networkAccess, LyricsSaver* lyricsSaver,
+                 PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+    LyricsEditor(Lyrics lyrics, PlayerController* playerController, SettingsManager* settings,
+                 QWidget* parent = nullptr);
 
-    void accept() override;
-    void apply();
+    void updateTrack(const Track& track);
+
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
+
+    void apply() override;
 
     [[nodiscard]] QSize sizeHint() const override;
 
@@ -47,6 +59,8 @@ signals:
     void lyricsEdited(const Fooyin::Lyrics::Lyrics& lyrics);
 
 private:
+    void setupUi();
+    void setupConnections();
     void reset();
     void seek();
     void updateButtons();
@@ -56,8 +70,12 @@ private:
     void removeTimestamp();
     void removeAllTimestamps();
 
+    Track m_track;
+    LyricsSaver* m_lyricsSaver;
     PlayerController* m_playerController;
     SettingsManager* m_settings;
+    std::shared_ptr<NetworkAccessManager> m_networkAccess;
+    LyricsFinder* m_lyricsFinder;
     Lyrics m_lyrics;
 
     QPushButton* m_playPause;
@@ -72,6 +90,27 @@ private:
 
     QTextEdit* m_lyricsText;
     QColor m_currentLineColour;
+};
+
+class LyricsEditorDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    LyricsEditorDialog(Lyrics lyrics, PlayerController* playerController, SettingsManager* settings,
+                       QWidget* parent = nullptr);
+
+    [[nodiscard]] LyricsEditor* editor() const;
+
+    void saveState();
+    void restoreState();
+
+    void accept() override;
+
+    [[nodiscard]] QSize sizeHint() const override;
+
+private:
+    LyricsEditor* m_editor;
 };
 } // namespace Lyrics
 } // namespace Fooyin

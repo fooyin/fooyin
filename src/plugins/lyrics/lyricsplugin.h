@@ -49,6 +49,8 @@ private:
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
     EngineController* m_engine;
+    std::shared_ptr<AudioLoader> m_audioLoader;
+    std::shared_ptr<NetworkAccessManager> m_networkAccess;
     WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
     std::unique_ptr<LyricsSettings> m_lyricsSettings;

@@ -56,6 +56,8 @@ public:
 
     static QString defaultNoLyricsScript();
 
+    void updateLyrics(const Track& track, bool force = false);
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
@@ -64,7 +66,6 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    void updateLyrics(const Track& track);
     void loadLyrics(const Lyrics& lyrics);
     void changeLyrics(const Lyrics& lyrics);
     void openEditor(const Lyrics& lyrics);

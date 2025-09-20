@@ -101,7 +101,10 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, EngineController*
     m_scrollArea->setWidget(m_lyricsArea);
 
     QObject::connect(m_engine, &EngineController::engineStateChanged, this, &LyricsWidget::playStateChanged);
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &LyricsWidget::updateLyrics);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
+                     [this](const Track& track) { updateLyrics(track, false); });
+    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this,
+                     [this](const Track& track) { updateLyrics(track, true); });
     QObject::connect(m_playerController, &PlayerController::positionChanged, m_lyricsArea, &LyricsArea::setCurrentTime);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
                      qOverload<uint64_t>(&LyricsWidget::checkStartAutoScrollPos));
@@ -138,6 +141,38 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, EngineController*
 QString LyricsWidget::defaultNoLyricsScript()
 {
     return u"[%1: %artist%$crlf(2)][%2: %album%$crlf(2)]%3: %title%"_s.arg(tr("Artist"), tr("Album"), tr("Title"));
+}
+
+void LyricsWidget::updateLyrics(const Track& track, bool force)
+{
+    m_lyrics.clear();
+
+    QObject::disconnect(m_finderConnection);
+
+    if(m_scrollAnim) {
+        m_scrollAnim->stop();
+    }
+    m_scrollArea->verticalScrollBar()->setValue(0);
+
+    if(std::exchange(m_currentTrack, track) == track && !force) {
+        return;
+    }
+
+    if(!track.isValid()) {
+        return;
+    }
+
+    const auto script = m_settings->value<Settings::Lyrics::NoLyricsScript>();
+    m_lyricsArea->setDisplayString(m_parser.evaluate(script, track));
+
+    m_finderConnection = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::loadLyrics);
+
+    if(m_settings->value<Settings::Lyrics::AutoSearch>()) {
+        m_lyricsFinder->findLyrics(track);
+    }
+    else {
+        m_lyricsFinder->findLocalLyrics(track);
+    }
 }
 
 QString LyricsWidget::name() const
@@ -252,38 +287,6 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 
-void LyricsWidget::updateLyrics(const Track& track)
-{
-    m_lyrics.clear();
-
-    QObject::disconnect(m_finderConnection);
-
-    if(m_scrollAnim) {
-        m_scrollAnim->stop();
-    }
-    m_scrollArea->verticalScrollBar()->setValue(0);
-
-    if(std::exchange(m_currentTrack, track) == track) {
-        return;
-    }
-
-    if(!track.isValid()) {
-        return;
-    }
-
-    const auto script = m_settings->value<Settings::Lyrics::NoLyricsScript>();
-    m_lyricsArea->setDisplayString(m_parser.evaluate(script, track));
-
-    m_finderConnection = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::loadLyrics);
-
-    if(m_settings->value<Settings::Lyrics::AutoSearch>()) {
-        m_lyricsFinder->findLyrics(track);
-    }
-    else {
-        m_lyricsFinder->findLocalLyrics(track);
-    }
-}
-
 void LyricsWidget::loadLyrics(const Lyrics& lyrics)
 {
     const bool first = m_lyrics.empty();
@@ -312,10 +315,14 @@ void LyricsWidget::changeLyrics(const Lyrics& lyrics)
 
 void LyricsWidget::openEditor(const Lyrics& lyrics)
 {
-    auto* editor = new LyricsEditor(lyrics, m_playerController, m_settings, Utils::getMainWindow());
-    editor->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(editor, &LyricsEditor::lyricsEdited, this, &LyricsWidget::changeLyrics);
-    editor->show();
+    auto* dlg = new LyricsEditorDialog(lyrics, m_playerController, m_settings, Utils::getMainWindow());
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+
+    QObject::connect(dlg, &QDialog::finished, dlg, &LyricsEditorDialog::saveState);
+    QObject::connect(dlg->editor(), &LyricsEditor::lyricsEdited, this, &LyricsWidget::changeLyrics);
+
+    dlg->show();
+    dlg->restoreState();
 }
 
 void LyricsWidget::playStateChanged(AudioEngine::PlaybackState state)

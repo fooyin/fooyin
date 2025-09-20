@@ -19,6 +19,7 @@
 
 #include "lyricsplugin.h"
 
+#include "lyricseditor.h"
 #include "lyricsfinder.h"
 #include "lyricssaver.h"
 #include "lyricswidget.h"
@@ -29,7 +30,9 @@
 #include "settings/lyricssettings.h"
 #include "settings/lyricssourcespage.h"
 
+#include <core/engine/audioloader.h>
 #include <core/player/playercontroller.h>
+#include <gui/propertiesdialog.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
 
@@ -40,6 +43,8 @@ void LyricsPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
     m_engine           = context.engine;
+    m_audioLoader      = context.audioLoader;
+    m_networkAccess    = context.networkAccess;
     m_settings         = context.settingsManager;
 
     m_lyricsSettings = std::make_unique<LyricsSettings>(m_settings);
@@ -53,6 +58,13 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
 {
     m_actionManager  = context.actionManager;
     m_widgetProvider = context.widgetProvider;
+
+    context.propertiesDialog->addTab(tr("Lyrics"), [this](const TrackList& tracks) -> LyricsEditor* {
+        if(tracks.size() == 1 && m_audioLoader->canWriteMetadata(tracks.front())) {
+            return new LyricsEditor(tracks.front(), m_networkAccess, m_lyricsSaver, m_playerController, m_settings);
+        }
+        return nullptr;
+    });
 
     m_widgetProvider->registerWidget(
         u"Lyrics"_s,
