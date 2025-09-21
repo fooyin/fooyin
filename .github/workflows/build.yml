@@ -1,4 +1,4 @@
-name: Linux build
+name: Build
 
 on:
   push:
@@ -78,8 +78,8 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-           name: fedora-${{matrix.fedora_version}}
-           path: rpm
+          name: fedora-${{matrix.fedora_version}}
+          path: rpm
 
   debian:
     name: Debian
@@ -178,3 +178,68 @@ jobs:
         with:
           name: ubuntu-${{matrix.ubuntu_version}}
           path: deb
+
+  freebsd:
+    name: FreeBSD
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: run VM
+        uses: cross-platform-actions/action@master
+        with:
+          operating_system: freebsd
+          architecture: x86-64
+          cpu_count: 4
+          shell: bash
+          version: '14.2'
+          run: |
+            ./ci/freebsd-depends.sh
+            ./ci/freebsd-build.sh
+            ./ci/tests.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: freebsd-14.2
+          path: pkg
+
+  attach:
+    name: Attach to release
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: ubuntu-latest
+    needs:
+      - fedora
+      - debian
+      - ubuntu
+      - freebsd
+    steps:
+      - name: Install unzip
+        run: sudo apt-get install -y unzip
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Check extracted files
+        run: ls -R ./artifacts
+
+      - name: Upload extracted files to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.event.release.tag_name }}
+          file: ./artifacts/*
+          overwrite: true
+          file_glob: true
