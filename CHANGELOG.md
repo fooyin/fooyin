@@ -1,5 +1,55 @@
 # Changelog
 
+## [0.9.2](https://github.com/fooyin/fooyin/releases/tag/v0.9.2) (2025-09-21)
+
+### Improvements
+* Core: Add option to preserve file timestamps ([#660](https://github.com/fooyin/fooyin/issues/660))
+* FileOps
+  - Add presets to track selection context menu
+  - Remove writable check on directory ([#655](https://github.com/fooyin/fooyin/issues/655))
+* GUI: Use helper for saving/restoring state in MainWindow
+* GUI/MPRIS: Always load album covers from file ([#665](https://github.com/fooyin/fooyin/issues/665))
+* Info Panel
+  - Adjust value column size ([#342](https://github.com/fooyin/fooyin/issues/342))
+  - Add option to toggle horizontal scrollbar ([#342](https://github.com/fooyin/fooyin/issues/342))
+* OpenMPT: Add loop count option to settings ([#643](https://github.com/fooyin/fooyin/pull/643))
+* Playlist
+  - Add actions to remove duplicate and dead tracks ([#607](https://github.com/fooyin/fooyin/issues/607))
+  - Add setting to control track preload count ([#571](https://github.com/fooyin/fooyin/issues/571))
+* Scrobbler: Add support for custom services ([#672](https://github.com/fooyin/fooyin/pull/672))
+* Lyrics
+  - Add lyrics tab to properties dialog
+  - Add forward and rewind buttons for precise timestamp adjustments ([#623](https://github.com/fooyin/fooyin/pull/623))
+  - Allow removing lyrics
+  - Improve layout of editor controls
+
+### Fixes
+* Engine
+  - Drain audio output before closing ([#654](https://github.com/fooyin/fooyin/issues/654))
+  - Fix playback of multi-track files ([#627](https://github.com/fooyin/fooyin/issues/627))
+  - Fix regression with playback restarting on unpause
+* GME/OpenMPT/LibVGM: Fix infinite looping ([#668](https://github.com/fooyin/fooyin/issues/668))
+* Library: Fix parsing CUE sheets with multiple files/tracks ([#582](https://github.com/fooyin/fooyin/issues/582))
+* Playback
+  - Always follow track if option is enabled, regardless of playstate
+  - Fix playback switching to queued playlist, even with 'Follow Playback Queue' disabled ([#647](https://github.com/fooyin/fooyin/issues/647))
+* Playlist
+  - Fix regression with playlist track selection behavior
+  - Fix crash when active playlist is deleted ([#658](https://github.com/fooyin/fooyin/issues/658))
+  - Fix highlighting playing track ([#664](https://github.com/fooyin/fooyin/issues/664))
+  - Fix stop icon persisting
+  - Fix scrolling to current index
+  - Fix selection restoration ([#666](https://github.com/fooyin/fooyin/issues/666))
+  - Limit cursor movement to track rows
+* Scrobbler
+  - Fix MusicBrainz token not being saved
+  - Fix duration and listened_at types ([#676](https://github.com/fooyin/fooyin/issues/676))
+
+### Build/System
+* Build: Update to use C++23 ([#685](https://github.com/fooyin/fooyin/pull/685))
+* Ubuntu/Debian: Fix package dependencies ([#620](https://github.com/fooyin/fooyin/pull/620))
+
+
 ## [0.9.1](https://github.com/fooyin/fooyin/releases/tag/v0.9.1) (2025-08-17)
 
 ### Fixes
