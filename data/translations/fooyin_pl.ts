@@ -968,7 +968,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
         <source>Search the current playlist</source>
-        <translation>Szukaj w obecnej playliscie</translation>
+        <translation>Szukaj w obecnej playliście</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="50"/>
@@ -4541,7 +4541,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
@@ -4552,37 +4552,37 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>P&amp;revious</source>
-        <translation type="unfinished"></translation>
+        <translation>Pop&amp;rzedni</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Następny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
         <source>Repeat &amp;playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Powtórz &amp;playlistę</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="53"/>
         <source>&amp;Shuffle tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pomieszaj utwory</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="54"/>
         <source>Shu&amp;ffle albums</source>
-        <translation type="unfinished"></translation>
+        <translation>Pom&amp;ieszaj albumy</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
         <source>&amp;Random</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Losowy</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="56"/>
         <source>Stop &amp;after current</source>
-        <translation type="unfinished"></translation>
+        <translation>Z&amp;atrzymaj po obecnym utworze</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="57"/>
@@ -4597,37 +4597,37 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="68"/>
         <source>Stop playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Zatrzymaj odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="74"/>
         <source>Pause or unpause playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Pauzuj lub wznów odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="83"/>
         <source>Start playing the next track in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Odtwórz następny utwór w obecnej playliście</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="89"/>
         <source>Start playing the previous track in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Odtwórz poprzedni utwór w playliście</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="103"/>
         <source>Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolejność</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="106"/>
         <source>&amp;Order</source>
-        <translation type="unfinished"></translation>
+        <translation>K&amp;olejność</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="117"/>
         <source>Set playback order to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Przywróć domyślną kolejność odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="123"/>
@@ -4658,17 +4658,17 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="172"/>
         <source>Cursor follows play&amp;back</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zaznaczenie podąża za kolejnością odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="173"/>
         <source>Select the currently playing track when changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaznacz obecnie odtwarzany utwór przy zmianie utworu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
         <source>Playback follows &amp;cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kolejność odtwarzania podąża za zaznaczeniem</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
@@ -4678,27 +4678,27 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="229"/>
         <source>&amp;Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pauza</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
         <source>&amp;Default</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Domyślny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Repeat &amp;track</source>
-        <translation type="unfinished"></translation>
+        <translation>Powtórz u&amp;twór</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Repeat &amp;album</source>
-        <translation type="unfinished"></translation>
+        <translation>Powtórz &amp;album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="77"/>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Odtwarzanie/Pauza</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="175"/>
@@ -4721,7 +4721,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="248"/>
         <source>Playback</source>
-        <translation type="unfinished">Odtwarzanie</translation>
+        <translation>Odtwarzanie</translation>
     </message>
 </context>
 <context>
@@ -4729,17 +4729,17 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="82"/>
         <source>Save/restore playback state</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz/wczytaj stan odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Cursor follows playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaznaczenie podąża za kolejnością odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="84"/>
         <source>Playback follows cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolejność odtwarzania podąża za zaznaczeniem</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="88"/>

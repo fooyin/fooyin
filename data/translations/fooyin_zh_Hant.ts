@@ -2117,32 +2117,32 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="490"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="490"/>
         <source>Seek</source>
-        <translation type="unfinished">尋找</translation>
+        <translation>尋找</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="492"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished"></translation>
+        <translation>向前尋找(小步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="499"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished"></translation>
+        <translation>向前尋找(大步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="506"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished"></translation>
+        <translation>向後尋找(小步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="514"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished"></translation>
+        <translation>向後尋找(大步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="539"/>
@@ -2157,12 +2157,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="549"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished"></translation>
+        <translation>切換選單列</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="551"/>
         <source>View</source>
-        <translation type="unfinished">檢視</translation>
+        <translation>檢視</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="560"/>
@@ -2984,12 +2984,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
         <source>Show scrollbar (vertical)</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示捲軸(垂直)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="224"/>
         <source>Show scrollbar (horizontal)</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示捲軸(水平)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="233"/>
@@ -3742,12 +3742,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="52"/>
         <source>Rewind line (- 100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>倒帶線 (- 100ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="53"/>
         <source>Forward line (+ 100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>快轉線 (+ 100ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="54"/>
@@ -4436,12 +4436,12 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="71"/>
         <source>Loop count</source>
-        <translation type="unfinished">循環次數</translation>
+        <translation>循環次數</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="75"/>
         <source>times</source>
-        <translation type="unfinished">次</translation>
+        <translation>次</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="77"/>
@@ -4591,7 +4591,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="57"/>
         <source>&amp;Reset the above after stopping</source>
-        <translation type="unfinished"></translation>
+        <translation>停止之後重新設定上述(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="61"/>
@@ -4677,7 +4677,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
         <source>Reset &apos;Stop after current&apos; after stopping</source>
-        <translation type="unfinished"></translation>
+        <translation>停止之後重新設定 &apos;目前曲目之後停止&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="229"/>
@@ -4758,12 +4758,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="85"/>
         <source>Stop playback after the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>目前曲目之後停止播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
         <source>Reset the above after stopping</source>
-        <translation type="unfinished"></translation>
+        <translation>以上重新設定在停止之後</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="89"/>
@@ -4773,7 +4773,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="90"/>
         <source>Stop playback if the active playlist is deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>停止播放，如果作用的播放清單被刪除了</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="100"/>
@@ -4803,22 +4803,22 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="138"/>
         <source>Controls</source>
-        <translation type="unfinished">控制</translation>
+        <translation>控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="151"/>
         <source>Seek step (small)</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找步階(小)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="153"/>
         <source>Seek step (large)</source>
-        <translation type="unfinished"></translation>
+        <translation>尋找步階(大)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="155"/>
         <source>Volume step</source>
-        <translation type="unfinished">音量位階</translation>
+        <translation>音量位階</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="159"/>
@@ -4884,7 +4884,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="69"/>
         <source>Show playing queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示播放佇列曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="70"/>
@@ -5998,7 +5998,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="104"/>
         <source>Show playing queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示播放佇列曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="132"/>
@@ -6475,47 +6475,47 @@
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="46"/>
         <source>Edit Scrobbling Service</source>
-        <translation type="unfinished"></translation>
+        <translation>編輯聆聽記錄服務</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="48"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>類型</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="49"/>
         <source>Name</source>
-        <translation type="unfinished">名稱</translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="50"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="51"/>
         <source>Token</source>
-        <translation type="unfinished"></translation>
+        <translation>符記</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="61"/>
         <source>A service with that name already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>其服務所用名稱已經存在</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="80"/>
         <source>Test</source>
-        <translation type="unfinished"></translation>
+        <translation>測試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="124"/>
         <source>Add Scrobbling Service</source>
-        <translation type="unfinished"></translation>
+        <translation>增加聆聽記錄服務</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="166"/>
         <source>Token authenticated successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>符記身份驗證成功</translation>
     </message>
 </context>
 <context>
@@ -6579,7 +6579,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="113"/>
         <source>Add Service</source>
-        <translation type="unfinished"></translation>
+        <translation>增加服務</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="115"/>
@@ -6609,32 +6609,32 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="128"/>
         <source>Enter a query - tracks that match the query will NOT be scrobbled</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入查詢 - 查詢符合的曲目不會被記錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="327"/>
         <source>Edit</source>
-        <translation type="unfinished">編輯</translation>
+        <translation>編輯</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="329"/>
         <source>Delete</source>
-        <translation type="unfinished">刪除</translation>
+        <translation>刪除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="346"/>
         <source>Token</source>
-        <translation type="unfinished"></translation>
+        <translation>符記</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="349"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="370"/>
         <source>You can find your token here</source>
-        <translation type="unfinished"></translation>
+        <translation>您在此能找到您的符記</translation>
     </message>
     <message>
         <source>Enter a query. Tracks that match the query will NOT be scrobbled</source>

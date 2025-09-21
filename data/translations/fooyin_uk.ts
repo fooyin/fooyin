@@ -276,7 +276,7 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="49"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="254"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"/>
@@ -320,7 +320,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation>Пошук...</translation>
+        <translation>Пошукаю</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
@@ -1087,7 +1087,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="481"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
 </context>
 <context>
@@ -1217,7 +1217,7 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="146"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="186"/>
@@ -1480,7 +1480,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
@@ -1563,7 +1563,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
@@ -2117,32 +2117,32 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="490"/>
         <source>Playback</source>
-        <translation type="unfinished">Відтворення</translation>
+        <translation>Відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="490"/>
         <source>Seek</source>
-        <translation type="unfinished">Шукати</translation>
+        <translation>Шукати</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="492"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished"></translation>
+        <translation>Рухатися вперед (маленький крок)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="499"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished"></translation>
+        <translation>Переміщення вперед (великий крок)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="506"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотування назад (невеликий крок)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="514"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотування назад (великий крок)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="539"/>
@@ -2157,12 +2157,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="549"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикання панелі меню</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="551"/>
         <source>View</source>
-        <translation type="unfinished">Переглянути</translation>
+        <translation>Переглянути</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="560"/>
@@ -2984,12 +2984,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
         <source>Show scrollbar (vertical)</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати смугу прокручування (вертикальну)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="224"/>
         <source>Show scrollbar (horizontal)</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати смугу прокручування (горизонтальну)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="233"/>
@@ -3742,12 +3742,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="52"/>
         <source>Rewind line (- 100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Лінія перемотування (-100 мс)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="53"/>
         <source>Forward line (+ 100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Пряма лінія (+ 100 мс)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="54"/>
@@ -4436,12 +4436,12 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="71"/>
         <source>Loop count</source>
-        <translation type="unfinished">Кількість циклів</translation>
+        <translation>Кількість циклів</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="75"/>
         <source>times</source>
-        <translation type="unfinished"></translation>
+        <translation>рази</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="77"/>
@@ -4591,7 +4591,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="57"/>
         <source>&amp;Reset the above after stopping</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Скиньте вищезазначене після зупинки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="61"/>
@@ -4677,7 +4677,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
         <source>Reset &apos;Stop after current&apos; after stopping</source>
-        <translation type="unfinished"></translation>
+        <translation>Скидання «Зупинка після струму» після зупинки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="229"/>
@@ -4758,12 +4758,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="85"/>
         <source>Stop playback after the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Зупинити відтворення після поточної доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
         <source>Reset the above after stopping</source>
-        <translation type="unfinished"></translation>
+        <translation>Скиньте вищезазначене після зупинки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="89"/>
@@ -4773,7 +4773,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="90"/>
         <source>Stop playback if the active playlist is deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>Зупинити відтворення, якщо активний список відтворення видалено</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="100"/>
@@ -4803,22 +4803,22 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="138"/>
         <source>Controls</source>
-        <translation type="unfinished">Елементи керування</translation>
+        <translation>Елементи керування</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="151"/>
         <source>Seek step (small)</source>
-        <translation type="unfinished"></translation>
+        <translation>Крок пошуку (малий)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="153"/>
         <source>Seek step (large)</source>
-        <translation type="unfinished"></translation>
+        <translation>Крок пошуку (великий)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="155"/>
         <source>Volume step</source>
-        <translation type="unfinished">Крок гучності</translation>
+        <translation>Крок гучності</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="159"/>
@@ -4884,7 +4884,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="69"/>
         <source>Show playing queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати трек черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="70"/>
@@ -5998,7 +5998,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="104"/>
         <source>Show playing queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати трек черги відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="132"/>
@@ -6475,47 +6475,47 @@
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="46"/>
         <source>Edit Scrobbling Service</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати сервіс скробблінгу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="48"/>
         <source>Type</source>
-        <translation type="unfinished">Тип</translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="49"/>
         <source>Name</source>
-        <translation type="unfinished">Ім&apos;я</translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="50"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="51"/>
         <source>Token</source>
-        <translation type="unfinished"></translation>
+        <translation>Токен</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="61"/>
         <source>A service with that name already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервіс із такою назвою вже існує</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="80"/>
         <source>Test</source>
-        <translation type="unfinished"></translation>
+        <translation>Тест</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="124"/>
         <source>Add Scrobbling Service</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати сервіс скробблінгу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="166"/>
         <source>Token authenticated successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Токен успішно автентифіковано</translation>
     </message>
 </context>
 <context>
@@ -6579,7 +6579,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="113"/>
         <source>Add Service</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати послугу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="115"/>
@@ -6609,32 +6609,32 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="128"/>
         <source>Enter a query - tracks that match the query will NOT be scrobbled</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть запит – треки, що відповідають запиту, НЕ будуть скробловані</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="327"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="329"/>
         <source>Delete</source>
-        <translation type="unfinished">Видалити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="346"/>
         <source>Token</source>
-        <translation type="unfinished"></translation>
+        <translation>Токен</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="349"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="370"/>
         <source>You can find your token here</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви можете знайти свій токен тут</translation>
     </message>
     <message>
         <source>Enter a query. Tracks that match the query will NOT be scrobbled</source>
