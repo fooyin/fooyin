@@ -24,7 +24,12 @@
 #include <core/track.h>
 #include <gui/plugins/guiplugin.h>
 
-namespace Fooyin::FileOps {
+class QMenu;
+
+namespace Fooyin {
+class ActionContainer;
+
+namespace FileOps {
 class FileOpsPlugin : public QObject,
                       public Plugin,
                       public CorePlugin,
@@ -35,11 +40,21 @@ class FileOpsPlugin : public QObject,
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
+    FileOpsPlugin();
+
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
 
 private:
+    void recreateMenu();
+
+    ActionManager* m_actionManager;
     MusicLibrary* m_library;
+    TrackSelectionController* m_trackSelectionController;
     SettingsManager* m_settings;
+
+    ActionContainer* m_fileOpsMenu;
+    std::vector<QObject*> m_opActions;
 };
-} // namespace Fooyin::FileOps
+} // namespace FileOps
+} // namespace Fooyin

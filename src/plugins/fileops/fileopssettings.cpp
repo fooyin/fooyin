@@ -53,6 +53,18 @@ std::vector<FileOpPreset> getPresets()
     return presets;
 }
 
+std::map<Operation, std::vector<FileOpPreset>> getMappedPresets()
+{
+    const auto presets = getPresets();
+    std::map<Operation, std::vector<FileOpPreset>> mapped;
+
+    for(const auto& preset : presets) {
+        mapped[preset.op].emplace_back(preset);
+    }
+
+    return mapped;
+}
+
 void savePresets(const std::vector<FileOpPreset>& presets)
 {
     QByteArray byteArray;

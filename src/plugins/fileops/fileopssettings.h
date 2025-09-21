@@ -21,7 +21,10 @@
 
 #include "fileopsdefs.h"
 
+#include <map>
+
 namespace Fooyin::FileOps {
 std::vector<FileOpPreset> getPresets();
+std::map<Operation, std::vector<FileOpPreset>> getMappedPresets();
 void savePresets(const std::vector<FileOpPreset>& presets);
 } // namespace Fooyin::FileOps

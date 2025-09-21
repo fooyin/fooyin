@@ -107,6 +107,7 @@ public:
     std::vector<FileOpPreset> m_presets;
     bool m_loading{false};
     bool m_running{false};
+    bool m_presetsChanged{false};
 };
 
 FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* library, const TrackList& tracks,
@@ -282,6 +283,8 @@ void FileOpsDialogPrivate::savePreset()
         m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
         updateButtonState();
     }
+
+    m_presetsChanged = true;
 }
 
 void FileOpsDialogPrivate::loadPreset()
@@ -290,20 +293,7 @@ void FileOpsDialogPrivate::loadPreset()
         return;
     }
 
-    m_loading = true;
-
-    const QString name = m_presetBox->currentText();
-
-    auto preset = findPreset(name);
-    if(preset != m_presets.cend()) {
-        m_destination->setText(preset->dest);
-        m_filename->setText(preset->filename);
-        m_entireSource->setChecked(preset->wholeDir);
-        m_removeEmpty->setChecked(preset->removeEmpty);
-    }
-
-    m_loading = false;
-    simulateOp();
+    m_self->loadPreset(m_presetBox->currentText());
 }
 
 void FileOpsDialogPrivate::deletePreset()
@@ -319,6 +309,8 @@ void FileOpsDialogPrivate::deletePreset()
         m_presets.erase(preset);
         m_presetBox->removeItem(m_presetBox->findText(name));
     }
+
+    m_presetsChanged = true;
 }
 
 void FileOpsDialogPrivate::saveCurrentPreset() const
@@ -448,10 +440,37 @@ FileOpsDialog::FileOpsDialog(MusicLibrary* library, const TrackList& tracks, Ope
     p->setup();
 }
 
+void FileOpsDialog::loadPreset(const QString& name)
+{
+    if(name.isEmpty()) {
+        return;
+    }
+
+    p->m_loading = true;
+
+    auto preset = p->findPreset(name);
+    if(preset != p->m_presets.cend()) {
+        p->m_presetBox->setCurrentText(name);
+
+        p->m_destination->setText(preset->dest);
+        p->m_filename->setText(preset->filename);
+        p->m_entireSource->setChecked(preset->wholeDir);
+        p->m_removeEmpty->setChecked(preset->removeEmpty);
+    }
+
+    p->m_loading = false;
+    p->simulateOp();
+}
+
 void FileOpsDialog::done(int value)
 {
     p->saveCurrentPreset();
     FileOps::savePresets(p->m_presets);
+
+    if(p->m_presetsChanged) {
+        emit presetsChanged();
+    }
+
     QDialog::done(value);
 }
 } // namespace Fooyin::FileOps

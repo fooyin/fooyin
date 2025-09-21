@@ -40,7 +40,12 @@ public:
     FileOpsDialog(MusicLibrary* library, const TrackList& tracks, Operation operation, SettingsManager* settings,
                   QWidget* parent = nullptr);
 
+    void loadPreset(const QString& name);
+
     void done(int value) override;
+
+signals:
+    void presetsChanged();
 
 private:
     std::unique_ptr<FileOpsDialogPrivate> p;
