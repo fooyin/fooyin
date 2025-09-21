@@ -20,6 +20,7 @@
 #include "fileopsdialog.h"
 
 #include "fileopsmodel.h"
+#include "fileopssettings.h"
 
 #include <gui/guiconstants.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -46,7 +47,6 @@
 using namespace Qt::StringLiterals;
 
 constexpr auto CurrentPreset = "FileOps/CurrentPreset";
-constexpr auto SavedPresets  = "FileOps/Presets";
 
 namespace Fooyin::FileOps {
 class FileOpsDialogPrivate : public QObject
@@ -69,7 +69,6 @@ public:
     void deletePreset();
 
     void saveCurrentPreset() const;
-    void savePresets() const;
     void loadCurrentPreset() const;
     void loadPresets();
     void populatePresets();
@@ -335,23 +334,6 @@ void FileOpsDialogPrivate::saveCurrentPreset() const
     m_settings->fileSet(CurrentPreset, byteArray);
 }
 
-void FileOpsDialogPrivate::savePresets() const
-{
-    QByteArray byteArray;
-    QDataStream stream(&byteArray, QIODevice::WriteOnly);
-    stream.setVersion(QDataStream::Qt_6_0);
-
-    stream << static_cast<qint32>(m_presets.size());
-
-    for(const auto& preset : m_presets) {
-        stream << preset;
-    }
-
-    byteArray = qCompress(byteArray, 9);
-
-    m_settings->fileSet(SavedPresets, byteArray);
-}
-
 void FileOpsDialogPrivate::loadCurrentPreset() const
 {
     auto byteArray = m_settings->fileValue(CurrentPreset).toByteArray();
@@ -376,27 +358,7 @@ void FileOpsDialogPrivate::loadCurrentPreset() const
 
 void FileOpsDialogPrivate::loadPresets()
 {
-    auto byteArray = m_settings->fileValue(SavedPresets).toByteArray();
-
-    if(!byteArray.isEmpty()) {
-        byteArray = qUncompress(byteArray);
-
-        QDataStream stream(&byteArray, QIODevice::ReadOnly);
-        stream.setVersion(QDataStream::Qt_6_0);
-
-        qint32 size;
-        stream >> size;
-
-        while(size > 0) {
-            --size;
-
-            FileOpPreset preset;
-            stream >> preset;
-
-            m_presets.push_back(preset);
-        }
-    }
-
+    m_presets = FileOps::getPresets();
     populatePresets();
 }
 
@@ -489,7 +451,7 @@ FileOpsDialog::FileOpsDialog(MusicLibrary* library, const TrackList& tracks, Ope
 void FileOpsDialog::done(int value)
 {
     p->saveCurrentPreset();
-    p->savePresets();
+    FileOps::savePresets(p->m_presets);
     QDialog::done(value);
 }
 } // namespace Fooyin::FileOps

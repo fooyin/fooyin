@@ -21,7 +21,6 @@
 
 #include <core/library/musiclibrary.h>
 #include <utils/enum.h>
-#include <utils/fileutils.h>
 
 namespace Fooyin::FileOps {
 FileOpsModel::FileOpsModel(MusicLibrary* library, TrackList tracks, SettingsManager* settings, QObject* parent)
@@ -46,8 +45,6 @@ FileOpsModel::~FileOpsModel()
 void FileOpsModel::simulate(const FileOpPreset& preset)
 {
     m_worker.stopThread();
-
-    beginResetModel();
 
     QMetaObject::invokeMethod(&m_worker, [this, preset]() { m_worker.simulate(preset); });
 }
@@ -152,6 +149,7 @@ int FileOpsModel::rowCount(const QModelIndex& /*parent*/) const
 
 void FileOpsModel::populate(const FileOperations& operations)
 {
+    beginResetModel();
     m_operations = operations;
     endResetModel();
 

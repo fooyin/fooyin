@@ -10,6 +10,8 @@ create_fooyin_plugin_internal(
             fileopsplugin.h
             fileopsregistry.cpp
             fileopsregistry.h
+            fileopssettings.cpp
+            fileopssettings.h
             fileopsworker.cpp
             fileopsworker.h
 )
