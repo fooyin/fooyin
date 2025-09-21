@@ -34,6 +34,18 @@
 
 using namespace Qt::StringLiterals;
 
+namespace {
+struct DeleteLaterDeleter
+{
+    void operator()(auto* ptr) const
+    {
+        if(ptr) {
+            ptr->deleteLater();
+        }
+    }
+};
+} // namespace
+
 namespace Fooyin {
 class ActionManagerPrivate
 {
@@ -53,15 +65,29 @@ public:
     void updateFocusWidget(QWidget* widget);
     void setContext(const Context& updatedContext);
 
+    void commandDestroyed(const Id& id);
+    void containerDestroyed(const Id& id);
     void clear();
+
+    template <class T>
+    auto makeItem(const Id& id, ActionManager* parent) const
+    {
+        return std::unique_ptr<T, DeleteLaterDeleter>(new T(id, parent), DeleteLaterDeleter{});
+    };
+
+    template <class T>
+    auto makeItem(const Id& id) const
+    {
+        return std::unique_ptr<T, DeleteLaterDeleter>(new T(id), DeleteLaterDeleter{});
+    };
 
     ActionManager* m_self;
 
     SettingsManager* m_settingsManager;
     QMainWindow* m_mainWindow{nullptr};
 
-    std::unordered_map<Id, std::unique_ptr<Command>, Id::IdHash> m_idCmdMap;
-    std::unordered_map<Id, std::unique_ptr<ActionContainer>, Id::IdHash> m_idContainerMap;
+    std::unordered_map<Id, std::unique_ptr<Command, DeleteLaterDeleter>, Id::IdHash> m_idCmdMap;
+    std::unordered_map<Id, std::unique_ptr<ActionContainer, DeleteLaterDeleter>, Id::IdHash> m_idContainerMap;
     std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
     std::set<ActionContainer*> m_scheduledContainerUpdates;
 
@@ -77,7 +103,9 @@ Command* ActionManagerPrivate::overridableAction(const Id& id)
         return m_idCmdMap.at(id).get();
     }
 
-    auto* command = m_idCmdMap.emplace(id, std::make_unique<Command>(id)).first->second.get();
+    auto* command = m_idCmdMap.try_emplace(id, makeItem<Command>(id)).first->second.get();
+    QObject::connect(command, &QObject::destroyed, m_self, [this, id]() { commandDestroyed(id); });
+
     loadSetting(id, command);
 
     QAction* action = command->action();
@@ -176,6 +204,20 @@ void ActionManagerPrivate::setContext(const Context& updatedContext)
     m_currentContext = updatedContext;
     for(const auto& [id, command] : m_idCmdMap) {
         command->setCurrentContext(m_currentContext);
+    }
+}
+
+void ActionManagerPrivate::commandDestroyed(const Id& id)
+{
+    if(m_idCmdMap.contains(id)) {
+        m_idCmdMap.erase(id);
+    }
+}
+
+void ActionManagerPrivate::containerDestroyed(const Id& id)
+{
+    if(m_idContainerMap.contains(id)) {
+        m_idContainerMap.erase(id);
     }
 }
 
@@ -320,8 +362,8 @@ ActionContainer* ActionManager::createMenu(const Id& id)
         return p->m_idContainerMap.at(id).get();
     }
 
-    auto* menu = p->m_idContainerMap.emplace(id, std::make_unique<MenuContainer>(id, this)).first->second.get();
-
+    auto* menu = p->m_idContainerMap.try_emplace(id, p->makeItem<MenuContainer>(id, this)).first->second.get();
+    QObject::connect(menu, &QObject::destroyed, this, [this, id]() { p->containerDestroyed(id); });
     QObject::connect(menu, &ActionContainer::requestUpdate, this,
                      [this](auto* container) { p->scheduleContainerUpdate(container); });
 
@@ -342,7 +384,9 @@ ActionContainer* ActionManager::createMenuBar(const Id& id)
         auto* menuBar = new QMenuBar(p->m_mainWindow);
         menuBar->setObjectName(id.name());
 
-        auto container = std::make_unique<MenuBarContainer>(id, this);
+        auto container = p->makeItem<MenuBarContainer>(id, this);
+        QObject::connect(container.get(), &QObject::destroyed, this, [this, id]() { p->containerDestroyed(id); });
+
         container->setMenuBar(menuBar);
         p->m_idContainerMap.emplace(id, std::move(container));
     }
