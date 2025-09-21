@@ -962,16 +962,19 @@ void PlaylistWidgetPrivate::tracksRemoved(const std::vector<int>& indexes) const
     if(indexesToRemove.empty()) {
         const auto selected = filterSelectedIndexes(m_playlistView);
 
-        if(selected.size() == m_playlistController->currentPlaylist()->trackCount()) {
+        if(std::cmp_equal(selected.size(), m_playlistController->currentPlaylist()->trackCount())) {
             delCmd = new ResetTracks(m_playerController, m_model, m_playlistController->currentPlaylistId(),
                                      m_playlistController->currentPlaylist()->playlistTracks(), {});
+
+            m_playlistController->addToHistory(delCmd);
+            m_model->updateHeader(m_playlistController->currentPlaylist());
+            return;
         }
-        else {
-            for(const QModelIndex& index : selected) {
-                if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
-                    trackSelection.push_back(index);
-                    indexesToRemove.emplace_back(index.data(PlaylistItem::Index).toInt());
-                }
+
+        for(const QModelIndex& index : selected) {
+            if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+                trackSelection.push_back(index);
+                indexesToRemove.emplace_back(index.data(PlaylistItem::Index).toInt());
             }
         }
     }
@@ -997,7 +1000,6 @@ void PlaylistWidgetPrivate::tracksRemoved(const std::vector<int>& indexes) const
     }
 
     m_playlistController->addToHistory(delCmd);
-
     m_model->updateHeader(m_playlistController->currentPlaylist());
 }
 
