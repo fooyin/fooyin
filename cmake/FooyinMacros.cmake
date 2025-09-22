@@ -12,7 +12,7 @@ function(create_fooyin_plugin plugin_name)
     cmake_parse_arguments(
         LIB
         ""
-        ""
+        "JSON_IN"
         "DEPENDS;SOURCES"
         ${ARGN}
     )
@@ -23,9 +23,15 @@ function(create_fooyin_plugin plugin_name)
     set(output_name "fyplugin_${name}")
 
     # Configure json file:
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${name}.json.in")
-      list(APPEND LIB_SOURCES ${name}.json.in)
-      configure_file(${name}.json.in "${CMAKE_CURRENT_BINARY_DIR}/${name}.json")
+    if (LIB_JSON_IN)
+        set(json_file "${CMAKE_CURRENT_SOURCE_DIR}/${LIB_JSON_IN}")
+    else()
+        set(json_file "${CMAKE_CURRENT_SOURCE_DIR}/${name}.json.in")
+    endif()
+
+    if (EXISTS "${json_file}")
+        list(APPEND LIB_SOURCES "${json_file}")
+        configure_file("${json_file}" "${CMAKE_CURRENT_BINARY_DIR}/${name}.json")
     endif()
 
     add_library(${plugin_name} MODULE ${LIB_SOURCES})
