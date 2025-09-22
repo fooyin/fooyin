@@ -32,6 +32,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
         libqt6gui6 (>= 6.4.0),
         libqt6widgets6 (>= 6.4.0),
         libqt6network6 (>= 6.4.0),
+        libqt6concurrent6 (>= 6.4.0),
         libqt6sql6 (>= 6.4.0),
         libqt6sql6-sqlite (>= 6.4.0),
         libqt6svg6 (>= 6.4.0),
