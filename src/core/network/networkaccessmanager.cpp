@@ -19,6 +19,8 @@
 
 #include <core/network/networkaccessmanager.h>
 
+#include "internalcoresettings.h"
+
 #include <utils/fypaths.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -67,10 +69,17 @@ public:
         }
     }
 
-    void configure(NetworkAccessManager::Mode mode, const NetworkAccessManager::ProxyConfig& config)
+    void configure(SettingsManager* settings)
     {
-        m_mode   = mode;
-        m_config = config;
+        using namespace Settings::Core::Internal;
+
+        m_mode            = static_cast<NetworkAccessManager::Mode>(settings->value<ProxyMode>());
+        m_config.type     = static_cast<QNetworkProxy::ProxyType>(settings->value<ProxyType>());
+        m_config.host     = settings->value<ProxyHost>();
+        m_config.port     = settings->value<ProxyPort>();
+        m_config.useAuth  = settings->value<ProxyAuth>();
+        m_config.username = settings->value<ProxyUsername>();
+        m_config.password = settings->value<ProxyPassword>();
     }
 
     QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& /*query*/) override
@@ -132,14 +141,17 @@ public:
     {
         auto reconfigure = [this]() {
             auto* proxy = new ProxyFactory();
-            proxy->configure(
-                static_cast<NetworkAccessManager::Mode>(m_settings->value<Settings::Core::ProxyMode>()),
-                m_settings->value<Settings::Core::ProxyConfig>().value<NetworkAccessManager::ProxyConfig>());
+            proxy->configure(m_settings);
             m_self->setProxyFactory(proxy); // Takes ownership
         };
 
-        m_settings->subscribe<Settings::Core::ProxyMode>(m_self, reconfigure);
-        m_settings->subscribe<Settings::Core::ProxyConfig>(m_self, reconfigure);
+        m_settings->subscribe<Settings::Core::Internal::ProxyMode>(m_self, reconfigure);
+        m_settings->subscribe<Settings::Core::Internal::ProxyType>(m_self, reconfigure);
+        m_settings->subscribe<Settings::Core::Internal::ProxyHost>(m_self, reconfigure);
+        m_settings->subscribe<Settings::Core::Internal::ProxyPort>(m_self, reconfigure);
+        m_settings->subscribe<Settings::Core::Internal::ProxyAuth>(m_self, reconfigure);
+        m_settings->subscribe<Settings::Core::Internal::ProxyUsername>(m_self, reconfigure);
+        m_settings->subscribe<Settings::Core::Internal::ProxyPassword>(m_self, reconfigure);
 
         reconfigure();
     }

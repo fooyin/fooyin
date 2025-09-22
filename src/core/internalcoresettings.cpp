@@ -73,8 +73,6 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<RGType>(static_cast<int>(ReplayGainType::Track), u"Engine/ReplayGainType"_s);
     m_settings->createSetting<RGPreAmp>(0.0F, u"Engine/ReplayGainPreAmp"_s);
     m_settings->createSetting<NonRGPreAmp>(0.0F, u"Engine/NonReplayGainPreAmp"_s);
-    m_settings->createSetting<ProxyMode>(static_cast<int>(NetworkAccessManager::Mode::None), u"Networking/ProxyMode"_s);
-    m_settings->createSetting<ProxyConfig>(QVariant{}, u"Networking/ProxyConfig"_s);
     m_settings->createSetting<UseVariousForCompilations>(false, u"Library/UseVariousArtistsForCompilations"_s);
     m_settings->createSetting<ShuffleAlbumsGroupScript>(u"%albumartist% - %date% - %album%"_s,
                                                         u"Playback/ShuffleAlbumsGroupScript"_s);
@@ -94,6 +92,15 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::FadingIntervals>(QVariant::fromValue(FadingIntervals{}),
                                                          u"Engine/FadingIntervals"_s);
     m_settings->createSetting<Internal::VBRUpdateInterval>(1000, u"Engine/VBRUpdateInterval"_s);
+    m_settings->createSetting<Internal::ProxyMode>(static_cast<int>(NetworkAccessManager::Mode::None),
+                                                   u"Networking/ProxyMode"_s);
+    m_settings->createSetting<Internal::ProxyType>(static_cast<int>(QNetworkProxy::HttpProxy),
+                                                   u"Networking/ProxyType"_s);
+    m_settings->createSetting<Internal::ProxyHost>(u""_s, u"Networking/ProxyHost"_s);
+    m_settings->createSetting<Internal::ProxyPort>(8080, u"Networking/ProxyPort"_s);
+    m_settings->createSetting<Internal::ProxyAuth>(false, u"Networking/ProxyAuth"_s);
+    m_settings->createSetting<Internal::ProxyUsername>(u""_s, u"Networking/ProxyUsername"_s);
+    m_settings->createSetting<Internal::ProxyPassword>(u""_s, u"Networking/ProxyPassword"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 

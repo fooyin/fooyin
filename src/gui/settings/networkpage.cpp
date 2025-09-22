@@ -18,9 +18,10 @@
  */
 
 #include "networkpage.h"
-#include "core/network/networkaccessmanager.h"
 
 #include <core/coresettings.h>
+#include <core/internalcoresettings.h>
+#include <core/network/networkaccessmanager.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -57,8 +58,12 @@ private:
     QRadioButton* m_noProxy;
     QRadioButton* m_useSystemProxy;
     QRadioButton* m_manualProxy;
+    QLabel* m_typeLabel;
+    QLabel* m_type;
     QComboBox* m_proxyType;
+    QLabel* m_hostLabel;
     QLineEdit* m_host;
+    QLabel* m_portLabel;
     QSpinBox* m_port;
     QGroupBox* m_auth;
     QLineEdit* m_username;
@@ -71,8 +76,11 @@ NetworkPageWidget::NetworkPageWidget(SettingsManager* settings)
     , m_noProxy{new QRadioButton(tr("No proxy"), this)}
     , m_useSystemProxy{new QRadioButton(tr("Use system proxy"), this)}
     , m_manualProxy{new QRadioButton(tr("Manual proxy"), this)}
+    , m_typeLabel{new QLabel(tr("Type") + ":"_L1, this)}
     , m_proxyType{new QComboBox(this)}
+    , m_hostLabel{new QLabel(tr("Host") + ":"_L1, this)}
     , m_host{new QLineEdit(this)}
+    , m_portLabel{new QLabel(tr("Port") + ":"_L1, this)}
     , m_port{new QSpinBox(this)}
     , m_auth{new QGroupBox(tr("Authentication"), this)}
     , m_username{new QLineEdit(this)}
@@ -106,11 +114,11 @@ NetworkPageWidget::NetworkPageWidget(SettingsManager* settings)
     proxyLayout->addWidget(m_noProxy, row++, 0, 1, 3);
     proxyLayout->addWidget(m_useSystemProxy, row++, 0, 1, 3);
     proxyLayout->addWidget(m_manualProxy, row++, 0, 1, 3);
-    proxyLayout->addWidget(new QLabel(tr("Type") + ":"_L1, this), row, 0);
+    proxyLayout->addWidget(m_typeLabel, row, 0);
     proxyLayout->addWidget(m_proxyType, row++, 1);
-    proxyLayout->addWidget(new QLabel(tr("Host") + ":"_L1, this), row, 0);
+    proxyLayout->addWidget(m_hostLabel, row, 0);
     proxyLayout->addWidget(m_host, row, 1, 1, 2);
-    proxyLayout->addWidget(new QLabel(tr("Port") + ":"_L1, this), row, 3);
+    proxyLayout->addWidget(m_portLabel, row, 3);
     proxyLayout->addWidget(m_port, row++, 4);
     proxyLayout->addWidget(m_auth, row++, 0, 1, 5);
     proxyLayout->setColumnStretch(2, 1);
@@ -124,55 +132,62 @@ NetworkPageWidget::NetworkPageWidget(SettingsManager* settings)
 
 void NetworkPageWidget::load()
 {
-    const auto proxyMode = static_cast<NetworkAccessManager::Mode>(m_settings->value<Settings::Core::ProxyMode>());
-    m_noProxy->setChecked(proxyMode == NetworkAccessManager::Mode::None);
-    m_useSystemProxy->setChecked(proxyMode == NetworkAccessManager::Mode::System);
-    m_manualProxy->setChecked(proxyMode == NetworkAccessManager::Mode::Manual);
+    const auto mode = static_cast<NetworkAccessManager::Mode>(m_settings->value<Settings::Core::Internal::ProxyMode>());
+    m_noProxy->setChecked(mode == NetworkAccessManager::Mode::None);
+    m_useSystemProxy->setChecked(mode == NetworkAccessManager::Mode::System);
+    m_manualProxy->setChecked(mode == NetworkAccessManager::Mode::Manual);
 
-    const auto config = m_settings->value<Settings::Core::ProxyConfig>().value<NetworkAccessManager::ProxyConfig>();
-    m_host->setText(config.host);
-    m_port->setValue(config.port);
-    m_auth->setChecked(config.useAuth);
-    m_username->setText(config.username);
-    m_password->setText(config.password);
+    m_host->setText(m_settings->value<Settings::Core::Internal::ProxyHost>());
+    m_port->setValue(m_settings->value<Settings::Core::Internal::ProxyPort>());
+    m_auth->setChecked(m_settings->value<Settings::Core::Internal::ProxyAuth>());
+    m_username->setText(m_settings->value<Settings::Core::Internal::ProxyUsername>());
+    m_password->setText(m_settings->value<Settings::Core::Internal::ProxyPassword>());
 
     updateWidgetState();
 }
 
 void NetworkPageWidget::apply()
 {
-    const auto id = m_proxyActionGroup->checkedId();
-    m_settings->set<Settings::Core::ProxyMode>(id);
-
-    NetworkAccessManager::ProxyConfig config;
-    if(m_proxyType->currentIndex() == 0) {
-        config.type = QNetworkProxy::HttpProxy;
-    }
-    else {
-        config.type = QNetworkProxy::Socks5Proxy;
-    }
-    config.host     = m_host->text();
-    config.port     = m_port->value();
-    config.useAuth  = m_auth->isChecked();
-    config.username = m_username->text();
-    config.password = m_password->text();
+    const auto mode = m_proxyActionGroup->checkedId();
+    m_settings->set<Settings::Core::Internal::ProxyMode>(mode);
+    const auto type = m_proxyType->currentIndex() == 0 ? QNetworkProxy::HttpProxy : QNetworkProxy::Socks5Proxy;
+    m_settings->set<Settings::Core::Internal::ProxyType>(static_cast<int>(type));
+    m_settings->set<Settings::Core::Internal::ProxyHost>(m_host->text());
+    m_settings->set<Settings::Core::Internal::ProxyPort>(m_port->value());
+    m_settings->set<Settings::Core::Internal::ProxyAuth>(m_auth->isChecked());
+    m_settings->set<Settings::Core::Internal::ProxyUsername>(m_username->text());
+    m_settings->set<Settings::Core::Internal::ProxyPassword>(m_password->text());
 }
 
 void NetworkPageWidget::reset()
 {
-    m_settings->reset<Settings::Core::ProxyMode>();
-    m_settings->reset<Settings::Core::ProxyConfig>();
+    m_settings->reset<Settings::Core::Internal::ProxyMode>();
+    m_settings->reset<Settings::Core::Internal::ProxyType>();
+    m_settings->reset<Settings::Core::Internal::ProxyHost>();
+    m_settings->reset<Settings::Core::Internal::ProxyPort>();
+    m_settings->reset<Settings::Core::Internal::ProxyAuth>();
+    m_settings->reset<Settings::Core::Internal::ProxyUsername>();
+    m_settings->reset<Settings::Core::Internal::ProxyPassword>();
 }
 
 void NetworkPageWidget::updateWidgetState()
 {
     const bool manualProxy = m_manualProxy->isChecked();
-    m_proxyType->setEnabled(manualProxy);
-    m_host->setEnabled(manualProxy);
-    m_port->setEnabled(manualProxy);
-    m_auth->setEnabled(manualProxy);
-    m_username->setEnabled(manualProxy);
-    m_password->setEnabled(manualProxy);
+
+    m_typeLabel->setVisible(manualProxy);
+    m_proxyType->setVisible(manualProxy);
+    m_hostLabel->setVisible(manualProxy);
+    m_host->setVisible(manualProxy);
+    m_portLabel->setVisible(manualProxy);
+    m_port->setVisible(manualProxy);
+    m_auth->setVisible(manualProxy);
+    m_username->setVisible(manualProxy);
+    m_password->setVisible(manualProxy);
+
+    const bool useAuth = m_auth->isChecked();
+
+    m_username->setEnabled(useAuth);
+    m_password->setEnabled(useAuth);
 }
 
 NetworkPage::NetworkPage(SettingsManager* settings, QObject* parent)

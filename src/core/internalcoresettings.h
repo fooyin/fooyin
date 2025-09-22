@@ -93,6 +93,13 @@ enum CoreInternalSettings : uint32_t
     EngineFading      = 3 | Type::Bool,
     FadingIntervals   = 4 | Type::Variant,
     VBRUpdateInterval = 5 | Type::Int,
+    ProxyMode         = 6 | Type::Int,
+    ProxyType         = 7 | Type::Int,
+    ProxyHost         = 8 | Type::String,
+    ProxyPort         = 9 | Type::Int,
+    ProxyAuth         = 10 | Type::Bool,
+    ProxyUsername     = 11 | Type::String,
+    ProxyPassword     = 12 | Type::String,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal
