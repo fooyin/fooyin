@@ -1968,7 +1968,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="98"/>
         <source>Preserve timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти позначки часу</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
@@ -1993,12 +1993,12 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Tagging</source>
-        <translation type="unfinished">Теги</translation>
+        <translation>Тегування</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
         <source>Preserve file timestamps when updating tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберігати позначки часу файлів під час оновлення тегів</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="132"/>
@@ -2648,17 +2648,17 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="185"/>
         <source>Images</source>
-        <translation type="unfinished">Зображення</translation>
+        <translation>Зображення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Ліміт розподілу зображень</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="189"/>
         <source>Set to &apos;0&apos; to disable the limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановіть значення «0», щоб вимкнути обмеження.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="200"/>
@@ -3796,12 +3796,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="114"/>
         <source>Rewind line (-100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Лінія перемотування (-100 мс)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
         <source>Forward line (+100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Пряма лінія (+100 мс)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="125"/>
@@ -3829,7 +3829,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="318"/>
         <source>Lyrics Editor</source>
-        <translation type="unfinished">Редактор текстів пісень</translation>
+        <translation>Редактор текстів пісень</translation>
     </message>
 </context>
 <context>
@@ -4684,7 +4684,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="123"/>
         <source>Set playback order to repeat the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити порядок відтворення для повторення поточної доріжки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="147"/>
@@ -4810,7 +4810,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Save/restore active playlist state</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти/відновити стан активного списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="87"/>
@@ -4835,7 +4835,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="102"/>
         <source>Save active playlist state on exit and restore it on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти стан активного списку відтворення під час виходу та відновити його під час наступного запуску</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="103"/>
@@ -5287,27 +5287,27 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Behaviour</source>
-        <translation type="unfinished">Поведінка</translation>
+        <translation>Поведінка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
         <source>Preload count</source>
-        <translation type="unfinished"></translation>
+        <translation>Кількість попередніх завантажень</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="113"/>
         <source>Number of tracks used to preload the playlist before loading the rest of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Кількість треків, що використовуються для попереднього завантаження списку відтворення перед завантаженням решти списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="119"/>
         <source> tracks</source>
-        <translation type="unfinished"></translation>
+        <translation> треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="124"/>
         <source>Set to &apos;0&apos; to disable preloading.</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановіть значення «0», щоб вимкнути попереднє завантаження.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
@@ -5849,22 +5849,22 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="427"/>
         <source>Remove duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити дублікати</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="428"/>
         <source>Remove duplicate tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучення дублікатів треків зі списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="432"/>
         <source>Remove dead tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучити мертві сліди</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="433"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Вилучення мертві (неіснуючі) треки зі списку відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="445"/>
