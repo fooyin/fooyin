@@ -22,7 +22,6 @@ At least one of the following is required for audio output:
 
 The following libraries are optional:
 * [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) - will use 3rd party dep if not present on system
-* [libvgm](https://github.com/ValleyBell/libvgm) - will use 3rd party dep if not present on system
 * [libsndfile](https://libsndfile.github.io/libsndfile) - for the sndfile audio input plugin
 * [OpenMPT](https://lib.openmpt.org/libopenmpt) - for the OpenMPT audio input plugin
 * [Game Music Emu](https://github.com/libgme/game-music-emu) - for the GME audio input plugin
@@ -71,7 +70,7 @@ sudo dnf install \
 2. Clone the fooyin repository (including submodules):
 
 ```
-git clone --recurse-submodules https://github.com/fooyin/fooyin.git
+git clone https://github.com/fooyin/fooyin.git
 ```
 
 3. Switch into the directory: `cd fooyin`
@@ -98,7 +97,6 @@ The following options can be passed to CMake to customise the build:
 * `-DBUILD_TESTING` - Build tests (OFF by default)
 * `-DBUILD_PLUGINS` - Build the plugins included with fooyin (ON by default)
 * `-DBUILD_ALSA` - Build the ALSA plugin (ON by default)
-* `-DBUILD_LIBVGM` - Build the libvgm plugin (ON by default)
 * `-DBUILD_TRANSLATIONS` - Build translation files (ON by default)
 * `-DBUILD_CCACHE` - Build using CCache if found (ON by default)
 * `-DBUILD_PCH` - Build with precompiled header support (OFF by default)
