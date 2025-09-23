@@ -86,6 +86,8 @@ std::optional<QFileInfo> findMatchingCue(const QFileInfo& file)
 QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExtensions,
                        const QStringList& excludeExtensions, const QStringList& playlistExtensions)
 {
+    const Fooyin::Timer timer;
+
     QFileInfoList files;
 
     QStringList nameFilters{restrictExtensions};
@@ -130,6 +132,8 @@ QFileInfoList getFiles(const QStringList& paths, const QStringList& restrictExte
     }
 
     sortFiles(files);
+
+    qCInfo(LIB_SCANNER) << "Found" << files.size() << "files in" << timer.elapsedFormatted();
 
     return files;
 }
@@ -677,6 +681,8 @@ void LibraryScannerPrivate::updateExistingTrack(Track& track, const QString& fil
 
 void LibraryScannerPrivate::readNewTrack(const QString& file)
 {
+    qCDebug(LIB_SCANNER) << "Indexing new file:" << file;
+
     TrackList tracks = readTracks(file);
     if(tracks.empty()) {
         return;
