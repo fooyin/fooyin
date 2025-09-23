@@ -103,7 +103,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     auto* startupGroupLayout = new QGridLayout(startupGroup);
 
     int row{0};
-    startupGroupLayout->addWidget(new QLabel(tr("Behaviour") + u":"_s, this), row, 0);
+    startupGroupLayout->addWidget(new QLabel(tr("Window behaviour") + u":"_s, this), row, 0);
     startupGroupLayout->addWidget(m_startupBehaviour, row++, 1);
     startupGroupLayout->addWidget(m_waitForTracks, row++, 0, 1, 2);
     startupGroupLayout->setColumnStretch(1, 1);
