@@ -48,7 +48,7 @@
 #include <QTabBar>
 #include <QTimer>
 
-#if(QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
 #include <chrono>
 #endif
 
@@ -404,7 +404,7 @@ void PlaylistTabs::dragMoveEvent(QDragMoveEvent* event)
         }
 
         if(!m_hoverTimer.isActive()) {
-#if(QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
             m_hoverTimer.start(1s, this);
 #else
             m_hoverTimer.start(1000, this);
@@ -491,6 +491,7 @@ void PlaylistTabs::setupConnections()
         const auto id = m_tabs->tabBar()->tabData(index).value<UId>();
         m_playlistHandler->renamePlaylist(id, text);
     });
+    QObject::connect(m_tabs, &SingleTabbedWidget::currentChanged, this, [this](int index) { tabChanged(index); });
     QObject::connect(m_tabs, &SingleTabbedWidget::tabBarClicked, this, [this](int index) { tabChanged(index); });
     QObject::connect(m_tabs, &SingleTabbedWidget::tabMoved, this, [this](int from, int to) { tabMoved(from, to); });
     QObject::connect(m_playlistController, &PlaylistController::playlistsLoaded, this,
