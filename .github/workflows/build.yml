@@ -208,6 +208,37 @@ jobs:
           name: freebsd-14.2
           path: pkg
 
+  macos:
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runs-on: macos-15-intel
+          - arch: aarch64
+            runs-on: macos-latest
+    name: macOS-${{ matrix.arch }}
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Dependencies
+        run: |
+          ./ci/macos-depends.sh
+
+      - name: Build
+        run: |
+          ./ci/macos-build.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}
+          path: txz
+
   attach:
     name: Attach to release
     if: github.event_name == 'release' && github.event.action == 'published'
@@ -217,6 +248,7 @@ jobs:
       - debian
       - ubuntu
       - freebsd
+      - macos
     steps:
       - name: Checkout
         uses: actions/checkout@v4
