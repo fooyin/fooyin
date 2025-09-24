@@ -368,6 +368,12 @@ target_link_libraries(
             Fooyin::CorePrivate
 )
 
+if(WIN32)
+    set_target_properties(fooyin PROPERTIES WIN32_EXECUTABLE TRUE)
+    configure_file(data/win_version.rc.in win_version.rc @ONLY)
+    target_sources(fooyin PRIVATE win_version.rc)
+endif()
+
 # ---- Fooyin install ----
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
