@@ -23,9 +23,9 @@
 
 #include <utils/id.h>
 
-#include <QPointer>
 #include <QWidget>
 
+#include <memory>
 #include <unordered_map>
 
 class QAction;
@@ -33,6 +33,8 @@ class QDialog;
 class QMenu;
 
 namespace Fooyin {
+class FyWidgetPrivate;
+
 class FYGUI_EXPORT LayoutCopyContext
 {
 public:
@@ -110,6 +112,7 @@ public:
     Q_DECLARE_FLAGS(Features, Feature)
 
     explicit FyWidget(QWidget* parent);
+    ~FyWidget() override;
 
     [[nodiscard]] Id id() const;
     /*!
@@ -230,9 +233,7 @@ Q_SIGNALS:
     void changeSearch(const QString& search);
 
 private:
-    Id m_id;
-    Features m_features;
-    QPointer<QDialog> m_configDialog;
+    std::unique_ptr<FyWidgetPrivate> p;
 };
 using WidgetList = std::vector<FyWidget*>;
 } // namespace Fooyin

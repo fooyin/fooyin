@@ -66,6 +66,7 @@
 #include "settings/generalpage.h"
 #include "settings/guidisplaypage.h"
 #include "settings/guigeneralpage.h"
+#include "settings/guilayoutpage.h"
 #include "settings/guithemespage.h"
 #include "settings/guitrackdisplaypage.h"
 #include "settings/library/librarygeneralpage.h"
@@ -336,6 +337,7 @@ void Widgets::registerPages()
     new GuiGeneralPage(m_gui->layoutProvider(), m_gui->editableLayout(), m_settings, this);
     new GuiDisplayPage(m_settings, this);
     new GuiTrackDisplayPage(m_settings, this);
+    new GuiLayoutPage(m_gui->layoutProvider(), m_gui->editableLayout(), m_gui->widgetProvider(), m_settings, this);
     new GuiThemesPage(m_gui->themeRegistry(), m_settings, this);
     new TrackContextMenuPage(m_gui->trackSelection(), m_settings, this);
 

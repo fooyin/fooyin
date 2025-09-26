@@ -17,6 +17,7 @@
  *
  */
 
+#include "editablelayout_p.h"
 #include <gui/editablelayout.h>
 
 #include "contextmenuids.h"
@@ -110,204 +111,108 @@ void preserveWidgetIds(QJsonObject& widgetObject, FyWidget* widget)
 }
 } // namespace
 
-class RootContainer : public WidgetContainer
+RootContainer::RootContainer(WidgetProvider* provider, SettingsManager* settings, QWidget* parent)
+    : WidgetContainer{provider, settings, parent}
+    , m_settings{settings}
+    , m_layout{new QVBoxLayout(this)}
+    , m_widget{new Dummy(m_settings, this)}
 {
-    Q_OBJECT
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->addWidget(m_widget);
+}
 
-public:
-    explicit RootContainer(WidgetProvider* provider, SettingsManager* settings, QWidget* parent = nullptr)
-        : WidgetContainer{provider, settings, parent}
-        , m_settings{settings}
-        , m_layout{new QVBoxLayout(this)}
-        , m_widget{new Dummy(m_settings, this)}
-    {
-        m_layout->setContentsMargins(0, 0, 0, 0);
-        m_layout->addWidget(m_widget);
-    }
-
-    void reset()
-    {
-        delete m_widget;
-        m_widget = new Dummy(m_settings, this);
-        m_layout->addWidget(m_widget);
-    }
-
-    [[nodiscard]] FyWidget* widget() const
-    {
-        return m_widget;
-    }
-
-    [[nodiscard]] QString name() const override
-    {
-        return u"Root"_s;
-    }
-
-    [[nodiscard]] QString layoutName() const override
-    {
-        return name();
-    }
-
-    [[nodiscard]] bool canAddWidget() const override
-    {
-        return !m_widget || qobject_cast<Dummy*>(m_widget);
-    }
-
-    [[nodiscard]] bool canMoveWidget(int /*index*/, int /*newIndex*/) const override
-    {
-        return false;
-    }
-
-    [[nodiscard]] int widgetIndex(const Id& id) const override
-    {
-        return m_widget && m_widget->id() == id ? 0 : -1;
-    }
-
-    [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override
-    {
-        return m_widget && m_widget->id() == id ? m_widget : nullptr;
-    }
-
-    [[nodiscard]] FyWidget* widgetAtIndex(int index) const override
-    {
-        return index == 0 ? m_widget : nullptr;
-    }
-
-    [[nodiscard]] int widgetCount() const override
-    {
-        return m_widget && !qobject_cast<Dummy*>(m_widget) ? 1 : 0;
-    }
-
-    [[nodiscard]] WidgetList widgets() const override
-    {
-        if(m_widget) {
-            return {m_widget};
-        }
-
-        return {};
-    }
-
-    int addWidget(FyWidget* widget) override
-    {
-        insertWidget(0, widget);
-        return 0;
-    }
-
-    void insertWidget(int index, FyWidget* widget) override
-    {
-        if(index != 0) {
-            return;
-        }
-
-        widget->setParent(this);
-        delete m_widget;
-        m_widget = widget;
-        m_layout->insertWidget(0, m_widget);
-    }
-
-    void removeWidget(int index) override
-    {
-        if(index == 0) {
-            reset();
-        }
-    }
-
-    void replaceWidget(int index, FyWidget* newWidget) override
-    {
-        insertWidget(index, newWidget);
-    }
-
-    void moveWidget(int /*index*/, int /*newIndex*/) override { }
-
-private:
-    SettingsManager* m_settings;
-    QVBoxLayout* m_layout;
-    QPointer<FyWidget> m_widget;
-};
-
-class EditableLayoutPrivate
+void RootContainer::reset()
 {
-public:
-    EditableLayoutPrivate(EditableLayout* self, ActionManager* actionManager, WidgetProvider* widgetProvider,
-                          LayoutProvider* layoutProvider, SettingsManager* settings);
+    delete m_widget;
+    m_widget = new Dummy(m_settings, this);
+    m_layout->addWidget(m_widget);
+}
 
-    void setupDefault() const;
-    void updateMargins() const;
-    void changeEditingState(bool editing);
+FyWidget* RootContainer::widget() const
+{
+    return m_widget;
+}
 
-    void showOverlay(FyWidget* widget) const;
-    void hideOverlay() const;
+QString RootContainer::name() const
+{
+    return u"Root"_s;
+}
 
-    void setupAddWidgetMenu(QMenu* menu, WidgetContainer* parent, FyWidget* prev, FyWidget* current) const;
-    bool setupMoveWidgetMenu(QMenu* menu, WidgetContainer* parent, FyWidget* current) const;
-    void setupUnsplitAction(QMenu* menu, WidgetContainer* parent, FyWidget* current) const;
-    void setupPasteMenu(QMenu* menu, WidgetContainer* parent, FyWidget* prev, FyWidget* current, bool isDummy);
-    void setupContextMenu(FyWidget* widget, QMenu* menu);
+QString RootContainer::layoutName() const
+{
+    return name();
+}
 
-    [[nodiscard]] WidgetList findAllWidgets() const;
+bool RootContainer::canAddWidget() const
+{
+    return !m_widget || qobject_cast<Dummy*>(m_widget);
+}
 
-    template <typename T, typename Predicate>
-    [[nodiscard]] T findWidgets(const Predicate& predicate) const
-    {
-        if(!m_root) {
-            if constexpr(std::is_same_v<T, FyWidget*>) {
-                return nullptr;
-            }
-            return {};
-        }
+bool RootContainer::canMoveWidget(int /*index*/, int /*newIndex*/) const
+{
+    return false;
+}
 
-        T widgets;
+int RootContainer::widgetIndex(const Id& id) const
+{
+    return m_widget && m_widget->id() == id ? 0 : -1;
+}
 
-        std::stack<FyWidget*> widgetsToCheck;
-        widgetsToCheck.push(m_root);
+FyWidget* RootContainer::widgetAtId(const Id& id) const
+{
+    return m_widget && m_widget->id() == id ? m_widget : nullptr;
+}
 
-        while(!widgetsToCheck.empty()) {
-            auto* current = widgetsToCheck.top();
-            widgetsToCheck.pop();
+FyWidget* RootContainer::widgetAtIndex(int index) const
+{
+    return index == 0 ? m_widget : nullptr;
+}
 
-            if(!current) {
-                continue;
-            }
+int RootContainer::widgetCount() const
+{
+    return m_widget && !qobject_cast<Dummy*>(m_widget) ? 1 : 0;
+}
 
-            if(predicate(current)) {
-                if constexpr(std::is_same_v<T, WidgetList>) {
-                    widgets.push_back(current);
-                }
-                else {
-                    return current;
-                }
-            }
-
-            if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
-                const auto containerWidgets = container->widgets();
-                for(FyWidget* containerWidget : containerWidgets) {
-                    widgetsToCheck.push(containerWidget);
-                }
-            }
-        }
-
-        if constexpr(std::is_same_v<T, FyWidget*>) {
-            return nullptr;
-        }
-        return widgets;
+WidgetList RootContainer::widgets() const
+{
+    if(m_widget) {
+        return {m_widget};
     }
 
-    EditableLayout* m_self;
+    return {};
+}
 
-    ActionManager* m_actionManager;
-    SettingsManager* m_settings;
-    WidgetProvider* m_widgetProvider;
-    LayoutProvider* m_layoutProvider;
+int RootContainer::addWidget(FyWidget* widget)
+{
+    insertWidget(0, widget);
+    return 0;
+}
 
-    QPointer<QMenu> m_editingMenu;
-    QHBoxLayout* m_box;
-    QPointer<OverlayWidget> m_overlay;
-    RootContainer* m_root;
-    bool m_layoutEditing{false};
+void RootContainer::insertWidget(int index, FyWidget* widget)
+{
+    if(index != 0) {
+        return;
+    }
 
-    WidgetContext* m_editingContext;
-    QJsonObject m_widgetClipboard;
-    QUndoStack* m_layoutHistory;
-};
+    widget->setParent(this);
+    delete m_widget;
+    m_widget = widget;
+    m_layout->insertWidget(0, m_widget);
+}
+
+void RootContainer::removeWidget(int index)
+{
+    if(index == 0) {
+        reset();
+    }
+}
+
+void RootContainer::replaceWidget(int index, FyWidget* newWidget)
+{
+    insertWidget(index, newWidget);
+}
+
+void RootContainer::moveWidget(int /*index*/, int /*newIndex*/) { }
 
 EditableLayoutPrivate::EditableLayoutPrivate(EditableLayout* self, ActionManager* actionManager,
                                              WidgetProvider* widgetProvider, LayoutProvider* layoutProvider,
@@ -319,6 +224,7 @@ EditableLayoutPrivate::EditableLayoutPrivate(EditableLayout* self, ActionManager
     , m_layoutProvider{layoutProvider}
     , m_box{new QHBoxLayout(m_self)}
     , m_root{new RootContainer(m_widgetProvider, m_settings, m_self)}
+    , m_layoutEditing{false}
     , m_editingContext{new WidgetContext(m_self, Context{"Fooyin.LayoutEditing"}, m_self)}
     , m_layoutHistory{new QUndoStack(m_self)}
 {
@@ -371,6 +277,27 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
 
         m_self->saveLayout();
     }
+}
+
+void EditableLayoutPrivate::changeLayout(const FyLayout& layout) const
+{
+    m_root->reset();
+
+    if(m_self->loadLayout(layout)) {
+        m_layoutProvider->changeLayout(layout);
+    }
+    else {
+        setupDefault();
+    }
+
+    if(m_root->widgetCount() == 0) {
+        m_settings->set<Settings::Gui::LayoutEditing>(true);
+    }
+    else {
+        m_settings->set<Settings::Gui::LayoutEditing>(false);
+    }
+
+    Q_EMIT m_self->layoutChanged();
 }
 
 void EditableLayoutPrivate::showOverlay(FyWidget* widget) const
@@ -752,7 +679,7 @@ void EditableLayout::initialise()
                      [redo](bool canRedo) { redo->setEnabled(canRedo); });
     redo->setEnabled(p->m_layoutHistory->canRedo());
 
-    changeLayout(p->m_layoutProvider->currentLayout());
+    p->changeLayout(p->m_layoutProvider->currentLayout());
 }
 
 FyLayout EditableLayout::saveCurrentToLayout(const QString& name)
@@ -845,25 +772,14 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 
 void EditableLayout::changeLayout(const FyLayout& layout)
 {
-    p->m_root->reset();
-
-    if(!loadLayout(layout)) {
-        p->setupDefault();
-    }
-
-    if(p->m_root->widgetCount() == 0) {
-        p->m_settings->set<Settings::Gui::LayoutEditing>(true);
-    }
-    else {
-        p->m_settings->set<Settings::Gui::LayoutEditing>(false);
-    }
-
-    Q_EMIT layoutChanged();
+    p->m_layoutHistory->push(new SwitchLayoutCommand(p.get(), layout));
 }
 
 void EditableLayout::saveLayout()
 {
-    const auto layout = saveCurrentToLayout(u"Default"_s);
+    const auto currentLayout = p->m_layoutProvider->currentLayout();
+    const QString layoutName = currentLayout.name().isEmpty() ? u"Default"_s : currentLayout.name();
+    const auto layout        = saveCurrentToLayout(layoutName);
     if(layout.isValid()) {
         p->m_layoutProvider->changeLayout(layout);
         p->m_layoutProvider->saveCurrentLayout();
@@ -878,7 +794,6 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
 
     const auto json = layout.json();
 
-    p->m_layoutHistory->clear();
     layout.loadWindowSize();
 
     if(!json.contains("Widgets"_L1)) {
@@ -981,5 +896,4 @@ void EditableLayout::showQuickSetup()
 }
 } // namespace Fooyin
 
-#include "editablelayout.moc"
 #include "gui/moc_editablelayout.cpp"

@@ -25,11 +25,45 @@
 #include <QDialog>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QLayout>
 #include <QMenu>
+#include <QPointer>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+class FyWidgetPrivate
+{
+public:
+    explicit FyWidgetPrivate(FyWidget* self)
+        : m_self{self}
+    { }
+
+    void saveCommonLayoutData(QJsonObject& layout, bool includeId) const
+    {
+        if(includeId
+           && (m_features & FyWidget::PersistId || m_features & (FyWidget::Search | FyWidget::ExclusiveSearch))) {
+            layout["ID"_L1] = m_id.name();
+        }
+
+        if(m_hasCustomMargins && m_self->layout()) {
+            const QMargins margins = m_self->layout()->contentsMargins();
+            QJsonObject marginData;
+            marginData["Left"_L1]   = margins.left();
+            marginData["Top"_L1]    = margins.top();
+            marginData["Right"_L1]  = margins.right();
+            marginData["Bottom"_L1] = margins.bottom();
+            layout["Margins"_L1]    = marginData;
+        }
+    }
+
+    FyWidget* m_self;
+    Id m_id{Utils::generateUniqueHash()};
+    FyWidget::Features m_features;
+    bool m_hasCustomMargins{false};
+    QPointer<QDialog> m_configDialog;
+};
+
 QString LayoutCopyContext::mappedString(const QString& scope, const QString& value)
 {
     const QString key = scope + u':' + value;
@@ -41,31 +75,33 @@ QString LayoutCopyContext::mappedString(const QString& scope, const QString& val
 
 FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
-    , m_id{Utils::generateUniqueHash()}
+    , p{std::make_unique<FyWidgetPrivate>(this)}
 { }
+
+FyWidget::~FyWidget() = default;
 
 Id FyWidget::id() const
 {
-    return m_id;
+    return p->m_id;
 }
 
 FyWidget::Features FyWidget::features() const
 {
-    return m_features;
+    return p->m_features;
 }
 
 bool FyWidget::hasFeature(Feature feature) const
 {
-    return m_features & feature;
+    return p->m_features & feature;
 }
 
 void FyWidget::setFeature(Feature feature, bool on)
 {
     if(on) {
-        m_features |= feature;
+        p->m_features |= feature;
     }
     else {
-        m_features &= ~feature;
+        p->m_features &= ~feature;
     }
 }
 
@@ -97,10 +133,7 @@ void FyWidget::saveLayout(QJsonArray& layout)
 {
     QJsonObject widgetData;
 
-    if(m_features & PersistId || m_features & (Search | ExclusiveSearch)) {
-        widgetData["ID"_L1] = m_id.name();
-    }
-
+    p->saveCommonLayoutData(widgetData, true);
     saveLayoutData(widgetData);
 
     QJsonObject widgetObject;
@@ -113,6 +146,7 @@ void FyWidget::saveBaseLayout(QJsonArray& layout)
 {
     QJsonObject widgetData;
 
+    p->saveCommonLayoutData(widgetData, false);
     saveLayoutData(widgetData);
 
     QJsonObject widgetObject;
@@ -125,6 +159,7 @@ void FyWidget::saveCopyLayout(QJsonArray& layout, LayoutCopyContext& context, bo
 {
     QJsonObject widgetData;
 
+    p->saveCommonLayoutData(widgetData, false);
     saveCopyLayoutData(widgetData, context, isRoot);
 
     QJsonObject widgetObject;
@@ -136,7 +171,16 @@ void FyWidget::saveCopyLayout(QJsonArray& layout, LayoutCopyContext& context, bo
 void FyWidget::loadLayout(const QJsonObject& layout)
 {
     if(layout.contains("ID"_L1)) {
-        m_id = Id{layout["ID"_L1].toString()};
+        p->m_id = Id{layout["ID"_L1].toString()};
+    }
+
+    p->m_hasCustomMargins = false;
+
+    if(this->layout() && layout.value("Margins"_L1).isObject()) {
+        const QJsonObject marginData = layout.value("Margins"_L1).toObject();
+        this->layout()->setContentsMargins(marginData.value("Left"_L1).toInt(), marginData.value("Top"_L1).toInt(),
+                                           marginData.value("Right"_L1).toInt(), marginData.value("Bottom"_L1).toInt());
+        p->m_hasCustomMargins = true;
     }
 
     loadLayoutData(layout);
@@ -183,15 +227,15 @@ void FyWidget::showConfigDialog(QDialog* dialog)
         return;
     }
 
-    if(m_configDialog) {
+    if(p->m_configDialog) {
         dialog->deleteLater();
-        m_configDialog->raise();
-        m_configDialog->activateWindow();
+        p->m_configDialog->raise();
+        p->m_configDialog->activateWindow();
         return;
     }
 
-    m_configDialog = dialog;
-    QObject::connect(dialog, &QDialog::destroyed, this, [this]() { m_configDialog = nullptr; });
+    p->m_configDialog = dialog;
+    QObject::connect(dialog, &QDialog::destroyed, this, [this]() { p->m_configDialog = nullptr; });
     dialog->open();
 }
 } // namespace Fooyin

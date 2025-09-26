@@ -72,6 +72,8 @@ public:
 
     /** Returns @c true if the widget at @p key exists. */
     [[nodiscard]] bool widgetExists(const QString& key) const;
+    /** Returns the display name registered for the widget at @p key, or @p key if no widget is registered. */
+    [[nodiscard]] QString displayName(const QString& key) const;
     /** Returns @c true if an instance can be created of the widget at @p key. */
     [[nodiscard]] bool canCreateWidget(const QString& key) const;
 

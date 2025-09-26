@@ -230,6 +230,7 @@ constexpr auto DspManager                         = "Fooyin.Page.Playback.DspMan
 constexpr auto NowPlaying                         = "Fooyin.Page.Playback.NowPlaying";
 constexpr auto InterfaceGeneral                   = "Fooyin.Page.Interface.General";
 constexpr auto InterfaceDisplay                   = "Fooyin.Page.Interface.Display";
+constexpr auto InterfaceLayout                    = "Fooyin.Page.Interface.Layout";
 constexpr auto InterfaceTrackDisplay              = "Fooyin.Page.Interface.TrackDisplay";
 constexpr auto InterfaceContextMenuTrack          = "Fooyin.Page.Interface.ContextMenu.Track";
 constexpr auto InterfaceContextMenuPlaylistWidget = "Fooyin.Page.Interface.ContextMenu.PlaylistWidget";

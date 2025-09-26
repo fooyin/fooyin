@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <gui/fylayout.h>
 #include <utils/id.h>
 
 #include <QJsonObject>
@@ -27,12 +28,14 @@
 
 namespace Fooyin {
 class EditableLayout;
+class EditableLayoutPrivate;
 class WidgetContainer;
 class WidgetProvider;
 
 class LayoutChangeCommand : public QUndoCommand
 {
 public:
+    explicit LayoutChangeCommand(EditableLayout* layout);
     LayoutChangeCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container);
 
 protected:
@@ -43,6 +46,20 @@ protected:
     QPointer<WidgetContainer> m_container;
     Id m_containerId;
     QByteArray m_containerState;
+};
+
+class SwitchLayoutCommand : public LayoutChangeCommand
+{
+public:
+    SwitchLayoutCommand(EditableLayoutPrivate* editableLayout, FyLayout layout);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    EditableLayoutPrivate* m_editableLayout;
+    FyLayout m_oldLayout;
+    FyLayout m_newLayout;
 };
 
 class AddWidgetCommand : public LayoutChangeCommand
