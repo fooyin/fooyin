@@ -29,7 +29,7 @@ jobs:
           git-username: "${{ secrets.BOT_USERNAME }}"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.BOT_TOKEN }}
           commit-message: '[translations] Update sources'
