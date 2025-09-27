@@ -1,13 +1,14 @@
 name: Update translations
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [closed]
     branches: [master]
 
 jobs:
   update-translations:
-    if: github.event.pull_request.user.login == 'weblate' && github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.user.login == 'weblate')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
