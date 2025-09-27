@@ -1366,10 +1366,6 @@
         <translation>无事可干</translation>
     </message>
     <message>
-        <source>Cannot write to %1</source>
-        <translation type="vanished">无法写入到 %1</translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="411"/>
         <source>Pending operations</source>
         <translation>等待中的操作</translation>
@@ -1956,11 +1952,6 @@
         <translation>关闭时最小化到系统托盘</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
-        <source>Behaviour</source>
-        <translation>行为</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="100"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
         <translation>延迟打开 fooyin，直到所有轨道加载完成</translation>
@@ -1974,6 +1965,11 @@
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
         <source>Startup</source>
         <translation>启动</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
+        <source>Window behaviour</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
@@ -2072,10 +2068,6 @@
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="62"/>
         <source>Loop count</source>
         <translation>循环次数</translation>
-    </message>
-    <message>
-        <source>(0 = infinite)</source>
-        <translation type="vanished">(0 = 无限)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="68"/>
@@ -2696,18 +2688,6 @@
         <translation>选中信息</translation>
     </message>
     <message>
-        <source>Controls</source>
-        <translation type="vanished">控制</translation>
-    </message>
-    <message>
-        <source>Seek step</source>
-        <translation type="vanished">定位步长</translation>
-    </message>
-    <message>
-        <source>Volume step</source>
-        <translation type="vanished">音量步长</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="224"/>
         <source>Rating</source>
         <translation>评分</translation>
@@ -3006,10 +2986,6 @@
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="207"/>
         <source>Show header</source>
         <translation>显示标题</translation>
-    </message>
-    <message>
-        <source>Show scrollbar</source>
-        <translation type="vanished">显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
@@ -4372,12 +4348,12 @@
 <context>
     <name>Fooyin::NetworkPage</name>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="182"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="197"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="183"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="198"/>
         <source>Networking</source>
         <translation>网络设置</translation>
     </message>
@@ -4385,52 +4361,52 @@
 <context>
     <name>Fooyin::NetworkPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="71"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="76"/>
         <source>No proxy</source>
         <translation>关闭代理配置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="72"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
         <source>Use system proxy</source>
         <translation>使用系统代理配置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="73"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="78"/>
         <source>Manual proxy</source>
         <translation>手工配置代理</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="85"/>
         <source>Authentication</source>
         <translation>身份验证</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="91"/>
         <source>Proxy</source>
         <translation>代理</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="97"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="105"/>
         <source>Username</source>
         <translation>用户名</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="99"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="107"/>
         <source>Password</source>
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="109"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="79"/>
         <source>Type</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="111"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="81"/>
         <source>Host</source>
         <translation>主机名</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="113"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
         <source>Port</source>
         <translation>端口号</translation>
     </message>
@@ -5668,12 +5644,12 @@
         <translation>右移</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="536"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="537"/>
         <source>Add playlist</source>
         <translation>添加播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="544"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="545"/>
         <source>Clear playlist</source>
         <translation>清空播放列表</translation>
     </message>
@@ -6741,10 +6717,6 @@
         <translation>服务</translation>
     </message>
     <message>
-        <source>User token</source>
-        <translation type="vanished">用户令牌</translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="248"/>
         <source>Sign Out</source>
         <translation>登出</translation>
@@ -6763,10 +6735,6 @@
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="253"/>
         <source>Signed in as %1</source>
         <translation>已作为%1登录</translation>
-    </message>
-    <message>
-        <source>You can find your user token here</source>
-        <translation type="vanished">你可以在这里找到你的用户令牌</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="260"/>
@@ -7756,79 +7724,6 @@
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="413"/>
         <source>Playback</source>
         <translation>播放</translation>
-    </message>
-</context>
-<context>
-    <name>Fooyin::VgmInput::VgmInputSettings</name>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="43"/>
-        <source>Guess track number from filename</source>
-        <translation>从文件名中猜测音轨号</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="53"/>
-        <source>Length</source>
-        <translation>长度</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="56"/>
-        <source>Loop count</source>
-        <translation>重复次数</translation>
-    </message>
-    <message>
-        <source>(0 = infinite)</source>
-        <translation type="vanished">(0 = 无限)</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="62"/>
-        <source>Fade length</source>
-        <translation>淡入淡出长度</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="46"/>
-        <source>%1 Settings</source>
-        <translation>%1设置</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="60"/>
-        <source>times</source>
-        <translation>次</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="66"/>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="72"/>
-        <source>ms</source>
-        <translation>毫秒</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="68"/>
-        <source>End silence length</source>
-        <translation>结尾空白静音时长</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="84"/>
-        <source>General</source>
-        <translation>常规设置</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="87"/>
-        <source>ROM location</source>
-        <translation>ROM地址</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
-        <source>Certain files %1 require their system&apos;s ROM to play %2. Provide a directory where these can be found here.</source>
-        <translation>某些文件%1需要系统ROM来播放%2。在这里提供这些文件的目录。</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="95"/>
-        <source>&amp;Browse…</source>
-        <translation>浏览(&amp;B)…</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="138"/>
-        <source>Select ROM path</source>
-        <translation>选择ROM路径</translation>
     </message>
 </context>
 <context>

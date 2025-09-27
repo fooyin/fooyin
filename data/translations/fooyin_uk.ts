@@ -1366,10 +1366,6 @@
         <translation>Нічого робити</translation>
     </message>
     <message>
-        <source>Cannot write to %1</source>
-        <translation type="vanished">Неможливо записати в %1</translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="411"/>
         <source>Pending operations</source>
         <translation>Операції, що очікують на виконання</translation>
@@ -1956,11 +1952,6 @@
         <translation>Згорнути в лоток при закритті</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
-        <source>Behaviour</source>
-        <translation>Поведінка</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="100"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
         <translation>Відкласти відкриття fooyin до завантаження всіх доріжок</translation>
@@ -1974,6 +1965,11 @@
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
         <source>Startup</source>
         <translation>Запуск</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
+        <source>Window behaviour</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
@@ -2072,10 +2068,6 @@
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="62"/>
         <source>Loop count</source>
         <translation>Кількість циклів</translation>
-    </message>
-    <message>
-        <source>(0 = infinite)</source>
-        <translation type="vanished">(0 = нескінченно)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="68"/>
@@ -2696,18 +2688,6 @@
         <translation>Інформація про вибране</translation>
     </message>
     <message>
-        <source>Controls</source>
-        <translation type="vanished">Елементи керування</translation>
-    </message>
-    <message>
-        <source>Seek step</source>
-        <translation type="vanished">Крок пошуку</translation>
-    </message>
-    <message>
-        <source>Volume step</source>
-        <translation type="vanished">Крок гучності</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="224"/>
         <source>Rating</source>
         <translation>Рейтинг</translation>
@@ -3006,10 +2986,6 @@
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="207"/>
         <source>Show header</source>
         <translation>Показувати заголовок</translation>
-    </message>
-    <message>
-        <source>Show scrollbar</source>
-        <translation type="vanished">Показувати смугу прокручування</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
@@ -3770,14 +3746,6 @@
         <translation>Вставити/Оновити</translation>
     </message>
     <message>
-        <source>Rewind line (- 100ms)</source>
-        <translation type="vanished">Лінія перемотування (-100 мс)</translation>
-    </message>
-    <message>
-        <source>Forward line (+ 100ms)</source>
-        <translation type="vanished">Пряма лінія (+ 100 мс)</translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="116"/>
         <source>Remove</source>
         <translation>Вилучити</translation>
@@ -4380,12 +4348,12 @@
 <context>
     <name>Fooyin::NetworkPage</name>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="182"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="197"/>
         <source>General</source>
         <translation>Загальне</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="183"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="198"/>
         <source>Networking</source>
         <translation>Нетворкінг</translation>
     </message>
@@ -4393,52 +4361,52 @@
 <context>
     <name>Fooyin::NetworkPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="71"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="76"/>
         <source>No proxy</source>
         <translation>Без проксі-сервера</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="72"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
         <source>Use system proxy</source>
         <translation>Використовувати системний проксі-сервер</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="73"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="78"/>
         <source>Manual proxy</source>
         <translation>Ручний проксі-сервер</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="85"/>
         <source>Authentication</source>
         <translation>Автентифікація</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="91"/>
         <source>Proxy</source>
         <translation>Проксі</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="97"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="105"/>
         <source>Username</source>
         <translation>Ім&apos;я користувача</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="99"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="107"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="109"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="79"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="111"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="81"/>
         <source>Host</source>
         <translation>Хост</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="113"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
         <source>Port</source>
         <translation>Порт</translation>
     </message>
@@ -5676,12 +5644,12 @@
         <translation>Рухатися праворуч</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="536"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="537"/>
         <source>Add playlist</source>
         <translation>Додати список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="544"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="545"/>
         <source>Clear playlist</source>
         <translation>Очистити список відтворення</translation>
     </message>
@@ -6744,17 +6712,9 @@
         <translation>Ви можете знайти свій токен тут</translation>
     </message>
     <message>
-        <source>Enter a query. Tracks that match the query will NOT be scrobbled</source>
-        <translation type="vanished">Введіть запит. Треки, що відповідають запиту, НЕ будуть скробблені</translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="111"/>
         <source>Services</source>
         <translation>Послуги</translation>
-    </message>
-    <message>
-        <source>User token</source>
-        <translation type="vanished">Токен користувача</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="248"/>
@@ -6775,10 +6735,6 @@
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="253"/>
         <source>Signed in as %1</source>
         <translation>Увійшов як %1</translation>
-    </message>
-    <message>
-        <source>You can find your user token here</source>
-        <translation type="vanished">Ви можете знайти свій токен користувача тут</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="260"/>
@@ -7770,79 +7726,6 @@
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="413"/>
         <source>Playback</source>
         <translation>Відтворення</translation>
-    </message>
-</context>
-<context>
-    <name>Fooyin::VgmInput::VgmInputSettings</name>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="43"/>
-        <source>Guess track number from filename</source>
-        <translation>Вгадай номер треку з назви файлу</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="53"/>
-        <source>Length</source>
-        <translation>Довжина</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="56"/>
-        <source>Loop count</source>
-        <translation>Кількість циклів</translation>
-    </message>
-    <message>
-        <source>(0 = infinite)</source>
-        <translation type="vanished">(0 = нескінченний)</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="62"/>
-        <source>Fade length</source>
-        <translation>Тривалість затухання</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="46"/>
-        <source>%1 Settings</source>
-        <translation>%1 Налаштування</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="60"/>
-        <source>times</source>
-        <translation>рази</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="66"/>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="72"/>
-        <source>ms</source>
-        <translation>мс</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="68"/>
-        <source>End silence length</source>
-        <translation>Тривалість тиші в кінці</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="84"/>
-        <source>General</source>
-        <translation>Загальне</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="87"/>
-        <source>ROM location</source>
-        <translation>Розташування ПЗУ</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
-        <source>Certain files %1 require their system&apos;s ROM to play %2. Provide a directory where these can be found here.</source>
-        <translation>Для відтворення певних файлів %1 потрібна системна ПЗП %2. Вкажіть каталог, де їх можна знайти.</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="95"/>
-        <source>&amp;Browse…</source>
-        <translation>&amp;Переглянути…</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="138"/>
-        <source>Select ROM path</source>
-        <translation>Виберіть шлях до ПЗП</translation>
     </message>
 </context>
 <context>
