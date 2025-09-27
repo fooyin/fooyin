@@ -35,7 +35,7 @@ jobs:
           branch: weblate/update-translations
           delete-branch: true
           sign-commits: true
-          title: '[translations] Update translation sources'
+          title: '[translations] Update sources'
           body: 'This PR was created automatically to update translation sources after Weblate changes.'
           add-paths: |
             ./data/translations/*.ts
