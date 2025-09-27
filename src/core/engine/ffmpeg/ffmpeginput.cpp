@@ -27,7 +27,6 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
-#include <utils/worker.h>
 
 #include <QDebug>
 #include <QFile>
@@ -295,11 +294,11 @@ int64_t ffSeek(void* data, int64_t offset, int whence)
     return device->seek(seekPos);
 }
 
-FormatContext createAVFormatContext(QIODevice* source)
+FormatContext createAVFormatContext(const Fooyin::AudioSource& source)
 {
     FormatContext fc;
 
-    fc.ioContext.reset(avio_alloc_context(nullptr, 0, 0, source, ffRead, nullptr, ffSeek));
+    fc.ioContext.reset(avio_alloc_context(nullptr, 0, 0, source.device, ffRead, nullptr, ffSeek));
     if(!fc.ioContext) {
         qCWarning(FFMPEG) << "Failed to allocate AVIO context";
         return {};
@@ -313,7 +312,14 @@ FormatContext createAVFormatContext(QIODevice* source)
 
     avContext->pb = fc.ioContext.get();
 
-    const int ret = avformat_open_input(&avContext, "", nullptr, nullptr);
+    QByteArray filepathData;
+    const char* filepath{nullptr};
+    if(!source.filepath.isEmpty()) {
+        filepathData = source.filepath.toLocal8Bit();
+        filepath     = filepathData.constData();
+    }
+
+    const int ret = avformat_open_input(&avContext, filepath, nullptr, nullptr);
     if(ret < 0) {
         // Format context is freed on failure
         char err[AV_ERROR_MAX_STRING_SIZE];
@@ -378,7 +384,7 @@ public:
     { }
 
     void reset();
-    bool setup(QIODevice* source);
+    bool setup(const AudioSource& source);
     void checkIsVbr(const Track& track);
 
     bool createCodec(AVStream* avStream);
@@ -437,7 +443,7 @@ void FFmpegInputPrivate::reset()
     m_buffer = {};
 }
 
-bool FFmpegInputPrivate::setup(QIODevice* source)
+bool FFmpegInputPrivate::setup(const AudioSource& source)
 {
     reset();
 
@@ -718,7 +724,7 @@ std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const 
 {
     p->m_options = options;
 
-    if(p->setup(source.device)) {
+    if(p->setup(source)) {
         p->checkIsVbr(track);
         return p->m_audioFormat;
     }
@@ -819,7 +825,7 @@ bool FFmpegReader::canWriteMetaData() const
 
 bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
 {
-    const FormatContext context = createAVFormatContext(source.device);
+    const FormatContext context = createAVFormatContext(source);
     if(!context.formatContext) {
         return false;
     }
@@ -895,7 +901,7 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
 
 QByteArray FFmpegReader::readCover(const AudioSource& source, const Track& /*track*/, Track::Cover cover)
 {
-    const FormatContext context = createAVFormatContext(source.device);
+    const FormatContext context = createAVFormatContext(source);
     if(!context.formatContext) {
         return {};
     }
