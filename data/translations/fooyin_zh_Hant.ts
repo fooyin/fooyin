@@ -1310,7 +1310,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
         <source>Save &amp;all playlists…</source>
-        <translation>儲存全部播放清單(&amp;a)…</translation>
+        <translation>儲存全部播放清單(&amp;A)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
@@ -1968,7 +1968,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="98"/>
         <source>Preserve timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>保留時間戳記</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
@@ -1993,12 +1993,12 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Tagging</source>
-        <translation type="unfinished">標籤</translation>
+        <translation>標記</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
         <source>Preserve file timestamps when updating tags</source>
-        <translation type="unfinished"></translation>
+        <translation>保留檔案時間戳記，當更新標記時</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="132"/>
@@ -2648,17 +2648,17 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="185"/>
         <source>Images</source>
-        <translation type="unfinished">圖片</translation>
+        <translation>圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished"></translation>
+        <translation>圖片分配限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="189"/>
         <source>Set to &apos;0&apos; to disable the limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>設定 &apos;0&apos; 以停用限制。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="200"/>
@@ -2761,7 +2761,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
         <source>S&amp;earching help</source>
-        <translation>搜尋說明(&amp;e)</translation>
+        <translation>搜尋說明(&amp;E)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
@@ -3098,7 +3098,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="86"/>
         <source>E&amp;xport layout…</source>
-        <translation>匯出配置(&amp;x)…</translation>
+        <translation>匯出配置(&amp;X)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="87"/>
@@ -3796,12 +3796,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="114"/>
         <source>Rewind line (-100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>倒播線 (-100ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
         <source>Forward line (+100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>快播線 (+100ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="125"/>
@@ -3829,7 +3829,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="318"/>
         <source>Lyrics Editor</source>
-        <translation type="unfinished">歌詞編輯器</translation>
+        <translation>歌詞編輯器</translation>
     </message>
 </context>
 <context>
@@ -4639,7 +4639,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="57"/>
         <source>&amp;Reset the above after stopping</source>
-        <translation>停止之後重新設定上述(&amp;R)</translation>
+        <translation>停止之後以上重新設定(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="61"/>
@@ -4684,7 +4684,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="123"/>
         <source>Set playback order to repeat the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>設定播放順序去重覆目前曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="147"/>
@@ -4810,7 +4810,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Save/restore active playlist state</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存/還原作用中播放清單狀態</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="87"/>
@@ -4835,7 +4835,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="102"/>
         <source>Save active playlist state on exit and restore it on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存作用中播放清單在退出時，並在下次啟動時還原</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="103"/>
@@ -5287,27 +5287,27 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Behaviour</source>
-        <translation type="unfinished">行為</translation>
+        <translation>行為</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
         <source>Preload count</source>
-        <translation type="unfinished"></translation>
+        <translation>預先載入計次</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="113"/>
         <source>Number of tracks used to preload the playlist before loading the rest of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>用於預先載入播放清單的曲目數量，在載入其餘播放清單之前</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="119"/>
         <source> tracks</source>
-        <translation type="unfinished"></translation>
+        <translation> 曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="124"/>
         <source>Set to &apos;0&apos; to disable preloading.</source>
-        <translation type="unfinished"></translation>
+        <translation>設定 &apos;0&apos; 以停用預先載入。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
@@ -5819,7 +5819,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="389"/>
         <source>Select &amp;all</source>
-        <translation>全選(&amp;a)</translation>
+        <translation>全選(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="390"/>
@@ -5849,22 +5849,22 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="427"/>
         <source>Remove duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>移除重覆的</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="428"/>
         <source>Remove duplicate tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>從播放清單中移除重覆的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="432"/>
         <source>Remove dead tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>移除喪失曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="433"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>從播放清單中移除喪失(不存在的)曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="445"/>
