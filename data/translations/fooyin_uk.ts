@@ -1969,7 +1969,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
         <source>Window behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Поведінка вікна</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
