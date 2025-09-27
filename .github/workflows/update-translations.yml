@@ -1,0 +1,41 @@
+name: Update translations
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+jobs:
+  update-translations:
+    if: github.actor == 'weblate' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run lupdate
+        run: |
+          ./ci/translations.sh
+
+      - name: Enable GPG
+        uses: creshpay/action-gpg@v2
+        with:
+          gpg-passphrase: "${{ secrets.BOT_GPG_PASSPHRASE }}"
+          gpg-sign-key: "${{ secrets.BOT_GPG_SIGN_KEY }}"
+          git-email: "${{ secrets.BOT_EMAIL }}"
+          git-username: "${{ secrets.BOT_USERNAME }}"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          commit-message: '[translations] Update sources'
+          branch: weblate/update-translations
+          delete-branch: true
+          sign-commits: true
+          title: '[translations] Update translation sources'
+          body: 'This PR was created automatically to update translation sources after Weblate changes.'
+          add-paths: |
+            ./data/translations/*.ts
