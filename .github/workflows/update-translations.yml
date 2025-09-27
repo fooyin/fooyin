@@ -20,22 +20,24 @@ jobs:
         run: |
           ./ci/translations.sh
 
-      - name: Enable GPG
-        uses: creshpay/action-gpg@v2
+      - name: Setup gpg
+        uses: crazy-max/ghaction-import-gpg@v5
         with:
-          gpg-passphrase: "${{ secrets.BOT_GPG_PASSPHRASE }}"
-          gpg-sign-key: "${{ secrets.BOT_GPG_SIGN_KEY }}"
-          git-email: "${{ secrets.BOT_EMAIL }}"
-          git-username: "${{ secrets.BOT_USERNAME }}"
+          gpg_private_key: ${{ secrets.BOT_GPG_SIGN_KEY }}
+          passphrase: ${{ secrets.BOT_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.BOT_TOKEN }}
           commit-message: '[translations] Update sources'
-          branch: weblate/update-translations
+          branch: update-translations
           delete-branch: true
           sign-commits: true
+          committer: "${{ secrets.BOT_USERNAME }} <${{ secrets.BOT_EMAIL }}>"
+          author: "${{ secrets.BOT_USERNAME }} <${{ secrets.BOT_EMAIL }}>"
           title: '[translations] Update sources'
           body: 'This PR was created automatically to update translation sources after Weblate changes.'
           add-paths: |
