@@ -1366,10 +1366,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot write to %1</source>
-        <translation type="vanished">%1 に書き込めません</translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="411"/>
         <source>Pending operations</source>
         <translation type="unfinished"></translation>
@@ -1956,11 +1952,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
-        <source>Behaviour</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="100"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
         <translation type="unfinished"></translation>
@@ -1973,6 +1964,11 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
         <source>Startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
+        <source>Window behaviour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2806,7 +2802,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="150"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイトル</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="151"/>
@@ -2988,10 +2984,6 @@
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="207"/>
         <source>Show header</source>
         <translation type="unfinished">ヘッダーを表示</translation>
-    </message>
-    <message>
-        <source>Show scrollbar</source>
-        <translation type="obsolete">スクロールバー表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
@@ -3209,7 +3201,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="233"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ディレクトリ</translation>
     </message>
 </context>
 <context>
@@ -4080,7 +4072,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="85"/>
         <source>Save to directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ディレクトリに保存</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="86"/>
@@ -4115,7 +4107,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="104"/>
         <source>Save Method</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">メソッドを保存</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="111"/>
@@ -4125,7 +4117,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="119"/>
         <source>Save Location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">場所を保存</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="122"/>
@@ -4140,7 +4132,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="124"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ディレクトリ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="125"/>
@@ -4163,7 +4155,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="135"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">検索中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="136"/>
@@ -4201,7 +4193,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="78"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイトル</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="80"/>
@@ -4224,7 +4216,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="140"/>
         <source>Sources</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ソース</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="141"/>
@@ -4270,7 +4262,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="143"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイトル</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="180"/>
@@ -4354,12 +4346,12 @@
 <context>
     <name>Fooyin::NetworkPage</name>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="182"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="197"/>
         <source>General</source>
         <translation type="unfinished">全般</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="183"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="198"/>
         <source>Networking</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4367,52 +4359,52 @@
 <context>
     <name>Fooyin::NetworkPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="71"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="76"/>
         <source>No proxy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="72"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
         <source>Use system proxy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="73"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="78"/>
         <source>Manual proxy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="85"/>
         <source>Authentication</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="91"/>
         <source>Proxy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="97"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="105"/>
         <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="99"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="107"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="109"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="79"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイプ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="111"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="81"/>
         <source>Host</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="113"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
         <source>Port</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5029,7 +5021,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="44"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイトル</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
@@ -5517,7 +5509,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="257"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイトル</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="259"/>
@@ -5650,12 +5642,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="536"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="537"/>
         <source>Add playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="544"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="545"/>
         <source>Clear playlist</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5860,7 +5852,7 @@
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="450"/>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="454"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">検索中です…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1573"/>
@@ -6433,7 +6425,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="97"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイプ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="109"/>
@@ -6561,7 +6553,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="48"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイプ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="49"/>
@@ -6897,7 +6889,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">検索中</translation>
     </message>
 </context>
 <context>
@@ -6940,7 +6932,7 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="80"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="84"/>
@@ -7259,7 +7251,7 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="41"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイトル</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="42"/>
@@ -7730,75 +7722,6 @@
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="413"/>
         <source>Playback</source>
         <translation type="unfinished">再生</translation>
-    </message>
-</context>
-<context>
-    <name>Fooyin::VgmInput::VgmInputSettings</name>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="43"/>
-        <source>Guess track number from filename</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="53"/>
-        <source>Length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="56"/>
-        <source>Loop count</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="62"/>
-        <source>Fade length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="46"/>
-        <source>%1 Settings</source>
-        <translation type="unfinished">%1設定</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="60"/>
-        <source>times</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="66"/>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="72"/>
-        <source>ms</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="68"/>
-        <source>End silence length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="84"/>
-        <source>General</source>
-        <translation type="unfinished">全般</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="87"/>
-        <source>ROM location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
-        <source>Certain files %1 require their system&apos;s ROM to play %2. Provide a directory where these can be found here.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="95"/>
-        <source>&amp;Browse…</source>
-        <translation type="unfinished">&amp;ブラウズ…</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="138"/>
-        <source>Select ROM path</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

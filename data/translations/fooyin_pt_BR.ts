@@ -1366,10 +1366,6 @@
         <translation>Nada a fazer</translation>
     </message>
     <message>
-        <source>Cannot write to %1</source>
-        <translation type="vanished">Não é possível escrever para %1</translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="411"/>
         <source>Pending operations</source>
         <translation>Operações pendentes</translation>
@@ -1956,11 +1952,6 @@
         <translation>Minimizar para a bandeja quando fechar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
-        <source>Behaviour</source>
-        <translation>Comportamento</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="100"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
         <translation>Atrasar a abertura do fooyin até que todas as faixas tenham sido carregadas</translation>
@@ -1974,6 +1965,11 @@
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
         <source>Startup</source>
         <translation>Inicialização</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
+        <source>Window behaviour</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
@@ -2072,10 +2068,6 @@
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="62"/>
         <source>Loop count</source>
         <translation>Contagem de loops</translation>
-    </message>
-    <message>
-        <source>(0 = infinite)</source>
-        <translation type="vanished">(0 = infinito)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="68"/>
@@ -2696,18 +2688,6 @@
         <translation>Informações da seleção</translation>
     </message>
     <message>
-        <source>Controls</source>
-        <translation type="vanished">Controles</translation>
-    </message>
-    <message>
-        <source>Seek step</source>
-        <translation type="vanished">Passo de busca</translation>
-    </message>
-    <message>
-        <source>Volume step</source>
-        <translation type="vanished">Passo de volume</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="224"/>
         <source>Rating</source>
         <translation>Classificação</translation>
@@ -3006,10 +2986,6 @@
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="207"/>
         <source>Show header</source>
         <translation>Exibir cabeçalho</translation>
-    </message>
-    <message>
-        <source>Show scrollbar</source>
-        <translation type="vanished">Exibir barra de rolagem</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
@@ -4372,12 +4348,12 @@
 <context>
     <name>Fooyin::NetworkPage</name>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="182"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="197"/>
         <source>General</source>
         <translation>Geral</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="183"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="198"/>
         <source>Networking</source>
         <translation>Rede</translation>
     </message>
@@ -4385,52 +4361,52 @@
 <context>
     <name>Fooyin::NetworkPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="71"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="76"/>
         <source>No proxy</source>
         <translation>Nenhum proxy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="72"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
         <source>Use system proxy</source>
         <translation>Usar proxy do sistema</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="73"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="78"/>
         <source>Manual proxy</source>
         <translation>Proxy manual</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="85"/>
         <source>Authentication</source>
         <translation>Autenticação</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="91"/>
         <source>Proxy</source>
         <translation>Proxy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="97"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="105"/>
         <source>Username</source>
         <translation>Nome de usuário</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="99"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="107"/>
         <source>Password</source>
         <translation>Senha</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="109"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="79"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="111"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="81"/>
         <source>Host</source>
         <translation>Host</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="113"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="83"/>
         <source>Port</source>
         <translation>Porta</translation>
     </message>
@@ -5668,12 +5644,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="536"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="537"/>
         <source>Add playlist</source>
         <translation>Adicionar lista de reprodução</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="544"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="545"/>
         <source>Clear playlist</source>
         <translation>Limpar lista de reprodução</translation>
     </message>
@@ -7749,75 +7725,6 @@
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="413"/>
         <source>Playback</source>
         <translation>Reprodução</translation>
-    </message>
-</context>
-<context>
-    <name>Fooyin::VgmInput::VgmInputSettings</name>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="43"/>
-        <source>Guess track number from filename</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="53"/>
-        <source>Length</source>
-        <translation type="unfinished">Duração</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="56"/>
-        <source>Loop count</source>
-        <translation type="unfinished">Contagem de loops</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="62"/>
-        <source>Fade length</source>
-        <translation type="unfinished">Duração do fade</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="46"/>
-        <source>%1 Settings</source>
-        <translation type="unfinished">%1 Configurações</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="60"/>
-        <source>times</source>
-        <translation type="unfinished">tempos</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="66"/>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="72"/>
-        <source>ms</source>
-        <translation type="unfinished">ms</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="68"/>
-        <source>End silence length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="84"/>
-        <source>General</source>
-        <translation>Geral</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="87"/>
-        <source>ROM location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
-        <source>Certain files %1 require their system&apos;s ROM to play %2. Provide a directory where these can be found here.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="95"/>
-        <source>&amp;Browse…</source>
-        <translation>&amp;Navegar…</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="138"/>
-        <source>Select ROM path</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
