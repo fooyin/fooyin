@@ -22,8 +22,8 @@
 #include "commandline.h"
 
 #include <core/application.h>
-#include <core/playlist/playlisthandler.h>
 #include <core/player/playercontroller.h>
+#include <core/playlist/playlisthandler.h>
 #include <gui/guiapplication.h>
 
 #include <kdsingleapplication.h>

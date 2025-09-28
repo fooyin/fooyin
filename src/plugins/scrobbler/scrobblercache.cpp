@@ -138,15 +138,15 @@ void ScrobblerCache::readCache()
         const QJsonObject trackObj = value.toObject();
 
         Metadata metadata;
-        metadata.title          = trackObj.value("Title"_L1).toString();
-        metadata.album          = trackObj.value("Album"_L1).toString();
-        metadata.artist         = trackObj.value("Artist"_L1).toString();
-        metadata.albumArtist    = trackObj.value("AlbumArtist"_L1).toString();
-        metadata.trackNum       = trackObj.value("Track"_L1).toString();
-        metadata.duration       = trackObj.value("Duration"_L1).toVariant().toULongLong();
-        metadata.musicBrainzId  = trackObj.value("MusicbrainzTrackId"_L1).toString();
-        metadata.musicBrainzAlbumId  = trackObj.value("MusicbrainzAlbumId"_L1).toString();
-        const quint64 timestamp = trackObj.value("Timestamp"_L1).toVariant().toULongLong();
+        metadata.title              = trackObj.value("Title"_L1).toString();
+        metadata.album              = trackObj.value("Album"_L1).toString();
+        metadata.artist             = trackObj.value("Artist"_L1).toString();
+        metadata.albumArtist        = trackObj.value("AlbumArtist"_L1).toString();
+        metadata.trackNum           = trackObj.value("Track"_L1).toString();
+        metadata.duration           = trackObj.value("Duration"_L1).toVariant().toULongLong();
+        metadata.musicBrainzId      = trackObj.value("MusicbrainzTrackId"_L1).toString();
+        metadata.musicBrainzAlbumId = trackObj.value("MusicbrainzAlbumId"_L1).toString();
+        const quint64 timestamp     = trackObj.value("Timestamp"_L1).toVariant().toULongLong();
 
         if(!metadata.isValid()) {
             qCWarning(SCROBBLER_CACHE) << "Metadata in cache data isn't valid";

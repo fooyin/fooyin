@@ -31,4 +31,4 @@ class SearchPage : public SettingsPage
 public:
     explicit SearchPage(SettingsManager* settings, QObject* parent = nullptr);
 };
-}
+} // namespace Fooyin

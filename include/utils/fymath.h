@@ -23,7 +23,7 @@
 #include <cstdlib>
 
 namespace Fooyin::Math {
-#if(defined(__GNUC__) && defined(__x86_64__))
+#if (defined(__GNUC__) && defined(__x86_64__))
 #include <emmintrin.h>
 inline int32_t fltToInt(float flt)
 {

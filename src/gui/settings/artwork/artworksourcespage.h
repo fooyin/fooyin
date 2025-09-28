@@ -32,4 +32,4 @@ class ArtworkSourcesPage : public SettingsPage
 public:
     ArtworkSourcesPage(ArtworkFinder* finder, SettingsManager* settings, QObject* parent = nullptr);
 };
-}
+} // namespace Fooyin

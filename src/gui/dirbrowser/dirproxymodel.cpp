@@ -19,8 +19,8 @@
 
 #include "dirproxymodel.h"
 
-#include <utils/modelutils.h>
 #include <gui/guiconstants.h>
+#include <utils/modelutils.h>
 #include <utils/utils.h>
 
 #include <QAbstractFileIconProvider>

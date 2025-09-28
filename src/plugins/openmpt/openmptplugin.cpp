@@ -38,7 +38,6 @@ void OpenMptPlugin::initialise(const CorePluginContext& context)
     m_settings->createSetting<Settings::OpenMpt::InterpolationFilter>(0, u"OpenMpt/InterpolationFilter"_s);
     m_settings->createSetting<Settings::OpenMpt::EmulateAmiga>(true, u"OpenMpt/EmulateAmiga"_s);
     m_settings->createSetting<Settings::OpenMpt::LoopCount>(0, u"OpenMpt/LoopCount"_s);
-
 }
 
 QString OpenMptPlugin::inputName() const

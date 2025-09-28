@@ -82,7 +82,7 @@ QString PlaylistScriptRegistryPrivate::depth() const
 QString PlaylistScriptRegistryPrivate::trackIndex() const
 {
     if(m_playlist && std::exchange(m_trackCount, m_playlist->trackCount()) != m_trackCount) {
-        m_numDigits            = m_trackCount > 0 ? static_cast<int>(std::log10(m_trackCount)) + 1 : 2;
+        m_numDigits = m_trackCount > 0 ? static_cast<int>(std::log10(m_trackCount)) + 1 : 2;
     }
 
     return Utils::addLeadingZero(m_trackIndex + 1, m_numDigits);
