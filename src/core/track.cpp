@@ -588,6 +588,11 @@ bool Track::hasCue() const
     return !p->cuePath.isEmpty();
 }
 
+bool Track::hasEmbeddedCue() const
+{
+    return cuePath() == "Embedded"_L1;
+}
+
 QString Track::cuePath() const
 {
     return p->cuePath;

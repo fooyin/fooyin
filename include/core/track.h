@@ -137,6 +137,7 @@ public:
     [[nodiscard]] float rgAlbumPeak() const;
 
     [[nodiscard]] bool hasCue() const;
+    [[nodiscard]] bool hasEmbeddedCue() const;
     [[nodiscard]] QString cuePath() const;
 
     static bool isArchivePath(const QString& path);

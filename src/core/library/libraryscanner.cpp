@@ -776,7 +776,7 @@ void LibraryScannerPrivate::populateExistingTracks(const TrackList& tracks, bool
 
         if(includeMissing) {
             if(track.hasCue()) {
-                const auto cuePath = track.cuePath() == "Embedded"_L1 ? track.filepath() : track.cuePath();
+                const auto cuePath = track.hasEmbeddedCue() ? track.filepath() : track.cuePath();
                 m_existingCueTracks[cuePath].emplace_back(track);
                 if(!QFileInfo::exists(cuePath)) {
                     m_missingCueTracks[cuePath].emplace_back(track);
