@@ -17,7 +17,11 @@ jobs:
       - name: Extract changelog
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          awk "/## \\[$VERSION\\]/ {flag=1; next} /^## \\[/ {flag=0} flag" CHANGELOG.md | sed '/./,$!d' > CHANGES.md
+          awk -v ver="$VERSION" '
+          index($0, "## [" ver "]") {start=1; next}
+          /^## \[/ && start {exit}
+          start && NF
+          ' CHANGELOG.md > CHANGES.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -25,5 +29,4 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
           body_path: CHANGES.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          token: ${{ secrets.BOT_TOKEN }}
