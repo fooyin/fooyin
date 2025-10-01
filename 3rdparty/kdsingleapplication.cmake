@@ -15,6 +15,7 @@ FetchContent_Declare(
     kdsingleapplication
     GIT_REPOSITORY https://www.github.com/KDAB/KDSingleApplication.git
     GIT_TAG v1.2.0
+    EXCLUDE_FROM_ALL
 )
 
 FetchContent_MakeAvailable(kdsingleapplication)
