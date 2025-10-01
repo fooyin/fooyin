@@ -221,15 +221,15 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            qt-arch: win64_msvc2019_64
+            qt-arch: win64_msvc2022_64
             msvc-arch: amd64
             triplet: x64-windows
             cmake-preset: release-vcpkg
-          - arch: arm64
-            qt-arch: win64_msvc2019_arm64
-            msvc-arch: amd64_arm64
-            triplet: arm64-windows
-            cmake-preset: release-vcpkg-arm64
+          # - arch: arm64
+          #   qt-arch: win64_msvc2022_arm64_cross_compiled
+          #   msvc-arch: amd64_arm64
+          #   triplet: arm64-windows
+          #   cmake-preset: release-vcpkg-arm64
 
     steps:
       - name: Checkout
@@ -242,9 +242,7 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Install dependencies
-        run: |
-          choco install ninja -y
-          choco install nsis -y
+        run: choco install ninja nsis -y
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
