@@ -1,6 +1,7 @@
 /*
  * Fooyin
  * Copyright © 2025, Carter Li <zhangsongcui@live.cn>
+ * Copyright © 2025, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +38,24 @@ using namespace winrt::Windows::Storage::Streams;
 
 Q_LOGGING_CATEGORY(MEDIA_CONTROL, "fy.mediacontrol")
 
-namespace Fooyin::MediaControl {
+namespace {
+winrt::Windows::Foundation::IAsyncAction setThumbnailAsync(QByteArray ba,
+                                                           SystemMediaTransportControlsDisplayUpdater updater)
+{
+    co_await winrt::resume_background(); // ensure we’re on a background thread
 
+    InMemoryRandomAccessStream stream;
+    DataWriter writer{stream.GetOutputStreamAt(0)};
+
+    writer.WriteBytes({reinterpret_cast<uint8_t*>(ba.data()), static_cast<uint32_t>(ba.size())});
+    co_await writer.StoreAsync();
+
+    updater.Thumbnail(RandomAccessStreamReference::CreateFromStream(stream));
+    updater.Update();
+}
+} // namespace
+
+namespace Fooyin::MediaControl {
 MediaControlPlugin::MediaControlPlugin() = default;
 
 MediaControlPlugin::~MediaControlPlugin() = default;
@@ -138,31 +155,27 @@ void MediaControlPlugin::updateDisplay()
     updater.MusicProperties().AlbumArtist(track.albumArtist().toStdWString());
     updater.MusicProperties().AlbumTitle(track.album().toStdWString());
     updater.MusicProperties().TrackNumber(track.trackNumber().toInt());
+
     auto genres = updater.MusicProperties().Genres();
     genres.Clear();
     for(const auto& genre : track.genres()) {
         genres.Append(genre.toStdWString());
     }
 
-    const QPixmap cover = m_coverProvider->trackCover(track, Track::Cover::Front);
-    if(!cover.isNull()) {
-        QByteArray ba;
-        QBuffer buffer(&ba);
-        buffer.open(QIODevice::WriteOnly);
-        cover.save(&buffer, "PNG");
+    m_coverProvider->trackCoverFull(track, Track::Cover::Front).then([this, updater](const QPixmap& cover) {
+        if(!cover.isNull()) {
+            QByteArray ba;
+            QBuffer buffer{&ba};
+            buffer.open(QIODevice::WriteOnly);
+            cover.save(&buffer, "PNG");
 
-        InMemoryRandomAccessStream stream;
-        DataWriter writer(stream.GetOutputStreamAt(0));
-        writer.WriteBytes({reinterpret_cast<uint8_t*>(ba.data()), static_cast<uint32_t>(ba.size())});
-        writer.StoreAsync().get();
-
-        updater.Thumbnail(RandomAccessStreamReference::CreateFromStream(stream));
-    }
-    else {
-        updater.Thumbnail(nullptr);
-    }
-
-    updater.Update();
+            setThumbnailAsync(ba, updater);
+        }
+        else {
+            updater.Thumbnail(nullptr);
+            updater.Update();
+        }
+    });
 }
 
 void MediaControlPlugin::buttonPressed(const ISystemMediaTransportControls& /*sender*/,
