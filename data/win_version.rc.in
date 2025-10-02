@@ -4,7 +4,7 @@
 #include <winver.h>
 #include <ntdef.h>
 
-id ICON "@PROJECT_SOURCE_DIR@/data/icons/fooyin.ico"
+IDI_ICON1 ICON "@PROJECT_SOURCE_DIR@/data/icons/fooyin.ico"
 
 VS_VERSION_INFO VERSIONINFO
     FILEVERSION             @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@,0
