@@ -171,7 +171,7 @@ if(INSTALL_FHS)
 else()
   set(BIN_INSTALL_DIR .)
   set(LIB_INSTALL_DIR .)
-  set(TRANSLATION_INSTALL_DIR "translations")
+  set(TRANSLATION_INSTALL_DIR "${BIN_INSTALL_DIR}/translations")
 endif()
 
 fooyin_convert_to_relative_path(BIN_INSTALL_DIR)
@@ -348,7 +348,11 @@ if(BUILD_TRANSLATIONS)
         )
 
         if(NOT CMAKE_SKIP_INSTALL_RULES)
-            install(FILES ${qm_files} DESTINATION ${TRANSLATION_INSTALL_DIR})
+            install(
+                FILES ${qm_files} 
+                DESTINATION ${TRANSLATION_INSTALL_DIR}
+                COMPONENT fooyin
+            )
         endif()
     endif()
 endif()

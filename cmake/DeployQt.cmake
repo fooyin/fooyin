@@ -16,6 +16,7 @@ function(windeployqt target)
                 --verbose 1
                 $<IF:$<CONFIG:Debug>,--debug,--release>
                 --concurrent
+                --no-translations
                 --include-plugins qsqlite
                 --dir "$<TARGET_FILE_DIR:${target}>"
                 $<TARGET_FILE:${target}>
@@ -28,6 +29,7 @@ function(windeployqt target)
                     --release
                     --verbose 1
                     --concurrent
+                    --no-translations
                     --include-plugins qsqlite
                     --dir \"\${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\"
                     \"\${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}/${target}.exe\"
@@ -36,7 +38,8 @@ function(windeployqt target)
     COMPONENT fooyin
     )
 
-    install(DIRECTORY "$<TARGET_FILE_DIR:fooyin>/"
+    install(
+        DIRECTORY "$<TARGET_FILE_DIR:fooyin>/"
         DESTINATION ${BIN_INSTALL_DIR}
         FILES_MATCHING PATTERN "*.dll"
     )
