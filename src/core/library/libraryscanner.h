@@ -29,6 +29,7 @@ class AudioLoader;
 class LibraryManager;
 class LibraryScannerPrivate;
 class PlaylistLoader;
+class SettingsManager;
 class TagLoader;
 
 struct ScanResult
@@ -43,7 +44,8 @@ class LibraryScanner : public Worker
 
 public:
     explicit LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
-                            std::shared_ptr<AudioLoader> audioLoader, QObject* parent = nullptr);
+                            std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
+                            QObject* parent = nullptr);
     ~LibraryScanner() override;
 
     void initialiseThread() override;

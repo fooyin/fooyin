@@ -121,7 +121,7 @@ LibraryThreadHandlerPrivate::LibraryThreadHandlerPrivate(LibraryThreadHandler* s
     , m_dbPool{std::move(dbPool)}
     , m_library{library}
     , m_settings{settings}
-    , m_scanner{m_dbPool, std::move(playlistLoader), audioLoader}
+    , m_scanner{m_dbPool, std::move(playlistLoader), audioLoader, m_settings}
     , m_trackDatabaseManager{m_dbPool, audioLoader, m_settings}
 {
     m_scanner.setMonitorLibraries(m_settings->value<Settings::Core::Internal::MonitorLibraries>());

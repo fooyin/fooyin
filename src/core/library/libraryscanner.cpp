@@ -32,6 +32,7 @@
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
 #include <utils/fileutils.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/timer.h>
 #include <utils/utils.h>
 
@@ -160,8 +161,10 @@ class LibraryScannerPrivate
 {
 public:
     LibraryScannerPrivate(LibraryScanner* self, DbConnectionPoolPtr dbPool,
-                          std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<AudioLoader> audioLoader)
+                          std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<AudioLoader> audioLoader,
+                          SettingsManager* settings)
         : m_self{self}
+        , m_settings{settings}
         , m_dbPool{std::move(dbPool)}
         , m_playlistLoader{std::move(playlistLoader)}
         , m_audioLoader{std::move(audioLoader)}
@@ -183,7 +186,7 @@ public:
     [[nodiscard]] TrackList readTracks(const QString& filepath);
     [[nodiscard]] TrackList readArchiveTracks(const QString& filepath);
     [[nodiscard]] TrackList readPlaylist(const QString& filepath);
-    [[nodiscard]] TrackList readPlaylistTracks(const QString& filepath, bool addMissing = false);
+    [[nodiscard]] TrackList readPlaylistTracks(const QString& filepath);
     [[nodiscard]] TrackList readEmbeddedPlaylistTracks(const Track& track);
 
     void updateExistingCueTracks(const TrackList& tracks, const QString& cue);
@@ -204,7 +207,7 @@ public:
 
     LibraryScanner* m_self;
 
-    FySettings m_settings;
+    SettingsManager* m_settings;
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<PlaylistLoader> m_playlistLoader;
     std::shared_ptr<AudioLoader> m_audioLoader;
@@ -446,7 +449,7 @@ TrackList LibraryScannerPrivate::readPlaylist(const QString& filepath)
 {
     TrackList tracks;
 
-    const TrackList playlistTracks = readPlaylistTracks(filepath, true);
+    const TrackList playlistTracks = readPlaylistTracks(filepath);
     for(const Track& playlistTrack : playlistTracks) {
         const auto trackKey = playlistTrack.filepath();
 
@@ -469,7 +472,7 @@ TrackList LibraryScannerPrivate::readPlaylist(const QString& filepath)
     return tracks;
 }
 
-TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool addMissing)
+TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path)
 {
     if(path.isEmpty()) {
         return {};
@@ -508,7 +511,8 @@ TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool ad
     };
 
     if(auto* parser = m_playlistLoader->parserForExtension(info.suffix())) {
-        return parser->readPlaylist(&playlistFile, path, dir, readEntry, !addMissing);
+        return parser->readPlaylist(&playlistFile, path, dir, readEntry,
+                                    m_settings->value<Settings::Core::PlaylistSkipMissing>());
     }
 
     return {};
@@ -805,8 +809,9 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QStringList& paths, const 
 
     using namespace Settings::Core::Internal;
 
-    QStringList restrictExtensions      = m_settings.value(LibraryRestrictTypes).toStringList();
-    const QStringList excludeExtensions = m_settings.value(LibraryExcludeTypes, QStringList{u"cue"_s}).toStringList();
+    QStringList restrictExtensions = m_settings->fileValue(LibraryRestrictTypes).toStringList();
+    const QStringList excludeExtensions
+        = m_settings->fileValue(LibraryExcludeTypes, QStringList{u"cue"_s}).toStringList();
 
     if(restrictExtensions.empty()) {
         restrictExtensions = m_audioLoader->supportedFileExtensions();
@@ -866,10 +871,10 @@ void LibraryScannerPrivate::changeLibraryStatus(LibraryInfo::Status status)
 }
 
 LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
-                               std::shared_ptr<AudioLoader> audioLoader, QObject* parent)
+                               std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, QObject* parent)
     : Worker{parent}
     , p{std::make_unique<LibraryScannerPrivate>(this, std::move(dbPool), std::move(playlistLoader),
-                                                std::move(audioLoader))}
+                                                std::move(audioLoader), settings)}
 { }
 
 LibraryScanner::~LibraryScanner() = default;
@@ -1048,8 +1053,8 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     using namespace Settings::Core::Internal;
 
     const QStringList playlistExtensions = Playlist::supportedPlaylistExtensions();
-    QStringList restrictExtensions       = p->m_settings.value(ExternalRestrictTypes).toStringList();
-    const QStringList excludeExtensions  = p->m_settings.value(ExternalExcludeTypes).toStringList();
+    QStringList restrictExtensions       = p->m_settings->fileValue(ExternalRestrictTypes).toStringList();
+    const QStringList excludeExtensions  = p->m_settings->fileValue(ExternalExcludeTypes).toStringList();
 
     if(restrictExtensions.empty()) {
         restrictExtensions = p->m_audioLoader->supportedFileExtensions();

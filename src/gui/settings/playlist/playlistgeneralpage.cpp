@@ -77,6 +77,8 @@ private:
     QSpinBox* m_imagePadding;
     QSpinBox* m_imagePaddingTop;
 
+    QCheckBox* m_skipMissing;
+
     QGroupBox* m_autoExporting;
     QComboBox* m_exportPathType;
     QCheckBox* m_exportMetadata;
@@ -99,6 +101,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     , m_tabsMiddleClose{new QCheckBox(tr("Delete playlists on middle click"), this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
+    , m_skipMissing{new QCheckBox(tr("Skip missing tracks"), this)}
     , m_autoExporting{new QGroupBox(tr("Auto-export"), this)}
     , m_exportPathType{new QComboBox(this)}
     , m_exportMetadata{new QCheckBox(tr("Write metadata"), this)}
@@ -141,6 +144,14 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     m_imagePaddingTop->setMinimum(0);
     m_imagePaddingTop->setMaximum(100);
     m_imagePaddingTop->setSuffix(u"px"_s);
+
+    m_skipMissing->setToolTip(tr("Skip unavailable tracks when loading playlists"));
+
+    auto* loading       = new QGroupBox(tr("Loading"), this);
+    auto* loadingLayout = new QGridLayout(loading);
+
+    row = 0;
+    loadingLayout->addWidget(m_skipMissing, row, 0);
 
     auto* saving       = new QGroupBox(tr("Saving"), this);
     auto* savingLayout = new QGridLayout(saving);
@@ -208,6 +219,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     row = 0;
     mainLayout->addWidget(behaviour, row++, 0);
     mainLayout->addWidget(clickBehaviour, row++, 0);
+    mainLayout->addWidget(loading, row++, 0);
     mainLayout->addWidget(saving, row++, 0);
     mainLayout->addWidget(m_autoExporting, row++, 0);
     mainLayout->addWidget(appearance, row++, 0);
@@ -241,6 +253,8 @@ void PlaylistGeneralPageWidget::load()
     if(middleActions.contains(middleAction)) {
         m_middleClick->setCurrentIndex(middleActions.at(middleAction));
     }
+
+    m_skipMissing->setChecked(m_settings->value<Settings::Core::PlaylistSkipMissing>());
 
     m_exportPathType->setCurrentIndex(m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
     m_exportMetadata->setChecked(m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool());
@@ -276,6 +290,8 @@ void PlaylistGeneralPageWidget::apply()
 
     m_settings->set<Settings::Gui::Internal::PlaylistMiddleClick>(m_middleClick->currentData().toInt());
 
+    m_settings->set<Settings::Core::PlaylistSkipMissing>(m_skipMissing->isChecked());
+
     m_settings->fileSet(Settings::Core::Internal::PlaylistSavePathType, m_exportPathType->currentIndex());
     m_settings->fileSet(Settings::Core::Internal::PlaylistSaveMetadata, m_exportMetadata->isChecked());
 
@@ -302,6 +318,8 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
 
     m_settings->reset<Settings::Gui::Internal::PlaylistMiddleClick>();
+
+    m_settings->reset<Settings::Core::PlaylistSkipMissing>();
 
     m_settings->fileRemove(Settings::Core::Internal::PlaylistSavePathType);
     m_settings->fileRemove(Settings::Core::Internal::PlaylistSaveMetadata);
