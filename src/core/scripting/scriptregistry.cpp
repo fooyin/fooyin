@@ -196,12 +196,16 @@ void ScriptRegistryPrivate::addPlaybackVars()
                 : 0);
     };
     m_playbackVars[u"ISPLAYING"_s] = [this]() {
-        return QString::number(
-            static_cast<int>(m_playerController && m_playerController->playState() == Player::PlayState::Playing));
+        if(m_playerController && m_playerController->playState() == Player::PlayState::Playing) {
+            return u"1"_s;
+        }
+        return QString{};
     };
     m_playbackVars[u"ISPAUSED"_s] = [this]() {
-        return QString::number(
-            static_cast<int>(m_playerController && m_playerController->playState() == Player::PlayState::Paused));
+        if(m_playerController && m_playerController->playState() == Player::PlayState::Paused) {
+            return u"1"_s;
+        }
+        return QString{};
     };
 }
 
