@@ -55,31 +55,13 @@ template <typename FuncType>
 auto generateSetFunc(FuncType func)
 {
     return [func](Fooyin::Track& track, Fooyin::ScriptRegistry::FuncRet arg) {
-        if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(int)>) {
-            if(const auto* value = std::get_if<int>(&arg)) {
-                (track.*func)(*value);
-            }
-        }
-        else if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(uint64_t)>) {
-            if(const auto* value = std::get_if<uint64_t>(&arg)) {
-                (track.*func)(*value);
-            }
-        }
-        else if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(float)>) {
-            if(const auto* value = std::get_if<float>(&arg)) {
-                (track.*func)(*value);
-            }
-        }
-        else if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(const QString&)>) {
-            if(const auto* value = std::get_if<QString>(&arg)) {
-                (track.*func)(*value);
-            }
-        }
-        else if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(const QStringList&)>) {
-            if(const auto* value = std::get_if<QStringList>(&arg)) {
-                (track.*func)(*value);
-            }
-        }
+        std::visit(
+            [&]<typename Param>(Param&& value) {
+                if constexpr(std::is_invocable_v<FuncType, Fooyin::Track&, Param>) {
+                    (track.*func)(value);
+                }
+            },
+            arg);
     };
 }
 
