@@ -133,15 +133,25 @@ QString findMatchingFile(const QString& filepath)
 {
     const QFileInfo info{filepath};
     const QDir dir         = info.absoluteDir();
+    const QString baseName = info.completeBaseName();
     const QString fileName = info.fileName();
 
     const auto files = dir.entryList(QDir::Files);
 
+    // Find exact match first
     for(const QString& file : files) {
         if(file.compare(fileName, Qt::CaseInsensitive) == 0) {
             return dir.absoluteFilePath(file);
         }
     }
+
+    // Else find matching filename without extension
+    for(const QString& file : files) {
+        if(QFileInfo{file}.completeBaseName().compare(baseName, Qt::CaseInsensitive) == 0) {
+            return dir.absoluteFilePath(file);
+        }
+    }
+
     return filepath;
 }
 
