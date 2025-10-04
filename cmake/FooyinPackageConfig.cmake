@@ -39,36 +39,45 @@ if(CPACK_GENERATOR STREQUAL "DEB")
     )
 
     # Distro specific packages
-    if("${DIST_RELEASE}" STREQUAL "jammy")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu70")
-    elseif("${DIST_RELEASE}" STREQUAL "mantic")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu72")
-    elseif("${DIST_RELEASE}" STREQUAL "noble")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu74")
-    elseif("${DIST_RELEASE}" STREQUAL "plucky")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu76")
-    elseif("${DIST_RELEASE}" STREQUAL "questing")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu76")
-    elseif("${DIST_RELEASE}" STREQUAL "trixie")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu76")
-    elseif("${DIST_RELEASE}" STREQUAL "forky")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu76")
-    else()
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libicu72")
+    set(ICU_VERSIONS
+        jammy    libicu70
+        mantic   libicu72
+        noble    libicu74
+        plucky   libicu76
+        questing libicu76
+        trixie   libicu76
+        forky    libicu76
+    )
+
+    set(TAGLIB_VERSIONS
+        bookworm libtag1v5
+        noble    libtag1v5
+        plucky   libtag2
+        questing libtag2
+        trixie   libtag2
+        forky    libtag2
+    )
+
+    list(FIND ICU_VERSIONS "${DIST_RELEASE}" idx)
+    if(idx GREATER -1)
+        math(EXPR idx "${idx} + 1")
+        list(GET ICU_VERSIONS ${idx} ICU_VERSION)
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, ${ICU_VERSION}")
     endif()
 
-    if("${DIST_RELEASE}" STREQUAL "trixie")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag2")
-    elseif("${DIST_RELEASE}" STREQUAL "forky")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag2")
-    elseif("${DIST_RELEASE}" STREQUAL "bookworm")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag1v5")
-    elseif("${DIST_RELEASE}" STREQUAL "plucky")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag2")
-    elseif("${DIST_RELEASE}" STREQUAL "questing")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag2")
-    elseif("${DIST_RELEASE}" STREQUAL "noble")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libtag1v5")
+    list(FIND TAGLIB_VERSIONS "${DIST_RELEASE}" idx)
+    if(idx GREATER -1)
+        math(EXPR idx "${idx} + 1")
+        list(GET TAGLIB_VERSIONS ${idx} TAGLIB_VERSION)
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, ${TAGLIB_VERSION}")
+    endif()
+
+    if(NOT "${DIST_RELEASE}" STREQUAL "bookworm")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS
+            "${CPACK_DEBIAN_PACKAGE_DEPENDS},
+            libqcoro6core0t64,
+            libqcoro6network0t64"
+        )
     endif()
 endif()
 

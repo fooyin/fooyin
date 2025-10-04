@@ -11,6 +11,7 @@ sudo pkg install -y \
      vulkan-headers \
      alsa-lib \
      qt6-tools \
+     qcoro-qt6 \
      ffmpeg \
      taglib \
      kdsingleapplication \

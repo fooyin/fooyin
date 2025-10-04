@@ -18,6 +18,7 @@ dnf -y install --skip-broken \
      qt6-qtbase-devel \
      qt6-qtsvg-devel \
      qt6-qttools-devel \
+     qcoro-qt6-devel \
      libavcodec-free-devel \
      libavfilter-free-devel \
      libavformat-free-devel \
