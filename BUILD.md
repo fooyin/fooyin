@@ -22,6 +22,7 @@ At least one of the following is required for audio output:
 
 The following libraries are optional:
 * [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) - will use 3rd party dep if not present on system
+* [QCoro](https://github.com/qcoro/qcoro) - will use 3rd party dep if not present on system
 * [libsndfile](https://libsndfile.github.io/libsndfile) - for the sndfile audio input plugin
 * [OpenMPT](https://lib.openmpt.org/libopenmpt) - for the OpenMPT audio input plugin
 * [Game Music Emu](https://github.com/libgme/game-music-emu) - for the GME audio input plugin
