@@ -6,6 +6,10 @@ if(UNIX AND NOT APPLE)
     add_subdirectory(mpris)
 endif()
 
+if (APPLE)
+    add_subdirectory(nowplaying)
+endif()
+
 add_subdirectory(fileops)
 add_subdirectory(filters)
 add_subdirectory(gme)
