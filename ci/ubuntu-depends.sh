@@ -49,3 +49,11 @@ case "$CODENAME" in
     $SUDO apt-get install -y libtag-dev
     ;;
 esac
+
+case "$CODENAME" in
+bookworm)
+    ;;
+*)
+    $SUDO apt-get install -y qcoro-qt6-dev
+    ;;
+esac

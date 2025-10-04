@@ -14,6 +14,7 @@ $SUDO pacman -S --noconfirm --needed \
        qt6-svg \
        qt6-tools \
        kdsingleapplication \
+       qcoro \
        taglib \
        ffmpeg \
        pipewire \
