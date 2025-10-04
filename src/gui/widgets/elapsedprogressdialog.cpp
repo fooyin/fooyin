@@ -70,6 +70,7 @@ ElapsedProgressDialog::ElapsedProgressDialog(const QString& labelText, const QSt
         m_wasCancelled = true;
         m_updateTimer->stop();
         hide();
+        emit cancelled();
     });
 }
 
@@ -107,6 +108,11 @@ void ElapsedProgressDialog::setText(const QString& text)
 void ElapsedProgressDialog::setMinimumDuration(std::chrono::milliseconds duration)
 {
     m_minDuration = duration;
+}
+
+void ElapsedProgressDialog::setShowRemaining(bool show)
+{
+    m_remainingLabel->setVisible(show);
 }
 
 void ElapsedProgressDialog::startTimer()

@@ -45,12 +45,16 @@ public:
 
     void setText(const QString& text);
     void setMinimumDuration(std::chrono::milliseconds duration);
+    void setShowRemaining(bool show);
 
     void startTimer();
     [[nodiscard]] bool wasCancelled() const;
     [[nodiscard]] std::chrono::milliseconds elapsedTime() const;
 
     [[nodiscard]] QSize sizeHint() const override;
+
+signals:
+    void cancelled();
 
 private:
     void updateStatus();
