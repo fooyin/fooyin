@@ -49,6 +49,7 @@ public:
     void updateLibraryTracks(const TrackList& updatedTracks);
     QFuture<void> updateTracksMetadata(const TrackList& tracksToUpdate);
     QFuture<void> updateTracks(const TrackList& tracksToUpdate);
+    void removeTracks(const TrackList& tracksToRemove);
 
     void handleScanResult(const ScanResult& result);
     void scannedTracks(int id, const TrackList& tracks);
@@ -163,6 +164,24 @@ QFuture<void> UnifiedMusicLibraryPrivate::updateTracks(const TrackList& tracksTo
             emit m_self->tracksUpdated(sortedTracks);
         });
     });
+}
+
+void UnifiedMusicLibraryPrivate::removeTracks(const TrackList& tracksToRemove)
+{
+    const std::unordered_set<Track, Track::TrackHash> toRemove(tracksToRemove.begin(), tracksToRemove.end());
+
+    TrackList remainingTracks;
+    remainingTracks.reserve(m_tracks.size());
+
+    for(const auto& track : m_tracks) {
+        if(!toRemove.contains(track)) {
+            remainingTracks.push_back(track);
+        }
+    }
+
+    m_tracks = std::move(remainingTracks);
+
+    emit m_self->tracksDeleted(tracksToRemove);
 }
 
 void UnifiedMusicLibraryPrivate::handleScanResult(const ScanResult& result)
@@ -286,6 +305,8 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
                      [this](const TrackList& tracks) { p->updateTracksMetadata(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksStatsUpdated, this,
                      [this](const TrackList& tracks) { p->updateTracks(tracks); });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksRemoved, this,
+                     [this](const TrackList& tracks) { p->removeTracks(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::gotTracks, this,
                      [this](const TrackList& tracks) { p->loadTracks(tracks); });
 
@@ -460,6 +481,11 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
 void UnifiedMusicLibrary::cleanupTracks()
 {
     p->m_threadHandler.cleanupTracks();
+}
+
+WriteRequest UnifiedMusicLibrary::removeUnavailbleTracks()
+{
+    return p->m_threadHandler.removeUnavailbleTracks(p->m_tracks);
 }
 } // namespace Fooyin
 

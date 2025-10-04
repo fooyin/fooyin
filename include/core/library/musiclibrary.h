@@ -159,6 +159,9 @@ public:
     /** Updates the statistics (playcount, rating etc) in the database for @p track.  */
     virtual void updateTrackStats(const Track& track) = 0;
 
+    /** Remove unavailable tracks from the library and database. */
+    virtual WriteRequest removeUnavailbleTracks() = 0;
+
 signals:
     void scanProgress(const Fooyin::ScanProgress& progress);
     void tracksScanned(int id, const Fooyin::TrackList& tracks);

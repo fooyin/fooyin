@@ -73,6 +73,7 @@ public:
 
     void trackWasPlayed(const Track& track);
     void cleanupTracks();
+    WriteRequest removeUnavailbleTracks() override;
 
 private:
     std::unique_ptr<UnifiedMusicLibraryPrivate> p;

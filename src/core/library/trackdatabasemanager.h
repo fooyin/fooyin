@@ -44,12 +44,14 @@ signals:
     void gotTracks(const Fooyin::TrackList& tracks);
     void updatedTracks(const Fooyin::TrackList& tracks);
     void updatedTracksStats(const Fooyin::TrackList& tracks);
+    void removedTracks(const Fooyin::TrackList& tracks);
 
 public slots:
     void getAllTracks();
     void updateTracks(const Fooyin::TrackList& tracks, bool write);
     void updateTrackStats(const Fooyin::TrackList& track, bool onlyPlaycount);
     void writeCovers(const Fooyin::TrackCoverData& tracks);
+    void removeUnavailbleTracks(const TrackList& tracks);
     void cleanupTracks();
 
 private:

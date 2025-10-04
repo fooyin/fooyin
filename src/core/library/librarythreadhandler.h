@@ -64,6 +64,7 @@ public:
     void saveUpdatedTrackStats(const TrackList& tracks);
     void saveUpdatedTrackPlaycounts(const TrackList& tracks);
 
+    WriteRequest removeUnavailbleTracks(const TrackList& tracks);
     void cleanupTracks();
     void libraryRemoved(int id);
 
@@ -75,6 +76,7 @@ signals:
     void scanUpdate(const Fooyin::ScanResult& result);
     void tracksUpdated(const Fooyin::TrackList& tracks);
     void tracksStatsUpdated(const Fooyin::TrackList& tracks);
+    void tracksRemoved(const Fooyin::TrackList& tracks);
 
     void gotTracks(const Fooyin::TrackList& result);
 

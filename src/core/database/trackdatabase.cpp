@@ -428,7 +428,7 @@ bool TrackDatabase::deleteTrack(int id)
 
     query.bindValue(u":trackID"_s, id);
 
-    return !query.exec();
+    return query.exec();
 }
 
 bool TrackDatabase::deleteTracks(const TrackList& tracks)

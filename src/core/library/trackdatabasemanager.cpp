@@ -207,6 +207,21 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
     setState(Idle);
 }
 
+void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks)
+{
+    TrackList trackstoRemove;
+
+    for(const Track& track : tracks) {
+        if(!QFileInfo::exists(track.isInArchive() ? track.archivePath() : track.filepath())) {
+            trackstoRemove.push_back(track);
+        }
+    }
+
+    if(m_trackDatabase.deleteTracks(trackstoRemove)) {
+        emit removedTracks(trackstoRemove);
+    }
+}
+
 void TrackDatabaseManager::cleanupTracks()
 {
     setState(Running);

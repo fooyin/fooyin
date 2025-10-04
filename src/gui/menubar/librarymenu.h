@@ -20,12 +20,14 @@
 #pragma once
 
 #include <core/database/generaldatabase.h>
+#include <core/library/musiclibrary.h>
 
 #include <QObject>
 
 namespace Fooyin {
 class Application;
 class ActionManager;
+class MusicLibrary;
 
 class LibraryMenu : public QObject
 {
@@ -39,9 +41,13 @@ signals:
     void requestQuickSearch();
 
 private:
+    void removeUnavailbleTracks();
     void optimiseDatabase();
     void cleanupDatabase();
 
     DbConnectionPoolPtr m_database;
+    MusicLibrary* m_library;
+
+    WriteRequest m_deleteRequest;
 };
 } // namespace Fooyin

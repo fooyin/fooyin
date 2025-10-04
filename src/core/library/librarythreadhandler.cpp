@@ -409,6 +409,8 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      &LibraryThreadHandler::tracksUpdated);
     QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::updatedTracksStats, this,
                      &LibraryThreadHandler::tracksStatsUpdated);
+    QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::removedTracks, this,
+                     &LibraryThreadHandler::tracksRemoved);
     QObject::connect(&p->m_scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
     QObject::connect(&p->m_scanner, &LibraryScanner::progressChanged, this,
                      [this](int current, const QString& file, int total) { p->updateProgress(current, file, total); });
@@ -514,6 +516,19 @@ void LibraryThreadHandler::saveUpdatedTrackPlaycounts(const TrackList& tracks)
 {
     p->m_tracksPendingPlaycountUpdate.insert(p->m_tracksPendingPlaycountUpdate.end(), tracks.cbegin(), tracks.cend());
     p->m_playcountTimer.start(UpdateInterval, this);
+}
+
+WriteRequest LibraryThreadHandler::removeUnavailbleTracks(const TrackList& tracks)
+{
+    WriteRequest request;
+    request.cancel = [this]() {
+        p->m_trackDatabaseManager.stopThread();
+    };
+
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
+                              [this, tracks]() { p->m_trackDatabaseManager.removeUnavailbleTracks(tracks); });
+
+    return request;
 }
 
 void LibraryThreadHandler::cleanupTracks()
