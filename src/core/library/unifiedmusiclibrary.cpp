@@ -33,6 +33,7 @@
 #include <QDateTime>
 
 #include <ranges>
+#include <unordered_set>
 
 using namespace std::chrono_literals;
 
