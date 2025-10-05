@@ -934,12 +934,12 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальне</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>Discord</translation>
     </message>
 </context>
 <context>
@@ -947,42 +947,42 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="60"/>
         <source>Enable</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="61"/>
         <source>Show playstate</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати стан гри</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="67"/>
         <source>Fields</source>
-        <translation type="unfinished">Поля&apos;</translation>
+        <translation>Полях</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="71"/>
         <source>Title</source>
-        <translation type="unfinished">Назва</translation>
+        <translation>Назва</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="73"/>
         <source>Artist</source>
-        <translation type="unfinished">Виконавець</translation>
+        <translation>Виконавець</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="75"/>
         <source>Album</source>
-        <translation type="unfinished">Альбом</translation>
+        <translation>Альбом</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
         <source>Display a small icon in Discord showing the current playback state</source>
-        <translation type="unfinished"></translation>
+        <translation>Відображати в Discord маленьку іконку, яка показує поточний стан відтворення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="85"/>
         <source>Client ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Ідентифікатор клієнта</translation>
     </message>
 </context>
 <context>
@@ -5301,7 +5301,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="104"/>
         <source>Skip missing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропустити відсутні треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="105"/>
@@ -5351,12 +5351,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="148"/>
         <source>Skip unavailable tracks when loading playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропускати недоступні треки під час завантаження списків відтворення</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="150"/>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="156"/>
@@ -7677,18 +7677,18 @@
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="160"/>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="205"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередніх</translation>
     </message>
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="173"/>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="211"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Далі</translation>
     </message>
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="208"/>
         <source>Play</source>
-        <translation type="unfinished">Відтворити</translation>
+        <translation>Відтворити</translation>
     </message>
 </context>
 <context>
