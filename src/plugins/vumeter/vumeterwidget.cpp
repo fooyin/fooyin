@@ -33,6 +33,7 @@
 #include <QActionGroup>
 #include <QBasicTimer>
 #include <QContextMenuEvent>
+#include <QElapsedTimer>
 #include <QJsonObject>
 #include <QMenu>
 #include <QPainter>
