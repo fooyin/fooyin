@@ -2455,7 +2455,8 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
         }
     }
-    else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "application/ogg"_L1) {
+    else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "audio/vorbis"_L1
+            || mimeType == "application/ogg"_L1) {
         const TagLib::Ogg::Vorbis::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
@@ -2631,7 +2632,8 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             return readFlacCover(file.pictureList(), cover);
         }
     }
-    else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "application/ogg"_L1) {
+    else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "audio/vorbis"_L1
+            || mimeType == "application/ogg"_L1) {
         const TagLib::Ogg::Vorbis::File file(&stream, true);
         if(file.isValid() && file.tag()) {
             return readFlacCover(file.tag()->pictureList(), cover);
@@ -2789,7 +2791,8 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
             file.save();
         }
     }
-    else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "application/ogg"_L1) {
+    else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "audio/vorbis"_L1
+            || mimeType == "application/ogg"_L1) {
         TagLib::Ogg::Vorbis::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file);
@@ -2951,7 +2954,8 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             }
         }
     }
-    else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "application/ogg"_L1) {
+    else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1 || mimeType == "audio/vorbis"_L1
+            || mimeType == "application/ogg"_L1) {
         TagLib::Ogg::Vorbis::File file(&stream, false);
         if(file.isValid() && file.tag()) {
             if(writeXiphCover(file.tag(), covers)) {
