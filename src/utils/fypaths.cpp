@@ -36,9 +36,19 @@ QString operator/(const QString& first, const QString& second)
     using Fooyin::Utils::File::cleanPath;
     return (second.isEmpty()) ? cleanPath(first) : cleanPath(first + QDir::separator() + second);
 }
+
+QString baseDir()
+{
+    return Fooyin::Utils::isPortable() ? QCoreApplication::applicationDirPath() : QString{};
+}
 } // namespace
 
 namespace Fooyin::Utils {
+bool isPortable()
+{
+    return QFile::exists(QCoreApplication::applicationDirPath() + "/PORTABLE"_L1);
+}
+
 QString createPath(const QString& path, const QString& appendPath)
 {
     if(!QFileInfo::exists(path)) {
@@ -60,35 +70,47 @@ QString createPath(const QString& path, const QString& appendPath)
 
 QString configPath(const QString& appendPath)
 {
-    static const auto path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    const auto path = isPortable() ? QCoreApplication::applicationDirPath() + "/config"_L1
+                                   : QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
     return createPath(path, appendPath);
 }
 
 QString statePath(const QString& appendPath)
 {
+    QString path;
+
+    if(isPortable()) {
+        path = QCoreApplication::applicationDirPath() + "/data"_L1;
+        return createPath(path, appendPath);
+    }
+
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
     QString stateHome = QFile::decodeName(qgetenv("XDG_STATE_HOME"));
     if(!stateHome.startsWith(u'/')) {
-        // Relative paths should be ignored
         stateHome.clear();
     }
     if(stateHome.isEmpty()) {
         stateHome = QDir::homePath() + "/.local/state"_L1;
     }
+    path = stateHome + "/fooyin"_L1;
+#else
+    path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#endif
 
-    stateHome += "/fooyin"_L1;
-
-    return createPath(stateHome, appendPath);
+    return createPath(path, appendPath);
 }
 
 QString sharePath(const QString& appendPath)
 {
-    static const auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    static const auto path = isPortable() ? QCoreApplication::applicationDirPath() + "/data"_L1
+                                          : QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     return createPath(path, appendPath);
 }
 
 QString cachePath(const QString& appendPath)
 {
-    static const auto path = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    static const auto path = isPortable() ? QCoreApplication::applicationDirPath() + "/cache"_L1
+                                          : QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     return createPath(path, appendPath);
 }
 } // namespace Fooyin::Utils

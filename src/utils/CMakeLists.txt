@@ -50,7 +50,7 @@ set(SOURCES
     itemregistry.cpp
     modelutils.cpp
     modelutils.h
-    paths.cpp
+    fypaths.cpp
     signalthrottler.cpp
     stareditor.cpp
     stardelegate.cpp

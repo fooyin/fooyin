@@ -1,0 +1,5 @@
+if(CPACK_GENERATOR STREQUAL "ZIP")
+	set(portable_file "${CMAKE_CURRENT_BINARY_DIR}/PORTABLE")
+	file(WRITE "${portable_file}" "")
+	message(STATUS "Created portable file: ${portable_file}")
+endif()

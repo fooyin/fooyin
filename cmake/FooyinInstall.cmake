@@ -1,18 +1,32 @@
 # ---- Fooyin data ----
 
-set(README_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-set(LICENSE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+set(README_FILE "README.md")
+set(LICENSE_FILE "COPYING")
 
-if(UNIX)
+if(WIN32)
     install(
-        FILES ${LICENSE_FILE}
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/${LICENSE_FILE}"
+        DESTINATION ${BIN_INSTALL_DIR}
+        RENAME License.txt
+        COMPONENT fooyin
+    )
+
+    install(
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/${README_FILE}"
+        DESTINATION ${BIN_INSTALL_DIR}
+        RENAME Readme.txt
+        COMPONENT fooyin
+    )
+elseif(UNIX)
+    install(
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/${LICENSE_FILE}"
         DESTINATION ${DOC_INSTALL_DIR}
         RENAME LICENSE
         COMPONENT fooyin
     )
 
     install(
-        FILES ${README_FILE}
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/${README_FILE}"
         DESTINATION ${DOC_INSTALL_DIR}
         RENAME README
         COMPONENT fooyin
