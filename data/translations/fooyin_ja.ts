@@ -1331,12 +1331,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="79"/>
         <source>&amp;Load playlist…</source>
-        <translation>プレイリストを&amp;ロード しています…</translation>
+        <translation>プレイリストを&amp;ロード…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="86"/>
         <source>&amp;Save playlist…</source>
-        <translation>プレイリストを&amp;保存 しています…</translation>
+        <translation>プレイリストを&amp;保存…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="102"/>
@@ -1366,7 +1366,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
         <source>Save &amp;all playlists…</source>
-        <translation>&amp;すべて のプレイリストを保存しています…</translation>
+        <translation>&amp;すべて のプレイリストを保存…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
@@ -7453,12 +7453,12 @@
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="53"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="71"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation>タブスタック</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="269"/>
@@ -7501,17 +7501,17 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="45"/>
         <source>Artist Name</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティスト名</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="46"/>
         <source>Track Title</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックタイトル</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="47"/>
         <source>Album Title</source>
-        <translation type="unfinished"></translation>
+        <translation>アルバムタイトル</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="48"/>
@@ -7541,32 +7541,32 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック番号</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="54"/>
         <source>Total Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>全トラック</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="55"/>
         <source>Disc Number</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク番号</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="56"/>
         <source>Total Discs</source>
-        <translation type="unfinished"></translation>
+        <translation>全ディスク</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="57"/>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>コメント</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>評価</translation>
     </message>
 </context>
 <context>
@@ -7574,7 +7574,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="177"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>インデックス</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="179"/>
@@ -7623,7 +7623,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="49"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>貼り付け</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="50"/>
@@ -7684,7 +7684,7 @@
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="208"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>再生</translation>
     </message>
 </context>
 <context>
