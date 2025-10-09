@@ -934,7 +934,7 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
@@ -947,12 +947,12 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="60"/>
         <source>Enable</source>
-        <translation type="unfinished"></translation>
+        <translation>开启</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="61"/>
         <source>Show playstate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">显示播放状态</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="67"/>
@@ -977,12 +977,12 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
         <source>Display a small icon in Discord showing the current playback state</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">在Discord中显示一个小图标，显示当前播放状态。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="85"/>
         <source>Client ID</source>
-        <translation type="unfinished"></translation>
+        <translation>登录 ID</translation>
     </message>
 </context>
 <context>
@@ -2015,7 +2015,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="98"/>
         <source>Preserve timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">保留时间戳</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
@@ -2025,7 +2025,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
         <source>Window behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">窗口行为</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
@@ -2050,7 +2050,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
         <source>Preserve file timestamps when updating tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">更新标签时保留文件时间戳</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="132"/>
@@ -2701,12 +2701,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">图片分配限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="189"/>
         <source>Set to &apos;0&apos; to disable the limit.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">设置为&apos;0&apos;以禁用限制。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="200"/>
@@ -3820,12 +3820,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="114"/>
         <source>Rewind line (-100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">回退线（-100毫秒）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
         <source>Forward line (+100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">前导线 (+100毫秒)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="125"/>
@@ -4708,7 +4708,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="123"/>
         <source>Set playback order to repeat the current track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">将播放顺序设置为循环当前曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="147"/>
@@ -4834,7 +4834,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Save/restore active playlist state</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">保存/恢复活动播放列表状态</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="87"/>
@@ -4859,7 +4859,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="102"/>
         <source>Save active playlist state on exit and restore it on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">退出时保存活动播放列表状态，下次启动时恢复该状态</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="103"/>
@@ -5301,7 +5301,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="104"/>
         <source>Skip missing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">跳过缺失的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="105"/>
@@ -5321,22 +5321,22 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
         <source>Preload count</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">预加载计数</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
         <source>Number of tracks used to preload the playlist before loading the rest of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">在加载播放列表其余部分之前用于预加载播放列表的曲目数量</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source> tracks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> 曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
         <source>Set to &apos;0&apos; to disable preloading.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">设置为&apos;0&apos;以禁用预加载。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="130"/>
@@ -5351,12 +5351,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="148"/>
         <source>Skip unavailable tracks when loading playlists</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">加载播放列表时跳过不可用曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="150"/>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">加载中</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="156"/>
@@ -5888,22 +5888,22 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="427"/>
         <source>Remove duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">删除重复项</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="428"/>
         <source>Remove duplicate tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">从播放列表中删除重复曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="432"/>
         <source>Remove dead tracks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">清除无效曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="433"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">从播放列表中移除已删除（不存在的）曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="445"/>
@@ -7675,13 +7675,13 @@
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="160"/>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="205"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">上一首</translation>
     </message>
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="173"/>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="211"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">下一首</translation>
     </message>
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="208"/>
