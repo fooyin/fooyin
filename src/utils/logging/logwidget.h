@@ -21,7 +21,12 @@
 
 #include "fyutils_export.h"
 
+#include "logmodel.h"
+
+#include <QBasicTimer>
 #include <QWidget>
+
+#include <queue>
 
 class QComboBox;
 class QTreeView;
@@ -41,13 +46,21 @@ public:
 
     [[nodiscard]] QSize sizeHint() const override;
 
+protected:
+    void timerEvent(QTimerEvent* event) override;
+
 private:
     void saveLog();
 
     SettingsManager* m_settings;
+
     QTreeView* m_view;
     LogModel* m_model;
     QComboBox* m_level;
+
     bool m_scrollIsAtBottom;
+
+    std::queue<ConsoleEntry> m_queue;
+    QBasicTimer m_flushTimer;
 };
 } // namespace Fooyin

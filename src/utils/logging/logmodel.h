@@ -49,6 +49,7 @@ public:
     explicit LogModel(QObject* parent = nullptr);
 
     void addEntry(ConsoleEntry entry);
+    void addEntries(std::vector<ConsoleEntry> entries);
     void clear();
 
     [[nodiscard]] std::deque<ConsoleEntry> entries();

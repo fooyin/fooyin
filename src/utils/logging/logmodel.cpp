@@ -75,6 +75,48 @@ void LogModel::addEntry(ConsoleEntry entry)
     endInsertRows();
 }
 
+void LogModel::addEntries(std::vector<ConsoleEntry> entries)
+{
+    if(entries.empty()) {
+        return;
+    }
+
+    static const QRegularExpression regex(QLatin1String{MessageSplit});
+
+    for(auto& entry : entries) {
+        const QRegularExpressionMatch match = regex.match(entry.message);
+        if(match.hasMatch()) {
+            entry.category = match.captured(1);
+            entry.message  = match.captured(2);
+        }
+    }
+
+    const int availableSpace = (m_maxEntries > 0) ? std::max<int>(0, m_maxEntries - static_cast<int>(m_items.size()))
+                                                  : static_cast<int>(entries.size());
+
+    if(m_maxEntries > 0 && std::cmp_greater(entries.size(), availableSpace)) {
+        const int excess = static_cast<int>(entries.size()) - availableSpace;
+        entries.erase(entries.begin(), entries.begin() + excess);
+    }
+
+    const int totalAfterInsert = static_cast<int>(m_items.size() + entries.size());
+    if(m_maxEntries > 0 && totalAfterInsert > m_maxEntries) {
+        const int toRemove = totalAfterInsert - m_maxEntries;
+        beginRemoveRows({}, 0, toRemove - 1);
+        m_items.erase(m_items.begin(), m_items.begin() + toRemove);
+        endRemoveRows();
+    }
+
+    const int start = rowCount({});
+    const int end   = start + static_cast<int>(entries.size()) - 1;
+
+    beginInsertRows({}, start, end);
+    for(auto& entry : entries) {
+        m_items.push_back(std::move(entry));
+    }
+    endInsertRows();
+}
+
 void LogModel::setMaxEntries(int maxEntries)
 {
     m_maxEntries = maxEntries;

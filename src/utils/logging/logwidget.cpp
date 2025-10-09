@@ -19,8 +19,6 @@
 
 #include "logwidget.h"
 
-#include "logmodel.h"
-
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -33,11 +31,15 @@
 #include <QLoggingCategory>
 #include <QPushButton>
 #include <QScrollBar>
+#include <QTimerEvent>
 #include <QTreeView>
 
 Q_LOGGING_CATEGORY(LOG_WIDGET, "fy.log")
 
 using namespace Qt::StringLiterals;
+
+constexpr auto FlushInterval    = 200;
+constexpr auto MaxQueuedEntries = 250;
 
 namespace Fooyin {
 LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
@@ -95,12 +97,38 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
 
 void LogWidget::addEntry(const QString& message, QtMsgType type)
 {
-    m_model->addEntry({.time = QDateTime::currentDateTime(), .type = type, .category = {}, .message = message});
+    m_queue.push({.time = QDateTime::currentDateTime(), .type = type, .category = {}, .message = message});
+
+    m_flushTimer.start(m_queue.size() >= MaxQueuedEntries ? 0 : FlushInterval, this);
 }
 
 QSize LogWidget::sizeHint() const
 {
     return Utils::proportionateSize(this, 0.3, 0.4);
+}
+
+void LogWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() != m_flushTimer.timerId()) {
+        QWidget::timerEvent(event);
+        return;
+    }
+
+    m_flushTimer.stop();
+
+    if(!m_queue.empty()) {
+        std::vector<ConsoleEntry> entries;
+        entries.reserve(m_queue.size());
+
+        while(!m_queue.empty()) {
+            entries.push_back(std::move(m_queue.front()));
+            m_queue.pop();
+        }
+
+        m_model->addEntries(std::move(entries));
+    }
+
+    QWidget::timerEvent(event);
 }
 
 void LogWidget::saveLog()
