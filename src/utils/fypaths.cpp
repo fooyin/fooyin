@@ -36,11 +36,6 @@ QString operator/(const QString& first, const QString& second)
     using Fooyin::Utils::File::cleanPath;
     return (second.isEmpty()) ? cleanPath(first) : cleanPath(first + QDir::separator() + second);
 }
-
-QString baseDir()
-{
-    return Fooyin::Utils::isPortable() ? QCoreApplication::applicationDirPath() : QString{};
-}
 } // namespace
 
 namespace Fooyin::Utils {
