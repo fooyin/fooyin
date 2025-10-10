@@ -939,7 +939,7 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Discord</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Discord</translation>
     </message>
 </context>
 <context>
