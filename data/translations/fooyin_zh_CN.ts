@@ -977,7 +977,7 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
         <source>Display a small icon in Discord showing the current playback state</source>
-        <translation type="unfinished">在Discord中显示一个小图标，显示当前播放状态。</translation>
+        <translation>在Discord中显示一个小图标，显示当前播放状态</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="85"/>
