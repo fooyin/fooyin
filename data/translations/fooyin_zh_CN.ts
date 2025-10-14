@@ -6715,7 +6715,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="109"/>
         <source>Filter scrobbles</source>
-        <translation>过滤歌曲记录</translation>
+        <translation>过滤播放记录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="110"/>
