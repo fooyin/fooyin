@@ -939,7 +939,7 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Discord</source>
-        <translation type="unfinished">Discord</translation>
+        <translation>Discord社区</translation>
     </message>
 </context>
 <context>
@@ -3820,12 +3820,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="114"/>
         <source>Rewind line (-100ms)</source>
-        <translation type="unfinished">回退线（-100毫秒）</translation>
+        <translation>回退线（-100毫秒）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
         <source>Forward line (+100ms)</source>
-        <translation type="unfinished">前导线 (+100毫秒)</translation>
+        <translation>前导线 (+100毫秒)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="125"/>
