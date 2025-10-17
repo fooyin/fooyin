@@ -92,7 +92,12 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     });
     QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this, &MprisPlugin::trackChanged);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
-                     [this](uint64_t ms) { emit Seeked(static_cast<int64_t>(ms) * 1000); });
+                     [this](uint64_t ms) {
+        QDBusMessage msg = QDBusMessage::createSignal(QString::fromLatin1(MprisObjectPath), QString::fromLatin1(PlayerEntity),
+                                                    u"Seeked"_s);
+        msg.setArguments({QVariant::fromValue(static_cast<qint64>(ms) * 1000)});
+        QDBusConnection::sessionBus().send(msg);
+    });
 
     QObject::connect(this, &MprisPlugin::reloadMetadata, this, [this]() { notify(u"Metadata"_s, metadata()); });
 }
