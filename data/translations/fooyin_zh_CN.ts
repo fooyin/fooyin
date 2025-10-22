@@ -939,7 +939,7 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Discord</source>
-        <translation>Discord社区</translation>
+        <translation>Discord 社区</translation>
     </message>
 </context>
 <context>
@@ -947,7 +947,7 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="60"/>
         <source>Enable</source>
-        <translation>开启</translation>
+        <translation>启用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="61"/>
@@ -977,7 +977,7 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
         <source>Display a small icon in Discord showing the current playback state</source>
-        <translation>在Discord中显示一个小图标，显示当前播放状态</translation>
+        <translation>在 Discord 中显示一个小图标，显示当前播放状态</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="85"/>
@@ -1156,12 +1156,12 @@
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Edit %1 Name</source>
-        <translation>编辑%1的名称</translation>
+        <translation>编辑 %1 名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="73"/>
         <source>%1 name:</source>
-        <translation>%1的名称：</translation>
+        <translation>%1 名称：</translation>
     </message>
 </context>
 <context>
@@ -1260,7 +1260,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="150"/>
         <source>%1 Layout %2</source>
-        <translation>%1的布局 %2</translation>
+        <translation>%1 的布局 %2</translation>
     </message>
 </context>
 <context>
@@ -1419,7 +1419,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="407"/>
         <source>Nothing to do</source>
-        <translation>无事可干</translation>
+        <translation>什么也不做</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="411"/>
@@ -2093,7 +2093,7 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="46"/>
         <source>%1 Settings</source>
-        <translation>%1设置</translation>
+        <translation>%1 设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="53"/>
@@ -3158,7 +3158,7 @@
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="246"/>
         <source>%1 Layout</source>
-        <translation>%1布局</translation>
+        <translation>%1 布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="255"/>
@@ -4120,7 +4120,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="83"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation>在60秒或三分之一音轨时长后自动保存</translation>
+        <translation>在 60 秒或三分之一音轨时长后自动保存</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="84"/>
@@ -4487,12 +4487,12 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="46"/>
         <source>Use Amiga resampler</source>
-        <translation>使用Amiga再取样器</translation>
+        <translation>使用 Amiga 再取样器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="50"/>
         <source>%1 Settings</source>
-        <translation>%1配置</translation>
+        <translation>%1 配置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="68"/>
@@ -5603,7 +5603,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="436"/>
         <source>Copy of %1</source>
-        <translation>%1的副本</translation>
+        <translation>%1 的副本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="269"/>
@@ -5727,7 +5727,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="366"/>
         <source>%1 contents</source>
-        <translation>%1的内容</translation>
+        <translation>%1 的内容</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="151"/>
@@ -6049,7 +6049,7 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="224"/>
         <source>%1 Plugin</source>
-        <translation>%1插件</translation>
+        <translation>%1 插件</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="232"/>
@@ -6805,7 +6805,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="253"/>
         <source>Signed in as %1</source>
-        <translation>已作为%1登录</translation>
+        <translation>已作为 %1 登录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="260"/>
@@ -6841,7 +6841,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="151"/>
         <source>%1 Authentication</source>
-        <translation>%1认证</translation>
+        <translation>%1 认证</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="153"/>
@@ -6928,7 +6928,7 @@
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
         <source>%Ln result(s)</source>
         <translation>
-            <numerusform>%Ln个结果</numerusform>
+            <numerusform>%Ln 个结果</numerusform>
         </translation>
     </message>
     <message>
@@ -7109,7 +7109,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="503"/>
         <source>Search in</source>
-        <translation>在...中搜索</translation>
+        <translation>搜索在</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="505"/>
@@ -7205,7 +7205,7 @@
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="141"/>
         <source>Shell Integration</source>
-        <translation>Shell 集成</translation>
+        <translation>外壳集成</translation>
     </message>
 </context>
 <context>
@@ -8172,7 +8172,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
         <source>Abort</source>
-        <translation>放弃</translation>
+        <translation>中止</translation>
     </message>
 </context>
 <context>
@@ -8180,7 +8180,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="315"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="316"/>
@@ -8553,7 +8553,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="359"/>
         <source>Scanning %1</source>
-        <translation>正在扫描%1</translation>
+        <translation>正在扫描 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="362"/>
@@ -8641,44 +8641,44 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="429"/>
         <source>Expected %1 to close quote</source>
-        <translation>期望%1关闭引号</translation>
+        <translation>期望 %1 关闭引号</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="452"/>
         <source>Expected %1 to close variable list</source>
-        <translation>期望%1关闭变量列表</translation>
+        <translation>期望 %1 关闭变量列表</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="463"/>
         <source>Expected %1 to close variable</source>
-        <translation>期望%1关闭变量</translation>
+        <translation>期望 %1 关闭变量</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="483"/>
         <source>Expected %1 after function name</source>
-        <translation>在函数名后期望%1</translation>
+        <translation>在函数名后期望 %1</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="493"/>
         <source>Expected %1 at end of function</source>
-        <translation>在函数结束后期望%1</translation>
+        <translation>在函数结束后期望 %1</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="527"/>
         <source>Expected %1 to close conditional</source>
-        <translation>期望%1关闭条件选择</translation>
+        <translation>期望 %1 关闭条件选择</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="555"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="561"/>
         <source>Expected %1 to close group</source>
-        <translation>期望%1关闭分组</translation>
+        <translation>期望 %1 关闭分组</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="791"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="796"/>
         <source>Expected %1 after %2</source>
-        <translation>在%2后期望%1</translation>
+        <translation>在 %2 后期望 %1</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1264"/>
