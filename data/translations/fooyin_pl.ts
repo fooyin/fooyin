@@ -70,12 +70,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="65"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyszukaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="67"/>
         <source>Artwork Finder</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyszukaj okładkę</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="69"/>
@@ -92,17 +92,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="124"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Typ</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="216"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyszukiwanie…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="222"/>
         <source>No artwork found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nie znaleziono okładek</translation>
     </message>
 </context>
 <context>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="197"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobierz</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
@@ -128,12 +128,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="77"/>
         <source>Embed in file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Obsadź w plik</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="78"/>
         <source>Save to directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zapisz do katalogu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
@@ -153,17 +153,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Save Method</source>
-        <translation type="unfinished"></translation>
+        <translation>Metoda zapisywania</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Save Location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Miejsce zapisu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="114"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Katalog</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
@@ -320,7 +320,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyszukiwanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
@@ -338,17 +338,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Automatycznie szukaj brakujące okładki przy otwarzaniu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
         <source>Minimum match threshold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Minimalny próg dopasowania</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="71"/>
         <source>Search parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyszukaj parametry</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="77"/>
