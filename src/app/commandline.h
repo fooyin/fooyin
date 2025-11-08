@@ -38,6 +38,8 @@ public:
         Stop      = 4,
         Next      = 5,
         Previous  = 6,
+        SeekFwd   = 7,
+        SeekBack  = 8,
     };
 
     explicit CommandLine(int argc = 0, char** argv = nullptr);
@@ -46,6 +48,7 @@ public:
 
     [[nodiscard]] bool empty() const;
     [[nodiscard]] QList<QUrl> files() const;
+    [[nodiscard]] uint64_t seekDelta() const;
     [[nodiscard]] bool skipSingleApp() const;
     [[nodiscard]] PlayerAction playerAction() const;
 
@@ -60,6 +63,7 @@ private:
     char** m_argv;
 #endif
     QList<QUrl> m_files;
+    uint64_t m_seekDelta = 0;
     bool m_skipSingle;
     PlayerAction m_playerAction;
 };
