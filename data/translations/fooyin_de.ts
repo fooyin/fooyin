@@ -2220,7 +2220,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="554"/>
         <source>Toggle Menubar</source>
-        <translation>Zeige Menüleiste</translation>
+        <translation>Menüleiste umschalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="556"/>
@@ -2701,7 +2701,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Limit für Bildergröße</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="189"/>
@@ -7534,7 +7534,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="51"/>
         <source>Performer</source>
-        <translation>Performer</translation>
+        <translation>Ausführender</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
