@@ -70,6 +70,12 @@ void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, C
             case(CommandLine::PlayerAction::Previous):
                 player->previous();
                 break;
+            case(CommandLine::PlayerAction::SeekFwd):
+                player->seekForward(cmdLine.seekDelta());
+                break;
+            case(CommandLine::PlayerAction::SeekBack):
+                player->seekBackward(cmdLine.seekDelta());
+                break;
             case(CommandLine::PlayerAction::None):
                 break;
         }
