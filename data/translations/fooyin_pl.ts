@@ -2920,17 +2920,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
         <source>Total Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar Całkowity</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar Pliku</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="190"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Ostatnio Zmodyfikowano</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="195"/>
@@ -2940,7 +2940,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="200"/>
         <source>Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodano</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="208"/>
@@ -2960,7 +2960,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="217"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdzielczość Bitowa</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
@@ -2975,7 +2975,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="226"/>
         <source>Sample Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Częstotliwość Próbkowania</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="228"/>
@@ -3046,12 +3046,12 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
         <source>Show scrollbar (vertical)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż pasek przewijania (pionowy)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="224"/>
         <source>Show scrollbar (horizontal)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż pasek przewijania (poziomy)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="233"/>
@@ -3135,7 +3135,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="87"/>
         <source>Save the current layout to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz obecny układ do pliku</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
@@ -3178,7 +3178,7 @@
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="262"/>
         <source>Unless exported, the current layout will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jeżeli nie został wyeksportowany, bieżący układ zostanie utracony.</translation>
     </message>
 </context>
 <context>
@@ -3199,22 +3199,22 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="127"/>
         <source>Auto refresh on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatyczne odświeżanie po uruchomieniu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="128"/>
         <source>Monitor libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Monitoruj biblioteki</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="129"/>
         <source>Mark unavailable tracks on playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznacz niedostępne utwory podczas odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="130"/>
         <source>Mark unavailable tracks on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznacz niedostępne utwory po uruchomieniu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="131"/>
@@ -3224,37 +3224,37 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="132"/>
         <source>Save ratings to file metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisuj oceny do metadanych pliku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="133"/>
         <source>Save playcount to file metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisuj liczbę odtworzeń do metadanych pliku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="144"/>
         <source>Scan libraries for changes on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Skanuj biblioteki w poszukiwaniu zmian po uruchomieniu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
         <source>Monitor libraries for external changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Monitoruj biblioteki pod kątem zmian zewnętrznych</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="147"/>
         <source>File Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodzaje Plików</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="151"/>
         <source>Restrict to</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogranicz do</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="153"/>
         <source>Exclude</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyklucz</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="233"/>
@@ -3277,7 +3277,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
         <source>&amp;Clean</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wyczyść</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
@@ -3307,12 +3307,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="70"/>
         <source>&amp;Reload tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Przeładuj utwory</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
         <source>Reload metadata from files for all tracks in libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Przeładuj metadane z plików dla wszystkich utworów w bibliotekach</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="76"/>
@@ -3322,7 +3322,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="77"/>
         <source>Search all libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Szukaj we wszystkich bibliotekach</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="82"/>
@@ -3337,7 +3337,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="88"/>
         <source>&amp;Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Skonfiguruj</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="89"/>
@@ -3347,22 +3347,22 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="108"/>
         <source>Optimising database…</source>
-        <translation type="unfinished"></translation>
+        <translation>Optymalizowanie bazy danych…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="118"/>
         <source>Database optimised</source>
-        <translation type="unfinished"></translation>
+        <translation>Baza danych zoptymalizowana</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="123"/>
         <source>Cleaning database…</source>
-        <translation type="unfinished"></translation>
+        <translation>Czyszczenie bazy danych…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="133"/>
         <source>Database cleaned</source>
-        <translation type="unfinished"></translation>
+        <translation>Baza danych wyczyszczona</translation>
     </message>
 </context>
 <context>
@@ -3370,7 +3370,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="221"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="223"/>
@@ -3385,7 +3385,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="227"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status</translation>
     </message>
 </context>
 <context>
@@ -3394,7 +3394,7 @@
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="146"/>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="147"/>
         <source>Sorting</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortowanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="147"/>
@@ -3412,7 +3412,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="90"/>
         <source>Sort tracks in library by</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortuj utwory w bibliotece według</translation>
     </message>
 </context>
 <context>
