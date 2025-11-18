@@ -111,6 +111,7 @@ void LyricsEditor::setupUi()
     m_seek       = new QPushButton(tr("Seek"), this);
     m_reset      = new QPushButton(tr("Reset Changes"), this);
     m_insert     = new QPushButton(tr("Insert/Update"), this);
+    m_insertNext = new QPushButton(tr("Update+Next Line"), this);
     m_rewind     = new QPushButton(tr("Rewind line (-100ms)"), this);
     m_forward    = new QPushButton(tr("Forward line (+100ms)"), this);
     m_remove     = new QPushButton(tr("Remove"), this);
@@ -134,7 +135,8 @@ void LyricsEditor::setupUi()
     auto* timestampsLayout = new QGridLayout(timestampsGroup);
 
     row = 0;
-    timestampsLayout->addWidget(m_insert, row++, 0, 1, 2);
+    timestampsLayout->addWidget(m_insert, row, 0);
+    timestampsLayout->addWidget(m_insertNext, row++, 1);
     timestampsLayout->addWidget(m_rewind, row, 0);
     timestampsLayout->addWidget(m_forward, row++, 1);
     timestampsLayout->addWidget(m_remove, row, 0);
@@ -153,6 +155,7 @@ void LyricsEditor::setupUi()
         m_playPause->setDisabled(true);
         m_seek->setDisabled(true);
         m_insert->setDisabled(true);
+        m_insertNext->setDisabled(true);
         m_rewind->setDisabled(true);
         m_forward->setDisabled(true);
     }
@@ -165,6 +168,7 @@ void LyricsEditor::setupConnections()
     QObject::connect(m_seek, &QPushButton::clicked, this, &LyricsEditor::seek);
     QObject::connect(m_reset, &QPushButton::clicked, this, &LyricsEditor::reset);
     QObject::connect(m_insert, &QPushButton::clicked, this, &LyricsEditor::insertOrUpdateTimestamp);
+    QObject::connect(m_insertNext, &QPushButton::clicked, this, &LyricsEditor::insertOrUpdateTimestampAndGotoNextLine);
     QObject::connect(m_rewind, &QPushButton::clicked, this, &LyricsEditor::adjustTimestamp);
     QObject::connect(m_forward, &QPushButton::clicked, this, &LyricsEditor::adjustTimestamp);
     QObject::connect(m_remove, &QPushButton::clicked, this, &LyricsEditor::removeTimestamp);
@@ -251,6 +255,29 @@ void LyricsEditor::insertOrUpdateTimestamp()
     }
 
     cursor.insertText(currentLine);
+}
+void LyricsEditor::insertOrUpdateTimestampAndGotoNextLine()
+{
+    QTextCursor cursor = m_lyricsText->textCursor();
+    cursor.movePosition(QTextCursor::StartOfLine);
+    cursor.select(QTextCursor::LineUnderCursor);
+    QString currentLine = cursor.selectedText();
+
+    QString newTimestamp = u"[%1]"_s.arg(formatTimestamp(m_playerController->currentPosition()));
+
+    static const QRegularExpression regex{QLatin1String{TimestampRegex}};
+    if(regex.match(currentLine).hasMatch()) {
+        currentLine.replace(regex, newTimestamp);
+    }
+    else {
+        currentLine = newTimestamp + currentLine;
+    }
+
+    cursor.insertText(currentLine);
+    cursor.movePosition(QTextCursor::StartOfLine);
+    cursor.movePosition(QTextCursor::Down);
+    cursor.movePosition(QTextCursor::StartOfLine);
+    m_lyricsText->setTextCursor(cursor);
 }
 
 void LyricsEditor::adjustTimestamp()
