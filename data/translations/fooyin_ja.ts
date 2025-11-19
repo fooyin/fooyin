@@ -2000,7 +2000,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="95"/>
         <source>Show system tray icon</source>
-        <translation type="unfinished"></translation>
+        <translation>システムトレイにアイコンを表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="96"/>
@@ -2020,7 +2020,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
         <source>Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>起動</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
@@ -2030,7 +2030,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>User Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザーディレクトリ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="114"/>
@@ -2055,27 +2055,27 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="132"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>言語</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="147"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>標準</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="148"/>
         <source>Start maximised</source>
-        <translation type="unfinished"></translation>
+        <translation>最大化して開始</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="149"/>
         <source>Start hidden to tray</source>
-        <translation type="unfinished"></translation>
+        <translation>起動時はトレイに</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="150"/>
         <source>Remember from last run</source>
-        <translation type="unfinished"></translation>
+        <translation>直前の動作を記憶する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="179"/>
@@ -2085,7 +2085,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="180"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation>変更を有効にするために、再起動しますか?</translation>
     </message>
 </context>
 <context>
@@ -2153,27 +2153,27 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="384"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>終了</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="473"/>
         <source>Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>音量</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="475"/>
         <source>Volume up</source>
-        <translation type="unfinished"></translation>
+        <translation>音量を上げる</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="482"/>
         <source>Volume down</source>
-        <translation type="unfinished"></translation>
+        <translation>音量を下げる</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="489"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>ミュート</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
@@ -2233,12 +2233,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>無視</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="589"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のファイル</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="598"/>
@@ -2305,7 +2305,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="846"/>
         <source>Reload Required</source>
-        <translation type="unfinished"></translation>
+        <translation>リロードが必要</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="847"/>
@@ -2315,37 +2315,37 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="852"/>
         <source>Reload Now</source>
-        <translation type="unfinished"></translation>
+        <translation>リロードします</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="854"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="919"/>
         <source>Playback Error</source>
-        <translation type="unfinished"></translation>
+        <translation>再生エラー</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="972"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックが見つかりません</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1215"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークを検索中</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1229"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの検索終了</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="944"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>続行</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="688"/>
@@ -2395,12 +2395,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1070"/>
         <source>Load Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストをロード</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1106"/>
         <source>Save Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストを保存</translation>
     </message>
 </context>
 <context>
@@ -2423,7 +2423,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>システムデフォルト</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
