@@ -320,7 +320,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation>Идёт поиск</translation>
+        <translation>Поиск</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
@@ -853,17 +853,17 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
         <source>Click Behaviour</source>
-        <translation>Поведение при клике</translation>
+        <translation>Поведение щелчка мыши</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="90"/>
         <source>Double-click</source>
-        <translation>Двойной клик</translation>
+        <translation>Двойной щелчок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="92"/>
         <source>Middle-click</source>
-        <translation>Клик средней кнопкой мыши</translation>
+        <translation>Щелчок средней кнопкой</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="97"/>
@@ -873,7 +873,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="108"/>
         <source>Display Options</source>
-        <translation>Опции отображения</translation>
+        <translation>Параметры отображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="134"/>
@@ -1833,7 +1833,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="74"/>
         <source>Click Behaviour</source>
-        <translation>Поведение при клике</translation>
+        <translation>Поведение щелчка мыши</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="84"/>
@@ -1843,12 +1843,12 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="77"/>
         <source>Double-click</source>
-        <translation>Двойной клик</translation>
+        <translation>Двойной щелчок</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="79"/>
         <source>Middle-click</source>
-        <translation>Клик средней кнопкой мыши</translation>
+        <translation>Щелчок средней кнопкой</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="92"/>
@@ -2148,7 +2148,7 @@
         <source>Plugin search locations:
 
 </source>
-        <translation>Каталог для поиска плагинов:
+        <translation>Каталоги для поиска плагинов:
 
 </translation>
     </message>
@@ -2246,7 +2246,7 @@
         <location filename="../../src/gui/guiapplication.cpp" line="598"/>
         <location filename="../../src/gui/guiapplication.cpp" line="628"/>
         <source>Tagging</source>
-        <translation>Тэги</translation>
+        <translation>Теги</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="601"/>
@@ -2490,7 +2490,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="128"/>
         <source>Foreground (Disabled)</source>
-        <translation>Передний план (Неактивный)</translation>
+        <translation>Передний план (неактивный)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="129"/>
@@ -2510,17 +2510,17 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="132"/>
         <source>Button Text (Disabled)</source>
-        <translation>Текст кнопки (Неактивный)</translation>
+        <translation>Текст кнопки (неактивный)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="133"/>
         <source>ToolTip (Background)</source>
-        <translation>Подсказка (Фон)</translation>
+        <translation>Подсказка (фон)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="134"/>
         <source>ToolTip (Foreground)</source>
-        <translation>Подсказка (Передний план)</translation>
+        <translation>Подсказка (передний план)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="135"/>
@@ -3219,7 +3219,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="131"/>
         <source>Use &apos;Various Artists&apos; for compilations</source>
-        <translation>Использовать &apos;Various Artists&apos; для сборников</translation>
+        <translation>Использовать «Various Artists» для сборников</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="132"/>
@@ -3549,7 +3549,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="95"/>
         <source>Click Behaviour</source>
-        <translation>Поведение при клике</translation>
+        <translation>Поведение щелчка мыши</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="108"/>
@@ -3559,7 +3559,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="98"/>
         <source>Double-click</source>
-        <translation>Двойной клик</translation>
+        <translation>Двойной щелчок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="80"/>
@@ -3594,7 +3594,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="99"/>
         <source>Middle-click</source>
-        <translation>Клик средней кнопкой мыши</translation>
+        <translation>Щелчок средней кнопкой</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="111"/>
@@ -4292,12 +4292,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="84"/>
         <source>Lyrics will be searched for in the above order.</source>
-        <translation>Поиск текстов песен будет осуществляться в данном порядке.</translation>
+        <translation>Поиск текстов песен будет происходить в показанном выше порядке.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="85"/>
         <source>Metadata tags</source>
-        <translation>Тэги метаданных</translation>
+        <translation>Теги метаданных</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="87"/>
@@ -5341,12 +5341,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="130"/>
         <source>Click Behaviour</source>
-        <translation>Поведение при клике</translation>
+        <translation>Поведение щелчка мыши</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="133"/>
         <source>Middle-click</source>
-        <translation>Клик средней кнопкой мыши</translation>
+        <translation>Щелчок средней кнопкой</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="148"/>
@@ -5793,7 +5793,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="187"/>
         <source>C&amp;lear</source>
-        <translation>Очистить</translation>
+        <translation>&amp;Очистить</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="188"/>
@@ -6139,7 +6139,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="60"/>
         <source>&amp;Clear</source>
-        <translation>Очистить</translation>
+        <translation>&amp;Очистить</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="104"/>
@@ -6674,7 +6674,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="116"/>
         <source>No login token in callback.</source>
-        <translation>В коллбэке отсутствует токен входа</translation>
+        <translation>В ответном вызове отсутствует токен входа.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="127"/>
@@ -6795,12 +6795,12 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="252"/>
         <source>Signed in</source>
-        <translation>Зашёл</translation>
+        <translation>Вход произведён</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="257"/>
         <source>Sign In</source>
-        <translation>Зашёл</translation>
+        <translation>Войти</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="253"/>
@@ -6893,7 +6893,7 @@
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="245"/>
         <source>Clear All</source>
-        <translation>Очистить</translation>
+        <translation>Очистить все</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="255"/>
@@ -7173,7 +7173,7 @@
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="183"/>
         <source>Reset Page</source>
-        <translation>Сбросить</translation>
+        <translation>Сбросить страницу</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="184"/>
@@ -7277,7 +7277,7 @@
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="253"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="254"/>
         <source>Shortcuts</source>
-        <translation>Комбинации клавиш</translation>
+        <translation>Сочетания клавиш</translation>
     </message>
 </context>
 <context>
@@ -7285,7 +7285,7 @@
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="104"/>
         <source>Shortcuts</source>
-        <translation>Комбинации клавиш</translation>
+        <translation>Сочетания клавиш</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="120"/>
@@ -7839,7 +7839,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="48"/>
         <source>&amp;Log</source>
-        <translation>&amp;Лог</translation>
+        <translation>&amp;Журнал</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
@@ -8096,12 +8096,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="111"/>
         <source>RMS Max</source>
-        <translation>RMS Макс.</translation>
+        <translation>Макс. RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="115"/>
         <source>RMS Min</source>
-        <translation>RMS Мин.</translation>
+        <translation>Мин. RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="119"/>
@@ -8200,7 +8200,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
         <source>RMS</source>
-        <translation>RMS</translation>
+        <translation>RMS (среднее квадратичное)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="86"/>
@@ -8321,7 +8321,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="183"/>
         <source>Clear Cache</source>
-        <translation>Очистить</translation>
+        <translation>Очистить кэш</translation>
     </message>
 </context>
 <context>
@@ -8354,7 +8354,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="175"/>
         <source>RMS</source>
-        <translation>RMS</translation>
+        <translation>RMS (среднее квадратичное)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="176"/>
