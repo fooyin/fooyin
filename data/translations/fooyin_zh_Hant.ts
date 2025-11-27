@@ -2807,12 +2807,12 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="68"/>
         <source>&amp;Frequently asked questions</source>
-        <translation>常見問題(&amp;F)</translation>
+        <translation>常見問答集(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
         <source>Open the FAQ</source>
-        <translation>開啟常見問題集</translation>
+        <translation>開啟常見問答集</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="73"/>
