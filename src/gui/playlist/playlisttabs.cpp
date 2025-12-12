@@ -450,12 +450,12 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
         }
     }
 
-    if(event->mimeData()->hasUrls()) {
-        emit filesDropped(event->mimeData()->urls(), id);
+    if(event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
+        emit tracksDropped(event->mimeData()->data(QString::fromLatin1(Constants::Mime::TrackIds)), id);
         event->acceptProposedAction();
     }
-    else if(event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
-        emit tracksDropped(event->mimeData()->data(QString::fromLatin1(Constants::Mime::TrackIds)), id);
+    else if(event->mimeData()->hasUrls()) {
+        emit filesDropped(event->mimeData()->urls(), id);
         event->acceptProposedAction();
     }
     else {
