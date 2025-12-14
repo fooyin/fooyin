@@ -726,7 +726,7 @@ void FFmpegInputPrivate::readNext()
         }
     }
 
-    if(m_seekPos > 0 && m_codec.context()->codec_id == AV_CODEC_ID_APE) {
+    if(m_seekPos > 0) {
         const auto packetPts = av_rescale_q_rnd(packet->pts, m_timeBase, TimeBaseMs, AVRounding::AV_ROUND_DOWN);
         m_skipBytes          = m_audioFormat.bytesForDuration(std::abs(m_seekPos - packetPts));
     }
@@ -743,13 +743,12 @@ void FFmpegInputPrivate::seek(uint64_t pos)
 
     pos += m_startTimeMs;
 
-    constexpr static auto min = std::numeric_limits<int64_t>::min();
-    constexpr static auto max = std::numeric_limits<int64_t>::max();
     m_seekPos = static_cast<int64_t>(pos);
 
     const auto target = av_rescale_q_rnd(m_seekPos, TimeBaseMs, TimeBaseAv, AVRounding::AV_ROUND_DOWN);
+    const auto min    = av_rescale_q_rnd(m_seekPos - 1000, TimeBaseMs, TimeBaseAv, AVRounding::AV_ROUND_DOWN);
 
-    if(auto ret = avformat_seek_file(m_context.get(), -1, min, target, max, 0) < 0) {
+    if(auto ret = avformat_seek_file(m_context.get(), -1, min, target, target, 0) < 0) {
         Utils::printError(ret);
     }
     avcodec_flush_buffers(m_codec.context());
