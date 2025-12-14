@@ -537,6 +537,8 @@ bool FFmpegInputPrivate::setup(const AudioSource& source, uint64_t duration, uns
     if(createCodec(m_stream.avStream())) {
         m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar, m_codec.context()->sample_fmt);
         if(subsong < m_context->nb_chapters) {
+            // Chapters require seeking
+            m_options &= ~AudioDecoder::NoSeeking;
             seek(0);
         }
         return true;
@@ -678,24 +680,27 @@ int FFmpegInputPrivate::receiveAVFrames()
         auto sampleCount             = m_audioFormat.bytesPerFrame() * m_frame.sampleCount();
         const uint64_t startTime     = m_codec.context()->codec_id == AV_CODEC_ID_APE ? m_currentPos : m_frame.ptsMs();
         const uint64_t frameDuration = m_frame.sampleCount() * 1000 / m_audioFormat.sampleRate();
-        if(frameDuration > m_endTimeMs - startTime) {
+        if(frameDuration >= m_endTimeMs - startTime) {
             const auto newSampleCount = (m_endTimeMs - startTime) * m_audioFormat.sampleRate() / 1000;
             sampleCount               = m_audioFormat.bytesPerFrame() * newSampleCount;
             m_eof                     = true;
         }
 
+        // Seeking may land before the chapter start time
+        const uint64_t startTimeClipped = std::max(startTime, m_startTimeMs);
+
         if(m_codec.isPlanar()) {
-            m_buffer = {m_audioFormat, startTime - m_startTimeMs};
+            m_buffer = {m_audioFormat, startTimeClipped - m_startTimeMs};
             m_buffer.resize(static_cast<size_t>(sampleCount));
             interleave(m_frame.avFrame()->data, m_buffer);
         }
         else {
             m_buffer = {m_frame.avFrame()->data[0], static_cast<size_t>(sampleCount), m_audioFormat,
-                        startTime - m_startTimeMs};
+                        startTimeClipped - m_startTimeMs};
         }
 
         if(!(m_options & AudioDecoder::NoSeeking)) {
-            // Handle seeking of APE files
+            // Handle inaccurate seeking
             if(m_skipBytes > 0) {
                 const auto len = std::min(sampleCount, m_skipBytes);
                 m_skipBytes -= len;
@@ -765,7 +770,7 @@ void FFmpegInputPrivate::readNext()
         }
     }
 
-    if(m_seekPos > 0 && m_codec.context()->codec_id == AV_CODEC_ID_APE) {
+    if(m_seekPos > 0) {
         const auto packetPts = av_rescale_q_rnd(packet->pts, m_timeBase, TimeBaseMs, AVRounding::AV_ROUND_DOWN);
         m_skipBytes          = m_audioFormat.bytesForDuration(std::abs(m_seekPos - packetPts));
     }
