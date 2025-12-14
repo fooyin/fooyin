@@ -186,12 +186,13 @@ void ApplicationPrivate::registerInputs()
     m_audioLoader->addReader(u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); });
     m_audioLoader->addReader(u"TagLib"_s, {[]() {
                                  return std::make_unique<TagLibReader>();
-                             }});
+                             }},
+                             1);
     m_audioLoader->addDecoder(u"FFmpeg"_s, []() { return std::make_unique<FFmpegDecoder>(); }, 99);
     m_audioLoader->addReader(u"FFmpeg"_s, {[]() {
                                  return std::make_unique<FFmpegReader>();
                              }},
-                             99);
+                             0);
 }
 
 void ApplicationPrivate::setupConnections()
