@@ -167,7 +167,7 @@ QString convertString(const char* str)
     return QString::fromUtf8(str);
 };
 
-void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
+void parseTag(Fooyin::Track& track, const AVDictionaryEntry* tag, bool isTrack, int nbChapters)
 {
     if(strcasecmp(tag->key, "album") == 0) {
         track.setAlbum(convertString(tag->value));
@@ -179,7 +179,10 @@ void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
         track.setAlbumArtists({convertString(tag->value)});
     }
     else if(strcasecmp(tag->key, "title") == 0) {
-        track.setTitle(convertString(tag->value));
+        if(!isTrack && nbChapters > 1)
+            track.setAlbum(convertString(tag->value));
+        else
+            track.setTitle(convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "genre") == 0) {
         track.setGenres({convertString(tag->value)});
@@ -235,6 +238,26 @@ void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
         track.addExtraTag(u"PODCASTCATEGORY"_s, convertString(tag->value));
     }
     else if(strncasecmp(tag->key, "ID3V2_PRIV", 10) == 0) { }
+    else if(strcasecmp(tag->key, "REPLAYGAIN_GAIN")) {
+        char* end;
+        const float gain = strtof(tag->value, &end);
+        if(end > tag->value) {
+            if(isTrack)
+                track.setRGTrackGain(gain);
+            else
+                track.setRGAlbumGain(gain);
+        }
+    }
+    else if(strcasecmp(tag->key, "REPLAYGAIN_PEAK")) {
+        char* end;
+        const float peak = strtof(tag->value, &end);
+        if(end > tag->value) {
+            if(isTrack)
+                track.setRGTrackPeak(peak);
+            else
+                track.setRGAlbumPeak(peak);
+        }
+    }
     else {
         track.addExtraTag(convertString(tag->key).toUpper(), convertString(tag->value));
     }
@@ -1041,8 +1064,34 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     }
 
     AVDictionaryEntry* tag{nullptr};
-    while((tag = av_dict_get(context.formatContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-        parseTag(track, tag);
+    if(context.formatContext->metadata) {
+        while((tag = av_dict_get(context.formatContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+            parseTag(track, tag, false, _nb_chapters);
+        }
+        tag = nullptr;
+    }
+    if(context.formatContext->nb_programs > 0) {
+        AVProgram* program = context.formatContext->programs[0];
+        if(program && program->metadata) {
+            while((tag = av_dict_get(program->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+                parseTag(track, tag, false, _nb_chapters);
+            }
+            tag = nullptr;
+        }
+    }
+    if(avStream->metadata) {
+        while((tag = av_dict_get(avStream->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+            parseTag(track, tag, false, _nb_chapters);
+        }
+        tag = nullptr;
+    }
+    if(_subsong < _nb_chapters) {
+        AVChapter* chapter = context.formatContext->chapters[_subsong];
+        if(chapter && chapter->metadata) {
+            while((tag = av_dict_get(chapter->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+                parseTag(track, tag, true, _nb_chapters);
+            }
+        }
     }
 
     return true;
