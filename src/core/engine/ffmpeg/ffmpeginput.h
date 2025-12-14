@@ -61,9 +61,14 @@ public:
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
+    [[nodiscard]] int subsongCount() const override;
 
+    bool init(const AudioSource& source) override;
     [[nodiscard]] bool readTrack(const AudioSource& source, Track& track) override;
     [[nodiscard]] QByteArray readCover(const AudioSource& source, const Track& track, Track::Cover cover) override;
     [[nodiscard]] bool writeTrack(const AudioSource& source, const Track& track, WriteOptions options) override;
+
+private:
+    int m_subsongCount;
 };
 } // namespace Fooyin
