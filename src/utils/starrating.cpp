@@ -104,7 +104,7 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
                                  .arg(m_maxCount)
                                  .arg(mode == EditMode::Editable ? 1 : 0)
                                  .arg(rect.width())
-                                 .arg(alignment);
+                                 .arg(alignment.toInt());
 
     QPixmap pixmap;
     if(!QPixmapCache::find(cacheKey, &pixmap)) {
