@@ -119,7 +119,7 @@ public:
     void SetPosition(const QDBusObjectPath& path, int64_t position);
 
 signals:
-    void Seeked(int64_t position);
+    void Seeked(qlonglong position);
     void fullscreenChanged(bool fullscreen);
     void volumeChanged(double volume);
     void loopStatusChanged(const QString& status);
