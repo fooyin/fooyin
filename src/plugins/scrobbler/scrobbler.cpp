@@ -19,10 +19,10 @@
 
 #include "scrobbler.h"
 
-#include "settings/scrobblersettings.h"
 #include "services/lastfmservice.h"
 #include "services/librefmservice.h"
 #include "services/listenbrainzservice.h"
+#include "settings/scrobblersettings.h"
 
 #include <core/player/playercontroller.h>
 #include <utils/settings/settingsmanager.h>

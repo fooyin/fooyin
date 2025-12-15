@@ -54,7 +54,7 @@ private:
     QCheckBox* m_scrobblingEnabled;
     QSpinBox* m_scrobbleDelay;
 
-    QCheckBox* m_scrobbleFilterEnabled;
+    QGroupBox* m_filterScrobblesGroup;
     ScriptLineEdit* m_scrobbleFilter;
 
     QLineEdit* m_titleParam;
@@ -68,17 +68,14 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_scrobblingEnabled{new QCheckBox(tr("Enable scrobbling"), this)}
     , m_scrobbleDelay{new QSpinBox(this)}
-    , m_scrobbleFilterEnabled{new QCheckBox(tr("Filter scrobbles"), this)}
-    , m_scrobbleFilter{new ScriptLineEdit(tr("Filter"), this)}
+    , m_filterScrobblesGroup{new QGroupBox(tr("Filter scrobbles"), this)}
+    , m_scrobbleFilter{new ScriptLineEdit(this)}
     , m_titleParam{new QLineEdit(this)}
     , m_artistParam{new QLineEdit(this)}
     , m_albumParam{new QLineEdit(this)}
     , m_sendAlbumArtist{new QCheckBox(tr("Album Artist"), this)}
     , m_albumArtistParam{new QLineEdit(this)}
 {
-    auto* genralGroup   = new QGroupBox(tr("General"), this);
-    auto* generalLayout = new QGridLayout(genralGroup);
-
     auto* delayLabel       = new QLabel(tr("Scrobble delay") + ":"_L1, this);
     const QString delayTip = tr("Time to wait before submitting scrobbles");
 
@@ -93,10 +90,17 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
     filterLabel->setToolTip(filterTip);
     m_scrobbleFilter->setToolTip(filterTip);
 
+    int row{0};
+    auto* filterLayout = new QGridLayout(m_filterScrobblesGroup);
+    filterLayout->addWidget(filterLabel, row, 0, 1, 1);
+    filterLayout->addWidget(m_scrobbleFilter, row++, 1, 1, 3);
+
+    m_filterScrobblesGroup->setCheckable(true);
+
     auto* paramsGroup  = new QGroupBox(tr("Fields"), this);
     auto* paramsLayout = new QGridLayout(paramsGroup);
 
-    int row{0};
+    row = 0;
     paramsLayout->addWidget(new QLabel(tr("Title") + ":"_L1, this), row, 0);
     paramsLayout->addWidget(m_titleParam, row++, 1);
     paramsLayout->addWidget(new QLabel(tr("Artist") + ":"_L1, this), row, 0);
@@ -106,27 +110,20 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
     paramsLayout->addWidget(m_sendAlbumArtist, row, 0);
     paramsLayout->addWidget(m_albumArtistParam, row++, 1);
 
-    row = 0;
-    generalLayout->addWidget(m_scrobblingEnabled, row++, 0, 1, 3);
-    generalLayout->addWidget(delayLabel, row, 0, 1, 2);
-    generalLayout->addWidget(m_scrobbleDelay, row++, 2);
-
-    generalLayout->addWidget(m_scrobbleFilterEnabled, row++, 0, 1, 3);
-    generalLayout->addWidget(filterLabel, row, 0, 1, 1);
-    generalLayout->addWidget(m_scrobbleFilter, row++, 1, 1, 3);
-
-    generalLayout->setRowStretch(generalLayout->rowCount(), 1);
-    generalLayout->setColumnStretch(3, 1);
-
     auto* layout = new QGridLayout(this);
 
     row = 0;
-    layout->addWidget(genralGroup, row++, 0, 1, 3);
+    layout->addWidget(m_scrobblingEnabled, row++, 0, 1, 3);
+    layout->addWidget(delayLabel, row, 0, 1, 2);
+    layout->addWidget(m_scrobbleDelay, row++, 2);
+
+    layout->addWidget(m_filterScrobblesGroup, row++, 0, 1, 3);
+
     layout->addWidget(paramsGroup, row++, 0, 1, 3);
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(2, 1);
 
-    QObject::connect(m_scrobbleFilterEnabled, &QCheckBox::clicked, m_scrobbleFilter, &QWidget::setEnabled);
+    QObject::connect(m_filterScrobblesGroup, &QGroupBox::clicked, m_scrobbleFilter, &QWidget::setEnabled);
     QObject::connect(m_sendAlbumArtist, &QCheckBox::clicked, m_albumArtistParam, &QWidget::setEnabled);
 }
 
@@ -142,10 +139,10 @@ void ScrobblerPageWidget::load()
     m_albumArtistParam->setText(m_settings->value<Settings::Scrobbler::AlbumArtistField>());
     m_albumArtistParam->setEnabled(m_sendAlbumArtist->isChecked());
 
-    m_scrobbleFilterEnabled->setChecked(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>());
+    m_filterScrobblesGroup->setChecked(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>());
     m_scrobbleFilter->setText(m_settings->value<Settings::Scrobbler::ScrobbleFilter>());
 
-    m_scrobbleFilter->setEnabled(m_scrobbleFilterEnabled->isChecked());
+    m_scrobbleFilter->setEnabled(m_filterScrobblesGroup->isChecked());
 }
 
 void ScrobblerPageWidget::apply()
@@ -159,7 +156,7 @@ void ScrobblerPageWidget::apply()
     m_settings->set<Settings::Scrobbler::SendAlbumArtist>(m_sendAlbumArtist->isChecked());
     m_settings->set<Settings::Scrobbler::AlbumArtistField>(m_albumArtistParam->text());
 
-    m_settings->set<Settings::Scrobbler::EnableScrobbleFilter>(m_scrobbleFilterEnabled->isChecked());
+    m_settings->set<Settings::Scrobbler::EnableScrobbleFilter>(m_filterScrobblesGroup->isChecked());
     m_settings->set<Settings::Scrobbler::ScrobbleFilter>(m_scrobbleFilter->text());
 }
 
