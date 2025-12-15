@@ -170,6 +170,7 @@ PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialo
 
     m_applyButton = buttonBox->button(QDialogButtonBox::Apply);
     buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+    buttonBox->button(QDialogButtonBox::Cancel)->setAutoDefault(false);
     tabWidget->setCurrentIndex(0);
 
     m_toolsButton->setText(tr("Tools"));
