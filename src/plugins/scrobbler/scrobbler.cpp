@@ -19,7 +19,7 @@
 
 #include "scrobbler.h"
 
-#include "scrobblersettings.h"
+#include "settings/scrobblersettings.h"
 #include "services/lastfmservice.h"
 #include "services/librefmservice.h"
 #include "services/listenbrainzservice.h"

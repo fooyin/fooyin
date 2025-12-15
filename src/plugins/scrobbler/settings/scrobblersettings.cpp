@@ -30,9 +30,13 @@ ScrobblerSettings::ScrobblerSettings(SettingsManager* settings)
 
     settings->createSetting<ScrobblingEnabled>(false, u"Scrobbling/Enabled"_s);
     settings->createSetting<ScrobblingDelay>(0, u"Scrobbling/Delay"_s);
-    settings->createSetting<PreferAlbumArtist>(false, u"Scrobbling/PreferAlbumArtist"_s);
+    settings->createSetting<SendAlbumArtist>(false, u"Scrobbling/SendAlbumArtist"_s);
     settings->createSetting<EnableScrobbleFilter>(false, u"Scrobbling/EnableScrobbleFilter"_s);
     settings->createSetting<ScrobbleFilter>(u""_s, u"Scrobbling/Filter"_s);
     settings->createSetting<ServicesData>(QByteArray{}, u"Scrobbling/ServicesData"_s);
+    settings->createSetting<TitleField>(u"%title%"_s, u"Scrobbling/TitleField"_s);
+    settings->createSetting<AlbumField>(u"%album%"_s, u"Scrobbling/AlbumField"_s);
+    settings->createSetting<ArtistField>(u"%artist%"_s, u"Scrobbling/ArtistField"_s);
+    settings->createSetting<AlbumArtistField>(u"$meta(albumartist)"_s, u"Scrobbling/AlbumArtistField"_s);
 }
 } // namespace Fooyin::Scrobbler

@@ -20,9 +20,10 @@
 #include "scrobblerplugin.h"
 
 #include "scrobbler.h"
-#include "scrobblerpage.h"
-#include "scrobblersettings.h"
 #include "scrobblertoggle.h"
+#include "settings/scrobblerpage.h"
+#include "settings/scrobblerservicespage.h"
+#include "settings/scrobblersettings.h"
 
 #include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>
@@ -61,7 +62,8 @@ void ScrobblerPlugin::initialise(const GuiPluginContext& context)
         tr("Scrobble Toggle"));
     context.widgetProvider->setSubMenus(u"ScrobbleToggle"_s, {tr("Controls")});
 
-    new ScrobblerPage(m_scrobbler.get(), m_settings, this);
+    new ScrobblerPage(m_settings, this);
+    new ScrobblerServicesPage(m_scrobbler.get(), m_settings, this);
 }
 
 void ScrobblerPlugin::shutdown()

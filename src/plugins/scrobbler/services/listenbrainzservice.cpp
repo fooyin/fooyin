@@ -19,8 +19,6 @@
 
 #include "listenbrainzservice.h"
 
-#include "scrobblersettings.h"
-
 #include <core/coresettings.h>
 #include <core/network/networkaccessmanager.h>
 #include <utils/settings/settingsmanager.h>
@@ -39,6 +37,45 @@ using namespace Qt::StringLiterals;
 constexpr auto ApiUrl = "https://api.listenbrainz.org";
 
 constexpr auto MaxScrobblesPerRequest = 10;
+
+namespace {
+QJsonObject getTrackMetadata(const Fooyin::Scrobbler::Metadata& metadata)
+{
+    QJsonObject metaObj;
+
+    metaObj.insert(u"artist_name"_s, metadata.artist);
+
+    if(!metadata.album.isEmpty()) {
+        metaObj.insert(u"release_name"_s, metadata.album);
+    }
+
+    metaObj.insert(u"track_name"_s, metadata.title);
+
+    QJsonObject infoObj;
+
+    if(metadata.duration > 0) {
+        infoObj.insert(u"duration_ms"_s, static_cast<qint64>(metadata.duration) * 1000);
+    }
+    if(!metadata.trackNum.isEmpty()) {
+        infoObj.insert(u"tracknumber"_s, metadata.trackNum);
+    }
+    if(!metadata.musicBrainzId.isEmpty()) {
+        infoObj.insert(u"recording_mbid"_s, metadata.musicBrainzId);
+    }
+    if(!metadata.musicBrainzAlbumId.isEmpty()) {
+        infoObj.insert(u"release_mbid"_s, metadata.musicBrainzAlbumId);
+    }
+
+    infoObj.insert(u"media_player"_s, QCoreApplication::applicationName());
+    infoObj.insert(u"media_player_version"_s, QCoreApplication::applicationVersion());
+    infoObj.insert(u"submission_client"_s, QCoreApplication::applicationName());
+    infoObj.insert(u"submission_client_version"_s, QCoreApplication::applicationVersion());
+
+    metaObj.insert(u"additional_info"_s, infoObj);
+
+    return metaObj;
+}
+} // namespace
 
 namespace Fooyin::Scrobbler {
 QUrl ListenBrainzService::url() const
@@ -106,7 +143,7 @@ void ListenBrainzService::testApi()
 void ListenBrainzService::updateNowPlaying()
 {
     QJsonObject metaObj;
-    metaObj.insert(u"track_metadata"_s, getTrackMetadata(Metadata{currentTrack()}));
+    metaObj.insert(u"track_metadata"_s, getTrackMetadata(Metadata{scriptParser(), settings(), currentTrack()}));
 
     QJsonArray payload;
     payload.append(metaObj);
@@ -236,48 +273,6 @@ ScrobblerService::ReplyResult ListenBrainzService::getJsonFromReply(QNetworkRepl
     }
 
     return replyResult;
-}
-
-QJsonObject ListenBrainzService::getTrackMetadata(const Metadata& metadata) const
-{
-    QJsonObject metaObj;
-
-    if(settings()->value<Settings::Scrobbler::PreferAlbumArtist>() && !metadata.albumArtist.isEmpty()) {
-        metaObj.insert(u"artist_name"_s, metadata.albumArtist);
-    }
-    else {
-        metaObj.insert(u"artist_name"_s, metadata.artist);
-    }
-
-    if(!metadata.album.isEmpty()) {
-        metaObj.insert(u"release_name"_s, metadata.album);
-    }
-
-    metaObj.insert(u"track_name"_s, metadata.title);
-
-    QJsonObject infoObj;
-
-    if(metadata.duration > 0) {
-        infoObj.insert(u"duration_ms"_s, static_cast<qint64>(metadata.duration) * 1000);
-    }
-    if(!metadata.trackNum.isEmpty()) {
-        infoObj.insert(u"tracknumber"_s, metadata.trackNum);
-    }
-    if(!metadata.musicBrainzId.isEmpty()) {
-        infoObj.insert(u"recording_mbid"_s, metadata.musicBrainzId);
-    }
-    if(!metadata.musicBrainzAlbumId.isEmpty()) {
-        infoObj.insert(u"release_mbid"_s, metadata.musicBrainzAlbumId);
-    }
-
-    infoObj.insert(u"media_player"_s, QCoreApplication::applicationName());
-    infoObj.insert(u"media_player_version"_s, QCoreApplication::applicationVersion());
-    infoObj.insert(u"submission_client"_s, QCoreApplication::applicationName());
-    infoObj.insert(u"submission_client_version"_s, QCoreApplication::applicationVersion());
-
-    metaObj.insert(u"additional_info"_s, infoObj);
-
-    return metaObj;
 }
 
 void ListenBrainzService::testFinished(QNetworkReply* reply)

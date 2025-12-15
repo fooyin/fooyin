@@ -32,10 +32,14 @@ enum ScrobblerSettings : uint32_t
 {
     ScrobblingEnabled    = 0 | Type::Bool,
     ScrobblingDelay      = 1 | Type::Int,
-    PreferAlbumArtist    = 2 | Type::Bool,
+    SendAlbumArtist      = 2 | Type::Bool,
     EnableScrobbleFilter = 3 | Type::Bool,
     ScrobbleFilter       = 4 | Type::String,
     ServicesData         = 5 | Type::ByteArray,
+    TitleField           = 6 | Type::String,
+    AlbumField           = 7 | Type::String,
+    ArtistField          = 8 | Type::String,
+    AlbumArtistField     = 9 | Type::String,
 };
 Q_ENUM_NS(ScrobblerSettings)
 } // namespace Settings::Scrobbler

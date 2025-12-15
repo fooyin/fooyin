@@ -19,6 +19,10 @@
 
 #include "scrobblercache.h"
 
+#include "settings/scrobblersettings.h"
+
+#include <utils/settings/settingsmanager.h>
+
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -38,11 +42,11 @@ constexpr auto WriteInterval = 300000;
 #endif
 
 namespace Fooyin::Scrobbler {
-Metadata::Metadata(const Track& track)
-    : title{track.title()}
-    , album{track.album()}
-    , artist{track.artist()}
-    , albumArtist{track.albumArtist()}
+Metadata::Metadata(ScriptParser* parser, SettingsManager* settings, const Track& track)
+    : title{parser->evaluate(settings->value<Settings::Scrobbler::TitleField>(), track)}
+    , album{parser->evaluate(settings->value<Settings::Scrobbler::AlbumField>(), track)}
+    , artist{parser->evaluate(settings->value<Settings::Scrobbler::ArtistField>(), track)}
+    , albumArtist{parser->evaluate(settings->value<Settings::Scrobbler::AlbumArtistField>(), track)}
     , trackNum{track.trackNumber()}
     , duration{track.duration() / 1000}
 {
@@ -61,8 +65,9 @@ Metadata::Metadata(const Track& track)
     }
 }
 
-ScrobblerCache::ScrobblerCache(QString filepath, QObject* parent)
+ScrobblerCache::ScrobblerCache(QString filepath, SettingsManager* settings, QObject* parent)
     : QObject{parent}
+    , m_settings{settings}
     , m_filepath{std::move(filepath)}
 {
     readCache();
@@ -164,7 +169,9 @@ void ScrobblerCache::readCache()
 
 CacheItem* ScrobblerCache::add(const Track& track, const uint64_t timestamp)
 {
-    auto* item = m_items.emplace_back(std::make_unique<CacheItem>(Metadata{track}, timestamp)).get();
+    auto* item
+        = m_items.emplace_back(std::make_unique<CacheItem>(Metadata{&m_scriptParser, m_settings, track}, timestamp))
+              .get();
 
     if(!m_writeTimer.isActive()) {
         m_writeTimer.start(WriteInterval, this);

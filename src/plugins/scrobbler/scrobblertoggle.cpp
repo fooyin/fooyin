@@ -19,7 +19,7 @@
 
 #include "scrobblertoggle.h"
 
-#include "scrobblersettings.h"
+#include "settings/scrobblersettings.h"
 
 #include <gui/guisettings.h>
 #include <gui/widgets/toolbutton.h>

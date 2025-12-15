@@ -27,12 +27,12 @@ class SettingsManager;
 namespace Scrobbler {
 class Scrobbler;
 
-class ScrobblerPage : public SettingsPage
+class ScrobblerServicesPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    explicit ScrobblerPage(Scrobbler* scrobbler, SettingsManager* settings, QObject* parent = nullptr);
+    explicit ScrobblerServicesPage(Scrobbler* scrobbler, SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Scrobbler
 } // namespace Fooyin

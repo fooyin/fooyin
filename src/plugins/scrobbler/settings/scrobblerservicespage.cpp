@@ -17,7 +17,7 @@
  *
  */
 
-#include "scrobblerpage.h"
+#include "scrobblerservicespage.h"
 
 #include "customservicedialog.h"
 #include "scrobbler.h"
@@ -40,12 +40,12 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Scrobbler {
-class ScrobblerPageWidget : public SettingsPageWidget
+class ScrobblerServicesPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
 
 public:
-    explicit ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* settings);
+    explicit ScrobblerServicesPageWidget(Scrobbler* scrobbler, SettingsManager* settings);
 
     void load() override;
     void apply() override;
@@ -64,13 +64,6 @@ private:
 
     Scrobbler* m_scrobbler;
     SettingsManager* m_settings;
-
-    QCheckBox* m_scrobblingEnabled;
-    QCheckBox* m_preferAlbumArtist;
-    QSpinBox* m_scrobbleDelay;
-
-    QCheckBox* m_scrobbleFilterEnabled;
-    ScriptLineEdit* m_scrobbleFilter;
 
     QGroupBox* m_serviceGroup;
     QGridLayout* m_serviceLayout;
@@ -100,87 +93,34 @@ private:
     QPushButton* m_addCustomService;
 };
 
-ScrobblerPageWidget::ScrobblerPageWidget(Scrobbler* scrobbler, SettingsManager* settings)
+ScrobblerServicesPageWidget::ScrobblerServicesPageWidget(Scrobbler* scrobbler, SettingsManager* settings)
     : m_scrobbler{scrobbler}
     , m_settings{settings}
-    , m_scrobblingEnabled{new QCheckBox(tr("Enable scrobbling"), this)}
-    , m_preferAlbumArtist{new QCheckBox(tr("Prefer album artist"), this)}
-    , m_scrobbleDelay{new QSpinBox(this)}
-    , m_scrobbleFilterEnabled{new QCheckBox(tr("Filter scrobbles"), this)}
-    , m_scrobbleFilter{new ScriptLineEdit(tr("Filter"), this)}
     , m_serviceGroup{new QGroupBox(tr("Services"), this)}
     , m_serviceLayout{new QGridLayout(m_serviceGroup)}
     , m_addCustomService{new QPushButton(tr("Add Service"), this)}
 {
-    auto* genralGroup   = new QGroupBox(tr("General"), this);
-    auto* generalLayout = new QGridLayout(genralGroup);
-
-    auto* delayLabel       = new QLabel(tr("Scrobble delay") + ":"_L1, this);
-    const QString delayTip = tr("Time to wait before submitting scrobbles");
-
-    delayLabel->setToolTip(delayTip);
-    m_scrobbleDelay->setToolTip(delayTip);
-
-    m_scrobbleDelay->setRange(0, 600);
-    m_scrobbleDelay->setSuffix(" "_L1 + tr("seconds"));
-
-    auto* filterLabel       = new QLabel(tr("Query") + ":"_L1, this);
-    const QString filterTip = tr("Enter a query - tracks that match the query will NOT be scrobbled");
-    filterLabel->setToolTip(filterTip);
-    m_scrobbleFilter->setToolTip(filterTip);
-
-    int row{0};
-    generalLayout->addWidget(m_scrobblingEnabled, row++, 0, 1, 3);
-    generalLayout->addWidget(m_preferAlbumArtist, row++, 0, 1, 3);
-    generalLayout->addWidget(delayLabel, row, 0, 1, 2);
-    generalLayout->addWidget(m_scrobbleDelay, row++, 2);
-
-    generalLayout->addWidget(m_scrobbleFilterEnabled, row++, 0, 1, 3);
-    generalLayout->addWidget(filterLabel, row, 0, 1, 1);
-    generalLayout->addWidget(m_scrobbleFilter, row++, 1, 1, 3);
-
-    generalLayout->setRowStretch(generalLayout->rowCount(), 1);
-    generalLayout->setColumnStretch(3, 1);
-
     m_serviceLayout->setRowStretch(m_serviceLayout->rowCount(), 1);
     m_serviceLayout->setColumnStretch(0, 1);
 
     auto* layout = new QGridLayout(this);
 
-    row = 0;
-    layout->addWidget(genralGroup, row++, 0, 1, 3);
+    int row{0};
     layout->addWidget(m_serviceGroup, row++, 0, 1, 3);
     layout->addWidget(m_addCustomService, row++, 0, 1, 3);
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(2, 1);
 
-    QObject::connect(m_scrobbleFilterEnabled, &QCheckBox::clicked, m_scrobbleFilter, &QWidget::setEnabled);
-    QObject::connect(m_addCustomService, &QPushButton::clicked, this, &ScrobblerPageWidget::addCustomService);
+    QObject::connect(m_addCustomService, &QPushButton::clicked, this, &ScrobblerServicesPageWidget::addCustomService);
 }
 
-void ScrobblerPageWidget::load()
+void ScrobblerServicesPageWidget::load()
 {
-    m_scrobblingEnabled->setChecked(m_settings->value<Settings::Scrobbler::ScrobblingEnabled>());
-    m_scrobbleDelay->setValue(m_settings->value<Settings::Scrobbler::ScrobblingDelay>());
-    m_preferAlbumArtist->setChecked(m_settings->value<Settings::Scrobbler::PreferAlbumArtist>());
-
-    m_scrobbleFilterEnabled->setChecked(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>());
-    m_scrobbleFilter->setText(m_settings->value<Settings::Scrobbler::ScrobbleFilter>());
-
-    m_scrobbleFilter->setEnabled(m_scrobbleFilterEnabled->isChecked());
-
     populateServices();
 }
 
-void ScrobblerPageWidget::apply()
+void ScrobblerServicesPageWidget::apply()
 {
-    m_settings->set<Settings::Scrobbler::ScrobblingEnabled>(m_scrobblingEnabled->isChecked());
-    m_settings->set<Settings::Scrobbler::ScrobblingDelay>(m_scrobbleDelay->value());
-    m_settings->set<Settings::Scrobbler::PreferAlbumArtist>(m_preferAlbumArtist->isChecked());
-
-    m_settings->set<Settings::Scrobbler::EnableScrobbleFilter>(m_scrobbleFilterEnabled->isChecked());
-    m_settings->set<Settings::Scrobbler::ScrobbleFilter>(m_scrobbleFilter->text());
-
     for(const auto& context : m_pendingDelete) {
         m_scrobbler->removeCustomService(context.service);
     }
@@ -193,17 +133,9 @@ void ScrobblerPageWidget::apply()
     }
 }
 
-void ScrobblerPageWidget::reset()
-{
-    m_settings->reset<Settings::Scrobbler::ScrobblingEnabled>();
-    m_settings->reset<Settings::Scrobbler::ScrobblingDelay>();
-    m_settings->reset<Settings::Scrobbler::PreferAlbumArtist>();
+void ScrobblerServicesPageWidget::reset() { }
 
-    m_settings->reset<Settings::Scrobbler::EnableScrobbleFilter>();
-    m_settings->reset<Settings::Scrobbler::ScrobbleFilter>();
-}
-
-void ScrobblerPageWidget::populateServices()
+void ScrobblerServicesPageWidget::populateServices()
 {
     m_pendingDelete.clear();
 
@@ -213,7 +145,7 @@ void ScrobblerPageWidget::populateServices()
     }
 }
 
-void ScrobblerPageWidget::toggleLogin(ScrobblerService* service)
+void ScrobblerServicesPageWidget::toggleLogin(ScrobblerService* service)
 {
     const auto context = findContext(service);
     if(context == m_serviceContext.cend()) {
@@ -236,7 +168,7 @@ void ScrobblerPageWidget::toggleLogin(ScrobblerService* service)
     service->authenticate();
 }
 
-void ScrobblerPageWidget::updateServiceState(ScrobblerService* service)
+void ScrobblerServicesPageWidget::updateServiceState(ScrobblerService* service)
 {
     const auto context = findContext(service);
     if(context == m_serviceContext.cend()) {
@@ -292,7 +224,7 @@ void ScrobblerPageWidget::updateServiceState(ScrobblerService* service)
     }
 }
 
-void ScrobblerPageWidget::updateDetails(ScrobblerService* service)
+void ScrobblerServicesPageWidget::updateDetails(ScrobblerService* service)
 {
     const auto context = findContext(service);
     if(context == m_serviceContext.cend()) {
@@ -311,7 +243,7 @@ void ScrobblerPageWidget::updateDetails(ScrobblerService* service)
     service->updateDetails(details);
 }
 
-void ScrobblerPageWidget::addService(ScrobblerService* service)
+void ScrobblerServicesPageWidget::addService(ScrobblerService* service)
 {
     ServiceContext context;
     context.service    = service;
@@ -383,7 +315,7 @@ void ScrobblerPageWidget::addService(ScrobblerService* service)
     updateServiceState(service);
 }
 
-void ScrobblerPageWidget::addCustomService()
+void ScrobblerServicesPageWidget::addCustomService()
 {
     auto* dialog = new CustomServiceDialog(m_scrobbler, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -398,7 +330,7 @@ void ScrobblerPageWidget::addCustomService()
     dialog->show();
 }
 
-void ScrobblerPageWidget::editCustomService(ScrobblerService* service)
+void ScrobblerServicesPageWidget::editCustomService(ScrobblerService* service)
 {
     auto* dialog = new CustomServiceDialog(service, m_scrobbler, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -413,7 +345,7 @@ void ScrobblerPageWidget::editCustomService(ScrobblerService* service)
     dialog->show();
 }
 
-void ScrobblerPageWidget::deleteCustomService(ScrobblerService* service)
+void ScrobblerServicesPageWidget::deleteCustomService(ScrobblerService* service)
 {
     const auto context = findContext(service);
     if(context != m_serviceContext.cend()) {
@@ -423,21 +355,22 @@ void ScrobblerPageWidget::deleteCustomService(ScrobblerService* service)
     }
 }
 
-std::vector<ScrobblerPageWidget::ServiceContext>::iterator ScrobblerPageWidget::findContext(ScrobblerService* service)
+std::vector<ScrobblerServicesPageWidget::ServiceContext>::iterator
+ScrobblerServicesPageWidget::findContext(ScrobblerService* service)
 {
     return std::ranges::find_if(m_serviceContext,
                                 [service](const auto& context) { return context.service == service; });
 }
 
-ScrobblerPage::ScrobblerPage(Scrobbler* scrobbler, SettingsManager* settings, QObject* parent)
+ScrobblerServicesPage::ScrobblerServicesPage(Scrobbler* scrobbler, SettingsManager* settings, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
-    setId({"Fooyin.Page.Network.Scrobbling"});
-    setName(tr("General"));
+    setId({"Fooyin.Page.Network.Scrobbling.Services"});
+    setName(tr("Services"));
     setCategory({tr("Networking"), tr("Scrobbling")});
-    setWidgetCreator([scrobbler, settings] { return new ScrobblerPageWidget(scrobbler, settings); });
+    setWidgetCreator([scrobbler, settings] { return new ScrobblerServicesPageWidget(scrobbler, settings); });
 }
 } // namespace Fooyin::Scrobbler
 
-#include "moc_scrobblerpage.cpp"
-#include "scrobblerpage.moc"
+#include "moc_scrobblerservicespage.cpp"
+#include "scrobblerservicespage.moc"

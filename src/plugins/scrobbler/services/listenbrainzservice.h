@@ -49,7 +49,6 @@ public:
 private:
     QNetworkReply* createRequest(RequestType type, const QUrl& url, const QJsonDocument& json = {});
     ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) override;
-    [[nodiscard]] QJsonObject getTrackMetadata(const Metadata& metadata) const;
 
     void testFinished(QNetworkReply* reply);
     void updateNowPlayingFinished(QNetworkReply* reply);
