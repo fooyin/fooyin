@@ -72,4 +72,5 @@ tmp/
 /vcpkg_installed
 /out/
 fooyin_build
-CMakeFiles
+CMakeFilesL
+CMakeCache.txt
