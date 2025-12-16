@@ -105,6 +105,7 @@ protected:
     [[nodiscard]] SettingsManager* settings() const;
 
     ServiceDetails& detailsRef();
+    ScriptParser* scriptParser();
 
     QNetworkReply* addReply(QNetworkReply* reply);
     bool removeReply(QNetworkReply* reply);

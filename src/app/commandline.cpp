@@ -57,6 +57,8 @@ CommandLine::CommandLine(int argc, char** argv)
 
 bool CommandLine::parse()
 {
+    m_seekDelta = 0;
+
     static constexpr option cmdOptions[] = {
 #ifdef Q_OS_WIN
         {L"help", no_argument, nullptr, 'h'},
@@ -68,6 +70,8 @@ bool CommandLine::parse()
         {L"stop", no_argument, nullptr, 's'},
         {L"next", no_argument, nullptr, 'f'},
         {L"previous", no_argument, nullptr, 'r'},
+        {L"seek-forward", required_argument, nullptr, 'F'},
+        {L"seek-backward", required_argument, nullptr, 'R'},
         {nullptr, 0, nullptr, 0
 #else
         {"help", no_argument, nullptr, 'h'},
@@ -79,6 +83,8 @@ bool CommandLine::parse()
         {"stop", no_argument, nullptr, 's'},
         {"next", no_argument, nullptr, 'f'},
         {"previous", no_argument, nullptr, 'r'},
+        {"seek-forward", required_argument, nullptr, 'F'},
+        {"seek-backward", required_argument, nullptr, 'R'},
         {nullptr, 0, nullptr, 0
 #endif
         }
@@ -91,21 +97,23 @@ bool CommandLine::parse()
                              "  -v, --version   %6\n"
                              "\n"
                              "%7:\n"
-                             "  -t, --play-pause  %8\n"
-                             "  -p, --play        %9\n"
-                             "  -u, --pause       %10\n"
-                             "  -s, --stop        %11\n"
-                             "  -f, --next        %12\n"
-                             "  -r, --previous    %13\n"
+                             "  -t, --play-pause           %8\n"
+                             "  -p, --play                 %9\n"
+                             "  -u, --pause                %10\n"
+                             "  -s, --stop                 %11\n"
+                             "  -f, --next                 %12\n"
+                             "  -r, --previous             %13\n"
+                             "  -F, --seek-forward <time>  %16\n"
+                             "  -R, --seek-backward <time> %17\n"
                              "\n"
                              "%14:\n"
                              "  urls            %15\n"_s;
 
     for(;;) {
 #ifdef Q_OS_WIN
-        const int c = getopt_long(m_argc, m_argv, L"hvxtpusfr", cmdOptions, nullptr);
+        const int c = getopt_long(m_argc, m_argv, L"hvxtpusfrF:R:", cmdOptions, nullptr);
 #else
-        const int c = getopt_long(m_argc, m_argv, "hvxtpusfr", cmdOptions, nullptr);
+        const int c = getopt_long(m_argc, m_argv, "hvxtpusfrF:R:", cmdOptions, nullptr);
 #endif
         if(c == -1) {
             break;
@@ -118,7 +126,8 @@ bool CommandLine::parse()
                     QObject::tr("Display help on command line options"), QObject::tr("Display version information"),
                     QObject::tr("Player options"), QObject::tr("Toggle playback"), QObject::tr("Start playback"),
                     QObject::tr("Pause playback"), QObject::tr("Stop playback"), QObject::tr("Skip to next track"),
-                    QObject::tr("Skip to previous track"), QObject::tr("Arguments"), QObject::tr("Files to open"));
+                    QObject::tr("Skip to previous track"), QObject::tr("Arguments"), QObject::tr("Files to open"),
+                    QObject::tr("Seek forward"), QObject::tr("Seek backward"));
                 std::cout << helpText.toLocal8Bit().constData() << '\n';
                 return false;
             }
@@ -148,6 +157,30 @@ bool CommandLine::parse()
             case('r'):
                 m_playerAction = PlayerAction::Previous;
                 break;
+            case('F'):
+                if(optarg) {
+                    try {
+                        m_seekDelta = std::stoull(optarg);
+                    }
+                    catch(...) {
+                        return false;
+                    }
+                    m_playerAction = PlayerAction::SeekFwd;
+                    break;
+                }
+                return false;
+            case('R'):
+                if(optarg) {
+                    try {
+                        m_seekDelta = std::stoull(optarg);
+                    }
+                    catch(...) {
+                        return false;
+                    }
+                    m_playerAction = PlayerAction::SeekBack;
+                    break;
+                }
+                return false;
             default:
                 return false;
         }
@@ -174,6 +207,11 @@ QList<QUrl> CommandLine::files() const
     return m_files;
 }
 
+uint64_t CommandLine::seekDelta() const
+{
+    return m_seekDelta;
+}
+
 bool CommandLine::skipSingleApp() const
 {
     return m_skipSingle;
@@ -192,6 +230,7 @@ QByteArray CommandLine::saveOptions() const
     stream << m_files;
     stream << m_skipSingle;
     stream << static_cast<quint8>(m_playerAction);
+    stream << static_cast<quint64>(m_seekDelta);
 
     return out;
 }
@@ -207,4 +246,7 @@ void CommandLine::loadOptions(const QByteArray& options)
     quint8 playerAction{0};
     stream >> playerAction;
     m_playerAction = static_cast<PlayerAction>(playerAction);
+    quint64 seekDelta;
+    stream >> seekDelta;
+    m_seekDelta = static_cast<uint64_t>(seekDelta);
 }

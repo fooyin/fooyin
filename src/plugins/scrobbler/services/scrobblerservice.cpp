@@ -19,7 +19,7 @@
 
 #include "scrobblerservice.h"
 #include "scrobblerauthsession.h"
-#include "scrobblersettings.h"
+#include "settings/scrobblersettings.h"
 
 #include <core/network/networkaccessmanager.h>
 #include <utils/fypaths.h>
@@ -130,7 +130,7 @@ void ScrobblerService::updateDetails(const ServiceDetails& details)
 void ScrobblerService::initialise()
 {
     if(!m_cache) {
-        m_cache = new ScrobblerCache(Utils::cachePath() + "/"_L1 + name().toLower() + ".cache"_L1, this);
+        m_cache = new ScrobblerCache(Utils::cachePath() + "/"_L1 + name().toLower() + ".cache"_L1, m_settings, this);
     }
 }
 
@@ -299,6 +299,11 @@ SettingsManager* ScrobblerService::settings() const
 ServiceDetails& ScrobblerService::detailsRef()
 {
     return m_details;
+}
+
+ScriptParser* ScrobblerService::scriptParser()
+{
+    return &m_scriptParser;
 }
 
 QNetworkReply* ScrobblerService::addReply(QNetworkReply* reply)

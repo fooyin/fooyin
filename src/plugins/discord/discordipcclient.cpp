@@ -25,6 +25,7 @@
 
 #include <QApplication>
 #include <QDataStream>
+#include <QDir>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QLoggingCategory>

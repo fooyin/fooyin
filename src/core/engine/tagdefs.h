@@ -23,7 +23,6 @@ namespace Fooyin {
 namespace Tag {
 constexpr auto Title         = "TITLE";
 constexpr auto Artist        = "ARTIST";
-constexpr auto ArtistAlt     = "ARTISTS";
 constexpr auto Album         = "ALBUM";
 constexpr auto AlbumArtist   = "ALBUMARTIST";
 constexpr auto Genre         = "GENRE";

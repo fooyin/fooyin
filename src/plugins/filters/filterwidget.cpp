@@ -560,8 +560,11 @@ void FilterWidget::setupConnections()
             m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
         }
     });
-    QObject::connect(m_header, &QHeaderView::sectionMoved, this,
-                     [this]() { m_model->setColumnOrder(Utils::logicalIndexOrder(m_header)); });
+    QObject::connect(m_header, &QHeaderView::sectionMoved, this, [this]() {
+        if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
+            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
+        }
+    });
     QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_sortProxy, &QSortFilterProxyModel::sort);
     QObject::connect(m_header, &ExpandedTreeView::customContextMenuRequested, this, &FilterWidget::filterHeaderMenu);
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,

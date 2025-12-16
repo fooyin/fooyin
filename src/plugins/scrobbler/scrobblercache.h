@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/scripting/scriptparser.h>
 #include <core/track.h>
 
 #include <QBasicTimer>
@@ -29,7 +30,7 @@ class Metadata
 {
 public:
     Metadata() = default;
-    explicit Metadata(const Track& track);
+    explicit Metadata(ScriptParser* parser, SettingsManager* settings, const Track& track);
 
     QString title;
     QString album;
@@ -61,7 +62,7 @@ class ScrobblerCache : public QObject
     Q_OBJECT
 
 public:
-    explicit ScrobblerCache(QString filepath, QObject* parent);
+    explicit ScrobblerCache(QString filepath, SettingsManager* settings, QObject* parent);
     ~ScrobblerCache() override;
 
     void readCache();
@@ -78,6 +79,9 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
+    SettingsManager* m_settings;
+    ScriptParser m_scriptParser;
+
     QString m_filepath;
     QBasicTimer m_writeTimer;
     CacheItemUPtrList m_items;

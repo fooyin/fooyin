@@ -630,12 +630,17 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
 
         qCDebug(AUTO_HEADER) << "Restoring state for" << sectionCount << "section(s)";
 
-        for(int section{0}; section < sectionCount; ++section) {
-            setSectionHidden(section, pixelWidths[section] < MinSectionWidth);
-            moveSection(visualIndex(logicalIndexes[section]), section);
+        for(int targetVisual{0}; targetVisual < sectionCount; ++targetVisual) {
+            setSectionHidden(targetVisual, pixelWidths[targetVisual] < MinSectionWidth);
+
+            const int targetLogical = logicalIndexes[targetVisual];
+            const int currentVisual = visualIndex(targetLogical);
+            if(currentVisual != targetVisual) {
+                moveSection(currentVisual, targetVisual);
+            }
 
             if(!p->m_stretchEnabled) {
-                resizeSection(section, pixelWidths[section]);
+                resizeSection(targetVisual, pixelWidths[targetVisual]);
             }
         }
     }

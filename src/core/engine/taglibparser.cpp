@@ -628,7 +628,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
         if(field == Title) {
             track.setTitle(convertString(value.toString()));
         }
-        else if(field == Artist || field == ArtistAlt) {
+        else if(field == Artist) {
             track.setArtists(convertStringList(value));
         }
         else if(field == Album) {

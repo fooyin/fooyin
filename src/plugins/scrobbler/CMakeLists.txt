@@ -11,12 +11,8 @@ create_fooyin_plugin_internal(
             scrobblerauthsession.h
             scrobblercache.cpp
             scrobblercache.h
-            scrobblerpage.cpp
-            scrobblerpage.h
             scrobblerplugin.cpp
             scrobblerplugin.h
-            scrobblersettings.cpp
-            scrobblersettings.h
             scrobblertoggle.cpp
             scrobblertoggle.h
             services/servicedetails.cpp
@@ -29,4 +25,10 @@ create_fooyin_plugin_internal(
             services/listenbrainzservice.h
             services/scrobblerservice.cpp
             services/scrobblerservice.h
+            settings/scrobblerpage.cpp
+            settings/scrobblerpage.h
+            settings/scrobblerservicespage.cpp
+            settings/scrobblerservicespage.h
+            settings/scrobblersettings.cpp
+            settings/scrobblersettings.h
 )

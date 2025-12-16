@@ -20,7 +20,7 @@
 #include "lastfmservice.h"
 
 #include "scrobblerauthsession.h"
-#include "scrobblersettings.h"
+#include "settings/scrobblersettings.h"
 
 #include <core/coresettings.h>
 #include <core/network/networkaccessmanager.h>
@@ -161,22 +161,24 @@ void LastFmService::testApi()
 
 void LastFmService::updateNowPlaying()
 {
-    const bool preferAlbumArtist = settings()->value<Settings::Scrobbler::PreferAlbumArtist>();
-
     const Track track = currentTrack();
 
     std::map<QString, QString> params
         = {{u"method"_s, u"track.updateNowPlaying"_s},
-           {u"artist"_s, preferAlbumArtist && !track.albumArtists().empty() ? track.albumArtists().join(", "_L1)
-                                                                            : track.artists().join(", "_L1)},
-           {u"track"_s, track.title()}};
+           {u"artist"_s, scriptParser()->evaluate(settings()->value<Settings::Scrobbler::ArtistField>(), track)},
+           {u"track"_s, scriptParser()->evaluate(settings()->value<Settings::Scrobbler::TitleField>(), track)}};
 
-    if(!track.album().isEmpty()) {
-        params.emplace(u"album"_s, track.album());
+    const QString album = scriptParser()->evaluate(settings()->value<Settings::Scrobbler::AlbumField>(), track);
+    if(!album.isEmpty()) {
+        params.emplace(u"album"_s, album);
     }
 
-    if(!preferAlbumArtist && !track.albumArtist().isEmpty()) {
-        params.emplace(u"albumArtist"_s, track.albumArtists().join(u','));
+    if(settings()->value<Settings::Scrobbler::SendAlbumArtist>()) {
+        const QString albumArtist
+            = scriptParser()->evaluate(settings()->value<Settings::Scrobbler::AlbumArtistField>(), track);
+        if(!albumArtist.isEmpty()) {
+            params.emplace(u"albumArtist"_s, albumArtist);
+        }
     }
 
     QNetworkReply* reply = createRequest(params);
@@ -193,8 +195,7 @@ void LastFmService::submit()
 
     std::map<QString, QString> params{{u"method"_s, u"track.scrobble"_s}};
 
-    const bool preferAlbumArtist = settings()->value<Settings::Scrobbler::PreferAlbumArtist>();
-    const CacheItemList items    = cache()->items();
+    const CacheItemList items = cache()->items();
     CacheItemList sentItems;
 
     for(int i{0}; const auto& item : items) {
@@ -206,17 +207,15 @@ void LastFmService::submit()
 
         const Metadata& md = item->metadata;
 
-        const auto artist = preferAlbumArtist && !md.albumArtist.isEmpty() ? md.albumArtist : item->metadata.artist;
-
         params.emplace(u"track[%1]"_s.arg(i), md.title);
-        params.emplace(u"artist[%1]"_s.arg(i), artist);
+        params.emplace(u"artist[%1]"_s.arg(i), md.artist);
         params.emplace(u"duration[%1]"_s.arg(i), QString::number(md.duration));
         params.emplace(u"timestamp[%1]"_s.arg(i), QString::number(item->timestamp));
 
         if(!md.album.isEmpty()) {
             params.emplace(u"album[%1]"_s.arg(i), md.album);
         }
-        if(!preferAlbumArtist && !md.albumArtist.isEmpty()) {
+        if(settings()->value<Settings::Scrobbler::SendAlbumArtist>() && !md.albumArtist.isEmpty()) {
             params.emplace(u"albumArtist[%1]"_s.arg(i), md.albumArtist);
         }
         if(!md.trackNum.isEmpty()) {
