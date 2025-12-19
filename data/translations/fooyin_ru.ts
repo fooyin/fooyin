@@ -34,7 +34,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Playback</source>
-        <translation>&amp;Воспроизведение</translation>
+        <translation>В&amp;оспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
@@ -138,7 +138,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
         <source>Front Cover</source>
-        <translation>Основная обложка</translation>
+        <translation>Лицевая обложка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="96"/>
@@ -237,7 +237,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="45"/>
         <source>Front Cover</source>
-        <translation>Основная обложка</translation>
+        <translation>Лицевая обложка</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="46"/>
@@ -399,7 +399,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="83"/>
         <source>Front Cover</source>
-        <translation>Основная обложка</translation>
+        <translation>Лицевая обложка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="84"/>
@@ -1316,7 +1316,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="64"/>
         <source>Create a new empty playlist</source>
-        <translation>Создать новый плейлист</translation>
+        <translation>Создать новый пустой плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
@@ -2322,7 +2322,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="854"/>
         <source>OK</source>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="919"/>
@@ -2377,7 +2377,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1007"/>
         <source>Audio Files (%1)</source>
-        <translation>Аудио файлы (%1)</translation>
+        <translation>Аудиофайлы (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1018"/>
@@ -2736,7 +2736,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="210"/>
         <source>VBR update interval</source>
-        <translation>Интервал обновления VBR</translation>
+        <translation>Период обновления VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="214"/>
@@ -2812,7 +2812,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
         <source>Open the FAQ</source>
-        <translation>Открыть FAQ</translation>
+        <translation>Открыть часто задаваемые вопросы</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="73"/>
@@ -2915,7 +2915,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="180"/>
         <source>Subsong Index</source>
-        <translation>Индекс субпесни</translation>
+        <translation>Индекс подпесни</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="185"/>
@@ -2960,7 +2960,7 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="217"/>
         <source>Bit Depth</source>
-        <translation>Битность</translation>
+        <translation>Разрядность</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
@@ -3297,7 +3297,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="63"/>
         <source>&amp;Scan for changes</source>
-        <translation>&amp;Найти изменения</translation>
+        <translation>П&amp;роверить изменения</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
@@ -3385,7 +3385,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="227"/>
         <source>Status</source>
-        <translation>Статус</translation>
+        <translation>Состояние</translation>
     </message>
 </context>
 <context>
@@ -3420,7 +3420,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="72"/>
         <source>&amp;Scan for changes</source>
-        <translation>&amp;Найти изменения</translation>
+        <translation>П&amp;роверить изменения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="76"/>
@@ -3799,7 +3799,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="113"/>
         <source>Insert/Update</source>
-        <translation>Вставить/Обновить</translation>
+        <translation>Вставить/обновить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="116"/>
@@ -4738,7 +4738,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="172"/>
         <source>Cursor follows play&amp;back</source>
-        <translation>Курсор следует за воспроизведением</translation>
+        <translation>Выделение курсора следует за воспро&amp;изведением</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="173"/>
@@ -4748,7 +4748,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
         <source>Playback follows &amp;cursor</source>
-        <translation>Воспроизведение следует за курсором</translation>
+        <translation>Воспроизведение &amp;следует за выделением курсора</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
@@ -4814,12 +4814,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="85"/>
         <source>Cursor follows playback</source>
-        <translation>Курсор следует за воспроизведением</translation>
+        <translation>Выделение курсора следует за воспроизведением</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
         <source>Playback follows cursor</source>
-        <translation>Воспроизведение следует за курсором</translation>
+        <translation>Воспроизведение следует за выделением курсора</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="90"/>
@@ -5114,7 +5114,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="50"/>
         <source>Playing</source>
-        <translation>Значок проигрывания</translation>
+        <translation>Играет</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="51"/>
@@ -5144,7 +5144,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="56"/>
         <source>Bit Depth</source>
-        <translation>Битность</translation>
+        <translation>Разрядность</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="57"/>
@@ -5169,7 +5169,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
         <source>Front Cover</source>
-        <translation>Основная обложка</translation>
+        <translation>Лицевая обложка</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="63"/>
@@ -5529,7 +5529,7 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="173"/>
         <source>Create a new empty group</source>
-        <translation>Создать новую группу</translation>
+        <translation>Создать новую пустую группу</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="163"/>
@@ -5940,7 +5940,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1314"/>
         <source>Reset columns to default</source>
-        <translation>Восстановить колонки по-умолчанию</translation>
+        <translation>Сбросить столбцы на стандартные</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="181"/>
@@ -5955,7 +5955,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="183"/>
         <source>&amp;Stop after this</source>
-        <translation>&amp;Остановить после данного</translation>
+        <translation>&amp;Остановить после этого</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1323"/>
@@ -6088,7 +6088,7 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="129"/>
         <source>Status</source>
-        <translation>Статус</translation>
+        <translation>Состояние</translation>
     </message>
 </context>
 <context>
@@ -6193,7 +6193,7 @@
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="38"/>
         <source>OK</source>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="41"/>
@@ -6922,7 +6922,7 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
         <source>Start typing to search</source>
-        <translation>Печатайте для начала поиска</translation>
+        <translation>Начните вводить текста для поиска</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
@@ -7370,7 +7370,7 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="292"/>
         <source>Status Bar</source>
-        <translation>Панель статуса</translation>
+        <translation>Строка состояния</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="359"/>
@@ -7403,7 +7403,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
         <source>Status Widget</source>
-        <translation>Виджет статуса</translation>
+        <translation>Виджет состояния</translation>
     </message>
 </context>
 <context>
@@ -7957,7 +7957,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="119"/>
         <source>Channel spacing</source>
-        <translation>Интервал между каналами</translation>
+        <translation>Зазор между каналами</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="121"/>
@@ -7967,7 +7967,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="123"/>
         <source>Bar spacing</source>
-        <translation>Расстояние между полосами</translation>
+        <translation>Зазор между полосами</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="127"/>
@@ -7977,7 +7977,7 @@
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="129"/>
         <source>Section spacing</source>
-        <translation>Интервал между разделами</translation>
+        <translation>Зазор между разделами</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumetersettingspage.cpp" line="137"/>
@@ -8220,7 +8220,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="83"/>
         <source>Min/Max</source>
-        <translation>Мин/Макс</translation>
+        <translation>Минимум/максимум</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="85"/>
@@ -8349,7 +8349,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="174"/>
         <source>Min/Max</source>
-        <translation>Мин/Макс</translation>
+        <translation>Минимум/максимум</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="175"/>
@@ -8495,7 +8495,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="231"/>
         <source>Status Bar</source>
-        <translation>Панель статуса</translation>
+        <translation>Строка состояния</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="240"/>
@@ -8540,7 +8540,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="303"/>
         <source>Status bar</source>
-        <translation>Строка статуса</translation>
+        <translation>Строка состояния</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="353"/>
