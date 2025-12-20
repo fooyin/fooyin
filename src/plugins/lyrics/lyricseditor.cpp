@@ -111,7 +111,7 @@ void LyricsEditor::setupUi()
     m_seek       = new QPushButton(tr("Seek"), this);
     m_reset      = new QPushButton(tr("Reset Changes"), this);
     m_insert     = new QPushButton(tr("Insert/Update"), this);
-    m_insertNext = new QPushButton(tr("Update+Next Line"), this);
+    m_insertNext = new QPushButton(tr("Update and Next Line"), this);
     m_rewind     = new QPushButton(tr("Rewind line (-100ms)"), this);
     m_forward    = new QPushButton(tr("Forward line (+100ms)"), this);
     m_remove     = new QPushButton(tr("Remove"), this);
@@ -258,22 +258,7 @@ void LyricsEditor::insertOrUpdateTimestamp()
 }
 void LyricsEditor::insertOrUpdateTimestampAndGotoNextLine()
 {
-    QTextCursor cursor = m_lyricsText->textCursor();
-    cursor.movePosition(QTextCursor::StartOfLine);
-    cursor.select(QTextCursor::LineUnderCursor);
-    QString currentLine = cursor.selectedText();
-
-    QString newTimestamp = u"[%1]"_s.arg(formatTimestamp(m_playerController->currentPosition()));
-
-    static const QRegularExpression regex{QLatin1String{TimestampRegex}};
-    if(regex.match(currentLine).hasMatch()) {
-        currentLine.replace(regex, newTimestamp);
-    }
-    else {
-        currentLine = newTimestamp + currentLine;
-    }
-
-    cursor.insertText(currentLine);
+	LyricsEditor::adjustTimestamp();
     cursor.movePosition(QTextCursor::StartOfLine);
     cursor.movePosition(QTextCursor::Down);
     cursor.movePosition(QTextCursor::StartOfLine);
