@@ -259,6 +259,7 @@ void LyricsEditor::insertOrUpdateTimestamp()
 void LyricsEditor::insertOrUpdateTimestampAndGotoNextLine()
 {
 	LyricsEditor::adjustTimestamp();
+	QTextCursor cursor = m_lyricsText->textCursor();
     cursor.movePosition(QTextCursor::StartOfLine);
     cursor.movePosition(QTextCursor::Down);
     cursor.movePosition(QTextCursor::StartOfLine);
