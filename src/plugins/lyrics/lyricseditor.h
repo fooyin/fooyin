@@ -66,6 +66,7 @@ private:
     void updateButtons();
     void highlightCurrentLine();
     void insertOrUpdateTimestamp();
+    void insertOrUpdateTimestampAndGotoNextLine();
     void adjustTimestamp();
     void removeTimestamp();
     void removeAllTimestamps();
@@ -83,6 +84,7 @@ private:
     QPushButton* m_reset;
 
     QPushButton* m_insert;
+    QPushButton* m_insertNext;
     QPushButton* m_rewind;
     QPushButton* m_forward;
     QPushButton* m_remove;
