@@ -88,7 +88,7 @@ jobs:
           path: rpm
 
   debian:
-    name: Debian (${{ matrix.runner.arch }}, ${{matrix.debian_version}})
+    name: Debian (${{matrix.debian_version}}, ${{ matrix.runner.arch }})
     runs-on: ${{ matrix.runner.os }}
     strategy:
       fail-fast: false
@@ -97,7 +97,7 @@ jobs:
           - { os: ubuntu-latest, arch: amd64 }
           - { os: ubuntu-24.04-arm, arch: arm64 }
         debian_version: ["bookworm", "trixie", "forky"]
-        # linking of fyplugin_discord.so  fails on bookworm, exclude it
+        # linking of fyplugin_discord.so  fails on bookworm on arm64, exclude it
         exclude:
           - runner: { os: ubuntu-24.04-arm, arch: arm64 }
             debian_version: bookworm
@@ -144,7 +144,7 @@ jobs:
           path: deb
 
   ubuntu:
-    name: Ubuntu (${{ matrix.runner.arch }}, ${{matrix.ubuntu_version}})
+    name: Ubuntu (${{matrix.ubuntu_version}}, ${{ matrix.runner.arch }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
