@@ -88,60 +88,14 @@ jobs:
           path: rpm
 
   debian:
-    name: Debian
-    runs-on: ubuntu-latest
+    name: Debian ${{ matrix.runner.arch }}
+    runs-on: ${{ matrix.runner.os }}
     strategy:
       fail-fast: false
       matrix:
-        debian_version: ["bookworm", "trixie", "forky"]
-    container:
-      image: debian:${{matrix.debian_version}}
-    steps:
-      - name: Install git
-        run: |
-          apt-get update -qq
-          apt-get install -qq --force-yes git
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: recursive
-
-      - name: Dependencies
-        run: |
-          ./ci/ubuntu-depends.sh
-
-      - name: Install GTest
-        run: |
-          cd /usr/src/gtest
-          cmake .
-          make
-          cp lib/*.a /usr/lib
-          ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
-          ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
-
-      - name: Build
-        run: |
-          ./ci/ubuntu-build.sh
-
-      - name: Run tests
-        if: env.BUILD_TESTS == 'ON'
-        run: |
-          ./ci/tests.sh
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: debian-${{matrix.debian_version}}
-          path: deb
-
-  debian-arm64:
-    name: Debian (ARM64)
-    runs-on: ubuntu-24.04-arm
-    strategy:
-      fail-fast: false
-      matrix:
+        runner:
+          - { os: ubuntu-latest, arch: amd64 }
+          - { os: ubuntu-24.04-arm, arch: arm64 }
         debian_version: ["bookworm", "trixie", "forky"]
     container:
       image: debian:${{matrix.debian_version}}
@@ -349,7 +303,6 @@ jobs:
     needs:
       - fedora
       - debian
-      - debian-arm64
       - ubuntu
       - freebsd
       - windows
