@@ -11,7 +11,7 @@ env:
   BUILD_TESTS: ON
   CMAKE_PRESET: release-vcpkg
   VCPKG_DISABLE_METRICS: true
-  QT_VERSION: '6.8.3'
+  QT_VERSION: "6.8.3"
 
 permissions:
   contents: write # needed for vcpkg cache
@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        fedora_version: [ '41', '42', '43' ]
+        fedora_version: ["41", "42", "43"]
     container:
       image: fedora:${{matrix.fedora_version}}
     steps:
@@ -93,7 +93,56 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        debian_version: [ 'bookworm', 'trixie', 'forky' ]
+        debian_version: ["bookworm", "trixie", "forky"]
+    container:
+      image: debian:${{matrix.debian_version}}
+    steps:
+      - name: Install git
+        run: |
+          apt-get update -qq
+          apt-get install -qq --force-yes git
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Dependencies
+        run: |
+          ./ci/ubuntu-depends.sh
+
+      - name: Install GTest
+        run: |
+          cd /usr/src/gtest
+          cmake .
+          make
+          cp lib/*.a /usr/lib
+          ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
+          ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+
+      - name: Build
+        run: |
+          ./ci/ubuntu-build.sh
+
+      - name: Run tests
+        if: env.BUILD_TESTS == 'ON'
+        run: |
+          ./ci/tests.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-${{matrix.debian_version}}
+          path: deb
+
+  debian-arm64:
+    name: Debian
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        debian_version: ["bookworm", "trixie", "forky"]
     container:
       image: debian:${{matrix.debian_version}}
     steps:
@@ -142,7 +191,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ubuntu_version: [ 'noble', 'plucky', 'questing' ]
+        ubuntu_version: ["noble", "plucky", "questing"]
     container:
       image: ubuntu:${{matrix.ubuntu_version}}
     steps:
@@ -253,7 +302,7 @@ jobs:
           archives: qtbase qtsvg qttools
           cache: true
           arch: ${{ matrix.qt-arch }}
-          install-deps: 'true'
+          install-deps: "true"
 
       - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1
