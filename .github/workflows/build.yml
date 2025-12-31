@@ -140,11 +140,14 @@ jobs:
           path: deb
 
   ubuntu:
-    name: Ubuntu
+    name: Ubuntu (${{ matrix.runner.arch }}, ${{matrix.ubuntu_version}})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
+        runner:
+          - { os: ubuntu-latest, arch: amd64 }
+          - { os: ubuntu-24.04-arm, arch: arm64 }
         ubuntu_version: ["noble", "plucky", "questing"]
     container:
       image: ubuntu:${{matrix.ubuntu_version}}
@@ -185,7 +188,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: ubuntu-${{matrix.ubuntu_version}}
+          name: ubuntu-${{matrix.ubuntu_version}}-${{ matrix.runner.arch }}
           path: deb
 
   freebsd:
