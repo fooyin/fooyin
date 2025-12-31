@@ -349,6 +349,7 @@ jobs:
     needs:
       - fedora
       - debian
+      - debian-arm64
       - ubuntu
       - freebsd
       - windows
