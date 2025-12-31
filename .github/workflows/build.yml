@@ -97,6 +97,9 @@ jobs:
           - { os: ubuntu-latest, arch: amd64 }
           - { os: ubuntu-24.04-arm, arch: arm64 }
         debian_version: ["bookworm", "trixie", "forky"]
+        exclude:
+          - runner: { os: ubuntu-24.04-arm, arch: arm64 }
+            debian_version: bookworm
     container:
       image: debian:${{matrix.debian_version}}
     steps:
