@@ -95,11 +95,11 @@ jobs:
       matrix:
         runner:
           - { os: ubuntu-latest, arch: amd64 }
-          - { os: ubuntu-24.04-arm, arch: arm64 }
+          - { os: ubuntu-latest-arm, arch: arm64 }
         debian_version: ["bookworm", "trixie", "forky"]
         # linking of fyplugin_discord.so  fails on bookworm on arm64, exclude it
         exclude:
-          - runner: { os: ubuntu-24.04-arm, arch: arm64 }
+          - runner: { os: ubuntu-latest-arm, arch: arm64 }
             debian_version: bookworm
     container:
       image: debian:${{matrix.debian_version}}
@@ -151,7 +151,7 @@ jobs:
       matrix:
         runner:
           - { os: ubuntu-latest, arch: amd64 }
-          - { os: ubuntu-24.04-arm, arch: arm64 }
+          - { os: ubuntu-latest-arm, arch: arm64 }
         ubuntu_version: ["noble", "plucky", "questing"]
     container:
       image: ubuntu:${{matrix.ubuntu_version}}
