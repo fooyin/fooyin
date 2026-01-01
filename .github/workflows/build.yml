@@ -11,7 +11,7 @@ env:
   BUILD_TESTS: ON
   CMAKE_PRESET: release-vcpkg
   VCPKG_DISABLE_METRICS: true
-  QT_VERSION: "6.8.3"
+  QT_VERSION: '6.8.3'
 
 permissions:
   contents: write # needed for vcpkg cache
@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        fedora_version: ["41", "42", "43"]
+        fedora_version: ['41', '42', '43']
     container:
       image: fedora:${{matrix.fedora_version}}
     steps:
@@ -96,7 +96,7 @@ jobs:
         runner:
           - { os: ubuntu-latest, arch: amd64 }
           - { os: ubuntu-24.04-arm, arch: arm64 }
-        debian_version: ["bookworm", "trixie", "forky"]
+        debian_version: ['bookworm', 'trixie', 'forky']
         # linking of fyplugin_discord.so  fails on bookworm on arm64, exclude it
         exclude:
           - runner: { os: ubuntu-24.04-arm, arch: arm64 }
@@ -152,7 +152,7 @@ jobs:
         runner:
           - { os: ubuntu-latest, arch: amd64 }
           - { os: ubuntu-24.04-arm, arch: arm64 }
-        ubuntu_version: ["noble", "plucky", "questing"]
+        ubuntu_version: ['noble', 'plucky', 'questing']
     container:
       image: ubuntu:${{matrix.ubuntu_version}}
     steps:
@@ -263,7 +263,7 @@ jobs:
           archives: qtbase qtsvg qttools
           cache: true
           arch: ${{ matrix.qt-arch }}
-          install-deps: "true"
+          install-deps: 'true'
 
       - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1
@@ -300,7 +300,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: "windows-${{ matrix.arch }}"
+          name: 'windows-${{ matrix.arch }}'
           path: artifacts
 
   attach:
