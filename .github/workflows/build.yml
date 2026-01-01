@@ -145,7 +145,7 @@ jobs:
 
   ubuntu:
     name: Ubuntu (${{matrix.ubuntu_version}}, ${{ matrix.runner.arch }})
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner.os }}
     strategy:
       fail-fast: false
       matrix:
