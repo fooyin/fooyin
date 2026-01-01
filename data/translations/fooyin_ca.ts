@@ -1167,17 +1167,17 @@
 <context>
     <name>Fooyin::ElapsedProgressDialog</name>
     <message>
-        <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="134"/>
+        <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="140"/>
         <source>Time elapsed</source>
         <translation>Temps transcorregut</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="140"/>
+        <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="146"/>
         <source>Estimated</source>
         <translation>Estimat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="143"/>
+        <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="149"/>
         <source>Calculating…</source>
         <translation>Calculant…</translation>
     </message>
@@ -1660,58 +1660,58 @@
 <context>
     <name>Fooyin::Filters::FilterWidget</name>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="658"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="661"/>
         <source>Display</source>
         <translation>Visualització</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="456"/>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="661"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="664"/>
         <source>Columns</source>
         <translation>Columna</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="662"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="665"/>
         <source>Artwork (bottom labels)</source>
         <translation>Art gràfic (etiquetes inferiors)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="663"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="666"/>
         <source>Artwork (right labels)</source>
         <translation>Art gràfic (etiquetes de la dreta)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="664"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="667"/>
         <source>Artwork (no labels)</source>
         <translation>Art gràfic (sense etiquetes)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="707"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="710"/>
         <source>Summary item</source>
         <translation>Element de resum</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="714"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="717"/>
         <source>Front cover</source>
         <translation>Imatge de Portada</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="715"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="718"/>
         <source>Back cover</source>
         <translation>Imatge de contraportada</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="737"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="740"/>
         <source>Show header</source>
         <translation type="unfinished">Mostra la capçalera</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="745"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="748"/>
         <source>Show scrollbar</source>
         <translation type="unfinished">Mostra la barra de desplaçament</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="753"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="756"/>
         <source>Alternating row colours</source>
         <translation type="unfinished">Colors de fila alternats</translation>
     </message>
@@ -1726,7 +1726,7 @@
         <translation>Gestiona grups</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="716"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="719"/>
         <source>Artist</source>
         <translation>Artista</translation>
     </message>
@@ -3265,102 +3265,127 @@
 <context>
     <name>Fooyin::LibraryMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="47"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="48"/>
         <source>Library</source>
         <translation>Biblioteca</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="50"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="51"/>
         <source>&amp;Database</source>
         <translation>&amp;Base de dades</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
         <source>&amp;Clean</source>
         <translation>&amp;Neteja</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="53"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="54"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
         <translation>Elimina les pistes que no són de la biblioteca i que no estan a cap llista de reproducció i les estadístiques de reproducció caducades</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="58"/>
         <source>&amp;Optimise</source>
         <translation>&amp;Optimitza</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="58"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="59"/>
         <source>Reduce disk usage and improve query performance</source>
         <translation>Reduir l&apos;ús del disc i millorar el rendiment de les consultes</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="63"/>
+        <source>Remove &amp;unavailable tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
+        <source>Remove unavailable tracks from the database and libraries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="69"/>
         <source>&amp;Scan for changes</source>
         <translation>&amp;Escaneja per detectar canvis</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="70"/>
         <source>Update tracks in libraries which have been modified on disk</source>
         <translation>Actualitza les pistes de les biblioteques que s&apos;han modificat al disc</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="70"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="76"/>
         <source>&amp;Reload tracks</source>
         <translation>&amp;Recarrega les pistes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="77"/>
         <source>Reload metadata from files for all tracks in libraries</source>
         <translation>Torna a carregar les metadades dels fitxers per a totes les pistes de les biblioteques</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="76"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="82"/>
         <source>S&amp;earch</source>
         <translation>C&amp;erca</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="77"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="83"/>
         <source>Search all libraries</source>
         <translation>Cerca a totes les biblioteques</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="82"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="88"/>
         <source>&amp;Quick Search</source>
         <translation>&amp;Cerca ràpida</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="83"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="89"/>
         <source>Show quick search popup</source>
         <translation>Mostra la finestra emergent de cerca ràpida</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="88"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="94"/>
         <source>&amp;Configure</source>
         <translation>&amp;Configura</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="89"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="95"/>
         <source>Open the library page in the settings dialog</source>
         <translation>Obre la pàgina de la biblioteca al diàleg de configuració</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="108"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
+        <source>Removing unavailable tracks…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
+        <source>Abort</source>
+        <translation type="unfinished">Aborta</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="119"/>
+        <source>Removing unavailable tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="142"/>
         <source>Optimising database…</source>
         <translation>Optimitzant la base de dades…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="118"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="152"/>
         <source>Database optimised</source>
         <translation>Base de dades optimitzada</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="123"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="157"/>
         <source>Cleaning database…</source>
         <translation>Netejant la base de dades…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/librarymenu.cpp" line="133"/>
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="167"/>
         <source>Database cleaned</source>
         <translation>Base de dades netejada</translation>
     </message>
@@ -3744,42 +3769,42 @@
 <context>
     <name>Fooyin::LogWidget</name>
     <message>
-        <location filename="../../src/utils/logging/logwidget.cpp" line="51"/>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="53"/>
         <source>Log</source>
         <translation>Registre</translation>
     </message>
     <message>
-        <location filename="../../src/utils/logging/logwidget.cpp" line="53"/>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="55"/>
         <source>&amp;Clear</source>
         <translation>&amp;Esborra</translation>
     </message>
     <message>
-        <location filename="../../src/utils/logging/logwidget.cpp" line="55"/>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="57"/>
         <source>&amp;Save Log</source>
         <translation>&amp;Desa el registre</translation>
     </message>
     <message>
-        <location filename="../../src/utils/logging/logwidget.cpp" line="62"/>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="64"/>
         <source>Debug</source>
         <translation>Depuració</translation>
     </message>
     <message>
-        <location filename="../../src/utils/logging/logwidget.cpp" line="63"/>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="65"/>
         <source>Info</source>
         <translation>Informació</translation>
     </message>
     <message>
-        <location filename="../../src/utils/logging/logwidget.cpp" line="64"/>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="66"/>
         <source>Warning</source>
         <translation>Avís</translation>
     </message>
     <message>
-        <location filename="../../src/utils/logging/logwidget.cpp" line="65"/>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="67"/>
         <source>Critical</source>
         <translation>Crític</translation>
     </message>
     <message>
-        <location filename="../../src/utils/logging/logwidget.cpp" line="108"/>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="136"/>
         <source>Save Log</source>
         <translation>Desa el registre</translation>
     </message>
@@ -3802,12 +3827,12 @@
         <translation>Insereix/Actualitza</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="116"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="117"/>
         <source>Remove</source>
         <translation>Elimina</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="117"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="118"/>
         <source>Remove All</source>
         <translation>Elimina-ho tot</translation>
     </message>
@@ -3819,31 +3844,36 @@
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="114"/>
-        <source>Rewind line (-100ms)</source>
+        <source>Update and Next Line</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
+        <source>Rewind line (-100ms)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="116"/>
         <source>Forward line (+100ms)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="125"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="126"/>
         <source>Operation</source>
         <translation>Operació</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="133"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="134"/>
         <source>Timestamps</source>
         <translation>Marques de temps</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="210"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="214"/>
         <source>Pause</source>
         <translation>Pausa</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="214"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="218"/>
         <source>Play</source>
         <translation>Reprodueix</translation>
     </message>
@@ -3851,7 +3881,7 @@
 <context>
     <name>Fooyin::Lyrics::LyricsEditorDialog</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="318"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="333"/>
         <source>Lyrics Editor</source>
         <translation type="unfinished">Editor de lletres</translation>
     </message>
@@ -6118,13 +6148,13 @@
     <name>Fooyin::PropertiesDialogWidget</name>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="155"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="175"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="176"/>
         <source>Tools</source>
         <translation>Eines</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="159"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="247"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="248"/>
         <source>Properties</source>
         <translation>Propietats</translation>
     </message>
@@ -6685,17 +6715,17 @@
 <context>
     <name>Fooyin::Scrobbler::ScrobblerPage</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="436"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="182"/>
         <source>General</source>
         <translation>General</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="437"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="183"/>
         <source>Networking</source>
         <translation>Xarxes</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="437"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="183"/>
         <source>Scrobbling</source>
         <translation>Scrobbling</translation>
     </message>
@@ -6703,135 +6733,85 @@
 <context>
     <name>Fooyin::Scrobbler::ScrobblerPageWidget</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="106"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="69"/>
         <source>Enable scrobbling</source>
         <translation>Activa l&apos;scrobbling</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="107"/>
-        <source>Prefer album artist</source>
-        <translation>Artista de l&apos;àlbum preferit</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="109"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="71"/>
         <source>Filter scrobbles</source>
         <translation>Filtrar Scrobbles</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="110"/>
-        <source>Filter</source>
-        <translation type="unfinished">Filtre</translation>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="76"/>
+        <source>Album Artist</source>
+        <translation type="unfinished">Artista de l&apos;àlbum</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="113"/>
-        <source>Add Service</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="115"/>
-        <source>General</source>
-        <translation>General</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="118"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
         <source>Scrobble delay</source>
         <translation>Retard de Scrobble</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="119"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="80"/>
         <source>Time to wait before submitting scrobbles</source>
         <translation>Temps d&apos;espera abans d&apos;enviar scrobbles</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="125"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="86"/>
         <source>seconds</source>
         <translation>segons</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="127"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="88"/>
         <source>Query</source>
         <translation type="unfinished">Consulta</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="128"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="89"/>
         <source>Enter a query - tracks that match the query will NOT be scrobbled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="327"/>
-        <source>Edit</source>
-        <translation type="unfinished">Edita</translation>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
+        <source>Fields</source>
+        <translation type="unfinished">Camps</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="329"/>
-        <source>Delete</source>
-        <translation type="unfinished">Suprimeix</translation>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="104"/>
+        <source>Title</source>
+        <translation type="unfinished">Títol</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="346"/>
-        <source>Token</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="106"/>
+        <source>Artist</source>
+        <translation type="unfinished">Artista</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="349"/>
-        <source>URL</source>
-        <translation type="unfinished">URL</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="370"/>
-        <source>You can find your token here</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="111"/>
-        <source>Services</source>
-        <translation>Serveis</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="248"/>
-        <source>Sign Out</source>
-        <translation>Tanca la sessió</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="252"/>
-        <source>Signed in</source>
-        <translation>Sessió iniciada</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="257"/>
-        <source>Sign In</source>
-        <translation>Inicia la sessió</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="253"/>
-        <source>Signed in as %1</source>
-        <translation>Sessió iniciada com a %1</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="260"/>
-        <source>Not signed in</source>
-        <translation>No has iniciat la sessió</translation>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="108"/>
+        <source>Album</source>
+        <translation type="unfinished">Àlbum</translation>
     </message>
 </context>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerPlugin</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="51"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="52"/>
         <source>Toggle scrobbling</source>
         <translation>Activa/desactiva l&apos;scrobbling</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="57"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="58"/>
         <source>Scrobbler</source>
         <translation>Scrobbler</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="61"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="62"/>
         <source>Scrobble Toggle</source>
         <translation>Activa/desactiva l&apos;Scrobble</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="62"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="63"/>
         <source>Controls</source>
         <translation>Controls</translation>
     </message>
@@ -6857,6 +6837,87 @@
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="162"/>
         <source>Copy URL</source>
         <translation>Copia l&apos;URL</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Scrobbler::ScrobblerServicesPage</name>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="369"/>
+        <source>Services</source>
+        <translation type="unfinished">Serveis</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
+        <source>Networking</source>
+        <translation type="unfinished">Xarxes</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
+        <source>Scrobbling</source>
+        <translation type="unfinished">Scrobbling</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Scrobbler::ScrobblerServicesPageWidget</name>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="99"/>
+        <source>Services</source>
+        <translation type="unfinished">Serveis</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="101"/>
+        <source>Add Service</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="180"/>
+        <source>Sign Out</source>
+        <translation type="unfinished">Tanca la sessió</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="184"/>
+        <source>Signed in</source>
+        <translation type="unfinished">Sessió iniciada</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="185"/>
+        <source>Signed in as %1</source>
+        <translation type="unfinished">Sessió iniciada com a %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="189"/>
+        <source>Sign In</source>
+        <translation type="unfinished">Inicia la sessió</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="192"/>
+        <source>Not signed in</source>
+        <translation type="unfinished">No has iniciat la sessió</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="259"/>
+        <source>Edit</source>
+        <translation type="unfinished">Edita</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="261"/>
+        <source>Delete</source>
+        <translation type="unfinished">Suprimeix</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="278"/>
+        <source>Token</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="281"/>
+        <source>URL</source>
+        <translation type="unfinished">URL</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="302"/>
+        <source>You can find your token here</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7997,42 +8058,42 @@
 <context>
     <name>Fooyin::VuMeter::VuMeterWidget</name>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="625"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="626"/>
         <source>Peak Meter</source>
         <translation>Mesurador de pics</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="625"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="626"/>
         <source>VU Meter</source>
         <translation>Mesurador de VU</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="802"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="803"/>
         <source>Show peaks</source>
         <translation>Mostra els pics</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="807"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="808"/>
         <source>Show legend</source>
         <translation>Mostra la llegenda</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="812"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="813"/>
         <source>Orientation</source>
         <translation>Orientació</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="815"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="816"/>
         <source>Horizontal</source>
         <translation>Horitzontal</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="816"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="817"/>
         <source>Vertical</source>
         <translation>Vertical</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="830"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="831"/>
         <source>Settings…</source>
         <translation>Configuració…</translation>
     </message>
@@ -8565,79 +8626,89 @@ d&apos;utilitzar més espai de disc a la memòria cau.</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="117"/>
+        <location filename="../../src/app/commandline.cpp" line="125"/>
         <source>Usage</source>
         <translation>Ús</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="117"/>
+        <location filename="../../src/app/commandline.cpp" line="125"/>
         <source>options</source>
         <translation>opcions</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="117"/>
+        <location filename="../../src/app/commandline.cpp" line="125"/>
         <source>urls</source>
         <translation>urls</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="117"/>
+        <location filename="../../src/app/commandline.cpp" line="125"/>
         <source>Options</source>
         <translation>Opcions</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="118"/>
+        <location filename="../../src/app/commandline.cpp" line="126"/>
         <source>Display help on command line options</source>
         <translation>Mostra l&apos;ajuda a les opcions de la línia d&apos;ordres</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="118"/>
+        <location filename="../../src/app/commandline.cpp" line="126"/>
         <source>Display version information</source>
         <translation>Mostra la informació de la versió</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="119"/>
+        <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Player options</source>
         <translation>Opcions del reproductor</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="119"/>
+        <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Toggle playback</source>
         <translation>Activa/desactiva la reproducció</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="119"/>
+        <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Start playback</source>
         <translation>Inicia la reproducció</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="120"/>
+        <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Pause playback</source>
         <translation>Pausa la reproducció</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="120"/>
+        <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Stop playback</source>
         <translation>Atura la reproducció</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="120"/>
+        <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Skip to next track</source>
         <translation>Salta a la pista següent</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="121"/>
+        <location filename="../../src/app/commandline.cpp" line="129"/>
         <source>Skip to previous track</source>
         <translation>Salta a la pista anterior</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="121"/>
+        <location filename="../../src/app/commandline.cpp" line="129"/>
         <source>Arguments</source>
         <translation>Arguments</translation>
     </message>
     <message>
-        <location filename="../../src/app/commandline.cpp" line="121"/>
+        <location filename="../../src/app/commandline.cpp" line="129"/>
         <source>Files to open</source>
         <translation>Fitxers per obrir</translation>
+    </message>
+    <message>
+        <location filename="../../src/app/commandline.cpp" line="130"/>
+        <source>Seek forward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/commandline.cpp" line="130"/>
+        <source>Seek backward</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="429"/>
