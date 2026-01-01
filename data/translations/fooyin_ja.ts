@@ -1001,12 +1001,12 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
         <source>Right-click to add a new widget</source>
-        <translation type="unfinished"></translation>
+        <translation>ウィジェットの追加は右クリック</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="105"/>
         <source>Enter layout editing mode to edit</source>
-        <translation type="unfinished"></translation>
+        <translation>編集するにはレイアウト編集モードに入ってください</translation>
     </message>
 </context>
 <context>
@@ -1331,12 +1331,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="79"/>
         <source>&amp;Load playlist…</source>
-        <translation>プレイリストを&amp;ロード しています…</translation>
+        <translation>プレイリストを&amp;ロード…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="86"/>
         <source>&amp;Save playlist…</source>
-        <translation>プレイリストを&amp;保存 しています…</translation>
+        <translation>プレイリストを&amp;保存…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="102"/>
@@ -1366,7 +1366,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="93"/>
         <source>Save &amp;all playlists…</source>
-        <translation>&amp;すべて のプレイリストを保存しています…</translation>
+        <translation>&amp;すべて のプレイリストを保存…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
@@ -1424,7 +1424,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="411"/>
         <source>Pending operations</source>
-        <translation type="unfinished"></translation>
+        <translation>操作を保留中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="419"/>
@@ -1479,12 +1479,12 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="273"/>
         <source>Preset already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>既存のプリセットです</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="274"/>
         <source>Preset %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット %1 は既に存在します。上書きしますか?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="393"/>
@@ -1545,22 +1545,22 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="66"/>
         <source>&amp;File operations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ファイル操作</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="122"/>
         <source>&amp;Copy to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;コピー…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="123"/>
         <source>&amp;Move to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;移動…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="124"/>
         <source>&amp;Rename to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;名前の変更…</translation>
     </message>
 </context>
 <context>
@@ -1636,12 +1636,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="332"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>戻る</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="349"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>終了</translation>
     </message>
 </context>
 <context>
@@ -1654,7 +1654,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="421"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>フィルター</translation>
     </message>
 </context>
 <context>
@@ -1668,7 +1668,7 @@
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="456"/>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="661"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>カラム</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="662"/>
@@ -2000,7 +2000,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="95"/>
         <source>Show system tray icon</source>
-        <translation type="unfinished"></translation>
+        <translation>システムトレイにアイコンを表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="96"/>
@@ -2020,7 +2020,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
         <source>Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>起動</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
@@ -2030,7 +2030,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>User Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザーディレクトリ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="114"/>
@@ -2045,7 +2045,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ付け</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
@@ -2055,27 +2055,27 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="132"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>言語</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="147"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>標準</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="148"/>
         <source>Start maximised</source>
-        <translation type="unfinished"></translation>
+        <translation>最大化して開始</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="149"/>
         <source>Start hidden to tray</source>
-        <translation type="unfinished"></translation>
+        <translation>起動時はトレイに</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="150"/>
         <source>Remember from last run</source>
-        <translation type="unfinished"></translation>
+        <translation>直前の動作を記憶する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="179"/>
@@ -2085,7 +2085,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="180"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation>変更を有効にするために、再起動しますか?</translation>
     </message>
 </context>
 <context>
@@ -2153,27 +2153,27 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="384"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>終了</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="473"/>
         <source>Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>音量</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="475"/>
         <source>Volume up</source>
-        <translation type="unfinished"></translation>
+        <translation>音量を上げる</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="482"/>
         <source>Volume down</source>
-        <translation type="unfinished"></translation>
+        <translation>音量を下げる</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="489"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>ミュート</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
@@ -2233,33 +2233,33 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>無視</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="589"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のファイル</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="598"/>
         <location filename="../../src/gui/guiapplication.cpp" line="628"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ付け</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="601"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルからタグをリロード</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="602"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished"></translation>
+        <translation>修正されたファイルからタグをリロード</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="604"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルからのタグで選択したトラックのタグを置き換える</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="606"/>
@@ -2305,7 +2305,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="846"/>
         <source>Reload Required</source>
-        <translation type="unfinished"></translation>
+        <translation>リロードが必要</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="847"/>
@@ -2315,42 +2315,42 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="852"/>
         <source>Reload Now</source>
-        <translation type="unfinished"></translation>
+        <translation>リロードします</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="854"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="919"/>
         <source>Playback Error</source>
-        <translation type="unfinished"></translation>
+        <translation>再生エラー</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="972"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックが見つかりません</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1215"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークを検索中</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1229"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの検索終了</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="944"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>続行</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="688"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーティリティ</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="946"/>
@@ -2395,12 +2395,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1070"/>
         <source>Load Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストをロード</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1106"/>
         <source>Save Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストを保存</translation>
     </message>
 </context>
 <context>
@@ -2423,7 +2423,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>システムデフォルト</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
@@ -5289,12 +5289,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="100"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>タブに削除ボタンを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="101"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished"></translation>
+        <translation>中クリックでプレイリストを削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="104"/>
@@ -5886,7 +5886,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="427"/>
         <source>Remove duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>重複を削除する</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="428"/>
@@ -5901,7 +5901,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="433"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>存在しないトラックをプレイリストから削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="445"/>
@@ -7453,12 +7453,12 @@
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="53"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="71"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation>タブスタック</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="269"/>
@@ -7501,17 +7501,17 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="45"/>
         <source>Artist Name</source>
-        <translation type="unfinished"></translation>
+        <translation>アーティスト名</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="46"/>
         <source>Track Title</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックタイトル</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="47"/>
         <source>Album Title</source>
-        <translation type="unfinished"></translation>
+        <translation>アルバムタイトル</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="48"/>
@@ -7526,12 +7526,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="50"/>
         <source>Composer</source>
-        <translation type="unfinished"></translation>
+        <translation>作曲者</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="51"/>
         <source>Performer</source>
-        <translation type="unfinished"></translation>
+        <translation>パフォーマー</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
@@ -7541,32 +7541,32 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック番号</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="54"/>
         <source>Total Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>全トラック</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="55"/>
         <source>Disc Number</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスク番号</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="56"/>
         <source>Total Discs</source>
-        <translation type="unfinished"></translation>
+        <translation>全ディスク</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="57"/>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>コメント</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>評価</translation>
     </message>
 </context>
 <context>
@@ -7574,7 +7574,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="177"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>インデックス</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="179"/>
@@ -7584,7 +7584,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="181"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation>フィールド</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="183"/>
@@ -7597,12 +7597,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="135"/>
         <source>Fields</source>
-        <translation type="unfinished"></translation>
+        <translation>フィールド</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="136"/>
         <source>Tag Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ編集</translation>
     </message>
 </context>
 <context>
@@ -7623,12 +7623,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="49"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>貼り付け</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="50"/>
         <source>Paste fields</source>
-        <translation type="unfinished"></translation>
+        <translation>フィールドを貼り付け</translation>
     </message>
 </context>
 <context>
@@ -7679,12 +7679,12 @@
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="173"/>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="211"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>次</translation>
     </message>
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="208"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>再生</translation>
     </message>
 </context>
 <context>
@@ -7727,27 +7727,27 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="141"/>
         <source>Open containing folder</source>
-        <translation type="unfinished"></translation>
+        <translation>含まれるフォルダを開く</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="142"/>
         <source>Search for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークを検索…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="143"/>
         <source>Quicksearch for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークのクイックサーチ</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="144"/>
         <source>Remove all artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてのアートワークを削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="145"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>プロパティ</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="155"/>
@@ -8130,22 +8130,22 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="101"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーティリティ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="106"/>
         <source>Regenerate waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>wavデータを再度生成する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="107"/>
         <source>Regenerate waveform data for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したトラックのwavデータを再生成する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="111"/>
         <source>Generate missing waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>失われたwavデータを生成する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="112"/>
@@ -8155,7 +8155,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="116"/>
         <source>Remove waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>wavデータを削除する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="117"/>
@@ -8165,12 +8165,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
         <source>Generating waveform data…</source>
-        <translation type="unfinished"></translation>
+        <translation>wavデータを生成しています…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>無視</translation>
     </message>
 </context>
 <context>

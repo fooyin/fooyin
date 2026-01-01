@@ -70,12 +70,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="65"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Ara</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="67"/>
         <source>Artwork Finder</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm Kapağı Bul</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="69"/>
@@ -92,17 +92,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="124"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tür</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="216"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation>Aranıyor…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="222"/>
         <source>No artwork found</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotoğraf bulunamadı</translation>
     </message>
 </context>
 <context>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="197"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>İndir</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
@@ -128,12 +128,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="77"/>
         <source>Embed in file</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyaya gömülü</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="78"/>
         <source>Save to directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Klasöre kaydet</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
@@ -153,12 +153,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Save Method</source>
-        <translation type="unfinished"></translation>
+        <translation>Kayıt Metodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Save Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Kayıt yeri</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="114"/>
@@ -320,7 +320,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>Arama</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
@@ -338,22 +338,22 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Oynatmayı başladığında eksik albüm kapağını otomatik olarak ara</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
         <source>Minimum match threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum eşleşme eşiği</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="71"/>
         <source>Search parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Arama parametreleri</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="77"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Şarkı adı</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="79"/>
@@ -368,12 +368,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="85"/>
         <source>Finder thumbnail size</source>
-        <translation type="unfinished"></translation>
+        <translation>Küçük resim boyutu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="91"/>
         <source>Size of thumbnails in Artwork Finder when searching for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm kapağı aranırken küçük resimlerin boyutu</translation>
     </message>
 </context>
 <context>
@@ -381,7 +381,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="155"/>
         <source>Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaynaklar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="156"/>
@@ -414,17 +414,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="91"/>
         <source>Local paths</source>
-        <translation type="unfinished"></translation>
+        <translation>Yerel dizinler</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="93"/>
         <source>Download sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaynakları indir</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="95"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm kapağı yukarıdaki sıraya göre aranacaktır.</translation>
     </message>
 </context>
 <context>
@@ -591,17 +591,17 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="250"/>
         <source>Search for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm kapağı ara…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="251"/>
         <source>Quicksearch for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Hızlı albüm kapağı ara</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="252"/>
         <source>Remove artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm kapağı sil</translation>
     </message>
 </context>
 <context>
@@ -848,7 +848,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="85"/>
         <source>Start playback on send</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönderim sırasında oynatmayı başlat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
@@ -939,7 +939,7 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>Discord</translation>
     </message>
 </context>
 <context>
@@ -947,22 +947,22 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="60"/>
         <source>Enable</source>
-        <translation type="unfinished"></translation>
+        <translation>Etkinleştir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="61"/>
         <source>Show playstate</source>
-        <translation type="unfinished"></translation>
+        <translation>Çalma durumunu göster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="67"/>
         <source>Fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Alanlar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="71"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="73"/>
@@ -977,12 +977,12 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
         <source>Display a small icon in Discord showing the current playback state</source>
-        <translation type="unfinished"></translation>
+        <translation>Discord&apos;da geçerli oynatma durumunu gösteren küçük bir simge görüntüle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="85"/>
         <source>Client ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanıcı kimliği</translation>
     </message>
 </context>
 <context>
@@ -1024,7 +1024,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
         <source>Search the current playlist</source>
-        <translation type="unfinished">Mevcut oynatma listesine gönder</translation>
+        <translation>Mevcut oynatma listesinde ara</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="50"/>
@@ -1474,22 +1474,22 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="240"/>
         <source>Move entire source folder contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaynak dizinin tüm içeriğini taşı</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="273"/>
         <source>Preset already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Önayar zaten kayıtlı</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="274"/>
         <source>Preset %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Önayar %1 zaten kayıtlı. Üzerine yazılsın mı?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="393"/>
         <source>&amp;Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;İptal et</translation>
     </message>
 </context>
 <context>
@@ -1502,7 +1502,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="90"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaynak</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="92"/>
@@ -1527,7 +1527,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="176"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Yarat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="178"/>
@@ -1537,7 +1537,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen</translation>
     </message>
 </context>
 <context>
@@ -1545,22 +1545,22 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="66"/>
         <source>&amp;File operations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dosya işlemleri</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="122"/>
         <source>&amp;Copy to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Hedefe kopyala…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="123"/>
         <source>&amp;Move to…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hedefe &amp;taşı</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="124"/>
         <source>&amp;Rename to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;İsim değiştir…</translation>
     </message>
 </context>
 <context>
@@ -1568,12 +1568,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm Sanatçısı</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="41"/>
@@ -1588,7 +1588,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="43"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarih</translation>
     </message>
 </context>
 <context>
@@ -1596,7 +1596,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="535"/>
         <source>Filter Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtre Sonuçları</translation>
     </message>
 </context>
 <context>
@@ -1604,13 +1604,13 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="108"/>
         <source>Clear Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Grubu Temizle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="118"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="313"/>
         <source>Clear Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Grupları Temizle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
@@ -1621,7 +1621,7 @@
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="251"/>
         <source>Ungrouped</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruplanmamış</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="185"/>
@@ -1631,17 +1631,17 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="304"/>
         <source>Add New Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Grup Ekle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="332"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Geri</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="349"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitir</translation>
     </message>
 </context>
 <context>
@@ -1649,12 +1649,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="204"/>
         <source>All (%1 %2s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tümü (%1 %2s)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="421"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrele</translation>
     </message>
 </context>
 <context>
@@ -1668,27 +1668,27 @@
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="456"/>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="661"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Sütunlar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="662"/>
         <source>Artwork (bottom labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm kapağı (alt etiketler)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="663"/>
         <source>Artwork (right labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm kapağı (sağ etiketler)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="664"/>
         <source>Artwork (no labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm kapağı (etiketsiz)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="707"/>
         <source>Summary item</source>
-        <translation type="unfinished"></translation>
+        <translation>Özet öğesi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="714"/>
@@ -1703,27 +1703,27 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="737"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık göster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="745"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaydırma çubuğunu göster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="753"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Farklı sıra renkleri</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="498"/>
         <source>Multiple columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Çoklu sütunlar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="521"/>
         <source>Manage groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Grupları yönet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="716"/>
@@ -1733,17 +1733,17 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="506"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Daha fazla…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="261"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Kütüphane Filtresi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="227"/>
         <source>Filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtreleme seçenekleri</translation>
     </message>
 </context>
 <context>
@@ -1751,7 +1751,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="161"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Dizin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="163"/>
@@ -1761,7 +1761,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="165"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation>Alan</translation>
     </message>
 </context>
 <context>
@@ -1769,7 +1769,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="133"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Sütunlar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="134"/>
@@ -1779,7 +1779,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="134"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtreler</translation>
     </message>
 </context>
 <context>
@@ -1787,7 +1787,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="78"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Betik editörü</translation>
     </message>
 </context>
 <context>
@@ -1805,7 +1805,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="190"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtreler</translation>
     </message>
 </context>
 <context>
@@ -1813,22 +1813,22 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="68"/>
         <source>Start playback on send</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönderirken oynatmaya başla</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="69"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Etkin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="70"/>
         <source>Switch when changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Değiştiğinde geç</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="71"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>Çalışmaya devam et</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="74"/>
@@ -1838,7 +1838,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="84"/>
         <source>Filter Selection Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Oynatma Listesini Filtrele</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="77"/>
@@ -1858,7 +1858,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="87"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu aktif oynatma listesi ise, seçimi değiştirirken çalmaya devam et</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="123"/>
@@ -1914,7 +1914,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="141"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Görünüm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="142"/>
@@ -1924,7 +1924,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="142"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtreler</translation>
     </message>
 </context>
 <context>
@@ -1932,32 +1932,32 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="61"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Satır yüksekliğini yoksay</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="66"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Görünüm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="71"/>
         <source>Artwork Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm Kapağı Modu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="87"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Genişlik</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="89"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Yükseklik</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="84"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Boyut, araçta %1 kullanılarak da değiştirilebilir.</translation>
     </message>
 </context>
 <context>
@@ -1965,12 +1965,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="54"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Kütüphane Filtresi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="55"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtreler</translation>
     </message>
 </context>
 <context>
@@ -1995,97 +1995,97 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="94"/>
         <source>Wait for tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Parçayı bekleyin</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="95"/>
         <source>Show system tray icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistem tepsisinde simge göster</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="96"/>
         <source>Minimise to tray on close</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistem tepsisine küçült</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="100"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm parçalar yüklenene kadar programın açılmasını geciktir</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="98"/>
         <source>Preserve timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaman etiketlerini koru</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="102"/>
         <source>Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlangıç</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
         <source>Window behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Pencere davranışı</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>User Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanıcı klasörleri</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="114"/>
         <source>Open Config Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Ayar Klasörünü Aç</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="115"/>
         <source>Open Share Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Paylaşılan Klasörü Aç</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketleme</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
         <source>Preserve file timestamps when updating tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketler güncellenirken dosya zaman etiketlerini koru</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="132"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Dil</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="147"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="148"/>
         <source>Start maximised</source>
-        <translation type="unfinished"></translation>
+        <translation>Tam ekran başlat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="149"/>
         <source>Start hidden to tray</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistem tepsisine küçültülmüş başlat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="150"/>
         <source>Remember from last run</source>
-        <translation type="unfinished"></translation>
+        <translation>Son çalıştırmadan hatırla</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="179"/>
         <source>Language changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Dil değiştirildi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="180"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Programı yeniden başlatma gerekli. Şimdi yapılsın mı?</translation>
     </message>
 </context>
 <context>
@@ -2093,42 +2093,42 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="46"/>
         <source>%1 Settings</source>
-        <translation type="unfinished">%1 ayarları</translation>
+        <translation>%1 Ayarları</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="53"/>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Uzunluk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="56"/>
         <source>Maximum length</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum uzunluk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="60"/>
         <source>minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>dakika</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="66"/>
         <source>times</source>
-        <translation type="unfinished"></translation>
+        <translation>süreler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="72"/>
         <source>ms</source>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="62"/>
         <source>Loop count</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekrar sayısı</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="68"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Ses azalma uzunluğu</translation>
     </message>
 </context>
 <context>
@@ -2136,44 +2136,46 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="379"/>
         <source>Plugins not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Eklentiler bulunamadı</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="380"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tam işlevsellik için bazı eklentiler gerekli.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="381"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Eklenti arama klasörleri:
+
+</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="384"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Kapat</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="473"/>
         <source>Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>Ses</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="475"/>
         <source>Volume up</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesi artır</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="482"/>
         <source>Volume down</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesi azalt</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="489"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesi kıs</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
@@ -2183,32 +2185,32 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Şarkıda gezin</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="497"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished"></translation>
+        <translation>İleri atla (küçük)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="504"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished"></translation>
+        <translation>İleri atla (büyük)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="511"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished"></translation>
+        <translation>Geri atla (küçük)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished"></translation>
+        <translation>Geri atla (büyük)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="544"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Oynatma listesini sil</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="546"/>
@@ -2218,189 +2220,189 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="554"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished"></translation>
+        <translation>Menü çubuğunu aç/kapat</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="556"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>Görünüm</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Şarkıları okuyor…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>İptal et</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="589"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>Geçerli dosya</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="598"/>
         <location filename="../../src/gui/guiapplication.cpp" line="628"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketlemek</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="601"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyalardan etiketleri tekrar yükle</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="602"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished"></translation>
+        <translation>Değiştirilmiş dosyalardan etiketleri tekrar yükle</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="604"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilen parçalardaki etiketleri dosyalardaki etiketlerle değiştir</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="606"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilen parçalardaki etiketler düzenlendiyse dosyalardaki etiketlerle değiştir</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="631"/>
         <source>Rate 0</source>
-        <translation type="unfinished"></translation>
+        <translation>Puanla 0</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="632"/>
         <source>Rate 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Puanla 1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="633"/>
         <source>Rate 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Puanla 2</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="634"/>
         <source>Rate 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Puanla 3</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="635"/>
         <source>Rate 4</source>
-        <translation type="unfinished"></translation>
+        <translation>Puanla 4</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="636"/>
         <source>Rate 5</source>
-        <translation type="unfinished"></translation>
+        <translation>Puanla 5</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="638"/>
         <location filename="../../src/gui/guiapplication.cpp" line="671"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Puanlama</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="846"/>
         <source>Reload Required</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeniden yükleme gerekli</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="847"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Veritabanı değişikliği nedeniyle, kayıtlı meta verilerini güncellemek için parçalar diskten yeniden yüklenmelidir.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="852"/>
         <source>Reload Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Şimdi yeniden yükle</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="854"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="919"/>
         <source>Playback Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Oynatma Hatası</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="972"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Parça Bulunamadı</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1215"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm kapağı aranıyor…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1229"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm kapağı araması bitti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="944"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Devam et</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="688"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>Yardımcı programlar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="946"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Dur</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="950"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir parça mevcut değilse her zaman oynatmaya devam et</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="977"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished"></translation>
+        <translation>Çözücü Mevcut Değil</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1006"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Desteklenen Tüm Medya Dosyaları (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1007"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ses Dosyaları (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1018"/>
         <source>Add Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya Ekle</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1032"/>
         <source>Add Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Klasör Ekle</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1060"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Desteklenen Oynatma Listeleri (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1070"/>
         <source>Load Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Oynatma Listesi Yükle</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1106"/>
         <source>Save Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Oynatma Listesini Kaydet</translation>
     </message>
 </context>
 <context>
@@ -2423,117 +2425,117 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistem varsayılanı</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Temalar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="110"/>
         <source>Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkaplan</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="111"/>
         <source>Foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazı rengi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="112"/>
         <source>Foreground (Bright)</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazı rengi (Parlak)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="113"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazı</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="114"/>
         <source>Placeholder text</source>
-        <translation type="unfinished"></translation>
+        <translation>Yer tutucu metni</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="115"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Zemin</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
         <source>Base (Alternate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zemin (Alternatif)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="117"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Vurgula</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="118"/>
         <source>Highlighted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Vurgulanan metin</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="119"/>
         <source>Button (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Buton (Arkaplan)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="120"/>
         <source>Button (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Buton (Yazı rengi)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="128"/>
         <source>Foreground (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazı rengi (Devre dışı)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="129"/>
         <source>Highlight (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vurgula (Devre dışı)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="130"/>
         <source>Highlighted Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vurgulanan Metin (Devre dışı)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="131"/>
         <source>Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Metin (Devre dışı)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="132"/>
         <source>Button Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Buton Metni (Devre dışı)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="133"/>
         <source>ToolTip (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Araç İpucu (Arkaplan)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="134"/>
         <source>ToolTip (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Araç İpucu (Yazı rengi)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="135"/>
         <source>Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="136"/>
         <source>Link (Visited)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı (Ziyaret edilmiş)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="137"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Açık</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="138"/>
