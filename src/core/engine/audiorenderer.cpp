@@ -98,6 +98,7 @@ void AudioRenderer::init(const Track& track, const AudioFormat& format, bool for
 
     if(!m_audioOutput) {
         emit initialised(false);
+        return;
     }
 
     if(!isGapless && m_audioOutput->initialised()) {
