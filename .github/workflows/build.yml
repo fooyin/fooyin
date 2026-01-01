@@ -49,11 +49,14 @@ jobs:
           ./ci/tests.sh
 
   fedora:
-    name: Fedora
-    runs-on: ubuntu-latest
+    name: Fedora (${{matrix.debian_version}}, ${{ matrix.runner.arch }})
+    runs-on: ${{ matrix.runner.os }}
     strategy:
       fail-fast: false
       matrix:
+        runner:
+          - { os: ubuntu-latest, arch: amd64 }
+          - { os: ubuntu-24.04-arm, arch: arm64 }
         fedora_version: [ '41', '42', '43' ]
     container:
       image: fedora:${{matrix.fedora_version}}
@@ -84,7 +87,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: fedora-${{matrix.fedora_version}}
+          name: fedora-${{matrix.fedora_version}}-${{ matrix.runner.arch }}
           path: rpm
 
   debian:
