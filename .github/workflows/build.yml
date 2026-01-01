@@ -49,7 +49,7 @@ jobs:
           ./ci/tests.sh
 
   fedora:
-    name: Fedora (${{matrix.debian_version}}, ${{ matrix.runner.arch }})
+    name: Fedora (${{matrix.fedora_version}}, ${{ matrix.runner.arch }})
     runs-on: ${{ matrix.runner.os }}
     strategy:
       fail-fast: false
