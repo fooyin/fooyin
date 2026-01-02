@@ -12,6 +12,7 @@ set(
     lyrics
     mediacontrol
     mpris
+    notify
     openmpt
     pipewire
     rawaudio
@@ -55,7 +56,7 @@ if(BUILD_ALSA)
 endif()
 
 if(UNIX AND NOT APPLE)
-    list(APPEND FOOYIN_DEFAULT_PLUGINS mpris)
+    list(APPEND FOOYIN_DEFAULT_PLUGINS mpris notify)
 endif()
 
 if(WIN32)
@@ -77,8 +78,14 @@ endif()
 
 if(UNIX AND NOT APPLE)
     fooyin_add_selected_plugin(mpris)
-elseif("mpris" IN_LIST FOOYIN_RESOLVED_PLUGINS)
-    message(STATUS "mpris plugin is only available on Unix platforms other than macOS; skipping.")
+    fooyin_add_selected_plugin(notify)
+else()
+    if("mpris" IN_LIST FOOYIN_RESOLVED_PLUGINS)
+        message(STATUS "mpris plugin is only available on Unix platforms other than macOS; skipping.")
+    endif()
+    if("notify" IN_LIST FOOYIN_RESOLVED_PLUGINS)
+        message(STATUS "notify plugin is only available on Unix platforms other than macOS; skipping.")
+    endif()
 endif()
 
 fooyin_add_selected_plugin(discord)
