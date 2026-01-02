@@ -30,7 +30,10 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 #include <QIODevice>
+
+#include <algorithm>
 
 #if defined(Q_OS_WINDOWS)
 #define snprintf _snprintf
@@ -159,22 +162,199 @@ QString convertString(const char* str)
     return QString::fromUtf8(str);
 };
 
+constexpr std::array<char, 8> ApeTagPreamble{'A', 'P', 'E', 'T', 'A', 'G', 'E', 'X'};
+constexpr int ApeFooterSize   = 32;
+constexpr int ApeMinTagSize   = ApeFooterSize;
+constexpr int ApeItemHdrSize  = 8; // 4 bytes value length + 4 bytes flags
+constexpr int ApeMaxItemCount = 1000;
+constexpr int ApeMaxTagSize   = 32 * 1024 * 1024; // 32 MB max
+
+struct ApeTagItem
+{
+    QString key;
+    QStringList values;
+};
+
+uint32_t readLE32(const char* data)
+{
+    const auto* d = reinterpret_cast<const uint8_t*>(data);
+    return static_cast<uint32_t>(d[0]) | (static_cast<uint32_t>(d[1]) << 8) | (static_cast<uint32_t>(d[2]) << 16)
+         | (static_cast<uint32_t>(d[3]) << 24);
+}
+
+std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
+{
+    std::vector<ApeTagItem> items;
+
+    if(!device || !device->isOpen()) {
+        return items;
+    }
+
+    const qint64 fileSize = device->size();
+    if(fileSize < ApeMinTagSize) {
+        return items;
+    }
+
+    // Read footer (last 32 bytes)
+    device->seek(fileSize - ApeFooterSize);
+    const QByteArray footer = device->read(ApeFooterSize);
+    if(footer.size() != ApeFooterSize) {
+        return items;
+    }
+
+    // Check preamble
+    if(std::memcmp(footer.constData(), ApeTagPreamble.data(), 8) != 0) {
+        return items;
+    }
+
+    const uint32_t version   = readLE32(footer.constData() + 8);
+    const uint32_t tagSize   = readLE32(footer.constData() + 12);
+    const uint32_t itemCount = readLE32(footer.constData() + 16);
+
+    // Validate
+    if(version != 2000 || tagSize < ApeFooterSize || tagSize > ApeMaxTagSize || itemCount > ApeMaxItemCount) {
+        return items;
+    }
+
+    // Read tag data (excluding footer)
+    const uint32_t dataSize = tagSize - ApeFooterSize;
+    if(static_cast<qint64>(tagSize) > fileSize) {
+        return items;
+    }
+
+    device->seek(fileSize - tagSize);
+    const QByteArray tagData = device->read(dataSize);
+    if(static_cast<uint32_t>(tagData.size()) != dataSize) {
+        return items;
+    }
+
+    // Parse items
+    uint32_t offset = 0;
+    for(uint32_t i = 0; i < itemCount && offset + ApeItemHdrSize < dataSize; ++i) {
+        const uint32_t valueLen = readLE32(tagData.constData() + offset);
+        // const uint32_t flags = readLE32(tagData.constData() + offset + 4);
+        offset += ApeItemHdrSize;
+
+        // Read null-terminated key
+        const char* keyStart = tagData.constData() + offset;
+        const char* keyEnd   = std::find(keyStart, tagData.constData() + dataSize, '\0');
+        if(keyEnd >= tagData.constData() + dataSize) {
+            break;
+        }
+
+        const QString key = QString::fromUtf8(keyStart, keyEnd - keyStart);
+        offset            = static_cast<uint32_t>(keyEnd - tagData.constData() + 1);
+
+        if(offset + valueLen > dataSize) {
+            break;
+        }
+
+        // Read value (may contain null separators for multi-value)
+        const QByteArray valueData = tagData.mid(offset, valueLen);
+        offset += valueLen;
+
+        // Split on null bytes for multi-value support
+        QStringList values;
+        int start = 0;
+        for(int j = 0; j <= valueData.size(); ++j) {
+            if(j == valueData.size() || valueData.at(j) == '\0') {
+                if(j > start) {
+                    values.append(QString::fromUtf8(valueData.constData() + start, j - start));
+                }
+                start = j + 1;
+            }
+        }
+
+        if(!key.isEmpty() && !values.isEmpty()) {
+            items.push_back({key.toUpper(), values});
+        }
+    }
+
+    return items;
+}
+
+void applyApeTag(Fooyin::Track& track, const ApeTagItem& item)
+{
+    const QString& key        = item.key;
+    const QStringList& values = item.values;
+    const QString singleValue = values.join(QString{});
+    const QString firstValue  = values.isEmpty() ? QString{} : values.first();
+
+    if(key == u"ALBUM") {
+        track.setAlbum(firstValue);
+    }
+    else if(key == u"ARTIST") {
+        QStringList artists = track.artists();
+        artists.append(values);
+        track.setArtists(artists);
+    }
+    else if(key == u"ALBUM ARTIST" || key == u"ALBUMARTIST") {
+        QStringList albumArtists = track.albumArtists();
+        albumArtists.append(values);
+        track.setAlbumArtists(albumArtists);
+    }
+    else if(key == u"TITLE") {
+        track.setTitle(firstValue);
+    }
+    else if(key == u"GENRE") {
+        QStringList genres = track.genres();
+        genres.append(values);
+        track.setGenres(genres);
+    }
+    else if(key == u"TRACK") {
+        readTrackTotalPair(firstValue, track);
+    }
+    else if(key == u"DISC" || key == u"DISCNUMBER") {
+        readDiscTotalPair(firstValue, track);
+    }
+    else if(key == u"DATE" || key == u"YEAR") {
+        track.setDate(firstValue);
+    }
+    else if(key == u"COMPOSER") {
+        QStringList composers = track.composers();
+        composers.append(values);
+        track.setComposers(composers);
+    }
+    else if(key == u"PERFORMER") {
+        QStringList performers = track.performers();
+        performers.append(values);
+        track.setPerformers(performers);
+    }
+    else if(key == u"COMMENT") {
+        track.setComment(firstValue);
+    }
+    else if(key == u"FMPS_RATING") {
+        track.setRating(firstValue.toFloat());
+    }
+    else {
+        for(const QString& val : values) {
+            track.addExtraTag(key, val);
+        }
+    }
+}
+
 void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
 {
     if(strcasecmp(tag->key, "album") == 0) {
         track.setAlbum(convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "artist") == 0) {
-        track.setArtists({convertString(tag->value)});
+        QStringList artists = track.artists();
+        artists.append(convertString(tag->value));
+        track.setArtists(artists);
     }
     else if(strcasecmp(tag->key, "album_artist") == 0 || strcasecmp(tag->key, "album artist") == 0) {
-        track.setAlbumArtists({convertString(tag->value)});
+        QStringList albumArtists = track.albumArtists();
+        albumArtists.append(convertString(tag->value));
+        track.setAlbumArtists(albumArtists);
     }
     else if(strcasecmp(tag->key, "title") == 0) {
         track.setTitle(convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "genre") == 0) {
-        track.setGenres({convertString(tag->value)});
+        QStringList genres = track.genres();
+        genres.append(convertString(tag->value));
+        track.setGenres(genres);
     }
     else if(strcasecmp(tag->key, "part_number") == 0 || strcasecmp(tag->key, "track") == 0) {
         readTrackTotalPair(convertString(tag->value), track);
@@ -196,10 +376,14 @@ void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
         track.setYear(convertString(tag->value).toInt());
     }
     else if(strcasecmp(tag->key, "composer") == 0) {
-        track.setComposers({convertString(tag->value)});
+        QStringList composers = track.composers();
+        composers.append(convertString(tag->value));
+        track.setComposers(composers);
     }
     else if(strcasecmp(tag->key, "performer") == 0) {
-        track.setPerformers({convertString(tag->value)});
+        QStringList performers = track.performers();
+        performers.append(convertString(tag->value));
+        track.setPerformers(performers);
     }
     else if(strcasecmp(tag->key, "comment") == 0) {
         track.setComment(convertString(tag->value));
@@ -898,9 +1082,31 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
         track.setBitrate(bitrate);
     }
 
-    AVDictionaryEntry* tag{nullptr};
-    while((tag = av_dict_get(context.formatContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-        parseTag(track, tag);
+    // Check if this file might have APEv2 tags with multi-value support
+    // FFmpeg's AVDictionary truncates values at null bytes, so we read APEv2 directly
+    static const QStringList apeTagExtensions{u"tak"_s, u"wv"_s, u"mpc"_s, u"ape"_s};
+    const QString ext = QFileInfo{track.filepath()}.suffix().toLower();
+
+    bool usedApeReader = false;
+    if(apeTagExtensions.contains(ext) && source.device) {
+        const qint64 origPos = source.device->pos();
+        const auto apeTags   = readApeV2Tags(source.device);
+        source.device->seek(origPos);
+
+        if(!apeTags.empty()) {
+            usedApeReader = true;
+            for(const auto& item : apeTags) {
+                applyApeTag(track, item);
+            }
+        }
+    }
+
+    // Fall back to FFmpeg metadata if APEv2 reading didn't work
+    if(!usedApeReader) {
+        AVDictionaryEntry* tag{nullptr};
+        while((tag = av_dict_get(context.formatContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+            parseTag(track, tag);
+        }
     }
 
     return true;
