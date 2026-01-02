@@ -71,7 +71,21 @@ QString trackMeta(const Fooyin::Track& track, const QStringList& args)
         return {};
     }
 
-    return track.metaValue(args.front());
+    const QString value = track.metaValue(args.front());
+
+    if(args.size() > 1) {
+        bool ok{false};
+        const int index = args.at(1).toInt(&ok);
+        if(ok) {
+            const QStringList values = value.split(QLatin1String{Fooyin::Constants::UnitSeparator});
+            if(index >= 0 && index < values.size()) {
+                return values.at(index);
+            }
+            return {};
+        }
+    }
+
+    return value;
 }
 
 QString trackInfo(const Fooyin::Track& track, const QStringList& args)

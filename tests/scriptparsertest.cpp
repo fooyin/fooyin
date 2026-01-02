@@ -145,6 +145,18 @@ TEST_F(ScriptParserTest, MetaTest)
     EXPECT_EQ(u"The Verve", m_parser.evaluate(QStringLiteral("$meta(artist)"), track));
 }
 
+TEST_F(ScriptParserTest, MetaIndexTest)
+{
+    Track track;
+    track.setArtists({QStringLiteral("Artist One"), QStringLiteral("Artist Two"), QStringLiteral("Artist Three")});
+
+    EXPECT_EQ(u"Artist One", m_parser.evaluate(QStringLiteral("$meta(artist,0)"), track));
+    EXPECT_EQ(u"Artist Two", m_parser.evaluate(QStringLiteral("$meta(artist,1)"), track));
+    EXPECT_EQ(u"Artist Three", m_parser.evaluate(QStringLiteral("$meta(artist,2)"), track));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$meta(artist,3)"), track));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$meta(artist,-1)"), track));
+}
+
 TEST_F(ScriptParserTest, InfoTest)
 {
     Track track;
