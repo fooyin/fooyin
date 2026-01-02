@@ -4,6 +4,7 @@ endif()
 
 if(UNIX AND NOT APPLE)
     add_subdirectory(mpris)
+    add_subdirectory(notify)
 endif()
 
 add_subdirectory(discord)
