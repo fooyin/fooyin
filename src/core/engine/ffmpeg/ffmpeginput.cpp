@@ -60,7 +60,7 @@ QStringList fileExtensions(bool allSupported)
 {
     QStringList extensions{u"mp3"_s,  u"ogg"_s, u"opus"_s, u"oga"_s, u"m4a"_s,  u"wav"_s, u"wv"_s,
                            u"flac"_s, u"wma"_s, u"asf"_s,  u"mpc"_s, u"aiff"_s, u"ape"_s, u"webm"_s,
-                           u"mp4"_s,  u"mka"_s, u"dsf"_s,  u"dff"_s, u"wv"_s};
+                           u"mp4"_s,  u"mka"_s, u"dsf"_s,  u"dff"_s, u"wv"_s,   u"tak"_s};
 
     if(!allSupported) {
         return extensions;
@@ -163,11 +163,15 @@ QString convertString(const char* str)
 };
 
 constexpr std::array<char, 8> ApeTagPreamble{'A', 'P', 'E', 'T', 'A', 'G', 'E', 'X'};
-constexpr int ApeFooterSize   = 32;
-constexpr int ApeMinTagSize   = ApeFooterSize;
-constexpr int ApeItemHdrSize  = 8; // 4 bytes value length + 4 bytes flags
-constexpr int ApeMaxItemCount = 1000;
-constexpr int ApeMaxTagSize   = 32 * 1024 * 1024; // 32 MB max
+constexpr std::array<char, 3> Id3v1Preamble{'T', 'A', 'G'};
+constexpr int ApeFooterSize     = 32;
+constexpr int ApeHeaderSize     = 32;
+constexpr int ApeMinTagSize     = ApeFooterSize;
+constexpr int ApeItemHdrSize    = 8; // 4 bytes value length + 4 bytes flags
+constexpr int ApeMaxItemCount   = 1000;
+constexpr int ApeMaxTagSize     = 32 * 1024 * 1024; // 32 MB max
+constexpr int Id3v1Size         = 128;
+constexpr uint32_t ApeHasHeader = 0x80000000;
 
 struct ApeTagItem
 {
@@ -195,8 +199,22 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
         return items;
     }
 
-    // Read footer (last 32 bytes)
-    device->seek(fileSize - ApeFooterSize);
+    // Check for ID3v1 tag at end of file (128 bytes starting with "TAG")
+    qint64 apeEndOffset = fileSize;
+    if(fileSize >= Id3v1Size) {
+        device->seek(fileSize - Id3v1Size);
+        const QByteArray id3Check = device->read(3);
+        if(id3Check.size() == 3 && std::memcmp(id3Check.constData(), Id3v1Preamble.data(), 3) == 0) {
+            apeEndOffset = fileSize - Id3v1Size;
+        }
+    }
+
+    if(apeEndOffset < ApeMinTagSize) {
+        return items;
+    }
+
+    // Read footer (32 bytes before end/ID3v1)
+    device->seek(apeEndOffset - ApeFooterSize);
     const QByteArray footer = device->read(ApeFooterSize);
     if(footer.size() != ApeFooterSize) {
         return items;
@@ -210,19 +228,26 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
     const uint32_t version   = readLE32(footer.constData() + 8);
     const uint32_t tagSize   = readLE32(footer.constData() + 12);
     const uint32_t itemCount = readLE32(footer.constData() + 16);
+    const uint32_t flags     = readLE32(footer.constData() + 20);
 
     // Validate
     if(version != 2000 || tagSize < ApeFooterSize || tagSize > ApeMaxTagSize || itemCount > ApeMaxItemCount) {
         return items;
     }
 
-    // Read tag data (excluding footer)
+    // Tag size includes footer but not header
+    // So tagSize = sizeof(items) + 32
     const uint32_t dataSize = tagSize - ApeFooterSize;
-    if(static_cast<qint64>(tagSize) > fileSize) {
+    qint64 tagItemsStart    = apeEndOffset - tagSize;
+    const bool hasHeader    = (flags & ApeHasHeader) != 0;
+
+    // Validate positions - if header exists, it's before items (not included in tagSize)
+    const qint64 minStart = hasHeader ? ApeHeaderSize : 0;
+    if(tagItemsStart < minStart || static_cast<qint64>(dataSize) > apeEndOffset) {
         return items;
     }
 
-    device->seek(fileSize - tagSize);
+    device->seek(tagItemsStart);
     const QByteArray tagData = device->read(dataSize);
     if(static_cast<uint32_t>(tagData.size()) != dataSize) {
         return items;
@@ -231,8 +256,9 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
     // Parse items
     uint32_t offset = 0;
     for(uint32_t i = 0; i < itemCount && offset + ApeItemHdrSize < dataSize; ++i) {
-        const uint32_t valueLen = readLE32(tagData.constData() + offset);
-        // const uint32_t flags = readLE32(tagData.constData() + offset + 4);
+        const uint32_t valueLen  = readLE32(tagData.constData() + offset);
+        const uint32_t itemFlags = readLE32(tagData.constData() + offset + 4);
+        const uint32_t itemType  = itemFlags & 0x3; // Bits 0-1: 0=UTF-8, 1=binary, 2=external
         offset += ApeItemHdrSize;
 
         // Read null-terminated key
@@ -247,6 +273,12 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
 
         if(offset + valueLen > dataSize) {
             break;
+        }
+
+        // Skip binary items (type 1) - they're not text data
+        if(itemType == 1) {
+            offset += valueLen;
+            continue;
         }
 
         // Read value (may contain null separators for multi-value)
@@ -319,6 +351,11 @@ void applyApeTag(Fooyin::Track& track, const ApeTagItem& item)
         QStringList performers = track.performers();
         performers.append(values);
         track.setPerformers(performers);
+    }
+    else if(key == u"CONDUCTOR") {
+        for(const QString& val : values) {
+            track.addExtraTag(u"CONDUCTOR"_s, val);
+        }
     }
     else if(key == u"COMMENT") {
         track.setComment(firstValue);
@@ -1081,6 +1118,14 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     if(bitrate > 0) {
         track.setBitrate(bitrate);
     }
+
+    // Clear multi-value fields before reading to avoid duplicates when rescanning
+    track.setArtists({});
+    track.setAlbumArtists({});
+    track.setGenres({});
+    track.setComposers({});
+    track.setPerformers({});
+    track.clearExtraTags();
 
     // Check if this file might have APEv2 tags with multi-value support
     // FFmpeg's AVDictionary truncates values at null bytes, so we read APEv2 directly
