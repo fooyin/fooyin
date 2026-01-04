@@ -3297,12 +3297,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="63"/>
         <source>Remove &amp;unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить &amp;недоступные дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
         <source>Remove unavailable tracks from the database and libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить недоступные дорожки из базы данных и библиотек</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="69"/>
@@ -3357,17 +3357,17 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>Removing unavailable tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаляются недоступные дорожки…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>Abort</source>
-        <translation type="unfinished">Прервать</translation>
+        <translation>Прервать</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="119"/>
         <source>Removing unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаляются недоступные дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="142"/>
@@ -3845,7 +3845,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="114"/>
         <source>Update and Next Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить и перейти на следующую строку</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
@@ -6745,7 +6745,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="76"/>
         <source>Album Artist</source>
-        <translation type="unfinished">Исполнитель альбома</translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
@@ -6775,22 +6775,22 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
         <source>Fields</source>
-        <translation type="unfinished">Поля</translation>
+        <translation>Поля</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="104"/>
         <source>Title</source>
-        <translation type="unfinished">Название</translation>
+        <translation>Название</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="106"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="108"/>
         <source>Album</source>
-        <translation type="unfinished">Альбом</translation>
+        <translation>Альбом</translation>
     </message>
 </context>
 <context>
@@ -6844,17 +6844,17 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="369"/>
         <source>Services</source>
-        <translation type="unfinished">Службы</translation>
+        <translation>Службы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеть</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
         <source>Scrobbling</source>
-        <translation type="unfinished">Скробблинг</translation>
+        <translation>Скробблинг</translation>
     </message>
 </context>
 <context>
@@ -6862,62 +6862,62 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="99"/>
         <source>Services</source>
-        <translation type="unfinished">Службы</translation>
+        <translation>Службы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="101"/>
         <source>Add Service</source>
-        <translation type="unfinished">Добавить службу</translation>
+        <translation>Добавить службу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="180"/>
         <source>Sign Out</source>
-        <translation type="unfinished">Выход</translation>
+        <translation>Выйти</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="184"/>
         <source>Signed in</source>
-        <translation type="unfinished">Вход произведён</translation>
+        <translation>Вход произведён</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="185"/>
         <source>Signed in as %1</source>
-        <translation type="unfinished">Подключён как %1</translation>
+        <translation>Вход произведён как %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="189"/>
         <source>Sign In</source>
-        <translation type="unfinished">Войти</translation>
+        <translation>Войти</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="192"/>
         <source>Not signed in</source>
-        <translation type="unfinished">Не подключён</translation>
+        <translation>Вход не произведён</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="259"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Править</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="261"/>
         <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="278"/>
         <source>Token</source>
-        <translation type="unfinished">Токен</translation>
+        <translation>Токен</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="281"/>
         <source>URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Адрес</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="302"/>
         <source>You can find your token here</source>
-        <translation type="unfinished">Вы можете найти свой токен здесь</translation>
+        <translation>Вы можете найти свой токен здесь</translation>
     </message>
 </context>
 <context>
@@ -8704,12 +8704,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотка вперёд</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek backward</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотка назад</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="429"/>
