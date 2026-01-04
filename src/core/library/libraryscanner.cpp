@@ -41,6 +41,7 @@
 #include <QDirIterator>
 #include <QFileSystemWatcher>
 #include <QLoggingCategory>
+#include <QRegularExpression>
 
 #include <ranges>
 
@@ -152,6 +153,57 @@ void readFileProperties(Fooyin::Track& track)
     }
     if(track.fileSize() == 0) {
         track.setFileSize(fileInfo.size());
+    }
+}
+
+void applyCueTrackTags(Fooyin::TrackList& tracks)
+{
+    static const QRegularExpression cueTrackRegex{u"^CUE_TRACK(\\d+)_(.+)$"_s,
+                                                  QRegularExpression::CaseInsensitiveOption};
+
+    for(Fooyin::Track& track : tracks) {
+        const QString trackNum = track.trackNumber().rightJustified(2, u'0');
+        const QString prefix   = u"CUE_TRACK%1_"_s.arg(trackNum);
+
+        QStringList tagsToRemove;
+        const auto extraTags = track.extraTags();
+
+        for(auto it = extraTags.cbegin(); it != extraTags.cend(); ++it) {
+            const QString& tagName              = it.key();
+            const QRegularExpressionMatch match = cueTrackRegex.match(tagName);
+
+            if(match.hasMatch()) {
+                tagsToRemove.append(tagName);
+
+                // Only apply tags that match this track's number
+                if(tagName.startsWith(prefix, Qt::CaseInsensitive)) {
+                    const QString field       = match.captured(2).toUpper();
+                    const QStringList& values = it.value();
+
+                    if(field == "COMPOSER"_L1) {
+                        track.setComposers(values);
+                    }
+                    else if(field == "PERFORMER"_L1) {
+                        track.setPerformers(values);
+                    }
+                    else if(field == "ARTIST"_L1) {
+                        track.setArtists(values);
+                    }
+                    else if(field == "GENRE"_L1) {
+                        track.setGenres(values);
+                    }
+                    else if(!values.isEmpty()) {
+                        // Store other fields as extra tags with just the field name
+                        track.replaceExtraTag(field, values);
+                    }
+                }
+            }
+        }
+
+        // Remove all Cue_track* tags from extra tags
+        for(const QString& tag : tagsToRemove) {
+            track.removeExtraTag(tag);
+        }
     }
 }
 } // namespace
@@ -552,6 +604,7 @@ TrackList LibraryScannerPrivate::readEmbeddedPlaylistTracks(const Track& track)
 
     if(auto* parser = m_playlistLoader->parserForExtension(u"cue"_s)) {
         TrackList tracks = parser->readPlaylist(&buffer, track.filepath(), {}, readEntry, false);
+        applyCueTrackTags(tracks);
         for(auto& plTrack : tracks) {
             plTrack.generateHash();
         }
@@ -988,13 +1041,22 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
 
     TrackList tracksToUpdate;
 
+    // Group embedded cue tracks by parent file
+    std::unordered_map<QString, TrackList> embeddedCueTracks;
+
     for(const Track& track : tracks) {
         if(!mayRun()) {
             p->finishScan();
             return;
         }
 
+        if(track.hasEmbeddedCue()) {
+            embeddedCueTracks[track.filepath()].push_back(track);
+            continue;
+        }
+
         if(track.hasCue()) {
+            // External cue tracks - skip for now (would need different handling)
             continue;
         }
 
@@ -1025,6 +1087,46 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
         }
 
         p->fileScanned(track.filepath());
+    }
+
+    // Process embedded cue tracks
+    for(auto& [filepath, cueTracks] : embeddedCueTracks) {
+        if(!mayRun()) {
+            p->finishScan();
+            return;
+        }
+
+        // Build a map of track number -> original track for preserving IDs
+        std::unordered_map<QString, Track> originalTracksByNum;
+        for(const Track& t : cueTracks) {
+            originalTracksByNum[t.trackNumber()] = t;
+        }
+
+        // Re-read the parent file
+        Track parentTrack{filepath};
+        if(!p->m_audioLoader->readTrackMetadata(parentTrack)) {
+            continue;
+        }
+
+        if(!parentTrack.hasExtraTag(u"CUESHEET"_s)) {
+            continue;
+        }
+
+        // Regenerate cue tracks from the embedded cuesheet
+        TrackList newCueTracks = p->readEmbeddedPlaylistTracks(parentTrack);
+
+        for(Track& newTrack : newCueTracks) {
+            const QString trackNum = newTrack.trackNumber();
+            if(originalTracksByNum.contains(trackNum)) {
+                const Track& original = originalTracksByNum.at(trackNum);
+                newTrack.setId(original.id());
+                newTrack.setLibraryId(original.libraryId());
+                newTrack.setAddedTime(original.addedTime());
+                tracksToUpdate.push_back(newTrack);
+            }
+        }
+
+        p->fileScanned(filepath);
     }
 
     if(!tracksToUpdate.empty()) {
