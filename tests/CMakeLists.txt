@@ -20,6 +20,7 @@ fooyin_add_test(test_scriptformatter scriptformattertest.cpp)
 
 fooyin_add_test(test_tagreader tagreadertest.cpp data/audio.qrc)
 fooyin_add_test(test_tagwriter tagwritertest.cpp data/audio.qrc)
+fooyin_add_test(test_ffmpegreader ffmpegreadertest.cpp data/audio.qrc)
 
 fooyin_add_test(test_cueparser cueparsertest.cpp data/playlists.qrc)
 fooyin_add_test(test_m3uparser m3uparsertest.cpp data/playlists.qrc)

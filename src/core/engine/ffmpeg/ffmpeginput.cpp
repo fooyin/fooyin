@@ -179,6 +179,12 @@ struct ApeTagItem
     QStringList values;
 };
 
+struct ApeCoverItem
+{
+    QString key;
+    QByteArray data;
+};
+
 uint32_t readLE32(const char* data)
 {
     const auto* d = reinterpret_cast<const uint8_t*>(data);
@@ -275,8 +281,8 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
             break;
         }
 
-        // Skip binary items (type 1) - they're not text data
-        if(itemType == 1) {
+        // Skip binary items (type 1) and cover art (type 2) - they're not text data
+        if(itemType == 1 || itemType == 2) {
             offset += valueLen;
             continue;
         }
@@ -303,6 +309,108 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
     }
 
     return items;
+}
+
+QByteArray readApeV2Cover(QIODevice* device, Fooyin::Track::Cover cover)
+{
+    if(!device || !device->isOpen()) {
+        return {};
+    }
+
+    const qint64 fileSize = device->size();
+    if(fileSize < ApeMinTagSize) {
+        return {};
+    }
+
+    // Check for ID3v1 tag at end of file
+    qint64 apeEndOffset = fileSize;
+    if(fileSize >= Id3v1Size) {
+        device->seek(fileSize - Id3v1Size);
+        const QByteArray id3Check = device->read(3);
+        if(id3Check.size() == 3 && std::memcmp(id3Check.constData(), Id3v1Preamble.data(), 3) == 0) {
+            apeEndOffset = fileSize - Id3v1Size;
+        }
+    }
+
+    if(apeEndOffset < ApeMinTagSize) {
+        return {};
+    }
+
+    // Read footer
+    device->seek(apeEndOffset - ApeFooterSize);
+    const QByteArray footer = device->read(ApeFooterSize);
+    if(footer.size() != ApeFooterSize) {
+        return {};
+    }
+
+    if(std::memcmp(footer.constData(), ApeTagPreamble.data(), 8) != 0) {
+        return {};
+    }
+
+    const uint32_t version   = readLE32(footer.constData() + 8);
+    const uint32_t tagSize   = readLE32(footer.constData() + 12);
+    const uint32_t itemCount = readLE32(footer.constData() + 16);
+    const uint32_t flags     = readLE32(footer.constData() + 20);
+
+    if(version != 2000 || tagSize < ApeFooterSize || tagSize > ApeMaxTagSize || itemCount > ApeMaxItemCount) {
+        return {};
+    }
+
+    const uint32_t dataSize = tagSize - ApeFooterSize;
+    qint64 tagItemsStart    = apeEndOffset - tagSize;
+    const bool hasHeader    = (flags & ApeHasHeader) != 0;
+
+    const qint64 minStart = hasHeader ? ApeHeaderSize : 0;
+    if(tagItemsStart < minStart || static_cast<qint64>(dataSize) > apeEndOffset) {
+        return {};
+    }
+
+    device->seek(tagItemsStart);
+    const QByteArray tagData = device->read(dataSize);
+    if(static_cast<uint32_t>(tagData.size()) != dataSize) {
+        return {};
+    }
+
+    // Determine target key based on cover type
+    const QString targetKey = cover == Fooyin::Track::Cover::Front ? u"COVER ART (FRONT)"_s
+                            : cover == Fooyin::Track::Cover::Back  ? u"COVER ART (BACK)"_s
+                                                                   : u"COVER ART (ARTIST)"_s;
+
+    // Parse items looking for cover art
+    uint32_t offset = 0;
+    for(uint32_t i = 0; i < itemCount && offset + ApeItemHdrSize < dataSize; ++i) {
+        const uint32_t valueLen  = readLE32(tagData.constData() + offset);
+        const uint32_t itemFlags = readLE32(tagData.constData() + offset + 4);
+        const uint32_t itemType  = itemFlags & 0x3;
+        offset += ApeItemHdrSize;
+
+        const char* keyStart = tagData.constData() + offset;
+        const char* keyEnd   = std::find(keyStart, tagData.constData() + dataSize, '\0');
+        if(keyEnd >= tagData.constData() + dataSize) {
+            break;
+        }
+
+        const QString key = QString::fromUtf8(keyStart, keyEnd - keyStart).toUpper();
+        offset            = static_cast<uint32_t>(keyEnd - tagData.constData() + 1);
+
+        if(offset + valueLen > dataSize) {
+            break;
+        }
+
+        // Process binary items (type 1) or items tagged as type 2 (some taggers use this for covers)
+        if((itemType == 1 || itemType == 2) && key == targetKey) {
+            const QByteArray valueData = tagData.mid(offset, valueLen);
+            // APEv2 cover format: null-terminated filename + image data
+            const int nullPos = valueData.indexOf('\0');
+            if(nullPos >= 0 && nullPos + 1 < valueData.size()) {
+                return valueData.mid(nullPos + 1);
+            }
+        }
+
+        offset += valueLen;
+    }
+
+    return {};
 }
 
 void applyApeTag(Fooyin::Track& track, const ApeTagItem& item)
@@ -1157,16 +1265,29 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     return true;
 }
 
-QByteArray FFmpegReader::readCover(const AudioSource& source, const Track& /*track*/, Track::Cover cover)
+QByteArray FFmpegReader::readCover(const AudioSource& source, const Track& track, Track::Cover cover)
 {
+    // Try APEv2 cover reading for files that use APEv2 tags
+    static const QStringList apeTagExtensions{u"tak"_s, u"wv"_s, u"mpc"_s, u"ape"_s};
+    const QString ext = QFileInfo{track.filepath()}.suffix().toLower();
+
+    if(apeTagExtensions.contains(ext) && source.device) {
+        const qint64 origPos      = source.device->pos();
+        const QByteArray apeCover = readApeV2Cover(source.device, cover);
+        source.device->seek(origPos);
+
+        if(!apeCover.isEmpty()) {
+            return apeCover;
+        }
+    }
+
+    // Fall back to FFmpeg attached pictures
     const FormatContext context = createAVFormatContext(source);
     if(!context.formatContext) {
         return {};
     }
 
-    auto coverData = findCover(context.formatContext.get(), cover);
-
-    return coverData;
+    return findCover(context.formatContext.get(), cover);
 }
 
 bool FFmpegReader::writeTrack(const AudioSource& /*source*/, const Track& /*track*/, WriteOptions /*options*/)
