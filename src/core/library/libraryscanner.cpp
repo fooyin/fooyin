@@ -204,6 +204,10 @@ void applyCueTrackTags(Fooyin::TrackList& tracks)
         for(const QString& tag : tagsToRemove) {
             track.removeExtraTag(tag);
         }
+
+        // Remove parent file metadata that doesn't apply to individual cue tracks
+        track.removeExtraTag(u"CUESHEET"_s);
+        track.removeExtraTag(u"TOTALTRACKS"_s);
     }
 }
 } // namespace
