@@ -81,13 +81,13 @@
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="69"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="120"/>
         <source>Artist</source>
-        <translation type="unfinished">アーティスト</translation>
+        <translation>アーティスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="122"/>
         <source>Album</source>
-        <translation type="unfinished">アルバム</translation>
+        <translation>アルバム</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="124"/>
@@ -115,7 +115,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
         <source>Interface</source>
-        <translation type="unfinished">インターフェース</translation>
+        <translation>インターフェース</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
@@ -8652,7 +8652,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Player options</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイヤーのオプション</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
@@ -8662,27 +8662,27 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>再生を開始</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Pause playback</source>
-        <translation type="unfinished"></translation>
+        <translation>一時停止</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Stop playback</source>
-        <translation type="unfinished"></translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Skip to next track</source>
-        <translation type="unfinished"></translation>
+        <translation>次のトラックにスキップ</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="129"/>
         <source>Skip to previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>前のトラックにスキップ</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="129"/>
