@@ -55,7 +55,7 @@ private:
     std::unique_ptr<FFmpegInputPrivate> p;
 };
 
-class FFmpegReader : public AudioReader
+class FYCORE_EXPORT FFmpegReader : public AudioReader
 {
 public:
     [[nodiscard]] QStringList extensions() const override;
