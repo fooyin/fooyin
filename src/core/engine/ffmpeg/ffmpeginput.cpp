@@ -227,10 +227,11 @@ ApeTagInfo readApeFooter(QIODevice* device)
     device->seek(apeEndOffset - ApeFooterSize);
     const QByteArray footer = device->read(ApeFooterSize);
     if(footer.size() != ApeFooterSize) {
+        qCDebug(FFMPEG) << "APEv2: Failed to read footer";
         return info;
     }
 
-    // Check preamble
+    // Check preamble - no APE tag present (not an error, just no tags)
     if(std::memcmp(footer.constData(), ApeTagPreamble.data(), 8) != 0) {
         return info;
     }
@@ -240,8 +241,22 @@ ApeTagInfo readApeFooter(QIODevice* device)
     info.itemCount         = readLE32(footer.constData() + 16);
     const uint32_t flags   = readLE32(footer.constData() + 20);
 
+    // Log unexpected version (still process if >= 2000)
+    if(version != 2000) {
+        qCDebug(FFMPEG) << "APEv2: Unexpected version" << version << "(expected 2000)";
+    }
+
     // Validate - accept APEv2 (version 2000) and potentially future versions
-    if(version < 2000 || tagSize < ApeFooterSize || tagSize > ApeMaxTagSize || info.itemCount > ApeMaxItemCount) {
+    if(version < 2000) {
+        qCDebug(FFMPEG) << "APEv2: Unsupported version" << version;
+        return info;
+    }
+    if(tagSize < ApeFooterSize || tagSize > ApeMaxTagSize) {
+        qCDebug(FFMPEG) << "APEv2: Invalid tag size" << tagSize;
+        return info;
+    }
+    if(info.itemCount > ApeMaxItemCount) {
+        qCDebug(FFMPEG) << "APEv2: Too many items" << info.itemCount;
         return info;
     }
 
@@ -250,15 +265,18 @@ ApeTagInfo readApeFooter(QIODevice* device)
     qint64 tagItemsStart    = apeEndOffset - tagSize;
     const bool hasHeader    = (flags & ApeHasHeader) != 0;
 
-    // Validate positions - if header exists, it's before items (not included in tagSize)
+    // Validate tag data doesn't exceed file bounds
     const qint64 minStart = hasHeader ? ApeHeaderSize : 0;
     if(tagItemsStart < minStart || static_cast<qint64>(dataSize) > apeEndOffset) {
+        qCDebug(FFMPEG) << "APEv2: Tag data exceeds file bounds";
         return info;
     }
 
     device->seek(tagItemsStart);
     info.tagData = device->read(dataSize);
     if(static_cast<uint32_t>(info.tagData.size()) != dataSize) {
+        qCDebug(FFMPEG) << "APEv2: Failed to read tag data (expected" << dataSize << "got" << info.tagData.size()
+                        << ")";
         return info;
     }
 

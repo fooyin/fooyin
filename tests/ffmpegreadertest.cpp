@@ -23,6 +23,8 @@
 
 #include <core/track.h>
 
+#include <QBuffer>
+
 #include <gtest/gtest.h>
 
 namespace Fooyin::Testing {
@@ -124,5 +126,67 @@ TEST_F(FFmpegReaderTest, MpcApev2CoverArtType2)
 
     // Verify they are different covers
     EXPECT_NE(frontCover, backCover);
+}
+
+TEST_F(FFmpegReaderTest, MalformedApev2TruncatedFooter)
+{
+    // Create a file that's too small to contain APE footer (< 32 bytes)
+    QByteArray smallData(20, '\0');
+    QBuffer buffer(&smallData);
+    buffer.open(QIODevice::ReadOnly);
+
+    Track track{QStringLiteral("test.mpc")};
+    // Should not crash and should fail gracefully
+    EXPECT_FALSE(m_reader.readTrack({QStringLiteral("test.mpc"), &buffer, nullptr}, track));
+}
+
+TEST_F(FFmpegReaderTest, MalformedApev2InvalidPreamble)
+{
+    // Create a file with invalid APE preamble (garbage at footer position)
+    QByteArray data(100, '\0');
+    // Write garbage where APE footer would be (last 32 bytes)
+    data.replace(data.size() - 32, 8, "NOTAPETG");
+
+    QBuffer buffer(&data);
+    buffer.open(QIODevice::ReadOnly);
+
+    Track track{QStringLiteral("test.mpc")};
+    // Should not crash - just return with no APE tags parsed
+    // FFmpeg may still try to read the file, which will fail, but that's expected
+    [[maybe_unused]] bool result = m_reader.readTrack({QStringLiteral("test.mpc"), &buffer, nullptr}, track);
+
+    // Track should have empty metadata (no crash)
+    EXPECT_TRUE(track.title().isEmpty());
+    EXPECT_TRUE(track.artists().isEmpty());
+}
+
+TEST_F(FFmpegReaderTest, MalformedApev2InvalidTagSize)
+{
+    // Create APE footer with valid preamble but absurd tag size
+    QByteArray data(100, '\0');
+    const int footerStart = data.size() - 32;
+
+    // APE preamble "APETAGEX"
+    data.replace(footerStart, 8, "APETAGEX");
+    // Version 2000 (little-endian)
+    data[footerStart + 8]  = static_cast<char>(0xD0);
+    data[footerStart + 9]  = static_cast<char>(0x07);
+    data[footerStart + 10] = 0;
+    data[footerStart + 11] = 0;
+    // Tag size: 0xFFFFFFFF (impossibly large, little-endian)
+    data[footerStart + 12] = static_cast<char>(0xFF);
+    data[footerStart + 13] = static_cast<char>(0xFF);
+    data[footerStart + 14] = static_cast<char>(0xFF);
+    data[footerStart + 15] = static_cast<char>(0xFF);
+
+    QBuffer buffer(&data);
+    buffer.open(QIODevice::ReadOnly);
+
+    Track track{QStringLiteral("test.mpc")};
+    // Should not crash - APE reader should reject invalid tag size
+    [[maybe_unused]] bool result = m_reader.readTrack({QStringLiteral("test.mpc"), &buffer, nullptr}, track);
+
+    // Track should have empty metadata (no crash)
+    EXPECT_TRUE(track.title().isEmpty());
 }
 } // namespace Fooyin::Testing
