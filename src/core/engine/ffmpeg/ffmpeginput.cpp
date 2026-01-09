@@ -173,16 +173,20 @@ constexpr int ApeMaxTagSize     = 32 * 1024 * 1024; // 32 MB max
 constexpr int Id3v1Size         = 128;
 constexpr uint32_t ApeHasHeader = 0x80000000;
 
+// File extensions that may use APEv2 tags with multi-value support
+const QStringList ApeTagExtensions{u"tak"_s, u"wv"_s, u"mpc"_s, u"ape"_s};
+
 struct ApeTagItem
 {
     QString key;
     QStringList values;
 };
 
-struct ApeCoverItem
+struct ApeTagInfo
 {
-    QString key;
-    QByteArray data;
+    QByteArray tagData;
+    uint32_t itemCount{0};
+    bool valid{false};
 };
 
 uint32_t readLE32(const char* data)
@@ -192,17 +196,17 @@ uint32_t readLE32(const char* data)
          | (static_cast<uint32_t>(d[3]) << 24);
 }
 
-std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
+ApeTagInfo readApeFooter(QIODevice* device)
 {
-    std::vector<ApeTagItem> items;
+    ApeTagInfo info;
 
     if(!device || !device->isOpen()) {
-        return items;
+        return info;
     }
 
     const qint64 fileSize = device->size();
     if(fileSize < ApeMinTagSize) {
-        return items;
+        return info;
     }
 
     // Check for ID3v1 tag at end of file (128 bytes starting with "TAG")
@@ -216,33 +220,32 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
     }
 
     if(apeEndOffset < ApeMinTagSize) {
-        return items;
+        return info;
     }
 
     // Read footer (32 bytes before end/ID3v1)
     device->seek(apeEndOffset - ApeFooterSize);
     const QByteArray footer = device->read(ApeFooterSize);
     if(footer.size() != ApeFooterSize) {
-        return items;
+        return info;
     }
 
     // Check preamble
     if(std::memcmp(footer.constData(), ApeTagPreamble.data(), 8) != 0) {
-        return items;
+        return info;
     }
 
-    const uint32_t version   = readLE32(footer.constData() + 8);
-    const uint32_t tagSize   = readLE32(footer.constData() + 12);
-    const uint32_t itemCount = readLE32(footer.constData() + 16);
-    const uint32_t flags     = readLE32(footer.constData() + 20);
+    const uint32_t version = readLE32(footer.constData() + 8);
+    const uint32_t tagSize = readLE32(footer.constData() + 12);
+    info.itemCount         = readLE32(footer.constData() + 16);
+    const uint32_t flags   = readLE32(footer.constData() + 20);
 
-    // Validate
-    if(version != 2000 || tagSize < ApeFooterSize || tagSize > ApeMaxTagSize || itemCount > ApeMaxItemCount) {
-        return items;
+    // Validate - accept APEv2 (version 2000) and potentially future versions
+    if(version < 2000 || tagSize < ApeFooterSize || tagSize > ApeMaxTagSize || info.itemCount > ApeMaxItemCount) {
+        return info;
     }
 
     // Tag size includes footer but not header
-    // So tagSize = sizeof(items) + 32
     const uint32_t dataSize = tagSize - ApeFooterSize;
     qint64 tagItemsStart    = apeEndOffset - tagSize;
     const bool hasHeader    = (flags & ApeHasHeader) != 0;
@@ -250,14 +253,31 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
     // Validate positions - if header exists, it's before items (not included in tagSize)
     const qint64 minStart = hasHeader ? ApeHeaderSize : 0;
     if(tagItemsStart < minStart || static_cast<qint64>(dataSize) > apeEndOffset) {
-        return items;
+        return info;
     }
 
     device->seek(tagItemsStart);
-    const QByteArray tagData = device->read(dataSize);
-    if(static_cast<uint32_t>(tagData.size()) != dataSize) {
+    info.tagData = device->read(dataSize);
+    if(static_cast<uint32_t>(info.tagData.size()) != dataSize) {
+        return info;
+    }
+
+    info.valid = true;
+    return info;
+}
+
+std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
+{
+    std::vector<ApeTagItem> items;
+
+    const ApeTagInfo info = readApeFooter(device);
+    if(!info.valid) {
         return items;
     }
+
+    const QByteArray& tagData = info.tagData;
+    const uint32_t dataSize   = static_cast<uint32_t>(tagData.size());
+    const uint32_t itemCount  = info.itemCount;
 
     // Parse items
     uint32_t offset = 0;
@@ -293,14 +313,19 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
 
         // Split on null bytes for multi-value support
         QStringList values;
-        int start = 0;
-        for(int j = 0; j <= valueData.size(); ++j) {
-            if(j == valueData.size() || valueData.at(j) == '\0') {
+        int start        = 0;
+        const int vdSize = valueData.size();
+        for(int j = 0; j < vdSize; ++j) {
+            if(valueData.at(j) == '\0') {
                 if(j > start) {
                     values.append(QString::fromUtf8(valueData.constData() + start, j - start));
                 }
                 start = j + 1;
             }
+        }
+        // Handle final segment after last null (or entire value if no nulls)
+        if(start < vdSize) {
+            values.append(QString::fromUtf8(valueData.constData() + start, vdSize - start));
         }
 
         if(!key.isEmpty() && !values.isEmpty()) {
@@ -313,70 +338,21 @@ std::vector<ApeTagItem> readApeV2Tags(QIODevice* device)
 
 QByteArray readApeV2Cover(QIODevice* device, Fooyin::Track::Cover cover)
 {
-    if(!device || !device->isOpen()) {
+    const ApeTagInfo info = readApeFooter(device);
+    if(!info.valid) {
         return {};
     }
 
-    const qint64 fileSize = device->size();
-    if(fileSize < ApeMinTagSize) {
-        return {};
-    }
-
-    // Check for ID3v1 tag at end of file
-    qint64 apeEndOffset = fileSize;
-    if(fileSize >= Id3v1Size) {
-        device->seek(fileSize - Id3v1Size);
-        const QByteArray id3Check = device->read(3);
-        if(id3Check.size() == 3 && std::memcmp(id3Check.constData(), Id3v1Preamble.data(), 3) == 0) {
-            apeEndOffset = fileSize - Id3v1Size;
-        }
-    }
-
-    if(apeEndOffset < ApeMinTagSize) {
-        return {};
-    }
-
-    // Read footer
-    device->seek(apeEndOffset - ApeFooterSize);
-    const QByteArray footer = device->read(ApeFooterSize);
-    if(footer.size() != ApeFooterSize) {
-        return {};
-    }
-
-    if(std::memcmp(footer.constData(), ApeTagPreamble.data(), 8) != 0) {
-        return {};
-    }
-
-    const uint32_t version   = readLE32(footer.constData() + 8);
-    const uint32_t tagSize   = readLE32(footer.constData() + 12);
-    const uint32_t itemCount = readLE32(footer.constData() + 16);
-    const uint32_t flags     = readLE32(footer.constData() + 20);
-
-    if(version != 2000 || tagSize < ApeFooterSize || tagSize > ApeMaxTagSize || itemCount > ApeMaxItemCount) {
-        return {};
-    }
-
-    const uint32_t dataSize = tagSize - ApeFooterSize;
-    qint64 tagItemsStart    = apeEndOffset - tagSize;
-    const bool hasHeader    = (flags & ApeHasHeader) != 0;
-
-    const qint64 minStart = hasHeader ? ApeHeaderSize : 0;
-    if(tagItemsStart < minStart || static_cast<qint64>(dataSize) > apeEndOffset) {
-        return {};
-    }
-
-    device->seek(tagItemsStart);
-    const QByteArray tagData = device->read(dataSize);
-    if(static_cast<uint32_t>(tagData.size()) != dataSize) {
-        return {};
-    }
+    const QByteArray& tagData = info.tagData;
+    const uint32_t dataSize   = static_cast<uint32_t>(tagData.size());
+    const uint32_t itemCount  = info.itemCount;
 
     // Determine target key based on cover type
     const QString targetKey = cover == Fooyin::Track::Cover::Front ? u"COVER ART (FRONT)"_s
                             : cover == Fooyin::Track::Cover::Back  ? u"COVER ART (BACK)"_s
                                                                    : u"COVER ART (ARTIST)"_s;
 
-    // Parse items looking for cover art
+    // Parse items looking for cover art (binary items type 1 or 2)
     uint32_t offset = 0;
     for(uint32_t i = 0; i < itemCount && offset + ApeItemHdrSize < dataSize; ++i) {
         const uint32_t valueLen  = readLE32(tagData.constData() + offset);
@@ -417,7 +393,6 @@ void applyApeTag(Fooyin::Track& track, const ApeTagItem& item)
 {
     const QString& key        = item.key;
     const QStringList& values = item.values;
-    const QString singleValue = values.join(QString{});
     const QString firstValue  = values.isEmpty() ? QString{} : values.first();
 
     if(key == u"ALBUM") {
@@ -1237,11 +1212,10 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
 
     // Check if this file might have APEv2 tags with multi-value support
     // FFmpeg's AVDictionary truncates values at null bytes, so we read APEv2 directly
-    static const QStringList apeTagExtensions{u"tak"_s, u"wv"_s, u"mpc"_s, u"ape"_s};
     const QString ext = QFileInfo{track.filepath()}.suffix().toLower();
 
     bool usedApeReader = false;
-    if(apeTagExtensions.contains(ext) && source.device) {
+    if(ApeTagExtensions.contains(ext) && source.device) {
         const qint64 origPos = source.device->pos();
         const auto apeTags   = readApeV2Tags(source.device);
         source.device->seek(origPos);
@@ -1268,10 +1242,9 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
 QByteArray FFmpegReader::readCover(const AudioSource& source, const Track& track, Track::Cover cover)
 {
     // Try APEv2 cover reading for files that use APEv2 tags
-    static const QStringList apeTagExtensions{u"tak"_s, u"wv"_s, u"mpc"_s, u"ape"_s};
     const QString ext = QFileInfo{track.filepath()}.suffix().toLower();
 
-    if(apeTagExtensions.contains(ext) && source.device) {
+    if(ApeTagExtensions.contains(ext) && source.device) {
         const qint64 origPos      = source.device->pos();
         const QByteArray apeCover = readApeV2Cover(source.device, cover);
         source.device->seek(origPos);
