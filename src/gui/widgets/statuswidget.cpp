@@ -28,6 +28,7 @@
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/playlist/playlistcontroller.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/clickablelabel.h>
 #include <gui/widgets/elidedlabel.h>
@@ -58,7 +59,8 @@ class StatusWidgetPrivate : public QObject
 
 public:
     StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController, PlaylistHandler* playlistHandler,
-                        TrackSelectionController* selectionController, SettingsManager* settings);
+                        PlaylistController* playlistController, TrackSelectionController* selectionController,
+                        SettingsManager* settings);
 
     void setupConnections();
 
@@ -79,6 +81,7 @@ public:
     StatusWidget* m_self;
     PlayerController* m_playerController;
     PlaylistHandler* m_playlistHandler;
+    PlaylistController* m_playlistController;
     TrackSelectionController* m_selectionController;
 
     SettingsManager* m_settings;
@@ -98,12 +101,13 @@ public:
 };
 
 StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController,
-                                         PlaylistHandler* playlistHandler,
+                                         PlaylistHandler* playlistHandler, PlaylistController* playlistController,
                                          TrackSelectionController* selectionController, SettingsManager* settings)
     : QObject{self}
     , m_self{self}
     , m_playerController{playerController}
     , m_playlistHandler{playlistHandler}
+    , m_playlistController{playlistController}
     , m_selectionController{selectionController}
     , m_settings{settings}
     , m_scriptParser{new ScriptRegistry(m_playerController)}
@@ -278,9 +282,11 @@ void StatusWidgetPrivate::stateChanged(const Player::PlayState state)
 }
 
 StatusWidget::StatusWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                           TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent)
+                           PlaylistController* playlistController, TrackSelectionController* selectionController,
+                           SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<StatusWidgetPrivate>(this, playerController, playlistHandler, selectionController, settings)}
+    , p{std::make_unique<StatusWidgetPrivate>(this, playerController, playlistHandler, playlistController,
+                                              selectionController, settings)}
 {
     setObjectName(StatusWidget::name());
 }
@@ -380,6 +386,11 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(showTips);
 
     menu->popup(event->globalPos());
+}
+
+void StatusWidget::mouseDoubleClickEvent([[maybe_unused]] QMouseEvent* event)
+{
+    p->m_playlistController->showNowPlaying();
 }
 
 void StatusWidget::timerEvent(QTimerEvent* event)
