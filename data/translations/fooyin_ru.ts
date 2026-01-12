@@ -1489,7 +1489,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="393"/>
         <source>&amp;Abort</source>
-        <translation>Прервать</translation>
+        <translation>Прер&amp;вать</translation>
     </message>
 </context>
 <context>
