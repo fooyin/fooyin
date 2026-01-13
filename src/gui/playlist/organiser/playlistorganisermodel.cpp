@@ -337,19 +337,20 @@ void PlaylistOrganiserModel::playlistRemoved(Playlist* playlist)
 
 void PlaylistOrganiserModel::sortAllPlaylists(const SortOrder order)
 {
-    for (auto & m_node : m_nodes) {
+    for(auto& m_node : m_nodes) {
         // find root
-        if (m_node.second.parent()->type() == PlaylistOrganiserItem::Type::Root) {
-
+        if(m_node.second.parent()->type() == PlaylistOrganiserItem::Type::Root) {
             emit layoutAboutToBeChanged();
 
             // sort children of root
-            m_node.second.parent()->sortChildren([order](const PlaylistOrganiserItem* first, const PlaylistOrganiserItem* second) {
-                if (order == Descending) {
-                    return 0 < QString::localeAwareCompare(first->title(), second->title());
-                }
-                return 0 >= QString::localeAwareCompare(first->title(), second->title());
-            });
+            m_node.second.parent()->sortChildren(
+                [order](const PlaylistOrganiserItem* first, const PlaylistOrganiserItem* second) {
+                    if(order == Descending) {
+                        return 0 < QString::localeAwareCompare(first->title(), second->title());
+                    }
+
+                    return 0 >= QString::localeAwareCompare(first->title(), second->title());
+                });
 
             emit layoutChanged();
 
@@ -362,13 +363,13 @@ void PlaylistOrganiserModel::sortAllPlaylists(const SortOrder order)
 void PlaylistOrganiserModel::sortGroupPlaylists(const QModelIndexList& indices, const SortOrder order)
 {
     // abort unless we only have a single playlist selected
-    if (indices.size() != 1) {
+    if(indices.size() != 1) {
         return;
     }
 
-    auto *sortGroup = itemForIndex(indices.first());
+    auto* sortGroup = itemForIndex(indices.first());
 
-    if (sortGroup->type() != PlaylistOrganiserItem::Type::GroupItem) {
+    if(sortGroup->type() != PlaylistOrganiserItem::Type::GroupItem) {
         return;
     }
 
@@ -376,7 +377,7 @@ void PlaylistOrganiserModel::sortGroupPlaylists(const QModelIndexList& indices, 
 
     // TODO: share this function with sortAllPlaylist somehow
     sortGroup->sortChildren([order](const PlaylistOrganiserItem* first, const PlaylistOrganiserItem* second) {
-        if (order == Descending) {
+        if(order == Descending) {
             return 0 < QString::localeAwareCompare(first->title(), second->title());
         }
         return 0 >= QString::localeAwareCompare(first->title(), second->title());

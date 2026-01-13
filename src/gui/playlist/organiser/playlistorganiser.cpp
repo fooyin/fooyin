@@ -136,16 +136,16 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     , m_newAutoPlaylistCmd{actionManager->registerAction(m_newAutoPlaylist, Constants::Actions::NewAutoPlaylist,
                                                          m_context->context())}
     , m_editAutoPlaylist{new QAction(tr("Edit autoplaylist"), this)}
-    , m_editAutoPlaylistCmd{
-          actionManager->registerAction(m_editAutoPlaylist, Constants::Actions::EditAutoPlaylist, m_context->context())}
+    , m_editAutoPlaylistCmd{actionManager->registerAction(m_editAutoPlaylist, Constants::Actions::EditAutoPlaylist,
+                                                          m_context->context())}
 
     , m_sortAllPlaylistsAsc{new QAction(tr("Sort all playlists"), this)}
-    , m_sortAllPlaylistsAscCmd{
-        actionManager->registerAction(m_sortAllPlaylistsAsc, "PlaylistOrganiser.SortAllPlaylistsAsc", m_context->context())}
+    , m_sortAllPlaylistsAscCmd{actionManager->registerAction(
+          m_sortAllPlaylistsAsc, "PlaylistOrganiser.SortAllPlaylistsAsc", m_context->context())}
 
     , m_sortGroupPlaylistsAsc{new QAction(tr("Sort playlists in this group"), this)}
-    , m_sortGroupPlaylistsAscCmd{
-        actionManager->registerAction(m_sortGroupPlaylistsAsc, "PlaylistOrganiser.SortGroupPlaylistsAsc", m_context->context())}
+    , m_sortGroupPlaylistsAscCmd{actionManager->registerAction(
+          m_sortGroupPlaylistsAsc, "PlaylistOrganiser.SortGroupPlaylistsAsc", m_context->context())}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
