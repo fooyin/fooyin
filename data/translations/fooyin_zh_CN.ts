@@ -3297,12 +3297,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="63"/>
         <source>Remove &amp;unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>移除不可用曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
         <source>Remove unavailable tracks from the database and libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>从数据库和库中移除不可用的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="69"/>
@@ -3357,17 +3357,17 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>Removing unavailable tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在删除不可用的曲目…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>中止</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="119"/>
         <source>Removing unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>移除不可用曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="142"/>
@@ -3845,7 +3845,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="114"/>
         <source>Update and Next Line</source>
-        <translation type="unfinished"></translation>
+        <translation>更新与下一行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
@@ -6849,7 +6849,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation>网络活动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
@@ -8702,12 +8702,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek forward</source>
-        <translation type="unfinished"></translation>
+        <translation>向前跳转</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek backward</source>
-        <translation type="unfinished"></translation>
+        <translation>向后跳转</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="429"/>
