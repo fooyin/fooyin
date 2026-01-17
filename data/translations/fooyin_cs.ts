@@ -2286,7 +2286,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="634"/>
         <source>Rate 3</source>
-        <translation>3★</translation>
+        <translation>3 ★</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="635"/>
@@ -8757,7 +8757,7 @@ na disku.</translation>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1264"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1303"/>
         <source>Expected end of script</source>
-        <translation>Očekáván konec skriptu</translation>
+        <translation>očekáván konec skriptu</translation>
     </message>
 </context>
 <context>
