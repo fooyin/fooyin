@@ -6745,7 +6745,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="76"/>
         <source>Album Artist</source>
-        <translation type="unfinished">专辑艺术家</translation>
+        <translation>专辑艺术家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
@@ -6775,22 +6775,22 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
         <source>Fields</source>
-        <translation type="unfinished">字段</translation>
+        <translation>字段</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="104"/>
         <source>Title</source>
-        <translation type="unfinished">标题</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="106"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="108"/>
         <source>Album</source>
-        <translation type="unfinished">专辑</translation>
+        <translation>专辑</translation>
     </message>
 </context>
 <context>
@@ -6844,7 +6844,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="369"/>
         <source>Services</source>
-        <translation type="unfinished">服务</translation>
+        <translation>服务</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
@@ -6854,7 +6854,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
         <source>Scrobbling</source>
-        <translation type="unfinished">歌曲记录</translation>
+        <translation>歌曲记录</translation>
     </message>
 </context>
 <context>
@@ -6862,62 +6862,62 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="99"/>
         <source>Services</source>
-        <translation type="unfinished">服务</translation>
+        <translation>服务</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="101"/>
         <source>Add Service</source>
-        <translation type="unfinished">添加服务</translation>
+        <translation>添加服务</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="180"/>
         <source>Sign Out</source>
-        <translation type="unfinished">登出</translation>
+        <translation>登出</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="184"/>
         <source>Signed in</source>
-        <translation type="unfinished">已登录</translation>
+        <translation>已登录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="185"/>
         <source>Signed in as %1</source>
-        <translation type="unfinished">已作为 %1 登录</translation>
+        <translation>已作为 %1 登录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="189"/>
         <source>Sign In</source>
-        <translation type="unfinished">登录</translation>
+        <translation>登录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="192"/>
         <source>Not signed in</source>
-        <translation type="unfinished">未登录</translation>
+        <translation>未登录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="259"/>
         <source>Edit</source>
-        <translation type="unfinished">编辑</translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="261"/>
         <source>Delete</source>
-        <translation type="unfinished">删除</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="278"/>
         <source>Token</source>
-        <translation type="unfinished">令牌</translation>
+        <translation>令牌</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="281"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="302"/>
         <source>You can find your token here</source>
-        <translation type="unfinished">你可以在这里找到你的令牌</translation>
+        <translation>你可以在这里找到你的令牌</translation>
     </message>
 </context>
 <context>
