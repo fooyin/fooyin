@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -18,7 +18,7 @@ jobs:
           ./ci/translations.sh
 
       - name: Setup gpg
-        uses: crazy-max/ghaction-import-gpg@v5
+        uses: crazy-max/ghaction-import-gpg@v6.3.0
         with:
           gpg_private_key: ${{ secrets.BOT_GPG_SIGN_KEY }}
           passphrase: ${{ secrets.BOT_GPG_PASSPHRASE }}
@@ -26,7 +26,7 @@ jobs:
           git_commit_gpgsign: true
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.BOT_TOKEN }}
           commit-message: '[translations] Update sources'
