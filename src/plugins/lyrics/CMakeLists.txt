@@ -2,19 +2,24 @@ create_fooyin_plugin_internal(
     lyrics
     DEPENDS Fooyin::Gui
     SOURCES lyrics.h
-            lyricsarea.cpp
-            lyricsarea.h
+            lyricscolours.h
             lyricsconstants.h
+            lyricsdelegate.cpp
+            lyricsdelegate.h
             lyricseditor.cpp
             lyricseditor.h
             lyricsfinder.cpp
             lyricsfinder.h
+            lyricsmodel.cpp
+            lyricsmodel.h
             lyricsparser.cpp
             lyricsparser.h
             lyricsplugin.cpp
             lyricsplugin.h
             lyricssaver.cpp
             lyricssaver.h
+            lyricsview.cpp
+            lyricsview.h
             lyricswidget.cpp
             lyricswidget.h
             sources/darklyrics.cpp

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <QApplication>
+#include <QFont>
 #include <QString>
 #include <QStringList>
 
@@ -119,6 +121,43 @@ struct Lyrics
     [[nodiscard]] bool isValid() const noexcept
     {
         return type != Type::Unknown;
+    }
+
+    [[nodiscard]] bool isSynced() const
+    {
+        return type == Lyrics::Type::Synced || type == Lyrics::Type::SyncedWords;
+    }
+
+    [[nodiscard]] bool isSyncedWords() const
+    {
+        return type == Lyrics::Type::SyncedWords;
+    }
+
+    static QFont defaultFont()
+    {
+        return QApplication::font("Fooyin::Lyrics::LyricsArea");
+    }
+
+    static QFont defaultLineFont()
+    {
+        QFont font{defaultFont()};
+        font.setBold(true);
+        font.setPointSize(font.pointSize() + 1);
+        return font;
+    }
+
+    static QFont defaultWordLineFont()
+    {
+        QFont font{defaultFont()};
+        font.setPointSize(font.pointSize() + 1);
+        return font;
+    }
+
+    static QFont defaultWordFont()
+    {
+        QFont font{defaultWordLineFont()};
+        font.setBold(true);
+        return font;
     }
 
     bool operator==(const Lyrics& other) const noexcept
