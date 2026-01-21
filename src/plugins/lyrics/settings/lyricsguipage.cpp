@@ -19,7 +19,7 @@
 
 #include "lyricsguipage.h"
 
-#include "lyricsarea.h"
+#include "lyrics.h"
 #include "lyricscolours.h"
 #include "lyricsconstants.h"
 #include "lyricssettings.h"
@@ -29,7 +29,6 @@
 #include <gui/widgets/fontbutton.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
@@ -231,6 +230,7 @@ LyricsGuiPageWidget::LyricsGuiPageWidget(SettingsManager* settings)
     QObject::connect(m_wordFont, &QCheckBox::clicked, m_wordFontBtn, &QWidget::setEnabled);
 
     QObject::connect(m_bgColour, &QCheckBox::clicked, m_bgColourBtn, &QWidget::setEnabled);
+    QObject::connect(m_lineColour, &QCheckBox::clicked, m_lineColourBtn, &QWidget::setEnabled);
     QObject::connect(m_unplayedColour, &QCheckBox::clicked, m_unplayedColourBtn, &QWidget::setEnabled);
     QObject::connect(m_playedColour, &QCheckBox::clicked, m_playedColourBtn, &QWidget::setEnabled);
     QObject::connect(m_syncedLineColour, &QCheckBox::clicked, m_syncedLineColourBtn, &QWidget::setEnabled);
@@ -281,10 +281,10 @@ void LyricsGuiPageWidget::load()
         button->setEnabled(check->isChecked());
     };
 
-    loadFont(m_lineFont, m_lineFontBtn, m_settings->value<Settings::Lyrics::LineFont>(), LyricsArea::defaultLineFont());
+    loadFont(m_lineFont, m_lineFontBtn, m_settings->value<Settings::Lyrics::LineFont>(), Lyrics::defaultLineFont());
     loadFont(m_wordLineFont, m_wordLineFontBtn, m_settings->value<Settings::Lyrics::WordLineFont>(),
-             LyricsArea::defaultWordLineFont());
-    loadFont(m_wordFont, m_wordFontBtn, m_settings->value<Settings::Lyrics::WordFont>(), LyricsArea::defaultWordFont());
+             Lyrics::defaultWordLineFont());
+    loadFont(m_wordFont, m_wordFontBtn, m_settings->value<Settings::Lyrics::WordFont>(), Lyrics::defaultWordFont());
 }
 
 void LyricsGuiPageWidget::apply()

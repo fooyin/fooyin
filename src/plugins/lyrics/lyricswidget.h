@@ -23,7 +23,6 @@
 #include "settings/lyricssettings.h"
 
 #include <core/engine/audioengine.h>
-#include <core/player/playerdefs.h>
 #include <core/scripting/scriptparser.h>
 #include <gui/fywidget.h>
 
@@ -31,8 +30,6 @@
 #include <QPointer>
 
 class QPropertyAnimation;
-class QScrollArea;
-class QTextEdit;
 
 namespace Fooyin {
 class EngineController;
@@ -41,10 +38,11 @@ class SettingsManager;
 class Track;
 
 namespace Lyrics {
-class LyricsArea;
+class LyricsView;
+class LyricsDelegate;
 class LyricsFinder;
+class LyricsModel;
 class LyricsSaver;
-class LyricsScrollArea;
 
 class LyricsWidget : public FyWidget
 {
@@ -71,6 +69,10 @@ private:
     void openEditor(const Lyrics& lyrics);
     void playStateChanged(AudioEngine::PlaybackState state);
 
+    void setCurrentTime(uint64_t time);
+    void seekTo(const QModelIndex& index, const QPoint& pos);
+
+    void highlightCurrentLine();
     void scrollToCurrentLine(int scrollValue);
     void updateScrollMode(ScrollMode mode);
 
@@ -82,13 +84,17 @@ private:
     EngineController* m_engine;
     SettingsManager* m_settings;
 
-    LyricsScrollArea* m_scrollArea;
-    LyricsArea* m_lyricsArea;
+    LyricsView* m_lyricsView;
+    LyricsModel* m_model;
+    LyricsDelegate* m_delegate;
 
     LyricsFinder* m_lyricsFinder;
     LyricsSaver* m_lyricsSaver;
 
-    Lyrics::Type m_type;
+    Lyrics m_currentLyrics;
+    uint64_t m_currentTime;
+    int m_currentLine;
+
     Track m_currentTrack;
     std::vector<Lyrics> m_lyrics;
     QMetaObject::Connection m_finderConnection;
