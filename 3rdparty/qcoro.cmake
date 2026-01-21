@@ -1,4 +1,4 @@
-# find_package(QCoro6 0.9.0 QUIET COMPONENTS Core Network)
+find_package(QCoro6 0.9.0 QUIET COMPONENTS Core Network)
 
 if(TARGET QCoro6::Core)
     message(STATUS "Using system QCoro")
