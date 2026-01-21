@@ -55,7 +55,7 @@ void LocalLyrics::search(const SearchParams& params)
         const QFileInfo fileInfo{QDir::cleanPath(filter)};
         const QDir filePath{fileInfo.path()};
         const QString filePattern  = fileInfo.fileName();
-        const QStringList fileList = filePath.entryList({filePattern}, QDir::Files);
+        const QStringList fileList = filePath.entryList({filePattern}, QDir::Files | QDir::Hidden);
 
         for(const QString& file : fileList) {
             lrcPaths.emplace_back(filePath.absoluteFilePath(file));
