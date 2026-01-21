@@ -1,4 +1,4 @@
-find_package(QCoro6 0.9.0 QUIET COMPONENTS Core Network)
+# find_package(QCoro6 0.9.0 QUIET COMPONENTS Core Network)
 
 if(TARGET QCoro6::Core)
     message(STATUS "Using system QCoro")
@@ -10,6 +10,7 @@ else()
 
         set(BUILD_SHARED_LIBS OFF)
         set(BUILD_TESTING OFF)
+        set(CMAKE_POSITION_INDEPENDENT_CODE ON)
         set(QCORO_BUILD_EXAMPLES OFF)
         set(QCORO_WITH_QTWEBSOCKETS OFF)
         set(QCORO_WITH_QTQUICK OFF)
