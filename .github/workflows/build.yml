@@ -30,7 +30,7 @@ jobs:
           pacman -S git --noconfirm
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
@@ -63,7 +63,7 @@ jobs:
           dnf -y install git
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
@@ -82,7 +82,7 @@ jobs:
           ./ci/tests.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: fedora-${{matrix.fedora_version}}
           path: rpm
@@ -103,7 +103,7 @@ jobs:
           apt-get install -qq --force-yes git
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
@@ -131,7 +131,7 @@ jobs:
           ./ci/tests.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: debian-${{matrix.debian_version}}
           path: deb
@@ -152,7 +152,7 @@ jobs:
           apt-get install -qq --force-yes git
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
@@ -180,7 +180,7 @@ jobs:
           ./ci/tests.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ubuntu-${{matrix.ubuntu_version}}
           path: deb
@@ -190,26 +190,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
 
       - name: run VM
-        uses: cross-platform-actions/action@master
+        uses: cross-platform-actions/action@v0.32.0
         with:
           operating_system: freebsd
           architecture: x86-64
           cpu_count: 4
           shell: bash
-          version: '14.2'
+          version: '15.0'
           run: |
             ./ci/freebsd-depends.sh
             ./ci/freebsd-build.sh
             ./ci/tests.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: freebsd-14.2
           path: pkg
@@ -233,7 +233,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
@@ -267,7 +267,7 @@ jobs:
           echo "VCPKG_TARGET_TRIPLET=${{ matrix.triplet }}" >> $env:GITHUB_ENV
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ${{ github.workspace }}/vcpkg-binary-cache
@@ -286,7 +286,7 @@ jobs:
         shell: pwsh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: "windows-${{ matrix.arch }}"
           path: artifacts
@@ -303,12 +303,12 @@ jobs:
       - windows
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: ./artifacts
           merge-multiple: true
