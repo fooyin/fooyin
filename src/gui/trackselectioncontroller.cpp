@@ -73,7 +73,7 @@ public:
     void removeContextObject(WidgetContext* context);
     void updateActiveContext(QWidget* widget);
 
-    void handleActions(Playlist* playlist, PlaylistAction::ActionOptions options) const;
+    void handleActions(PlaylistAction::ActionOptions options, Playlist* playlist = nullptr) const;
     void sendToNewPlaylist(PlaylistAction::ActionOptions options, const QString& playlistName) const;
     void sendToCurrentPlaylist(PlaylistAction::ActionOptions options) const;
     void addToCurrentPlaylist() const;
@@ -81,7 +81,7 @@ public:
     void startPlayback(PlaylistAction::ActionOptions options);
     void addToQueue() const;
     void queueNext() const;
-    void sendToQueue() const;
+    void sendToQueue(PlaylistAction::ActionOptions options) const;
 
     void updateActionState();
 
@@ -378,17 +378,19 @@ void TrackSelectionControllerPrivate::updateActiveContext(QWidget* widget)
     }
 }
 
-void TrackSelectionControllerPrivate::handleActions(Playlist* playlist, PlaylistAction::ActionOptions options) const
+void TrackSelectionControllerPrivate::handleActions(PlaylistAction::ActionOptions options, Playlist* playlist) const
 {
-    if(!playlist) {
-        return;
-    }
-
-    if(options & PlaylistAction::Switch) {
+    if(playlist && options & PlaylistAction::Switch) {
         m_playlistController->changeCurrentPlaylist(playlist);
     }
+
     if(options & PlaylistAction::StartPlayback) {
-        m_playlistHandler->startPlayback(playlist);
+        if(playlist) {
+            m_playlistHandler->startPlayback(playlist);
+        }
+        else {
+            m_playlistController->playerController()->next();
+        }
     }
 }
 
@@ -407,7 +409,7 @@ void TrackSelectionControllerPrivate::sendToNewPlaylist(PlaylistAction::ActionOp
 
         if(!activePlaylist || activePlaylist->name() != newName) {
             auto* playlist = m_playlistHandler->createPlaylist(newName, selection.tracks);
-            handleActions(playlist, options);
+            handleActions(options, playlist);
             return;
         }
         const QString keepActiveName = newName + u" ("_s + tr("Playback") + u")"_s;
@@ -422,7 +424,7 @@ void TrackSelectionControllerPrivate::sendToNewPlaylist(PlaylistAction::ActionOp
 
     if(auto* playlist = m_playlistHandler->createPlaylist(newName, selection.tracks)) {
         playlist->changeCurrentIndex(-1);
-        handleActions(playlist, options);
+        handleActions(options, playlist);
         emit m_self->actionExecuted(TrackAction::SendNewPlaylist);
     }
 }
@@ -436,7 +438,7 @@ void TrackSelectionControllerPrivate::sendToCurrentPlaylist(PlaylistAction::Acti
     const auto& selection = m_contextSelection.at(m_activeContext);
     if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
         m_playlistHandler->createPlaylist(currentPlaylist->name(), selection.tracks);
-        handleActions(currentPlaylist, options);
+        handleActions(options, currentPlaylist);
         emit m_self->actionExecuted(TrackAction::SendCurrentPlaylist);
     }
 }
@@ -517,7 +519,7 @@ void TrackSelectionControllerPrivate::queueNext() const
     emit m_self->actionExecuted(TrackAction::QueueNext);
 }
 
-void TrackSelectionControllerPrivate::sendToQueue() const
+void TrackSelectionControllerPrivate::sendToQueue(PlaylistAction::ActionOptions options) const
 {
     if(!hasTracks()) {
         return;
@@ -525,6 +527,7 @@ void TrackSelectionControllerPrivate::sendToQueue() const
 
     const auto& selection = m_contextSelection.at(m_activeContext);
     m_playlistController->playerController()->replaceTracks(selection.tracks);
+    handleActions(options);
     emit m_self->actionExecuted(TrackAction::SendToQueue);
 }
 
@@ -713,13 +716,11 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
             p->startPlayback(options);
             break;
         case(TrackAction::AddToQueue):
-            p->addToQueue();
-            break;
         case(TrackAction::QueueNext):
             p->addToQueue();
             break;
         case(TrackAction::SendToQueue):
-            p->sendToQueue();
+            p->sendToQueue(options);
             break;
         case(TrackAction::None):
             break;
