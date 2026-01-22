@@ -43,7 +43,7 @@ class LyricsEditor : public PropertiesTabWidget
 public:
     LyricsEditor(const Track& track, std::shared_ptr<NetworkAccessManager> networkAccess, LyricsSaver* lyricsSaver,
                  PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
-    LyricsEditor(Lyrics lyrics, PlayerController* playerController, SettingsManager* settings,
+    LyricsEditor(Lyrics lyrics, PlayerController* playerController, LyricsSaver* lyricsSaver, SettingsManager* settings,
                  QWidget* parent = nullptr);
 
     void updateTrack(const Track& track);
@@ -99,8 +99,8 @@ class LyricsEditorDialog : public QDialog
     Q_OBJECT
 
 public:
-    LyricsEditorDialog(Lyrics lyrics, PlayerController* playerController, SettingsManager* settings,
-                       QWidget* parent = nullptr);
+    LyricsEditorDialog(Lyrics lyrics, PlayerController* playerController, LyricsSaver* lyricsSaver,
+                       SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] LyricsEditor* editor() const;
 

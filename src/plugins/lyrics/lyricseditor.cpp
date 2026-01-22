@@ -57,10 +57,10 @@ LyricsEditor::LyricsEditor(const Track& track, std::shared_ptr<NetworkAccessMana
     updateTrack(m_track);
 }
 
-LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, SettingsManager* settings,
-                           QWidget* parent)
+LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, LyricsSaver* lyricsSaver,
+                           SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
-    , m_lyricsSaver{nullptr}
+    , m_lyricsSaver{lyricsSaver}
     , m_playerController{playerController}
     , m_settings{settings}
     , m_lyricsFinder{nullptr}
@@ -68,12 +68,16 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Se
 {
     setupUi();
     setupConnections();
+    updateTrack(m_playerController->currentTrack());
 }
 
 void LyricsEditor::updateTrack(const Track& track)
 {
     m_track = track;
-    m_lyricsFinder->findLocalLyrics(m_track);
+
+    if(m_lyricsFinder) {
+        m_lyricsFinder->findLocalLyrics(m_track);
+    }
 }
 
 QString LyricsEditor::name() const
@@ -325,10 +329,10 @@ void LyricsEditor::removeAllTimestamps()
     m_lyricsText->setPlainText(currentText);
 }
 
-LyricsEditorDialog::LyricsEditorDialog(Lyrics lyrics, PlayerController* playerController, SettingsManager* settings,
-                                       QWidget* parent)
+LyricsEditorDialog::LyricsEditorDialog(Lyrics lyrics, PlayerController* playerController, LyricsSaver* lyricsSaver,
+                                       SettingsManager* settings, QWidget* parent)
     : QDialog{parent}
-    , m_editor{new LyricsEditor(std::move(lyrics), playerController, settings, this)}
+    , m_editor{new LyricsEditor(std::move(lyrics), playerController, lyricsSaver, settings, this)}
 {
     setWindowTitle(tr("Lyrics Editor"));
 

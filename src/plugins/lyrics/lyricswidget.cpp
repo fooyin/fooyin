@@ -319,7 +319,7 @@ void LyricsWidget::changeLyrics(const Lyrics& lyrics)
 
 void LyricsWidget::openEditor(const Lyrics& lyrics)
 {
-    auto* dlg = new LyricsEditorDialog(lyrics, m_playerController, m_settings, Utils::getMainWindow());
+    auto* dlg = new LyricsEditorDialog(lyrics, m_playerController, m_lyricsSaver, m_settings, Utils::getMainWindow());
     dlg->setAttribute(Qt::WA_DeleteOnClose);
 
     QObject::connect(dlg, &QDialog::finished, dlg, &LyricsEditorDialog::saveState);
