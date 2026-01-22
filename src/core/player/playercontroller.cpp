@@ -243,6 +243,12 @@ void PlayerController::nextAuto()
         p->loadScheduledTrack();
     }
     else if(p->m_queue.empty() && p->m_playlistHandler) {
+        if(p->m_isQueueTrack && p->m_settings->value<Settings::Core::PlaybackQueueStopWhenFinished>()) {
+            changeCurrentTrack(Track{});
+            reset();
+            return;
+        }
+
         p->m_isQueueTrack         = false;
         const PlaylistTrack track = p->m_playlistHandler->changeNextTrack();
         changeCurrentTrack(track);
