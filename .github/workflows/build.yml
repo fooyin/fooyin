@@ -188,6 +188,8 @@ jobs:
   freebsd:
     name: FreeBSD
     runs-on: ubuntu-latest
+    env:
+      FREEBSD_VERSION: '15.0'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -202,7 +204,7 @@ jobs:
           architecture: x86-64
           cpu_count: 4
           shell: bash
-          version: '15.0'
+          version: ${{ env.FREEBSD_VERSION }}
           run: |
             ./ci/freebsd-depends.sh
             ./ci/freebsd-build.sh
@@ -211,7 +213,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: freebsd-14.2
+          name: freebsd-${{ env.FREEBSD_VERSION }}
           path: pkg
 
   windows:
