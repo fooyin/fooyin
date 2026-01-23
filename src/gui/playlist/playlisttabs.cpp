@@ -323,13 +323,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
             = new QAction(playlist->isAutoPlaylist() ? tr("Rename autoplaylist") : tr("Rename playlist"), menu);
         QObject::connect(renameAction, &QAction::triggered, tabBar, &EditableTabBar::showEditor);
 
-        auto* removeAction
-            = new QAction(playlist->isAutoPlaylist() ? tr("Remove autoplaylist") : tr("Remove playlist"), menu);
-        QObject::connect(removeAction, &QAction::triggered, this,
-                         [this, id]() { m_playlistHandler->removePlaylist(id); });
-
         menu->addAction(renameAction);
-        menu->addAction(removeAction);
         menu->addSeparator();
     }
 
@@ -356,6 +350,17 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
         if(auto* savePlaylist = m_actionManager->command(Constants::Actions::SavePlaylist)) {
             menu->addAction(savePlaylist->action());
+        }
+
+        menu->addSeparator();
+
+        if(playlist) {
+            auto* removeAction
+                = new QAction(playlist->isAutoPlaylist() ? tr("Remove autoplaylist") : tr("Remove playlist"), menu);
+            QObject::connect(removeAction, &QAction::triggered, this,
+                             [this, id]() { m_playlistHandler->removePlaylist(id); });
+
+            menu->addAction(removeAction);
         }
 
         menu->addSeparator();
