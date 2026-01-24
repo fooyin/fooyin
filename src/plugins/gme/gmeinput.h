@@ -22,19 +22,14 @@
 #include <core/coresettings.h>
 #include <core/engine/audioinput.h>
 
-#include <gme/gme.h>
-#undef byte // Fix conflicts with QSpan
+class Music_Emu;
 
 namespace Fooyin::Gme {
 struct MusicEmuDeleter
 {
-    void operator()(Music_Emu* emu) const
-    {
-        if(emu) {
-            gme_delete(emu);
-        }
-    }
+    void operator()(Music_Emu* emu) const;
 };
+
 using MusicEmuPtr = std::unique_ptr<Music_Emu, MusicEmuDeleter>;
 
 class GmeDecoder : public AudioDecoder

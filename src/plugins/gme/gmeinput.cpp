@@ -26,6 +26,8 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
+#include <gme/gme.h>
+
 Q_LOGGING_CATEGORY(GME, "fy.gme")
 
 using namespace Qt::StringLiterals;
@@ -98,10 +100,18 @@ QStringList supportedExtensions()
 } // namespace
 
 namespace Fooyin::Gme {
+void MusicEmuDeleter::operator()(Music_Emu* emu) const
+{
+    if(emu) {
+        gme_delete(emu);
+    }
+}
+
 GmeDecoder::GmeDecoder()
     : m_subsong{0}
     , m_duration{0}
     , m_loopLength{0}
+    , m_repeatTrack{false}
 {
     m_format.setSampleFormat(SampleFormat::S16);
     m_format.setSampleRate(SampleRate);
