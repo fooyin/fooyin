@@ -49,11 +49,14 @@ jobs:
           ./ci/tests.sh
 
   fedora:
-    name: Fedora
-    runs-on: ubuntu-latest
+    name: Fedora (${{matrix.fedora_version}}, ${{ matrix.runner.arch }})
+    runs-on: ${{ matrix.runner.os }}
     strategy:
       fail-fast: false
       matrix:
+        runner:
+          - { os: ubuntu-latest, arch: amd64 }
+          - { os: ubuntu-24.04-arm, arch: arm64 }
         fedora_version: [ '41', '42', '43' ]
     container:
       image: fedora:${{matrix.fedora_version}}
@@ -84,16 +87,19 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: fedora-${{matrix.fedora_version}}
+          name: fedora-${{matrix.fedora_version}}-${{ matrix.runner.arch }}
           path: rpm
 
   debian:
-    name: Debian
-    runs-on: ubuntu-latest
+    name: Debian (${{matrix.debian_version}}, ${{ matrix.runner.arch }})
+    runs-on: ${{ matrix.runner.os }}
     strategy:
       fail-fast: false
       matrix:
-        debian_version: [ 'bookworm', 'trixie', 'forky' ]
+        runner:
+          - { os: ubuntu-latest, arch: amd64 }
+          - { os: ubuntu-24.04-arm, arch: arm64 }
+        debian_version: ['bookworm', 'trixie', 'forky']
     container:
       image: debian:${{matrix.debian_version}}
     steps:
@@ -133,16 +139,19 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: debian-${{matrix.debian_version}}
+          name: debian-${{matrix.debian_version}}-${{ matrix.runner.arch }}
           path: deb
 
   ubuntu:
-    name: Ubuntu
-    runs-on: ubuntu-latest
+    name: Ubuntu (${{matrix.ubuntu_version}}, ${{ matrix.runner.arch }})
+    runs-on: ${{ matrix.runner.os }}
     strategy:
       fail-fast: false
       matrix:
-        ubuntu_version: [ 'noble', 'plucky', 'questing' ]
+        runner:
+          - { os: ubuntu-latest, arch: amd64 }
+          - { os: ubuntu-24.04-arm, arch: arm64 }
+        ubuntu_version: ['noble', 'plucky', 'questing']
     container:
       image: ubuntu:${{matrix.ubuntu_version}}
     steps:
@@ -182,7 +191,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: ubuntu-${{matrix.ubuntu_version}}
+          name: ubuntu-${{matrix.ubuntu_version}}-${{ matrix.runner.arch }}
           path: deb
 
   freebsd:
