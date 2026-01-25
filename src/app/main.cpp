@@ -35,7 +35,27 @@ using namespace Qt::StringLiterals;
 
 namespace {
 #ifdef Q_OS_WIN
+#include <roapi.h>
 #include <windows.h>
+
+struct GuiThreadApartment
+{
+    bool initialised{false};
+
+    GuiThreadApartment()
+    {
+        const HRESULT result = RoInitialize(RO_INIT_SINGLETHREADED);
+        initialised          = SUCCEEDED(result);
+    }
+
+    ~GuiThreadApartment()
+    {
+        if(initialised) {
+            RoUninitialize();
+        }
+    }
+};
+
 void configurePluginSearchPaths()
 {
     SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
@@ -132,6 +152,14 @@ int main(int argc, char** argv)
             return 0;
         }
     }
+
+#ifdef Q_OS_WIN
+    const GuiThreadApartment guiThreadApartment;
+    if(!guiThreadApartment.initialised) {
+        QLoggingCategory log{"Main"};
+        qCWarning(log) << "Failed to initialise the GUI thread apartment";
+    }
+#endif
 
     const QApplication app{argc, argv};
     KDSingleApplication instance{QCoreApplication::applicationName(),
