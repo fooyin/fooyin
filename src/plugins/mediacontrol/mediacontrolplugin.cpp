@@ -116,16 +116,17 @@ bool MediaControlPlugin::ensureSmtc()
 
     try {
         HWND hWnd = reinterpret_cast<HWND>(m_windowController->mainWindow()->winId());
-        
+
         // Check if window is valid
         if(!::IsWindow(hWnd)) {
             return false;
         }
 
-        auto interop = winrt::get_activation_factory<SystemMediaTransportControls, ISystemMediaTransportControlsInterop>();
+        auto interop
+            = winrt::get_activation_factory<SystemMediaTransportControls, ISystemMediaTransportControlsInterop>();
         winrt::check_hresult(
             interop->GetForWindow(hWnd, winrt::guid_of<ISystemMediaTransportControls>(), winrt::put_abi(m_smtc)));
-        
+
         m_smtc.IsPlayEnabled(true);
         m_smtc.IsPauseEnabled(true);
         m_smtc.IsNextEnabled(true);
@@ -134,7 +135,7 @@ bool MediaControlPlugin::ensureSmtc()
         m_smtc.IsRewindEnabled(true);
 
         m_buttonPressedToken = m_smtc.ButtonPressed({this, &MediaControlPlugin::buttonPressed});
-        
+
         qCDebug(MEDIA_CONTROL) << "SMTC initialized successfully";
         return true;
     }
