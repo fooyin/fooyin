@@ -1,6 +1,7 @@
 /*
  * Fooyin
  * Copyright © 2025, Carter Li <zhangsongcui@live.cn>
+ * Copyright © 2025, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,18 +55,20 @@ public:
 private:
     void trackChanged(const PlaylistTrack& playlistTrack);
     void playStateChanged();
-    void playModeChanged();
     void updateDisplay();
     void buttonPressed(const winrt::Windows::Media::ISystemMediaTransportControls& sender,
                        const winrt::Windows::Media::SystemMediaTransportControlsButtonPressedEventArgs& args);
+    bool ensureSmtc();
+    void destroySmtc();
 
-    PlayerController* m_playerController = nullptr;
-    PlaylistHandler* m_playlistHandler   = nullptr;
+    PlayerController* m_playerController;
+    PlaylistHandler* m_playlistHandler;
     std::shared_ptr<AudioLoader> m_audioLoader;
-    SettingsManager* m_settings    = nullptr;
-    CoverProvider* m_coverProvider = nullptr;
+    WindowController* m_windowController;
+    SettingsManager* m_settings;
+    CoverProvider* m_coverProvider;
 
-    winrt::Windows::Media::ISystemMediaTransportControls m_smtc{nullptr};
+    winrt::Windows::Media::ISystemMediaTransportControls m_smtc;
     winrt::event_token m_buttonPressedToken;
 };
 

@@ -56,9 +56,19 @@ winrt::Windows::Foundation::IAsyncAction setThumbnailAsync(QByteArray ba,
 } // namespace
 
 namespace Fooyin::MediaControl {
-MediaControlPlugin::MediaControlPlugin() = default;
+MediaControlPlugin::MediaControlPlugin()
+    : m_playerController{nullptr}
+    , m_playlistHandler{nullptr}
+    , m_windowController{nullptr}
+    , m_settings{nullptr}
+    , m_coverProvider{nullptr}
+    , m_smtc{nullptr}
+{ }
 
-MediaControlPlugin::~MediaControlPlugin() = default;
+MediaControlPlugin::~MediaControlPlugin()
+{
+    destroySmtc();
+}
 
 void MediaControlPlugin::initialise(const CorePluginContext& context)
 {
@@ -78,104 +88,179 @@ void MediaControlPlugin::initialise(const GuiPluginContext& context)
     m_coverProvider = new CoverProvider(m_audioLoader, m_settings, this);
     m_coverProvider->setUsePlaceholder(false);
 
-    HWND hWnd = reinterpret_cast<HWND>(context.windowController->mainWindow()->winId());
-
-    auto interop = winrt::get_activation_factory<SystemMediaTransportControls, ISystemMediaTransportControlsInterop>();
-    winrt::check_hresult(
-        interop->GetForWindow(hWnd, winrt::guid_of<ISystemMediaTransportControls>(), winrt::put_abi(m_smtc)));
-    m_smtc.IsPlayEnabled(true);
-    m_smtc.IsPauseEnabled(true);
-    m_smtc.IsNextEnabled(true);
-    m_smtc.IsPreviousEnabled(true);
-    m_smtc.IsStopEnabled(true);
-    m_smtc.IsRewindEnabled(true);
-
-    m_buttonPressedToken = m_smtc.ButtonPressed({this, &MediaControlPlugin::buttonPressed});
+    m_windowController = context.windowController;
 }
 
 void MediaControlPlugin::shutdown()
 {
+    destroySmtc();
+}
+
+bool MediaControlPlugin::ensureSmtc()
+{
     if(m_smtc) {
-        m_smtc.ButtonPressed(m_buttonPressedToken);
+        try {
+            if(m_smtc.IsEnabled()) {
+                return true;
+            }
+        }
+        catch(...) {
+            // Object became invalid
+            destroySmtc();
+        }
+    }
+
+    if(!m_windowController->mainWindow()) {
+        return false;
+    }
+
+    try {
+        HWND hWnd = reinterpret_cast<HWND>(m_windowController->mainWindow()->winId());
+        
+        // Check if window is valid
+        if(!::IsWindow(hWnd)) {
+            return false;
+        }
+
+        auto interop = winrt::get_activation_factory<SystemMediaTransportControls, ISystemMediaTransportControlsInterop>();
+        winrt::check_hresult(
+            interop->GetForWindow(hWnd, winrt::guid_of<ISystemMediaTransportControls>(), winrt::put_abi(m_smtc)));
+        
+        m_smtc.IsPlayEnabled(true);
+        m_smtc.IsPauseEnabled(true);
+        m_smtc.IsNextEnabled(true);
+        m_smtc.IsPreviousEnabled(true);
+        m_smtc.IsStopEnabled(true);
+        m_smtc.IsRewindEnabled(true);
+
+        m_buttonPressedToken = m_smtc.ButtonPressed({this, &MediaControlPlugin::buttonPressed});
+        
+        qCDebug(MEDIA_CONTROL) << "SMTC initialized successfully";
+        return true;
+    }
+    catch(const winrt::hresult_error& ex) {
+        qCWarning(MEDIA_CONTROL) << "Failed to initialize SMTC:" << ex.code().value;
+        m_smtc = nullptr;
+        return false;
+    }
+}
+
+void MediaControlPlugin::destroySmtc()
+{
+    if(!m_smtc) {
+        return;
+    }
+
+    try {
+        if(m_buttonPressedToken) {
+            m_smtc.ButtonPressed(m_buttonPressedToken);
+            m_buttonPressedToken = {};
+        }
         m_smtc.DisplayUpdater().ClearAll();
+        m_smtc = nullptr;
+        qCDebug(MEDIA_CONTROL) << "SMTC destroyed successfully";
+    }
+    catch(...) {
         m_smtc = nullptr;
     }
 }
 
-void MediaControlPlugin::trackChanged(const PlaylistTrack& /*playlistTrack*/)
+void MediaControlPlugin::trackChanged(const PlaylistTrack& playlistTrack)
 {
-    if(!m_smtc) {
+    if(!playlistTrack.isValid()) {
         return;
     }
 
-    m_smtc.IsNextEnabled(m_playlistHandler->nextTrack().isValid());
-    m_smtc.IsPreviousEnabled(m_playlistHandler->previousTrack().isValid());
+    if(!ensureSmtc()) {
+        return;
+    }
 
-    updateDisplay();
+    try {
+        m_smtc.IsNextEnabled(m_playlistHandler->nextTrack().isValid());
+        m_smtc.IsPreviousEnabled(m_playlistHandler->previousTrack().isValid());
+        updateDisplay();
+    }
+    catch(const winrt::hresult_error&) {
+        destroySmtc();
+    }
 }
 
 void MediaControlPlugin::playStateChanged()
 {
-    if(!m_smtc) {
+    if(!ensureSmtc()) {
         return;
     }
 
-    switch(m_playerController->playState()) {
-        case Player::PlayState::Playing:
-            m_smtc.PlaybackStatus(MediaPlaybackStatus::Playing);
-            break;
-        case Player::PlayState::Paused:
-            m_smtc.PlaybackStatus(MediaPlaybackStatus::Paused);
-            break;
-        case Player::PlayState::Stopped:
-            m_smtc.PlaybackStatus(MediaPlaybackStatus::Stopped);
-            break;
+    try {
+        switch(m_playerController->playState()) {
+            case Player::PlayState::Playing:
+                m_smtc.PlaybackStatus(MediaPlaybackStatus::Playing);
+                break;
+            case Player::PlayState::Paused:
+                m_smtc.PlaybackStatus(MediaPlaybackStatus::Paused);
+                break;
+            case Player::PlayState::Stopped:
+                m_smtc.PlaybackStatus(MediaPlaybackStatus::Stopped);
+                break;
+        }
+    }
+    catch(const winrt::hresult_error&) {
+        destroySmtc();
     }
 }
 
 void MediaControlPlugin::updateDisplay()
 {
-    if(!m_smtc) {
+    if(!ensureSmtc()) {
         return;
     }
 
-    auto updater             = m_smtc.DisplayUpdater();
-    const auto playlistTrack = m_playerController->currentPlaylistTrack();
+    try {
+        auto updater             = m_smtc.DisplayUpdater();
+        const auto playlistTrack = m_playerController->currentPlaylistTrack();
 
-    if(!playlistTrack.isValid()) {
-        updater.ClearAll();
-        return;
-    }
-
-    const auto& track = playlistTrack.track;
-
-    updater.Type(MediaPlaybackType::Music);
-    updater.MusicProperties().Title(track.title().toStdWString());
-    updater.MusicProperties().Artist(track.artist().toStdWString());
-    updater.MusicProperties().AlbumArtist(track.albumArtist().toStdWString());
-    updater.MusicProperties().AlbumTitle(track.album().toStdWString());
-    updater.MusicProperties().TrackNumber(track.trackNumber().toInt());
-
-    auto genres = updater.MusicProperties().Genres();
-    genres.Clear();
-    for(const auto& genre : track.genres()) {
-        genres.Append(genre.toStdWString());
-    }
-
-    m_coverProvider->trackCoverFull(track, Track::Cover::Front).then([this, updater](const QPixmap& cover) {
-        if(!cover.isNull()) {
-            QByteArray ba;
-            QBuffer buffer{&ba};
-            buffer.open(QIODevice::WriteOnly);
-            cover.save(&buffer, "PNG");
-
-            setThumbnailAsync(ba, updater);
+        if(!playlistTrack.isValid()) {
+            updater.ClearAll();
+            return;
         }
-        else {
-            updater.Thumbnail(nullptr);
-            updater.Update();
+
+        const auto& track = playlistTrack.track;
+
+        updater.Type(MediaPlaybackType::Music);
+        updater.MusicProperties().Title(track.title().toStdWString());
+        updater.MusicProperties().Artist(track.artist().toStdWString());
+        updater.MusicProperties().AlbumArtist(track.albumArtist().toStdWString());
+        updater.MusicProperties().AlbumTitle(track.album().toStdWString());
+        updater.MusicProperties().TrackNumber(track.trackNumber().toInt());
+
+        auto genres = updater.MusicProperties().Genres();
+        genres.Clear();
+        for(const auto& genre : track.genres()) {
+            genres.Append(genre.toStdWString());
         }
-    });
+
+        m_coverProvider->trackCoverFull(track, Track::Cover::Front).then([this, updater](const QPixmap& cover) {
+            if(!ensureSmtc()) {
+                return;
+            }
+
+            if(!cover.isNull()) {
+                QByteArray ba;
+                QBuffer buffer{&ba};
+                buffer.open(QIODevice::WriteOnly);
+                cover.save(&buffer, "PNG");
+
+                setThumbnailAsync(ba, updater);
+            }
+            else {
+                updater.Thumbnail(nullptr);
+                updater.Update();
+            }
+        });
+    }
+    catch(const winrt::hresult_error&) {
+        destroySmtc();
+    }
 }
 
 void MediaControlPlugin::buttonPressed(const ISystemMediaTransportControls& /*sender*/,
