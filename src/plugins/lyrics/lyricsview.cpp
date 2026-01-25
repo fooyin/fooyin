@@ -65,10 +65,12 @@ void LyricsView::mouseReleaseEvent(QMouseEvent* event)
 {
     QListView::mouseReleaseEvent(event);
 
-    const QPoint pos        = event->position().toPoint();
-    const QModelIndex index = indexAt(pos);
+    if(event->button() == Qt::LeftButton) {
+        const QPoint pos        = event->position().toPoint();
+        const QModelIndex index = indexAt(pos);
 
-    emit lineClicked(index, pos);
+        emit lineClicked(index, pos);
+    }
 }
 
 void LyricsView::wheelEvent(QWheelEvent* event)
