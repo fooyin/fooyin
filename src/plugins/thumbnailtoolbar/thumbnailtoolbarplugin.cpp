@@ -1,6 +1,7 @@
 /*
  * Fooyin
  * Copyright © 2025, Carter Li <zhangsongcui@live.cn>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,24 +117,29 @@ void ThumbnailToolbarPlugin::trackChanged(const PlaylistTrack& /*playlistTrack*/
 
 void ThumbnailToolbarPlugin::playStateChanged()
 {
+    if(!m_taskbarList) {
+        return;
+    }
+
+    TBPFLAG state{TBPF_NORMAL};
+
     switch(m_playerController->playState()) {
-        case Player::PlayState::Playing:
-            m_taskbarList->SetProgressState(reinterpret_cast<HWND>(m_windowController->mainWindow()->winId()),
-                                            TBPF_NORMAL);
+        case(Player::PlayState::Playing):
+            state = TBPF_NORMAL;
             break;
-        case Player::PlayState::Paused:
-            m_taskbarList->SetProgressState(reinterpret_cast<HWND>(m_windowController->mainWindow()->winId()),
-                                            TBPF_PAUSED);
+        case(Player::PlayState::Paused):
+            state = TBPF_PAUSED;
             break;
-        case Player::PlayState::Stopped:
-            m_taskbarList->SetProgressState(reinterpret_cast<HWND>(m_windowController->mainWindow()->winId()),
-                                            TBPF_ERROR);
+        case(Player::PlayState::Stopped):
+            state = TBPF_ERROR;
             break;
         default:
-            m_taskbarList->SetProgressState(reinterpret_cast<HWND>(m_windowController->mainWindow()->winId()),
-                                            TBPF_INDETERMINATE);
+            state = TBPF_INDETERMINATE;
             break;
     }
+
+    m_taskbarList->SetProgressState(reinterpret_cast<HWND>(m_windowController->mainWindow()->winId()), state);
+
     updateToolbarButtons();
 }
 
