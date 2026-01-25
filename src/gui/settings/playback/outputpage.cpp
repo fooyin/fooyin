@@ -225,7 +225,7 @@ void OutputPageWidget::setupDevices(const QString& output)
         return;
     }
 
-    const QString currentDevice = currentOutput.size() > 1 ? currentOutput.at(1) : QString{};
+    const QString currentDevice = currentOutput.size() > 1 ? currentOutput.sliced(1).join(u"|"_s) : QString{};
     const auto outputDevices    = m_engine->getOutputDevices(output);
 
     for(const auto& [name, desc] : outputDevices) {
