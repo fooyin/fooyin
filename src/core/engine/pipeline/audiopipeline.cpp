@@ -415,10 +415,6 @@ void AudioPipeline::stop()
     m_threadHost.setShutdownRequested(false);
     m_threadHost.clearAudioThreadIdentity();
 
-    if(m_outputUnit.output() && m_outputUnit.output()->initialised()) {
-        m_outputUnit.output()->uninit();
-    }
-
     m_threadHost.clearCommands();
 
     m_playing.store(false, std::memory_order_release);
@@ -667,6 +663,9 @@ void AudioPipeline::uninit()
         }
 
         pipeline.m_outputUnit.setOutputInitialized(false);
+        pipeline.m_playing.store(false, std::memory_order_release);
+        pipeline.m_pauseDrainActive.store(false, std::memory_order_release);
+        pipeline.m_bufferingPaused.store(false, std::memory_order_release);
         pipeline.m_playbackState.store(PipelinePlaybackState::Stopped, std::memory_order_release);
         pipeline.m_renderPhase = RenderPhase::Stopped;
         pipeline.m_renderer.setOutputFormat({});
@@ -1461,6 +1460,11 @@ void AudioPipeline::audioThreadFunc()
             m_threadHost.waitFor(IdleWaitMs);
         }
     }
+
+    if(m_outputUnit.output() && m_outputUnit.output()->initialised()) {
+        m_outputUnit.output()->uninit();
+    }
+    m_outputUnit.setOutputInitialized(false);
 
     m_threadHost.clearAudioThreadIdentity();
 }
