@@ -6826,7 +6826,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="153"/>
         <source>Open url in web browser?</source>
-        <translation>Открыть URL в браузере?</translation>
+        <translation>Открыть URL-адрес в браузере?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="160"/>
