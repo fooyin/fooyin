@@ -4,25 +4,25 @@ This document outlines the upcoming features for fooyin.
 
 ## New Features
 
-| Feature                                       | Release  |
-|-----------------------------------------------|----------|
-| Playback queue                                | ✅ 0.4.0  |
-| MPRIS support                                 | ✅ 0.4.0  |
-| CUE support                                   | ✅ 0.5.0  |
-| Renaming/Copying/Moving files on disk         | ✅ 0.6.0  |
-| Archive support (Adding to library, playback) | ✅ 0.6.0  |
-| Scrobbling                                    | ✅ 0.7.0  |
-| ReplayGain support                            | ✅ 0.7.0  |
-| Calculating ReplayGain                        | ✅ 0.8.0  |
-| Query-based language for advanced searching   | ✅ 0.8.0  |
-| Smart playlists                               | ✅ 0.9.0  |
-| Album artwork downloading/saving              | ✅ 0.9.0  |
-| Synchronised lyric support                    | ✅ 0.9.0  |
-| Audio conversion                              | ❓ TBD    |
-| Metadata lookup                               | ❓ TBD    |
-| Internet radio support                        | ❓ TBD    |
-| DSP plugins                                   | ❓ TBD    |
-| Equaliser                                     | ❓ TBD    |
+| Feature                                       | Release   |
+|-----------------------------------------------|-----------|
+| Playback queue                                | ✅ 0.4.0   |
+| MPRIS support                                 | ✅ 0.4.0   |
+| CUE support                                   | ✅ 0.5.0   |
+| Renaming/Copying/Moving files on disk         | ✅ 0.6.0   |
+| Archive support (Adding to library, playback) | ✅ 0.6.0   |
+| Scrobbling                                    | ✅ 0.7.0   |
+| ReplayGain support                            | ✅ 0.7.0   |
+| Calculating ReplayGain                        | ✅ 0.8.0   |
+| Query-based language for advanced searching   | ✅ 0.8.0   |
+| Smart playlists                               | ✅ 0.9.0   |
+| Album artwork downloading/saving              | ✅ 0.9.0   |
+| Synchronised lyric support                    | ✅ 0.9.0   |
+| DSP plugin support                            | 🚧 0.10.0 |
+| Audio conversion                              | ❓ TBD     |
+| Metadata lookup                               | ❓ TBD     |
+| Internet radio support                        | ❓ TBD     |
+| Equaliser                                     | ❓ TBD     |
 
 ## Enhancements
 
