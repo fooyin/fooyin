@@ -83,6 +83,13 @@ void ElapsedProgressDialog::setValue(int value)
 {
     m_progressBar->setValue(value);
 
+    if(value == m_progressBar->maximum()) {
+        m_isFinished = true;
+        m_updateTimer->stop();
+        hide();
+        return;
+    }
+
     if(!m_isStarting) {
         m_isStarting = true;
         QTimer::singleShot(m_minDuration, this, [this]() {
@@ -92,11 +99,6 @@ void ElapsedProgressDialog::setValue(int value)
                 show();
             }
         });
-    }
-    else if(value == m_progressBar->maximum()) {
-        m_isFinished = true;
-        m_updateTimer->stop();
-        hide();
     }
 }
 

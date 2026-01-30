@@ -195,15 +195,34 @@ void finaliseTrack(const CueSheet& sheet, Fooyin::Track& track)
     track.setCuePath(sheet.cuePath);
     track.setModifiedTime(std::max(track.modifiedTime(), sheet.lastModified));
 
-    track.setAlbumArtists({sheet.albumArtist});
-    track.setAlbum(sheet.album);
-    track.setGenres({sheet.genre});
-    track.setDate(sheet.date);
-    track.setDiscNumber(sheet.disc);
-    track.setComment(sheet.comment);
-    track.setComposers({sheet.composer});
-    track.setRGAlbumGain(sheet.rgAlbumGain);
-    track.setRGAlbumPeak(sheet.rgAlbumPeak);
+    // Only override metadata from file if cue sheet has values
+    if(!sheet.albumArtist.isEmpty()) {
+        track.setAlbumArtists({sheet.albumArtist});
+    }
+    if(!sheet.album.isEmpty()) {
+        track.setAlbum(sheet.album);
+    }
+    if(!sheet.genre.isEmpty()) {
+        track.setGenres({sheet.genre});
+    }
+    if(!sheet.date.isEmpty()) {
+        track.setDate(sheet.date);
+    }
+    if(!sheet.disc.isEmpty()) {
+        track.setDiscNumber(sheet.disc);
+    }
+    if(!sheet.comment.isEmpty()) {
+        track.setComment(sheet.comment);
+    }
+    if(!sheet.composer.isEmpty()) {
+        track.setComposers({sheet.composer});
+    }
+    if(sheet.rgAlbumGain != Fooyin::Constants::InvalidGain) {
+        track.setRGAlbumGain(sheet.rgAlbumGain);
+    }
+    if(sheet.rgAlbumPeak != Fooyin::Constants::InvalidPeak) {
+        track.setRGAlbumPeak(sheet.rgAlbumPeak);
+    }
 }
 
 void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QString& trackPath, Fooyin::TrackList& tracks)
