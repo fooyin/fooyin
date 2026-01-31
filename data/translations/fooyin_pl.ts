@@ -8696,7 +8696,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="129"/>
         <source>Files to open</source>
-        <translation type="unfinished"></translation>
+        <translation>Pliki do otwarcia</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
