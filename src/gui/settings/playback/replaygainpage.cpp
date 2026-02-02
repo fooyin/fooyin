@@ -142,12 +142,12 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
 
 void ReplayGainPageWidget::load()
 {
-    const auto mode = static_cast<AudioEngine::RGProcessing>(m_settings->value<Settings::Core::RGMode>());
-    m_disabled->setChecked(mode == AudioEngine::NoProcessing);
-    m_applyGain->setChecked(mode == AudioEngine::ApplyGain);
-    m_applyGainClipping->setChecked(
-        mode == static_cast<AudioEngine::RGProcessing>(AudioEngine::ApplyGain | AudioEngine::PreventClipping));
-    m_clipping->setChecked(mode == AudioEngine::PreventClipping);
+    const auto mode = static_cast<Engine::RGProcessing>(m_settings->value<Settings::Core::RGMode>());
+    m_disabled->setChecked(mode == Engine::NoProcessing);
+    m_applyGain->setChecked(mode == Engine::ApplyGain);
+    m_applyGainClipping->setChecked(mode
+                                    == static_cast<Engine::RGProcessing>(Engine::ApplyGain | Engine::PreventClipping));
+    m_clipping->setChecked(mode == Engine::PreventClipping);
 
     const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
     m_trackGain->setChecked(gainType == ReplayGainType::Track);
@@ -162,19 +162,19 @@ void ReplayGainPageWidget::load()
 
 void ReplayGainPageWidget::apply()
 {
-    int mode{AudioEngine::NoProcessing};
+    int mode{Engine::NoProcessing};
 
     if(m_disabled->isChecked()) {
-        mode = AudioEngine::NoProcessing;
+        mode = Engine::NoProcessing;
     }
     else if(m_applyGain->isChecked()) {
-        mode = AudioEngine::ApplyGain;
+        mode = Engine::ApplyGain;
     }
     else if(m_applyGainClipping->isChecked()) {
-        mode = AudioEngine::ApplyGain | AudioEngine::PreventClipping;
+        mode = Engine::ApplyGain | Engine::PreventClipping;
     }
     else if(m_clipping->isChecked()) {
-        mode = AudioEngine::PreventClipping;
+        mode = Engine::PreventClipping;
     }
 
     m_settings->set<Settings::Core::RGMode>(mode);

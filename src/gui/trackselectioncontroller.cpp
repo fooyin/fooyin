@@ -386,7 +386,7 @@ void TrackSelectionControllerPrivate::handleActions(PlaylistAction::ActionOption
 
     if(options & PlaylistAction::StartPlayback) {
         if(playlist) {
-            m_playlistHandler->startPlayback(playlist);
+            m_playlistController->playerController()->startPlayback(playlist);
         }
         else {
             m_playlistController->playerController()->next();
@@ -484,7 +484,7 @@ void TrackSelectionControllerPrivate::startPlayback(PlaylistAction::ActionOption
         const auto& selection = m_contextSelection.at(m_activeContext);
         m_playlistHandler->replacePlaylistTracks(m_tempPlaylist->id(), selection.tracks);
         m_tempPlaylist->changeCurrentIndex(selection.firstIndex >= 0 ? selection.firstIndex : 0);
-        m_playlistHandler->startPlayback(m_tempPlaylist);
+        m_playlistController->playerController()->startPlayback(m_tempPlaylist);
     }
     else {
         if(auto* playlist = m_playlistController->currentPlaylist()) {
@@ -492,7 +492,7 @@ void TrackSelectionControllerPrivate::startPlayback(PlaylistAction::ActionOption
             if(selection.firstIndex >= 0) {
                 playlist->changeCurrentIndex(selection.firstIndex);
             }
-            m_playlistHandler->startPlayback(playlist);
+            m_playlistController->playerController()->startPlayback(playlist);
         }
     }
 }

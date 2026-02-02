@@ -203,6 +203,7 @@ constexpr auto Playback           = "Fooyin.Page.Playback";
 constexpr auto Output             = "Fooyin.Page.Playback.Output";
 constexpr auto Decoding           = "Fooyin.Page.Playback.Decoding";
 constexpr auto ReplayGain         = "Fooyin.Page.Playback.ReplayGain";
+constexpr auto DspManager         = "Fooyin.Page.Playback.DspManager";
 constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
 constexpr auto InterfaceTheme     = "Fooyin.Page.Interface.Theme";
 constexpr auto ArtworkGeneral     = "Fooyin.Page.Interface.Artwork.General";

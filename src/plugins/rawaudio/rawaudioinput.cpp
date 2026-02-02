@@ -102,7 +102,7 @@ AudioBuffer RawAudioDecoder::readBuffer(size_t bytes)
     AudioBuffer buffer{m_format, m_format.durationForFrames(static_cast<int>(m_currentFrame))};
     buffer.resize(bytes);
 
-    const auto readBytes = m_file->read(std::bit_cast<char*>(buffer.data()), static_cast<qint64>(bytes));
+    const auto readBytes = m_file->read(reinterpret_cast<char*>(buffer.data()), static_cast<qint64>(bytes));
     if(readBytes <= 0) {
         return {};
     }

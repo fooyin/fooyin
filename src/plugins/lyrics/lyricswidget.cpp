@@ -329,7 +329,7 @@ void LyricsWidget::openEditor(const Lyrics& lyrics)
     dlg->restoreState();
 }
 
-void LyricsWidget::playStateChanged(AudioEngine::PlaybackState state)
+void LyricsWidget::playStateChanged(Engine::PlaybackState state)
 {
     const auto stopScrolling = [this]() {
         if(m_scrollMode == ScrollMode::Automatic && m_scrollAnim) {
@@ -338,18 +338,16 @@ void LyricsWidget::playStateChanged(AudioEngine::PlaybackState state)
     };
 
     switch(state) {
-        case(AudioEngine::PlaybackState::Paused):
+        case(Engine::PlaybackState::Paused):
             stopScrolling();
             break;
-        case(AudioEngine::PlaybackState::Error):
-        case(AudioEngine::PlaybackState::Stopped): {
+        case(Engine::PlaybackState::Error):
+        case(Engine::PlaybackState::Stopped):
             stopScrolling();
             scrollToCurrentLine(0);
-        } break;
-        case(AudioEngine::PlaybackState::Playing):
-            updateScrollMode(m_scrollMode);
             break;
-        case(AudioEngine::PlaybackState::FadingOut):
+        case(Engine::PlaybackState::Playing):
+            updateScrollMode(m_scrollMode);
             break;
     }
 }

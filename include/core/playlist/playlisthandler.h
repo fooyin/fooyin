@@ -30,7 +30,6 @@
 
 namespace Fooyin {
 class MusicLibrary;
-class PlayerController;
 class PlaylistHandlerPrivate;
 class SettingsManager;
 
@@ -40,8 +39,7 @@ class FYCORE_EXPORT PlaylistHandler : public QObject
 
 public:
     explicit PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
-                             PlayerController* playerController, MusicLibrary* library, SettingsManager* settings,
-                             QObject* parent = nullptr);
+                             MusicLibrary* library, SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
     /** Returns the playlist with the @p id if it exists, otherwise nullptr. */
@@ -102,14 +100,12 @@ public:
     void changeActivePlaylist(const UId& id);
     void changeActivePlaylist(Playlist* playlist);
 
-    /** Returns the next track to be played, or an invalid track if the playlist will end. */
-    PlaylistTrack nextTrack();
-    /** Returns the next track to be played, or an invalid track if the playlist will end. */
-    PlaylistTrack changeNextTrack();
-    /** Returns the previous track to be played, or an invalid track if the playlist will end. */
-    PlaylistTrack previousTrack();
-    /** Returns the previous track to be played, or an invalid track if the playlist will end. */
-    PlaylistTrack changePreviousTrack();
+    /** Returns the current track in the active playlist with metadata populated if needed. */
+    [[nodiscard]] PlaylistTrack currentTrack() const;
+    /** Returns a preview track relative to the current index in the active playlist. */
+    [[nodiscard]] PlaylistTrack peekRelativeTrack(Playlist::PlayModes mode, int delta = 1) const;
+    /** Advances and returns a track relative to the current index in the active playlist. */
+    [[nodiscard]] PlaylistTrack advanceRelativeTrack(Playlist::PlayModes mode, int delta = 1);
 
     void renamePlaylist(const UId& id, const QString& name);
     void removePlaylist(const UId& id);
@@ -118,11 +114,8 @@ public:
     [[nodiscard]] Playlist* activePlaylist() const;
 
     [[nodiscard]] int playlistCount() const;
-
-    /** Changes the active playlist to the playlist with @p playlistId and starts playback. */
-    void startPlayback(const UId& id);
-    /** Changes the active playlist to @p playlist and starts playback. */
-    void startPlayback(Playlist* playlist);
+    /** Prime upcoming track state/metadata for seamless transition preparation. */
+    void prepareUpcomingTrack();
 
     void savePlaylists();
     void savePlaylist(const UId& id);
@@ -133,14 +126,14 @@ signals:
     void playlistRemoved(Fooyin::Playlist* playlist);
     void playlistRenamed(Fooyin::Playlist* playlist);
     void activePlaylistChanged(Fooyin::Playlist* playlist);
+    void activePlaylistDeleted();
+    void restoreCurrentTrackRequested(const Fooyin::PlaylistTrack& track);
+    void playlistReferencesRemapRequested(const Fooyin::UId& fromPlaylistId, const Fooyin::UId& toPlaylistId);
 
     void tracksAdded(Fooyin::Playlist* playlist, const Fooyin::TrackList& tracks, int index);
     void tracksChanged(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
     void tracksUpdated(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
     void tracksRemoved(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
-
-public slots:
-    void trackAboutToFinish();
 
 private:
     std::unique_ptr<PlaylistHandlerPrivate> p;

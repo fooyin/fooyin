@@ -55,7 +55,7 @@ spa_audio_format findSpaFormat(const Fooyin::SampleFormat& format)
             return SPA_AUDIO_FORMAT_U8;
         case(Fooyin::SampleFormat::S16):
             return SPA_AUDIO_FORMAT_S16;
-        case(Fooyin::SampleFormat::S24):
+        case(Fooyin::SampleFormat::S24In32):
         case(Fooyin::SampleFormat::S32):
             return SPA_AUDIO_FORMAT_S32;
         case(Fooyin::SampleFormat::F32):
@@ -68,7 +68,95 @@ spa_audio_format findSpaFormat(const Fooyin::SampleFormat& format)
     }
 }
 
-void updateChannelMap(spa_audio_info_raw* info, int channels)
+spa_audio_channel toSpaChannel(Fooyin::AudioFormat::ChannelPosition channel)
+{
+    using P = Fooyin::AudioFormat::ChannelPosition;
+    switch(channel) {
+        case P::FrontLeft:
+            return SPA_AUDIO_CHANNEL_FL;
+        case P::FrontRight:
+            return SPA_AUDIO_CHANNEL_FR;
+        case P::FrontCenter:
+            return SPA_AUDIO_CHANNEL_FC;
+        case P::LFE:
+            return SPA_AUDIO_CHANNEL_LFE;
+        case P::BackLeft:
+            return SPA_AUDIO_CHANNEL_RL;
+        case P::BackRight:
+            return SPA_AUDIO_CHANNEL_RR;
+#ifdef SPA_AUDIO_CHANNEL_FLC
+        case P::FrontLeftOfCenter:
+            return SPA_AUDIO_CHANNEL_FLC;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_FRC
+        case P::FrontRightOfCenter:
+            return SPA_AUDIO_CHANNEL_FRC;
+#endif
+        case P::BackCenter:
+            return SPA_AUDIO_CHANNEL_RC;
+        case P::SideLeft:
+            return SPA_AUDIO_CHANNEL_SL;
+        case P::SideRight:
+            return SPA_AUDIO_CHANNEL_SR;
+#ifdef SPA_AUDIO_CHANNEL_TC
+        case P::TopCenter:
+            return SPA_AUDIO_CHANNEL_TC;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_TFL
+        case P::TopFrontLeft:
+            return SPA_AUDIO_CHANNEL_TFL;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_TFC
+        case P::TopFrontCenter:
+            return SPA_AUDIO_CHANNEL_TFC;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_TFR
+        case P::TopFrontRight:
+            return SPA_AUDIO_CHANNEL_TFR;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_TRL
+        case P::TopBackLeft:
+            return SPA_AUDIO_CHANNEL_TRL;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_TRC
+        case P::TopBackCenter:
+            return SPA_AUDIO_CHANNEL_TRC;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_TRR
+        case P::TopBackRight:
+            return SPA_AUDIO_CHANNEL_TRR;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_LFE2
+        case P::LFE2:
+            return SPA_AUDIO_CHANNEL_LFE2;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_TSL
+        case P::TopSideLeft:
+            return SPA_AUDIO_CHANNEL_TSL;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_TSR
+        case P::TopSideRight:
+            return SPA_AUDIO_CHANNEL_TSR;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_BC
+        case P::BottomFrontCenter:
+            return SPA_AUDIO_CHANNEL_BC;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_BLC
+        case P::BottomFrontLeft:
+            return SPA_AUDIO_CHANNEL_BLC;
+#endif
+#ifdef SPA_AUDIO_CHANNEL_BRC
+        case P::BottomFrontRight:
+            return SPA_AUDIO_CHANNEL_BRC;
+#endif
+        case P::UnknownPosition:
+        default:
+            return SPA_AUDIO_CHANNEL_UNKNOWN;
+    }
+}
+
+void updateChannelMapLegacy(spa_audio_info_raw* info, int channels)
 {
     // Set channels according to: https://xiph.org/flac/format.html
     switch(channels) {
@@ -126,6 +214,52 @@ void updateChannelMap(spa_audio_info_raw* info, int channels)
             break;
     }
 }
+
+void updateChannelMap(spa_audio_info_raw* info, const Fooyin::AudioFormat& format)
+{
+    if(format.hasChannelLayout()) {
+        bool validMap = true;
+        for(int i = 0; i < format.channelCount(); ++i) {
+            spa_audio_channel mapped = SPA_AUDIO_CHANNEL_UNKNOWN;
+            if(format.channelCount() == 1
+               && format.channelPosition(i) == Fooyin::AudioFormat::ChannelPosition::FrontCenter) {
+                mapped = SPA_AUDIO_CHANNEL_MONO;
+            }
+            else {
+                mapped = toSpaChannel(format.channelPosition(i));
+            }
+            info->position[static_cast<size_t>(i)] = mapped;
+            if(mapped == SPA_AUDIO_CHANNEL_UNKNOWN) {
+                validMap = false;
+            }
+        }
+
+        if(validMap) {
+            return;
+        }
+    }
+
+    updateChannelMapLegacy(info, format.channelCount());
+}
+
+bool supportsPipewireLayout(const Fooyin::AudioFormat& format)
+{
+    if(!format.hasChannelLayout()) {
+        return true;
+    }
+
+    for(int i = 0; i < format.channelCount(); ++i) {
+        const auto pos = format.channelPosition(i);
+        if(format.channelCount() == 1 && pos == Fooyin::AudioFormat::ChannelPosition::FrontCenter) {
+            continue;
+        }
+        if(toSpaChannel(pos) == SPA_AUDIO_CHANNEL_UNKNOWN) {
+            return false;
+        }
+    }
+
+    return true;
+}
 } // namespace
 
 namespace Fooyin::Pipewire {
@@ -147,12 +281,24 @@ void PipeWireOutput::uninit()
 
 void PipeWireOutput::reset()
 {
+    if(!m_stream || !m_loop) {
+        m_buffer.clear();
+        m_bufferPos = 0;
+        return;
+    }
+
     const ThreadLoopGuard guard{m_loop.get()};
     m_stream->flush(false);
+    m_buffer.clear();
+    m_bufferPos = 0;
 }
 
 void PipeWireOutput::start()
 {
+    if(!m_stream || !m_loop) {
+        return;
+    }
+
     const ThreadLoopGuard guard{m_loop.get()};
     m_stream->setActive(true);
     // Setting volume only works consistently when stream is active,
@@ -162,6 +308,10 @@ void PipeWireOutput::start()
 
 void PipeWireOutput::drain()
 {
+    if(!m_stream || !m_loop) {
+        return;
+    }
+
     const ThreadLoopGuard guard{m_loop.get()};
 
     if(m_bufferPos > 0) {
@@ -210,8 +360,11 @@ OutputState PipeWireOutput::currentState()
 {
     OutputState state;
 
-    state.queuedSamples = m_buffer.frameCount();
-    state.freeSamples   = bufferSize() - state.queuedSamples;
+    state.queuedFrames = m_buffer.frameCount();
+    state.freeFrames   = bufferSize() - state.queuedFrames;
+    if(m_format.sampleRate() > 0) {
+        state.delay = static_cast<double>(state.queuedFrames) / static_cast<double>(m_format.sampleRate());
+    }
 
     return state;
 }
@@ -223,16 +376,24 @@ int PipeWireOutput::bufferSize() const
 
 int PipeWireOutput::write(const AudioBuffer& buffer)
 {
+    if(!m_stream || !m_loop) {
+        return 0;
+    }
+
     const ThreadLoopGuard guard{m_loop.get()};
 
     m_buffer.append(buffer.constData());
     m_bufferPos += buffer.byteCount();
 
-    return buffer.sampleCount();
+    return buffer.frameCount();
 }
 
 void PipeWireOutput::setPaused(bool pause)
 {
+    if(!m_stream || !m_loop) {
+        return;
+    }
+
     const ThreadLoopGuard guard{m_loop.get()};
     m_stream->setActive(!pause);
 }
@@ -241,8 +402,17 @@ void PipeWireOutput::setVolume(double volume)
 {
     m_volume = static_cast<float>(volume);
 
+    if(!initialised()) {
+        return;
+    }
+
     const ThreadLoopGuard guard{m_loop.get()};
     m_stream->setVolume(static_cast<float>(volume));
+}
+
+bool PipeWireOutput::supportsVolumeControl() const
+{
+    return true;
 }
 
 void PipeWireOutput::setDevice(const QString& device)
@@ -250,6 +420,27 @@ void PipeWireOutput::setDevice(const QString& device)
     if(!device.isEmpty()) {
         m_device = device;
     }
+}
+
+AudioFormat PipeWireOutput::negotiateFormat(const AudioFormat& requested) const
+{
+    if(!requested.isValid()) {
+        return requested;
+    }
+
+    if(supportsPipewireLayout(requested)) {
+        return requested;
+    }
+
+    AudioFormat negotiated = requested;
+    const auto fallback    = AudioFormat::defaultChannelLayoutForChannelCount(requested.channelCount());
+    if(static_cast<int>(fallback.size()) == requested.channelCount()) {
+        negotiated.setChannelLayout(fallback);
+    }
+    else {
+        negotiated.clearChannelLayout();
+    }
+    return negotiated;
 }
 
 QString PipeWireOutput::error() const
@@ -336,7 +527,7 @@ bool PipeWireOutput::initStream()
         .channels = static_cast<uint32_t>(m_format.channelCount()),
     };
 
-    updateChannelMap(&audioInfo, m_format.channelCount());
+    updateChannelMap(&audioInfo, m_format);
 
     std::vector<const spa_pod*> params;
     params.emplace_back(spa_format_audio_raw_build(&builder, SPA_PARAM_EnumFormat, &audioInfo));

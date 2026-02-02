@@ -28,6 +28,13 @@ namespace Fooyin {
 class AudioLoaderPrivate;
 class Track;
 
+/*!
+ * Registry and selection layer for decoder/reader/archive backends.
+ *
+ * `AudioLoader` stores backend priority/enable state, resolves appropriate
+ * backend for a file/track, and provides convenience helpers for metadata and
+ * cover read/write operations.
+ */
 class FYCORE_EXPORT AudioLoader final
 {
 public:
@@ -45,12 +52,18 @@ public:
     AudioLoader();
     ~AudioLoader();
 
+    //! Persist current backend order/enable flags to settings storage.
     void saveState();
+    //! Restore backend order/enable flags from settings storage.
     void restoreState();
 
+    //! All supported file extensions across readers/decoders/archive readers.
     [[nodiscard]] QStringList supportedFileExtensions() const;
+    //! Extensions that can be decoded as playable tracks.
     [[nodiscard]] QStringList supportedTrackExtensions() const;
+    //! Extensions that are archive containers.
     [[nodiscard]] QStringList supportedArchiveExtensions() const;
+    //! True when track has a writable reader backend.
     [[nodiscard]] bool canWriteMetadata(const Track& track) const;
 
     [[nodiscard]] bool isArchive(const QString& file) const;
@@ -66,9 +79,12 @@ public:
     [[nodiscard]] bool writeTrackCover(const Track& track, const TrackCovers& coverData,
                                        AudioReader::WriteOptions options) const;
 
+    //! Register decoder backend with optional priority and archive-wrapper flag.
     void addDecoder(const QString& name, const DecoderCreator& creator, int priority = -1,
                     bool isArchiveWrapper = false);
+    //! Register metadata reader backend with optional priority.
     void addReader(const QString& name, const ReaderCreator& creator, int priority = -1, bool isArchiveWrapper = false);
+    //! Register archive reader backend with optional priority.
     void addArchiveReader(const QString& name, const ArchiveReaderCreator& creator, int priority = -1);
 
     [[nodiscard]] std::vector<LoaderEntry<DecoderCreator>> decoders() const;
@@ -83,6 +99,7 @@ public:
     void reloadDecoderExtensions(const QString& name);
     void reloadReaderExtensions(const QString& name);
 
+    //! Reset backend registry and runtime state.
     void reset();
 
 private:

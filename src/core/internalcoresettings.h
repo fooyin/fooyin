@@ -34,38 +34,6 @@ enum class ReplayGainType : uint8_t
     PlaybackOrder
 };
 
-struct FadingIntervals
-{
-    int inPauseStop{1000};
-    int outPauseStop{1000};
-    int inSeek{1000};
-    int outSeek{1000};
-    int inChange{1000};
-    int outChange{1000};
-
-    friend QDataStream& operator<<(QDataStream& stream, const FadingIntervals& fading)
-    {
-        stream << fading.inPauseStop;
-        stream << fading.outPauseStop;
-        stream << fading.inSeek;
-        stream << fading.outSeek;
-        stream << fading.inChange;
-        stream << fading.outChange;
-        return stream;
-    }
-
-    friend QDataStream& operator>>(QDataStream& stream, FadingIntervals& fading)
-    {
-        stream >> fading.inPauseStop;
-        stream >> fading.outPauseStop;
-        stream >> fading.inSeek;
-        stream >> fading.outSeek;
-        stream >> fading.inChange;
-        stream >> fading.outChange;
-        return stream;
-    }
-};
-
 namespace Settings::Core::Internal {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
@@ -91,15 +59,17 @@ enum CoreInternalSettings : uint32_t
     MuteVolume        = 1 | Type::Double,
     DisabledPlugins   = 2 | Type::StringList,
     EngineFading      = 3 | Type::Bool,
-    FadingIntervals   = 4 | Type::Variant,
-    VBRUpdateInterval = 5 | Type::Int,
-    ProxyMode         = 6 | Type::Int,
-    ProxyType         = 7 | Type::Int,
-    ProxyHost         = 8 | Type::String,
-    ProxyPort         = 9 | Type::Int,
-    ProxyAuth         = 10 | Type::Bool,
-    ProxyUsername     = 11 | Type::String,
-    ProxyPassword     = 12 | Type::String,
+    FadingValues      = 4 | Type::Variant,
+    EngineCrossfading = 5 | Type::Bool,
+    CrossfadingValues = 6 | Type::Variant,
+    VBRUpdateInterval = 7 | Type::Int,
+    ProxyMode         = 8 | Type::Int,
+    ProxyType         = 9 | Type::Int,
+    ProxyHost         = 10 | Type::String,
+    ProxyPort         = 11 | Type::Int,
+    ProxyAuth         = 12 | Type::Bool,
+    ProxyUsername     = 13 | Type::String,
+    ProxyPassword     = 14 | Type::String,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal
@@ -114,5 +84,3 @@ private:
     SettingsManager* m_settings;
 };
 } // namespace Fooyin
-
-Q_DECLARE_METATYPE(Fooyin::FadingIntervals)

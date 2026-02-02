@@ -78,7 +78,7 @@ signals:
     void tracksStatsUpdated(const Fooyin::TrackList& tracks);
     void tracksRemoved(const Fooyin::TrackList& tracks);
 
-    void gotTracks(const Fooyin::TrackList& result);
+    void gotTracks(Fooyin::TrackList result);
 
 protected:
     void timerEvent(QTimerEvent* event) override;

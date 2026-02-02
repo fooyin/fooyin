@@ -49,7 +49,9 @@ public:
     void setPaused(bool pause) override;
 
     void setVolume(double volume) override;
+    [[nodiscard]] bool supportsVolumeControl() const override;
     void setDevice(const QString& device) override;
+    [[nodiscard]] AudioFormat negotiateFormat(const AudioFormat& requested) const override;
 
     [[nodiscard]] QString error() const override;
     [[nodiscard]] AudioFormat format() const override;

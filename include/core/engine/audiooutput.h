@@ -30,9 +30,9 @@
 namespace Fooyin {
 struct OutputState
 {
-    int freeSamples{0};
-    int queuedSamples{0};
-    double delay{0.0};
+    int freeFrames{0};   // Frames the backend can accept immediately
+    int queuedFrames{0}; // Frames queued in backend but not yet played
+    double delay{0.0};   // Estimated backend latency in seconds
 };
 
 struct OutputDevice
@@ -70,7 +70,7 @@ public:
      */
     virtual void reset() = 0;
     /*!
-     *  Drains all audio samples in the output buffer.
+     *  Drains all audio frames in the output buffer.
      *  @note this will only be called if @fn initialised returns @c true.
      */
     virtual void drain() = 0;
@@ -93,7 +93,7 @@ public:
      */
     virtual OutputState currentState() = 0;
     /*!
-     *  Returns the size of the audio driver buffer in samples.
+     *  Returns the size of the audio driver buffer in frames.
      *  @note this will only be called if @fn initialised returns @c true.
      */
     [[nodiscard]] virtual int bufferSize() const = 0;
@@ -108,23 +108,46 @@ public:
      * Writes the audio data contained in the @p buffer to the audio driver.
      * @note this will only be called if @fn initialised returns @c true.
      * @note this may be called before @fn start to prefill the buffer.
-     * @returns the number of samples written.
+     * @returns the number of frames written.
      */
     virtual int write(const AudioBuffer& buffer) = 0;
 
     virtual void setPaused(bool pause) = 0;
 
     /*!
-     * Set's the volume of the audio driver.
+     * Sets the volume of the audio driver.
      * @note this may be called regardless of the current initialised state.
      */
-    virtual void setVolume(double volume) = 0;
+    virtual void setVolume(double volume)
+    {
+        Q_UNUSED(volume);
+    }
+    /*!
+     * Returns true when the backend applies master volume itself.
+     *
+     * Backends returning false rely on engine-side post-DSP master scaling.
+     */
+    [[nodiscard]] virtual bool supportsVolumeControl() const
+    {
+        return true;
+    }
 
     /*!
-     * Set's the device for this driver.
+     * Sets the device for this driver.
      * @note this may be called regardless of the current initialised state.
      */
     virtual void setDevice(const QString& device) = 0;
+
+    /*!
+     * Optionally negotiate a preferred output layout before init.
+     *
+     * Implementations should only change metadata that does not require an
+     * engine-side resample or remix. The default keeps the requested format.
+     */
+    [[nodiscard]] virtual AudioFormat negotiateFormat(const AudioFormat& requested) const
+    {
+        return requested;
+    }
 
     /** Returns the output format following the call to @fn init. */
     [[nodiscard]] virtual AudioFormat format() const = 0;
@@ -136,7 +159,7 @@ public:
     };
 
 signals:
-    void stateChanged(State state);
+    void stateChanged(Fooyin::AudioOutput::State state);
 };
 using OutputCreator = std::function<std::unique_ptr<AudioOutput>()>;
 } // namespace Fooyin

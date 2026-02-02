@@ -27,6 +27,10 @@
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
 #include "dirbrowser/dirbrowser.h"
+#include "dsp/dsppresetregistry.h"
+#include "dsp/dspsettingsregistry.h"
+#include "dsp/resamplersettingswidget.h"
+#include "dsp/skipsilencesettingswidget.h"
 #include "gui/editablelayout.h"
 #include "guiapplication.h"
 #include "librarytree/librarytreecontroller.h"
@@ -56,6 +60,7 @@
 #include "settings/librarytree/librarytreepage.h"
 #include "settings/networkpage.h"
 #include "settings/playback/decoderpage.h"
+#include "settings/playback/dspmanagerpage.h"
 #include "settings/playback/outputpage.h"
 #include "settings/playback/playbackpage.h"
 #include "settings/playback/replaygainpage.h"
@@ -100,6 +105,8 @@ Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, Pla
     , m_playlistInteractor{playlistInteractor}
     , m_playlistController{playlistInteractor->playlistController()}
     , m_libraryTreeController{new LibraryTreeController(m_settings, this)}
+    , m_dspPresetRegistry{new DspPresetRegistry(m_settings, this)}
+    , m_dspSettingsRegistry{std::make_unique<DspSettingsRegistry>()}
 {
     QObject::connect(m_core->library(), &MusicLibrary::scanProgress, this, &Widgets::showScanProgress);
 }
@@ -255,6 +262,7 @@ void Widgets::registerPages()
     new LibraryGeneralPage(m_gui->actionManager(), m_core->libraryManager(), m_core->library(), m_settings, this);
     new LibrarySortingPage(m_gui->actionManager(), m_core->sortingRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);
+    new DspManagerPage(m_core->dspChainStore(), m_dspPresetRegistry, m_dspSettingsRegistry.get(), m_settings, this);
     new PlaylistGeneralPage(m_core->playlistLoader()->supportedSaveExtensions(), m_settings, this);
     new PlaylistColumnPage(m_gui->actionManager(), m_playlistController->columnRegistry(), m_settings, this);
     new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
@@ -271,6 +279,12 @@ void Widgets::registerPages()
     new LibraryTreeGroupPage(m_gui->actionManager(), m_libraryTreeController->groupRegistry(), m_settings, this);
     new PlaybackQueuePage(m_settings, this);
     new StatusWidgetPage(m_settings, this);
+}
+
+void Widgets::registerDspSettings()
+{
+    m_dspSettingsRegistry->registerProvider(std::make_unique<SkipSilenceSettingsProvider>());
+    m_dspSettingsRegistry->registerProvider(std::make_unique<ResamplerSettingsProvider>());
 }
 
 void Widgets::registerPropertiesTabs()
@@ -302,6 +316,11 @@ void Widgets::registerFontEntries() const
     themeReg->registerFontEntry(tr("Playlist"), u"Fooyin::PlaylistView"_s);
     themeReg->registerFontEntry(tr("Status bar"), u"Fooyin::StatusLabel"_s);
     themeReg->registerFontEntry(tr("Tabs"), u"Fooyin::EditableTabBar"_s);
+}
+
+DspSettingsRegistry* Widgets::dspSettingsRegistry() const
+{
+    return m_dspSettingsRegistry.get();
 }
 
 void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick)

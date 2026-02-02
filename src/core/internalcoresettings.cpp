@@ -23,6 +23,8 @@
 #include "version.h"
 
 #include <core/coresettings.h>
+#include <core/engine/audioformat.h>
+#include <core/engine/enginedefs.h>
 #include <core/network/networkaccessmanager.h>
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
@@ -34,6 +36,32 @@ using namespace Qt::StringLiterals;
 constexpr auto LogLevel = "LogLevel";
 
 namespace Fooyin {
+namespace {
+Engine::FadingValues defaultFadingValues()
+{
+    Engine::FadingValues values;
+    values.pause.in    = 120;
+    values.pause.out   = 120;
+    values.pause.curve = Engine::FadeCurve::Cosine;
+    values.stop.in     = 120;
+    values.stop.out    = 300;
+    values.stop.curve  = Engine::FadeCurve::Cosine;
+    return values;
+}
+
+Engine::CrossfadingValues defaultCrossfadingValues()
+{
+    Engine::CrossfadingValues values;
+    values.manualChange.in  = 300;
+    values.manualChange.out = 300;
+    values.autoChange.in    = 700;
+    values.autoChange.out   = 700;
+    values.seek.in          = 80;
+    values.seek.out         = 80;
+    return values;
+}
+} // namespace
+
 FySettings::FySettings(QObject* parent)
     : QSettings{Core::settingsPath(), QSettings::IniFormat, parent}
 { }
@@ -47,7 +75,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 {
     using namespace Settings::Core;
 
-    qRegisterMetaType<FadingIntervals>("FadingIntervals");
+    qRegisterMetaType<Engine::FadingValues>("FadingValues");
+    qRegisterMetaType<Engine::CrossfadingValues>("CrossfadingValues");
 
     m_settings->createTempSetting<FirstRun>(true);
     m_settings->createTempSetting<Version>(QString::fromLatin1(VERSION));
@@ -55,8 +84,10 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<AutoRefresh>(true, u"Library/AutoRefresh"_s);
     m_settings->createSetting<LibrarySortScript>(
         u"%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"_s, u"Library/SortScript"_s);
-    m_settings->createSetting<AudioOutput>(QString{}, u"Engine/AudioOutput"_s);
+    m_settings->createSetting<Settings::Core::AudioOutput>(QString{}, u"Engine/AudioOutput"_s);
     m_settings->createSetting<OutputVolume>(1.0, u"Engine/OutputVolume"_s);
+    m_settings->createSetting<OutputBitDepth>(static_cast<int>(SampleFormat::Unknown), u"Engine/OutputBitDepth"_s);
+    m_settings->createSetting<OutputDither>(false, u"Engine/OutputDither"_s);
     m_settings->createSetting<RewindPreviousTrack>(false, u"Playlist/RewindPreviousTrack"_s);
     m_settings->createSetting<GaplessPlayback>(true, u"Engine/GaplessPlayback"_s);
     m_settings->createSetting<Language>(QString{}, u"Language"_s);
@@ -91,8 +122,11 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
     m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, u"Plugins/Disabled"_s);
     m_settings->createSetting<Internal::EngineFading>(false, u"Engine/Fading"_s);
-    m_settings->createSetting<Internal::FadingIntervals>(QVariant::fromValue(FadingIntervals{}),
-                                                         u"Engine/FadingIntervals"_s);
+    m_settings->createSetting<Internal::FadingValues>(QVariant::fromValue(defaultFadingValues()),
+                                                      u"Engine/FadingValues"_s);
+    m_settings->createSetting<Internal::EngineCrossfading>(false, u"Engine/Crossfading"_s);
+    m_settings->createSetting<Internal::CrossfadingValues>(QVariant::fromValue(defaultCrossfadingValues()),
+                                                           u"Engine/CrossfadingValues"_s);
     m_settings->createSetting<Internal::VBRUpdateInterval>(1000, u"Engine/VBRUpdateInterval"_s);
     m_settings->createSetting<Internal::ProxyMode>(static_cast<int>(NetworkAccessManager::Mode::None),
                                                    u"Networking/ProxyMode"_s);
