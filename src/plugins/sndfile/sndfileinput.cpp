@@ -176,7 +176,7 @@ AudioBuffer SndFileDecoder::readBuffer(size_t bytes)
 
     const auto frames = static_cast<sf_count_t>(m_format.framesForBytes(static_cast<int>(bytes)));
 
-    const auto readFrames = sf_readf_double(m_sndFile, std::bit_cast<double*>(buffer.data()), frames);
+    const auto readFrames = sf_readf_double(m_sndFile, reinterpret_cast<double*>(buffer.data()), frames);
     m_currentFrame += readFrames;
 
     if(readFrames == 0) {

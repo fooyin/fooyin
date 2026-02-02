@@ -23,11 +23,15 @@
 
 #include <QDataStream>
 
+#include <set>
 #include <vector>
 
 namespace Fooyin {
 FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const std::vector<int>& vec);
 FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<int>& vec);
+
+FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const std::set<int>& vec);
+FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::set<int>& vec);
 
 FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const std::vector<int16_t>& vec);
 FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<int16_t>& vec);
@@ -39,58 +43,69 @@ FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const std::vector<QB
 FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<QByteArray>& vec);
 
 namespace DataStream {
-template <typename T, typename QType>
-QDataStream& writeVector(QDataStream& stream, const std::vector<T>& vec)
+template <class C>
+using value_t = std::ranges::range_value_t<C>;
+
+template <class C>
+constexpr bool has_reserve_v = requires(C& c, size_t n) { c.reserve(n); };
+
+template <class C, class V>
+constexpr bool has_push_back_v = requires(C& c, V&& v) { c.push_back(std::forward<V>(v)); };
+
+template <class To, class From>
+To maybeCast(From&& v)
 {
-    stream << static_cast<quint32>(vec.size());
-    for(const auto& value : vec) {
-        stream << static_cast<QType>(value);
+    if constexpr(std::is_same_v<std::remove_cvref_t<To>, std::remove_cvref_t<From>>) {
+        return std::forward<From>(v);
     }
-    return stream;
+    else {
+        return static_cast<To>(std::forward<From>(v));
+    }
 }
 
-template <typename T>
-QDataStream& writeVector(QDataStream& stream, const std::vector<T>& vec)
+template <class C, class V>
+void insertValue(C& c, V&& v)
 {
-    stream << static_cast<quint32>(vec.size());
-    for(const auto& value : vec) {
-        stream << value;
+    if constexpr(has_push_back_v<C, V>) {
+        c.push_back(std::forward<V>(v));
     }
-    return stream;
+    else {
+        c.insert(std::forward<V>(v));
+    }
 }
 
-template <typename T, typename QtType>
-QDataStream& readVector(QDataStream& stream, std::vector<T>& vec)
+template <class Container, class Wire = value_t<Container>>
+QDataStream& writeContainer(QDataStream& s, const Container& c)
 {
-    quint32 size;
-    stream >> size;
-
-    vec.clear();
-    vec.reserve(size);
-
-    for(quint32 i{0}; i < size; ++i) {
-        QtType value;
-        stream >> value;
-        vec.emplace_back(static_cast<T>(value));
+    s << static_cast<quint32>(c.size());
+    for(const auto& v : c) {
+        s << maybeCast<Wire>(v);
     }
-    return stream;
+    return s;
 }
 
-template <typename T>
-QDataStream& readVector(QDataStream& stream, std::vector<T>& vec)
+template <class Container, class Wire = value_t<Container>>
+QDataStream& readContainer(QDataStream& s, Container& c)
 {
-    quint32 size;
-    stream >> size;
+    quint32 n{0};
+    s >> n;
 
-    vec.clear();
-    vec.reserve(size);
-
-    for(quint32 i{0}; i < size; ++i) {
-        T value;
-        stream >> value;
-        vec.emplace_back(value);
+    c.clear();
+    if constexpr(has_reserve_v<Container>) {
+        c.reserve(static_cast<size_t>(n));
     }
-    return stream;
+
+    for(quint32 i{0}; i < n; ++i) {
+        Wire w{};
+        s >> w;
+        if(s.status() != QDataStream::Ok) {
+            c.clear();
+            return s;
+        }
+        insertValue(c, maybeCast<value_t<Container>>(w));
+    }
+
+    return s;
 }
 } // namespace DataStream
 } // namespace Fooyin

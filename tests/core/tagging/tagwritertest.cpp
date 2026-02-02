@@ -19,7 +19,7 @@
 
 #include "testutils.h"
 
-#include <core/engine/taglibparser.h>
+#include <core/engine/input/taglibparser.h>
 #include <core/track.h>
 
 #include <gtest/gtest.h>

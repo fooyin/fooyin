@@ -50,7 +50,7 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
         u"VUMeter"_s,
         [this]() {
             auto* meter = new VuMeterWidget(VuMeterWidget::Type::Rms, m_playerController, m_settings);
-            QObject::connect(m_engine, &EngineController::bufferPlayed, meter, &VuMeterWidget::renderBuffer);
+            QObject::connect(m_engine, &EngineController::levelReady, meter, &VuMeterWidget::renderLevel);
             return meter;
         },
         u"VU Meter"_s);
@@ -60,7 +60,7 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
         u"PeakMeter"_s,
         [this]() {
             auto* meter = new VuMeterWidget(VuMeterWidget::Type::Peak, m_playerController, m_settings);
-            QObject::connect(m_engine, &EngineController::bufferPlayed, meter, &VuMeterWidget::renderBuffer);
+            QObject::connect(m_engine, &EngineController::levelReady, meter, &VuMeterWidget::renderLevel);
             return meter;
         },
         u"Peak Meter"_s);

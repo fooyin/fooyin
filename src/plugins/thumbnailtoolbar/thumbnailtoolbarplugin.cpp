@@ -22,7 +22,6 @@
 
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
-#include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 #include <utils/utils.h>
 
@@ -60,7 +59,6 @@ ThumbnailToolbarPlugin::~ThumbnailToolbarPlugin() = default;
 void ThumbnailToolbarPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
-    m_playlistHandler  = context.playlistHandler;
 
     QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this,
                      &ThumbnailToolbarPlugin::trackChanged);
@@ -164,7 +162,7 @@ void ThumbnailToolbarPlugin::updateToolbarButtons()
     buttons[PREVIOUS_BUTTON_ID].hIcon = QIcon2HICON(Utils::iconFromTheme(Constants::Icons::Prev));
     wcscpy_s(buttons[PREVIOUS_BUTTON_ID].szTip,
              reinterpret_cast<LPCWSTR>(tr("Previous").utf16())); // On Windows, wchar_t is UTF-16
-    buttons[PREVIOUS_BUTTON_ID].dwFlags = m_playlistHandler->previousTrack().isValid() ? THBF_ENABLED : THBF_DISABLED;
+    buttons[PREVIOUS_BUTTON_ID].dwFlags = m_playerController->hasPreviousTrack() ? THBF_ENABLED : THBF_DISABLED;
 
     // Play/Pause button
     bool isPlaying = m_playerController->playState() == Player::PlayState::Playing;
@@ -177,7 +175,7 @@ void ThumbnailToolbarPlugin::updateToolbarButtons()
     // Next button
     buttons[NEXT_BUTTON_ID].hIcon = QIcon2HICON(Utils::iconFromTheme(Constants::Icons::Next));
     wcscpy_s(buttons[NEXT_BUTTON_ID].szTip, reinterpret_cast<LPCWSTR>(tr("Next").utf16()));
-    buttons[NEXT_BUTTON_ID].dwFlags = m_playlistHandler->nextTrack().isValid() ? THBF_ENABLED : THBF_DISABLED;
+    buttons[NEXT_BUTTON_ID].dwFlags = m_playerController->hasNextTrack() ? THBF_ENABLED : THBF_DISABLED;
 
     m_taskbarList->ThumbBarUpdateButtons(hWnd, 3, buttons);
 

@@ -23,6 +23,7 @@
 #include "playlistcontroller.h"
 
 #include <core/library/musiclibrary.h>
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -198,7 +199,7 @@ void PlaylistInteractor::filesToCurrentPlaylistReplace(const QList<QUrl>& urls, 
             m_handler->replacePlaylistTracks(playlist->id(), scannedTracks);
             playlist->changeCurrentIndex(0);
             if(play) {
-                m_handler->startPlayback(playlist);
+                playerController()->startPlayback(playlist);
             }
         }
     });
@@ -224,7 +225,7 @@ void PlaylistInteractor::filesToNewPlaylist(const QString& playlistName, const Q
         if(playlist) {
             m_controller->changeCurrentPlaylist(playlist);
             if(play) {
-                m_handler->startPlayback(playlist);
+                playerController()->startPlayback(playlist);
             }
         }
     };
@@ -243,7 +244,7 @@ void PlaylistInteractor::filesToNewPlaylistReplace(const QString& playlistName, 
         if(auto* playlist = m_handler->createPlaylist(playlistName, scannedTracks)) {
             m_controller->changeCurrentPlaylist(playlist);
             if(play) {
-                m_handler->startPlayback(playlist);
+                playerController()->startPlayback(playlist);
             }
         }
     };
@@ -299,7 +300,7 @@ void PlaylistInteractor::loadPlaylist(const QList<QPair<QString, QUrl>>& playlis
             if(playlist) {
                 m_controller->changeCurrentPlaylist(playlist);
                 if(play) {
-                    m_handler->startPlayback(playlist);
+                    playerController()->startPlayback(playlist);
                 }
             }
         };

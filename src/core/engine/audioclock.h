@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,44 +19,109 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
+#include <QObject>
+
+#include <atomic>
 #include <chrono>
+#include <cstdint>
+
+class QTimerEvent;
 
 namespace Fooyin {
-class AudioClock
+/*!
+ * Engine-side playback position clock.
+ *
+ * `AudioClock` combines rendered source position with output latency and a
+ * short-term rate estimate to publish smooth position updates between explicit
+ * pipeline sync points.
+ */
+class FYCORE_EXPORT AudioClock : public QObject
 {
+    Q_OBJECT
+
 public:
+    enum class State : uint8_t
+    {
+        Stopped = 0,
+        Paused,
+        Playing,
+    };
+
+    enum class UpdateMode : uint8_t
+    {
+        //! Normal monotonic update; keep predictive anchor continuity.
+        Continuous = 0,
+        //! Discontinuity (seek/switch); force re-anchor.
+        Discontinuity,
+    };
+
+    explicit AudioClock(QObject* parent = nullptr);
+
+    //! Start periodic sync/publish timers.
+    void start();
+    //! Stop timers and clear predictive anchor state.
+    void stop();
+
+    //! Apply latest source position + delay context from pipeline.
+    void applyPosition(uint64_t sourcePositionMs, uint64_t outputDelayMs, double delayToSourceScale,
+                       uint64_t generation, UpdateMode mode, bool emitNow);
+
+    //! Set playing state and optionally re-anchor from fallback position.
+    void setPlaying(uint64_t fallbackPositionMs);
+    //! Set paused state and freeze anchor at current predicted position.
+    void setPaused();
+    //! Set stopped state and reset to zero.
+    void setStopped();
+
+    //! Last published/predicted position in milliseconds.
+    [[nodiscard]] uint64_t position() const;
+    //! Monotonic context generation from producer updates.
+    [[nodiscard]] uint64_t generation() const;
+
+signals:
+    //! Request immediate sync sample from pipeline/engine.
+    void requestSyncPosition();
+    //! Published clock position update in milliseconds.
+    void positionChanged(uint64_t positionMs);
+
+protected:
+    void timerEvent(QTimerEvent* event) override;
+
+private:
     using Clock     = std::chrono::steady_clock;
     using TimePoint = Clock::time_point;
 
-    AudioClock();
+    [[nodiscard]] static uint64_t presentedFromSource(uint64_t sourcePositionMs, uint64_t outputDelayMs,
+                                                      double delayToSourceScale);
+    [[nodiscard]] static double clampRate(double rate);
+    [[nodiscard]] static uint64_t toPositionMs(double positionMs);
+    [[nodiscard]] double predictedPositionMs(TimePoint now) const;
+    void reanchor(double positionMs, TimePoint now);
+    void emitPosition(uint64_t positionMs);
+    void resetClock();
 
-    void sync(uint64_t position = 0);
-    void sync(const TimePoint& tp, uint64_t position);
+    State m_state;
+    uint64_t m_generation;
 
-    [[nodiscard]] uint64_t currentPosition() const;
+    bool m_hasAnchor;
+    double m_anchorPosMs;
+    TimePoint m_anchorTime;
+    double m_lastOutputMs;
+    double m_rateUsed;
 
-    void setPaused(bool paused);
+    std::atomic<uint64_t> m_lastReportedPositionMs;
 
-    [[nodiscard]] TimePoint timeFromPosition(uint64_t position, bool ignorePause = false) const;
-    [[nodiscard]] uint64_t positionFromTime(TimePoint tp, bool ignorePause = false) const;
+    int m_syncTimerId;
+    int m_publishTimerId;
 
-private:
-    using TrackTime = std::chrono::milliseconds;
+    TimePoint m_lastSyncTimerTick;
+    TimePoint m_lastPublishTimerTick;
+    bool m_hasLastSyncTimerTick;
+    bool m_hasLastPublishTimerTick;
 
-    template <typename T>
-    static Clock::duration toClockTime(const T& t)
-    {
-        return std::chrono::duration_cast<Clock::duration>(t);
-    }
-
-    template <typename T>
-    static TrackTime toTrackTime(const T& t)
-    {
-        return std::chrono::duration_cast<TrackTime>(t);
-    }
-
-    bool m_paused;
-    TrackTime m_position;
-    TimePoint m_timePoint;
+    bool m_syncTimerGapLogActive;
+    bool m_publishTimerGapLogActive;
 };
 } // namespace Fooyin

@@ -23,49 +23,107 @@
 
 #include <QString>
 
+#include <array>
 #include <cstdint>
+#include <span>
 
 namespace Fooyin {
+/*!
+ * PCM sample storage type used by engine buffers and output negotiation.
+ */
 enum class SampleFormat : uint8_t
 {
     Unknown = 0,
     U8,
     S16,
-    S24,
+    S24In32,
     S32,
     F32,
     F64,
 };
 
-// TODO: Handle channel layout
+/*!
+ * Audio format descriptor used across decode, DSP and output stages.
+ *
+ * The format describes sample type, rate and channels. Channel layout is
+ * optional; when absent, channel count still defines interleaving/stride rules.
+ *
+ * Conversion helpers (`bytesForDuration`, `framesForBytes`, etc.) clamp on
+ * overflow where needed instead of wrapping.
+ */
 class FYCORE_EXPORT AudioFormat
 {
 public:
+    enum class ChannelPosition : uint8_t
+    {
+        UnknownPosition = 0,
+        FrontLeft,
+        FrontRight,
+        FrontCenter,
+        LFE,
+        BackLeft,
+        BackRight,
+        FrontLeftOfCenter,
+        FrontRightOfCenter,
+        BackCenter,
+        SideLeft,
+        SideRight,
+        TopCenter,
+        TopFrontLeft,
+        TopFrontCenter,
+        TopFrontRight,
+        TopBackLeft,
+        TopBackCenter,
+        TopBackRight,
+        LFE2,
+        TopSideLeft,
+        TopSideRight,
+        BottomFrontCenter,
+        BottomFrontLeft,
+        BottomFrontRight,
+    };
+
+    static constexpr int MaxChannels = 32;
+    using ChannelLayout              = std::vector<ChannelPosition>;
+
     AudioFormat();
     AudioFormat(SampleFormat format, int sampleRate, int channelCount);
 
     bool operator==(const AudioFormat& other) const noexcept;
     bool operator!=(const AudioFormat& other) const noexcept;
 
+    //! True when sample format, sample rate and channel count describe a usable PCM stream.
     [[nodiscard]] bool isValid() const;
 
     [[nodiscard]] int sampleRate() const;
     [[nodiscard]] int channelCount() const;
     [[nodiscard]] SampleFormat sampleFormat() const;
-    [[nodiscard]] bool sampleFormatIsPlanar() const;
+    [[nodiscard]] bool hasChannelLayout() const;
+    [[nodiscard]] ChannelPosition channelPosition(int channelIndex) const;
+    [[nodiscard]] ChannelLayout channelLayout() const;
+    [[nodiscard]] std::span<const ChannelPosition> channelLayoutView() const noexcept;
 
     void setSampleRate(int sampleRate);
     void setChannelCount(int channelCount);
+    bool setChannelLayout(const ChannelLayout& layout);
+    bool setChannelLayoutAndCount(const ChannelLayout& layout);
+    void clearChannelLayout();
     void setSampleFormat(SampleFormat format);
-    void setSampleFormatIsPlanar(bool planar);
+    [[nodiscard]] static ChannelLayout defaultChannelLayoutForChannelCount(int channelCount);
 
-    [[nodiscard]] int bytesForDuration(uint64_t ms) const;
-    [[nodiscard]] uint64_t durationForBytes(int byteCount) const;
+    //! Convert duration to byte count for this format (saturates on overflow).
+    [[nodiscard]] uint64_t bytesForDuration(uint64_t ms) const;
+    //! Convert byte count to duration for this format.
+    [[nodiscard]] uint64_t durationForBytes(uint64_t byteCount) const;
 
-    [[nodiscard]] int bytesForFrames(int frameCount) const;
-    [[nodiscard]] int framesForBytes(int byteCount) const;
+    //! Convert frame count to byte count.
+    [[nodiscard]] uint64_t bytesForFrames(int frameCount) const;
+    //! Convert byte count to frame count (clamped to `int` range).
+    [[nodiscard]] int framesForBytes(uint64_t byteCount) const;
 
+    //! Convert duration to frames (clamped to `int` range).
     [[nodiscard]] int framesForDuration(uint64_t ms) const;
+    //! Convert frame count to duration.
     [[nodiscard]] uint64_t durationForFrames(int frameCount) const;
 
     [[nodiscard]] int bytesPerFrame() const;
@@ -73,11 +131,15 @@ public:
     [[nodiscard]] int bitsPerSample() const;
 
     [[nodiscard]] QString prettyFormat() const;
+    [[nodiscard]] QString prettyChannelLayout() const;
 
 private:
+    void applyDefaultChannelLayout();
+
     SampleFormat m_sampleFormat;
-    bool m_sampleFormatPlanar;
     int m_channelCount;
     int m_sampleRate;
+    bool m_hasChannelLayout;
+    std::array<ChannelPosition, MaxChannels> m_channelLayout;
 };
 } // namespace Fooyin

@@ -21,8 +21,8 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
-#include <core/engine/ffmpeg/ffmpeginput.h>
-#include <core/engine/ffmpeg/ffmpegutils.h>
+#include <core/engine/input/ffmpeg/ffmpeginput.h>
+#include <core/engine/input/ffmpeg/ffmpegutils.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
@@ -149,7 +149,7 @@ ReplayGainResult extractRGValues(AVFilterGraph* graph, bool truePeak)
     return result;
 }
 
-ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool truePeak)
+ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool isPlanar, bool truePeak)
 {
     int rc{0};
     ReplayGainFilter filter;
@@ -164,9 +164,8 @@ ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool true
     const auto sampleFmt  = format.sampleFormat();
     const auto sampleRate = format.sampleRate();
 
-    const auto sampleFmtName
-        = std::string{av_get_sample_fmt_name(Fooyin::Utils::sampleFormat(sampleFmt, format.sampleFormatIsPlanar()))};
-    const auto args = QString{u"time_base=%1/%2:sample_rate=%2:sample_fmt=%3:channel_layout=0x%4"_s}
+    const auto sampleFmtName = std::string{av_get_sample_fmt_name(Fooyin::Utils::sampleFormat(sampleFmt, isPlanar))};
+    const auto args          = QString{u"time_base=%1/%2:sample_rate=%2:sample_fmt=%3:channel_layout=0x%4"_s}
                           .arg(1)
                           .arg(sampleRate)
                           .arg(QString::fromStdString(sampleFmtName))
@@ -230,8 +229,13 @@ bool setupTrack(FFmpegContext& context, const Fooyin::Track& track, ReplayGainFi
         return false;
     }
 
+    bool isPlanar{false};
+    if(const auto planar = context.decoder.isPlanar()) {
+        isPlanar = planar.value();
+    }
+
     context.format = format.value();
-    filter         = initialiseRGFilter(context.format, context.truePeak);
+    filter         = initialiseRGFilter(context.format, isPlanar, context.truePeak);
     if(!filter.filterContext || !filter.filterGraph) {
         return false;
     }

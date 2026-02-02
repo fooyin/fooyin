@@ -23,6 +23,7 @@
 #include <utils/crypto.h>
 #include <utils/utils.h>
 
+#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QIODevice>

@@ -89,7 +89,7 @@ GmeSettings::GmeSettings(QWidget* parent)
     layout->addWidget(buttons, row++, 0, 1, 4, Qt::AlignBottom);
     layout->setColumnStretch(2, 1);
 
-    m_maxLength->setValue(m_settings.value(MaxLength, DefaultMaxLength).toInt());
+    m_maxLength->setValue(m_settings.value(MaxLength, DefaultMaxLength).toDouble());
     m_loopCount->setValue(m_settings.value(LoopCount, DefaultLoopCount).toInt());
     m_fadeLength->setValue(m_settings.value(FadeLength, DefaultFadeLength).toInt());
 

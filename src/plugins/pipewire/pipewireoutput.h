@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/engine/audiobuffer.h>
 #include <core/engine/audiooutput.h>
 
 #include "pipewirecontext.h"
@@ -45,11 +46,13 @@ public:
 
     OutputState currentState() override;
     [[nodiscard]] int bufferSize() const override;
-    int write(const AudioBuffer& buffer) override;
+    int write(std::span<const std::byte> data, int frameCount) override;
     void setPaused(bool pause) override;
 
     void setVolume(double volume) override;
+    [[nodiscard]] bool supportsVolumeControl() const override;
     void setDevice(const QString& device) override;
+    [[nodiscard]] AudioFormat negotiateFormat(const AudioFormat& requested) const override;
 
     [[nodiscard]] QString error() const override;
     [[nodiscard]] AudioFormat format() const override;

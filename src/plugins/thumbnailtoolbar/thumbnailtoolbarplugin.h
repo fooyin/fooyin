@@ -63,7 +63,6 @@ private:
     void handleThumbnailClick(int buttonId);
 
     PlayerController* m_playerController          = nullptr;
-    PlaylistHandler* m_playlistHandler            = nullptr;
     QPointer<WindowController> m_windowController = nullptr;
 
     Microsoft::WRL::ComPtr<ITaskbarList3> m_taskbarList;

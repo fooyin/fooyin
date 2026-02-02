@@ -40,7 +40,7 @@ class FYCORE_EXPORT PlayerController : public QObject
     Q_OBJECT
 
 public:
-    explicit PlayerController(SettingsManager* settings, QObject* parent = nullptr);
+    explicit PlayerController(SettingsManager* settings, PlaylistHandler* playlistHandler, QObject* parent = nullptr);
     ~PlayerController() override;
 
     /** Returns the current state (playing, paused or stopped). */
@@ -78,8 +78,10 @@ public:
     void pause();
     void previous();
     void next();
-    void nextAuto();
+    void advance(Player::AdvanceReason reason);
     void stop();
+    /*! Synchronise UI/controller state from engine without issuing transport requests. */
+    void syncPlayStateFromEngine(Player::PlayState state);
 
     /** Stops playback and clears position and current track. */
     void reset();
@@ -88,19 +90,27 @@ public:
     void seek(uint64_t ms);
     void seekForward(uint64_t delta);
     void seekBackward(uint64_t delta);
+    void startPlayback(const UId& playlistId);
+    void startPlayback(Playlist* playlist);
 
     void setCurrentPosition(uint64_t ms);
     void setBitrate(int bitrate);
 
     void changeCurrentTrack(const Track& track);
-    void changeCurrentTrack(const PlaylistTrack& track);
+    void changeCurrentTrack(const PlaylistTrack& track,
+                            const Player::TrackChangeContext& context = Player::TrackChangeContext{});
     void updateCurrentTrack(const Track& track);
     void updateCurrentTrackPlaylist(const UId& playlistId);
     void updateCurrentTrackIndex(int index);
 
     void scheduleNextTrack(const PlaylistTrack& track);
+    void remapPlaylistReferences(const UId& fromPlaylistId, const UId& toPlaylistId);
 
     [[nodiscard]] Track upcomingTrack() const;
+    [[nodiscard]] bool hasNextTrack() const;
+    [[nodiscard]] bool hasPreviousTrack() const;
+    [[nodiscard]] Player::TrackChangeContext lastTrackChangeContext() const;
+    [[nodiscard]] Player::PlaybackSnapshot playbackSnapshot() const;
 
     [[nodiscard]] PlaybackQueue playbackQueue() const;
     [[nodiscard]] int queuedTracksCount() const;
@@ -126,11 +136,12 @@ public:
     void clearPlaylistQueue(const UId& playlistId);
     void clearQueue();
 
-    void setPlaylistHandler(PlaylistHandler* handler);
-
 signals:
     void playStateChanged(Fooyin::Player::PlayState state);
     void playModeChanged(Fooyin::Playlist::PlayModes mode);
+    void transportPlayRequested();
+    void transportPauseRequested();
+    void transportStopRequested();
 
     void positionChanged(uint64_t ms);
     void positionMoved(uint64_t ms);
@@ -144,6 +155,8 @@ signals:
     void tracksDequeued(const Fooyin::QueueTracks& tracks);
     void trackIndexesDequeued(const Fooyin::PlaylistIndexes& indexes);
     void trackQueueChanged(const Fooyin::QueueTracks& removed, const Fooyin::QueueTracks& added);
+
+    void playbackSnapshotChanged(const Fooyin::Player::PlaybackSnapshot& snapshot);
 
 private:
     std::unique_ptr<PlayerControllerPrivate> p;

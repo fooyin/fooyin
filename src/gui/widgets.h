@@ -19,9 +19,12 @@
 
 #pragma once
 
+#include "dsp/dspsettingsregistry.h"
+
 #include <core/track.h>
 
 #include <QObject>
+#include <memory>
 
 namespace Fooyin {
 class Application;
@@ -34,6 +37,7 @@ class LibraryTreeController;
 class MainWindow;
 class PlaylistController;
 class PlaylistInteractor;
+class DspPresetRegistry;
 struct ScanProgress;
 class StatusWidget;
 class SettingsManager;
@@ -50,8 +54,10 @@ public:
 
     void registerWidgets();
     void registerPages();
+    void registerDspSettings();
     void registerPropertiesTabs();
     void registerFontEntries() const;
+    [[nodiscard]] DspSettingsRegistry* dspSettingsRegistry() const;
 
     void showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick);
     void removeArtwork(const TrackList& tracks, Track::Cover type);
@@ -72,5 +78,7 @@ private:
     PlaylistInteractor* m_playlistInteractor;
     PlaylistController* m_playlistController;
     LibraryTreeController* m_libraryTreeController;
+    DspPresetRegistry* m_dspPresetRegistry;
+    std::unique_ptr<DspSettingsRegistry> m_dspSettingsRegistry;
 };
 } // namespace Fooyin
