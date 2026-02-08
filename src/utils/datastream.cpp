@@ -23,100 +23,44 @@
 #include <QDataStream>
 #include <vector>
 
-namespace {
-template <typename T, typename QType>
-QDataStream& writeVector(QDataStream& stream, const std::vector<T>& vec)
-{
-    stream << static_cast<quint32>(vec.size());
-    for(const auto& value : vec) {
-        stream << static_cast<QType>(value);
-    }
-    return stream;
-}
-
-template <typename T>
-QDataStream& writeVector(QDataStream& stream, const std::vector<T>& vec)
-{
-    stream << static_cast<quint32>(vec.size());
-    for(const auto& value : vec) {
-        stream << value;
-    }
-    return stream;
-}
-
-template <typename T, typename QtType>
-QDataStream& readVector(QDataStream& stream, std::vector<T>& vec)
-{
-    quint32 size;
-    stream >> size;
-
-    vec.clear();
-    vec.reserve(size);
-
-    for(quint32 i{0}; i < size; ++i) {
-        QtType value;
-        stream >> value;
-        vec.emplace_back(static_cast<T>(value));
-    }
-    return stream;
-}
-
-template <typename T>
-QDataStream& readVector(QDataStream& stream, std::vector<T>& vec)
-{
-    quint32 size;
-    stream >> size;
-
-    vec.clear();
-    vec.reserve(size);
-
-    for(quint32 i{0}; i < size; ++i) {
-        T value;
-        stream >> value;
-        vec.emplace_back(value);
-    }
-    return stream;
-}
-} // namespace
-
 namespace Fooyin {
 QDataStream& operator<<(QDataStream& stream, const std::vector<int>& vec)
 {
-    return writeVector(stream, vec);
+    return DataStream::writeVector(stream, vec);
 }
 
 QDataStream& operator>>(QDataStream& stream, std::vector<int>& vec)
 {
-    return readVector(stream, vec);
+    return DataStream::readVector(stream, vec);
 }
 
 QDataStream& operator<<(QDataStream& stream, const std::vector<int16_t>& vec)
 {
-    return writeVector<int16_t, qint16>(stream, vec);
+    return DataStream::writeVector<int16_t, qint16>(stream, vec);
 }
 
 QDataStream& operator>>(QDataStream& stream, std::vector<int16_t>& vec)
 {
-    return readVector<int16_t, qint16>(stream, vec);
+    return DataStream::readVector<int16_t, qint16>(stream, vec);
 }
 
 QDataStream& operator<<(QDataStream& stream, const std::vector<uint64_t>& vec)
 {
-    return writeVector<uint64_t, quint64>(stream, vec);
+    return DataStream::writeVector<uint64_t, quint64>(stream, vec);
 }
 
 QDataStream& operator>>(QDataStream& stream, std::vector<uint64_t>& vec)
 {
-    return readVector<uint64_t, quint64>(stream, vec);
+    return DataStream::readVector<uint64_t, quint64>(stream, vec);
 }
 
 QDataStream& operator<<(QDataStream& stream, const std::vector<QByteArray>& vec)
 {
-    return writeVector(stream, vec);
+    return DataStream::writeVector(stream, vec);
 }
 
 QDataStream& operator>>(QDataStream& stream, std::vector<QByteArray>& vec)
 {
-    return readVector(stream, vec);
+    return DataStream::readVector(stream, vec);
 }
 } // namespace Fooyin
