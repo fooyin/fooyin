@@ -126,6 +126,7 @@ namespace Fooyin
 
         signals :
         /** Emitted after a @fn trackCover or @fn trackCoverThumbnail call if and when the cover is added to the cache. */
+
     
         void coverAdded(const Fooyin::Track& track);
 
