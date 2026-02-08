@@ -34,13 +34,13 @@
 
 #include <QBuffer>
 #include <QByteArray>
+#include <QCache>
 #include <QDir>
 #include <QFileInfo>
 #include <QIcon>
 #include <QImageReader>
 #include <QLoggingCategory>
 #include <QMimeDatabase>
-#include <QPixmapCache>
 
 #include <set>
 
@@ -50,6 +50,7 @@ using namespace Qt::StringLiterals;
 
 constexpr auto MaxSize = 1024;
 
+QCache<QString, QPixmap> Fooyin::CoverProvider::m_coverCache;
 // Used to keep track of tracks without artwork so we don't query the filesystem more than necessary
 std::set<QString> Fooyin::CoverProvider::m_noCoverKeys;
 
@@ -100,17 +101,6 @@ QSize calculateScaledSize(const QSize& originalSize, int maxSize)
     }
 
     return {newWidth, newHeight};
-}
-
-QPixmap loadCachedCover(const QString& key, int size = 0)
-{
-    QPixmap cover;
-
-    if(QPixmapCache::find(size == 0 ? key : generateThumbCoverKey(key, size), &cover)) {
-        return cover;
-    }
-
-    return {};
 }
 
 QString findDirectoryCover(const Fooyin::CoverPaths& paths, const Fooyin::Track& track, Fooyin::Track::Cover type)
@@ -319,12 +309,13 @@ public:
     explicit CoverProviderPrivate(CoverProvider* self, std::shared_ptr<AudioLoader> audioLoader,
                                   SettingsManager* settings);
 
-    QPixmap loadNoCover();
+    [[nodiscard]] QPixmap loadNoCover() const;
     void processCoverResult(const CoverLoader& loader);
     static QPixmap processLoadResult(const CoverLoader& loader);
     void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail,
                     CoverProvider::ThumbnailSize size = CoverProvider::None);
     [[nodiscard]] QFuture<QPixmap> loadCover(const Track& track, Track::Cover type) const;
+    QPixmap loadCachedCover(const QString& key, int size = 0);
     [[nodiscard]] QFuture<bool> hasCover(const QString& key, const Track& track, Track::Cover type) const;
 
     CoverProvider* m_self;
@@ -332,7 +323,7 @@ public:
     SettingsManager* m_settings;
 
     bool m_usePlacerholder{true};
-    QPixmapCache::Key m_noCoverKey;
+    QString m_noCoverKey{u"|NoCover|"_s};
     std::set<QString> m_pendingCovers;
 
     CoverPaths m_paths;
@@ -345,25 +336,38 @@ CoverProvider::CoverProviderPrivate::CoverProviderPrivate(CoverProvider* self, s
     , m_settings{settings}
     , m_paths{m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
 {
+    auto updateCache = [](const int sizeMb)
+    {
+        m_coverCache.setMaxCost(sizeMb * 1024LL * 1024LL);
+    };
+
+    updateCache(m_settings->value<Settings::Gui::Internal::PixmapCacheSize>());
+    m_settings->subscribe<Settings::Gui::Internal::PixmapCacheSize>(m_self, updateCache);
+
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
         m_self, [this](const QVariant& var) { m_paths = var.value<CoverPaths>(); });
-    m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { QPixmapCache::remove(m_noCoverKey); });
+    m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { m_coverCache.remove(m_noCoverKey); });
 }
 
-QPixmap CoverProvider::CoverProviderPrivate::loadNoCover()
+QPixmap CoverProvider::CoverProviderPrivate::loadNoCover() const
 {
-    QPixmap cachedCover;
-    if(QPixmapCache::find(m_noCoverKey, &cachedCover)) {
-        return cachedCover;
+    if (auto* cover = m_coverCache.object(m_noCoverKey))
+    {
+        return *cover;
     }
 
     const QIcon icon = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
     static const QSize coverSize{MaxSize, MaxSize};
-    const QPixmap cover = icon.pixmap(coverSize, Utils::windowDpr());
 
-    m_noCoverKey = QPixmapCache::insert(cover);
+    auto* cover = new QPixmap(icon.pixmap(coverSize, Utils::windowDpr()));
+    const int cost = cover->width() * cover->height() * cover->depth() / 8;
 
-    return cover;
+    if (m_coverCache.insert(m_noCoverKey, cover, cost))
+    {
+        return *cover;
+    }
+
+    return {};
 }
 
 void CoverProvider::CoverProviderPrivate::processCoverResult(const CoverLoader& loader)
@@ -375,10 +379,13 @@ void CoverProvider::CoverProviderPrivate::processCoverResult(const CoverLoader& 
         return;
     }
 
-    QPixmap cover = QPixmap::fromImage(loader.cover);
-    cover.setDevicePixelRatio(Utils::windowDpr());
+    auto* cover = new QPixmap(QPixmap::fromImage(loader.cover));
+    cover->setDevicePixelRatio(Utils::windowDpr());
 
-    if(!QPixmapCache::insert(loader.isThumb ? generateThumbCoverKey(loader.key, loader.size) : loader.key, cover)) {
+    const int cost = cover->width() * cover->height() * cover->depth() / 8;
+
+    if (!m_coverCache.insert(loader.isThumb ? generateThumbCoverKey(loader.key, loader.size) : loader.key, cover,
+                             cost)) {
         qCDebug(COV_PROV) << "Failed to cache cover for:" << loader.track.filepath();
     }
 
@@ -429,6 +436,17 @@ QFuture<QPixmap> CoverProvider::CoverProviderPrivate::loadCover(const Track& tra
         return result;
     });
     return loaderResult.then(m_self, [track](const CoverLoader& result) { return processLoadResult(result); });
+}
+
+QPixmap CoverProvider::CoverProviderPrivate::loadCachedCover(const QString& key, int size)
+{
+    const QString cacheKey = size == 0 ? key : generateThumbCoverKey(key, size);
+    if (auto* cover = m_coverCache.object(cacheKey))
+    {
+        return *cover;
+    }
+
+    return {};
 }
 
 QFuture<bool> CoverProvider::CoverProviderPrivate::hasCover(const QString& key, const Track& track,
@@ -483,8 +501,9 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
     }
 
     const QString coverKey = generateTrackCoverKey(track, type);
-    if(!p->m_pendingCovers.contains(coverKey)) {
-        QPixmap cover = loadCachedCover(coverKey);
+    if(!p->m_pendingCovers.contains(coverKey))
+    {
+        QPixmap cover = p->loadCachedCover(coverKey);
         if(!cover.isNull()) {
             return cover;
         }
@@ -512,8 +531,9 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, ThumbnailSize siz
     }
 
     const QString coverKey = generateAlbumCoverKey(track, type);
-    if(!p->m_pendingCovers.contains(coverKey) && !m_noCoverKeys.contains(coverKey)) {
-        QPixmap cover = loadCachedCover(coverKey, size);
+    if(!p->m_pendingCovers.contains(coverKey) && !m_noCoverKeys.contains(coverKey))
+    {
+        QPixmap cover = p->loadCachedCover(coverKey, size);
         if(!cover.isNull()) {
             return cover;
         }
@@ -569,7 +589,7 @@ void CoverProvider::clearCache()
     QDir cache{Fooyin::Gui::coverPath()};
     cache.removeRecursively();
 
-    QPixmapCache::clear();
+    m_coverCache.clear();
 }
 
 void CoverProvider::removeFromCache(const Track& track)
@@ -578,16 +598,17 @@ void CoverProvider::removeFromCache(const Track& track)
         QDir cache{Fooyin::Gui::coverPath()};
         cache.remove(coverThumbnailPath(key));
         m_noCoverKeys.erase(key);
-        QPixmapCache::remove(key);
+        m_coverCache.remove(key);
     };
 
     for(const auto type : {Track::Cover::Front, Track::Cover::Back, Track::Cover::Artist}) {
         removeKey(generateAlbumCoverKey(track, type));
         removeKey(generateTrackCoverKey(track, type));
 
-        for(const auto size : {Tiny, Small, MediumSmall, Medium, Large, VeryLarge, ExtraLarge, Huge}) {
-            QPixmapCache::remove(generateThumbCoverKey(generateAlbumCoverKey(track, type), size));
-            QPixmapCache::remove(generateThumbCoverKey(generateTrackCoverKey(track, type), size));
+        for(const auto size : {Tiny, Small, MediumSmall, Medium, Large, VeryLarge, ExtraLarge, Huge})
+        {
+            m_coverCache.remove(generateThumbCoverKey(generateAlbumCoverKey(track, type), size));
+            m_coverCache.remove(generateThumbCoverKey(generateTrackCoverKey(track, type), size));
         }
     }
 }

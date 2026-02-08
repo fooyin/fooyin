@@ -1151,13 +1151,6 @@ void GuiApplicationPrivate::saveAllPlaylist() const
 GuiApplication::GuiApplication(Application* core)
     : p{std::make_unique<GuiApplicationPrivate>(this, core)}
 {
-    auto updateCache = [](const int sizeMb) {
-        QPixmapCache::setCacheLimit(sizeMb * 1024);
-    };
-
-    updateCache(p->m_settings->value<Settings::Gui::Internal::PixmapCacheSize>());
-    p->m_settings->subscribe<Settings::Gui::Internal::PixmapCacheSize>(this, updateCache);
-
     QObject::connect(p->m_settings->settingsDialog(), &SettingsDialogController::opening, this, [this]() {
         const bool isLayoutEditing = p->m_settings->value<Settings::Gui::LayoutEditing>();
         // Layout editing mode overrides the global action context, so disable it until the dialog closes
