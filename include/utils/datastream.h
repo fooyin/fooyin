@@ -40,7 +40,7 @@ FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<QByteArr
 
 namespace DataStream {
 template <typename T, typename QType>
-FYUTILS_EXPORT QDataStream& writeVector(QDataStream& stream, const std::vector<T>& vec)
+QDataStream& writeVector(QDataStream& stream, const std::vector<T>& vec)
 {
     stream << static_cast<quint32>(vec.size());
     for(const auto& value : vec) {
@@ -50,7 +50,7 @@ FYUTILS_EXPORT QDataStream& writeVector(QDataStream& stream, const std::vector<T
 }
 
 template <typename T>
-FYUTILS_EXPORT QDataStream& writeVector(QDataStream& stream, const std::vector<T>& vec)
+QDataStream& writeVector(QDataStream& stream, const std::vector<T>& vec)
 {
     stream << static_cast<quint32>(vec.size());
     for(const auto& value : vec) {
@@ -60,7 +60,7 @@ FYUTILS_EXPORT QDataStream& writeVector(QDataStream& stream, const std::vector<T
 }
 
 template <typename T, typename QtType>
-FYUTILS_EXPORT QDataStream& readVector(QDataStream& stream, std::vector<T>& vec)
+QDataStream& readVector(QDataStream& stream, std::vector<T>& vec)
 {
     quint32 size;
     stream >> size;
@@ -77,7 +77,7 @@ FYUTILS_EXPORT QDataStream& readVector(QDataStream& stream, std::vector<T>& vec)
 }
 
 template <typename T>
-FYUTILS_EXPORT QDataStream& readVector(QDataStream& stream, std::vector<T>& vec)
+QDataStream& readVector(QDataStream& stream, std::vector<T>& vec)
 {
     quint32 size;
     stream >> size;
