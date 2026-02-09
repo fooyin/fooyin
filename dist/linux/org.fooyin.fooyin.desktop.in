@@ -10,4 +10,4 @@ Terminal=false
 Categories=AudioVideo;Player;Qt;Audio;
 MimeType=@FOOYIN_MIMETYPES@
 StartupNotify=false
-StartupWMClass=fooyin
+StartupWMClass=org.fooyin.fooyin
