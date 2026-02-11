@@ -85,11 +85,11 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/audioutils.h>
+#include <utils/fileutils.h>
 #include <utils/logging/logwidget.h>
 #include <utils/settings/advancedsettingsregistry.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/fileutils.h>
 #include <utils/utils.h>
 
 #include <QAction>
@@ -1332,18 +1332,18 @@ void GuiApplicationPrivate::addFolders()
 void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls)
 {
     const bool addDirectory = m_settings->value<Settings::Core::OpenFileAddDirectory>();
-    
+
     // If the setting is enabled and we're opening a single file
     if(addDirectory && urls.size() == 1) {
         const QUrl& url = urls.first();
         const QFileInfo fileInfo{url.toLocalFile()};
         const QString directory = fileInfo.absolutePath();
-        
+
         // Get all supported audio files from the directory
         const QStringList supportedExtensions
             = Utils::extensionsToWildcards(m_core->audioLoader()->supportedFileExtensions());
         const QList<QUrl> allFiles = Utils::File::getUrlsInDir(QDir{directory}, supportedExtensions);
-        
+
         // Find the index of the opened file in the directory's file list
         int playIndex = -1;
         for(int i = 0; i < allFiles.size(); ++i) {
@@ -1352,7 +1352,7 @@ void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls)
                 break;
             }
         }
-        
+
         // Scan the files and create/replace playlist
         const QString playlistName = m_settings->value<Settings::Core::OpenFilesPlaylist>();
         m_playlistInteractor.filesToTracks(allFiles, [this, playlistName, playIndex](const TrackList& scannedTracks) {
@@ -1363,9 +1363,7 @@ void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls)
                     m_playlistHandler->startPlayback(playlist);
                     // Show the currently playing track in the playlist
                     // Wait for the playlist to be loaded before showing the track
-                    QTimer::singleShot(500, m_self, [this]() {
-                        m_playlistController->showNowPlaying();
-                    });
+                    QTimer::singleShot(500, m_self, [this]() { m_playlistController->showNowPlaying(); });
                 }
             }
         });
