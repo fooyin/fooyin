@@ -70,6 +70,8 @@ private:
     QCheckBox* m_skipUnavailable;
     QCheckBox* m_stopIfActiveDeleted;
 
+    QCheckBox* m_openFileAddDirectory;
+
     QSpinBox* m_seekStep;
     QSpinBox* m_seekStepLarge;
     QDoubleSpinBox* m_volumeStep;
@@ -92,6 +94,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
     , m_stopIfActiveDeleted{new QCheckBox(tr("Stop playback if the active playlist is deleted"), this)}
+    , m_openFileAddDirectory{new QCheckBox(tr("When opening a file, load all files from its directory into a playlist and play the selected file"), this)}
     , m_seekStep{new QSpinBox(this)}
     , m_seekStepLarge{new QSpinBox(this)}
     , m_volumeStep{new QDoubleSpinBox(this)}
@@ -141,6 +144,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_openFileAddDirectory, row++, 0, 1, 2);
     generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 2);
     generalGroupLayout->setColumnStretch(1, 1);
@@ -200,6 +205,7 @@ void PlaybackPageWidget::load()
     m_skipUnavailable->setChecked(
         m_settings->fileValue(Settings::Core::Internal::PlaylistSkipUnavailable, false).toBool());
     m_stopIfActiveDeleted->setChecked(m_settings->value<Settings::Core::StopIfActivePlaylistDeleted>());
+    m_openFileAddDirectory->setChecked(m_settings->value<Settings::Core::OpenFileAddDirectory>());
 
     m_seekStep->setValue(m_settings->value<Settings::Gui::SeekStepSmall>());
     m_seekStepLarge->setValue(m_settings->value<Settings::Gui::SeekStepLarge>());
@@ -226,6 +232,7 @@ void PlaybackPageWidget::apply()
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
     m_settings->fileSet(Settings::Core::Internal::PlaylistSkipUnavailable, m_skipUnavailable->isChecked());
     m_settings->set<Settings::Core::StopIfActivePlaylistDeleted>(m_stopIfActiveDeleted->isChecked());
+    m_settings->set<Settings::Core::OpenFileAddDirectory>(m_openFileAddDirectory->isChecked());
 
     m_settings->set<Settings::Gui::SeekStepSmall>(m_seekStep->value());
     m_settings->set<Settings::Gui::SeekStepLarge>(m_seekStepLarge->value());
@@ -252,6 +259,7 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->fileRemove(Settings::Core::Internal::PlaylistSkipUnavailable);
     m_settings->reset<Settings::Core::StopIfActivePlaylistDeleted>();
+    m_settings->reset<Settings::Core::OpenFileAddDirectory>();
     m_settings->reset<Settings::Gui::SeekStepSmall>();
     m_settings->reset<Settings::Gui::SeekStepLarge>();
     m_settings->reset<Settings::Gui::VolumeStep>();

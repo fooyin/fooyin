@@ -86,6 +86,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PreserveTimestamps>(false, u"Tagging/PreserveTimestamps"_s);
     m_settings->createSetting<PlaylistSkipMissing>(true, u"Playlist/SkipMissing"_s);
     m_settings->createSetting<PlaybackQueueStopWhenFinished>(false, u"Playback/PlaybackQueueStopWhenFinished"_s);
+    m_settings->createSetting<OpenFileAddDirectory>(false, u"Playback/OpenFileAddDirectory"_s);
 
     m_settings->createSetting<Internal::MonitorLibraries>(true, u"Library/MonitorLibraries"_s);
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
