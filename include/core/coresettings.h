@@ -87,6 +87,7 @@ enum CoreSettings : uint32_t
     LibraryViewPlaylistSortScript = 38 | Type::String,
     OverwriteRatingOnReload       = 39 | Type::Bool,
     OverwritePlaycountOnReload    = 40 | Type::Bool,
+    OpenFileAddDirectory = 41 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core
