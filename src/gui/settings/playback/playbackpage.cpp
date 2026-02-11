@@ -94,7 +94,9 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
     , m_stopIfActiveDeleted{new QCheckBox(tr("Stop playback if the active playlist is deleted"), this)}
-    , m_openFileAddDirectory{new QCheckBox(tr("When opening a file, load all files from its directory into a playlist and play the selected file"), this)}
+    , m_openFileAddDirectory{new QCheckBox(
+          tr("When opening a file, load all files from its directory into a playlist and play the selected file"),
+          this)}
     , m_seekStep{new QSpinBox(this)}
     , m_seekStepLarge{new QSpinBox(this)}
     , m_volumeStep{new QDoubleSpinBox(this)}
