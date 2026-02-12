@@ -38,6 +38,7 @@ public:
         QString name;
         QStringList extensions;
         bool enabled{true};
+        bool isArchiveWrapper{false};
         T creator;
     };
 
@@ -65,8 +66,9 @@ public:
     [[nodiscard]] bool writeTrackCover(const Track& track, const TrackCovers& coverData,
                                        AudioReader::WriteOptions options) const;
 
-    void addDecoder(const QString& name, const DecoderCreator& creator, int priority = -1);
-    void addReader(const QString& name, const ReaderCreator& creator, int priority = -1);
+    void addDecoder(const QString& name, const DecoderCreator& creator, int priority = -1,
+                    bool isArchiveWrapper = false);
+    void addReader(const QString& name, const ReaderCreator& creator, int priority = -1, bool isArchiveWrapper = false);
     void addArchiveReader(const QString& name, const ArchiveReaderCreator& creator, int priority = -1);
 
     [[nodiscard]] std::vector<LoaderEntry<DecoderCreator>> decoders() const;
