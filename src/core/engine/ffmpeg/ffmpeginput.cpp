@@ -159,7 +159,7 @@ QString convertString(const char* str)
     return QString::fromUtf8(str);
 };
 
-void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
+void parseTag(Fooyin::Track& track, const AVDictionaryEntry* tag, bool isTrack, int nbChapters)
 {
     if(strcasecmp(tag->key, "album") == 0) {
         track.setAlbum(convertString(tag->value));
@@ -171,7 +171,10 @@ void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
         track.setAlbumArtists({convertString(tag->value)});
     }
     else if(strcasecmp(tag->key, "title") == 0) {
-        track.setTitle(convertString(tag->value));
+        if(!isTrack && nbChapters > 1)
+            track.setAlbum(convertString(tag->value));
+        else
+            track.setTitle(convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "genre") == 0) {
         track.setGenres({convertString(tag->value)});
@@ -227,6 +230,26 @@ void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
         track.addExtraTag(u"PODCASTCATEGORY"_s, convertString(tag->value));
     }
     else if(strncasecmp(tag->key, "ID3V2_PRIV", 10) == 0) { }
+    else if(strcasecmp(tag->key, "REPLAYGAIN_GAIN")) {
+        char* end;
+        const float gain = strtof(tag->value, &end);
+        if(end > tag->value) {
+            if(isTrack)
+                track.setRGTrackGain(gain);
+            else
+                track.setRGAlbumGain(gain);
+        }
+    }
+    else if(strcasecmp(tag->key, "REPLAYGAIN_PEAK")) {
+        char* end;
+        const float peak = strtof(tag->value, &end);
+        if(end > tag->value) {
+            if(isTrack)
+                track.setRGTrackPeak(peak);
+            else
+                track.setRGAlbumPeak(peak);
+        }
+    }
     else {
         track.addExtraTag(convertString(tag->key).toUpper(), convertString(tag->value));
     }
@@ -391,7 +414,7 @@ public:
     { }
 
     void reset();
-    bool setup(const AudioSource& source);
+    bool setup(const AudioSource& source, uint64_t duration, unsigned int subsong);
     void checkIsVbr(const Track& track);
 
     bool createCodec(AVStream* avStream);
@@ -428,6 +451,8 @@ public:
     uint64_t m_currentPos{0};
     int m_bitrate{0};
     int m_skipBytes{0};
+    uint64_t m_startTimeMs;
+    uint64_t m_endTimeMs;
 };
 
 void FFmpegInputPrivate::reset()
@@ -450,7 +475,7 @@ void FFmpegInputPrivate::reset()
     m_buffer = {};
 }
 
-bool FFmpegInputPrivate::setup(const AudioSource& source)
+bool FFmpegInputPrivate::setup(const AudioSource& source, uint64_t duration, unsigned int subsong)
 {
     reset();
 
@@ -471,8 +496,22 @@ bool FFmpegInputPrivate::setup(const AudioSource& source)
 
     m_timeBase = m_stream.avStream()->time_base;
 
+    if(subsong < m_context->nb_chapters) {
+        AVChapter* chapter  = m_context->chapters[subsong];
+        AVRational timeBase = chapter->time_base;
+        m_startTimeMs       = av_rescale_q(chapter->start, timeBase, TimeBaseMs);
+        m_endTimeMs         = av_rescale_q(chapter->end, timeBase, TimeBaseMs);
+    }
+    else {
+        m_startTimeMs = 0;
+        m_endTimeMs   = duration;
+    }
+
     if(createCodec(m_stream.avStream())) {
         m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar, m_codec.context()->sample_fmt);
+        if(subsong < m_context->nb_chapters) {
+            seek(0);
+        }
         return true;
     }
 
@@ -597,16 +636,23 @@ int FFmpegInputPrivate::receiveAVFrames()
     }
 
     if(!m_returnFrame) {
-        const auto sampleCount   = m_audioFormat.bytesPerFrame() * m_frame.sampleCount();
-        const uint64_t startTime = m_codec.context()->codec_id == AV_CODEC_ID_APE ? m_currentPos : m_frame.ptsMs();
+        auto sampleCount             = m_audioFormat.bytesPerFrame() * m_frame.sampleCount();
+        const uint64_t startTime     = m_codec.context()->codec_id == AV_CODEC_ID_APE ? m_currentPos : m_frame.ptsMs();
+        const uint64_t frameDuration = m_frame.sampleCount() * 1000 / m_audioFormat.sampleRate();
+        if(frameDuration > m_endTimeMs - startTime) {
+            const auto newSampleCount = (m_endTimeMs - startTime) * m_audioFormat.sampleRate() / 1000;
+            sampleCount               = m_audioFormat.bytesPerFrame() * newSampleCount;
+            m_eof                     = true;
+        }
 
         if(m_codec.isPlanar()) {
-            m_buffer = {m_audioFormat, startTime};
+            m_buffer = {m_audioFormat, startTime - m_startTimeMs};
             m_buffer.resize(static_cast<size_t>(sampleCount));
             interleave(m_frame.avFrame()->data, m_buffer);
         }
         else {
-            m_buffer = {m_frame.avFrame()->data[0], static_cast<size_t>(sampleCount), m_audioFormat, startTime};
+            m_buffer = {m_frame.avFrame()->data[0], static_cast<size_t>(sampleCount), m_audioFormat,
+                        startTime - m_startTimeMs};
         }
 
         if(!(m_options & AudioDecoder::NoSeeking)) {
@@ -634,6 +680,11 @@ int FFmpegInputPrivate::receiveAVFrames()
 void FFmpegInputPrivate::readNext()
 {
     if(!m_isDecoding) {
+        return;
+    }
+
+    if(m_currentPos >= m_endTimeMs) {
+        m_eof = true;
         return;
     }
 
@@ -675,7 +726,7 @@ void FFmpegInputPrivate::readNext()
         }
     }
 
-    if(m_seekPos > 0 && m_codec.context()->codec_id == AV_CODEC_ID_APE) {
+    if(m_seekPos > 0) {
         const auto packetPts = av_rescale_q_rnd(packet->pts, m_timeBase, TimeBaseMs, AVRounding::AV_ROUND_DOWN);
         m_skipBytes          = m_audioFormat.bytesForDuration(std::abs(m_seekPos - packetPts));
     }
@@ -690,14 +741,14 @@ void FFmpegInputPrivate::seek(uint64_t pos)
         return;
     }
 
+    pos += m_startTimeMs;
+
     m_seekPos = static_cast<int64_t>(pos);
 
-    constexpr static auto min = std::numeric_limits<int64_t>::min();
-    constexpr static auto max = std::numeric_limits<int64_t>::max();
-
     const auto target = av_rescale_q_rnd(m_seekPos, TimeBaseMs, TimeBaseAv, AVRounding::AV_ROUND_DOWN);
+    const auto min    = av_rescale_q_rnd(m_seekPos - 1000, TimeBaseMs, TimeBaseAv, AVRounding::AV_ROUND_DOWN);
 
-    if(auto ret = avformat_seek_file(m_context.get(), -1, min, target, max, 0) < 0) {
+    if(auto ret = avformat_seek_file(m_context.get(), -1, min, target, target, 0) < 0) {
         Utils::printError(ret);
     }
     avcodec_flush_buffers(m_codec.context());
@@ -731,7 +782,7 @@ std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const 
 {
     p->m_options = options;
 
-    if(p->setup(source)) {
+    if(p->setup(source, track.duration(), track.subsong())) {
         p->checkIsVbr(track);
         return p->m_audioFormat;
     }
@@ -830,6 +881,49 @@ bool FFmpegReader::canWriteMetaData() const
     return false;
 }
 
+int FFmpegReader::subsongCount() const
+{
+    return m_subsongCount;
+}
+
+bool FFmpegReader::init(const AudioSource& source)
+{
+    const FormatContext context = createAVFormatContext(source);
+    if(!context.formatContext) {
+        return false;
+    }
+
+    const Stream stream = Utils::findAudioStream(context.formatContext.get());
+    if(!stream.isValid()) {
+        return false;
+    }
+
+    const auto* avStream = stream.avStream();
+
+    const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
+    if(!avCodec) {
+        Utils::printError(u"Could not find a decoder for stream"_s);
+        return false;
+    }
+
+    CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
+    if(!avCodecContext) {
+        Utils::printError(u"Could not allocate context"_s);
+        return false;
+    }
+
+    if(avCodecContext->codec_type != AVMEDIA_TYPE_AUDIO) {
+        return false;
+    }
+
+    m_subsongCount = 1;
+    if(context.formatContext->nb_chapters > 0) {
+        m_subsongCount = context.formatContext->nb_chapters;
+    }
+
+    return true;
+}
+
 bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
 {
     const FormatContext context = createAVFormatContext(source);
@@ -879,14 +973,27 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     track.setBitDepth(format.bitsPerSample());
     track.setEncoding(isLossless(codecPar->codec_id) ? u"Lossless"_s : u"Lossy"_s);
 
+    int _subsong     = track.subsong();
+    int _nb_chapters = (int)context.formatContext->nb_chapters;
+
     if(track.duration() == 0) {
-        AVRational timeBase = avStream->time_base;
-        auto duration       = avStream->duration;
-        if(duration <= 0 || std::cmp_equal(duration, AV_NOPTS_VALUE)) {
-            duration = context.formatContext->duration;
-            timeBase = TimeBaseAv;
+        uint64_t durationMs;
+        if(_subsong < _nb_chapters) {
+            AVChapter* chapter         = context.formatContext->chapters[_subsong];
+            AVRational timeBase        = chapter->time_base;
+            const uint64_t startTimeMs = av_rescale_q(chapter->start, timeBase, TimeBaseMs);
+            const uint64_t endTimeMs   = av_rescale_q(chapter->end, timeBase, TimeBaseMs);
+            durationMs                 = endTimeMs - startTimeMs;
         }
-        const uint64_t durationMs = av_rescale_q(duration, timeBase, TimeBaseMs);
+        else {
+            AVRational timeBase = avStream->time_base;
+            auto duration       = avStream->duration;
+            if(duration <= 0 || std::cmp_equal(duration, AV_NOPTS_VALUE)) {
+                duration = context.formatContext->duration;
+                timeBase = TimeBaseAv;
+            }
+            durationMs = av_rescale_q(duration, timeBase, TimeBaseMs);
+        }
         track.setDuration(durationMs);
     }
 
@@ -898,9 +1005,32 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
         track.setBitrate(bitrate);
     }
 
-    AVDictionaryEntry* tag{nullptr};
-    while((tag = av_dict_get(context.formatContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-        parseTag(track, tag);
+    const AVDictionaryEntry* tag{nullptr};
+    if(context.formatContext->metadata) {
+        while((tag = av_dict_iterate(context.formatContext->metadata, tag))) {
+            parseTag(track, tag, false, _nb_chapters);
+        }
+    }
+    if(context.formatContext->nb_programs > 0) {
+        AVProgram* program = context.formatContext->programs[0];
+        if(program && program->metadata) {
+            while((tag = av_dict_iterate(program->metadata, tag))) {
+                parseTag(track, tag, false, _nb_chapters);
+            }
+        }
+    }
+    if(avStream->metadata) {
+        while((tag = av_dict_iterate(avStream->metadata, tag))) {
+            parseTag(track, tag, false, _nb_chapters);
+        }
+    }
+    if(_subsong < _nb_chapters) {
+        AVChapter* chapter = context.formatContext->chapters[_subsong];
+        if(chapter && chapter->metadata) {
+            while((tag = av_dict_iterate(chapter->metadata, tag))) {
+                parseTag(track, tag, true, _nb_chapters);
+            }
+        }
     }
 
     return true;
