@@ -182,18 +182,13 @@ void ApplicationPrivate::registerPlaylistParsers()
 
 void ApplicationPrivate::registerInputs()
 {
-    m_audioLoader->addDecoder(u"Archive"_s, [this]() { return std::make_unique<ArchiveDecoder>(m_audioLoader); }, -1,
-                              true);
-    m_audioLoader->addReader(u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); },
-                             -1, true);
-    m_audioLoader->addReader(u"TagLib"_s, {[]() {
-                                 return std::make_unique<TagLibReader>();
-                             }});
+    m_audioLoader->addDecoder(
+        u"Archive"_s, [this]() { return std::make_unique<ArchiveDecoder>(m_audioLoader); }, -1, true);
+    m_audioLoader->addReader(
+        u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); }, -1, true);
+    m_audioLoader->addReader(u"TagLib"_s, {[]() { return std::make_unique<TagLibReader>(); }});
     m_audioLoader->addDecoder(u"FFmpeg"_s, []() { return std::make_unique<FFmpegDecoder>(); }, 99);
-    m_audioLoader->addReader(u"FFmpeg"_s, {[]() {
-                                 return std::make_unique<FFmpegReader>();
-                             }},
-                             99);
+    m_audioLoader->addReader(u"FFmpeg"_s, {[]() { return std::make_unique<FFmpegReader>(); }}, 99);
 }
 
 void ApplicationPrivate::setupConnections()
