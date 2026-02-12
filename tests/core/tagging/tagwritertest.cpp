@@ -17,7 +17,7 @@
  *
  */
 
-#include "testutils.h"
+#include "../../testutils.h"
 
 #include <core/engine/taglibparser.h>
 #include <core/track.h>
