@@ -39,6 +39,12 @@ class PlaylistOrganiserModel : public TreeModel<PlaylistOrganiserItem>
     Q_OBJECT
 
 public:
+    enum SortOrder : uint8_t
+    {
+        Ascending,
+        Descending
+    };
+
     explicit PlaylistOrganiserModel(PlaylistHandler* playlistHandler, PlayerController* playerController);
 
     void populate();
@@ -53,6 +59,9 @@ public:
     void playlistInserted(Playlist* playlist, const QString& group, int index);
     void playlistRenamed(Playlist* playlist);
     void playlistRemoved(Playlist* playlist);
+
+    void sortAllPlaylists(const SortOrder order);
+    void sortGroupPlaylists(const QModelIndexList& indexes, const SortOrder order);
 
     QModelIndex indexForPlaylist(Playlist* playlist);
 
