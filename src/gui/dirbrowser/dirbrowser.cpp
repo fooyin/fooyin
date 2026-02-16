@@ -777,7 +777,7 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     settings->subscribe<Settings::Gui::Internal::DirBrowserShowSymLinks>(
         this, [this](bool enabled) { p->setShowSymLinksEnabled(enabled); });
     settings->subscribe<Settings::Gui::Internal::DirBrowserShowHidden>(
-        this, [this](bool enabled) {p->setShowHidden(enabled); });
+        this, [this](bool enabled) { p->setShowHidden(enabled); });
     settings->subscribe<Settings::Gui::Theme>(p->m_proxyModel, &DirProxyModel::resetPalette);
     settings->subscribe<Settings::Gui::Style>(p->m_proxyModel, &DirProxyModel::resetPalette);
 
