@@ -128,6 +128,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::DirBrowserListIndent>(true, u"DirectoryBrowser/IndentList"_s);
     m_settings->createSetting<Internal::DirBrowserControls>(true, u"DirectoryBrowser/Controls"_s);
     m_settings->createSetting<Internal::DirBrowserLocation>(true, u"DirectoryBrowser/LocationBar"_s);
+    m_settings->createSetting<Internal::DirBrowserShowSymLinks>(false, u"DirectoryBrowser/SymLinks"_s);
+    m_settings->createSetting<Internal::DirBrowserShowHidden>(false, u"DirectoryBrowser/Hidden"_s);
     m_settings->createSetting<Internal::WindowTitleTrackScript>(u"[%albumartist% - ]%title% \"[fooyin]\""_s,
                                                                 u"Interface/WindowTitleTrackScript"_s);
     m_settings->createSetting<Internal::TrackCoverPaths>(QVariant::fromValue(defaultCoverPaths()), u"Artwork/Paths"_s);

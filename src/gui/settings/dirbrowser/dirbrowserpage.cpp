@@ -60,6 +60,9 @@ private:
     QRadioButton* m_treeMode;
     QRadioButton* m_listMode;
 
+    QCheckBox* m_showSymLinks;
+    QCheckBox* m_showHidden;
+
     QCheckBox* m_showIcons;
     QCheckBox* m_indentList;
     QCheckBox* m_showHorizScrollbar;
@@ -80,6 +83,8 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     , m_showHorizScrollbar{new QCheckBox(tr("Show horizontal scrollbar"), this)}
     , m_showControls{new QCheckBox(tr("Show controls"), this)}
     , m_showLocation{new QCheckBox(tr("Show location"), this)}
+    , m_showSymLinks{new QCheckBox(tr("Show symlinks"), this)}
+    , m_showHidden{new QCheckBox(tr("Show hidden"), this)}
     , m_doubleClick{new QComboBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}
@@ -104,6 +109,10 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     modeGroup->addButton(m_listMode);
     browserModeLayout->addWidget(m_listMode);
     browserModeLayout->addStretch();
+
+    browserModeLayout->addWidget(new QLabel(tr("Browser Filters"), this), 0, Qt::AlignCenter);
+    browserModeLayout->addWidget(m_showSymLinks);
+    browserModeLayout->addWidget(m_showHidden);
 
     auto* displayOptions       = new QGroupBox(tr("Display Options"), this);
     auto* displayOptionsLayout = new QGridLayout(displayOptions);
@@ -173,6 +182,8 @@ void DirBrowserPageWidget::load()
     m_showHorizScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserShowHorizScroll>());
     m_showControls->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserControls>());
     m_showLocation->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserLocation>());
+    m_showSymLinks->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserShowSymLinks>());
+    m_showHidden->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserShowHidden>());
 
     const auto mode = static_cast<DirBrowser::Mode>(m_settings->value<Settings::Gui::Internal::DirBrowserMode>());
     if(mode == DirBrowser::Mode::List) {
@@ -195,6 +206,8 @@ void DirBrowserPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::DirBrowserShowHorizScroll>(m_showHorizScrollbar->isChecked());
     m_settings->set<Settings::Gui::Internal::DirBrowserControls>(m_showControls->isChecked());
     m_settings->set<Settings::Gui::Internal::DirBrowserLocation>(m_showLocation->isChecked());
+    m_settings->set<Settings::Gui::Internal::DirBrowserShowSymLinks>(m_showSymLinks->isChecked());
+    m_settings->set<Settings::Gui::Internal::DirBrowserShowHidden>(m_showHidden->isChecked());
 
     if(m_listMode->isChecked()) {
         m_settings->set<Settings::Gui::Internal::DirBrowserMode>(static_cast<int>(DirBrowser::Mode::List));
@@ -215,6 +228,8 @@ void DirBrowserPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::DirBrowserMode>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserControls>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserLocation>();
+    m_settings->reset<Settings::Gui::Internal::DirBrowserShowSymLinks>();
+    m_settings->reset<Settings::Gui::Internal::DirBrowserShowHidden>();
 }
 
 DirBrowserPage::DirBrowserPage(SettingsManager* settings, QObject* parent)
