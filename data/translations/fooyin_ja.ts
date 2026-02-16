@@ -338,7 +338,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>再生開始時にアートワークを自動検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
@@ -348,7 +348,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="71"/>
         <source>Search parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>パラメータ検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="77"/>
@@ -601,7 +601,7 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="252"/>
         <source>Remove artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークを削除</translation>
     </message>
 </context>
 <context>
@@ -701,7 +701,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="255"/>
         <source>Send to playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>再生キューに送る</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="282"/>
