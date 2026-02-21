@@ -664,7 +664,8 @@ void DirBrowserPrivate::setShowSymLinksEnabled(bool enabled)
     updateFilters();
 }
 
-void DirBrowserPrivate::setShowHidden(bool enabled) {
+void DirBrowserPrivate::setShowHidden(bool enabled)
+{
     m_showHidden = enabled;
     updateFilters();
 }
