@@ -60,14 +60,14 @@ private:
     QRadioButton* m_treeMode;
     QRadioButton* m_listMode;
 
-    QCheckBox* m_showSymLinks;
-    QCheckBox* m_showHidden;
-
     QCheckBox* m_showIcons;
     QCheckBox* m_indentList;
     QCheckBox* m_showHorizScrollbar;
     QCheckBox* m_showControls;
     QCheckBox* m_showLocation;
+
+    QCheckBox* m_showSymLinks;
+    QCheckBox* m_showHidden;
 
     QComboBox* m_doubleClick;
     QComboBox* m_middleClick;
