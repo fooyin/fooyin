@@ -23,10 +23,10 @@
 #include "database/playlistdatabase.h"
 #include "internalcoresettings.h"
 #include "library/libraryutils.h"
+#include "playback/playlistnavigator.h"
 
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
-#include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
 #include <utils/crypto.h>
 #include <utils/helpers.h>
@@ -50,7 +50,7 @@ class PlaylistHandlerPrivate
 {
 public:
     PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
-                           PlayerController* playerController, MusicLibrary* library, SettingsManager* settings);
+                           MusicLibrary* library, SettingsManager* settings);
 
     void reloadPlaylists();
     void populatePlaylists();
@@ -60,9 +60,10 @@ public:
     void handleTracksChanged(const TrackList& tracks);
     void handleTracksUpdated(const TrackList& tracks);
 
-    void startNextTrack(const Track& track, int index) const;
-    PlaylistTrack nextTrackChange(int delta);
-    PlaylistTrack nextTrack(int delta);
+    void prepareUpcomingTrack();
+    [[nodiscard]] PlaylistTrack currentTrack() const;
+    [[nodiscard]] PlaylistTrack nextTrackChange(int delta, Playlist::PlayModes mode);
+    [[nodiscard]] PlaylistTrack nextTrack(int delta, Playlist::PlayModes mode) const;
 
     void resetShuffleOrder();
     void updateIndices();
@@ -82,8 +83,7 @@ public:
     PlaylistHandler* m_self;
 
     DbConnectionPoolPtr m_dbPool;
-    std::shared_ptr<AudioLoader> m_audioLoader;
-    PlayerController* m_playerController;
+    PlaylistNavigator m_playlistNavigator;
     MusicLibrary* m_library;
     SettingsManager* m_settings;
     PlaylistDatabase m_playlistConnector;
@@ -95,13 +95,11 @@ public:
 };
 
 PlaylistHandlerPrivate::PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool,
-                                               std::shared_ptr<AudioLoader> audioLoader,
-                                               PlayerController* playerController, MusicLibrary* library,
+                                               std::shared_ptr<AudioLoader> audioLoader, MusicLibrary* library,
                                                SettingsManager* settings)
     : m_self{self}
     , m_dbPool{std::move(dbPool)}
-    , m_audioLoader{std::move(audioLoader)}
-    , m_playerController{playerController}
+    , m_playlistNavigator{std::move(audioLoader)}
     , m_library{library}
     , m_settings{settings}
 {
@@ -193,62 +191,25 @@ void PlaylistHandlerPrivate::handleTracksUpdated(const TrackList& tracks)
     }
 }
 
-void PlaylistHandlerPrivate::startNextTrack(const Track& track, int index) const
+PlaylistTrack PlaylistHandlerPrivate::currentTrack() const
 {
-    if(!m_activePlaylist) {
-        return;
-    }
-
-    Track nextTrk{track};
-    if(!nextTrk.metadataWasRead()) {
-        if(m_audioLoader->readTrackMetadata(nextTrk)) {
-            nextTrk.generateHash();
-            m_activePlaylist->updateTrackAtIndex(m_activePlaylist->currentTrackIndex(), nextTrk);
-        }
-    }
-
-    m_playerController->changeCurrentTrack({nextTrk, m_activePlaylist->id(), index});
-    m_playerController->play();
+    return m_playlistNavigator.currentTrack(m_activePlaylist);
 }
 
-PlaylistTrack PlaylistHandlerPrivate::nextTrackChange(int delta)
+PlaylistTrack PlaylistHandlerPrivate::nextTrackChange(int delta, Playlist::PlayModes mode)
 {
-    if(!m_activePlaylist) {
-        return {};
-    }
-
-    Track nextTrk = m_activePlaylist->nextTrackChange(delta, m_playerController->playMode());
-    if(!nextTrk.isValid()) {
-        return {};
-    }
-
-    if(!nextTrk.metadataWasRead()) {
-        if(m_audioLoader->readTrackMetadata(nextTrk)) {
-            nextTrk.generateHash();
-            m_activePlaylist->updateTrackAtIndex(m_activePlaylist->currentTrackIndex(), nextTrk);
-        }
-    }
-
-    return {nextTrk, m_activePlaylist->id(), m_activePlaylist->currentTrackIndex()};
+    return m_playlistNavigator.advanceRelativeTrack(m_activePlaylist, mode, delta);
 }
 
-PlaylistTrack PlaylistHandlerPrivate::nextTrack(int delta)
+PlaylistTrack PlaylistHandlerPrivate::nextTrack(int delta, Playlist::PlayModes mode) const
 {
-    if(!m_activePlaylist) {
-        return {};
-    }
+    return m_playlistNavigator.previewRelativeTrack(m_activePlaylist, mode, delta);
+}
 
-    Track nextTrk = m_activePlaylist->nextTrack(delta, m_playerController->playMode());
-
-    if(nextTrk.isValid() && !nextTrk.metadataWasRead()) {
-        if(m_audioLoader->readTrackMetadata(nextTrk)) {
-            nextTrk.generateHash();
-            const int nextIndex = m_activePlaylist->nextIndex(delta, m_playerController->playMode());
-            m_activePlaylist->updateTrackAtIndex(nextIndex, nextTrk);
-        }
-    }
-
-    return {nextTrk, m_activePlaylist->id(), m_activePlaylist->nextIndex(delta, m_playerController->playMode())};
+void PlaylistHandlerPrivate::prepareUpcomingTrack()
+{
+    const auto mode = static_cast<Playlist::PlayModes>(m_settings->value<Settings::Core::PlayMode>());
+    m_playlistNavigator.previewRelativeTrack(m_activePlaylist, mode, 1);
 }
 
 void PlaylistHandlerPrivate::resetShuffleOrder()
@@ -376,7 +337,11 @@ void PlaylistHandlerPrivate::restoreActivePlaylist()
     if(m_settings->fileValue(Settings::Core::Internal::SaveActivePlaylistState).toBool()) {
         const int lastIndex = stateSettings.value(ActiveIndex).toInt();
         m_activePlaylist->changeCurrentIndex(lastIndex);
-        m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
+
+        const PlaylistTrack restoredTrack{m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex};
+        if(restoredTrack.isValid()) {
+            emit m_self->restoreCurrentTrackRequested(restoredTrack);
+        }
     }
 }
 
@@ -430,11 +395,9 @@ Playlist* PlaylistHandlerPrivate::addNewAutoPlaylist(const QString& name, const 
 }
 
 PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
-                                 PlayerController* playerController, MusicLibrary* library, SettingsManager* settings,
-                                 QObject* parent)
+                                 MusicLibrary* library, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<PlaylistHandlerPrivate>(this, std::move(dbPool), std::move(audioLoader), playerController,
-                                                 library, settings)}
+    , p{std::make_unique<PlaylistHandlerPrivate>(this, std::move(dbPool), std::move(audioLoader), library, settings)}
 {
     p->reloadPlaylists();
 
@@ -695,25 +658,14 @@ void PlaylistHandler::replacePlaylistTracks(const UId& id, const TrackList& trac
 
 void PlaylistHandler::movePlaylistTracks(const UId& id, const UId& replaceId)
 {
-    auto updateQueue = [this, &id, &replaceId]() {
-        auto queueTracks = p->m_playerController->playbackQueue().tracks();
-        for(auto& track : queueTracks) {
-            if(track.playlistId == id) {
-                track.playlistId = replaceId;
-            }
-        }
-        p->m_playerController->replaceTracks(queueTracks);
-    };
-
     if(auto* playlist = playlistById(id)) {
         if(auto* replacePlaylist = playlistById(replaceId)) {
             createPlaylist(replacePlaylist->name(), playlist->tracks());
             replacePlaylist->changeCurrentIndex(playlist->currentTrackIndex());
 
+            emit playlistReferencesRemapRequested(id, replaceId);
             if(p->m_activePlaylist == playlist) {
-                p->m_playerController->updateCurrentTrackPlaylist(replaceId);
                 changeActivePlaylist(replacePlaylist);
-                updateQueue();
             }
         }
     }
@@ -825,26 +777,6 @@ void PlaylistHandler::changeActivePlaylist(Playlist* playlist)
     emit activePlaylistChanged(playlist);
 }
 
-PlaylistTrack PlaylistHandler::nextTrack()
-{
-    return p->nextTrack(1);
-}
-
-PlaylistTrack PlaylistHandler::changeNextTrack()
-{
-    return p->nextTrackChange(1);
-}
-
-PlaylistTrack PlaylistHandler::previousTrack()
-{
-    return p->nextTrack(-1);
-}
-
-PlaylistTrack PlaylistHandler::changePreviousTrack()
-{
-    return p->nextTrackChange(-1);
-}
-
 void PlaylistHandler::renamePlaylist(const UId& id, const QString& name)
 {
     if(playlistCount() < 1) {
@@ -890,10 +822,7 @@ void PlaylistHandler::removePlaylist(const UId& id)
     if(playlist == p->m_activePlaylist) {
         p->m_activePlaylist = nullptr;
         emit activePlaylistChanged(nullptr);
-
-        if(p->m_settings->value<Settings::Core::StopIfActivePlaylistDeleted>()) {
-            p->m_playerController->stop();
-        }
+        emit activePlaylistDeleted();
     }
 
     const int index = p->indexFromName(playlist->name());
@@ -918,6 +847,21 @@ int PlaylistHandler::playlistCount() const
         std::ranges::count_if(p->m_playlists, [](const auto& playlist) { return !playlist->isTemporary(); }));
 }
 
+PlaylistTrack PlaylistHandler::currentTrack() const
+{
+    return p->currentTrack();
+}
+
+PlaylistTrack PlaylistHandler::peekRelativeTrack(Playlist::PlayModes mode, int delta) const
+{
+    return p->nextTrack(delta, mode);
+}
+
+PlaylistTrack PlaylistHandler::advanceRelativeTrack(Playlist::PlayModes mode, int delta)
+{
+    return p->nextTrackChange(delta, mode);
+}
+
 void PlaylistHandler::savePlaylists()
 {
     p->updateIndices();
@@ -932,37 +876,9 @@ void PlaylistHandler::savePlaylist(const UId& id)
     }
 }
 
-void PlaylistHandler::startPlayback(const UId& id)
+void PlaylistHandler::prepareUpcomingTrack()
 {
-    if(auto* playlist = playlistById(id)) {
-        changeActivePlaylist(id);
-        playlist->reset();
-        p->startNextTrack(playlist->currentTrack(), playlist->currentTrackIndex());
-    }
-}
-
-void PlaylistHandler::startPlayback(Playlist* playlist)
-{
-    if(!playlist) {
-        return;
-    }
-
-    if(std::ranges::find_if(std::as_const(p->m_playlists), [playlist](const auto& pl) { return pl.get() == playlist; })
-       == p->m_playlists.cend()) {
-        return;
-    }
-
-    changeActivePlaylist(playlist);
-    playlist->reset();
-    if(playlist->currentTrackIndex() < 0) {
-        playlist->changeCurrentIndex(0);
-    }
-    p->startNextTrack(playlist->currentTrack(), playlist->currentTrackIndex());
-}
-
-void PlaylistHandler::trackAboutToFinish()
-{
-    p->nextTrack(1);
+    p->prepareUpcomingTrack();
 }
 } // namespace Fooyin
 

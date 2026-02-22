@@ -20,41 +20,103 @@
 #include <core/engine/audioconverter.h>
 
 #include <core/engine/audiobuffer.h>
-#include <utils/fymath.h>
 
+#include <algorithm>
 #include <array>
-#include <cfenv>
+#include <cmath>
+#include <limits>
+#include <random>
+#include <utility>
 
 namespace {
-using ChannelMap = std::array<int, 32>;
+using ChannelMap = std::array<int, Fooyin::AudioFormat::MaxChannels>;
+
+ChannelMap buildChannelMap(const Fooyin::AudioFormat& inFormat, const Fooyin::AudioFormat& outFormat)
+{
+    ChannelMap map;
+    map.fill(-1);
+
+    const int inCh  = inFormat.channelCount();
+    const int outCh = outFormat.channelCount();
+
+    if(!inFormat.hasChannelLayout() || !outFormat.hasChannelLayout()) {
+        const int n = std::min(inCh, outCh);
+        for(int i{0}; i < n; ++i) {
+            map[i] = i;
+        }
+        return map;
+    }
+
+    using Pos = Fooyin::AudioFormat::ChannelPosition;
+
+    std::array<int, 256> posToIn;
+    posToIn.fill(-1);
+
+    for(int i{0}; i < inCh; ++i) {
+        const Pos p = inFormat.channelPosition(i);
+        if(p != Pos::UnknownPosition) {
+            posToIn[static_cast<uint8_t>(p)] = i;
+        }
+    }
+
+    for(int o{0}; o < outCh; ++o) {
+        const Pos p = outFormat.channelPosition(o);
+        if(p == Pos::UnknownPosition) {
+            if(o < inCh) {
+                map[o] = o;
+            }
+            continue;
+        }
+        map[o] = posToIn[static_cast<uint8_t>(p)];
+    }
+
+    return map;
+}
 
 template <typename InputType, typename OutputType, typename Func>
 void convert(const Fooyin::AudioFormat& inputFormat, const std::byte* input, const Fooyin::AudioFormat& outputFormat,
-             std::byte* output, int sampleCount, const ChannelMap& channelMap, Func&& conversionFunc)
+             std::byte* output, int frames, const ChannelMap& channelMap, const Func& conversionFunc)
 {
     const int inBps  = inputFormat.bytesPerSample();
     const int outBps = outputFormat.bytesPerSample();
 
-    const int inChannels  = inputFormat.channelCount();
-    const int outChannels = outputFormat.channelCount();
+    const auto inChannels  = static_cast<size_t>(inputFormat.channelCount());
+    const auto outChannels = static_cast<size_t>(outputFormat.channelCount());
 
-    const int totalSamples = sampleCount * outChannels;
+    if(frames <= 0 || inChannels == 0 || outChannels == 0) {
+        return;
+    }
 
-    for(int i{0}; i < totalSamples; ++i) {
-        const int sampleIndex  = i / outChannels;
-        const int channelIndex = i % outChannels;
+    std::array<ptrdiff_t, Fooyin::AudioFormat::MaxChannels> mappedInOffsets;
+    mappedInOffsets.fill(-1);
 
-        if(channelMap.at(channelIndex) < 0) {
-            continue;
+    for(size_t outChannel{0}; outChannel < outChannels; ++outChannel) {
+        const int mappedInChannel = channelMap[outChannel];
+        if(mappedInChannel >= 0 && std::cmp_less(mappedInChannel, inChannels)) {
+            mappedInOffsets[outChannel] = static_cast<ptrdiff_t>(mappedInChannel) * static_cast<ptrdiff_t>(inBps);
         }
+    }
 
-        InputType inSample;
-        const auto inOffset = (sampleIndex * inChannels + channelMap.at(channelIndex)) * inBps;
-        std::memcpy(&inSample, input + inOffset, inBps);
+    const auto totalFrames      = static_cast<size_t>(frames);
+    const size_t inFrameStride  = inChannels * inBps;
+    const size_t outFrameStride = outChannels * outBps;
 
-        OutputType outSample = conversionFunc(inSample);
-        const auto outOffset = i * outBps;
-        std::memcpy(output + outOffset, &outSample, outBps);
+    for(size_t frame{0}; frame < totalFrames; ++frame) {
+        const std::byte* inFrame = input + (frame * inFrameStride);
+        std::byte* outFrame      = output + (frame * outFrameStride);
+
+        for(size_t outCh{0}; outCh < outChannels; ++outCh) {
+            const ptrdiff_t inOff = mappedInOffsets[outCh];
+            if(inOff < 0) {
+                continue;
+            }
+
+            InputType inSample{};
+            std::memcpy(&inSample, inFrame + static_cast<size_t>(inOff), inBps);
+
+            OutputType outSample = conversionFunc(inSample);
+            std::memcpy(outFrame + (outCh * outBps), &outSample, outBps);
+        }
     }
 }
 
@@ -70,17 +132,17 @@ int16_t convertU8ToS16(const uint8_t inSample)
 
 int32_t convertU8ToS32(const uint8_t inSample)
 {
-    return inSample ^ 0x80 << 24;
+    return (static_cast<int32_t>(inSample ^ 0x80) << 24);
 }
 
 float convertU8ToFloat(const uint8_t inSample)
 {
-    return static_cast<float>(inSample) * (1.0F / static_cast<float>(0x80)) - 1.0F;
+    return (static_cast<float>(inSample) * (1.0F / static_cast<float>(0x80))) - 1.0F;
 }
 
 double convertU8ToDouble(const uint8_t inSample)
 {
-    return static_cast<double>(inSample) * (1.0 / static_cast<double>(0x80)) - 1.0;
+    return (static_cast<double>(inSample) * (1.0 / static_cast<double>(0x80))) - 1.0;
 }
 
 uint8_t convertS16ToU8(const int16_t inSample)
@@ -110,7 +172,7 @@ double convertS16ToDouble(const int16_t inSample)
 
 uint8_t convertS32ToU8(const int32_t inSample)
 {
-    return static_cast<int8_t>(inSample >> 24 ^ 0x80);
+    return static_cast<uint8_t>(inSample >> 24 ^ 0x80);
 }
 
 int16_t convertS32ToS16(const int32_t inSample)
@@ -134,36 +196,46 @@ double convertS32ToDouble(const int32_t inSample)
 }
 
 template <typename T, typename R>
-R convertToIntegral(const T inSample, const R scalingFactor, const R minValue, const R maxValue)
+R convertToIntegral(T inSample, const T scale, const R minValue, const R maxValue)
 {
-    const int32_t prevRoundingMode = std::fegetround();
-    std::fesetround(FE_TONEAREST);
+    const T lo = static_cast<T>(minValue) / scale;
+    const T hi = static_cast<T>(maxValue) / scale;
 
-    int32_t intSample = Fooyin::Math::fltToInt(inSample * scalingFactor);
-    intSample         = std::clamp(intSample, static_cast<int32_t>(minValue), static_cast<int32_t>(maxValue));
+    inSample = std::clamp(inSample, lo, hi);
 
-    std::fesetround(prevRoundingMode);
+    const long long v = std::llrint(static_cast<double>(inSample) * static_cast<double>(scale));
 
-    return static_cast<R>(intSample);
+    const auto minI = static_cast<long long>(minValue);
+    const auto maxI = static_cast<long long>(maxValue);
+
+    return static_cast<R>(std::clamp(v, minI, maxI));
 }
 
 uint8_t convertFloatToU8(const float inSample)
 {
-    return convertToIntegral<float, uint8_t>(inSample, 0x80, std::numeric_limits<uint8_t>::min(),
-                                             std::numeric_limits<uint8_t>::max())
-         ^ 0x80;
+    const int16_t centered = convertToIntegral<float, int16_t>(inSample, 128.0F, int16_t{-128}, int16_t{127});
+    return static_cast<uint8_t>(centered + 128);
 }
 
 int16_t convertFloatToS16(const float inSample)
 {
-    return convertToIntegral<float, int16_t>(inSample, static_cast<int16_t>(0x8000),
+    return convertToIntegral<float, int16_t>(inSample, 32768.0F, std::numeric_limits<int16_t>::min(),
+                                             std::numeric_limits<int16_t>::max());
+}
+
+int16_t convertFloatToS16Dithered(const float inSample)
+{
+    constexpr float lsb = 1.0F / 32768.0F;
+    thread_local std::mt19937 rng{std::random_device{}()};
+    thread_local std::uniform_real_distribution<float> dist(-0.5F * lsb, 0.5F * lsb);
+    return convertToIntegral<float, int16_t>(inSample + dist(rng) + dist(rng), 32768.0F,
                                              std::numeric_limits<int16_t>::min(), std::numeric_limits<int16_t>::max());
 }
 
 int32_t convertFloatToS32(const float inSample)
 {
-    return convertToIntegral<float, int32_t>(inSample, static_cast<int32_t>(0x80000000),
-                                             std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max());
+    return convertToIntegral<float, int32_t>(inSample, 2147483648.0F, std::numeric_limits<int32_t>::min(),
+                                             std::numeric_limits<int32_t>::max());
 }
 
 float convertFloatToFloat(const float inSample)
@@ -178,21 +250,30 @@ double convertFloatToDouble(const float inSample)
 
 uint8_t convertDoubleToU8(const double inSample)
 {
-    return convertToIntegral<double, uint8_t>(inSample, 0x80, std::numeric_limits<uint8_t>::min(),
-                                              std::numeric_limits<uint8_t>::max())
-         ^ 0x80;
+    const int16_t centered = convertToIntegral<double, int16_t>(inSample, 128.0, int16_t{-128}, int16_t{127});
+    return static_cast<uint8_t>(centered + 128);
 }
 
 int16_t convertDoubleToS16(const double inSample)
 {
-    return convertToIntegral<double, int16_t>(inSample, static_cast<int16_t>(0x8000),
+    return convertToIntegral<double, int16_t>(inSample, 32768.0, std::numeric_limits<int16_t>::min(),
+                                              std::numeric_limits<int16_t>::max());
+}
+
+int16_t convertDoubleToS16Dithered(const double inSample)
+{
+    static constexpr double lsb = 1.0 / 32768.0;
+    thread_local std::mt19937 rng{std::random_device{}()};
+    thread_local std::uniform_real_distribution<double> dist{-0.5 * lsb, 0.5 * lsb};
+
+    return convertToIntegral<double, int16_t>(inSample + dist(rng) + dist(rng), 32768.0,
                                               std::numeric_limits<int16_t>::min(), std::numeric_limits<int16_t>::max());
 }
 
 int32_t convertDoubleToS32(const double inSample)
 {
-    return convertToIntegral<double, int32_t>(inSample, static_cast<int32_t>(0x80000000),
-                                              std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max());
+    return convertToIntegral<double, int32_t>(inSample, 2147483648.0, std::numeric_limits<int32_t>::min(),
+                                              std::numeric_limits<int32_t>::max());
 }
 
 float convertDoubleToFloat(const double inSample)
@@ -205,148 +286,116 @@ double convertDoubleToDouble(const double inSample)
     return inSample;
 }
 
-bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, const Fooyin::AudioFormat& outFormat,
-                   std::byte* output, int samples)
+template <typename In, typename Out, typename F>
+bool doConvert(const Fooyin::AudioFormat& inFmt, const std::byte* in, const Fooyin::AudioFormat& outFmt, std::byte* out,
+               int frames, const ChannelMap& ch, F&& f)
 {
-    ChannelMap channels;
-    std::iota(channels.begin(), channels.end(), -1);
+    convert<In, Out>(inFmt, in, outFmt, out, frames, ch, std::forward<F>(f));
+    return true;
+}
 
-    // TODO: Handle channel layout of output
-    const int outputChannels = outFormat.channelCount();
-    for(int i{0}; i < outputChannels; ++i) {
-        channels.at(i) = i;
-    }
+using DispatchFn = bool (*)(const Fooyin::AudioFormat&, const std::byte*, const Fooyin::AudioFormat&, std::byte*, int,
+                            const ChannelMap&, bool);
 
-    using SampleFormat = Fooyin::SampleFormat;
+template <typename In, typename Out, auto ConvFunc>
+constexpr DispatchFn cell() noexcept
+{
+    return +[](const Fooyin::AudioFormat& inFmt, const std::byte* in, const Fooyin::AudioFormat& outFmt, std::byte* out,
+               int frames, const ChannelMap& ch, bool /*dither*/) -> bool {
+        convert<In, Out>(inFmt, in, outFmt, out, frames, ch, ConvFunc);
+        return true;
+    };
+}
 
-    switch(inFormat.sampleFormat()) {
-        case(SampleFormat::U8): {
-            switch(outFormat.sampleFormat()) {
-                case(SampleFormat::U8):
-                    convert<uint8_t, uint8_t>(inFormat, input, outFormat, output, samples, channels, convertU8ToU8);
-                    return true;
-                case(SampleFormat::S16):
-                    convert<uint8_t, int16_t>(inFormat, input, outFormat, output, samples, channels, convertU8ToS16);
-                    return true;
-                case(SampleFormat::S24):
-                case(SampleFormat::S32):
-                    convert<uint8_t, int32_t>(inFormat, input, outFormat, output, samples, channels, convertU8ToS32);
-                    return true;
-                case(SampleFormat::F32):
-                    convert<uint8_t, float>(inFormat, input, outFormat, output, samples, channels, convertU8ToFloat);
-                    return true;
-                case(SampleFormat::F64):
-                    convert<uint8_t, double>(inFormat, input, outFormat, output, samples, channels, convertU8ToDouble);
-                    return true;
-                default:
-                    break;
-            }
-            break;
-        }
-        case(SampleFormat::S16): {
-            switch(outFormat.sampleFormat()) {
-                case(SampleFormat::U8):
-                    convert<int16_t, uint8_t>(inFormat, input, outFormat, output, samples, channels, convertS16ToU8);
-                    return true;
-                case(SampleFormat::S16):
-                    convert<int16_t, int16_t>(inFormat, input, outFormat, output, samples, channels, convertS16ToS16);
-                    return true;
-                case(SampleFormat::S24):
-                case(SampleFormat::S32):
-                    convert<int16_t, int32_t>(inFormat, input, outFormat, output, samples, channels, convertS16ToS32);
-                    return true;
-                case(SampleFormat::F32):
-                    convert<int16_t, float>(inFormat, input, outFormat, output, samples, channels, convertS16ToFloat);
-                    return true;
-                case(SampleFormat::F64):
-                    convert<int16_t, double>(inFormat, input, outFormat, output, samples, channels, convertS16ToDouble);
-                    return true;
-                default:
-                    break;
-            }
-            break;
-        }
-        case(SampleFormat::S24):
-        case(SampleFormat::S32): {
-            switch(outFormat.sampleFormat()) {
-                case(SampleFormat::U8):
-                    convert<int32_t, uint8_t>(inFormat, input, outFormat, output, samples, channels, convertS32ToU8);
-                    return true;
-                case(SampleFormat::S16):
-                    convert<int32_t, int16_t>(inFormat, input, outFormat, output, samples, channels, convertS32ToS16);
-                    return true;
-                case(SampleFormat::S24):
-                case(SampleFormat::S32):
-                    convert<int32_t, int32_t>(inFormat, input, outFormat, output, samples, channels, convertS32ToS32);
-                    return true;
-                case(SampleFormat::F32):
-                    convert<int32_t, float>(inFormat, input, outFormat, output, samples, channels, convertS32ToFloat);
-                    return true;
-                case(SampleFormat::F64):
-                    convert<int32_t, double>(inFormat, input, outFormat, output, samples, channels, convertS32ToDouble);
-                    return true;
-                default:
-                    break;
-            }
-            break;
-        }
-        case(SampleFormat::F32): {
-            switch(outFormat.sampleFormat()) {
-                case(SampleFormat::U8):
-                    convert<float, uint8_t>(inFormat, input, outFormat, output, samples, channels, convertFloatToU8);
-                    return true;
-                case(SampleFormat::S16):
-                    convert<float, int16_t>(inFormat, input, outFormat, output, samples, channels, convertFloatToS16);
-                    return true;
-                case(SampleFormat::S24):
-                case(SampleFormat::S32):
-                    convert<float, int32_t>(inFormat, input, outFormat, output, samples, channels, convertFloatToS32);
-                    return true;
-                case(SampleFormat::F32):
-                    convert<float, float>(inFormat, input, outFormat, output, samples, channels, convertFloatToFloat);
-                    return true;
-                case(SampleFormat::F64):
-                    convert<float, double>(inFormat, input, outFormat, output, samples, channels, convertFloatToDouble);
-                    return true;
-                default:
-                    break;
-            }
-            break;
-        }
-        case(SampleFormat::F64): {
-            switch(outFormat.sampleFormat()) {
-                case(SampleFormat::U8):
-                    convert<double, uint8_t>(inFormat, input, outFormat, output, samples, channels, convertDoubleToU8);
-                    return true;
-                case(SampleFormat::S16):
-                    convert<double, int16_t>(inFormat, input, outFormat, output, samples, channels, convertDoubleToS16);
-                    return true;
-                case(SampleFormat::S24):
-                case(SampleFormat::S32):
-                    convert<double, int32_t>(inFormat, input, outFormat, output, samples, channels, convertDoubleToS32);
-                    return true;
-                case(SampleFormat::F32):
-                    convert<double, float>(inFormat, input, outFormat, output, samples, channels, convertDoubleToFloat);
-                    return true;
-                case(SampleFormat::F64):
-                    convert<double, double>(inFormat, input, outFormat, output, samples, channels,
-                                            convertDoubleToDouble);
-                    return true;
-                default:
-                    break;
-            }
-            break;
-        }
+template <typename In, typename Out, auto NoDither, auto Dithered>
+constexpr DispatchFn cellDither() noexcept
+{
+    return +[](const Fooyin::AudioFormat& inFmt, const std::byte* in, const Fooyin::AudioFormat& outFmt, std::byte* out,
+               int frames, const ChannelMap& ch, bool dither) -> bool {
+        convert<In, Out>(inFmt, in, outFmt, out, frames, ch, dither ? Dithered : NoDither);
+        return true;
+    };
+}
+
+// clang-format off
+enum class Lane : uint8_t { U8, S16, S32, F32, F64, Count };
+// clang-format on
+
+constexpr int laneIndex(Fooyin::SampleFormat f) noexcept
+{
+    using SF = Fooyin::SampleFormat;
+    switch(f) {
+        case SF::U8:
+            return 0;
+        case SF::S16:
+            return 1;
+        case SF::S24In32:
+        case SF::S32:
+            return 2;
+        case SF::F32:
+            return 3;
+        case SF::F64:
+            return 4;
         default:
-            return false;
+            return -1;
+    }
+}
+
+bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, const Fooyin::AudioFormat& outFormat,
+                   std::byte* output, int frames, bool dither)
+{
+    const ChannelMap channels = buildChannelMap(inFormat, outFormat);
+
+    const int i = laneIndex(inFormat.sampleFormat());
+    const int o = laneIndex(outFormat.sampleFormat());
+    if(i < 0 || o < 0) {
+        return false;
     }
 
-    return false;
+    static constexpr int N = static_cast<int>(Lane::Count);
+    // clang-format off
+    static constexpr std::array<std::array<DispatchFn, N>, N> convertTable = {{
+        // in: U8
+        { cell<uint8_t, uint8_t,  convertU8ToU8>(),
+          cell<uint8_t, int16_t,  convertU8ToS16>(),
+          cell<uint8_t, int32_t,  convertU8ToS32>(),
+          cell<uint8_t, float,    convertU8ToFloat>(),
+          cell<uint8_t, double,   convertU8ToDouble>() },
+        // in: S16
+        { cell<int16_t, uint8_t,  convertS16ToU8>(),
+          cell<int16_t, int16_t,  convertS16ToS16>(),
+          cell<int16_t, int32_t,  convertS16ToS32>(),
+          cell<int16_t, float,    convertS16ToFloat>(),
+          cell<int16_t, double,   convertS16ToDouble>() },
+        // in: S32 lane (S32/S24In32)
+        { cell<int32_t, uint8_t,  convertS32ToU8>(),
+          cell<int32_t, int16_t,  convertS32ToS16>(),
+          cell<int32_t, int32_t,  convertS32ToS32>(),
+          cell<int32_t, float,    convertS32ToFloat>(),
+          cell<int32_t, double,   convertS32ToDouble>() },
+        // in: F32
+        { cell<float, uint8_t,    convertFloatToU8>(),
+          cellDither<float, int16_t, convertFloatToS16, convertFloatToS16Dithered>(),
+          cell<float, int32_t,    convertFloatToS32>(),
+          cell<float, float,      convertFloatToFloat>(),
+          cell<float, double,     convertFloatToDouble>() },
+        // in: F64
+        { cell<double, uint8_t,   convertDoubleToU8>(),
+          cellDither<double, int16_t, convertDoubleToS16, convertDoubleToS16Dithered>(),
+          cell<double, int32_t,   convertDoubleToS32>(),
+          cell<double, float,     convertDoubleToFloat>(),
+          cell<double, double,    convertDoubleToDouble>() },
+    }};
+    // clang-format on
+
+    const DispatchFn fn = convertTable[i][o];
+    return fn && fn(inFormat, input, outFormat, output, frames, channels, dither);
 }
 } // namespace
 
 namespace Fooyin::Audio {
-AudioBuffer convert(const AudioBuffer& buffer, const AudioFormat& outputFormat)
+
+AudioBuffer convert(const AudioBuffer& buffer, const AudioFormat& outputFormat, const bool dither)
 {
     if(!buffer.isValid() || !outputFormat.isValid()) {
         return {};
@@ -355,7 +404,8 @@ AudioBuffer convert(const AudioBuffer& buffer, const AudioFormat& outputFormat)
     AudioBuffer output{outputFormat, buffer.startTime()};
     output.resize(outputFormat.bytesForFrames(buffer.frameCount()));
 
-    if(convert(buffer.format(), buffer.constData().data(), outputFormat, output.data(), buffer.frameCount())) {
+    if(convertFormat(buffer.format(), buffer.constData().data(), outputFormat, output.data(), buffer.frameCount(),
+                     dither)) {
         return output;
     }
 
@@ -363,15 +413,12 @@ AudioBuffer convert(const AudioBuffer& buffer, const AudioFormat& outputFormat)
 }
 
 bool convert(const AudioFormat& inputFormat, const std::byte* input, const AudioFormat& outputFormat, std::byte* output,
-             int sampleCount)
+             const int frames, const bool dither)
 {
     if(!inputFormat.isValid() || !outputFormat.isValid()) {
         return false;
     }
 
-    convertFormat(inputFormat, input, outputFormat, output, sampleCount);
-
-    return true;
+    return convertFormat(inputFormat, input, outputFormat, output, frames, dither);
 }
-
 } // namespace Fooyin::Audio

@@ -696,7 +696,7 @@ void DirBrowserPrivate::startPlayback(const TrackList& tracks, int row)
     m_playlistHandler->replacePlaylistTracks(m_playlist->id(), tracks);
 
     m_playlist->changeCurrentIndex(row);
-    m_playlistHandler->startPlayback(m_playlist);
+    m_playlistInteractor->playerController()->startPlayback(m_playlist);
 }
 
 void DirBrowserPrivate::updateControlState() const

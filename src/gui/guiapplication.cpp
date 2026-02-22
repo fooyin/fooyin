@@ -60,6 +60,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
+#include <gui/plugins/dspguiplugin.h>
 #include <gui/plugins/guiplugin.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/propertiesdialog.h>
@@ -116,7 +117,7 @@ public:
     void initialiseTray();
     void updateWindowTitle();
     void checkArtwork();
-    void handleTrackStatus(AudioEngine::TrackStatus status);
+    void handleTrackStatus(Engine::TrackStatus status);
 
     static void removeExpiredCovers(const TrackList& tracks);
 
@@ -253,6 +254,7 @@ void GuiApplicationPrivate::initialise()
 
     m_widgets->registerWidgets();
     m_widgets->registerPages();
+    m_widgets->registerDspSettings();
     m_widgets->registerPropertiesTabs();
     m_widgets->registerFontEntries();
 
@@ -340,8 +342,8 @@ void GuiApplicationPrivate::setupConnections()
 
     QObject::connect(m_core->engine(), &EngineController::engineError, m_self,
                      [this](const QString& error) { showEngineError(error); });
-    QObject::connect(m_core->engine(), &EngineController::trackStatusChanged, m_self,
-                     [this](AudioEngine::TrackStatus status) { handleTrackStatus(status); });
+    QObject::connect(m_core->engine(), &EngineController::trackStatusContextChanged, m_self,
+                     [this](const Engine::TrackStatusContext& context) { handleTrackStatus(context.status); });
 
     m_settings->subscribe<Settings::Gui::LayoutEditing>(m_self, [this]() { updateWindowTitle(); });
     m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() {
@@ -370,6 +372,15 @@ void GuiApplicationPrivate::initialisePlugins()
 
     m_core->pluginManager()->initialisePlugins<GuiPlugin>(
         [this](GuiPlugin* plugin) { plugin->initialise(m_guiPluginContext); });
+
+    m_core->pluginManager()->initialisePlugins<DspGuiPlugin>([this](DspGuiPlugin* plugin) {
+        auto providers = plugin->settingsProviders();
+        for(auto& provider : providers) {
+            if(provider && m_widgets->dspSettingsRegistry()) {
+                m_widgets->dspSettingsRegistry()->registerProvider(std::move(provider));
+            }
+        }
+    });
 }
 
 void GuiApplicationPrivate::showPluginsNotFoundMessage()
@@ -438,11 +449,11 @@ void GuiApplicationPrivate::checkArtwork()
     }
 }
 
-void GuiApplicationPrivate::handleTrackStatus(AudioEngine::TrackStatus status)
+void GuiApplicationPrivate::handleTrackStatus(Engine::TrackStatus status)
 {
     const Track track = m_playerController->currentTrack();
 
-    if(status == AudioEngine::TrackStatus::Invalid) {
+    if(status == Engine::TrackStatus::Invalid) {
         if(track.isValid()) {
             if(track.isInArchive()) {
                 if(!QFileInfo::exists(track.archivePath())) {
@@ -454,7 +465,7 @@ void GuiApplicationPrivate::handleTrackStatus(AudioEngine::TrackStatus status)
             }
         }
     }
-    else if(status == AudioEngine::TrackStatus::Unreadable) {
+    else if(status == Engine::TrackStatus::Unreadable) {
         showTrackUnreableMessage(track);
     }
 }

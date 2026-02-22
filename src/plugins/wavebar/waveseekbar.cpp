@@ -136,7 +136,7 @@ void WaveSeekBar::processData(const WaveformData<float>& waveData)
     m_data = waveData;
 
     if(m_data.complete) {
-        const int waveformWidth = m_data.sampleCount() * m_sampleWidth;
+        const int waveformWidth = std::max(1, m_data.sampleCount() * m_sampleWidth);
         m_scale                 = static_cast<double>(width()) / static_cast<double>(waveformWidth);
 
         const double multiplier = 100.0;

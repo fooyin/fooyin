@@ -31,6 +31,8 @@
 namespace Fooyin {
 class ApplicationPrivate;
 class Database;
+class DspRegistry;
+class DspChainStore;
 class EngineController;
 class LibraryManager;
 class MusicLibrary;
@@ -67,6 +69,8 @@ public:
     [[nodiscard]] std::shared_ptr<AudioLoader> audioLoader() const;
     [[nodiscard]] std::shared_ptr<NetworkAccessManager> networkManager() const;
     [[nodiscard]] SortingRegistry* sortingRegistry() const;
+    [[nodiscard]] DspRegistry* dspRegistry() const;
+    [[nodiscard]] DspChainStore* dspChainStore() const;
 
 protected:
     void timerEvent(QTimerEvent* event) override;

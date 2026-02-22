@@ -1,7 +1,20 @@
 set(SOURCES
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/actioncontainer.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/actionmanager.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/proxyaction.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/widgetcontext.h
     ${CMAKE_SOURCE_DIR}/include/utils/async.h
     ${CMAKE_SOURCE_DIR}/include/utils/audioutils.h
+    ${CMAKE_SOURCE_DIR}/include/utils/compatutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/crypto.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnection.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnectionhandler.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnectionpool.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnectionprovider.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbmodule.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbquery.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbtransaction.h
     ${CMAKE_SOURCE_DIR}/include/utils/datastream.h
     ${CMAKE_SOURCE_DIR}/include/utils/enum.h
     ${CMAKE_SOURCE_DIR}/include/utils/fileutils.h
@@ -10,13 +23,20 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/helpers.h
     ${CMAKE_SOURCE_DIR}/include/utils/id.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
+    ${CMAKE_SOURCE_DIR}/include/utils/logging/messagehandler.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingspage.h
     ${CMAKE_SOURCE_DIR}/include/utils/signalthrottler.h
-    ${CMAKE_SOURCE_DIR}/include/utils/stareditor.h
+    ${CMAKE_SOURCE_DIR}/include/utils/snapshot.h
     ${CMAKE_SOURCE_DIR}/include/utils/stardelegate.h
+    ${CMAKE_SOURCE_DIR}/include/utils/stareditor.h
     ${CMAKE_SOURCE_DIR}/include/utils/starrating.h
     ${CMAKE_SOURCE_DIR}/include/utils/stringcollator.h
     ${CMAKE_SOURCE_DIR}/include/utils/stringutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/tablemodel.h
+    ${CMAKE_SOURCE_DIR}/include/utils/timeconstants.h
     ${CMAKE_SOURCE_DIR}/include/utils/threadqueue.h
     ${CMAKE_SOURCE_DIR}/include/utils/timer.h
     ${CMAKE_SOURCE_DIR}/include/utils/tooltipfilter.h
@@ -25,43 +45,6 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/treestatusitem.h
     ${CMAKE_SOURCE_DIR}/include/utils/utils.h
     ${CMAKE_SOURCE_DIR}/include/utils/worker.h
-    ${CMAKE_SOURCE_DIR}/include/utils/actions/actioncontainer.h
-    ${CMAKE_SOURCE_DIR}/include/utils/actions/actionmanager.h
-    ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
-    ${CMAKE_SOURCE_DIR}/include/utils/actions/proxyaction.h
-    ${CMAKE_SOURCE_DIR}/include/utils/actions/widgetcontext.h
-    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnection.h
-    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnectionhandler.h
-    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnectionpool.h
-    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnectionprovider.h
-    ${CMAKE_SOURCE_DIR}/include/utils/database/dbmodule.h
-    ${CMAKE_SOURCE_DIR}/include/utils/database/dbquery.h
-    ${CMAKE_SOURCE_DIR}/include/utils/database/dbtransaction.h
-    ${CMAKE_SOURCE_DIR}/include/utils/logging/messagehandler.h
-    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
-    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
-    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
-    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingspage.h
-    audioutils.cpp
-    crypto.cpp
-    datastream.cpp
-    fileutils.cpp
-    id.cpp
-    itemregistry.cpp
-    modelutils.cpp
-    modelutils.h
-    fypaths.cpp
-    signalthrottler.cpp
-    stareditor.cpp
-    stardelegate.cpp
-    starrating.cpp
-    stringcollator.cpp
-    stringutils.cpp
-    timer.cpp
-    tooltipfilter.cpp
-    treemodel.cpp
-    utils.cpp
-    worker.cpp
     actions/actioncontainer.cpp
     actions/actionmanager.cpp
     actions/command.cpp
@@ -69,17 +52,26 @@ set(SOURCES
     actions/menucontainer.h
     actions/proxyaction.cpp
     actions/widgetcontext.cpp
+    audioutils.cpp
+    crypto.cpp
     database/dbconnection.cpp
     database/dbconnectionhandler.cpp
     database/dbconnectionpool.cpp
     database/dbconnectionprovider.cpp
     database/dbquery.cpp
     database/dbtransaction.cpp
-    logging/logwidget.cpp
-    logging/logwidget.h
+    datastream.cpp
+    fileutils.cpp
+    fypaths.cpp
+    id.cpp
+    itemregistry.cpp
     logging/logmodel.cpp
     logging/logmodel.h
+    logging/logwidget.cpp
+    logging/logwidget.h
     logging/messagehandler.cpp
+    modelutils.cpp
+    modelutils.h
     settings/settingscategory.h
     settings/settingsdialog.cpp
     settings/settingsdialog.h
@@ -89,6 +81,17 @@ set(SOURCES
     settings/settingsmodel.cpp
     settings/settingsmodel.h
     settings/settingspage.cpp
+    signalthrottler.cpp
+    stardelegate.cpp
+    stareditor.cpp
+    starrating.cpp
+    stringcollator.cpp
+    stringutils.cpp
+    timer.cpp
+    tooltipfilter.cpp
+    treemodel.cpp
+    utils.cpp
+    worker.cpp
 )
 
 create_fooyin_library(

@@ -19,6 +19,8 @@
 
 #include "testutils.h"
 
+#include <core/playlist/playlist.h>
+
 #include <QDir>
 
 #include <gtest/gtest.h>
@@ -70,5 +72,20 @@ void TempResource::checkValid() const
     EXPECT_TRUE(!origFileData.isEmpty());
     EXPECT_TRUE(!tmpFileData.isEmpty());
     EXPECT_EQ(origFileData, tmpFileData);
+}
+
+std::unique_ptr<Playlist> PlaylistTestUtils::createPlaylist(const QString& name, SettingsManager* settings)
+{
+    return Playlist::create(name, settings);
+}
+
+void PlaylistTestUtils::replaceTracks(Playlist& playlist, const TrackList& tracks)
+{
+    playlist.replaceTracks(tracks);
+}
+
+void PlaylistTestUtils::changeCurrentIndex(Playlist& playlist, int index)
+{
+    playlist.changeCurrentIndex(index);
 }
 } // namespace Fooyin::Testing

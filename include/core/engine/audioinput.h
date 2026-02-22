@@ -30,6 +30,13 @@
 namespace Fooyin {
 class ArchiveReader;
 
+/*!
+ * Input source descriptor passed to readers/decoders.
+ *
+ * `filepath` is always set. `device` is set when caller already opened the
+ * source and wants backend code to read from that handle. `archiveReader` is
+ * only present for tracks coming from archives.
+ */
 struct AudioSource
 {
     // Filepath used to open device
@@ -40,6 +47,16 @@ struct AudioSource
     ArchiveReader* archiveReader{nullptr};
 };
 
+/*!
+ * Decoder interface used by playback pipeline.
+ *
+ * Lifecycle:
+ * 1. `init()` once per track/subsong
+ * 2. optional `start()`
+ * 3. repeated `readBuffer()`
+ * 4. optional `seek()`
+ * 5. `stop()` for teardown/reset
+ */
 class FYCORE_EXPORT AudioDecoder
 {
     Q_GADGET
@@ -209,6 +226,9 @@ public:
 };
 using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 
+/*!
+ * Reader interface for archive containers that expose files as virtual entries.
+ */
 class FYCORE_EXPORT ArchiveReader
 {
 public:

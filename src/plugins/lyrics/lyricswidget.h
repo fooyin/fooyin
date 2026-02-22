@@ -22,7 +22,7 @@
 #include "lyrics.h"
 #include "settings/lyricssettings.h"
 
-#include <core/engine/audioengine.h>
+#include <core/engine/enginedefs.h>
 #include <core/scripting/scriptparser.h>
 #include <gui/fywidget.h>
 
@@ -67,7 +67,7 @@ private:
     void loadLyrics(const Lyrics& lyrics);
     void changeLyrics(const Lyrics& lyrics);
     void openEditor(const Lyrics& lyrics);
-    void playStateChanged(AudioEngine::PlaybackState state);
+    void playStateChanged(Engine::PlaybackState state);
 
     void setCurrentTime(uint64_t time);
     void seekTo(const QModelIndex& index, const QPoint& pos);

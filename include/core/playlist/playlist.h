@@ -29,6 +29,10 @@
 
 namespace Fooyin {
 class PlaylistPrivate;
+class PlaylistNavigator;
+namespace Testing {
+class PlaylistTestUtils;
+}
 struct PlaylistTrack;
 class SettingsManager;
 
@@ -154,6 +158,8 @@ public:
 private:
     friend class PlaylistHandler;
     friend class PlaylistHandlerPrivate;
+    friend class PlaylistNavigator;
+    friend class Testing::PlaylistTestUtils;
 
     static std::unique_ptr<Playlist> create(const QString& name, SettingsManager* settings);
     static std::unique_ptr<Playlist> create(int dbId, const QString& name, int index, SettingsManager* settings);

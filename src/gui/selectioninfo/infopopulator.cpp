@@ -182,11 +182,10 @@ void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
         }
     }
 
-    checkAddEntryNode(u"FileSize"_s, total > 1 ? InfoPopulator::tr("Total Size") : InfoPopulator::tr("File Size"),
-                      ItemParent::Location, track.fileSize(), InfoItem::Total,
-                      InfoItem::FormatUIntFunc{[](uint64_t size) -> QString {
-                          return Utils::formatFileSize(size, true);
-                      }});
+    checkAddEntryNode(
+        u"FileSize"_s, total > 1 ? InfoPopulator::tr("Total Size") : InfoPopulator::tr("File Size"),
+        ItemParent::Location, track.fileSize(), InfoItem::Total,
+        InfoItem::FormatUIntFunc{[](uint64_t size) -> QString { return Utils::formatFileSize(size, true); }});
     checkAddEntryNode(u"LastModified"_s, InfoPopulator::tr("Last Modified"), ItemParent::Location, track.modifiedTime(),
                       InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
 
@@ -209,19 +208,16 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
     }
 
     checkAddEntryNode(u"Duration"_s, InfoPopulator::tr("Duration"), ItemParent::General, track.duration(),
-                      InfoItem::Total, InfoItem::FormatUIntFunc{[](uint64_t ms) {
-                          return Utils::msToString(ms);
-                      }});
+                      InfoItem::Total, InfoItem::FormatUIntFunc{[](uint64_t ms) { return Utils::msToString(ms); }});
     checkAddEntryNode(u"Channels"_s, InfoPopulator::tr("Channels"), ItemParent::General, track.channels(),
                       InfoItem::Percentage);
     checkAddEntryNode(u"BitDepth"_s, InfoPopulator::tr("Bit Depth"), ItemParent::General, track.bitDepth(),
                       InfoItem::Percentage);
     if(track.bitrate() > 0) {
-        checkAddEntryNode(u"Bitrate"_s, total > 1 ? InfoPopulator::tr("Avg. Bitrate") : InfoPopulator::tr("Bitrate"),
-                          ItemParent::General, track.bitrate(), InfoItem::Average,
-                          InfoItem::FormatUIntFunc{[](uint64_t bitrate) -> QString {
-                              return u"%1 kbps"_s.arg(bitrate);
-                          }});
+        checkAddEntryNode(
+            u"Bitrate"_s, total > 1 ? InfoPopulator::tr("Avg. Bitrate") : InfoPopulator::tr("Bitrate"),
+            ItemParent::General, track.bitrate(), InfoItem::Average,
+            InfoItem::FormatUIntFunc{[](uint64_t bitrate) -> QString { return u"%1 kbps"_s.arg(bitrate); }});
     }
     checkAddEntryNode(u"SampleRate"_s, InfoPopulator::tr("Sample Rate"), ItemParent::General,
                       u"%1 Hz"_s.arg(track.sampleRate()), InfoItem::Percentage);

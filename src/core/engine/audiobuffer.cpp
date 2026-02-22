@@ -49,27 +49,6 @@ public:
         std::ranges::fill(m_buffer, unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
 
-    void fillRemainingWithSilence()
-    {
-        const bool unsignedFormat = m_format.sampleFormat() == SampleFormat::U8;
-        std::fill(m_buffer.begin() + static_cast<long>(m_buffer.size()), m_buffer.end(),
-                  unsignedFormat ? std::byte{0x80} : std::byte{0});
-    }
-
-    template <typename T>
-    void scale(const double volume)
-    {
-        const auto bytes = static_cast<int>(m_buffer.size());
-        const int bps    = m_format.bytesPerSample();
-
-        for(int i{0}; i < bytes; i += bps) {
-            T sample;
-            std::memcpy(&sample, m_buffer.data() + i, bps);
-            sample *= volume;
-            std::memcpy(m_buffer.data() + i, &sample, bps);
-        }
-    }
-
     std::vector<std::byte> m_buffer;
     AudioFormat m_format;
     uint64_t m_startTime;
@@ -231,47 +210,6 @@ void AudioBuffer::fillSilence()
 {
     if(isValid()) {
         p->fillSilence();
-    }
-}
-
-void AudioBuffer::fillRemainingWithSilence()
-{
-    if(isValid()) {
-        p->fillRemainingWithSilence();
-    }
-}
-
-void AudioBuffer::scale(double volume)
-{
-    if(!isValid() || volume == 1.0) {
-        return;
-    }
-
-    if(volume == 0.0) {
-        fillSilence();
-        return;
-    }
-
-    switch(format().sampleFormat()) {
-        case(SampleFormat::U8):
-            p->scale<uint8_t>(volume);
-            break;
-        case(SampleFormat::S16):
-            p->scale<int16_t>(volume);
-            break;
-        case(SampleFormat::S24):
-        case(SampleFormat::S32):
-            p->scale<int32_t>(volume);
-            break;
-        case(SampleFormat::F32):
-            p->scale<float>(volume);
-            break;
-        case(SampleFormat::F64):
-            p->scale<double>(volume);
-            break;
-        case(SampleFormat::Unknown):
-        default:
-            qCWarning(AUD_BUFF) << "Unable to scale samples of unsupported format";
     }
 }
 } // namespace Fooyin

@@ -30,6 +30,13 @@
 namespace Fooyin {
 class AudioBufferPrivate;
 
+/*!
+ * Interleaved PCM buffer with timeline metadata.
+ *
+ * `AudioBuffer` is implicitly shared (copy-on-write). The payload is raw bytes
+ * interpreted according to `format()`, and `startTime()` anchors the buffer in
+ * source timeline milliseconds.
+ */
 class FYCORE_EXPORT AudioBuffer
 {
 public:
@@ -43,23 +50,38 @@ public:
     AudioBuffer& operator=(const AudioBuffer& other);
     AudioBuffer(AudioBuffer&& other) noexcept;
 
+    //! Reserve payload capacity in bytes.
     void reserve(size_t size);
+    //! Resize payload to `size` bytes.
     void resize(size_t size);
+    //! Append raw bytes to payload.
     void append(std::span<const std::byte> data);
+    //! Append raw bytes to payload.
     void append(const std::byte* data, size_t size);
+    //! Remove `size` bytes from beginning of payload.
     void erase(size_t size);
+    //! Clear payload bytes, keeping format/timing metadata.
     void clear();
+    //! Reset payload and metadata to default-invalid state.
     void reset();
 
+    //! True when format and payload are consistent/usable.
     [[nodiscard]] bool isValid() const;
+    //! Ensure unique ownership before in-place mutation.
     void detach();
 
     [[nodiscard]] AudioFormat format() const;
+    //! Number of audio frames represented by payload and format.
     [[nodiscard]] int frameCount() const;
+    //! Number of interleaved samples represented by payload and format.
     [[nodiscard]] int sampleCount() const;
+    //! Payload size in bytes.
     [[nodiscard]] int byteCount() const;
+    //! Buffer start timestamp in milliseconds.
     [[nodiscard]] uint64_t startTime() const;
+    //! Buffer end timestamp in milliseconds.
     [[nodiscard]] uint64_t endTime() const;
+    //! Buffer duration in milliseconds.
     [[nodiscard]] uint64_t duration() const;
 
     [[nodiscard]] std::span<const std::byte> constData() const;
@@ -68,9 +90,8 @@ public:
 
     void setStartTime(uint64_t startTime);
 
+    //! Fill payload with silence according to sample format.
     void fillSilence();
-    void fillRemainingWithSilence();
-    void scale(double volume);
 
 private:
     QExplicitlySharedDataPointer<AudioBufferPrivate> p;

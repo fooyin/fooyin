@@ -640,7 +640,7 @@ void LibraryTreeWidgetPrivate::handlePlayback(const QModelIndexList& indexes, in
     m_playlist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(LibTreePlaylist), tracks);
     if(m_playlist) {
         m_playlist->changeCurrentIndex(row);
-        m_playlistHandler->startPlayback(m_playlist);
+        m_playerController->startPlayback(m_playlist);
     }
 }
 

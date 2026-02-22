@@ -26,13 +26,19 @@
 #include <QDebug>
 #include <QLoggingCategory>
 
+#include <cerrno>
+#include <limits>
+#include <optional>
 #include <ranges>
+#include <utility>
 
 Q_LOGGING_CATEGORY(ALSA, "fy.alsa")
 
 using namespace Qt::StringLiterals;
 
 namespace {
+using ChannelPosition = Fooyin::AudioFormat::ChannelPosition;
+
 snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
 {
     switch(format) {
@@ -40,7 +46,7 @@ snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
             return SND_PCM_FORMAT_U8;
         case(Fooyin::SampleFormat::S16):
             return SND_PCM_FORMAT_S16;
-        case(Fooyin::SampleFormat::S24):
+        case(Fooyin::SampleFormat::S24In32):
         case(Fooyin::SampleFormat::S32):
             return SND_PCM_FORMAT_S32;
         case(Fooyin::SampleFormat::F32):
@@ -153,6 +159,92 @@ struct CtlHandleDeleter
     }
 };
 using CtlHandleUPtr = std::unique_ptr<snd_ctl_t, CtlHandleDeleter>;
+
+struct ChmapQueryList
+{
+    snd_pcm_chmap_query_t** queries{nullptr};
+
+    ~ChmapQueryList()
+    {
+        if(queries) {
+            snd_pcm_free_chmaps(queries);
+        }
+    }
+};
+
+ChannelPosition channelPositionFromAlsa(unsigned int pos)
+{
+    switch(pos) {
+        case SND_CHMAP_MONO:
+            return ChannelPosition::FrontCenter;
+        case SND_CHMAP_FL:
+            return ChannelPosition::FrontLeft;
+        case SND_CHMAP_FR:
+            return ChannelPosition::FrontRight;
+        case SND_CHMAP_FC:
+            return ChannelPosition::FrontCenter;
+        case SND_CHMAP_LFE:
+            return ChannelPosition::LFE;
+        case SND_CHMAP_RL:
+            return ChannelPosition::BackLeft;
+        case SND_CHMAP_RR:
+            return ChannelPosition::BackRight;
+        case SND_CHMAP_SL:
+            return ChannelPosition::SideLeft;
+        case SND_CHMAP_SR:
+            return ChannelPosition::SideRight;
+        case SND_CHMAP_RC:
+            return ChannelPosition::BackCenter;
+        case SND_CHMAP_FLC:
+            return ChannelPosition::FrontLeftOfCenter;
+        case SND_CHMAP_FRC:
+            return ChannelPosition::FrontRightOfCenter;
+#ifdef SND_CHMAP_TC
+        case SND_CHMAP_TC:
+            return ChannelPosition::TopCenter;
+#endif
+#ifdef SND_CHMAP_TFL
+        case SND_CHMAP_TFL:
+            return ChannelPosition::TopFrontLeft;
+#endif
+#ifdef SND_CHMAP_TFC
+        case SND_CHMAP_TFC:
+            return ChannelPosition::TopFrontCenter;
+#endif
+#ifdef SND_CHMAP_TFR
+        case SND_CHMAP_TFR:
+            return ChannelPosition::TopFrontRight;
+#endif
+#ifdef SND_CHMAP_TRL
+        case SND_CHMAP_TRL:
+            return ChannelPosition::TopBackLeft;
+#endif
+#ifdef SND_CHMAP_TRC
+        case SND_CHMAP_TRC:
+            return ChannelPosition::TopBackCenter;
+#endif
+#ifdef SND_CHMAP_TRR
+        case SND_CHMAP_TRR:
+            return ChannelPosition::TopBackRight;
+#endif
+        default:
+            return ChannelPosition::UnknownPosition;
+    }
+}
+
+Fooyin::AudioFormat::ChannelLayout channelLayoutFromAlsaMap(const snd_pcm_chmap_t& map)
+{
+    Fooyin::AudioFormat::ChannelLayout layout;
+    if(map.channels == 0) {
+        return layout;
+    }
+
+    layout.reserve(static_cast<size_t>(map.channels));
+    for(unsigned i = 0; i < map.channels; ++i) {
+        layout.push_back(channelPositionFromAlsa(map.pos[i]));
+    }
+    return layout;
+}
 } // namespace
 
 namespace Fooyin::Alsa {
@@ -161,7 +253,6 @@ AlsaOutput::AlsaOutput()
     , m_pausable{true}
     , m_started{false}
     , m_device{u"default"_s}
-    , m_volume{1.0}
     , m_bufferSize{8192}
     , m_periodSize{1024}
 { }
@@ -192,8 +283,10 @@ void AlsaOutput::uninit()
 
 void AlsaOutput::reset()
 {
-    checkError(snd_pcm_drop(m_pcmHandle.get()), "ALSA drop error");
-    checkError(snd_pcm_prepare(m_pcmHandle.get()), "ALSA prepare error");
+    if(m_pcmHandle) {
+        checkError(snd_pcm_drop(m_pcmHandle.get()), "ALSA drop error");
+        checkError(snd_pcm_prepare(m_pcmHandle.get()), "ALSA prepare error");
+    }
 
     m_started = false;
     recoverState();
@@ -250,20 +343,46 @@ int AlsaOutput::write(const AudioBuffer& buffer)
         return 0;
     }
 
-    const int frameCount = buffer.frameCount();
-
-    AudioBuffer adjustedBuff{buffer};
-    adjustedBuff.scale(m_volume);
-
-    snd_pcm_sframes_t err{0};
-    err = snd_pcm_writei(m_pcmHandle.get(), adjustedBuff.constData().data(), frameCount);
-    if(checkError(static_cast<int>(err), "Write error")) {
+    const int frameCount    = buffer.frameCount();
+    const int bytesPerFrame = buffer.format().bytesPerFrame();
+    if(frameCount <= 0 || bytesPerFrame <= 0) {
         return 0;
     }
-    if(err != frameCount) {
-        qCWarning(ALSA) << "Unexpected partial write";
+
+    const auto* data    = buffer.constData().data();
+    int framesRemaining = frameCount;
+    int framesWritten   = 0;
+    int eagainRetries   = 0;
+
+    while(framesRemaining > 0) {
+        const auto* ptr             = data + static_cast<size_t>(framesWritten * bytesPerFrame);
+        const snd_pcm_sframes_t err = snd_pcm_writei(m_pcmHandle.get(), ptr, framesRemaining);
+
+        if(err == -EAGAIN) {
+            if(eagainRetries++ > 4) {
+                break;
+            }
+            snd_pcm_wait(m_pcmHandle.get(), 10);
+            continue;
+        }
+
+        if(checkError(static_cast<int>(err), "Write error")) {
+            return framesWritten;
+        }
+
+        if(err <= 0) {
+            break;
+        }
+
+        framesWritten += static_cast<int>(err);
+        framesRemaining -= static_cast<int>(err);
     }
-    return static_cast<int>(err);
+
+    if(framesWritten != frameCount) {
+        qCDebug(ALSA) << "Partial write:" << framesWritten << "/" << frameCount;
+    }
+
+    return framesWritten;
 }
 
 void AlsaOutput::setPaused(bool pause)
@@ -272,7 +391,7 @@ void AlsaOutput::setPaused(bool pause)
         return;
     }
 
-    if(!pause && !recoverState()) {
+    if(!recoverState()) {
         return;
     }
 
@@ -285,9 +404,9 @@ void AlsaOutput::setPaused(bool pause)
     }
 }
 
-void AlsaOutput::setVolume(double volume)
+bool AlsaOutput::supportsVolumeControl() const
 {
-    m_volume = volume;
+    return false;
 }
 
 void AlsaOutput::setDevice(const QString& device)
@@ -295,6 +414,70 @@ void AlsaOutput::setDevice(const QString& device)
     if(!device.isEmpty()) {
         m_device = device;
     }
+}
+
+AudioFormat AlsaOutput::negotiateFormat(const AudioFormat& requested) const
+{
+    if(!requested.isValid() || requested.channelCount() <= 0) {
+        return requested;
+    }
+
+    snd_pcm_t* rawHandle{nullptr};
+    if(snd_pcm_open(&rawHandle, m_device.toLocal8Bit().constData(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK) < 0) {
+        return requested;
+    }
+    const PcmHandleUPtr handle{rawHandle, PcmHandleDeleter()};
+
+    ChmapQueryList maps{snd_pcm_query_chmaps(handle.get())};
+    if(!maps.queries) {
+        return requested;
+    }
+
+    int bestScore{std::numeric_limits<int>::min()};
+    int bestKnown{std::numeric_limits<int>::min()};
+    std::optional<AudioFormat::ChannelLayout> bestLayout;
+
+    for(int i = 0; maps.queries[i] != nullptr; ++i) {
+        const auto* query = maps.queries[i];
+        if(!query || static_cast<int>(query->map.channels) != requested.channelCount()) {
+            continue;
+        }
+
+        auto layout = channelLayoutFromAlsaMap(query->map);
+        if(static_cast<int>(layout.size()) != requested.channelCount()) {
+            continue;
+        }
+
+        int score = 0;
+        int known = 0;
+        for(int ch = 0; ch < requested.channelCount(); ++ch) {
+            const auto candidate = layout[static_cast<size_t>(ch)];
+            if(candidate != ChannelPosition::UnknownPosition) {
+                ++known;
+            }
+
+            if(requested.hasChannelLayout()) {
+                const auto requestedPos = requested.channelPosition(ch);
+                if(requestedPos == candidate) {
+                    ++score;
+                }
+            }
+        }
+
+        if(score > bestScore || (score == bestScore && known > bestKnown)) {
+            bestScore  = score;
+            bestKnown  = known;
+            bestLayout = std::move(layout);
+        }
+    }
+
+    if(!bestLayout) {
+        return requested;
+    }
+
+    AudioFormat negotiated = requested;
+    negotiated.setChannelLayout(*bestLayout);
+    return negotiated;
 }
 
 QString AlsaOutput::error() const
@@ -666,13 +849,13 @@ bool AlsaOutput::recoverState(OutputState* state)
     }
 
     if(state) {
-        const auto delay   = snd_pcm_status_get_delay(status);
-        state->delay       = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(m_format.sampleRate());
-        state->freeSamples = static_cast<int>(snd_pcm_status_get_avail(status));
-        state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(m_bufferSize));
+        const auto delay  = snd_pcm_status_get_delay(status);
+        state->delay      = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(m_format.sampleRate());
+        state->freeFrames = static_cast<int>(snd_pcm_status_get_avail(status));
+        state->freeFrames = std::clamp(state->freeFrames, 0, static_cast<int>(m_bufferSize));
         // Align to period size
-        state->freeSamples   = static_cast<int>(state->freeSamples / m_periodSize * m_periodSize);
-        state->queuedSamples = static_cast<int>(m_bufferSize) - state->freeSamples;
+        state->freeFrames   = static_cast<int>(state->freeFrames / m_periodSize * m_periodSize);
+        state->queuedFrames = static_cast<int>(m_bufferSize) - state->freeFrames;
     }
 
     return recovered;
