@@ -174,6 +174,10 @@ public:
     void setControlsEnabled(bool enabled);
     void setLocationEnabled(bool enabled);
 
+    void setShowSymLinksEnabled(bool enabled);
+    void setShowHidden(bool enabled);
+    void updateFilters();
+
     void changeMode(DirBrowser::Mode newMode);
 
     void startPlayback(const TrackList& tracks, int row);
@@ -203,6 +207,10 @@ public:
     QFileSystemModel* m_model;
     DirProxyModel* m_proxyModel;
     QUndoStack m_dirHistory;
+
+    QFlags<QDir::Filter> m_defaultFilters{QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot};
+    bool m_showSymLinks;
+    bool m_showHidden;
 
     Playlist* m_playlist{nullptr};
 
@@ -239,6 +247,8 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     , m_dirTree{new DirTree(m_self)}
     , m_model{new QFileSystemModel(m_self)}
     , m_proxyModel{new DirProxyModel(m_mode == DirBrowser::Mode::List, m_self)}
+    , m_showSymLinks{m_settings->value<Settings::Gui::Internal::DirBrowserShowSymLinks>()}
+    , m_showHidden{m_settings->value<Settings::Gui::Internal::DirBrowserShowHidden>()}
     , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserMiddleClick>())}
     , m_context{new WidgetContext(m_self, Context{Constants::Context::DirBrowser}, m_self)}
@@ -262,7 +272,7 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
 
     checkIconProvider();
 
-    m_model->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    updateFilters();
     m_model->setNameFilters(m_supportedExtensions);
     m_model->setNameFilterDisables(false);
     m_model->setReadOnly(true);
@@ -591,6 +601,20 @@ void DirBrowserPrivate::updateIndent(bool show) const
     }
 }
 
+void DirBrowserPrivate::updateFilters()
+{
+    QFlags<QDir::Filter> newFilters = m_defaultFilters;
+
+    if(!m_showSymLinks) {
+        newFilters |= QDir::NoSymLinks;
+    }
+    if(m_showHidden) {
+        newFilters |= QDir::Hidden;
+    }
+
+    m_model->setFilter(newFilters);
+}
+
 void DirBrowserPrivate::setControlsEnabled(bool enabled)
 {
     if(enabled && !m_upDir && !m_backDir && !m_forwardDir) {
@@ -632,6 +656,18 @@ void DirBrowserPrivate::setLocationEnabled(bool enabled)
             m_dirEdit->deleteLater();
         }
     }
+}
+
+void DirBrowserPrivate::setShowSymLinksEnabled(bool enabled)
+{
+    m_showSymLinks = enabled;
+    updateFilters();
+}
+
+void DirBrowserPrivate::setShowHidden(bool enabled)
+{
+    m_showHidden = enabled;
+    updateFilters();
 }
 
 void DirBrowserPrivate::changeMode(DirBrowser::Mode newMode)
@@ -739,6 +775,10 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
         this, [this](bool enabled) { p->setControlsEnabled(enabled); });
     settings->subscribe<Settings::Gui::Internal::DirBrowserLocation>(
         this, [this](bool enabled) { p->setLocationEnabled(enabled); });
+    settings->subscribe<Settings::Gui::Internal::DirBrowserShowSymLinks>(
+        this, [this](bool enabled) { p->setShowSymLinksEnabled(enabled); });
+    settings->subscribe<Settings::Gui::Internal::DirBrowserShowHidden>(
+        this, [this](bool enabled) { p->setShowHidden(enabled); });
     settings->subscribe<Settings::Gui::Theme>(p->m_proxyModel, &DirProxyModel::resetPalette);
     settings->subscribe<Settings::Gui::Style>(p->m_proxyModel, &DirProxyModel::resetPalette);
 
