@@ -247,8 +247,8 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     , m_dirTree{new DirTree(m_self)}
     , m_model{new QFileSystemModel(m_self)}
     , m_proxyModel{new DirProxyModel(m_mode == DirBrowser::Mode::List, m_self)}
-    , m_showSymLinks{static_cast<bool>(m_settings->value<Settings::Gui::Internal::DirBrowserShowSymLinks>())}
-    , m_showHidden{static_cast<bool>(m_settings->value<Settings::Gui::Internal::DirBrowserShowHidden>())}
+    , m_showSymLinks{m_settings->value<Settings::Gui::Internal::DirBrowserShowSymLinks>()}
+    , m_showHidden{m_settings->value<Settings::Gui::Internal::DirBrowserShowHidden>()}
     , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserMiddleClick>())}
     , m_context{new WidgetContext(m_self, Context{Constants::Context::DirBrowser}, m_self)}

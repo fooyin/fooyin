@@ -110,9 +110,11 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     browserModeLayout->addWidget(m_listMode);
     browserModeLayout->addStretch();
 
-    browserModeLayout->addWidget(new QLabel(tr("Browser Filters"), this), 0, Qt::AlignCenter);
-    browserModeLayout->addWidget(m_showSymLinks);
-    browserModeLayout->addWidget(m_showHidden);
+    auto* browserFilters       = new QGroupBox(tr("Browser Filters"), this);
+    auto* browserFiltersLayout = new QVBoxLayout(browserFilters);
+
+    browserFiltersLayout->addWidget(m_showSymLinks);
+    browserFiltersLayout->addWidget(m_showHidden);
 
     auto* displayOptions       = new QGroupBox(tr("Display Options"), this);
     auto* displayOptionsLayout = new QGridLayout(displayOptions);
@@ -126,7 +128,8 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(clickBehaviour, 0, 0);
     mainLayout->addWidget(browserMode, 1, 0);
-    mainLayout->addWidget(displayOptions, 2, 0);
+    mainLayout->addWidget(browserFilters, 2, 0);
+    mainLayout->addWidget(displayOptions, 3, 0);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     using ActionIndexMap = std::map<int, int>;
