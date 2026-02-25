@@ -18,11 +18,11 @@ This document outlines the upcoming features for fooyin.
 | Smart playlists                               | ✅ 0.9.0   |
 | Album artwork downloading/saving              | ✅ 0.9.0   |
 | Synchronised lyric support                    | ✅ 0.9.0   |
-| DSP plugin support                            | 🚧 0.10.0 |
+| DSP plugin support                            | 🚧 0.10.0  |
+| Equaliser                                     | 🚧 0.10.0  |
 | Audio conversion                              | ❓ TBD     |
 | Metadata lookup                               | ❓ TBD     |
 | Internet radio support                        | ❓ TBD     |
-| Equaliser                                     | ❓ TBD     |
 
 ## Enhancements
 
