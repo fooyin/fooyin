@@ -503,18 +503,7 @@ bool PlaylistOrganiserModel::dropMimeData(const QMimeData* data, Qt::DropAction 
         return false;
     }
 
-    if(data->hasUrls()) {
-        if(auto* item = itemForIndex(parent)) {
-            if(item->type() == PlaylistOrganiserItem::PlaylistItem) {
-                emit filesDroppedOnPlaylist(data->urls(), item->playlist()->id());
-            }
-            else {
-                emit filesDroppedOnGroup(data->urls(), item->title(), row);
-            }
-            return true;
-        }
-    }
-    else if(data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
+    if(data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
         auto trackData = data->data(QString::fromLatin1(Constants::Mime::TrackIds));
         std::vector<int> ids;
         QDataStream stream(&trackData, QIODevice::ReadOnly);
@@ -526,6 +515,18 @@ bool PlaylistOrganiserModel::dropMimeData(const QMimeData* data, Qt::DropAction 
             }
             else {
                 emit tracksDroppedOnGroup(ids, item->title(), row);
+            }
+            return true;
+        }
+    }
+
+    if(data->hasUrls()) {
+        if(auto* item = itemForIndex(parent)) {
+            if(item->type() == PlaylistOrganiserItem::PlaylistItem) {
+                emit filesDroppedOnPlaylist(data->urls(), item->playlist()->id());
+            }
+            else {
+                emit filesDroppedOnGroup(data->urls(), item->title(), row);
             }
             return true;
         }
