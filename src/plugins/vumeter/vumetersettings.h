@@ -37,6 +37,7 @@ enum VuMeterSettings : uint32_t
     BarSections    = 5 | Type::Int,
     SectionSpacing = 6 | Type::Int,
     MeterColours   = 7 | Type::Variant,
+    UpdateFps      = 8 | Type::Int,
 };
 Q_ENUM_NS(VuMeterSettings)
 } // namespace Settings::VuMeter

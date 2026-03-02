@@ -21,11 +21,10 @@
 
 #include "vumetercolours.h"
 
+#include <gui/framerate.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
-#include <QColor>
-#include <QPalette>
 
 using namespace Qt::StringLiterals;
 
@@ -45,5 +44,6 @@ VuMeterSettings::VuMeterSettings(SettingsManager* settings)
     m_settings->createSetting<BarSections>(1, u"VuMeter/BarSections"_s);
     m_settings->createSetting<SectionSpacing>(1, u"VuMeter/SectionSpacing"_s);
     m_settings->createSetting<MeterColours>(QVariant{}, u"VuMeter/Colours"_s);
+    m_settings->createSetting<UpdateFps>(Gui::FrameRate::toFps(Gui::FrameRate::Preset::Fps40), u"VuMeter/UpdateFps"_s);
 }
 } // namespace Fooyin::VuMeter

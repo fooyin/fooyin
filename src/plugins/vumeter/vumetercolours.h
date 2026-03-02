@@ -32,18 +32,42 @@ struct Colours
     {
         Background = 0,
         Peak,
+        Legend,
         Gradient1,
         Gradient2,
     };
 
-    QMap<Type, QColor> meterColours{{Type::Background, Qt::transparent},
-                                    {Type::Peak, QColor{190, 40, 10}},
-                                    {Type::Gradient1, QColor{65, 65, 65}},
-                                    {Type::Gradient2, QApplication::palette().highlight().color()}};
+    static QColor defaultColour(Type type)
+    {
+        switch(type) {
+            case Type::Background:
+                return Qt::transparent;
+            case Type::Peak:
+                return {190, 40, 10};
+            case Type::Legend:
+                return QApplication::palette().text().color();
+            case Type::Gradient1:
+                return {65, 65, 65};
+            case Type::Gradient2:
+                return QApplication::palette().highlight().color();
+        }
+
+        return {};
+    }
+
+    QMap<Type, QColor> meterColours{{Type::Background, defaultColour(Type::Background)},
+                                    {Type::Peak, defaultColour(Type::Peak)},
+                                    {Type::Legend, defaultColour(Type::Legend)},
+                                    {Type::Gradient1, defaultColour(Type::Gradient1)},
+                                    {Type::Gradient2, defaultColour(Type::Gradient2)}};
 
     [[nodiscard]] QColor colour(Type type) const
     {
-        return meterColours.value(type);
+        if(meterColours.contains(type)) {
+            return meterColours.value(type);
+        }
+
+        return defaultColour(type);
     }
 
     void setColour(Type type, const QColor& colour)

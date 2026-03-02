@@ -5,6 +5,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/editablelayout.h
     ${CMAKE_SOURCE_DIR}/include/gui/fylayout.h
     ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
+        ${CMAKE_SOURCE_DIR}/include/gui/framerate.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiconstants.h
     ${CMAKE_SOURCE_DIR}/include/gui/guipaths.h
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h

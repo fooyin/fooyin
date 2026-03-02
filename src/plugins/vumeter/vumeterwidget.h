@@ -66,6 +66,7 @@ public:
     [[nodiscard]] QSize minimumSizeHint() const override;
 
 protected:
+    void showEvent(QShowEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
