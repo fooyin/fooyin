@@ -8,21 +8,21 @@ create_fooyin_plugin_internal(
         settings/wavebarsettingspage.cpp
         settings/wavebarsettingspage.h
         wavebarcolours.h
-            wavebarconstants.cpp
-            wavebarconstants.h
-            wavebardatabase.cpp
-            wavebardatabase.h
-            wavebarplugin.cpp
-            wavebarplugin.h
-            wavebarwidget.cpp
-            wavebarwidget.h
-            waveformbuilder.cpp
-            waveformbuilder.h
-            waveformdata.h
-            waveformgenerator.cpp
-            waveformgenerator.h
-            waveformrescaler.cpp
-            waveformrescaler.h
-            waveseekbar.cpp
-            waveseekbar.h
+        wavebarconstants.cpp
+        wavebarconstants.h
+        wavebardatabase.cpp
+        wavebardatabase.h
+        wavebarplugin.cpp
+        wavebarplugin.h
+        wavebarwidget.cpp
+        wavebarwidget.h
+        waveformbuilder.cpp
+        waveformbuilder.h
+        waveformdata.h
+        waveformgenerator.cpp
+        waveformgenerator.h
+        waveformrescaler.cpp
+        waveformrescaler.h
+        waveseekbar.cpp
+        waveseekbar.h
 )

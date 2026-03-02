@@ -1,7 +1,13 @@
 create_fooyin_plugin_internal(
     tageditor
     DEPENDS Fooyin::Gui
-    SOURCES tageditorconstants.h
+        SOURCES settings/tageditorfieldregistry.cpp
+        settings/tageditorfieldregistry.h
+        settings/tageditorfieldsmodel.cpp
+        settings/tageditorfieldsmodel.h
+        settings/tageditorpage.cpp
+        settings/tageditorpage.h
+        tageditorconstants.h
             tageditoritem.cpp
             tageditoritem.h
             tageditormodel.cpp
@@ -12,10 +18,4 @@ create_fooyin_plugin_internal(
             tageditorview.h
             tageditorwidget.cpp
             tageditorwidget.h
-            settings/tageditorfieldregistry.cpp
-            settings/tageditorfieldregistry.h
-            settings/tageditorfieldsmodel.cpp
-            settings/tageditorfieldsmodel.h
-            settings/tageditorpage.cpp
-            settings/tageditorpage.h
 )

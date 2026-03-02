@@ -15,15 +15,15 @@ create_fooyin_plugin_internal(
             ffmpegscanner.h
             rgscanner.cpp
             rgscanner.h
-            rgscanresults.cpp
-            rgscanresults.h
-            rgscanresultsmodel.cpp
-            rgscanresultsmodel.h
+        rgscannerdefs.h
             rgscannerpage.cpp
             rgscannerpage.h
             rgscannerplugin.cpp
             rgscannerplugin.h
-            rgscannerdefs.h
+        rgscanresults.cpp
+        rgscanresults.h
+        rgscanresultsmodel.cpp
+        rgscanresultsmodel.h
 )
 
 target_include_directories(rgscanner PRIVATE ${FFMPEG_INCLUDE_DIRS})

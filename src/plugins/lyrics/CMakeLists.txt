@@ -22,6 +22,20 @@ create_fooyin_plugin_internal(
             lyricsview.h
             lyricswidget.cpp
             lyricswidget.h
+        settings/lyricsgeneralpage.cpp
+        settings/lyricsgeneralpage.h
+        settings/lyricsguipage.cpp
+        settings/lyricsguipage.h
+        settings/lyricssavingpage.cpp
+        settings/lyricssavingpage.h
+        settings/lyricssearchingpage.cpp
+        settings/lyricssearchingpage.h
+        settings/lyricssettings.cpp
+        settings/lyricssettings.h
+        settings/lyricssourcesmodel.cpp
+        settings/lyricssourcesmodel.h
+        settings/lyricssourcespage.cpp
+        settings/lyricssourcespage.h
             sources/darklyrics.cpp
             sources/darklyrics.h
             sources/locallyrics.cpp
@@ -36,18 +50,4 @@ create_fooyin_plugin_internal(
             sources/qqlyrics.h
             sources/taglyrics.cpp
             sources/taglyrics.h
-            settings/lyricssettings.cpp
-            settings/lyricssettings.h
-            settings/lyricsgeneralpage.cpp
-            settings/lyricsgeneralpage.h
-            settings/lyricsguipage.cpp
-            settings/lyricsguipage.h
-            settings/lyricssearchingpage.cpp
-            settings/lyricssearchingpage.h
-            settings/lyricssavingpage.cpp
-            settings/lyricssavingpage.h
-            settings/lyricssourcesmodel.cpp
-            settings/lyricssourcesmodel.h
-            settings/lyricssourcespage.cpp
-            settings/lyricssourcespage.h
 )
