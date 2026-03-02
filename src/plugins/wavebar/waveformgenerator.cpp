@@ -135,22 +135,27 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     setState(Running);
 
     if(!update && m_waveDb.existsInCache(trackKey)) {
-        if(render) {
-            WaveformData<int16_t> data;
-            if(m_waveDb.loadCachedData(trackKey, data)) {
-                const auto floatData = convertCache<float>(data);
-                m_data.channelData   = floatData.channelData;
-                m_data.complete      = true;
-
-                setState(Idle);
-                emit waveformGenerated(track, m_data);
-            }
-        }
-        else {
+        if(!render) {
             setState(Idle);
             emit waveformGenerated(track, {});
+            return;
         }
-        return;
+
+        WaveformData<int16_t> data;
+        if(m_waveDb.loadCachedData(trackKey, data)) {
+            const auto floatData = convertCache<float>(data);
+            m_data.channelData   = floatData.channelData;
+            m_data.complete      = true;
+
+            setState(Idle);
+            emit waveformGenerated(track, m_data);
+            return;
+        }
+
+        qCWarning(WAVEBAR) << "Unable to read waveform cache for track, regenerating:" << track.filepath();
+        if(!m_waveDb.removeFromCache(trackKey)) {
+            qCWarning(WAVEBAR) << "Unable to remove invalid waveform cache entry for track:" << track.filepath();
+        }
     }
 
     emit generatingWaveform();

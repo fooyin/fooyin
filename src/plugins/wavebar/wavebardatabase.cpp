@@ -31,9 +31,14 @@ using Fooyin::WaveBar::WaveformData;
 
 QDataStream& operator>>(QDataStream& stream, std::vector<WaveformData<int16_t>::ChannelData>& data)
 {
-    quint32 size;
+    quint32 size{0};
     stream >> size;
+    if(stream.status() != QDataStream::Ok) {
+        data.clear();
+        return stream;
+    }
 
+    data.clear();
     data.reserve(size);
 
     while(size > 0) {
@@ -43,6 +48,12 @@ QDataStream& operator>>(QDataStream& stream, std::vector<WaveformData<int16_t>::
         Fooyin::operator>>(stream, channel.max);
         Fooyin::operator>>(stream, channel.min);
         Fooyin::operator>>(stream, channel.rms);
+
+        if(stream.status() != QDataStream::Ok) {
+            data.clear();
+            return stream;
+        }
+
         data.emplace_back(channel);
     }
     return stream;
@@ -74,13 +85,20 @@ QByteArray serialiseData(const WaveformData<int16_t>& data)
     return out;
 }
 
-void deserialiseData(const QByteArray& cacheData, WaveformData<int16_t>& data)
+bool deserialiseData(const QByteArray& cacheData, WaveformData<int16_t>& data)
 {
+    data.channelData.clear();
+
     QByteArray in = qUncompress(cacheData);
+    if(in.isEmpty() && !cacheData.isEmpty()) {
+        return false;
+    }
+
     QDataStream stream{&in, QDataStream::ReadOnly};
     stream.setVersion(QDataStream::Qt_6_0);
 
     stream >> data.channelData;
+    return stream.status() == QDataStream::Ok;
 }
 } // namespace
 
@@ -120,8 +138,7 @@ bool WaveBarDatabase::loadCachedData(const QString& key, WaveformData<int16_t>& 
 
     if(query.exec() && query.next()) {
         const QByteArray cacheData = query.value(0).toByteArray();
-        deserialiseData(cacheData, data);
-        return true;
+        return deserialiseData(cacheData, data);
     }
 
     return false;

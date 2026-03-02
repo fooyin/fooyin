@@ -27,16 +27,25 @@ int buildSample(Fooyin::WaveBar::WaveformSample& sample, Fooyin::WaveBar::Wavefo
 {
     int sampleCount{0};
 
-    auto& [inMax, inMin, inRms] = data.channelData.at(channel);
+    if(channel < 0 || channel >= static_cast<int>(data.channelData.size())) {
+        return sampleCount;
+    }
+
+    auto& [inMax, inMin, inRms] = data.channelData[static_cast<size_t>(channel)];
+    const auto availableSamples = std::min({inMax.size(), inMin.size(), inRms.size()});
+    if(availableSamples == 0) {
+        return sampleCount;
+    }
 
     const int lastIndex = std::floor(end);
 
     for(int i = std::floor(start); i < std::ceil(end); ++i) {
         for(int index{i}; index < lastIndex; ++index) {
-            if(std::cmp_less(index, inMax.size())) {
-                const float sampleMax = inMax.at(index);
-                const float sampleMin = inMin.at(index);
-                const float sampleRms = inRms.at(index);
+            if(index >= 0 && static_cast<size_t>(index) < availableSamples) {
+                const auto sampleIndex = static_cast<size_t>(index);
+                const float sampleMax  = inMax[sampleIndex];
+                const float sampleMin  = inMin[sampleIndex];
+                const float sampleRms  = inRms[sampleIndex];
 
                 sample.max = std::max(sample.max, sampleMax);
                 sample.min = std::min(sample.min, sampleMin);
@@ -84,7 +93,11 @@ void WaveformRescaler::rescale()
     const auto samplesPerPixel = sampleSize / m_width;
 
     for(int ch{0}; ch < data.channels; ++ch) {
-        auto& [outMax, outMin, outRms] = data.channelData.at(ch);
+        if(ch < 0 || ch >= static_cast<int>(data.channelData.size())) {
+            continue;
+        }
+
+        auto& [outMax, outMin, outRms] = data.channelData[static_cast<size_t>(ch)];
 
         double start{0.0};
 

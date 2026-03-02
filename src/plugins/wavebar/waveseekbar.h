@@ -61,13 +61,13 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
-    [[nodiscard]] int positionFromValue(uint64_t value) const;
+    [[nodiscard]] double positionFromValue(double value) const;
     [[nodiscard]] uint64_t valueFromPosition(int pos) const;
     void updateMousePosition(const QPoint& pos);
-    void updateRange(int first, int last);
+    void updateRange(double first, double last);
 
     void drawChannel(QPainter& painter, int channel, double height, int first, int last, int y);
-    void drawSilence(QPainter& painter, int first, int last, double y);
+    void drawSilence(QPainter& painter, double first, double last, double y);
     void drawSeekTip();
 
     SettingsManager* m_settings;

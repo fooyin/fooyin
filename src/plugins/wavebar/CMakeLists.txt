@@ -1,7 +1,13 @@
 create_fooyin_plugin_internal(
     wavebar
     DEPENDS Fooyin::Gui
-    SOURCES wavebarcolours.h
+        SOURCES settings/wavebarguisettingspage.cpp
+        settings/wavebarguisettingspage.h
+        settings/wavebarsettings.cpp
+        settings/wavebarsettings.h
+        settings/wavebarsettingspage.cpp
+        settings/wavebarsettingspage.h
+        wavebarcolours.h
             wavebarconstants.cpp
             wavebarconstants.h
             wavebardatabase.cpp
@@ -19,10 +25,4 @@ create_fooyin_plugin_internal(
             waveformrescaler.h
             waveseekbar.cpp
             waveseekbar.h
-            settings/wavebarguisettingspage.cpp
-            settings/wavebarguisettingspage.h
-            settings/wavebarsettings.cpp
-            settings/wavebarsettings.h
-            settings/wavebarsettingspage.cpp
-            settings/wavebarsettingspage.h
 )

@@ -21,7 +21,6 @@
 
 #include "settings/wavebarsettings.h"
 
-#include <core/track.h>
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stringutils.h>
@@ -29,6 +28,8 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStyle>
+
+#include <cmath>
 
 using namespace Qt::StringLiterals;
 
@@ -138,9 +139,6 @@ void WaveSeekBar::processData(const WaveformData<float>& waveData)
     if(m_data.complete) {
         const int waveformWidth = std::max(1, m_data.sampleCount() * m_sampleWidth);
         m_scale                 = static_cast<double>(width()) / static_cast<double>(waveformWidth);
-
-        const double multiplier = 100.0;
-        m_scale                 = std::round(m_scale * multiplier) / multiplier;
     }
 
     update();
@@ -159,8 +157,8 @@ void WaveSeekBar::setPosition(uint64_t pos)
         return;
     }
 
-    const int oldX = positionFromValue(oldPos);
-    const int x    = positionFromValue(pos);
+    const double oldX = positionFromValue(static_cast<double>(oldPos));
+    const double x    = positionFromValue(static_cast<double>(pos));
 
     updateRange(oldX, x);
 }
@@ -198,12 +196,18 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     // Prevents clipping with seek tooltip and from other widgets
     rect.setHeight(contentsRect().height());
 
-    const auto first  = static_cast<int>(static_cast<double>(rect.left() / m_scale) / m_sampleWidth);
-    const auto last   = static_cast<int>(static_cast<double>(rect.right() + (1 / m_scale)));
-    const double posX = positionFromValue(m_position) / m_scale;
+    const double invScale    = m_scale > 0.0 ? (1.0 / m_scale) : 1.0;
+    const double firstSample = (static_cast<double>(rect.left()) * invScale) / static_cast<double>(m_sampleWidth);
+    const double lastSample
+        = ((static_cast<double>(rect.right()) + 1.0) * invScale) / static_cast<double>(m_sampleWidth);
+    const int first     = std::max(0, static_cast<int>(std::floor(firstSample)));
+    const int last      = std::max(first, static_cast<int>(std::ceil(lastSample)));
+    const double firstX = static_cast<double>(first * m_sampleWidth);
+    const double posX   = positionFromValue(static_cast<double>(m_position)) / m_scale;
 
     painter.fillRect(rect, m_colours.bgUnplayed);
-    painter.fillRect(QRect{first, 0, static_cast<int>(posX) - first, height()}, m_colours.bgPlayed);
+    const double playedWidth = std::max(0.0, posX - firstX);
+    painter.fillRect(QRectF{firstX, 0.0, playedWidth, static_cast<double>(height())}, m_colours.bgPlayed);
 
     const int channelHeight     = rect.height() / channels;
     const double waveformHeight = (channelHeight - m_centreGap) * m_channelScale;
@@ -224,8 +228,8 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
 
     if(isSeeking()) {
         painter.setPen({m_colours.seekingCursor, static_cast<double>(m_cursorWidth), Qt::SolidLine, Qt::FlatCap});
-        const int seekX = static_cast<int>(m_seekPos.x() / m_scale);
-        painter.drawLine(seekX, 0, seekX, height());
+        const double seekX = static_cast<double>(m_seekPos.x()) / m_scale;
+        painter.drawLine(QPointF{seekX, 0}, QPointF{seekX, static_cast<double>(height())});
     }
 }
 
@@ -296,22 +300,20 @@ void WaveSeekBar::keyPressEvent(QKeyEvent* event)
     }
 }
 
-int WaveSeekBar::positionFromValue(uint64_t value) const
+double WaveSeekBar::positionFromValue(double value) const
 {
     if(m_data.duration == 0) {
-        return 0;
+        return 0.0;
     }
 
     if(value >= m_data.duration) {
-        return width();
+        return static_cast<double>(width());
     }
 
     const auto max   = static_cast<double>(m_data.duration);
     const auto ratio = static_cast<double>(value) / max;
 
-    const auto pos = static_cast<int>(ratio * static_cast<double>(width()));
-
-    return pos;
+    return ratio * static_cast<double>(width());
 }
 
 uint64_t WaveSeekBar::valueFromPosition(int pos) const
@@ -342,17 +344,25 @@ void WaveSeekBar::updateMousePosition(const QPoint& pos)
     updateRange(oldSeekPos.x(), m_seekPos.x());
 }
 
-void WaveSeekBar::updateRange(int first, int last)
+void WaveSeekBar::updateRange(double first, double last)
 {
-    if(first == last) {
+    if(std::abs(first - last) < 0.0001) {
         return;
     }
 
-    const auto cursorWidth = static_cast<int>(m_cursorWidth * m_scale);
-    const int left         = (first < last ? first : last) - cursorWidth - m_sampleWidth;
-    const int width        = (std::abs(last - first) + (2 * cursorWidth) + 1) * m_sampleWidth;
+    const double cursorWidthPx = static_cast<double>(m_cursorWidth) * m_scale;
+    const double sampleWidthPx = std::max(1.0, static_cast<double>(m_sampleWidth) * m_scale);
+    const double gradientPx
+        = (m_barGap == 0) ? (static_cast<double>(std::max(1, m_barWidth)) * 2.0 * std::max(1.0, m_scale)) : 0.0;
 
-    const QRect updateRect(left, 0, width, height());
+    const double overscanPx = sampleWidthPx * 2.0;
+    const double marginPx   = cursorWidthPx + std::max(sampleWidthPx, gradientPx) + overscanPx + 2.0;
+    const double leftPos    = std::min(first, last) - marginPx;
+    const double rightPos   = std::max(first, last) + marginPx;
+
+    const int left        = static_cast<int>(std::floor(leftPos));
+    const int updateWidth = std::max(1, static_cast<int>(std::ceil(rightPos)) - left + 1);
+    const QRect updateRect(left, 0, updateWidth, height());
     update(updateRect);
 
     if(isSeeking() && m_seekTip) {
@@ -362,7 +372,7 @@ void WaveSeekBar::updateRange(int first, int last)
 
 void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int first, int last, int y)
 {
-    const auto& [max, min, rms] = m_data.channelData.at(channel);
+    const auto& [max, min, rms] = m_data.channelData[channel];
     if(max.empty() || min.empty() || rms.empty()) {
         return;
     }
@@ -380,114 +390,137 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         rmsScale = *std::ranges::max_element(rms);
     }
 
-    const auto total           = static_cast<int>(max.size());
-    const auto currentPosition = positionFromValue(m_position);
+    const auto total             = static_cast<int>(max.size());
+    const double currentPosition = positionFromValue(static_cast<double>(m_position)) / m_scale;
 
     if(!m_data.complete) {
-        const auto finalX  = total * m_sampleWidth;
+        const auto finalX  = static_cast<double>(total * m_sampleWidth);
+        const auto endX    = static_cast<double>(width()) / m_scale;
         const auto centreY = static_cast<double>(centre + (centreGap > 0 ? centreGap / 2 : 0));
-        drawSilence(painter, finalX, rect().width(), centreY);
+        drawSilence(painter, finalX, endX, centreY);
     }
     else if(m_mode & WaveMode::Silence && drawMax && drawMin) {
+        const auto firstX  = static_cast<double>(first * m_sampleWidth);
+        const auto lastX   = static_cast<double>((last + 1) * m_sampleWidth);
         const auto centreY = static_cast<double>(centre + (centreGap > 0 ? centreGap / 2 : 0));
-        drawSilence(painter, first, last, centreY);
+        drawSilence(painter, firstX, lastX, centreY);
     }
 
-    for(int i{first}; i <= last && i < total; ++i) {
-        const auto x        = static_cast<double>(i * m_sampleWidth);
-        const auto barWidth = static_cast<double>(m_barWidth);
-        const auto sampleX  = static_cast<int>(((i + 1) * m_sampleWidth) * m_scale);
+    const auto clipH    = static_cast<double>(this->height());
+    const int drawFirst = std::max(0, first);
+    const auto firstX   = static_cast<double>(drawFirst * m_sampleWidth);
 
-        double progress{0.0};
-        if(sampleX <= currentPosition) {
-            progress = 1.0;
-        }
-        else if(currentPosition < sampleX && currentPosition > (sampleX - m_sampleWidth)) {
-            progress = static_cast<double>(m_sampleWidth - std::abs(currentPosition - sampleX))
-                     / static_cast<double>(m_sampleWidth);
+    auto drawComponent = [this, &painter](double x, double barWidth, double waveCentre, double amplitude, double scale,
+                                          bool draw, const QColor& unplayed, const QColor& played, const QColor& border,
+                                          bool inProgress, bool isPlayed, double progress) {
+        if(!draw) {
+            return;
         }
 
-        const bool isPlayed     = progress >= 1.0;
-        const bool isInProgress = !isPlayed && progress > 0.0;
+        const double valueY = waveCentre - (amplitude * scale);
+        const QRectF rect{x, std::min(valueY, waveCentre), barWidth, std::abs(valueY - waveCentre)};
+
+        setupPainter(painter, inProgress, isPlayed, m_barWidth, progress, unplayed, played, border);
+        painter.drawRect(rect);
+    };
+
+    auto drawBar = [&](int i, bool inProgress, bool isPlayed, double progress) {
+        const double x        = static_cast<double>(i * m_sampleWidth);
+        const double barWidth = static_cast<double>(m_barWidth);
 
         if(m_mode & WaveMode::MinMax) {
-            auto waveCentre = static_cast<double>(centre);
-
-            if(drawMax) {
-                const QPointF pt1{x, waveCentre - (max.at(i) * maxScale)};
-                const QRectF rectMax{x, pt1.y(), barWidth, std::abs(pt1.y() - waveCentre)};
-
-                setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.maxUnplayed,
-                             m_colours.maxPlayed, m_colours.maxBorder);
-
-                painter.drawRect(rectMax);
-            }
-
-            waveCentre += centreGap;
-
-            if(drawMin) {
-                const QPointF pt2{x, waveCentre - (min.at(i) * minScale)};
-                const QRectF rectMin{x, waveCentre, barWidth, std::abs(waveCentre - pt2.y())};
-
-                setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.minUnplayed,
-                             m_colours.minPlayed, m_colours.minBorder);
-
-                painter.drawRect(rectMin);
-            }
+            drawComponent(x, barWidth, centre, max[i], maxScale, drawMax, m_colours.maxUnplayed, m_colours.maxPlayed,
+                          m_colours.maxBorder, inProgress, isPlayed, progress);
+            drawComponent(x, barWidth, centre + centreGap, min[i], minScale, drawMin, m_colours.minUnplayed,
+                          m_colours.minPlayed, m_colours.minBorder, inProgress, isPlayed, progress);
         }
 
         if(m_mode & WaveMode::Rms) {
-            auto waveCentre = static_cast<double>(centre);
+            const double rmsAmp = rms[i] / rmsScale;
+            drawComponent(x, barWidth, centre, rmsAmp, maxScale, drawMax, m_colours.rmsMaxUnplayed,
+                          m_colours.rmsMaxPlayed, m_colours.rmsMaxBorder, inProgress, isPlayed, progress);
+            drawComponent(x, barWidth, centre + centreGap, -rmsAmp, minScale, drawMin, m_colours.rmsMinUnplayed,
+                          m_colours.rmsMinPlayed, m_colours.rmsMinBorder, inProgress, isPlayed, progress);
+        }
+    };
 
-            if(drawMax) {
-                const QPointF pt1{x, waveCentre - (rms.at(i) / rmsScale * maxScale)};
-                const QRectF rectMax{x, pt1.y(), barWidth, std::abs(pt1.y() - waveCentre)};
+    if(m_barGap == 0) {
+        // Pass 1: all bars unplayed
+        for(int i{drawFirst}; i <= last && i < total; ++i) {
+            drawBar(i, false, false, 0.0);
+        }
 
-                setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.rmsMaxUnplayed,
-                             m_colours.rmsMaxPlayed, m_colours.rmsMaxBorder);
+        // Pass 2: clip to played region and redraw with played colours
+        const double clipWidth = currentPosition - firstX;
+        if(clipWidth > 0.0) {
+            painter.setClipRect(QRectF{firstX, 0.0, clipWidth, clipH}, Qt::IntersectClip);
+            for(int i{drawFirst}; i <= last && i < total; ++i) {
+                drawBar(i, false, true, 0.0);
+            }
+            painter.setClipping(false);
+        }
 
-                painter.drawRect(rectMax);
+        // Pass 3: pixel-aligned gradient zone centred at currentPosition.
+        // Each bar's colour is derived from its pixel distance to the cursor.
+        const double gradRadius = static_cast<double>(m_barWidth) * 2.0;
+        const int gradFirst
+            = std::max({0, first, static_cast<int>(std::floor((currentPosition - gradRadius) / m_sampleWidth))});
+        const int gradLast
+            = std::min(last, static_cast<int>(std::ceil((currentPosition + gradRadius) / m_sampleWidth)));
+
+        for(int i{gradFirst}; i <= gradLast && i < total; ++i) {
+            const double barCenter = static_cast<double>(i * m_sampleWidth) + (static_cast<double>(m_barWidth) * 0.5);
+            // t=0 → played colour, t=1 → unplayed colour
+            const double t = std::clamp((barCenter - (currentPosition - gradRadius)) / (2.0 * gradRadius), 0.0, 1.0);
+            drawBar(i, true, false, 1.0 - t);
+        }
+    }
+    else {
+        for(int i{drawFirst}; i <= last && i < total; ++i) {
+            const double sampleEnd   = static_cast<double>((i + 1) * m_sampleWidth);
+            const double sampleStart = sampleEnd - static_cast<double>(m_sampleWidth);
+
+            double progress{0.0};
+            if(sampleEnd <= currentPosition) {
+                progress = 1.0;
+            }
+            else if(currentPosition > sampleStart) {
+                const double sampleSpan = std::max(sampleEnd - sampleStart, 0.000001);
+                progress                = (currentPosition - sampleStart) / sampleSpan;
+                progress                = std::clamp(progress, 0.0, 1.0);
             }
 
-            waveCentre += centreGap;
-
-            if(drawMin) {
-                const QPointF pt2{x, waveCentre - (-rms.at(i) / rmsScale * minScale)};
-                const QRectF rectMin{x, waveCentre, barWidth, std::abs(waveCentre - pt2.y())};
-
-                setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.rmsMinUnplayed,
-                             m_colours.rmsMinPlayed, m_colours.rmsMinBorder);
-
-                painter.drawRect(rectMin);
-            }
+            const bool isPlayed     = progress >= 1.0;
+            const bool isInProgress = !isPlayed && progress > 0.0;
+            drawBar(i, isInProgress, isPlayed, progress);
         }
     }
 }
 
-void WaveSeekBar::drawSilence(QPainter& painter, int first, int last, double y)
+void WaveSeekBar::drawSilence(QPainter& painter, double first, double last, double y)
 {
-    const auto currentPosition = static_cast<double>(positionFromValue(m_position));
+    const auto currentPosition = positionFromValue(static_cast<double>(m_position)) / m_scale;
     const bool showRms         = m_data.complete && m_mode & WaveMode::Rms;
     const auto unplayedColour  = showRms ? m_colours.rmsMaxUnplayed : m_colours.maxUnplayed;
     const auto playedColour    = showRms ? m_colours.rmsMaxPlayed : m_colours.maxPlayed;
 
     if(currentPosition <= first) {
         painter.setPen(unplayedColour);
-        const QLineF unplayedLine{static_cast<double>(first), y, static_cast<double>(last), y};
+        const QLineF unplayedLine{first, y, last, y};
         painter.drawLine(unplayedLine);
     }
     else if(currentPosition >= last) {
         painter.setPen(playedColour);
-        const QLineF playedLine{static_cast<double>(first), y, static_cast<double>(last), y};
+        const QLineF playedLine{first, y, last, y};
         painter.drawLine(playedLine);
     }
     else {
         painter.setPen(playedColour);
-        const QLineF unplayedLine{static_cast<double>(first), y, currentPosition, y};
+        const QLineF unplayedLine{first, y, currentPosition, y};
         painter.drawLine(unplayedLine);
 
         painter.setPen(unplayedColour);
-        const QLineF playedLine{currentPosition, y, static_cast<double>(last), y};
+        const QLineF playedLine{currentPosition, y, last, y};
         painter.drawLine(playedLine);
     }
 }
