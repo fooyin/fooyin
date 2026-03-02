@@ -10,7 +10,8 @@
     "libopenmpt",
     "libsndfile",
     "libarchive",
-    "libgme"
+    "libgme",
+    "soundtouch"
   ],
   "features": {
     "fooyin-tests": {

@@ -20,4 +20,5 @@ sudo pkg install -y \
      libopenmpt \
      libarchive \
      ebur128 \
+     soundtouch \
      googletest
