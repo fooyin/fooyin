@@ -11,7 +11,8 @@
     "libsndfile",
     "libarchive",
     "libgme",
-    "soundtouch"
+    "soundtouch",
+    "soxr"
   ],
   "features": {
     "fooyin-tests": {
