@@ -208,18 +208,17 @@ void ScrobblerService::updateNowPlaying(const Track& track)
     m_timestamp    = static_cast<uint64_t>(QDateTime::currentSecsSinceEpoch());
     m_scrobbled    = false;
 
-    if(!settings()->value<Settings::Scrobbler::ScrobblingEnabled>()) {
+    if(!shouldUpdateNowPlaying(track)) {
         return;
     }
 
-    if(!isAuthenticated() || !canBeScrobbled(track)) {
-        return;
-    }
+    updateNowPlaying();
+}
 
-    if(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>()) {
-        if(!allowedByFilter(track)) {
-            return;
-        }
+void ScrobblerService::refreshNowPlaying()
+{
+    if(!shouldUpdateNowPlaying(m_currentTrack)) {
+        return;
     }
 
     updateNowPlaying();
@@ -319,6 +318,23 @@ bool ScrobblerService::removeReply(QNetworkReply* reply)
 
     QObject::disconnect(reply, nullptr, this, nullptr);
     reply->deleteLater();
+    return true;
+}
+
+bool ScrobblerService::shouldUpdateNowPlaying(const Track& track)
+{
+    if(!settings()->value<Settings::Scrobbler::ScrobblingEnabled>()) {
+        return false;
+    }
+
+    if(!isAuthenticated() || !canBeScrobbled(track)) {
+        return false;
+    }
+
+    if(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>() && !allowedByFilter(track)) {
+        return false;
+    }
+
     return true;
 }
 

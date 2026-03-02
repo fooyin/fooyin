@@ -80,6 +80,7 @@ public:
     void saveCache();
 
     void updateNowPlaying(const Track& track);
+    void refreshNowPlaying();
     void scrobble(const Track& track);
 
     virtual void testApi()          = 0;
@@ -110,6 +111,7 @@ protected:
     QNetworkReply* addReply(QNetworkReply* reply);
     bool removeReply(QNetworkReply* reply);
 
+    bool shouldUpdateNowPlaying(const Track& track);
     bool allowedByFilter(const Track& track);
 
     enum class ReplyResult : uint8_t

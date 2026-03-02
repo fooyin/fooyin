@@ -22,6 +22,9 @@
 #include "services/scrobblerservice.h"
 #include "services/servicedetails.h"
 
+#include <QBasicTimer>
+#include <QTimerEvent>
+
 #include <memory>
 #include <vector>
 
@@ -57,6 +60,11 @@ public:
     void saveCache();
 
 private:
+    void timerEvent(QTimerEvent* event) override;
+
+    [[nodiscard]] int nextNowPlayingRefreshDelay() const;
+    void updateNowPlayingTimer(bool reset = false);
+
     void addDefaultServices();
     void saveServices();
     void restoreServices();
@@ -66,6 +74,7 @@ private:
     SettingsManager* m_settings;
 
     std::vector<std::unique_ptr<ScrobblerService>> m_services;
+    QBasicTimer m_nowPlayingTimer;
 };
 } // namespace Scrobbler
 } // namespace Fooyin

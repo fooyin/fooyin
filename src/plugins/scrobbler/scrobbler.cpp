@@ -29,7 +29,13 @@
 
 #include <QIODevice>
 
+#include <algorithm>
+
 using namespace Qt::StringLiterals;
+
+constexpr auto NowPlayingRefreshIntervalMs  = 180000;
+constexpr auto NowPlayingFinalRefreshLeadMs = 180000;
+constexpr auto MinNowPlayingRefreshDelayMs  = 1000;
 
 namespace Fooyin::Scrobbler {
 Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<NetworkAccessManager> network,
@@ -48,6 +54,8 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &Scrobbler::updateNowPlaying);
     QObject::connect(m_playerController, &PlayerController::trackPlayed, this, &Scrobbler::scrobble);
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
+                     [this](const Player::PlayState) { updateNowPlayingTimer(); });
 }
 
 Scrobbler::~Scrobbler()
@@ -79,6 +87,8 @@ void Scrobbler::updateNowPlaying(const Track& track)
             service->updateNowPlaying(track);
         }
     }
+
+    updateNowPlayingTimer(true);
 }
 
 void Scrobbler::scrobble(const Track& track)
@@ -148,6 +158,67 @@ void Scrobbler::saveCache()
 {
     for(const auto& service : m_services) {
         service->saveCache();
+    }
+}
+
+int Scrobbler::nextNowPlayingRefreshDelay() const
+{
+    const bool shouldRefresh = std::ranges::any_of(m_services, [](const auto& service) { return service->isEnabled(); })
+                            && m_playerController->playState() == Player::PlayState::Playing
+                            && m_playerController->currentTrack().isValid();
+    if(!shouldRefresh) {
+        return 0;
+    }
+
+    const uint64_t durationMs = m_playerController->currentTrack().duration();
+    if(durationMs == 0) {
+        return 0;
+    }
+
+    const uint64_t positionMs = std::min<uint64_t>(m_playerController->currentPosition(), durationMs);
+    if(durationMs <= positionMs + NowPlayingFinalRefreshLeadMs) {
+        return 0;
+    }
+
+    // Send final update ~3 minutes before the end of the track
+    const uint64_t untilFinalUpdateMs = durationMs - positionMs - NowPlayingFinalRefreshLeadMs;
+    const uint64_t delayMs            = std::min<uint64_t>(NowPlayingRefreshIntervalMs, untilFinalUpdateMs);
+    return static_cast<int>(std::max<uint64_t>(delayMs, MinNowPlayingRefreshDelayMs));
+}
+
+void Scrobbler::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_nowPlayingTimer.timerId()) {
+        m_nowPlayingTimer.stop();
+
+        for(auto& service : m_services) {
+            if(service->isEnabled()) {
+                service->refreshNowPlaying();
+            }
+        }
+
+        updateNowPlayingTimer();
+    }
+
+    QObject::timerEvent(event);
+}
+
+void Scrobbler::updateNowPlayingTimer(const bool reset)
+{
+    const int delay = nextNowPlayingRefreshDelay();
+    if(delay <= 0) {
+        if(m_nowPlayingTimer.isActive()) {
+            m_nowPlayingTimer.stop();
+        }
+        return;
+    }
+
+    if(reset && m_nowPlayingTimer.isActive()) {
+        m_nowPlayingTimer.stop();
+    }
+
+    if(!m_nowPlayingTimer.isActive()) {
+        m_nowPlayingTimer.start(delay, this);
     }
 }
 
