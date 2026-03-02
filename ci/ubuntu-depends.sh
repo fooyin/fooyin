@@ -37,6 +37,7 @@ $SUDO apt-get install -y \
         libarchive-dev \
         libsndfile1-dev \
         libebur128-dev \
+        libsoundtouch-dev \
         libgtest-dev
 
 CODENAME=$(lsb_release -sc)

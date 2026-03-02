@@ -33,4 +33,5 @@ dnf -y install --skip-broken \
      libarchive-devel \
      libsndfile-devel \
      libebur128-devel \
+     soundtouch-devel \
      gtest-devel

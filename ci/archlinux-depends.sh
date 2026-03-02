@@ -24,4 +24,5 @@ $SUDO pacman -S --noconfirm --needed \
        libarchive \
        libsndfile \
        libebur128 \
+       soundtouch \
        gtest
