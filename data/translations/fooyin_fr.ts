@@ -934,7 +934,7 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>General</source>
-        <translation type="unfinished">Général</translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
@@ -957,27 +957,27 @@
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="67"/>
         <source>Fields</source>
-        <translation type="unfinished">Champs</translation>
+        <translation>Champs</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="71"/>
         <source>Title</source>
-        <translation type="unfinished">Titre</translation>
+        <translation>Titre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="73"/>
         <source>Artist</source>
-        <translation type="unfinished">Artiste</translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="75"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
         <source>Display a small icon in Discord showing the current playback state</source>
-        <translation type="unfinished">Afficher une icône sur Discord pour l&apos;état de lecture active</translation>
+        <translation>Afficher une petite icône dans Discord indiquant la lecture en cours</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="85"/>
@@ -1703,17 +1703,17 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="740"/>
         <source>Show header</source>
-        <translation type="unfinished">Afficher l&apos;en-tête</translation>
+        <translation>Afficher l&apos;en-tête</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="748"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Afficher la barre de défilement</translation>
+        <translation>Afficher la barre de défilement</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="756"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Alterner la couleur des lignes</translation>
+        <translation>Alterner la couleur des lignes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="498"/>
@@ -2180,7 +2180,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
         <source>Playback</source>
-        <translation type="unfinished">Lecture en cours</translation>
+        <translation>Lecture en cours</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="495"/>
@@ -2225,7 +2225,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="556"/>
         <source>View</source>
-        <translation type="unfinished">Vue</translation>
+        <translation>Vue</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
@@ -2696,7 +2696,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="185"/>
         <source>Images</source>
-        <translation type="unfinished">Images</translation>
+        <translation>Images</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="188"/>
@@ -2706,7 +2706,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="189"/>
         <source>Set to &apos;0&apos; to disable the limit.</source>
-        <translation type="unfinished">Évaluer à &apos;0&apos; pour désactiver la limite.</translation>
+        <translation>Définissez à « 0 » pour désactiver la limite.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="200"/>
@@ -3297,12 +3297,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="63"/>
         <source>Remove &amp;unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer les pistes &amp;indisponibles</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
         <source>Remove unavailable tracks from the database and libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprime les pistes indisponibles de la base de données et des bibliothèques</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="69"/>
@@ -3357,7 +3357,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>Removing unavailable tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Retrait des pistes indisponibles…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
@@ -3367,7 +3367,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="119"/>
         <source>Removing unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Retrait des pistes indisponibles</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="142"/>
@@ -3850,12 +3850,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
         <source>Rewind line (-100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Avancer les paroles (-100ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="116"/>
         <source>Forward line (+100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Retarder les paroles (+100ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="126"/>
@@ -3883,7 +3883,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="333"/>
         <source>Lyrics Editor</source>
-        <translation type="unfinished">Éditeur de paroles</translation>
+        <translation>Éditeur de paroles</translation>
     </message>
 </context>
 <context>
@@ -4919,7 +4919,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="145"/>
         <source>Controls</source>
-        <translation type="unfinished">Contrôles</translation>
+        <translation>Contrôles</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="158"/>
@@ -5346,7 +5346,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
         <source>Behaviour</source>
-        <translation type="unfinished">Comportement</translation>
+        <translation>Comportement</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
@@ -5361,7 +5361,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source> tracks</source>
-        <translation type="unfinished"></translation>
+        <translation> pistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
@@ -5928,12 +5928,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="432"/>
         <source>Remove dead tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer les pistes inactives</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="433"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Retire les pistes inactives (inexistantes) de la liste de lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="445"/>
@@ -6651,22 +6651,22 @@
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="46"/>
         <source>Edit Scrobbling Service</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier le service de scrobbling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="48"/>
         <source>Type</source>
-        <translation type="unfinished">Type</translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="49"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="50"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="51"/>
@@ -6686,7 +6686,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="124"/>
         <source>Add Scrobbling Service</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter un service de scrobbling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="166"/>
@@ -6745,7 +6745,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="76"/>
         <source>Album Artist</source>
-        <translation type="unfinished">Artiste de l&apos;Album</translation>
+        <translation>Artiste de l&apos;Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
@@ -6770,27 +6770,27 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="89"/>
         <source>Enter a query - tracks that match the query will NOT be scrobbled</source>
-        <translation type="unfinished">Saisir une requête - les titres correspondant à la requête ne seront PAS scrobbled</translation>
+        <translation>Saisir une requête - les titres correspondant à la requête ne seront PAS scrobblés</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
         <source>Fields</source>
-        <translation type="unfinished">Champs</translation>
+        <translation>Champs</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="104"/>
         <source>Title</source>
-        <translation type="unfinished">Titre</translation>
+        <translation>Titre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="106"/>
         <source>Artist</source>
-        <translation type="unfinished">Artiste</translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="108"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
 </context>
 <context>
@@ -6844,17 +6844,17 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="369"/>
         <source>Services</source>
-        <translation type="unfinished">Services</translation>
+        <translation>Services</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
         <source>Networking</source>
-        <translation type="unfinished">Réseaux</translation>
+        <translation>Réseaux</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
         <source>Scrobbling</source>
-        <translation type="unfinished">Scrobbling</translation>
+        <translation>Scrobbling</translation>
     </message>
 </context>
 <context>
@@ -6862,57 +6862,57 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="99"/>
         <source>Services</source>
-        <translation type="unfinished">Services</translation>
+        <translation>Services</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="101"/>
         <source>Add Service</source>
-        <translation type="unfinished">Ajouter un service</translation>
+        <translation>Ajouter un service</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="180"/>
         <source>Sign Out</source>
-        <translation type="unfinished">Se Déconnecter</translation>
+        <translation>Se déconnecter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="184"/>
         <source>Signed in</source>
-        <translation type="unfinished">Connecté</translation>
+        <translation>Connecté</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="185"/>
         <source>Signed in as %1</source>
-        <translation type="unfinished">Connecté en tant que %1</translation>
+        <translation>Connecté en tant que %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="189"/>
         <source>Sign In</source>
-        <translation type="unfinished">Se Connecter</translation>
+        <translation>Se connecter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="192"/>
         <source>Not signed in</source>
-        <translation type="unfinished">Non connecté</translation>
+        <translation>Non connecté</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="259"/>
         <source>Edit</source>
-        <translation type="unfinished">Éditer</translation>
+        <translation>Éditer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="261"/>
         <source>Delete</source>
-        <translation type="unfinished">Supprimer</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="278"/>
         <source>Token</source>
-        <translation type="unfinished">Token</translation>
+        <translation>Token</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="281"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="302"/>
@@ -7748,7 +7748,7 @@
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="208"/>
         <source>Play</source>
-        <translation type="unfinished">Lire</translation>
+        <translation>Lire</translation>
     </message>
 </context>
 <context>
@@ -8663,7 +8663,7 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Toggle playback</source>
-        <translation type="unfinished">Lecture/Pause</translation>
+        <translation>Lecture/Pause</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
@@ -8713,17 +8713,17 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="429"/>
         <source>Expected %1 to close quote</source>
-        <translation type="unfinished">%1 est attendu pour fermer la citation</translation>
+        <translation>%1 est attendu pour fermer la citation</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="452"/>
         <source>Expected %1 to close variable list</source>
-        <translation type="unfinished">%1 est attendu pour clore la liste des variables</translation>
+        <translation>%1 est attendu pour clore la liste des variables</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="463"/>
         <source>Expected %1 to close variable</source>
-        <translation type="unfinished">%1 est attendu pour clore la variable</translation>
+        <translation>%1 est attendu pour clore la variable</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="483"/>
@@ -8744,7 +8744,7 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="555"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="561"/>
         <source>Expected %1 to close group</source>
-        <translation type="unfinished">%1 est attendu pour fermer le groupe</translation>
+        <translation>%1 est attendu pour fermer le groupe</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="791"/>
@@ -8764,7 +8764,7 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="251"/>
         <source>Artwork</source>
-        <translation type="unfinished">Illustration</translation>
+        <translation>Illustration</translation>
     </message>
 </context>
 </TS>

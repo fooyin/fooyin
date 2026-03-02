@@ -3297,12 +3297,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="63"/>
         <source>Remove &amp;unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>移除無法可用的曲目(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
         <source>Remove unavailable tracks from the database and libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>移除無法可用的曲目從資料庫及音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="69"/>
@@ -3357,17 +3357,17 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>Removing unavailable tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>移除無法可用的曲目…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>Abort</source>
-        <translation type="unfinished">放棄</translation>
+        <translation>捨棄</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="119"/>
         <source>Removing unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>移除無法可用的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="142"/>
@@ -3845,7 +3845,7 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="114"/>
         <source>Update and Next Line</source>
-        <translation type="unfinished"></translation>
+        <translation>更新和下一行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
@@ -6745,7 +6745,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="76"/>
         <source>Album Artist</source>
-        <translation type="unfinished">專輯藝人</translation>
+        <translation>專輯藝人</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
@@ -6775,22 +6775,22 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
         <source>Fields</source>
-        <translation type="unfinished">欄位</translation>
+        <translation>欄位</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="104"/>
         <source>Title</source>
-        <translation type="unfinished">標題</translation>
+        <translation>標題</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="106"/>
         <source>Artist</source>
-        <translation type="unfinished">藝人</translation>
+        <translation>藝人</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="108"/>
         <source>Album</source>
-        <translation type="unfinished">專輯</translation>
+        <translation>專輯</translation>
     </message>
 </context>
 <context>
@@ -6844,17 +6844,17 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="369"/>
         <source>Services</source>
-        <translation type="unfinished">服務</translation>
+        <translation>服務</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation>網路</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
         <source>Scrobbling</source>
-        <translation type="unfinished">歌曲記錄</translation>
+        <translation>聆聽記錄</translation>
     </message>
 </context>
 <context>
@@ -6862,62 +6862,62 @@
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="99"/>
         <source>Services</source>
-        <translation type="unfinished">服務</translation>
+        <translation>服務</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="101"/>
         <source>Add Service</source>
-        <translation type="unfinished">增加服務</translation>
+        <translation>添加服務</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="180"/>
         <source>Sign Out</source>
-        <translation type="unfinished">登出</translation>
+        <translation>登出</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="184"/>
         <source>Signed in</source>
-        <translation type="unfinished">已經登入</translation>
+        <translation>已經登入</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="185"/>
         <source>Signed in as %1</source>
-        <translation type="unfinished">已經登入為 %1</translation>
+        <translation>已經登入為 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="189"/>
         <source>Sign In</source>
-        <translation type="unfinished">登入</translation>
+        <translation>登入</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="192"/>
         <source>Not signed in</source>
-        <translation type="unfinished">尚未登入</translation>
+        <translation>尚未登入</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="259"/>
         <source>Edit</source>
-        <translation type="unfinished">編輯</translation>
+        <translation>編輯</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="261"/>
         <source>Delete</source>
-        <translation type="unfinished">刪除</translation>
+        <translation>刪除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="278"/>
         <source>Token</source>
-        <translation type="unfinished">符記</translation>
+        <translation>符記</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="281"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="302"/>
         <source>You can find your token here</source>
-        <translation type="unfinished">您在此能找到您的符記</translation>
+        <translation>您在此能找到您的符記</translation>
     </message>
 </context>
 <context>
@@ -8702,12 +8702,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek forward</source>
-        <translation type="unfinished"></translation>
+        <translation>往前尋找</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek backward</source>
-        <translation type="unfinished"></translation>
+        <translation>往後尋找</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="429"/>

@@ -70,12 +70,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="65"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="67"/>
         <source>Artwork Finder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kuvamateriaalin Haku</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="69"/>
@@ -87,7 +87,7 @@
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="122"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="124"/>
@@ -97,12 +97,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="216"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Haetaan…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="222"/>
         <source>No artwork found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kuvamateriaalia ei löytynyt</translation>
     </message>
 </context>
 <context>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="197"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lataa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="198"/>
@@ -128,22 +128,22 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="77"/>
         <source>Embed in file</source>
-        <translation type="unfinished"></translation>
+        <translation>Upota tiedostoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="78"/>
         <source>Save to directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Tallenna hakemistoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="95"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Etukansi</translation>
+        <translation>Etukansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="96"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Takakansi</translation>
+        <translation>Takakansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="97"/>
@@ -153,27 +153,27 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Save Method</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Talletustapa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Save Location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tallennussijainti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="114"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Hakemisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
         <source>Filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedostonimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="187"/>
         <source>Select Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Valitse Hakemisto</translation>
     </message>
 </context>
 <context>
@@ -224,7 +224,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="93"/>
         <source>Clear Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Tyhjennä Välimuisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="146"/>
@@ -242,12 +242,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="46"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Takakansi</translation>
+        <translation>Takakansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="47"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="104"/>
@@ -282,7 +282,7 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="113"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation>Ei kuvamateriaalia</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="88"/>
@@ -320,7 +320,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>Haetaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
@@ -348,7 +348,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="71"/>
         <source>Search parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Hakuparametrit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="77"/>
@@ -363,7 +363,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="81"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="85"/>
@@ -381,7 +381,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="155"/>
         <source>Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Lähteet</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="156"/>
@@ -399,17 +399,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="83"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Etukansi</translation>
+        <translation>Etukansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="84"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Takakansi</translation>
+        <translation>Takakansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="85"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="91"/>
