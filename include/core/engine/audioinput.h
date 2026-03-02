@@ -30,16 +30,33 @@
 namespace Fooyin {
 class ArchiveReader;
 
+/*!
+ * Input source descriptor passed to readers/decoders.
+ *
+ * `filepath` is always set. `device` is set when caller already opened the
+ * source and wants backend code to read from that handle. `archiveReader` is
+ * only present for tracks coming from archives.
+ */
 struct AudioSource
 {
-    // Filepath used to open device
+    //! Source path (always set).
     QString filepath;
-    // An open device
+    //! Already-open source device.
     QIODevice* device{nullptr};
-    // Only valid if file is in an archive. Useful for retrieving files in same archive.
+    //! Optional archive helper when source originates from an archive container.
     ArchiveReader* archiveReader{nullptr};
 };
 
+/*!
+ * Decoder interface used by playback pipeline.
+ *
+ * Lifecycle:
+ * 1. `init()` once per track/subsong
+ * 2. optional `start()`
+ * 3. repeated `readBuffer()`
+ * 4. optional `seek()`
+ * 5. `stop()` for teardown/reset
+ */
 class FYCORE_EXPORT AudioDecoder
 {
     Q_GADGET
@@ -48,14 +65,14 @@ public:
     enum DecoderFlag : uint8_t
     {
         None = 0,
-        // Decoder will never call seek
+        //! Disable decoder seeking.
         NoSeeking = 1 << 0,
-        // Disable all looping
+        //! Disable all loop/repeat behaviour.
         NoLooping = 1 << 1,
-        // If decoder is set to infinitely loop, use a default loop count instead.
+        //! Replace infinite looping with backend/default bounded looping.
         NoInfiniteLooping = 1 << 2,
-        // Support updating tracks on init.
-        // Useful if properties like loop count can change duration.
+        //! Allow decoder to update `Track` metadata after `init()`.
+        //! Useful when duration/fields depend on decoder options.
         UpdateTracks = 1 << 3,
     };
     Q_DECLARE_FLAGS(DecoderOptions, DecoderFlag)
@@ -70,23 +87,23 @@ public:
     [[nodiscard]] virtual QStringList extensions() const = 0;
     /*!
      * Returns @c true if track is seekable.
-     * @note this will only be called after a valid AudioFormat is returned from @fn init.
+     * @note Called only after `init()` succeeds.
      */
     [[nodiscard]] virtual bool isSeekable() const = 0;
     /*!
      * Returns @c true if the current track is being repeated/looped forever.
-     * @note this will only be called after a valid AudioFormat is returned from @fn init.
+     * @note Called only after `init()` succeeds.
      */
     [[nodiscard]] virtual bool isRepeatingTrack() const;
     /*!
-     * Returns @c true if the track passed to @fn init has changed in some way.
+     * Returns @c true if the track passed to `init()` has changed in some way.
      * Useful for properties like duration which may change due to loop count.
-     * @note this will only be called after a valid AudioFormat is returned from @fn init.
+     * @note Called only after `init()` succeeds.
      */
     [[nodiscard]] virtual bool trackHasChanged() const;
     /*!
      * Returns the changed track.
-     * @note this will only be called if @fn trackHasChanged returns @c true.
+     * @note Called only when `trackHasChanged()` returns true.
      */
     [[nodiscard]] virtual Track changedTrack() const;
     /*!
@@ -97,38 +114,38 @@ public:
     [[nodiscard]] virtual int bitrate() const;
 
     /*!
-     * Setup the decoder for the given Track @p track.
-     * Will be called for every track (including subsongs) before decoding starts.
+     * Initialise decoder for `track` and `source`.
+     * Called once per track/subsong before decoding starts.
      * @returns a valid AudioFormat if track can be decoded.
      */
     virtual std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) = 0;
     /*!
-     * Start decoding the track passed to @fn init.
-     * @note the base class implementation of this function does nothing.
+     * Optional start hook after `init()`.
+     * Base class implementation does nothing.
      */
     virtual void start();
     /*!
-     * Stop and deinit the decoder.
-     * Should reset the decoder to a state prior to an @fn init call.
-     * @note this will be called on playback stop and when track is changed.
+     * Stop and deinitialise decoder state.
+     * Should reset to pre-`init()` state.
+     * Called on playback stop and track changes.
      */
     virtual void stop() = 0;
 
     /*!
-     * Seek to the given position @p pos in milliseconds.
-     * @see AudioFormat for converting @p pos to a sample or byte count.
+     * Seek to `pos` milliseconds in current stream.
      */
     virtual void seek(uint64_t pos) = 0;
 
     /*!
-     * Read a buffer interleaved audio data of size @p bytes.
-     * Audio should be in the format returned by @fn init.
-     * @see AudioFormat for converting @p bytes to a sample or byte count.
+     * Read up to `bytes` of interleaved PCM in the format returned by `init()`.
      */
     virtual AudioBuffer readBuffer(size_t bytes) = 0;
 };
 using DecoderCreator = std::function<std::unique_ptr<AudioDecoder>()>;
 
+/*!
+ * Metadata/tag reader/writer interface.
+ */
 class FYCORE_EXPORT AudioReader
 {
     Q_GADGET
@@ -137,11 +154,11 @@ public:
     enum WriteFlag : uint8_t
     {
         Metadata = 0,
-        // Write rating to file (if supported)
+        //! Persist rating field when supported.
         Rating = 1 << 0,
-        // Write playcount to file (if supported)
+        //! Persist play count field when supported.
         Playcount = 1 << 1,
-        // Preserve file timestamps (atime, mtime)
+        //! Preserve file timestamps (atime/mtime).
         PreserveTimestamps = 1 << 2,
     };
     Q_DECLARE_FLAGS(WriteOptions, WriteFlag)
@@ -154,54 +171,54 @@ public:
      * i.e. "flac,mp3"
      */
     [[nodiscard]] virtual QStringList extensions() const = 0;
-    /* Returns @c true if embedded album artwork can be read. */
+    //! True when embedded cover art can be read.
     [[nodiscard]] virtual bool canReadCover() const = 0;
-    /* Returns @c true if embedded album artwork can be written. */
+    //! True when embedded cover art can be written.
     [[nodiscard]] virtual bool canWriteCover() const;
-    /* Returns @c true if this reader supports writing metadata/tags to file. */
+    //! True when metadata writing is supported.
     [[nodiscard]] virtual bool canWriteMetaData() const = 0;
     /*!
      * Returns the number of subsongs contained in a file.
-     * Called after @fn init and before any @fn readTrack, @fn readCover or @fn writeTrack calls.
-     * @note the base class implementation of this function returns 1/no subsongs.
+     * Called after `init()` and before read/write operations.
+     * Base class implementation returns `1` (no subsongs).
      */
     [[nodiscard]] virtual int subsongCount() const;
     /*!
      * Returns @c true if the current track is being repeated/looped forever.
-     * @note this will only be called after @fn init returns @c true.
+     * @note Called only after `init()` returns true.
      */
     [[nodiscard]] virtual bool isRepeatingTrack() const;
 
     /*!
      * Prepares the audio source @p source for reading.
-     * If a track can have subsongs, the subsong count should be set here.
-     * @returns true if init was successful/file is supported.
-     * @note the base class implementation of this function returns @c true.
+     * If the source has subsongs, expose count via `subsongCount()`.
+     * @returns true if source is supported and ready for reads.
+     * @note Base class implementation returns true.
      */
     virtual bool init(const AudioSource& source);
 
     /*!
      * Reads metadata/tags for the given Track @p track.
-     * Will only be called after a successful @fn init call.
+     * Called only after successful `init()`.
      * @returns whether the track was read successfully.
      */
     [[nodiscard]] virtual bool readTrack(const AudioSource& source, Track& track) = 0;
     /*!
      * Reads embedded artwork for the given Track @p track.
-     * Will only be called after a successful @fn init call.
-     * @returns the image data as a bytearray.
-     * @note the base class implementation of this function returns nothing.
+     * Called only after successful `init()`.
+     * @returns image data.
+     * @note Base class implementation returns empty data.
      */
     [[nodiscard]] virtual QByteArray readCover(const AudioSource& source, const Track& track, Track::Cover cover);
     /*!
      * Writes the metadata/tags in the given Track @p track to file.
-     * Will only be called after a successful @fn init call.
+     * Called only after successful `init()`.
      * @returns whether the track was written successfully.
      */
     [[nodiscard]] virtual bool writeTrack(const AudioSource& source, const Track& track, WriteOptions options);
     /*!
      * Writes the cover for the given Track @p track to file.
-     * Will only be called after a successful @fn init call.
+     * Called only after successful `init()`.
      * @returns whether the cover was written successfully.
      */
     [[nodiscard]] virtual bool writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers,
@@ -209,6 +226,9 @@ public:
 };
 using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 
+/*!
+ * Reader interface for archive containers that expose files as virtual entries.
+ */
 class FYCORE_EXPORT ArchiveReader
 {
 public:
@@ -224,34 +244,32 @@ public:
     /*!
      * Returns the current file type.
      * i.e. "zip"
-     * @note this will only be called after @fn init returns @c true.
+     * @note Called only after `init()` returns true.
      */
     [[nodiscard]] virtual QString type() const = 0;
 
     /*!
      * Prepares the file @p file for reading.
-     * If a track can have subsongs, the subsong count should be set here.
-     * @returns true if init was successful/file is supported.
+     * @returns true if file is supported and ready for access.
      */
     virtual bool init(const QString& file) = 0;
     /*!
      * Returns a QIODevice for the file within the archive at @p file.
      * If the file can't be found, this should return nullptr.
-     * @note this will only be called after @fn init returns @c true.
+     * @note Called only after `init()` returns true.
      */
     virtual std::unique_ptr<QIODevice> entry(const QString& file) = 0;
     /*!
      * Reads all files in the archive.
      * The callback @p readEntry should be used to read each file in the archive.
      * @returns true if tracks were read successfully.
-     * @note this will only be called after @fn init returns @c true.
+     * @note Called only after `init()` returns true.
      */
     virtual bool readTracks(ReadEntryCallback readEntry) = 0;
     /*!
      * Reads artwork within the archive for the given Track @p track.
-     * @returns the image data as a bytearray.
-     * @note this will only be called after @fn init returns @c true.
-     * @note the base class implementation of this function returns nothing.
+     * @returns image data.
+     * @note Called only after `init()` returns true.
      */
     virtual QByteArray readCover(const Track& track, Track::Cover cover) = 0;
 };

@@ -28,6 +28,8 @@
 #include <QFile>
 
 #include <cfenv>
+#include <cstring>
+#include <limits>
 #include <utility>
 
 Q_LOGGING_CATEGORY(WAVEBAR, "fy.wavebar")
@@ -153,18 +155,39 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
 
     emit generatingWaveform();
 
-    const int bps               = m_format.bytesPerFrame();
-    const uint64_t durationSecs = m_data.duration / 1000;
-    const int samples           = static_cast<int>(durationSecs * m_format.sampleRate()) / bps * bps;
-    const int samplesPerBuffer  = static_cast<int>(static_cast<double>(samples) / samplesPerChannel) / bps * bps;
-    const int numOfUpdates      = std::max<int>(1, std::floor(static_cast<double>(durationSecs) / 5));
-    const int updateThreshold   = samplesPerChannel / numOfUpdates;
+    const int bpf = m_format.bytesPerFrame();
+    if(bpf <= 0) {
+        qCWarning(WAVEBAR) << "Invalid format while generating waveform for track:" << track.filepath();
+        setState(Idle);
+        emit waveformGenerated(track, {});
+        return;
+    }
+
+    const int safeSamplesPerChannel  = std::max(1, samplesPerChannel);
+    const uint64_t durationSecs      = m_data.duration / 1000;
+    const uint64_t updatesByDuration = std::max<uint64_t>(1, durationSecs / 5);
+    const int numOfUpdates           = static_cast<int>(
+        std::min<uint64_t>(updatesByDuration, static_cast<uint64_t>(std::numeric_limits<int>::max())));
+    const int updateThreshold = std::max(1, safeSamplesPerChannel / numOfUpdates);
+
+    const uint64_t endBytes = m_format.bytesForDuration(track.duration());
+    const auto bpfU64       = static_cast<uint64_t>(bpf);
+
+    uint64_t bufferSize
+        = endBytes > 0 ? std::max<uint64_t>(bpfU64, endBytes / static_cast<uint64_t>(safeSamplesPerChannel)) : bpfU64;
+    bufferSize -= bufferSize % bpfU64;
+    bufferSize = std::max<uint64_t>(bufferSize, bpfU64);
+
+    // Keep decoder reads bounded so large-duration/high-rate files do not request
+    // oversized chunks in one call.
+    static constexpr uint64_t MaxReadBytes = 4ULL * 1024ULL * 1024ULL;
+    if(bufferSize > MaxReadBytes) {
+        bufferSize = MaxReadBytes - (MaxReadBytes % bpfU64);
+        bufferSize = std::max<uint64_t>(bufferSize, bpfU64);
+    }
 
     int processedCount{0};
-    int processedBytes{0};
-    bool ending{false};
-    const int bufferSize = samplesPerBuffer * bps;
-    const int endBytes   = m_format.bytesForDuration(track.duration());
+    uint64_t processedBytes{0};
 
     m_decoder->start();
     m_decoder->seek(track.offset());
@@ -175,24 +198,38 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
             return;
         }
 
-        int bytesToRead{bufferSize};
-        const int bytesToEnd = endBytes - processedBytes;
-        if(bytesToEnd > 0 && bytesToEnd < bufferSize) {
-            bytesToRead = bytesToEnd;
-            ending      = true;
-        }
-        else if(ending || bytesToEnd <= 0) {
+        if(endBytes > 0 && processedBytes >= endBytes) {
             m_data.complete = true;
             break;
         }
 
-        auto buffer = m_decoder->readBuffer(static_cast<size_t>(bytesToRead));
+        uint64_t bytesToReadU64 = bufferSize;
+        if(endBytes > 0) {
+            bytesToReadU64 = std::min<uint64_t>(bufferSize, endBytes - processedBytes);
+        }
+
+        const size_t bytesToRead = static_cast<size_t>(
+            std::min<uint64_t>(bytesToReadU64, static_cast<uint64_t>(std::numeric_limits<size_t>::max())));
+
+        auto buffer = m_decoder->readBuffer(bytesToRead);
         if(!buffer.isValid()) {
             m_data.complete = true;
             break;
         }
 
-        processedBytes += buffer.byteCount();
+        if(buffer.byteCount() == 0) {
+            m_data.complete = true;
+            break;
+        }
+
+        const uint64_t decodedBytes = static_cast<uint64_t>(buffer.byteCount());
+        if(decodedBytes > std::numeric_limits<uint64_t>::max() - processedBytes) {
+            processedBytes = std::numeric_limits<uint64_t>::max();
+        }
+        else {
+            processedBytes += decodedBytes;
+        }
+
         buffer = Audio::convert(buffer, m_requiredFormat);
         processBuffer(buffer);
 
@@ -267,40 +304,47 @@ QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
 
 void WaveformGenerator::processBuffer(const AudioBuffer& buffer)
 {
-    const int bps         = buffer.format().bytesPerSample();
-    const int sampleCount = buffer.frameCount();
-    const auto* samples   = buffer.data();
+    const int channels   = m_data.channels;
+    const int frameCount = buffer.frameCount();
+    if(channels <= 0 || frameCount <= 0) {
+        return;
+    }
 
-    for(int ch{0}; ch < m_data.channels; ++ch) {
-        if(!mayRun()) {
+    if(buffer.format().bytesPerSample() != static_cast<int>(sizeof(float))) {
+        qCWarning(WAVEBAR) << "Unexpected non-float waveform buffer format:" << buffer.format().prettyFormat();
+        return;
+    }
+
+    const auto sampleCount = static_cast<size_t>(static_cast<uint64_t>(frameCount) * static_cast<uint64_t>(channels));
+    std::vector<float> samples(sampleCount);
+    std::memcpy(samples.data(), buffer.data(), sampleCount * sizeof(float));
+
+    std::vector<float> channelMax(static_cast<size_t>(channels), -1.0F);
+    std::vector<float> channelMin(static_cast<size_t>(channels), 1.0F);
+    std::vector<float> channelRms(static_cast<size_t>(channels), 0.0F);
+
+    static constexpr int CancellationCheckInterval = 2048;
+
+    for(int i{0}; i < frameCount; ++i) {
+        if((i % CancellationCheckInterval) == 0 && !mayRun()) {
             return;
         }
 
-        float max{-1.0};
-        float min{1.0};
-        float rms{0.0};
-
-        for(int i{0}; i < sampleCount; ++i) {
-            if(!mayRun()) {
-                return;
-            }
-
-            const int offset = (i * m_data.channels + ch) * bps;
-            float sample;
-            std::memcpy(&sample, samples + offset, bps);
-
-            max = std::max(max, sample);
-            min = std::min(min, sample);
-            rms += sample * sample;
+        const int frameOffset = i * channels;
+        for(int ch{0}; ch < channels; ++ch) {
+            const float sample                  = samples[static_cast<size_t>(frameOffset + ch)];
+            channelMax[static_cast<size_t>(ch)] = std::max(channelMax[static_cast<size_t>(ch)], sample);
+            channelMin[static_cast<size_t>(ch)] = std::min(channelMin[static_cast<size_t>(ch)], sample);
+            channelRms[static_cast<size_t>(ch)] += sample * sample;
         }
+    }
 
-        rms /= static_cast<float>(sampleCount);
-        rms = std::sqrt(rms);
-
+    const float normalise = 1.0F / static_cast<float>(frameCount);
+    for(int ch{0}; ch < channels; ++ch) {
         auto& [cMax, cMin, cRms] = m_data.channelData.at(ch);
-        cMax.emplace_back(max);
-        cMin.emplace_back(min);
-        cRms.emplace_back(rms);
+        cMax.emplace_back(channelMax[static_cast<size_t>(ch)]);
+        cMin.emplace_back(channelMin[static_cast<size_t>(ch)]);
+        cRms.emplace_back(std::sqrt(channelRms[static_cast<size_t>(ch)] * normalise));
     }
 }
 } // namespace Fooyin::WaveBar

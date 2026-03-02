@@ -22,14 +22,17 @@
 #include "corepaths.h"
 #include "database/database.h"
 #include "database/settingsdatabase.h"
-#include "engine/archiveinput.h"
+#include "engine/dsp/dspchainstore.h"
+#include "engine/dsp/dspregistry.h"
 #include "engine/enginehandler.h"
-#include "engine/ffmpeg/ffmpeginput.h"
-#include "engine/taglibparser.h"
+#include "engine/input/archiveinput.h"
+#include "engine/input/ffmpeg/ffmpeginput.h"
+#include "engine/input/taglibparser.h"
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
 #include "library/sortingregistry.h"
 #include "library/unifiedmusiclibrary.h"
+#include "playback/playbackcoordinator.h"
 #include "playlist/parsers/cueparser.h"
 #include "playlist/parsers/m3uparser.h"
 #include "playlist/playlistloader.h"
@@ -38,7 +41,9 @@
 #include "version.h"
 
 #include <core/coresettings.h>
+#include <core/engine/audiobuffer.h>
 #include <core/engine/audioloader.h>
+#include <core/engine/dsp/dspplugin.h>
 #include <core/engine/outputplugin.h>
 #include <core/network/networkaccessmanager.h>
 #include <core/player/playercontroller.h>
@@ -76,6 +81,7 @@ void registerTypes()
     qRegisterMetaType<Fooyin::Track>("Track");
     qRegisterMetaType<Fooyin::TrackList>("TrackList");
     qRegisterMetaType<Fooyin::TrackIds>("TrackIds");
+    qRegisterMetaType<Fooyin::AudioBuffer>("AudioBuffer");
     qRegisterMetaType<Fooyin::OutputCreator>("OutputCreator");
     qRegisterMetaType<Fooyin::LibraryInfo>("LibraryInfo");
     qRegisterMetaType<Fooyin::LibraryInfoMap>("LibraryInfoMap");
@@ -116,12 +122,15 @@ public:
     TranslationLoader m_translations;
     Database* m_database;
     std::shared_ptr<AudioLoader> m_audioLoader;
-    PlayerController* m_playerController;
-    EngineHandler m_engine;
+    DspRegistry m_dspRegistry;
+    DspChainStore m_dspChainStore;
     LibraryManager* m_libraryManager;
     std::shared_ptr<PlaylistLoader> m_playlistLoader;
     UnifiedMusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
+    PlayerController* m_playerController;
+    EngineHandler m_engine;
+    PlaybackCoordinator* m_playbackCoordinator;
     SortingRegistry* m_sortingRegistry;
     std::shared_ptr<NetworkAccessManager> m_networkManager;
 
@@ -139,14 +148,15 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_coreSettings{m_settings}
     , m_database{new Database(m_self)}
     , m_audioLoader{std::make_shared<AudioLoader>()}
-    , m_playerController{new PlayerController(m_settings, m_self)}
-    , m_engine{m_audioLoader, m_playerController, m_settings}
+    , m_dspChainStore{m_settings, &m_dspRegistry}
     , m_libraryManager{new LibraryManager(m_database->connectionPool(), m_settings, m_self)}
     , m_playlistLoader{std::make_shared<PlaylistLoader>()}
     , m_library{new UnifiedMusicLibrary(m_libraryManager, m_database->connectionPool(), m_playlistLoader, m_audioLoader,
                                         m_settings, m_self)}
-    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_playerController, m_library,
-                                            m_settings, m_self)}
+    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_library, m_settings, m_self)}
+    , m_playerController{new PlayerController(m_settings, m_playlistHandler, m_self)}
+    , m_engine{m_audioLoader, m_playerController, m_settings, &m_dspRegistry}
+    , m_playbackCoordinator{new PlaybackCoordinator(&m_engine, m_playerController, m_playlistHandler, m_self)}
     , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
     , m_networkManager{new NetworkAccessManager(m_settings, m_self)}
     , m_pluginManager{m_settings}
@@ -159,14 +169,13 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
 
 void ApplicationPrivate::initialise()
 {
-    m_playerController->setPlaylistHandler(m_playlistHandler);
-
     registerTypes();
     registerInputs();
     registerPlaylistParsers();
     setupConnections();
     loadPlugins();
 
+    m_dspChainStore.setEngine(&m_engine);
     m_audioLoader->restoreState();
     m_settingsSaveTimer.start(SettingsSaveInterval, m_self);
 
@@ -193,12 +202,13 @@ void ApplicationPrivate::registerInputs()
 
 void ApplicationPrivate::setupConnections()
 {
-    QObject::connect(&m_engine, &EngineController::trackStatusChanged, m_self, [this](AudioEngine::TrackStatus status) {
-        if(status == AudioEngine::TrackStatus::Invalid) {
-            const Track track = m_playerController->currentTrack();
-            markTrack(track);
-        }
-    });
+    QObject::connect(&m_engine, &EngineController::trackStatusContextChanged, m_self,
+                     [this](const Engine::TrackStatusContext& context) {
+                         if(context.status == Engine::TrackStatus::Invalid) {
+                             const Track track = m_playerController->currentTrack();
+                             markTrack(track);
+                         }
+                     });
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_self,
                      [this](const Track& track) { markTrack(track); });
@@ -208,7 +218,7 @@ void ApplicationPrivate::setupConnections()
         savePlaybackState();
 
         const auto state = m_engine.engineState();
-        if(state != AudioEngine::PlaybackState::Stopped && state != AudioEngine::PlaybackState::Error) {
+        if(state != Engine::PlaybackState::Stopped && state != Engine::PlaybackState::Error) {
             QObject::connect(&m_engine, &EngineController::finished, m_self, Application::quit);
             m_playerController->stop();
         }
@@ -271,6 +281,17 @@ void ApplicationPrivate::loadPlugins()
         }
         if(creator.archiveReader) {
             m_audioLoader->addArchiveReader(plugin->inputName(), creator.archiveReader);
+        }
+    });
+
+    m_pluginManager.initialisePlugins<DspPlugin>([this](DspPlugin* plugin) {
+        const auto dsps = plugin->dspCreators();
+        for(const auto& creator : dsps) {
+            if(creator.id.isEmpty() || creator.name.isEmpty() || !creator.factory) {
+                continue;
+            }
+
+            m_dspRegistry.registerDsp(creator);
         }
     });
 }
@@ -450,9 +471,9 @@ Application::Application(QObject* parent)
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksChanged, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksUpdated, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksRemoved, this, startPlaylistTimer);
-    p->m_trackLoadedConnection = QObject::connect(&p->m_engine, &EngineHandler::trackStatusChanged, this,
-                                                  [this](const AudioEngine::TrackStatus status) {
-                                                      if(status == AudioEngine::TrackStatus::Loaded) {
+    p->m_trackLoadedConnection = QObject::connect(&p->m_engine, &EngineHandler::trackStatusContextChanged, this,
+                                                  [this](const Engine::TrackStatusContext& context) {
+                                                      if(context.status == Engine::TrackStatus::Loaded) {
                                                           QObject::disconnect(p->m_trackLoadedConnection);
                                                           if(p->loadActivePlaylistState()) {
                                                               p->loadPlaybackState();
@@ -466,19 +487,15 @@ Application::Application(QObject* parent)
                      &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
-    QObject::connect(&p->m_engine, &EngineHandler::trackAboutToFinish, this, [this]() {
-        p->m_playlistHandler->trackAboutToFinish();
-        p->m_engine.prepareNextTrack(p->m_playerController->upcomingTrack());
-    });
     QObject::connect(&p->m_engine, &EngineHandler::trackChanged, p->m_library, [this](const Track& track) {
         p->m_library->updateTrackMetadata({track});
         auto currentTrack  = p->m_playerController->currentPlaylistTrack();
         currentTrack.track = track;
         p->m_playerController->changeCurrentTrack(currentTrack);
     });
-    QObject::connect(&p->m_engine, &EngineController::trackStatusChanged, this,
-                     [this](AudioEngine::TrackStatus status) {
-                         if(status == AudioEngine::TrackStatus::Invalid) {
+    QObject::connect(&p->m_engine, &EngineController::trackStatusContextChanged, this,
+                     [this](const Engine::TrackStatusContext& context) {
+                         if(context.status == Engine::TrackStatus::Invalid) {
                              p->m_playerController->pause();
                          }
                      });
@@ -604,6 +621,16 @@ std::shared_ptr<NetworkAccessManager> Application::networkManager() const
 SortingRegistry* Application::sortingRegistry() const
 {
     return p->m_sortingRegistry;
+}
+
+DspRegistry* Application::dspRegistry() const
+{
+    return &p->m_dspRegistry;
+}
+
+DspChainStore* Application::dspChainStore() const
+{
+    return &p->m_dspChainStore;
 }
 } // namespace Fooyin
 

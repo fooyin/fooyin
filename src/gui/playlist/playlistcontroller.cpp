@@ -475,7 +475,7 @@ void PlaylistController::addPlaylistMenu(QMenu* menu)
 void PlaylistController::startPlayback() const
 {
     if(p->m_currentPlaylist) {
-        p->m_handler->startPlayback(p->m_currentPlaylist->id());
+        p->m_playerController->startPlayback(p->m_currentPlaylist->id());
     }
 }
 

@@ -24,9 +24,9 @@
 #include <core/track.h>
 #include <utils/id.h>
 
-namespace Fooyin {
-namespace Player {
+namespace Fooyin::Player {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
+
 enum class PlayState : uint8_t
 {
     Playing = 0,
@@ -34,5 +34,37 @@ enum class PlayState : uint8_t
     Stopped,
 };
 Q_ENUM_NS(PlayState)
-} // namespace Player
-} // namespace Fooyin
+
+enum class AdvanceReason : uint8_t
+{
+    Unknown = 0,
+    ManualSelection,
+    ManualNext,
+    ManualPrevious,
+    NaturalEnd,
+    PreparedCrossfade,
+};
+Q_ENUM_NS(AdvanceReason)
+
+struct FYCORE_EXPORT TrackChangeContext
+{
+    AdvanceReason reason{AdvanceReason::Unknown};
+    bool userInitiated{false};
+};
+
+struct FYCORE_EXPORT PlaybackSnapshot
+{
+    PlayState playState{PlayState::Stopped};
+    Track track;
+    UId playlistId;
+    int indexInPlaylist{-1};
+    uint64_t positionMs{0};
+    uint64_t durationMs{0};
+    int bitrate{0};
+    bool isQueueTrack{false};
+};
+} // namespace Fooyin::Player
+
+Q_DECLARE_METATYPE(Fooyin::Player::AdvanceReason)
+Q_DECLARE_METATYPE(Fooyin::Player::TrackChangeContext)
+Q_DECLARE_METATYPE(Fooyin::Player::PlaybackSnapshot)

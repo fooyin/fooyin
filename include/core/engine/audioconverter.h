@@ -27,8 +27,23 @@ namespace Fooyin {
 class AudioFormat;
 
 namespace Audio {
-FYCORE_EXPORT AudioBuffer convert(const AudioBuffer& buffer, const AudioFormat& outputFormat);
+/*!
+ * Convert an AudioBuffer to @p outputFormat.
+ *
+ * Handles sample-format conversion and channel-layout remap/mix as needed.
+ * When @p dither is true, TPDF dither is applied for float->S16 conversion.
+ * Returns an invalid buffer on conversion failure.
+ */
+FYCORE_EXPORT AudioBuffer convert(const AudioBuffer& buffer, const AudioFormat& outputFormat, bool dither = false);
+
+/*!
+ * Convert interleaved raw samples between formats.
+ *
+ * When @p dither is true, TPDF dither is applied for float->S16 conversion.
+ * @p output must have enough space for the converted sample count.
+ */
 FYCORE_EXPORT bool convert(const AudioFormat& inputFormat, const std::byte* input, const AudioFormat& outputFormat,
-                           std::byte* output, int sampleCount);
-}; // namespace Audio
+                           std::byte* output, int frameCount, bool dither = false);
+
+} // namespace Audio
 } // namespace Fooyin

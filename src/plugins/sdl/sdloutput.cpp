@@ -21,20 +21,12 @@
 
 #include <SDL2/SDL.h>
 
-#include <QDebug>
 #include <QLoggingCategory>
-#include <QTimerEvent>
+#include <QMetaObject>
 
 Q_LOGGING_CATEGORY(SDL, "fy.sdl")
 
-using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-constexpr auto EventInterval = 200ms;
-#else
-constexpr auto EventInterval = 200;
-#endif
 
 namespace {
 SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
@@ -44,7 +36,7 @@ SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
             return AUDIO_U8;
         case(Fooyin::SampleFormat::S16):
             return AUDIO_S16SYS;
-        case(Fooyin::SampleFormat::S24):
+        case(Fooyin::SampleFormat::S24In32):
         case(Fooyin::SampleFormat::S32):
             return AUDIO_S32SYS;
         case(Fooyin::SampleFormat::F32):
@@ -78,7 +70,6 @@ SdlOutput::SdlOutput()
     : m_bufferSize{8192}
     , m_initialised{false}
     , m_device{u"default"_s}
-    , m_volume{1.0}
 {
 #ifdef Q_OS_WIN32
     SDL_setenv("SDL_AUDIODRIVER", "directsound", true); // WASAPI driver (default) is broken
@@ -131,7 +122,6 @@ bool SdlOutput::init(const AudioFormat& format)
 
 void SdlOutput::uninit()
 {
-    m_eventTimer.stop();
     SDL_CloseAudioDevice(m_audioDeviceId);
     SDL_Quit();
 
@@ -148,8 +138,8 @@ void SdlOutput::start()
 {
     if(SDL_GetAudioStatus() != SDL_AUDIO_PLAYING) {
         SDL_PauseAudioDevice(m_audioDeviceId, 0);
-        m_eventTimer.start(EventInterval, this);
     }
+    checkEvents();
 }
 
 void SdlOutput::drain()
@@ -178,9 +168,13 @@ int SdlOutput::bufferSize() const
 OutputState SdlOutput::currentState()
 {
     OutputState state;
+    checkEvents();
 
-    state.queuedSamples = static_cast<int>(SDL_GetQueuedAudioSize(m_audioDeviceId) / m_format.bytesPerFrame());
-    state.freeSamples   = m_bufferSize - state.queuedSamples;
+    state.queuedFrames = static_cast<int>(SDL_GetQueuedAudioSize(m_audioDeviceId) / m_format.bytesPerFrame());
+    state.freeFrames   = m_bufferSize - state.queuedFrames;
+    if(m_format.sampleRate() > 0) {
+        state.delay = static_cast<double>(state.queuedFrames) / static_cast<double>(m_format.sampleRate());
+    }
 
     return state;
 }
@@ -210,13 +204,27 @@ OutputDevices SdlOutput::getAllDevices(bool isCurrentOutput)
     return devices;
 }
 
-int SdlOutput::write(const AudioBuffer& buffer)
+int SdlOutput::write(const std::span<const std::byte> data, const int frameCount)
 {
-    AudioBuffer adjustedBuffer{buffer};
-    adjustedBuffer.scale(m_volume);
+    checkEvents();
+    if(frameCount <= 0) {
+        return 0;
+    }
 
-    if(SDL_QueueAudio(m_audioDeviceId, adjustedBuffer.constData().data(), buffer.byteCount()) == 0) {
-        return buffer.sampleCount();
+    const int bytesPerFrame = m_format.bytesPerFrame();
+    if(bytesPerFrame <= 0) {
+        return 0;
+    }
+
+    const size_t availableFrames = data.size() / static_cast<size_t>(bytesPerFrame);
+    const int framesToWrite      = std::min(frameCount, static_cast<int>(availableFrames));
+    if(framesToWrite <= 0) {
+        return 0;
+    }
+
+    const size_t byteCount = static_cast<size_t>(framesToWrite) * static_cast<size_t>(bytesPerFrame);
+    if(SDL_QueueAudio(m_audioDeviceId, data.data(), byteCount) == 0) {
+        return framesToWrite;
     }
 
     return 0;
@@ -227,9 +235,9 @@ void SdlOutput::setPaused(bool pause)
     SDL_PauseAudioDevice(m_audioDeviceId, pause);
 }
 
-void SdlOutput::setVolume(double volume)
+bool SdlOutput::supportsVolumeControl() const
 {
-    m_volume = volume;
+    return false;
 }
 
 void SdlOutput::setDevice(const QString& device)
@@ -250,21 +258,13 @@ AudioFormat SdlOutput::format() const
     return m_format;
 }
 
-void SdlOutput::timerEvent(QTimerEvent* event)
-{
-    if(event->timerId() == m_eventTimer.timerId()) {
-        checkEvents();
-    }
-
-    AudioOutput::timerEvent(event);
-}
-
 void SdlOutput::checkEvents()
 {
     while(SDL_PollEvent(&m_event)) {
         switch(m_event.type) {
             case(SDL_AUDIODEVICEREMOVED):
-                emit stateChanged(AudioOutput::State::Disconnected);
+                QMetaObject::invokeMethod(
+                    this, [this]() { emit stateChanged(AudioOutput::State::Disconnected); }, Qt::QueuedConnection);
             default:
                 break;
         }

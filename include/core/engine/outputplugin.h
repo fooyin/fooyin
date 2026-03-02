@@ -25,14 +25,16 @@
 
 namespace Fooyin {
 /*!
- * An abstract interface for plugins which add an audio output.
+ * Plugin interface for registering audio output backends.
  */
 class OutputPlugin
 {
 public:
     virtual ~OutputPlugin() = default;
 
-    [[nodiscard]] virtual QString name() const          = 0;
+    //! Unique backend name shown in settings/UI.
+    [[nodiscard]] virtual QString name() const = 0;
+    //! Factory that creates backend instances.
     [[nodiscard]] virtual OutputCreator creator() const = 0;
 };
 } // namespace Fooyin

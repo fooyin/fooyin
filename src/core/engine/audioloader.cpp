@@ -230,7 +230,7 @@ bool AudioLoader::canWriteMetadata(const Track& track) const
 {
     if(auto reader = readerForTrack(track)) {
         if(track.isInArchive()) {
-            reader->init({track.filepath(), nullptr, nullptr});
+            reader->init({.filepath = track.filepath(), .device = nullptr, .archiveReader = nullptr});
         }
         return reader->canWriteMetaData();
     }
@@ -435,6 +435,14 @@ void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator,
         return;
     }
 
+    auto decoder = creator();
+    if(!decoder) {
+        qCWarning(AUD_LDR) << "Decoder" << name << "cannot be instantiated";
+        return;
+    }
+
+    const auto decoderExtensions = normaliseExtensions(decoder->extensions());
+
     const std::unique_lock lock{p->m_mutex};
 
     if(std::ranges::any_of(p->m_decoders, [&name](const auto& loader) { return loader.name == name; })) {
@@ -442,17 +450,10 @@ void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator,
         return;
     }
 
-    auto decoder = creator();
-    if(!decoder) {
-        qCWarning(AUD_LDR) << "Decoder" << name << "cannot be instantiated";
-        return;
-    }
-
     LoaderEntry<DecoderCreator> loader;
     loader.name             = name;
     loader.index            = priority >= 0 ? priority : static_cast<int>(p->m_decoders.size());
-    loader.extensions       = isArchiveWrapper ? archiveExtensionsFromReaders(p->m_archiveReaders)
-                                               : normaliseExtensions(decoder->extensions());
+    loader.extensions       = isArchiveWrapper ? archiveExtensionsFromReaders(p->m_archiveReaders) : decoderExtensions;
     loader.isArchiveWrapper = isArchiveWrapper;
     loader.creator          = creator;
 
@@ -470,6 +471,14 @@ void AudioLoader::addReader(const QString& name, const ReaderCreator& creator, i
         return;
     }
 
+    auto reader = creator();
+    if(!reader) {
+        qCWarning(AUD_LDR) << "Reader" << name << "cannot be instantiated";
+        return;
+    }
+
+    const auto readerExtensions = normaliseExtensions(reader->extensions());
+
     const std::unique_lock lock{p->m_mutex};
 
     if(std::ranges::any_of(p->m_readers, [&name](const auto& loader) { return loader.name == name; })) {
@@ -477,17 +486,10 @@ void AudioLoader::addReader(const QString& name, const ReaderCreator& creator, i
         return;
     }
 
-    auto reader = creator();
-    if(!reader) {
-        qCWarning(AUD_LDR) << "Reader" << name << "cannot be instantiated";
-        return;
-    }
-
     LoaderEntry<ReaderCreator> loader;
     loader.name             = name;
     loader.index            = priority >= 0 ? priority : static_cast<int>(p->m_readers.size());
-    loader.extensions       = isArchiveWrapper ? archiveExtensionsFromReaders(p->m_archiveReaders)
-                                               : normaliseExtensions(reader->extensions());
+    loader.extensions       = isArchiveWrapper ? archiveExtensionsFromReaders(p->m_archiveReaders) : readerExtensions;
     loader.isArchiveWrapper = isArchiveWrapper;
     loader.creator          = creator;
 
@@ -505,6 +507,14 @@ void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreat
         return;
     }
 
+    auto reader = creator();
+    if(!reader) {
+        qCWarning(AUD_LDR) << "Reader" << name << "cannot be instantiated";
+        return;
+    }
+
+    const auto readerExtensions = normaliseExtensions(reader->extensions());
+
     const std::unique_lock lock{p->m_mutex};
 
     if(std::ranges::any_of(p->m_archiveReaders, [&name](const auto& loader) { return loader.name == name; })) {
@@ -512,16 +522,10 @@ void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreat
         return;
     }
 
-    auto reader = creator();
-    if(!reader) {
-        qCWarning(AUD_LDR) << "Reader" << name << "cannot be instantiated";
-        return;
-    }
-
     LoaderEntry<ArchiveReaderCreator> loader;
     loader.name       = name;
     loader.index      = priority >= 0 ? priority : static_cast<int>(p->m_archiveReaders.size());
-    loader.extensions = normaliseExtensions(reader->extensions());
+    loader.extensions = readerExtensions;
     loader.creator    = creator;
 
     p->m_archiveReaders.push_back(loader);

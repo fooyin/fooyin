@@ -22,11 +22,11 @@
 #include "vumetersettings.h"
 
 #include <core/engine/audioformat.h>
+#include <core/engine/levelframe.h>
 #include <core/player/playerdefs.h>
 #include <gui/fywidget.h>
 
 namespace Fooyin {
-class AudioBuffer;
 class PlayerController;
 class SettingsManager;
 
@@ -53,7 +53,7 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
-    void renderBuffer(const AudioBuffer& buffer);
+    void renderLevel(const LevelFrame& frame);
 
     void setOrientation(Qt::Orientation orientation);
     void setShowLegend(bool show);

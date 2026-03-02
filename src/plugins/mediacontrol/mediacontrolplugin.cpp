@@ -21,7 +21,6 @@
 #include "mediacontrolplugin.h"
 
 #include <core/player/playercontroller.h>
-#include <core/playlist/playlisthandler.h>
 #include <gui/windowcontroller.h>
 
 #include <QBuffer>
@@ -58,7 +57,6 @@ winrt::Windows::Foundation::IAsyncAction setThumbnailAsync(QByteArray ba,
 namespace Fooyin::MediaControl {
 MediaControlPlugin::MediaControlPlugin()
     : m_playerController{nullptr}
-    , m_playlistHandler{nullptr}
     , m_windowController{nullptr}
     , m_settings{nullptr}
     , m_coverProvider{nullptr}
@@ -73,7 +71,6 @@ MediaControlPlugin::~MediaControlPlugin()
 void MediaControlPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
-    m_playlistHandler  = context.playlistHandler;
     m_audioLoader      = context.audioLoader;
     m_settings         = context.settingsManager;
 
@@ -177,8 +174,8 @@ void MediaControlPlugin::trackChanged(const PlaylistTrack& playlistTrack)
     }
 
     try {
-        m_smtc.IsNextEnabled(m_playlistHandler->nextTrack().isValid());
-        m_smtc.IsPreviousEnabled(m_playlistHandler->previousTrack().isValid());
+        m_smtc.IsNextEnabled(m_playerController->hasNextTrack());
+        m_smtc.IsPreviousEnabled(m_playerController->hasPreviousTrack());
         updateDisplay();
     }
     catch(const winrt::hresult_error&) {

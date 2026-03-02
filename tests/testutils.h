@@ -19,7 +19,16 @@
 
 #pragma once
 
+#include <core/track.h>
+
 #include <QTemporaryFile>
+
+#include <memory>
+
+namespace Fooyin {
+class Playlist;
+class SettingsManager;
+} // namespace Fooyin
 
 namespace Fooyin::Testing {
 class TempResource : public QTemporaryFile
@@ -31,5 +40,13 @@ public:
 
 private:
     QString m_file;
+};
+
+class PlaylistTestUtils
+{
+public:
+    static std::unique_ptr<Playlist> createPlaylist(const QString& name, Fooyin::SettingsManager* settings);
+    static void replaceTracks(Playlist& playlist, const TrackList& tracks);
+    static void changeCurrentIndex(Playlist& playlist, int index);
 };
 } // namespace Fooyin::Testing

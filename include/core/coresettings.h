@@ -81,6 +81,8 @@ enum CoreSettings : uint32_t
     PreserveTimestamps            = 32 | Type::Bool,
     PlaylistSkipMissing           = 33 | Type::Bool,
     PlaybackQueueStopWhenFinished = 34 | Type::Bool,
+    OutputBitDepth                = 35 | Type::Int,
+    OutputDither                  = 36 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

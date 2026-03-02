@@ -1,5 +1,7 @@
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/coverprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsdialog.h
+    ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/editablelayout.h
     ${CMAKE_SOURCE_DIR}/include/gui/fylayout.h
     ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
@@ -7,20 +9,21 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/guipaths.h
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
     ${CMAKE_SOURCE_DIR}/include/gui/layoutprovider.h
-    ${CMAKE_SOURCE_DIR}/include/gui/propertiesdialog.h
-    ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
-    ${CMAKE_SOURCE_DIR}/include/gui/widgetcontainer.h
-    ${CMAKE_SOURCE_DIR}/include/gui/widgetfilter.h
-    ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
-    ${CMAKE_SOURCE_DIR}/include/gui/windowcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/plugins/dspguiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h
+    ${CMAKE_SOURCE_DIR}/include/gui/propertiesdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/richtext.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scripteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fytheme.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/themeregistry.h
+    ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgetcontainer.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgetfilter.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/actiondelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/autoheaderview.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/checkboxdelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/clickablelabel.h
@@ -32,8 +35,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/elapsedprogressdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/elidedlabel.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandableinputbox.h
-    ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandingcombobox.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandedtreeview.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandingcombobox.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/extendabletableview.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/fontbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/multilinedelegate.h
@@ -47,32 +50,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/specialvaluespinbox.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/tooltip.h
-    coverprovider.cpp
-    editablelayout.cpp
-    fylayout.cpp
-    fywidget.cpp
-    guiapplication.cpp
-    guiapplication.h
-    guipaths.cpp
-    guiutils.cpp
-    guiutils.h
-    internalguisettings.cpp
-    internalguisettings.h
-    layoutcommands.cpp
-    layoutcommands.h
-    layoutprovider.cpp
-    mainwindow.cpp
-    mainwindow.h
-    statusevent.cpp
-    statusevent.h
-    systemtrayicon.cpp
-    systemtrayicon.h
-    trackselectioncontroller.cpp
-    widgetfilter.cpp
-    widgetprovider.cpp
-    widgets.cpp
-    widgets.h
-    windowcontroller.cpp
+    ${CMAKE_SOURCE_DIR}/include/gui/windowcontroller.h
     artwork/artworkdelegate.cpp
     artwork/artworkdelegate.h
     artwork/artworkdialog.cpp
@@ -88,9 +66,9 @@ set(SOURCES
     artwork/artworkrow.cpp
     artwork/artworkrow.h
     artwork/sources/artworksource.cpp
+    artwork/sources/artworksource.cpp
+    artwork/sources/artworksource.cpp
     artwork/sources/artworksource.h
-    artwork/sources/artworksource.cpp
-    artwork/sources/artworksource.cpp
     artwork/sources/discogsartwork.cpp
     artwork/sources/discogsartwork.h
     artwork/sources/lastfmartwork.cpp
@@ -105,6 +83,7 @@ set(SOURCES
     controls/seekbar.h
     controls/volumecontrol.cpp
     controls/volumecontrol.h
+    coverprovider.cpp
     dialog/aboutdialog.cpp
     dialog/aboutdialog.h
     dialog/autoplaylistdialog.cpp
@@ -124,18 +103,30 @@ set(SOURCES
     dirbrowser/dirproxymodel.h
     dirbrowser/dirtree.cpp
     dirbrowser/dirtree.h
-    selectioninfo/infodelegate.cpp
-    selectioninfo/infodelegate.h
-    selectioninfo/infoitem.cpp
-    selectioninfo/infoitem.h
-    selectioninfo/infomodel.cpp
-    selectioninfo/infomodel.h
-    selectioninfo/infopopulator.cpp
-    selectioninfo/infopopulator.h
-    selectioninfo/infoview.cpp
-    selectioninfo/infoview.h
-    selectioninfo/infowidget.cpp
-    selectioninfo/infowidget.h
+    dsp/dsppreset.cpp
+    dsp/dsppreset.h
+    dsp/dsppresetregistry.cpp
+    dsp/dsppresetregistry.h
+    dsp/dspsettingsdialog.cpp
+    dsp/dspsettingsregistry.cpp
+    dsp/dspsettingsregistry.h
+    dsp/resamplersettingswidget.cpp
+    dsp/resamplersettingswidget.h
+    dsp/skipsilencesettingswidget.cpp
+    dsp/skipsilencesettingswidget.h
+    editablelayout.cpp
+    fylayout.cpp
+    fywidget.cpp
+    guiapplication.cpp
+    guiapplication.h
+    guipaths.cpp
+    guiutils.cpp
+    guiutils.h
+    internalguisettings.cpp
+    internalguisettings.h
+    layoutcommands.cpp
+    layoutcommands.h
+    layoutprovider.cpp
     librarytree/librarytreecontroller.cpp
     librarytree/librarytreecontroller.h
     librarytree/librarytreedelegate.cpp
@@ -155,6 +146,8 @@ set(SOURCES
     librarytree/librarytreeview.h
     librarytree/librarytreewidget.cpp
     librarytree/librarytreewidget.h
+    mainwindow.cpp
+    mainwindow.h
     menubar/editmenu.cpp
     menubar/editmenu.h
     menubar/filemenu.cpp
@@ -241,27 +234,27 @@ set(SOURCES
     replaygain/replaygainwidget.h
     scripting/expressiontreemodel.cpp
     scripting/expressiontreemodel.h
-    scripting/scripthighlighter.cpp
-    scripting/scripthighlighter.h
     scripting/scripteditor.cpp
     scripting/scriptformatter.cpp
     scripting/scriptformatterregistry.cpp
+    scripting/scripthighlighter.cpp
+    scripting/scripthighlighter.h
     search/searchcontroller.cpp
     search/searchcontroller.h
     search/searchwidget.cpp
     search/searchwidget.h
-    settings/generalpage.cpp
-    settings/generalpage.h
-    settings/guigeneralpage.cpp
-    settings/guigeneralpage.h
-    settings/guithemespage.cpp
-    settings/guithemespage.h
-    settings/networkpage.cpp
-    settings/networkpage.h
-    settings/searchpage.cpp
-    settings/searchpage.h
-    settings/shellintegrationpage.cpp
-    settings/shellintegrationpage.h
+    selectioninfo/infodelegate.cpp
+    selectioninfo/infodelegate.h
+    selectioninfo/infoitem.cpp
+    selectioninfo/infoitem.h
+    selectioninfo/infomodel.cpp
+    selectioninfo/infomodel.h
+    selectioninfo/infopopulator.cpp
+    selectioninfo/infopopulator.h
+    selectioninfo/infoview.cpp
+    selectioninfo/infoview.h
+    selectioninfo/infowidget.cpp
+    selectioninfo/infowidget.h
     settings/artwork/artworkdownloadpage.cpp
     settings/artwork/artworkdownloadpage.h
     settings/artwork/artworkgeneralpage.cpp
@@ -274,6 +267,12 @@ set(SOURCES
     settings/artwork/artworksourcespage.h
     settings/dirbrowser/dirbrowserpage.cpp
     settings/dirbrowser/dirbrowserpage.h
+    settings/generalpage.cpp
+    settings/generalpage.h
+    settings/guigeneralpage.cpp
+    settings/guigeneralpage.h
+    settings/guithemespage.cpp
+    settings/guithemespage.h
     settings/library/librarygeneralpage.cpp
     settings/library/librarygeneralpage.h
     settings/library/librarymodel.cpp
@@ -284,14 +283,22 @@ set(SOURCES
     settings/library/sortingmodel.h
     settings/librarytree/librarytreegroupmodel.cpp
     settings/librarytree/librarytreegroupmodel.h
-    settings/librarytree/librarytreepage.cpp
-    settings/librarytree/librarytreepage.h
     settings/librarytree/librarytreegrouppage.cpp
     settings/librarytree/librarytreegrouppage.h
+    settings/librarytree/librarytreepage.cpp
+    settings/librarytree/librarytreepage.h
+    settings/networkpage.cpp
+    settings/networkpage.h
     settings/playback/decodermodel.cpp
     settings/playback/decodermodel.h
     settings/playback/decoderpage.cpp
     settings/playback/decoderpage.h
+    settings/playback/dspdelegate.cpp
+    settings/playback/dspdelegate.h
+    settings/playback/dspmanagerpage.cpp
+    settings/playback/dspmanagerpage.h
+    settings/playback/dspmodel.cpp
+    settings/playback/dspmodel.h
     settings/playback/outputpage.cpp
     settings/playback/outputpage.h
     settings/playback/playbackpage.cpp
@@ -312,6 +319,10 @@ set(SOURCES
     settings/plugins/pluginsmodel.h
     settings/plugins/pluginspage.cpp
     settings/plugins/pluginspage.h
+    settings/searchpage.cpp
+    settings/searchpage.h
+    settings/shellintegrationpage.cpp
+    settings/shellintegrationpage.h
     settings/shortcuts/shortcutsmodel.cpp
     settings/shortcuts/shortcutsmodel.h
     settings/shortcuts/shortcutspage.cpp
@@ -324,8 +335,18 @@ set(SOURCES
     splitters/splitterwidget.h
     splitters/tabstackwidget.cpp
     splitters/tabstackwidget.h
+    statusevent.cpp
+    statusevent.h
+    systemtrayicon.cpp
+    systemtrayicon.h
     theme/fytheme.cpp
     theme/themeregistry.cpp
+    trackselectioncontroller.cpp
+    widgetfilter.cpp
+    widgetprovider.cpp
+    widgets.cpp
+    widgets.h
+    widgets/actiondelegate.cpp
     widgets/autoheaderview.cpp
     widgets/checkboxdelegate.cpp
     widgets/clickablelabel.cpp
@@ -336,10 +357,10 @@ set(SOURCES
     widgets/doubleslidereditor.cpp
     widgets/dummy.cpp
     widgets/dummy.h
-    widgets/elidedlabel.cpp
     widgets/editabletabbar.cpp
     widgets/editabletabwidget.cpp
     widgets/elapsedprogressdialog.cpp
+    widgets/elidedlabel.cpp
     widgets/expandableinputbox.cpp
     widgets/expandedtreeview.cpp
     widgets/expandedtreeview_p.h
@@ -368,6 +389,7 @@ set(SOURCES
     widgets/toolbutton.cpp
     widgets/tooltip.cpp
     widgets/widgetcontainer.cpp
+    windowcontroller.cpp
 )
 
 create_fooyin_library(

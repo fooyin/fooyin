@@ -24,7 +24,6 @@
 
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
-#include <core/playlist/playlisthandler.h>
 #include <gui/guipaths.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
@@ -72,7 +71,6 @@ MprisPlugin::MprisPlugin()
 void MprisPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
-    m_playlistHandler  = context.playlistHandler;
     m_audioLoader      = context.audioLoader;
     m_settings         = context.settingsManager;
 
@@ -191,12 +189,12 @@ bool MprisPlugin::canControl() const
 
 bool MprisPlugin::canGoNext() const
 {
-    return m_playlistHandler->activePlaylist() && m_playlistHandler->nextTrack().isValid();
+    return m_playerController->hasNextTrack();
 }
 
 bool MprisPlugin::canGoPrevious() const
 {
-    return m_playlistHandler->activePlaylist() && m_playlistHandler->previousTrack().isValid();
+    return m_playerController->hasPreviousTrack();
 }
 
 bool MprisPlugin::canPause() const
@@ -206,7 +204,8 @@ bool MprisPlugin::canPause() const
 
 bool MprisPlugin::canPlay() const
 {
-    return m_playlistHandler->activePlaylist() || !m_playerController->playbackQueue().empty();
+    return m_playerController->currentTrack().isValid() || m_playerController->hasNextTrack()
+        || !m_playerController->playbackQueue().empty();
 }
 
 bool MprisPlugin::canSeek() const

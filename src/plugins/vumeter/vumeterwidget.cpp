@@ -22,11 +22,8 @@
 #include "vumetercolours.h"
 #include "vumetersettings.h"
 
-#include <core/engine/audiobuffer.h>
-#include <core/engine/audioconverter.h>
 #include <core/player/playercontroller.h>
 #include <gui/guisettings.h>
-#include <utils/async.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -520,19 +517,19 @@ void VuMeterWidgetPrivate::drawHorizontalBars(QPainter& painter, float x, float 
 
     if(barCount == 1) {
         for(int row{0}; row < m_barSections; ++row) {
-            const float barY = y + static_cast<float>(row) * (barHeight + m_barSpacing);
+            const float barY = y + (static_cast<float>(row) * (barHeight + m_barSpacing));
             painter.fillRect(QRectF{x, barY, dbToSize(channelLevel), barHeight}, m_gradient);
         }
     }
     else {
         const auto first = static_cast<int>(std::max(0.0F, (((start - m_labelsSize) / m_meterWidth) * bars)));
         for(int column{first}; column < barCount; ++column) {
-            const float barDb = MinDb + static_cast<float>(column) * dbStep;
+            const float barDb = MinDb + (static_cast<float>(column) * dbStep);
             if(channelLevel > barDb) {
                 const float barX = x + (static_cast<float>(column) * barSize);
 
                 for(int row{0}; row < m_barSections; ++row) {
-                    const float barY = y + static_cast<float>(row) * (barHeight + m_sectionSpacing);
+                    const float barY = y + (static_cast<float>(row) * (barHeight + m_sectionSpacing));
                     painter.fillRect(QRectF{barX, barY, m_barSize, barHeight}, m_gradient);
                 }
             }
@@ -554,7 +551,7 @@ void VuMeterWidgetPrivate::drawVerticalBars(QPainter& painter, float x, float ch
 
     if(barCount == 1) {
         for(int column{0}; column < m_barSections; ++column) {
-            const float barX = x + static_cast<float>(column) * (barWidth + m_barSpacing);
+            const float barX = x + (static_cast<float>(column) * (barWidth + m_barSpacing));
             const float barY = dbToPos(channelLevel) - m_labelsSize;
             painter.fillRect(QRectF{barX, barY, barWidth, m_meterHeight - barY}, m_gradient);
         }
@@ -562,13 +559,13 @@ void VuMeterWidgetPrivate::drawVerticalBars(QPainter& painter, float x, float ch
     else {
         const auto first = static_cast<int>(std::max(0.0F, bars - ((start / m_meterHeight) * bars) - 1));
         for(int row{first}; row < barCount; ++row) {
-            const float barDb = MinDb + static_cast<float>(row) * dbStep;
+            const float barDb = MinDb + (static_cast<float>(row) * dbStep);
 
             if(channelLevel > barDb) {
                 const float barY = m_meterHeight - (static_cast<float>(row) * barSize);
 
                 for(int column{0}; column < m_barSections; ++column) {
-                    const float barX = x + static_cast<float>(column) * (barWidth + m_sectionSpacing);
+                    const float barX = x + (static_cast<float>(column) * (barWidth + m_sectionSpacing));
                     painter.fillRect(QRectF{barX, barY, barWidth, m_barSize}, m_gradient);
                 }
             }
@@ -583,11 +580,19 @@ void VuMeterWidgetPrivate::playStateChanged(Player::PlayState state)
 
     switch(state) {
         case(Player::PlayState::Playing):
+            m_stopping = false;
             m_updateTimer.start(UpdateInterval, m_self);
             m_elapsedTimer.start();
             break;
         case(Player::PlayState::Paused):
-            m_updateTimer.stop();
+            // Pause is requested optimistically by PlayerController; audio may
+            // still be fading out on the engine. Keep repaint timer alive
+            // until levels naturally decay to zero.
+            m_stopping = true;
+            if(!m_updateTimer.isActive()) {
+                m_updateTimer.start(UpdateInterval, m_self);
+                m_elapsedTimer.start();
+            }
             break;
         case(Player::PlayState::Stopped):
             if(m_updateTimer.isActive()) {
@@ -651,66 +656,46 @@ void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
     }
 }
 
-void VuMeterWidget::renderBuffer(const AudioBuffer& buffer)
+void VuMeterWidget::renderLevel(const LevelFrame& frame)
 {
-    p->m_format.setSampleRate(buffer.format().sampleRate());
-    const int channels = buffer.format().channelCount();
+    if(!p->m_updateTimer.isActive()) {
+        // Keep metering responsive even when transport state changed before the
+        // final fade-out buffers are consumed
+        p->m_stopping = false;
+        p->m_updateTimer.start(UpdateInterval, this);
+        p->m_elapsedTimer.start();
+    }
+
+    const int channels = std::clamp(frame.channelCount, 0, MaxChannels);
+    if(channels <= 0) {
+        return;
+    }
+
     p->m_format.setChannelCount(channels);
-
-    const AudioBuffer normalisedBuffer = Audio::convert(buffer, p->m_format);
-
-    p->m_lastPeakTimers.resize(channels);
-
-    auto calculatePeaks = Utils::asyncExec([this, normalisedBuffer, channels]() {
-        const int totalSamples = normalisedBuffer.sampleCount();
-        const int bps          = normalisedBuffer.format().bytesPerSample();
-
-        std::array<float, MaxChannels> peaks{0.0F};
-        std::array<int, MaxChannels> sampleCounts{0};
-
-        for(int i{0}; i < totalSamples; ++i) {
-            const int sampleIndex  = i / channels;
-            const int channelIndex = i % channels;
-
-            float sample;
-            const auto offset = (sampleIndex * channels + channelIndex) * bps;
-            std::memcpy(&sample, normalisedBuffer.data() + offset, bps);
-
-            if(p->m_type == Type::Peak) {
-                peaks.at(channelIndex) = std::max(peaks.at(channelIndex), std::abs(sample));
-            }
-            else {
-                peaks.at(channelIndex) += sample * sample;
-                sampleCounts.at(channelIndex)++;
-            }
-        }
-
-        if(p->m_type == Type::Rms) {
-            for(int i{0}; i < channels; ++i) {
-                peaks.at(i) = std::sqrt(peaks.at(i) / static_cast<float>(sampleCounts.at(i)));
-            }
-        }
-
-        return peaks;
-    });
-
-    calculatePeaks.then(this, [this, channels](const std::array<float, MaxChannels>& peaks) {
-        for(int i{0}; i < channels; ++i) {
-            const float bufferRMS = peaks.at(i);
-            const float bufferDb  = dbOnRange(20 * std::log10(bufferRMS));
-
-            float& channelLevel = p->m_channelDbLevels.at(i);
-            float& channelPeak  = p->m_channelPeaks.at(i);
-
-            if(bufferDb > channelLevel) {
-                channelLevel = bufferDb;
-            }
-            if(bufferDb > channelPeak) {
-                channelPeak = bufferDb;
-                p->m_lastPeakTimers.at(i).start();
-            }
+    p->m_lastPeakTimers.resize(static_cast<size_t>(channels));
+    std::ranges::for_each(p->m_lastPeakTimers, [](QElapsedTimer& timer) {
+        if(!timer.isValid()) {
+            timer.start();
         }
     });
+
+    constexpr float MinLinearValue = 1.0e-12F;
+    for(int i{0}; i < channels; ++i) {
+        const float linear
+            = (p->m_type == Type::Peak) ? frame.peak.at(static_cast<size_t>(i)) : frame.rms.at(static_cast<size_t>(i));
+
+        const float bufferDb = dbOnRange(20 * std::log10(std::max(linear, MinLinearValue)));
+
+        float& channelLevel = p->m_channelDbLevels.at(static_cast<size_t>(i));
+        float& channelPeak  = p->m_channelPeaks.at(static_cast<size_t>(i));
+
+        channelLevel = std::max(channelLevel, bufferDb);
+
+        if(bufferDb > channelPeak) {
+            channelPeak = bufferDb;
+            p->m_lastPeakTimers.at(static_cast<size_t>(i)).start();
+        }
+    }
 }
 
 void VuMeterWidget::setOrientation(Qt::Orientation orientation)

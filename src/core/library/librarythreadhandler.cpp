@@ -178,9 +178,7 @@ ScanRequest LibraryThreadHandlerPrivate::addLibraryScanRequest(const LibraryInfo
 {
     const int id = nextRequestId();
 
-    ScanRequest request{.type = ScanRequest::Library, .id = id, .cancel = [this, id]() {
-                            cancelScanRequest(id);
-                        }};
+    ScanRequest request{.type = ScanRequest::Library, .id = id, .cancel = [this, id]() { cancelScanRequest(id); }};
 
     LibraryScanRequest libraryRequest;
     libraryRequest.id           = id;
@@ -201,9 +199,7 @@ ScanRequest LibraryThreadHandlerPrivate::addTracksScanRequest(const TrackList& t
 {
     const int id = nextRequestId();
 
-    ScanRequest request{.type = ScanRequest::Tracks, .id = id, .cancel = [this, id]() {
-                            cancelScanRequest(id);
-                        }};
+    ScanRequest request{.type = ScanRequest::Tracks, .id = id, .cancel = [this, id]() { cancelScanRequest(id); }};
 
     LibraryScanRequest libraryRequest;
     libraryRequest.id           = id;
@@ -230,9 +226,7 @@ ScanRequest LibraryThreadHandlerPrivate::addFilesScanRequest(const QList<QUrl>& 
 {
     const int id = nextRequestId();
 
-    ScanRequest request{.type = ScanRequest::Files, .id = id, .cancel = [this, id]() {
-                            cancelScanRequest(id);
-                        }};
+    ScanRequest request{.type = ScanRequest::Files, .id = id, .cancel = [this, id]() { cancelScanRequest(id); }};
 
     LibraryScanRequest libraryRequest;
     libraryRequest.id    = id;
@@ -259,9 +253,7 @@ ScanRequest LibraryThreadHandlerPrivate::addDirectoryScanRequest(const LibraryIn
 {
     const int id = nextRequestId();
 
-    ScanRequest request{.type = ScanRequest::Library, .id = id, .cancel = [this, id]() {
-                            cancelScanRequest(id);
-                        }};
+    ScanRequest request{.type = ScanRequest::Library, .id = id, .cancel = [this, id]() { cancelScanRequest(id); }};
 
     LibraryScanRequest libraryRequest;
     libraryRequest.id      = id;
@@ -282,9 +274,7 @@ ScanRequest LibraryThreadHandlerPrivate::addPlaylistRequest(const QList<QUrl>& f
 {
     const int id = nextRequestId();
 
-    ScanRequest request{.type = ScanRequest::Playlist, .id = id, .cancel = [this, id]() {
-                            cancelScanRequest(id);
-                        }};
+    ScanRequest request{.type = ScanRequest::Playlist, .id = id, .cancel = [this, id]() { cancelScanRequest(id); }};
 
     LibraryScanRequest libraryRequest;
     libraryRequest.id    = id;

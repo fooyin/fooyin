@@ -32,14 +32,16 @@ struct InputCreator
 };
 
 /*!
- * An abstract interface for audio decoder plugins.
+ * Plugin interface for registering decoder/reader/archive backends.
  */
 class InputPlugin
 {
 public:
     virtual ~InputPlugin() = default;
 
-    [[nodiscard]] virtual QString inputName() const         = 0;
+    //! Unique plugin/backend name shown in settings/UI.
+    [[nodiscard]] virtual QString inputName() const = 0;
+    //! Factory bundle for decoder/reader/archive reader implementations.
     [[nodiscard]] virtual InputCreator inputCreator() const = 0;
 };
 } // namespace Fooyin

@@ -20,6 +20,7 @@
 #include "outputpage.h"
 
 #include <core/coresettings.h>
+#include <core/engine/enginedefs.h>
 #include <core/engine/enginehandler.h>
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
@@ -31,7 +32,6 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QListView>
 #include <QSpinBox>
 
 using namespace Qt::StringLiterals;
@@ -60,12 +60,28 @@ private:
 
     QCheckBox* m_gaplessPlayback;
     QSpinBox* m_bufferSize;
+    ExpandingComboBox* m_bitDepthBox;
 
     QGroupBox* m_fadingBox;
+    QCheckBox* m_fadingPauseEnabled;
+    QCheckBox* m_fadingStopEnabled;
+    QSpinBox* m_fadingPauseIn;
+    QSpinBox* m_fadingPauseOut;
     QSpinBox* m_fadingStopIn;
     QSpinBox* m_fadingStopOut;
-    // QSpinBox* m_fadingSeekIn;
-    // QSpinBox* m_fadingSeekOut;
+    QComboBox* m_pauseFadeCurve;
+    QComboBox* m_stopFadeCurve;
+
+    QGroupBox* m_crossfadeBox;
+    QCheckBox* m_crossfadeSeekEnabled;
+    QCheckBox* m_crossfadeManualEnabled;
+    QCheckBox* m_crossfadeAutoEnabled;
+    QSpinBox* m_crossfadeManualIn;
+    QSpinBox* m_crossfadeManualOut;
+    QSpinBox* m_crossfadeAutoIn;
+    QSpinBox* m_crossfadeAutoOut;
+    QSpinBox* m_crossfadeSeekIn;
+    QSpinBox* m_crossfadeSeekOut;
 };
 
 OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* settings)
@@ -75,11 +91,26 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     , m_deviceBox{new ExpandingComboBox(this)}
     , m_gaplessPlayback{new QCheckBox(tr("Gapless playback"), this)}
     , m_bufferSize{new QSpinBox(this)}
+    , m_bitDepthBox{new ExpandingComboBox(this)}
     , m_fadingBox{new QGroupBox(tr("Fading"), this)}
+    , m_fadingPauseEnabled{new QCheckBox(tr("Pause"), this)}
+    , m_fadingStopEnabled{new QCheckBox(tr("Stop"), this)}
+    , m_fadingPauseIn{new QSpinBox(this)}
+    , m_fadingPauseOut{new QSpinBox(this)}
     , m_fadingStopIn{new QSpinBox(this)}
     , m_fadingStopOut{new QSpinBox(this)}
-// , m_fadingSeekIn{new QSpinBox(this)}
-// , m_fadingSeekOut{new QSpinBox(this)}
+    , m_pauseFadeCurve{new QComboBox(this)}
+    , m_stopFadeCurve{new QComboBox(this)}
+    , m_crossfadeBox{new QGroupBox(tr("Crossfading"), this)}
+    , m_crossfadeSeekEnabled{new QCheckBox(tr("Seek"), this)}
+    , m_crossfadeManualEnabled{new QCheckBox(tr("Manual track change"), this)}
+    , m_crossfadeAutoEnabled{new QCheckBox(tr("Auto track change"), this)}
+    , m_crossfadeManualIn{new QSpinBox(this)}
+    , m_crossfadeManualOut{new QSpinBox(this)}
+    , m_crossfadeAutoIn{new QSpinBox(this)}
+    , m_crossfadeAutoOut{new QSpinBox(this)}
+    , m_crossfadeSeekIn{new QSpinBox(this)}
+    , m_crossfadeSeekOut{new QSpinBox(this)}
 {
     auto* generalBox    = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalBox);
@@ -91,62 +122,195 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 
     m_bufferSize->setSuffix(u" ms"_s);
     m_bufferSize->setSingleStep(100);
-    m_bufferSize->setMinimum(50);
+    m_bufferSize->setMinimum(500);
     m_bufferSize->setMaximum(30000);
+
+    m_bitDepthBox->addItem(tr("Automatic"), static_cast<int>(SampleFormat::Unknown));
+    m_bitDepthBox->addItem(tr("16-bit"), static_cast<int>(SampleFormat::S16));
+    m_bitDepthBox->addItem(tr("16-bit (dithered)"), static_cast<int>(SampleFormat::S16));
+    m_bitDepthBox->setItemData(m_bitDepthBox->count() - 1, true, Qt::UserRole + 1);
+    m_bitDepthBox->addItem(tr("24-bit"), static_cast<int>(SampleFormat::S24In32));
+    m_bitDepthBox->addItem(tr("32-bit"), static_cast<int>(SampleFormat::S32));
+    m_bitDepthBox->addItem(tr("32-bit float"), static_cast<int>(SampleFormat::F32));
+    m_bitDepthBox->setToolTip(tr("Override the output sample format. Devices may choose a compatible format."));
+    m_bitDepthBox->resizeDropDown();
 
     generalLayout->addWidget(new QLabel(tr("Buffer length") + u":"_s, this), 1, 0);
     generalLayout->addWidget(m_bufferSize, 1, 1);
+    generalLayout->addWidget(new QLabel(tr("Bit depth") + u":"_s, this), 2, 0);
+    generalLayout->addWidget(m_bitDepthBox, 2, 1);
 
     generalLayout->setColumnStretch(2, 1);
 
-    m_fadingBox->setCheckable(true);
     auto* fadingLayout = new QGridLayout(m_fadingBox);
 
+    m_fadingBox->setCheckable(true);
+
+    m_fadingPauseIn->setSuffix(u"ms"_s);
+    m_fadingPauseOut->setSuffix(u"ms"_s);
     m_fadingStopIn->setSuffix(u"ms"_s);
     m_fadingStopOut->setSuffix(u"ms"_s);
-    // m_fadingSeekIn->setSuffix(u"ms"_s);
-    // m_fadingSeekOut->setSuffix(u"ms"_s);
+    m_crossfadeManualIn->setSuffix(u"ms"_s);
+    m_crossfadeManualOut->setSuffix(u"ms"_s);
+    m_crossfadeAutoIn->setSuffix(u"ms"_s);
+    m_crossfadeAutoOut->setSuffix(u"ms"_s);
+    m_crossfadeSeekIn->setSuffix(u"ms"_s);
+    m_crossfadeSeekOut->setSuffix(u"ms"_s);
 
+    m_fadingPauseIn->setMaximum(10000);
+    m_fadingPauseOut->setMaximum(10000);
     m_fadingStopIn->setMaximum(10000);
     m_fadingStopOut->setMaximum(10000);
-    // m_fadingSeekIn->setMaximum(10000);
-    // m_fadingSeekOut->setMaximum(10000);
 
+    m_fadingPauseIn->setSingleStep(100);
+    m_fadingPauseOut->setSingleStep(100);
     m_fadingStopIn->setSingleStep(100);
     m_fadingStopOut->setSingleStep(100);
-    // m_fadingSeekIn->setSingleStep(100);
-    // m_fadingSeekOut->setSingleStep(100);
 
-    fadingLayout->addWidget(new QLabel(tr("Fade In"), this), 0, 1);
-    fadingLayout->addWidget(new QLabel(tr("Fade Out"), this), 0, 2);
-    fadingLayout->addWidget(new QLabel(tr("Pause/Stop"), this), 1, 0);
-    // fadingLayout->addWidget(new QLabel(tr("Seek"), this), 2, 0);
-    fadingLayout->addWidget(m_fadingStopIn, 1, 1);
-    fadingLayout->addWidget(m_fadingStopOut, 1, 2);
-    // fadingLayout->addWidget(m_fadingSeekIn, 2, 1);
-    // fadingLayout->addWidget(m_fadingSeekOut, 2, 2);
-    fadingLayout->setColumnStretch(3, 1);
+    const auto addFadeCurveItems = [](QComboBox* combo) {
+        combo->addItem(tr("Linear"), static_cast<int>(Engine::FadeCurve::Linear));
+        combo->addItem(tr("Ease Out (Sine)"), static_cast<int>(Engine::FadeCurve::Sine));
+        combo->addItem(tr("Ease In (Cosine)"), static_cast<int>(Engine::FadeCurve::Cosine));
+        combo->addItem(tr("Ease Out (Exponential)"), static_cast<int>(Engine::FadeCurve::Logarithmic));
+        combo->addItem(tr("Ease In (Exponential)"), static_cast<int>(Engine::FadeCurve::Exponential));
+        combo->addItem(tr("Smooth S-Curve"), static_cast<int>(Engine::FadeCurve::SmootherStep));
+    };
+
+    addFadeCurveItems(m_pauseFadeCurve);
+    addFadeCurveItems(m_stopFadeCurve);
+
+    int row{0};
+    fadingLayout->addWidget(new QLabel(tr("Fade In"), this), row, 1);
+    fadingLayout->addWidget(new QLabel(tr("Fade Out"), this), row, 2);
+    fadingLayout->addWidget(new QLabel(tr("Curve"), this), row++, 3);
+
+    fadingLayout->addWidget(m_fadingPauseEnabled, row, 0);
+    fadingLayout->addWidget(m_fadingPauseIn, row, 1);
+    fadingLayout->addWidget(m_fadingPauseOut, row, 2);
+    fadingLayout->addWidget(m_pauseFadeCurve, row++, 3);
+
+    fadingLayout->addWidget(m_fadingStopEnabled, row, 0);
+    fadingLayout->addWidget(m_fadingStopIn, row, 1);
+    fadingLayout->addWidget(m_fadingStopOut, row, 2);
+    fadingLayout->addWidget(m_stopFadeCurve, row++, 3);
+
+    fadingLayout->setColumnStretch(4, 1);
+
+    auto* crossmixLayout = new QGridLayout(m_crossfadeBox);
+
+    m_crossfadeBox->setCheckable(true);
+
+    m_crossfadeManualIn->setSuffix(u"ms"_s);
+    m_crossfadeManualOut->setSuffix(u"ms"_s);
+    m_crossfadeAutoIn->setSuffix(u"ms"_s);
+    m_crossfadeAutoOut->setSuffix(u"ms"_s);
+
+    m_crossfadeManualIn->setMaximum(30000);
+    m_crossfadeManualOut->setMaximum(30000);
+    m_crossfadeAutoIn->setMaximum(30000);
+    m_crossfadeAutoOut->setMaximum(30000);
+    m_crossfadeSeekIn->setMaximum(10000);
+    m_crossfadeSeekOut->setMaximum(10000);
+
+    m_crossfadeManualIn->setSingleStep(100);
+    m_crossfadeManualOut->setSingleStep(100);
+    m_crossfadeAutoIn->setSingleStep(100);
+    m_crossfadeAutoOut->setSingleStep(100);
+    m_crossfadeSeekIn->setSingleStep(100);
+    m_crossfadeSeekOut->setSingleStep(100);
+
+    row = 0;
+    crossmixLayout->addWidget(new QLabel(tr("Fade In"), this), row, 1);
+    crossmixLayout->addWidget(new QLabel(tr("Fade Out"), this), row++, 2);
+
+    crossmixLayout->addWidget(m_crossfadeSeekEnabled, row, 0);
+    crossmixLayout->addWidget(m_crossfadeSeekIn, row, 1);
+    crossmixLayout->addWidget(m_crossfadeSeekOut, row++, 2);
+
+    crossmixLayout->addWidget(m_crossfadeManualEnabled, row, 0);
+    crossmixLayout->addWidget(m_crossfadeManualIn, row, 1);
+    crossmixLayout->addWidget(m_crossfadeManualOut, row++, 2);
+
+    crossmixLayout->addWidget(m_crossfadeAutoEnabled, row, 0);
+    crossmixLayout->addWidget(m_crossfadeAutoIn, row, 1);
+    crossmixLayout->addWidget(m_crossfadeAutoOut, row++, 2);
+
+    crossmixLayout->setColumnStretch(3, 1);
 
     auto* mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(new QLabel(tr("Output") + u":"_s, this), 0, 0);
-    mainLayout->addWidget(m_outputBox, 0, 1);
-    mainLayout->addWidget(new QLabel(tr("Device") + u":"_s, this), 1, 0);
-    mainLayout->addWidget(m_deviceBox, 1, 1);
-    mainLayout->addWidget(generalBox, 2, 0, 1, 2);
-    mainLayout->addWidget(m_fadingBox, 3, 0, 1, 2);
+
+    row = 0;
+    mainLayout->addWidget(new QLabel(tr("Output") + u":"_s, this), row, 0);
+    mainLayout->addWidget(m_outputBox, row++, 1);
+    mainLayout->addWidget(new QLabel(tr("Device") + u":"_s, this), row, 0);
+    mainLayout->addWidget(m_deviceBox, row++, 1);
+    mainLayout->addWidget(generalBox, row++, 0, 1, 2);
+    mainLayout->addWidget(m_fadingBox, row++, 0, 1, 2);
+    mainLayout->addWidget(m_crossfadeBox, row++, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
-    auto matchBufferInterval = [this](const int value) {
-        if(value > m_bufferSize->value()) {
-            m_bufferSize->setValue(value);
+    auto syncBufferBounds = [this]() {
+        const int pauseIn   = m_fadingPauseEnabled->isChecked() ? m_fadingPauseIn->value() : 0;
+        const int pauseOut  = m_fadingPauseEnabled->isChecked() ? m_fadingPauseOut->value() : 0;
+        const int stopIn    = m_fadingStopEnabled->isChecked() ? m_fadingStopIn->value() : 0;
+        const int stopOut   = m_fadingStopEnabled->isChecked() ? m_fadingStopOut->value() : 0;
+        const int manualIn  = m_crossfadeManualEnabled->isChecked() ? m_crossfadeManualIn->value() : 0;
+        const int manualOut = m_crossfadeManualEnabled->isChecked() ? m_crossfadeManualOut->value() : 0;
+        const int autoIn    = m_crossfadeAutoEnabled->isChecked() ? m_crossfadeAutoIn->value() : 0;
+        const int autoOut   = m_crossfadeAutoEnabled->isChecked() ? m_crossfadeAutoOut->value() : 0;
+        const int seekIn    = m_crossfadeSeekEnabled->isChecked() ? m_crossfadeSeekIn->value() : 0;
+        const int seekOut   = m_crossfadeSeekEnabled->isChecked() ? m_crossfadeSeekOut->value() : 0;
+        const auto maxFadeValue
+            = std::max({pauseIn, pauseOut, stopIn, stopOut, manualIn, manualOut, autoIn, autoOut, seekIn, seekOut});
+        m_bufferSize->setMinimum(maxFadeValue);
+        if(m_bufferSize->value() < maxFadeValue) {
+            m_bufferSize->setValue(maxFadeValue);
         }
     };
 
+    auto updateRowStates = [this]() {
+        m_fadingPauseIn->setEnabled(m_fadingPauseEnabled->isChecked());
+        m_fadingPauseOut->setEnabled(m_fadingPauseEnabled->isChecked());
+        m_pauseFadeCurve->setEnabled(m_fadingPauseEnabled->isChecked());
+        m_fadingStopIn->setEnabled(m_fadingStopEnabled->isChecked());
+        m_fadingStopOut->setEnabled(m_fadingStopEnabled->isChecked());
+        m_stopFadeCurve->setEnabled(m_fadingStopEnabled->isChecked());
+
+        m_crossfadeSeekIn->setEnabled(m_crossfadeSeekEnabled->isChecked());
+        m_crossfadeSeekOut->setEnabled(m_crossfadeSeekEnabled->isChecked());
+        m_crossfadeManualIn->setEnabled(m_crossfadeManualEnabled->isChecked());
+        m_crossfadeManualOut->setEnabled(m_crossfadeManualEnabled->isChecked());
+        m_crossfadeAutoIn->setEnabled(m_crossfadeAutoEnabled->isChecked());
+        m_crossfadeAutoOut->setEnabled(m_crossfadeAutoEnabled->isChecked());
+    };
+
+    const auto updateState = [syncBufferBounds, updateRowStates]() {
+        updateRowStates();
+        syncBufferBounds();
+    };
+
     QObject::connect(m_outputBox, &QComboBox::currentTextChanged, this, &OutputPageWidget::setupDevices);
-    QObject::connect(m_fadingStopIn, &QSpinBox::valueChanged, this, matchBufferInterval);
-    QObject::connect(m_fadingStopOut, &QSpinBox::valueChanged, this, matchBufferInterval);
+    QObject::connect(m_fadingPauseIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_fadingPauseOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_fadingStopIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_fadingStopOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_crossfadeManualIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_crossfadeManualOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_crossfadeAutoIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_crossfadeAutoOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_crossfadeSeekIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_crossfadeSeekOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+
+    QObject::connect(m_fadingPauseEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
+    QObject::connect(m_fadingStopEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
+    QObject::connect(m_crossfadeSeekEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
+    QObject::connect(m_crossfadeManualEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
+    QObject::connect(m_crossfadeAutoEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
+
+    updateRowStates();
+    syncBufferBounds();
 }
 
 void OutputPageWidget::load()
@@ -156,12 +320,45 @@ void OutputPageWidget::load()
     m_gaplessPlayback->setChecked(m_settings->value<Settings::Core::GaplessPlayback>());
     m_bufferSize->setValue(m_settings->value<Settings::Core::BufferLength>());
 
+    const int bitDepthSetting = m_settings->value<Settings::Core::OutputBitDepth>();
+    const bool ditherSetting
+        = bitDepthSetting == static_cast<int>(SampleFormat::S16) && m_settings->value<Settings::Core::OutputDither>();
+
+    int bitDepthIndex{-1};
+    const int bitDepthItemCount = m_bitDepthBox->count();
+    for(int i{0}; i < bitDepthItemCount; ++i) {
+        if(m_bitDepthBox->itemData(i).toInt() == bitDepthSetting
+           && m_bitDepthBox->itemData(i, Qt::UserRole + 1).toBool() == ditherSetting) {
+            bitDepthIndex = i;
+            break;
+        }
+    }
+
+    m_bitDepthBox->setCurrentIndex(bitDepthIndex >= 0 ? bitDepthIndex : 0);
+    m_bitDepthBox->resizeToFitCurrent();
+
     m_fadingBox->setChecked(m_settings->value<Settings::Core::Internal::EngineFading>());
-    const auto fadingValues = m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>();
-    m_fadingStopIn->setValue(fadingValues.inPauseStop);
-    m_fadingStopOut->setValue(fadingValues.outPauseStop);
-    // m_fadingSeekIn->setValue(fadingValues.inSeek);
-    // m_fadingSeekOut->setValue(fadingValues.outSeek);
+    const auto fadingValues = m_settings->value<Settings::Core::Internal::FadingValues>().value<Engine::FadingValues>();
+    const auto loadFadeSpec = [](const Engine::FadeSpec& spec, QCheckBox* enabled, QSpinBox* in, QSpinBox* out,
+                                 QComboBox* curve = nullptr) {
+        enabled->setChecked(spec.enabled);
+        in->setValue(spec.in);
+        out->setValue(spec.out);
+        if(curve) {
+            curve->setCurrentIndex(static_cast<int>(spec.curve));
+        }
+    };
+
+    loadFadeSpec(fadingValues.pause, m_fadingPauseEnabled, m_fadingPauseIn, m_fadingPauseOut, m_pauseFadeCurve);
+    loadFadeSpec(fadingValues.stop, m_fadingStopEnabled, m_fadingStopIn, m_fadingStopOut, m_stopFadeCurve);
+
+    m_crossfadeBox->setChecked(m_settings->value<Settings::Core::Internal::EngineCrossfading>());
+    const auto crossfadingValues
+        = m_settings->value<Settings::Core::Internal::CrossfadingValues>().value<Engine::CrossfadingValues>();
+
+    loadFadeSpec(crossfadingValues.manualChange, m_crossfadeManualEnabled, m_crossfadeManualIn, m_crossfadeManualOut);
+    loadFadeSpec(crossfadingValues.autoChange, m_crossfadeAutoEnabled, m_crossfadeAutoIn, m_crossfadeAutoOut);
+    loadFadeSpec(crossfadingValues.seek, m_crossfadeSeekEnabled, m_crossfadeSeekIn, m_crossfadeSeekOut);
 }
 
 void OutputPageWidget::apply()
@@ -171,14 +368,37 @@ void OutputPageWidget::apply()
     m_settings->set<Settings::Core::GaplessPlayback>(m_gaplessPlayback->isChecked());
     m_settings->set<Settings::Core::BufferLength>(m_bufferSize->value());
 
-    FadingIntervals fadingValues;
-    fadingValues.inPauseStop  = m_fadingStopIn->value();
-    fadingValues.outPauseStop = m_fadingStopOut->value();
-    // fadingValues.inSeek       = m_fadingSeekIn->value();
-    // fadingValues.outSeek      = m_fadingSeekOut->value();
+    const int selectedBitDepth = m_bitDepthBox->currentData().toInt();
+    bool ditherEnabled         = m_bitDepthBox->currentData(Qt::UserRole + 1).toBool();
+    if(selectedBitDepth != static_cast<int>(SampleFormat::S16)) {
+        ditherEnabled = false;
+    }
+    m_settings->set<Settings::Core::OutputBitDepth>(selectedBitDepth);
+    m_settings->set<Settings::Core::OutputDither>(ditherEnabled);
+
+    const auto saveFadeSpec = [](Engine::FadeSpec& spec, const QCheckBox* enabled, const QSpinBox* in,
+                                 const QSpinBox* out, const QComboBox* curve = nullptr) {
+        spec.enabled = enabled->isChecked();
+        spec.in      = in->value();
+        spec.out     = out->value();
+        if(curve) {
+            spec.curve = static_cast<Engine::FadeCurve>(curve->currentData().toInt());
+        }
+    };
+
+    Engine::FadingValues fadingValues;
+    saveFadeSpec(fadingValues.pause, m_fadingPauseEnabled, m_fadingPauseIn, m_fadingPauseOut, m_pauseFadeCurve);
+    saveFadeSpec(fadingValues.stop, m_fadingStopEnabled, m_fadingStopIn, m_fadingStopOut, m_stopFadeCurve);
+
+    Engine::CrossfadingValues crossfadingValues;
+    saveFadeSpec(crossfadingValues.manualChange, m_crossfadeManualEnabled, m_crossfadeManualIn, m_crossfadeManualOut);
+    saveFadeSpec(crossfadingValues.autoChange, m_crossfadeAutoEnabled, m_crossfadeAutoIn, m_crossfadeAutoOut);
+    saveFadeSpec(crossfadingValues.seek, m_crossfadeSeekEnabled, m_crossfadeSeekIn, m_crossfadeSeekOut);
 
     m_settings->set<Settings::Core::Internal::EngineFading>(m_fadingBox->isChecked());
-    m_settings->set<Settings::Core::Internal::FadingIntervals>(QVariant::fromValue(fadingValues));
+    m_settings->set<Settings::Core::Internal::FadingValues>(QVariant::fromValue(fadingValues));
+    m_settings->set<Settings::Core::Internal::EngineCrossfading>(m_crossfadeBox->isChecked());
+    m_settings->set<Settings::Core::Internal::CrossfadingValues>(QVariant::fromValue(crossfadingValues));
 }
 
 void OutputPageWidget::reset()
@@ -186,8 +406,12 @@ void OutputPageWidget::reset()
     m_settings->reset<Settings::Core::AudioOutput>();
     m_settings->reset<Settings::Core::GaplessPlayback>();
     m_settings->reset<Settings::Core::BufferLength>();
+    m_settings->reset<Settings::Core::OutputBitDepth>();
+    m_settings->reset<Settings::Core::OutputDither>();
     m_settings->reset<Settings::Core::Internal::EngineFading>();
-    m_settings->reset<Settings::Core::Internal::FadingIntervals>();
+    m_settings->reset<Settings::Core::Internal::FadingValues>();
+    m_settings->reset<Settings::Core::Internal::EngineCrossfading>();
+    m_settings->reset<Settings::Core::Internal::CrossfadingValues>();
 }
 
 void OutputPageWidget::setupOutputs()

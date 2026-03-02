@@ -33,6 +33,7 @@
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
+#include <QJsonObject>
 #include <QMenu>
 #include <QVBoxLayout>
 

@@ -25,6 +25,8 @@
 
 #include <QDir>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Testing {
 class CueParserTest : public ::testing::Test
 {
@@ -41,7 +43,7 @@ protected:
 
 TEST_F(CueParserTest, SingleCue)
 {
-    const QString filepath = QStringLiteral(":/playlists/singlefiletest.cue");
+    const QString filepath = u":/playlists/singlefiletest.cue"_s;
     QFile file{filepath};
     if(file.open(QIODevice::ReadOnly)) {
         QDir dir{filepath};
@@ -59,8 +61,8 @@ TEST_F(CueParserTest, SingleCue)
         EXPECT_EQ(u"Loveless", tracks.at(0).album());
         EXPECT_EQ(u"Only Shallow", tracks.at(0).title());
 
-        EXPECT_EQ(tracks.at(1).discNumber(), QStringLiteral("1"));
-        EXPECT_EQ(tracks.at(1).trackNumber(), QStringLiteral("02"));
+        EXPECT_EQ(tracks.at(1).discNumber(), u"1"_s);
+        EXPECT_EQ(tracks.at(1).trackNumber(), u"02"_s);
     }
 }
 } // namespace Fooyin::Testing
