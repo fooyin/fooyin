@@ -848,12 +848,12 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="86"/>
         <source>Show symlinks</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit symbolické odkazy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
         <source>Show hidden</source>
-        <translation type="unfinished">Zobrazit skryté</translation>
+        <translation>Zobrazit skryté</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="90"/>
@@ -883,7 +883,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="113"/>
         <source>Browser Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtry správce souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="119"/>
@@ -1005,12 +1005,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="839"/>
         <source>Playback</source>
-        <translation type="unfinished">Přehrávání</translation>
+        <translation>Přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="839"/>
         <source>DSP Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Správce DSP</translation>
     </message>
 </context>
 <context>
@@ -1018,113 +1018,113 @@
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="203"/>
         <source>Load</source>
-        <translation type="unfinished">Načteno</translation>
+        <translation>Načíst</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="204"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="205"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation>Smazat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="234"/>
         <source>Per-Track DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="235"/>
         <source>Master DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Hlavní DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="237"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed. During crossfades, each track is processed independently.</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP stop jsou použity před mixováním stop pro každý stream samostatně. Během prolínání je každá stopa zpracována samostatně.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="239"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal. Effects here process the final combined output.</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP hlavní jsou použity po smixování stop do jednoho signálu. Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="242"/>
         <source>Available DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Dostupné DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="261"/>
         <source>DSP chain presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolby DSP řetězců</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="485"/>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="491"/>
         <source>DSP Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="485"/>
         <source>This DSP has no configurable settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tento DSP nepodporuje úpravy nastavení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="491"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se otevřít nastavení pro DSP „%1“.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="614"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfigurovat…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="622"/>
         <source>Move Up</source>
-        <translation type="unfinished">Posunout nahoru</translation>
+        <translation>Posunout nahoru</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="628"/>
         <source>Move Down</source>
-        <translation type="unfinished">Posunout dolů</translation>
+        <translation>Posunout dolů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="637"/>
         <source>Disable</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="637"/>
         <source>Enable</source>
-        <translation type="unfinished">Povolit</translation>
+        <translation>Povolit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="645"/>
         <source>Remove</source>
-        <translation type="unfinished">Odebrat</translation>
+        <translation>Odebrat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="663"/>
         <source>Add to Per-Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat pro stopy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="664"/>
         <source>Add to Master</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat k hlavním</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="785"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Předvolba již existuje</translation>
+        <translation>Předvolba již existuje</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="786"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolba „%1“ již existuje. Přepsat?</translation>
     </message>
 </context>
 <context>
@@ -4746,7 +4746,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="185"/>
         <source>Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Křivka</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="243"/>
@@ -4766,32 +4766,32 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="96"/>
         <source>Pause</source>
-        <translation type="unfinished">Pozastavit</translation>
+        <translation>Pozastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="97"/>
         <source>Stop</source>
-        <translation type="unfinished">Zastavit</translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="104"/>
         <source>Crossfading</source>
-        <translation type="unfinished"></translation>
+        <translation>Prolínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="105"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetočení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="106"/>
         <source>Manual track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruční změna skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="107"/>
         <source>Auto track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatická změna skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="119"/>
@@ -4801,37 +4801,37 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="128"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatické</translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="129"/>
         <source>16-bit</source>
-        <translation type="unfinished"></translation>
+        <translation>16 bitů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="130"/>
         <source>16-bit (dithered)</source>
-        <translation type="unfinished"></translation>
+        <translation>16 bitů (rozptyl)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="132"/>
         <source>24-bit</source>
-        <translation type="unfinished"></translation>
+        <translation>24 bitů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="133"/>
         <source>32-bit</source>
-        <translation type="unfinished"></translation>
+        <translation>32 bitů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="134"/>
         <source>32-bit float</source>
-        <translation type="unfinished"></translation>
+        <translation>32 bitů (float)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="135"/>
         <source>Override the output sample format. Devices may choose a compatible format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vynutit výstupní vzorkovací formát. Zařízení mohou vybrat kompatibilní formát.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="138"/>
@@ -4841,37 +4841,37 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="140"/>
         <source>Bit depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitová hloubka</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="171"/>
         <source>Linear</source>
-        <translation type="unfinished">Lineární</translation>
+        <translation>Lineární</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="172"/>
         <source>Ease Out (Sine)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ztišení (sinus)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="173"/>
         <source>Ease In (Cosine)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zesílení (cosinus)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="174"/>
         <source>Ease Out (Exponential)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ztišení (exponenciální)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="175"/>
         <source>Ease In (Exponential)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zesílení (exponenciální)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="176"/>
         <source>Smooth S-Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Hladká S-křivka</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="183"/>
@@ -5123,7 +5123,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="91"/>
         <source>Stop playback after queue finishes</source>
-        <translation type="unfinished"></translation>
+        <translation>Na konci fronty zastavit přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="93"/>
@@ -6863,57 +6863,57 @@
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="49"/>
         <source>Very High (28-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Velmi vysoká (28 bitů)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="50"/>
         <source>High (20-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vysoká (20 bitů)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="51"/>
         <source>Medium (18-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Střední (18 bitů)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="52"/>
         <source>Low (16-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nízká (16 bitů)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="53"/>
         <source>Quick (15-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Rychlá (15 bitů)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="69"/>
         <source>Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>Hz</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="81"/>
         <source>Exclude these sample rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepoužívat tyto vzorkovaní frekvence</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="83"/>
         <source>Resample only these sample rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Převzorkovat pouze tyto vzorkovací frekvence</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="85"/>
         <source>e.g. 44100, 48000, 96000</source>
-        <translation type="unfinished"></translation>
+        <translation>např. 44100, 48000, 96000</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="87"/>
         <source>Rate filtering:</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrování frekvencí:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="88"/>
         <source>Filtered rates:</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrované frekvence:</translation>
     </message>
 </context>
 <context>
@@ -9069,67 +9069,67 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="44"/>
         <source>Prefer SoXR engine (if available)</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferovat SoXR (pokud je k dispozici)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="45"/>
         <source>SoXR precision</source>
-        <translation type="unfinished"></translation>
+        <translation>Přesnost SoXR</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="72"/>
         <source>Target sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Cílová vzorkovací frekvence</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="39"/>
         <source>Do not skip initial silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepřeskakovat úvodní ticho</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="40"/>
         <source>Skip silence in the middle of a track</source>
-        <translation type="unfinished"></translation>
+        <translation>Přeskočit ticho uvnitř skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="46"/>
         <source>Minimum silence duration to activate removal:</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimální délka ticha pro vyjmutí:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="55"/>
         <source>Short</source>
-        <translation type="unfinished"></translation>
+        <translation>Krátký</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="57"/>
         <source>Long</source>
-        <translation type="unfinished"></translation>
+        <translation>Dlouhý</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="67"/>
         <source>Silence detection threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Práh detekce ticha:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="76"/>
         <source>Quiet</source>
-        <translation type="unfinished"></translation>
+        <translation>Tichý</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="78"/>
         <source>Loud</source>
-        <translation type="unfinished"></translation>
+        <translation>Hlasitý</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="149"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="150"/>
         <source> dB</source>
-        <translation type="unfinished"></translation>
+        <translation> dB</translation>
     </message>
 </context>
 <context>
