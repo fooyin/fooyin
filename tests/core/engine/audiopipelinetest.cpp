@@ -758,6 +758,8 @@ TEST(AudioPipelineTest, GaplessTransitionLiveHandoffAnchorsToAudibleStart)
     pipeline.play();
     ASSERT_TRUE(backend->waitForWritesAtLeast(1, 1500ms));
 
+    backend->setFreeFrames(0);
+
     auto replacement = makeStream(std::vector<double>(200, 0.8), false);
     replacement->setPosition(200); // 2000 ms @ 100 Hz mono, fully prefilled in buffer
 
