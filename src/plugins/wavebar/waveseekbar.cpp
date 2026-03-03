@@ -219,7 +219,7 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         y += channelHeight;
     }
 
-    if(m_showCursor && m_playState == Player::PlayState::Playing) {
+    if(m_showCursor && m_playState != Player::PlayState::Stopped) {
         painter.setPen({m_colours.cursor, static_cast<double>(m_cursorWidth), Qt::SolidLine, Qt::FlatCap});
         const QPointF pt1{posX, 0};
         const QPointF pt2{posX, static_cast<double>(height())};
