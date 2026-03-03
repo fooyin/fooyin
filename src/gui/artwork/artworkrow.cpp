@@ -84,9 +84,11 @@ ArtworkRow::ArtworkRow(const QString& name, Track::Cover cover, bool readOnly, Q
 
 void ArtworkRow::replaceImage()
 {
-    const QString filepath
-        = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Images") + " (*.png *.jpg)"_L1,
-                                       nullptr, QFileDialog::DontResolveSymlinks);
+    static const QStringList imagePatterns = {u"*.png"_s, u"*.jpg"_s, u"*.jpeg"_s, u"*.webp"_s, u"*.bmp"_s, u"*.gif"_s};
+    const QString filter                   = tr("Images") + u" (%1)"_s.arg(imagePatterns.join(u' '));
+
+    const QString filepath = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), filter, nullptr,
+                                                          QFileDialog::DontResolveSymlinks);
     if(filepath.isEmpty()) {
         return;
     }
@@ -100,6 +102,7 @@ void ArtworkRow::replaceImage()
 
     m_multipleImages = false;
     m_status         = (m_imageData.isEmpty() ? Status::Added : Status::Changed);
+
     loadImage(imageData, true);
     finalise(0);
 }

@@ -62,6 +62,7 @@
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFileInfo>
+#include <QImage>
 #include <QLoggingCategory>
 #include <QMimeDatabase>
 #include <QPixmap>
@@ -1638,45 +1639,74 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, Fooyin:
 
 bool writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const Fooyin::TrackCovers& covers)
 {
-    if(!covers.contains(Fooyin::Track::Cover::Front)) {
+    const auto coverIt = covers.find(Fooyin::Track::Cover::Front);
+    if(coverIt == covers.end()) {
         return false;
     }
 
+    const auto& cover = coverIt->second;
+
     bool modified{false};
+
+    using CoverArt = TagLib::MP4::CoverArt;
+    using Format   = CoverArt::Format;
+
+    if(cover.data.isEmpty()) {
+        if(mp4Tags->contains("covr")) {
+            mp4Tags->removeItem("covr");
+            return true;
+        }
+        return false;
+    }
+
+    QByteArray coverData{cover.data};
+    Format format{CoverArt::JPEG};
+    bool supportedFormat{true};
+
+    if(cover.mimeType == "image/jpeg"_L1 || cover.mimeType == "image/jpg"_L1) {
+        format = Format::JPEG;
+    }
+    else if(cover.mimeType == "image/png"_L1) {
+        format = Format::PNG;
+    }
+    else if(cover.mimeType == "image/bmp"_L1 || cover.mimeType == "image/x-ms-bmp"_L1) {
+        format = Format::BMP;
+    }
+    else if(cover.mimeType == "image/gif"_L1) {
+        format = Format::GIF;
+    }
+    else {
+        supportedFormat = false;
+    }
+
+    if(!supportedFormat) {
+        QImage image;
+        if(!image.loadFromData(coverData)) {
+            qCWarning(TAGLIB) << "Unsupported MP4 cover format and failed to decode image:" << cover.mimeType;
+            return false;
+        }
+
+        QByteArray convertedData;
+        QBuffer outputBuffer{&convertedData};
+        if(!outputBuffer.open(QIODevice::WriteOnly) || !image.save(&outputBuffer, "JPG", 90)) {
+            qCWarning(TAGLIB) << "Failed to convert MP4 cover image to JPEG from format:" << cover.mimeType;
+            return false;
+        }
+
+        coverData = convertedData;
+        format    = Format::JPEG;
+    }
 
     if(mp4Tags->contains("covr")) {
         mp4Tags->removeItem("covr");
         modified = true;
     }
 
-    using CoverArt = TagLib::MP4::CoverArt;
-
-    for(const auto& [type, cover] : covers) {
-        if(type != Fooyin::Track::Cover::Front) {
-            continue;
-        }
-
-        if(cover.data.isEmpty()) {
-            return modified;
-        }
-
-        CoverArt::Format format{CoverArt::JPEG};
-        if(cover.mimeType == "image/jpeg"_L1) {
-            format = TagLib::MP4::CoverArt::Format::JPEG;
-        }
-        else if(cover.mimeType == "image/png"_L1) {
-            format = TagLib::MP4::CoverArt::Format::PNG;
-        }
-        else {
-            continue;
-        }
-
-        const CoverArt newCoverArt(format, TagLib::ByteVector(cover.data.constData(), cover.data.size()));
-        TagLib::MP4::CoverArtList coverArtList;
-        coverArtList.append(newCoverArt);
-        mp4Tags->setItem("covr", TagLib::MP4::Item(coverArtList));
-        modified = true;
-    }
+    const CoverArt newCoverArt(format, TagLib::ByteVector(coverData.constData(), coverData.size()));
+    TagLib::MP4::CoverArtList coverArtList;
+    coverArtList.append(newCoverArt);
+    mp4Tags->setItem("covr", TagLib::MP4::Item(coverArtList));
+    modified = true;
 
     return modified;
 }
