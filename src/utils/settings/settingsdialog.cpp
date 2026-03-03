@@ -260,7 +260,7 @@ void SettingsDialog::reject()
 
 QSize SettingsDialog::sizeHint() const
 {
-    return Utils::proportionateSize(this, 0.3, 0.4);
+    return Utils::proportionateSize(this, 0.3, 0.5);
 }
 
 void SettingsDialog::apply()
