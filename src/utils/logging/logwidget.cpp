@@ -170,7 +170,7 @@ void LogWidget::copySelectedRows()
     QStringList lines;
     lines.reserve(rows.size());
 
-    for(const QModelIndex& rowIndex : rows) {
+    for(const QModelIndex& rowIndex : std::as_const(rows)) {
         QStringList columns;
         columns.reserve(m_model->columnCount({}));
 
@@ -199,10 +199,12 @@ void LogWidget::showContextMenu(const QPoint& pos)
     }
 
     auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* copy = menu->addAction(tr("&Copy"));
+    auto* copy = new QAction(tr("&Copy"), menu);
     copy->setEnabled(m_view->selectionModel() && m_view->selectionModel()->hasSelection());
     QObject::connect(copy, &QAction::triggered, this, &LogWidget::copySelectedRows);
+    menu->addAction(copy);
 
     menu->popup(m_view->viewport()->mapToGlobal(pos));
 }
