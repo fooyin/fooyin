@@ -90,6 +90,7 @@ protected:
     virtual void setupContextActions(QMenu* menu, const QPoint& pos);
     void contextMenuEvent(QContextMenuEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
 
 private:
     std::unique_ptr<ExtendableTableViewPrivate> p;

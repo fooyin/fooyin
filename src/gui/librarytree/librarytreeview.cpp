@@ -52,7 +52,10 @@ void LibraryTreeView::setLoading(bool isLoading)
 
 void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 {
-    QTreeView::mousePressEvent(event);
+    if(event->button() > Qt::MiddleButton) {
+        event->ignore();
+        return;
+    }
 
     const QModelIndex index = indexAt(event->position().toPoint());
 
@@ -62,12 +65,16 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 
     if(event->button() == Qt::MiddleButton) {
         emit middleClicked(index);
+        return;
     }
+
+    QTreeView::mousePressEvent(event);
 }
 
 void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    if(event->button() == Qt::MiddleButton) {
+    if(event->button() != Qt::LeftButton) {
+        event->ignore();
         return;
     }
     QTreeView::mouseDoubleClickEvent(event);

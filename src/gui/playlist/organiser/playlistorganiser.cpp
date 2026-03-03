@@ -109,6 +109,25 @@ void restoreExpandedState(QTreeView* view, QAbstractItemModel* model, QByteArray
         }
     }
 }
+
+class OrganiserTreeView : public QTreeView
+{
+public:
+    explicit OrganiserTreeView(QWidget* parent = nullptr)
+        : QTreeView(parent)
+    { }
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override
+    {
+        if(event->button() != Qt::LeftButton) {
+            event->ignore();
+            return;
+        }
+        QTreeView::mousePressEvent(event);
+    }
+};
+
 } // namespace
 
 namespace Fooyin {
@@ -119,7 +138,7 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     , m_settings{settings}
     , m_playlistInteractor{playlistInteractor}
     , m_playerController{playlistInteractor->playlistController()->playerController()}
-    , m_organiserTree{new QTreeView(this)}
+    , m_organiserTree{new OrganiserTreeView(this)}
     , m_model{new PlaylistOrganiserModel(playlistInteractor->handler(), m_playerController)}
     , m_context{new WidgetContext(this, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateUniqueHash())},
                                   this)}
