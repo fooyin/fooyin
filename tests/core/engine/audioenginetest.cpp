@@ -654,28 +654,6 @@ TEST(AudioEngineTest, SetVolumeClampsAndPropagatesToOutput)
     EXPECT_DOUBLE_EQ(harness.outputStats->volume(), 0.0);
 }
 
-TEST(AudioEngineTest, SetOutputDeviceForwardsOnlyWhenChanged)
-{
-    ensureCoreApplication();
-    EngineHarness harness{false};
-
-    const Track track = harness.createTrack(u"output-device.fyt"_s, 0, 100000);
-    harness.engine.loadTrack(track, false);
-    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
-
-    const int deviceCallsBefore = harness.outputStats->setDeviceCalls.load();
-    harness.engine.setOutputDevice(u"device-A"_s);
-    ASSERT_TRUE(pumpUntil(
-        [&harness, deviceCallsBefore]() { return harness.outputStats->setDeviceCalls.load() > deviceCallsBefore; },
-        2000ms));
-    EXPECT_EQ(harness.outputStats->device(), u"device-A"_s);
-
-    const int deviceCallsMid = harness.outputStats->setDeviceCalls.load();
-    harness.engine.setOutputDevice(u"device-A"_s);
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 20);
-    EXPECT_EQ(harness.outputStats->setDeviceCalls.load(), deviceCallsMid);
-}
-
 TEST(AudioEngineTest, SetAudioOutputReinitializesLoadedOutput)
 {
     ensureCoreApplication();

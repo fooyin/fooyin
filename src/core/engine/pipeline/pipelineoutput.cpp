@@ -176,10 +176,6 @@ int PipelineOutput::writeOutputBufferFrames(const AudioBuffer& buffer, int frame
         return 0;
     }
 
-    if(shouldStartOutput) {
-        m_output->start();
-    }
-
     const int totalFrames = buffer.frameCount();
     if(totalFrames <= 0 || frameOffset >= totalFrames) {
         return 0;
@@ -201,6 +197,10 @@ int PipelineOutput::writeOutputBufferFrames(const AudioBuffer& buffer, int frame
         = std::clamp(m_output->write(bytes.subspan(startByte), remainingFrames), 0, remainingFrames);
     if(writtenFrames <= 0) {
         return 0;
+    }
+
+    if(shouldStartOutput) {
+        m_output->start();
     }
 
     const auto frameBytes         = static_cast<size_t>(bytesPerFrame);

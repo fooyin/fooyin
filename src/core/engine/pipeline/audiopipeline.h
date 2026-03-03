@@ -373,8 +373,6 @@ private:
     void appendPendingOutput(const AudioBuffer& buffer);
     [[nodiscard]] int masterPrerollFrames() const;
     void clearPendingOutput();
-    //! Start backend output when initial preroll writes are ready.
-    void startOutputIfNeeded();
     //! Push fade-completion event into SPSC queue.
     void queueFadeEvent(const FadeEvent& event);
     void setLastInitError(QString error);

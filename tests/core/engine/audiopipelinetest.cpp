@@ -80,6 +80,10 @@ public:
     void start() override
     {
         const std::scoped_lock lock{m_mutex};
+        ++m_startCalls;
+        if(m_writeCalls == 0) {
+            m_startedBeforeFirstWrite = true;
+        }
         m_started = true;
     }
 
@@ -194,6 +198,18 @@ public:
         return m_writeCalls;
     }
 
+    [[nodiscard]] int startCallCount() const
+    {
+        const std::scoped_lock lock{m_mutex};
+        return m_startCalls;
+    }
+
+    [[nodiscard]] bool startedBeforeFirstWrite() const
+    {
+        const std::scoped_lock lock{m_mutex};
+        return m_startedBeforeFirstWrite;
+    }
+
     [[nodiscard]] int totalFramesWritten() const
     {
         const std::scoped_lock lock{m_mutex};
@@ -224,12 +240,14 @@ private:
     int m_queuedFrames{0};
     int m_maxWriteFrames{0};
     int m_writeCalls{0};
+    int m_startCalls{0};
     int m_totalFramesWritten{0};
     int m_lastWriteFrames{0};
     double m_delaySeconds{0.0};
     double m_volume{1.0};
     bool m_initialised{false};
     bool m_started{false};
+    bool m_startedBeforeFirstWrite{false};
     bool m_paused{false};
 };
 
@@ -610,6 +628,30 @@ TEST(AudioPipelineTest, MappedPositionIsMonotonicDuringSteadyDrain)
     for(size_t i{1}; i < mappedPositions.size(); ++i) {
         EXPECT_GE(mappedPositions[i], mappedPositions[i - 1]);
     }
+
+    pipeline.stop();
+}
+
+TEST(AudioPipelineTest, StartsOutputOnlyAfterFirstSuccessfulWrite)
+{
+    AudioPipeline pipeline;
+    auto output   = std::make_unique<FakeAudioOutput>(64);
+    auto* backend = output.get();
+    backend->setFreeFrames(64);
+
+    pipeline.setOutput(std::move(output));
+    pipeline.start();
+    ASSERT_TRUE(pipeline.init(testFormat()));
+
+    auto stream = makeStream(std::vector<double>(256, 0.25), true);
+    stream->setEndOfInput();
+    const auto streamId = pipeline.registerStream(stream);
+    pipeline.addStream(streamId);
+    pipeline.play();
+
+    ASSERT_TRUE(backend->waitForWritesAtLeast(1, 1500ms));
+    ASSERT_TRUE(waitUntil([backend]() { return backend->startCallCount() >= 1; }, 1000ms));
+    EXPECT_FALSE(backend->startedBeforeFirstWrite());
 
     pipeline.stop();
 }

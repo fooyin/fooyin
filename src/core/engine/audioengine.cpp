@@ -583,7 +583,6 @@ void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId)
     }
 
     if(wasPlaying) {
-        m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Pause);
         m_pipeline.pause();
     }
 
@@ -733,9 +732,6 @@ void AudioEngine::applyFadeResult(const FadeController::FadeResult& result)
     }
     else if(result.pauseNow) {
         clearTransportTransition();
-        if(auto stream = m_decoder.activeStream()) {
-            m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Pause);
-        }
         m_pipeline.pause();
         m_pipeline.resetOutput();
         clearPendingAnalysisData();
@@ -2013,10 +2009,6 @@ void AudioEngine::pause()
 
     if(pauseAction != PlaybackAction::Immediate && pauseAction != PlaybackAction::BeginFade) {
         return;
-    }
-
-    if(auto stream = m_decoder.activeStream()) {
-        m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Pause);
     }
 
     m_pipeline.pause();

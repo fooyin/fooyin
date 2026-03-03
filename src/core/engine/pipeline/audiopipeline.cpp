@@ -283,14 +283,25 @@ AudioFormat AudioPipeline::formatFromSnapshot(const std::shared_ptr<const Format
 
 int AudioPipeline::writeOutputBufferFrames(const AudioBuffer& buffer, int frameOffset)
 {
-    const bool shouldStartOutput = m_playing.load(std::memory_order_acquire) && (m_renderPhase == RenderPhase::Stopped);
-    return m_outputUnit.writeOutputBufferFrames(buffer, frameOffset, shouldStartOutput);
+    const bool shouldStartOutput = m_playing.load(std::memory_order_acquire) && (m_renderPhase != RenderPhase::Running);
+    const int writtenFrames      = m_outputUnit.writeOutputBufferFrames(buffer, frameOffset, shouldStartOutput);
+    if(writtenFrames > 0 && shouldStartOutput) {
+        m_renderPhase = RenderPhase::Running;
+    }
+
+    return writtenFrames;
 }
 
 int AudioPipeline::writeUnderrunConcealFrames(int maxFrames)
 {
-    const bool shouldStartOutput = m_playing.load(std::memory_order_acquire) && (m_renderPhase == RenderPhase::Stopped);
-    return m_outputUnit.writeUnderrunConcealFrames(maxFrames, m_renderer.outputFormat(), shouldStartOutput);
+    const bool shouldStartOutput = m_playing.load(std::memory_order_acquire) && (m_renderPhase != RenderPhase::Running);
+    const int writtenFrames
+        = m_outputUnit.writeUnderrunConcealFrames(maxFrames, m_renderer.outputFormat(), shouldStartOutput);
+    if(writtenFrames > 0 && shouldStartOutput) {
+        m_renderPhase = RenderPhase::Running;
+    }
+
+    return writtenFrames;
 }
 
 bool AudioPipeline::hasPendingOutput() const
@@ -343,15 +354,6 @@ void AudioPipeline::clearPendingOutput()
 void AudioPipeline::resetCycleRenderedPosition()
 {
     m_timelineUnit.resetCycleRenderedPosition();
-}
-
-void AudioPipeline::startOutputIfNeeded()
-{
-    if(!m_outputUnit.output() || !m_outputUnit.output()->initialised()) {
-        return;
-    }
-
-    m_outputUnit.output()->start();
 }
 
 void AudioPipeline::resetMasterRateObservation()
@@ -414,6 +416,7 @@ void AudioPipeline::stop()
 
     m_playing.store(false, std::memory_order_release);
     m_playbackState.store(PipelinePlaybackState::Stopped, std::memory_order_release);
+    m_renderPhase = RenderPhase::Stopped;
     m_outputUnit.setOutputInitialized(false);
     m_timelineUnit.setBufferUnderrun(false);
     clearMappedPositionState(0);
@@ -562,6 +565,7 @@ bool AudioPipeline::init(const AudioFormat& format)
             pipeline.m_outputSnapshot.store(makeSnapshot(pipeline.m_renderer.outputFormat()),
                                             std::memory_order_release);
             pipeline.m_outputUnit.setBufferFrames(std::max(1, pipeline.m_outputUnit.output()->bufferSize()));
+            pipeline.m_renderPhase = RenderPhase::Stopped;
 
             if(pipeline.m_outputUnit.outputSupportsVolume()) {
                 pipeline.m_outputUnit.output()->setVolume(pipeline.m_masterVolume);
@@ -608,6 +612,7 @@ void AudioPipeline::uninit()
 
         pipeline.m_outputUnit.setOutputInitialized(false);
         pipeline.m_playbackState.store(PipelinePlaybackState::Stopped, std::memory_order_release);
+        pipeline.m_renderPhase = RenderPhase::Stopped;
         pipeline.m_renderer.setOutputFormat({});
         pipeline.m_outputUnit.setBufferFrames(0);
         pipeline.clearMappedPositionState();
@@ -635,12 +640,16 @@ void AudioPipeline::play()
         const auto previousState = pipeline.m_playbackState.load(std::memory_order_acquire);
         pipeline.m_playing.store(true, std::memory_order_release);
         pipeline.m_playbackState.store(PipelinePlaybackState::Playing, std::memory_order_release);
+        pipeline.m_renderPhase = RenderPhase::Preroll;
 
         if(pipeline.m_outputUnit.output() && pipeline.m_outputUnit.output()->initialised()) {
             pipeline.m_outputUnit.output()->setPaused(false);
 
             if(previousState == PipelinePlaybackState::Paused) {
-                pipeline.startOutputIfNeeded();
+                const auto state = pipeline.m_outputUnit.output()->currentState();
+                if(state.queuedFrames > 0 || state.delay > 0.0) {
+                    pipeline.m_renderPhase = RenderPhase::Running;
+                }
             }
             else {
                 pipeline.clearPendingOutput();
@@ -656,6 +665,7 @@ void AudioPipeline::pause()
     enqueueAsync([](AudioPipeline& pipeline) {
         pipeline.m_playing.store(false, std::memory_order_release);
         pipeline.m_playbackState.store(PipelinePlaybackState::Paused, std::memory_order_release);
+        pipeline.m_renderPhase = RenderPhase::Stopped;
 
         if(pipeline.m_outputUnit.output() && pipeline.m_outputUnit.output()->initialised()) {
             pipeline.m_outputUnit.output()->setPaused(true);
@@ -670,6 +680,7 @@ void AudioPipeline::stopPlayback()
     enqueueAsync([](AudioPipeline& pipeline) {
         pipeline.m_playing.store(false, std::memory_order_release);
         pipeline.m_playbackState.store(PipelinePlaybackState::Stopped, std::memory_order_release);
+        pipeline.m_renderPhase = RenderPhase::Stopped;
 
         if(pipeline.m_outputUnit.output() && pipeline.m_outputUnit.output()->initialised()) {
             (*pipeline.m_outputUnit.output()).reset();
@@ -702,6 +713,7 @@ void AudioPipeline::resetOutput()
             (*pipeline.m_outputUnit.output()).reset();
         }
 
+        pipeline.m_renderPhase = RenderPhase::Stopped;
         pipeline.resetPendingOutputState(true, true);
     });
 }
@@ -1696,6 +1708,16 @@ bool AudioPipeline::handleMixerUnderrun(const OutputState& state, int framesWrit
 
     auto outputStateWithWrites = stateWithWrites(state, framesWrittenThisCycle);
     updatePlaybackDelay(outputStateWithWrites, PositionBasis::DecodeHead);
+
+    if(m_renderer.streamCount() > 0 && m_renderPhase == RenderPhase::Preroll) {
+        m_timelineUnit.setBufferUnderrun(false);
+        clearUnderrunWarningLatches();
+        notifyDataDemand(true);
+
+        const auto waitDuration = m_outputUnit.writeBackoff(m_renderer.outputFormat(), outputStateWithWrites);
+        m_threadHost.waitFor(waitDuration);
+        return true;
+    }
 
     if(m_renderer.streamCount() > 0) {
         m_timelineUnit.setBufferUnderrun(true);
