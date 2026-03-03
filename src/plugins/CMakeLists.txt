@@ -7,6 +7,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 add_subdirectory(discord)
+add_subdirectory(equaliser)
 add_subdirectory(fileops)
 add_subdirectory(filters)
 add_subdirectory(gme)
