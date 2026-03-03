@@ -50,6 +50,8 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
+    void copySelectedRows();
+    void showContextMenu(const QPoint& pos);
     void saveLog();
 
     SettingsManager* m_settings;

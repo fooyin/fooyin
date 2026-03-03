@@ -23,16 +23,23 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QAction>
+#include <QApplication>
+#include <QClipboard>
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QHeaderView>
+#include <QItemSelectionModel>
 #include <QLoggingCategory>
+#include <QMenu>
 #include <QPushButton>
 #include <QScrollBar>
 #include <QTimerEvent>
 #include <QTreeView>
+
+#include <algorithm>
 
 Q_LOGGING_CATEGORY(LOG_WIDGET, "fy.log")
 
@@ -78,9 +85,19 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     m_view->setRootIsDecorated(false);
     m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_view->header()->setStretchLastSection(true);
+    m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    m_view->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    auto* copyAction = new QAction(tr("&Copy"), m_view);
+    copyAction->setShortcut(QKeySequence::Copy);
+    copyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    QObject::connect(copyAction, &QAction::triggered, this, &LogWidget::copySelectedRows);
+    m_view->addAction(copyAction);
 
     QObject::connect(m_level, &QComboBox::currentIndexChanged, this,
                      [this]() { MessageHandler::setLevel(m_level->currentData().value<QtMsgType>()); });
+    QObject::connect(m_view, &QWidget::customContextMenuRequested, this, &LogWidget::showContextMenu);
     QObject::connect(m_model, &QAbstractItemModel::rowsAboutToBeInserted, this, [this]() {
         if(const auto* bar = m_view->verticalScrollBar()) {
             m_scrollIsAtBottom = (bar->value() == bar->maximum());
@@ -129,6 +146,65 @@ void LogWidget::timerEvent(QTimerEvent* event)
     }
 
     QWidget::timerEvent(event);
+}
+
+void LogWidget::copySelectedRows()
+{
+    const auto* selection = m_view->selectionModel();
+    if(!selection) {
+        return;
+    }
+
+    QModelIndexList rows = selection->selectedRows();
+    if(rows.isEmpty()) {
+        return;
+    }
+
+    std::ranges::sort(rows, [](const QModelIndex& lhs, const QModelIndex& rhs) {
+        if(lhs.row() == rhs.row()) {
+            return lhs.column() < rhs.column();
+        }
+        return lhs.row() < rhs.row();
+    });
+
+    QStringList lines;
+    lines.reserve(rows.size());
+
+    for(const QModelIndex& rowIndex : rows) {
+        QStringList columns;
+        columns.reserve(m_model->columnCount({}));
+
+        for(int col{0}; col < m_model->columnCount({}); ++col) {
+            const QModelIndex index = m_model->index(rowIndex.row(), col);
+            columns.push_back(m_model->data(index, Qt::DisplayRole).toString());
+        }
+
+        lines.push_back(columns.join(u"\t"_s));
+    }
+
+    if(!lines.isEmpty()) {
+        QApplication::clipboard()->setText(lines.join(u"\n"_s));
+    }
+}
+
+void LogWidget::showContextMenu(const QPoint& pos)
+{
+    if(auto* selection = m_view->selectionModel()) {
+        const QModelIndex clicked = m_view->indexAt(pos);
+        if(clicked.isValid() && !selection->isRowSelected(clicked.row(), clicked.parent())) {
+            selection->clearSelection();
+            selection->select(clicked, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+            selection->setCurrentIndex(clicked, QItemSelectionModel::Current);
+        }
+    }
+
+    auto* menu = new QMenu(this);
+
+    auto* copy = menu->addAction(tr("&Copy"));
+    copy->setEnabled(m_view->selectionModel() && m_view->selectionModel()->hasSelection());
+    QObject::connect(copy, &QAction::triggered, this, &LogWidget::copySelectedRows);
+
+    menu->popup(m_view->viewport()->mapToGlobal(pos));
 }
 
 void LogWidget::saveLog()
