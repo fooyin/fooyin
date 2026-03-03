@@ -1087,6 +1087,8 @@ void AudioPipeline::switchToStream(StreamId id)
             (*pipeline.m_outputUnit.output()).reset();
         }
 
+        pipeline.m_renderPhase
+            = pipeline.m_playing.load(std::memory_order_acquire) ? RenderPhase::Preroll : RenderPhase::Stopped;
         pipeline.clearPendingOutput();
         pipeline.clearMappedPositionState(streamPosMs);
         pipeline.resetPlaybackDelayState();
