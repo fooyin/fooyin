@@ -50,7 +50,8 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
-    void copySelectedRows();
+    void copySelectedRows() const;
+    void copyRows(const QModelIndexList& rows) const;
     void showContextMenu(const QPoint& pos);
     void saveLog();
 

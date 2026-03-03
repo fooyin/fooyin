@@ -48,6 +48,28 @@ using namespace Qt::StringLiterals;
 constexpr auto FlushInterval    = 200;
 constexpr auto MaxQueuedEntries = 250;
 
+namespace {
+QModelIndexList allRowIndexes(const QAbstractItemModel* model)
+{
+    QModelIndexList indexes;
+    if(!model) {
+        return indexes;
+    }
+
+    const QModelIndex root;
+
+    const int rows = model->rowCount(root);
+
+    indexes.reserve(rows);
+
+    for(int row{0}; row < rows; ++row) {
+        indexes.push_back(model->index(row, 0, root));
+    }
+
+    return indexes;
+}
+} // namespace
+
 namespace Fooyin {
 LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
@@ -61,11 +83,14 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
 
     auto* clearButton = new QPushButton(tr("&Clear"), this);
     QObject::connect(clearButton, &QPushButton::clicked, m_model, &LogModel::clear);
+    auto* copyButton = new QPushButton(tr("Co&py Log"), this);
+    QObject::connect(copyButton, &QPushButton::clicked, this, [this]() { copyRows(allRowIndexes(m_model)); });
     auto* saveButton = new QPushButton(tr("&Save Log"), this);
     QObject::connect(saveButton, &QPushButton::clicked, this, &LogWidget::saveLog);
 
     auto* buttonBox = new QDialogButtonBox(this);
     buttonBox->addButton(clearButton, QDialogButtonBox::ResetRole);
+    buttonBox->addButton(copyButton, QDialogButtonBox::ActionRole);
     buttonBox->addButton(saveButton, QDialogButtonBox::ApplyRole);
 
     m_level->addItem(tr("Debug"), QtMsgType::QtDebugMsg);
@@ -148,19 +173,25 @@ void LogWidget::timerEvent(QTimerEvent* event)
     QWidget::timerEvent(event);
 }
 
-void LogWidget::copySelectedRows()
+void LogWidget::copySelectedRows() const
 {
     const auto* selection = m_view->selectionModel();
     if(!selection) {
         return;
     }
 
-    QModelIndexList rows = selection->selectedRows();
+    copyRows(selection->selectedRows());
+}
+
+void LogWidget::copyRows(const QModelIndexList& rows) const
+{
     if(rows.isEmpty()) {
         return;
     }
 
-    std::ranges::sort(rows, [](const QModelIndex& lhs, const QModelIndex& rhs) {
+    QModelIndexList sortedRows{rows};
+
+    std::ranges::sort(sortedRows, [](const QModelIndex& lhs, const QModelIndex& rhs) {
         if(lhs.row() == rhs.row()) {
             return lhs.column() < rhs.column();
         }
@@ -168,9 +199,9 @@ void LogWidget::copySelectedRows()
     });
 
     QStringList lines;
-    lines.reserve(rows.size());
+    lines.reserve(sortedRows.size());
 
-    for(const QModelIndex& rowIndex : std::as_const(rows)) {
+    for(const QModelIndex& rowIndex : std::as_const(sortedRows)) {
         QStringList columns;
         columns.reserve(m_model->columnCount({}));
 
