@@ -388,9 +388,15 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 
-void StatusWidget::mouseDoubleClickEvent([[maybe_unused]] QMouseEvent* event)
+void StatusWidget::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    p->m_playlistController->showNowPlaying();
+    if(event->button() == Qt::LeftButton) {
+        if(auto* activePlaylist = p->m_playlistController->playlistHandler()->activePlaylist()) {
+            p->m_playlistController->showNowPlaying();
+            p->m_playlistController->changeCurrentPlaylist(activePlaylist);
+        }
+    }
+    FyWidget::mouseDoubleClickEvent(event);
 }
 
 void StatusWidget::timerEvent(QTimerEvent* event)
