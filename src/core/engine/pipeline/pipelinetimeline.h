@@ -77,6 +77,8 @@ public:
 
     [[nodiscard]] uint64_t playbackDelayMs() const;
     void setPlaybackDelayMs(uint64_t playbackDelayMs);
+    [[nodiscard]] uint64_t transitionPlaybackDelayMs() const;
+    void setTransitionPlaybackDelayMs(uint64_t playbackDelayMs);
 
     [[nodiscard]] double playbackDelayToTrackScale() const;
     void setPlaybackDelayToTrackScale(double scale);
@@ -122,6 +124,7 @@ private:
     std::atomic<uint64_t> m_renderedSegmentEndMs;
     std::atomic<int> m_renderedSegmentOutputFrames;
     std::atomic<uint64_t> m_playbackDelayMs;
+    std::atomic<uint64_t> m_transitionPlaybackDelayMs;
     std::atomic<double> m_playbackDelayToTrackScale;
     std::atomic<bool> m_bufferUnderrun;
 

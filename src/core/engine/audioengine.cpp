@@ -912,26 +912,50 @@ void AudioEngine::updatePosition()
     const double delayToSourceScale  = m_pipeline.playbackDelayToTrackScale();
     const auto pipelineStatus        = m_pipeline.currentStatus();
     const uint64_t decodeSourcePosMs = stream->positionMs();
-    bool hasRenderedSegment          = pipelineStatus.renderedSegment.valid;
-    uint64_t sourcePosMs             = decodeSourcePosMs;
+    const bool mappedForActiveStream
+        = pipelineStatus.renderedSegment.valid && pipelineStatus.renderedSegment.streamId == stream->id();
+
+    bool activeStreamMapped = mappedForActiveStream;
+    bool hasRenderedSegment = mappedForActiveStream;
+    uint64_t sourcePosMs    = decodeSourcePosMs;
+
+    // Gapless transitions can prefill a pending stream far ahead of
+    // audible output. Until that stream has rendered timeline data, clamp
+    // source position to stream start.
+    const bool pendingWithoutMappedAudio = stream->state() == AudioStream::State::Pending && !mappedForActiveStream;
+    if(pendingWithoutMappedAudio) {
+        sourcePosMs = 0;
+    }
+
     if(hasRenderedSegment) {
         const uint64_t mappedSourcePosMs = pipelineStatus.renderedSegment.sourceEndMs;
-        const double clampedScale        = std::clamp(delayToSourceScale, 0.05, 8.0);
-        const auto expectedGapMs
-            = static_cast<uint64_t>(std::llround(static_cast<double>(pipelineDelayMs) * clampedScale));
-        const uint64_t maxAllowedGapMs = expectedGapMs + std::max<uint64_t>(1000, MaxContinuousPositionJumpMs);
-        const uint64_t gapMs = mappedSourcePosMs >= decodeSourcePosMs ? (mappedSourcePosMs - decodeSourcePosMs)
-                                                                      : (decodeSourcePosMs - mappedSourcePosMs);
-        if(gapMs <= maxAllowedGapMs) {
+        if(mappedSourcePosMs <= decodeSourcePosMs) {
+            // Active-stream mapped timeline can legitimately lag decode-head
+            // during gapless warmup/prefill. Keep mapped authority in that case.
             sourcePosMs = mappedSourcePosMs;
         }
         else {
-            hasRenderedSegment = false;
+            const auto expectedGapMs
+                = static_cast<uint64_t>(std::llround(static_cast<double>(pipelineDelayMs) * delayToSourceScale));
+            const uint64_t maxAllowedGapMs = expectedGapMs + std::max<uint64_t>(1000, MaxContinuousPositionJumpMs);
+            const uint64_t aheadGapMs      = mappedSourcePosMs - decodeSourcePosMs;
+            if(aheadGapMs <= maxAllowedGapMs) {
+                sourcePosMs = mappedSourcePosMs;
+            }
+            else {
+                hasRenderedSegment = false;
+                activeStreamMapped = false;
+            }
         }
     }
     updatePositionContext(pipelineStatus.timelineEpoch);
 
+    const bool activeStreamUnmapped = !activeStreamMapped;
+
     uint64_t relativePosMs = relativeTrackPositionMs(sourcePosMs, m_streamToTrackOriginMs, m_currentTrack.offset());
+    if(activeStreamUnmapped && m_lastSourcePositionValid) {
+        relativePosMs = std::min(relativePosMs, m_lastSourcePositionMs);
+    }
 
     auto updateMode = AudioClock::UpdateMode::Continuous;
     bool emitNow    = false;
@@ -941,6 +965,7 @@ void AudioEngine::updatePosition()
                                 && (m_lastSourcePositionMs - relativePosMs) > MaxBackwardDriftToleranceMs;
         const bool forwardJump = relativePosMs > m_lastSourcePositionMs
                               && (relativePosMs - m_lastSourcePositionMs) > MaxContinuousPositionJumpMs;
+
         if(backwardDrift || forwardJump) {
             updateMode = AudioClock::UpdateMode::Discontinuity;
             emitNow    = true;
@@ -952,11 +977,13 @@ void AudioEngine::updatePosition()
     m_lastSourcePositionValid = true;
 
     const uint64_t decoderRelativePosMs
-        = relativeTrackPositionMs(stream->positionMs(), m_streamToTrackOriginMs, m_currentTrack.offset());
+        = (pendingWithoutMappedAudio || activeStreamUnmapped)
+            ? relativePosMs
+            : relativeTrackPositionMs(stream->positionMs(), m_streamToTrackOriginMs, m_currentTrack.offset());
     uint64_t trackEndingPosMs = decoderRelativePosMs;
+
     if(hasRenderedSegment) {
-        // Track-ending decisions must not advance beyond the active stream decode head.
-        // This prevents stale/mis-attributed mapped segments from re-triggering transitions.
+        // Track-ending decisions must not advance beyond the active stream decode head
         trackEndingPosMs = std::min(relativePosMs, decoderRelativePosMs);
     }
 
@@ -1266,7 +1293,7 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
     }
 
     const uint64_t bufferedMs    = stream->bufferedDurationMs();
-    const uint64_t outputDelayMs = m_pipeline.playbackDelayMs();
+    const uint64_t outputDelayMs = m_pipeline.transitionPlaybackDelayMs();
     uint64_t remainingOutputMs{bufferedMs};
 
     if(remainingOutputMs > std::numeric_limits<uint64_t>::max() - outputDelayMs) {

@@ -741,6 +741,76 @@ TEST(AudioPipelineTest, CrossfadeTransitionWhilePausedClearsMappedStateAndAnchor
     pipeline.stop();
 }
 
+TEST(AudioPipelineTest, GaplessTransitionLiveHandoffAnchorsToAudibleStart)
+{
+    AudioPipeline pipeline;
+    auto output   = std::make_unique<FakeAudioOutput>(64);
+    auto* backend = output.get();
+    backend->setFreeFrames(64);
+
+    pipeline.setOutput(std::move(output));
+    pipeline.start();
+    ASSERT_TRUE(pipeline.init(testFormat()));
+
+    auto first         = makeStream(std::vector<double>(256, 0.3), true);
+    const auto firstId = pipeline.registerStream(first);
+    pipeline.addStream(firstId);
+    pipeline.play();
+    ASSERT_TRUE(backend->waitForWritesAtLeast(1, 1500ms));
+
+    auto replacement = makeStream(std::vector<double>(200, 0.8), false);
+    replacement->setPosition(200); // 2000 ms @ 100 Hz mono, fully prefilled in buffer
+
+    AudioPipeline::TransitionRequest request;
+    request.type   = AudioPipeline::TransitionType::Gapless;
+    request.stream = replacement;
+
+    const auto result = pipeline.executeTransition(request);
+    ASSERT_TRUE(result.success);
+    ASSERT_NE(result.streamId, InvalidStreamId);
+
+    const auto statusAfter = pipeline.currentStatus();
+    EXPECT_EQ(statusAfter.state, PipelinePlaybackState::Playing);
+    EXPECT_EQ(statusAfter.position, 0U);
+    EXPECT_FALSE(statusAfter.positionIsMapped);
+    EXPECT_FALSE(statusAfter.renderedSegment.valid);
+
+    pipeline.stop();
+}
+
+TEST(AudioPipelineTest, GaplessTransitionLiveHandoffMarksPreviousPrimaryEndOfInput)
+{
+    AudioPipeline pipeline;
+    auto output   = std::make_unique<FakeAudioOutput>(64);
+    auto* backend = output.get();
+    backend->setFreeFrames(64);
+
+    pipeline.setOutput(std::move(output));
+    pipeline.start();
+    ASSERT_TRUE(pipeline.init(testFormat()));
+
+    auto first = makeStream(std::vector<double>(256, 0.3), true);
+    ASSERT_FALSE(first->endOfInput());
+    const auto firstId = pipeline.registerStream(first);
+    pipeline.addStream(firstId);
+    pipeline.play();
+    ASSERT_TRUE(backend->waitForWritesAtLeast(1, 1500ms));
+
+    auto replacement = makeStream(std::vector<double>(200, 0.8), false);
+
+    AudioPipeline::TransitionRequest request;
+    request.type   = AudioPipeline::TransitionType::Gapless;
+    request.stream = replacement;
+
+    const auto result = pipeline.executeTransition(request);
+    ASSERT_TRUE(result.success);
+    ASSERT_NE(result.streamId, InvalidStreamId);
+
+    EXPECT_TRUE(first->endOfInput());
+
+    pipeline.stop();
+}
+
 TEST(AudioPipelineTest, StopPlaybackClearsMappedSegmentAndResetsPosition)
 {
     AudioPipeline pipeline;

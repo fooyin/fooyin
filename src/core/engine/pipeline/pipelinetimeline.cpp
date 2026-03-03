@@ -31,6 +31,7 @@ PipelineTimeline::PipelineTimeline()
     , m_renderedSegmentEndMs{0}
     , m_renderedSegmentOutputFrames{0}
     , m_playbackDelayMs{0}
+    , m_transitionPlaybackDelayMs{0}
     , m_playbackDelayToTrackScale{1.0}
     , m_bufferUnderrun{false}
     , m_cycleMappedPositionValid{false}
@@ -75,6 +76,7 @@ void PipelineTimeline::clearMappedPositionState(std::optional<uint64_t> position
 void PipelineTimeline::resetPlaybackDelayState(bool resetScale)
 {
     m_playbackDelayMs.store(0, std::memory_order_relaxed);
+    m_transitionPlaybackDelayMs.store(0, std::memory_order_relaxed);
 
     if(resetScale) {
         m_playbackDelayToTrackScale.store(1.0, std::memory_order_relaxed);
@@ -171,6 +173,16 @@ uint64_t PipelineTimeline::playbackDelayMs() const
 void PipelineTimeline::setPlaybackDelayMs(uint64_t playbackDelayMs)
 {
     m_playbackDelayMs.store(playbackDelayMs, std::memory_order_relaxed);
+}
+
+uint64_t PipelineTimeline::transitionPlaybackDelayMs() const
+{
+    return m_transitionPlaybackDelayMs.load(std::memory_order_relaxed);
+}
+
+void PipelineTimeline::setTransitionPlaybackDelayMs(uint64_t playbackDelayMs)
+{
+    m_transitionPlaybackDelayMs.store(playbackDelayMs, std::memory_order_relaxed);
 }
 
 double PipelineTimeline::playbackDelayToTrackScale() const

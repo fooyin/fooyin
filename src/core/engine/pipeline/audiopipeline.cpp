@@ -52,7 +52,8 @@ constexpr auto MaxOrphanDrainTimeout         = std::chrono::milliseconds{15000};
 constexpr auto ProcessChunkTargetMs          = std::chrono::milliseconds{10};
 constexpr auto MinProcessChunkFrames         = 4096;
 constexpr auto MaxProcessChunkFrames         = 1048576;
-constexpr auto MasterTopUpMaxPulls           = 8;
+constexpr auto MasterTopUpMinPulls           = 8;
+constexpr auto MasterTopUpMaxPulls           = 64;
 constexpr auto MasterPrerollMinMs            = std::chrono::milliseconds{20};
 constexpr auto MasterPrerollMaxMs            = std::chrono::milliseconds{300};
 constexpr auto UnderrunConcealMaxMs          = std::chrono::milliseconds{20};
@@ -1151,6 +1152,23 @@ AudioPipeline::TransitionResult AudioPipeline::executeTransition(const Transitio
                     targetStream->applyCommand(AudioStream::Command::Play);
                 }
 
+                uint64_t targetPosMs          = targetStream->positionMs();
+                const bool liveGaplessHandoff = pipeline.m_playing.load(std::memory_order_acquire) && currentPrimary
+                                             && currentPrimary->id() != newStreamId;
+                if(liveGaplessHandoff && currentPrimary->state() != AudioStream::State::Stopped) {
+                    // Decoder ownership has moved to the next track stream, so end this one
+                    currentPrimary->setEndOfInput();
+                }
+
+                const uint64_t bufferedMs = targetStream->bufferedDurationMs();
+                if(liveGaplessHandoff) {
+                    targetPosMs = targetPosMs > bufferedMs ? (targetPosMs - bufferedMs) : 0;
+                }
+
+                pipeline.clearMappedPositionState(targetPosMs);
+                pipeline.beginTimelineEpoch(targetPosMs);
+                pipeline.resetMasterRateObservation();
+
                 return true;
             }
         }
@@ -1209,6 +1227,11 @@ PipelineStatus AudioPipeline::currentStatus() const
 uint64_t AudioPipeline::playbackDelayMs() const
 {
     return m_timelineUnit.playbackDelayMs();
+}
+
+uint64_t AudioPipeline::transitionPlaybackDelayMs() const
+{
+    return m_timelineUnit.transitionPlaybackDelayMs();
 }
 
 double AudioPipeline::playbackDelayToTrackScale() const
@@ -1363,20 +1386,25 @@ void AudioPipeline::processAudio()
 
     const int prerollFrames         = masterPrerollFrames();
     const int desiredBufferedFrames = std::max({0, freeFrames, prerollFrames});
+    const int processChunkFrames    = processFrameChunkLimit(m_renderer.outputFormat());
+    const int initialQueuedFrames   = pendingOutputFrames();
+    const int initialDeficitFrames  = std::max(1, desiredBufferedFrames - initialQueuedFrames);
+    const int topUpPullBudget
+        = std::max(1, (initialDeficitFrames + processChunkFrames - 1) / std::max(1, processChunkFrames));
+    const int maxTopUpPulls = std::clamp(topUpPullBudget, MasterTopUpMinPulls, MasterTopUpMaxPulls);
 
     bool sawMixerUnderrun{false};
     bool sawMixerReadStarved{false};
     bool sawMasterChainStarved{false};
 
-    for(int pull{0}; pull < MasterTopUpMaxPulls; ++pull) {
+    for(int pull{0}; pull < maxTopUpPulls; ++pull) {
         const int queuedFrames = pendingOutputFrames();
         if(queuedFrames >= desiredBufferedFrames) {
             break;
         }
 
-        const int outputFramesTarget
-            = std::min({std::max(1, desiredBufferedFrames - queuedFrames), m_outputUnit.bufferFrames(),
-                        processFrameChunkLimit(m_renderer.outputFormat())});
+        const int outputFramesTarget = std::min(
+            {std::max(1, desiredBufferedFrames - queuedFrames), m_outputUnit.bufferFrames(), processChunkFrames});
         int framesToProcess = inputFramesForOutputFrames(inputFormat, m_renderer.outputFormat(), outputFramesTarget);
 
         if(framesToProcess > MaxProcessChunkFrames) {
@@ -1407,7 +1435,6 @@ void AudioPipeline::processAudio()
             break;
         }
 
-        m_seekPrerollGraceUntil = {};
         m_timelineUnit.setBufferUnderrun(false);
         m_timelineUnit.setCycleInputPrimaryStreamId(pullResult.primaryStreamId);
         if(pullResult.fadeCompletion) {
@@ -1416,7 +1443,12 @@ void AudioPipeline::processAudio()
         }
 
         const int queuedNow = queueProcessedOutput();
-        if(queuedNow <= 0 && framesRead > 0) {
+        if(queuedNow > 0) {
+            // Clear seek preroll grace only once audio has actually reached the
+            // pending master output queue
+            m_seekPrerollGraceUntil = {};
+        }
+        else if(framesRead > 0) {
             sawMixerUnderrun      = true;
             sawMasterChainStarved = true;
         }
@@ -1426,7 +1458,7 @@ void AudioPipeline::processAudio()
         if(sawMixerUnderrun) {
             const bool seekPrerollActive = std::chrono::steady_clock::now() < m_seekPrerollGraceUntil;
 
-            if(seekPrerollActive && sawMixerReadStarved && !sawMasterChainStarved) {
+            if(seekPrerollActive && (sawMixerReadStarved || sawMasterChainStarved)) {
                 const auto outputStateWithWrites = stateWithWrites(state, framesWrittenThisCycle);
                 updatePlaybackDelay(outputStateWithWrites, PositionBasis::DecodeHead);
                 notifyDataDemand(true);
@@ -1499,6 +1531,7 @@ OutputState AudioPipeline::stateWithWrites(const OutputState& state, int framesW
 void AudioPipeline::updatePlaybackDelay(const OutputState& outputState, const PositionBasis basis)
 {
     uint64_t outputDelayMs{0};
+    uint64_t transitionDspDelayMs{0};
     uint64_t dspDelayMs{0};
     double delayToTrackScale{1.0};
 
@@ -1514,9 +1547,11 @@ void AudioPipeline::updatePlaybackDelay(const OutputState& outputState, const Po
         // Some outputs provide explicit device delay, others only queued frames.
         outputDelayMs = std::max(queuedMs, deviceDelayMs);
 
+        const double totalLatencySeconds = m_renderer.totalLatencySeconds();
+        transitionDspDelayMs             = static_cast<uint64_t>(std::llround(totalLatencySeconds * 1000.0));
+
         if(basis == PositionBasis::DecodeHead) {
-            const double dspLatencySeconds = m_renderer.totalLatencySeconds();
-            dspDelayMs                     = static_cast<uint64_t>(std::llround(dspLatencySeconds * 1000.0));
+            dspDelayMs = transitionDspDelayMs;
         }
 
         if(m_timelineUnit.hasMasterRateObservation()) {
@@ -1534,6 +1569,16 @@ void AudioPipeline::updatePlaybackDelay(const OutputState& outputState, const Po
     }
 
     m_timelineUnit.setPlaybackDelayMs(totalDelayMs);
+
+    uint64_t transitionDelayMs{outputDelayMs};
+    if(transitionDelayMs > std::numeric_limits<uint64_t>::max() - transitionDspDelayMs) {
+        transitionDelayMs = std::numeric_limits<uint64_t>::max();
+    }
+    else {
+        transitionDelayMs += transitionDspDelayMs;
+    }
+
+    m_timelineUnit.setTransitionPlaybackDelayMs(transitionDelayMs);
     m_timelineUnit.setPlaybackDelayToTrackScale(delayToTrackScale);
 }
 

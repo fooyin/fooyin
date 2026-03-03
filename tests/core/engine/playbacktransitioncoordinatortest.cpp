@@ -150,6 +150,93 @@ TEST(PlaybackTransitionCoordinatorTest, GaplessReadinessIsIndependentFromCrossfa
     EXPECT_EQ(state.autoTransitionMode(), PlaybackTransitionCoordinator::AutoTransitionMode::Gapless);
 }
 
+TEST(PlaybackTransitionCoordinatorTest, CrossfadeModeIsPreferredWhenGaplessBecomesReadyFirst)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs             = 9700;
+    input.durationMs             = 10000;
+    input.remainingOutputMs      = 450;
+    input.endOfInput             = false;
+    input.bufferEmpty            = false;
+    input.autoCrossfadeEnabled   = true;
+    input.gaplessEnabled         = true;
+    input.autoFadeOutMs          = 200;
+    input.autoFadeInMs           = 200;
+    input.gaplessPrepareWindowMs = 300;
+
+    const auto aboutToFinish = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(aboutToFinish.aboutToFinish);
+    EXPECT_FALSE(aboutToFinish.readyToSwitch);
+    EXPECT_FALSE(aboutToFinish.endReached);
+    EXPECT_TRUE(state.isReadyForAutoCrossfade());
+    EXPECT_FALSE(state.isReadyForGaplessHandoff());
+    EXPECT_EQ(state.autoTransitionMode(), PlaybackTransitionCoordinator::AutoTransitionMode::Crossfade);
+
+    input.positionMs = 9800;
+    const auto ready = state.evaluateTrackEnding(input);
+    EXPECT_FALSE(ready.aboutToFinish);
+    EXPECT_TRUE(ready.readyToSwitch);
+    EXPECT_FALSE(ready.endReached);
+}
+
+TEST(PlaybackTransitionCoordinatorTest, GaplessTimelineWindowAccountsForOutputDelay)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs             = 9200;
+    input.durationMs             = 10000;
+    input.remainingOutputMs      = 700;
+    input.endOfInput             = false;
+    input.bufferEmpty            = false;
+    input.autoCrossfadeEnabled   = false;
+    input.gaplessEnabled         = true;
+    input.autoFadeOutMs          = 0;
+    input.autoFadeInMs           = 0;
+    input.gaplessPrepareWindowMs = 300;
+    input.outputDelayMs          = 400;
+
+    const auto beforeWindow = state.evaluateTrackEnding(input);
+    EXPECT_FALSE(beforeWindow.aboutToFinish);
+    EXPECT_FALSE(beforeWindow.readyToSwitch);
+
+    input.positionMs         = 9400;
+    const auto aboutToFinish = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(aboutToFinish.aboutToFinish);
+    EXPECT_TRUE(aboutToFinish.readyToSwitch);
+    EXPECT_TRUE(state.isReadyForGaplessHandoff());
+}
+
+TEST(PlaybackTransitionCoordinatorTest, CrossfadeReadyWindowAccountsForOutputDelay)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs             = 9200;
+    input.durationMs             = 10000;
+    input.remainingOutputMs      = 900;
+    input.endOfInput             = false;
+    input.bufferEmpty            = false;
+    input.autoCrossfadeEnabled   = true;
+    input.gaplessEnabled         = false;
+    input.autoFadeOutMs          = 500;
+    input.autoFadeInMs           = 200;
+    input.gaplessPrepareWindowMs = 300;
+    input.outputDelayMs          = 400;
+
+    const auto aboutToFinish = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(aboutToFinish.aboutToFinish);
+    EXPECT_FALSE(aboutToFinish.readyToSwitch);
+    EXPECT_TRUE(state.isReadyForAutoCrossfade());
+
+    input.positionMs = 9400;
+    const auto ready = state.evaluateTrackEnding(input);
+    EXPECT_FALSE(ready.aboutToFinish);
+    EXPECT_TRUE(ready.readyToSwitch);
+}
+
 TEST(PlaybackTransitionCoordinatorTest, EndOfInputWithoutTransitionsWaitsForBufferDrain)
 {
     PlaybackTransitionCoordinator state;

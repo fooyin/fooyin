@@ -284,6 +284,8 @@ public:
 
     //! Reported pipeline playback delay in milliseconds (output + DSP latency).
     [[nodiscard]] uint64_t playbackDelayMs() const;
+    //! Transition-facing delay in milliseconds (output + full DSP latency).
+    [[nodiscard]] uint64_t transitionPlaybackDelayMs() const;
     //! Scale to convert output-time delay to source timeline delay.
     [[nodiscard]] double playbackDelayToTrackScale() const;
     //! True while audio worker thread is alive.

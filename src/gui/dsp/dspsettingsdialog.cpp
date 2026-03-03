@@ -48,8 +48,7 @@ DspSettingsDialog::DspSettingsDialog(QWidget* parent)
 
     QObject::connect(m_buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     QObject::connect(m_buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    QObject::connect(m_restoreButtonBox, &QDialogButtonBox::clicked, this,
-                     [this](QAbstractButton*) { restoreDefaults(); });
+    QObject::connect(m_restoreButtonBox, &QDialogButtonBox::clicked, this, [this]() { restoreDefaults(); });
 }
 
 DspSettingsDialog::~DspSettingsDialog() = default;
