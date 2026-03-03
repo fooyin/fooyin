@@ -50,7 +50,6 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
-#include <chrono>
 #include <limits>
 #include <utility>
 
@@ -59,20 +58,68 @@ Q_LOGGING_CATEGORY(ENGINE, "fy.engine")
 namespace {
 constexpr auto BasePrefillDecodeFrames         = 4096;
 constexpr auto MaxPrefillDecodeFrames          = 262144;
-constexpr int PrefillChunkDurationMs           = 10;
-constexpr int PositionSyncTimerCoalesceKey     = 0;
+constexpr auto PrefillChunkDurationMs          = 10;
+constexpr auto PositionSyncTimerCoalesceKey    = 0;
 constexpr uint64_t GaplessPrepareLeadMs        = 300;
-constexpr int MaxCrossfadePrefillMs            = 1000;
-constexpr int GaplessHandoffPrefillMs          = 250;
+constexpr auto MaxCrossfadePrefillMs           = 1000;
+constexpr auto GaplessHandoffPrefillMs         = 250;
 constexpr uint64_t MaxContinuousPositionJumpMs = 750;
 constexpr uint64_t MaxBackwardDriftToleranceMs = 50;
 
-std::pair<int, int> decodeWatermarksForBufferMs(int bufferLengthMs)
+std::pair<double, double> sanitiseWatermarkRatios(double lowRatio, double highRatio)
+{
+    lowRatio  = std::clamp(lowRatio, 0.05, 1.0);
+    highRatio = std::clamp(highRatio, 0.05, 1.0);
+
+    if(lowRatio > highRatio) {
+        std::swap(lowRatio, highRatio);
+    }
+
+    return {lowRatio, highRatio};
+}
+
+std::pair<int, int> decodeWatermarksForBufferMs(int bufferLengthMs, double lowRatio, double highRatio)
 {
     const int clampedBufferMs = std::max(200, bufferLengthMs);
-    const int lowMs           = std::clamp(clampedBufferMs / 2, 100, clampedBufferMs);
-    const int highMs          = std::clamp((clampedBufferMs * 3) / 4, lowMs, clampedBufferMs);
+
+    const auto [safeLowRatio, safeHighRatio] = sanitiseWatermarkRatios(lowRatio, highRatio);
+    const int lowMs  = std::clamp(static_cast<int>(std::lround(static_cast<double>(clampedBufferMs) * safeLowRatio)),
+                                  100, clampedBufferMs);
+    const int highMs = std::clamp(static_cast<int>(std::lround(static_cast<double>(clampedBufferMs) * safeHighRatio)),
+                                  lowMs, clampedBufferMs);
+
     return {lowMs, highMs};
+}
+
+int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnapshot& snapshot,
+                                    const Fooyin::AudioFormat& outputFormat)
+{
+    if(!snapshot.valid || !outputFormat.isValid() || outputFormat.sampleRate() <= 0) {
+        return 0;
+    }
+
+    const int outputSampleRate = outputFormat.sampleRate();
+    const auto framesToMs      = [outputSampleRate](int frames) {
+        const int safeFrames = std::max(0, frames);
+        if(safeFrames == 0) {
+            return 0;
+        }
+
+        const auto scaledMs = std::llround((static_cast<long double>(safeFrames) * 1000.0L)
+                                                / static_cast<long double>(outputSampleRate));
+        return static_cast<int>(std::clamp<long double>(scaledMs, 0.0L, std::numeric_limits<int>::max()));
+    };
+
+    const double delaySeconds = std::isfinite(snapshot.state.delay) ? std::max(0.0, snapshot.state.delay) : 0.0;
+    const int freeFrames      = std::max(0, snapshot.state.freeFrames);
+    const int queuedFrames    = std::max(0, snapshot.state.queuedFrames);
+    const int bufferFrames    = std::max(0, snapshot.bufferFrames);
+    const int delayFrames     = std::max(0, static_cast<int>(std::llround(delaySeconds * outputSampleRate)));
+
+    const int queueDemandFrames = std::max({freeFrames, bufferFrames, 0, queuedFrames + std::max(0, delayFrames)});
+    const int delayDemandMs     = std::max(0, static_cast<int>(std::llround(delaySeconds * 1000.0)));
+
+    return std::max(framesToMs(queueDemandFrames), delayDemandMs);
 }
 
 size_t prefillFramesPerChunk(int sampleRate)
@@ -114,6 +161,8 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_outputController{this, &m_pipeline}
     , m_volume{m_settings->value<Settings::Core::OutputVolume>()}
     , m_bufferLengthMs{m_settings->value<Settings::Core::BufferLength>()}
+    , m_decodeLowWatermarkRatio{m_settings->value<Settings::Core::Internal::DecodeLowWatermarkRatio>()}
+    , m_decodeHighWatermarkRatio{m_settings->value<Settings::Core::Internal::DecodeHighWatermarkRatio>()}
     , m_fadingEnabled{m_settings->value<Settings::Core::Internal::EngineFading>()}
     , m_crossfadeEnabled{m_settings->value<Settings::Core::Internal::EngineCrossfading>()}
     , m_gaplessEnabled{m_settings->value<Settings::Core::GaplessPlayback>()}
@@ -540,7 +589,7 @@ void AudioEngine::startSeekCrossfade(uint64_t positionMs, int fadeOutDurationMs,
     }
 }
 
-void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId)
+void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId, int prefillTargetMs)
 {
     m_decoder.clearDecodeReserve();
 
@@ -596,7 +645,8 @@ void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId)
         m_decoder.start();
     }
 
-    prefillActiveStream(m_bufferLengthMs / 4);
+    const int seekPrefillMs = prefillTargetMs > 0 ? prefillTargetMs : (m_bufferLengthMs / 4);
+    prefillActiveStream(seekPrefillMs);
 
     if(stream->bufferedDurationMs() == 0 && stream->endOfInput()) {
         qCWarning(ENGINE) << "Simple seek failed: no audio after prefill, stopping playback";
@@ -1168,7 +1218,8 @@ void AudioEngine::setupSettings()
     };
 
     const auto updateDecodeWatermarks = [this]() {
-        const auto [lowWatermarkMs, highWatermarkMs] = decodeWatermarksForBufferMs(m_bufferLengthMs);
+        const auto [lowWatermarkMs, highWatermarkMs]
+            = decodeWatermarksForBufferMs(m_bufferLengthMs, m_decodeLowWatermarkRatio, m_decodeHighWatermarkRatio);
         m_decoder.setBufferWatermarksMs(lowWatermarkMs, highWatermarkMs);
     };
 
@@ -1186,6 +1237,16 @@ void AudioEngine::setupSettings()
         m_bufferLengthMs = std::max(200, bufferLengthMs);
         updateDecodeWatermarks();
     });
+    m_settings->subscribe<Settings::Core::Internal::DecodeLowWatermarkRatio>(
+        this, [this, updateDecodeWatermarks](double ratio) {
+            m_decodeLowWatermarkRatio = ratio;
+            updateDecodeWatermarks();
+        });
+    m_settings->subscribe<Settings::Core::Internal::DecodeHighWatermarkRatio>(
+        this, [this, updateDecodeWatermarks](double ratio) {
+            m_decodeHighWatermarkRatio = ratio;
+            updateDecodeWatermarks();
+        });
 
     m_replayGainSharedSettings           = ReplayGainProcessor::makeSharedSettings();
     const auto refreshReplayGainSettings = [this]() {
@@ -1516,19 +1577,12 @@ bool AudioEngine::initDecoder(const Track& track, bool allowPreparedStream)
 bool AudioEngine::setupNewTrackStream(const Track& track, bool applyPendingSeek)
 {
     const auto startupPrefillMs = [this]() {
-        int targetMs = m_bufferLengthMs / 4;
-
-        if(!m_format.isValid()) {
-            return targetMs;
-        }
-
-        const AudioFormat perTrackFormat = m_pipeline.predictPerTrackFormat(m_format);
-        if(perTrackFormat.isValid() && perTrackFormat.sampleRate() > 0 && m_format.sampleRate() > 0
-           && perTrackFormat.sampleRate() != m_format.sampleRate()) {
-            targetMs = std::max(targetMs, m_decoder.highWatermarkMs());
-        }
-
-        return targetMs;
+        const int baseMs          = m_bufferLengthMs / 4;
+        const int decodeHighMs    = std::max(1, m_decoder.highWatermarkMs());
+        const auto outputSnapshot = m_pipeline.outputQueueSnapshot();
+        const int outputDemandMs  = startupPrefillFromOutputQueueMs(outputSnapshot, m_pipeline.outputFormat());
+        const int targetMs        = std::max({baseMs, decodeHighMs, outputDemandMs});
+        return std::clamp(targetMs, 1, std::max(1, m_bufferLengthMs));
     }();
 
     const size_t bufferSamples
@@ -1561,7 +1615,7 @@ bool AudioEngine::setupNewTrackStream(const Track& track, bool applyPendingSeek)
             return true;
         }
 
-        performSimpleSeek(pendingSeek->positionMs, pendingSeek->requestId);
+        performSimpleSeek(pendingSeek->positionMs, pendingSeek->requestId, startupPrefillMs);
 
         if(!m_decoder.isValid()) {
             qCWarning(ENGINE) << "Pending-seek stream setup left decoder invalid";

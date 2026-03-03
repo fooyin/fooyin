@@ -152,7 +152,7 @@ private:
     void performSeek(uint64_t positionMs, uint64_t requestId);
     void checkPendingSeek();
     void startSeekCrossfade(uint64_t positionMs, int fadeOutDurationMs, int fadeInDurationMs, uint64_t requestId);
-    void performSimpleSeek(uint64_t positionMs, uint64_t requestId = 0);
+    void performSimpleSeek(uint64_t positionMs, uint64_t requestId = 0, int prefillTargetMs = 0);
     void prefillActiveStream(int targetMs);
     [[nodiscard]] int adjustedCrossfadePrefillMs(int requestedMs) const;
     void cancelAllFades();
@@ -249,6 +249,8 @@ private:
 
     double m_volume;
     int m_bufferLengthMs;
+    double m_decodeLowWatermarkRatio;
+    double m_decodeHighWatermarkRatio;
     bool m_fadingEnabled;
     bool m_crossfadeEnabled;
     bool m_gaplessEnabled;

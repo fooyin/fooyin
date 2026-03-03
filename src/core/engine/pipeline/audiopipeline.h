@@ -143,6 +143,13 @@ public:
         bool fadeEventsPending{false};
     };
 
+    struct OutputQueueSnapshot
+    {
+        OutputState state;
+        int bufferFrames{0};
+        bool valid{false};
+    };
+
     AudioPipeline();
     ~AudioPipeline() override;
 
@@ -281,6 +288,7 @@ public:
     // ========================================================================
 
     [[nodiscard]] PipelineStatus currentStatus() const;
+    [[nodiscard]] OutputQueueSnapshot outputQueueSnapshot() const;
 
     //! Reported pipeline playback delay in milliseconds (output + DSP latency).
     [[nodiscard]] uint64_t playbackDelayMs() const;

@@ -55,21 +55,23 @@ constexpr auto FFmpegAllExtensions     = "Engine/FFmpegAllExtensions";
 
 enum CoreInternalSettings : uint32_t
 {
-    MonitorLibraries  = 0 | Type::Bool,
-    MuteVolume        = 1 | Type::Double,
-    DisabledPlugins   = 2 | Type::StringList,
-    EngineFading      = 3 | Type::Bool,
-    FadingValues      = 4 | Type::Variant,
-    EngineCrossfading = 5 | Type::Bool,
-    CrossfadingValues = 6 | Type::Variant,
-    VBRUpdateInterval = 7 | Type::Int,
-    ProxyMode         = 8 | Type::Int,
-    ProxyType         = 9 | Type::Int,
-    ProxyHost         = 10 | Type::String,
-    ProxyPort         = 11 | Type::Int,
-    ProxyAuth         = 12 | Type::Bool,
-    ProxyUsername     = 13 | Type::String,
-    ProxyPassword     = 14 | Type::String,
+    MonitorLibraries         = 0 | Type::Bool,
+    MuteVolume               = 1 | Type::Double,
+    DisabledPlugins          = 2 | Type::StringList,
+    EngineFading             = 3 | Type::Bool,
+    FadingValues             = 4 | Type::Variant,
+    EngineCrossfading        = 5 | Type::Bool,
+    CrossfadingValues        = 6 | Type::Variant,
+    VBRUpdateInterval        = 7 | Type::Int,
+    ProxyMode                = 8 | Type::Int,
+    ProxyType                = 9 | Type::Int,
+    ProxyHost                = 10 | Type::String,
+    ProxyPort                = 11 | Type::Int,
+    ProxyAuth                = 12 | Type::Bool,
+    ProxyUsername            = 13 | Type::String,
+    ProxyPassword            = 14 | Type::String,
+    DecodeLowWatermarkRatio  = 15 | Type::Double,
+    DecodeHighWatermarkRatio = 16 | Type::Double,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

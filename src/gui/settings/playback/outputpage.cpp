@@ -31,10 +31,14 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QSizePolicy>
 #include <QSpinBox>
 
 using namespace Qt::StringLiterals;
+
+constexpr auto MinBufferSize = 500;
 
 namespace Fooyin {
 class OutputPageWidget : public SettingsPageWidget
@@ -60,6 +64,9 @@ private:
 
     QCheckBox* m_gaplessPlayback;
     QSpinBox* m_bufferSize;
+    QSpinBox* m_decodeLowWatermark;
+    QSpinBox* m_decodeHighWatermark;
+    QLabel* m_decodeWatermarkHint;
     ExpandingComboBox* m_bitDepthBox;
 
     QGroupBox* m_fadingBox;
@@ -91,6 +98,9 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     , m_deviceBox{new ExpandingComboBox(this)}
     , m_gaplessPlayback{new QCheckBox(tr("Gapless playback"), this)}
     , m_bufferSize{new QSpinBox(this)}
+    , m_decodeLowWatermark{new QSpinBox(this)}
+    , m_decodeHighWatermark{new QSpinBox(this)}
+    , m_decodeWatermarkHint{new QLabel(this)}
     , m_bitDepthBox{new ExpandingComboBox(this)}
     , m_fadingBox{new QGroupBox(tr("Fading"), this)}
     , m_fadingPauseEnabled{new QCheckBox(tr("Pause"), this)}
@@ -114,16 +124,44 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 {
     auto* generalBox    = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalBox);
+    auto* bufferBox     = new QGroupBox(tr("Buffer"), this);
+    auto* bufferLayout  = new QGridLayout(bufferBox);
 
     m_gaplessPlayback->setToolTip(
         tr("Try to play consecutive tracks with no silence or disruption at the point of file change"));
 
-    generalLayout->addWidget(m_gaplessPlayback, 0, 0, 1, 3);
+    generalLayout->addWidget(m_gaplessPlayback, 0, 0, 1, 2);
 
     m_bufferSize->setSuffix(u" ms"_s);
     m_bufferSize->setSingleStep(100);
-    m_bufferSize->setMinimum(500);
+    m_bufferSize->setMinimum(MinBufferSize);
     m_bufferSize->setMaximum(30000);
+    m_bufferSize->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    const auto setupWatermarkRatioSpinBox = [](QSpinBox* spinBox) {
+        spinBox->setSingleStep(1);
+        spinBox->setMinimum(5);
+        spinBox->setMaximum(100);
+        spinBox->setSuffix(u"%"_s);
+    };
+
+    setupWatermarkRatioSpinBox(m_decodeLowWatermark);
+    setupWatermarkRatioSpinBox(m_decodeHighWatermark);
+    m_decodeLowWatermark->setPrefix(tr("Low "));
+    m_decodeHighWatermark->setPrefix(tr("High "));
+    m_decodeLowWatermark->setMinimumWidth(95);
+    m_decodeHighWatermark->setMinimumWidth(95);
+    m_decodeLowWatermark->setToolTip(tr("Decode starts/resumes when buffered audio drops below this watermark"));
+    m_decodeHighWatermark->setToolTip(tr("Decode pauses when buffered audio reaches this watermark"));
+    m_decodeWatermarkHint->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+
+    auto* decodeWatermarkLayout = new QHBoxLayout();
+    decodeWatermarkLayout->setContentsMargins(0, 0, 0, 0);
+    decodeWatermarkLayout->setSpacing(8);
+    decodeWatermarkLayout->addWidget(m_decodeLowWatermark);
+    decodeWatermarkLayout->addSpacing(10);
+    decodeWatermarkLayout->addWidget(m_decodeHighWatermark);
+    decodeWatermarkLayout->addStretch(1);
 
     m_bitDepthBox->addItem(tr("Automatic"), static_cast<int>(SampleFormat::Unknown));
     m_bitDepthBox->addItem(tr("16-bit"), static_cast<int>(SampleFormat::S16));
@@ -135,12 +173,16 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     m_bitDepthBox->setToolTip(tr("Override the output sample format. Devices may choose a compatible format."));
     m_bitDepthBox->resizeDropDown();
 
-    generalLayout->addWidget(new QLabel(tr("Buffer length") + u":"_s, this), 1, 0);
-    generalLayout->addWidget(m_bufferSize, 1, 1);
-    generalLayout->addWidget(new QLabel(tr("Bit depth") + u":"_s, this), 2, 0);
-    generalLayout->addWidget(m_bitDepthBox, 2, 1);
-
+    generalLayout->addWidget(new QLabel(tr("Bit depth") + u":"_s, this), 1, 0);
+    generalLayout->addWidget(m_bitDepthBox, 1, 1);
     generalLayout->setColumnStretch(2, 1);
+
+    bufferLayout->addWidget(new QLabel(tr("Buffer length") + u":"_s, this), 0, 0);
+    bufferLayout->addWidget(m_bufferSize, 0, 1, Qt::AlignLeft);
+    bufferLayout->addWidget(new QLabel(tr("Watermarks") + u":"_s, this), 1, 0);
+    bufferLayout->addLayout(decodeWatermarkLayout, 1, 1);
+    bufferLayout->addWidget(m_decodeWatermarkHint, 2, 1, 1, 2);
+    bufferLayout->setColumnStretch(2, 1);
 
     auto* fadingLayout = new QGridLayout(m_fadingBox);
 
@@ -245,6 +287,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     mainLayout->addWidget(new QLabel(tr("Device") + u":"_s, this), row, 0);
     mainLayout->addWidget(m_deviceBox, row++, 1);
     mainLayout->addWidget(generalBox, row++, 0, 1, 2);
+    mainLayout->addWidget(bufferBox, row++, 0, 1, 2);
     mainLayout->addWidget(m_fadingBox, row++, 0, 1, 2);
     mainLayout->addWidget(m_crossfadeBox, row++, 0, 1, 2);
 
@@ -252,21 +295,32 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     auto syncBufferBounds = [this]() {
-        const int pauseIn   = m_fadingPauseEnabled->isChecked() ? m_fadingPauseIn->value() : 0;
-        const int pauseOut  = m_fadingPauseEnabled->isChecked() ? m_fadingPauseOut->value() : 0;
-        const int stopIn    = m_fadingStopEnabled->isChecked() ? m_fadingStopIn->value() : 0;
-        const int stopOut   = m_fadingStopEnabled->isChecked() ? m_fadingStopOut->value() : 0;
-        const int manualIn  = m_crossfadeManualEnabled->isChecked() ? m_crossfadeManualIn->value() : 0;
-        const int manualOut = m_crossfadeManualEnabled->isChecked() ? m_crossfadeManualOut->value() : 0;
-        const int autoIn    = m_crossfadeAutoEnabled->isChecked() ? m_crossfadeAutoIn->value() : 0;
-        const int autoOut   = m_crossfadeAutoEnabled->isChecked() ? m_crossfadeAutoOut->value() : 0;
-        const int seekIn    = m_crossfadeSeekEnabled->isChecked() ? m_crossfadeSeekIn->value() : 0;
-        const int seekOut   = m_crossfadeSeekEnabled->isChecked() ? m_crossfadeSeekOut->value() : 0;
-        const auto maxFadeValue
-            = std::max({pauseIn, pauseOut, stopIn, stopOut, manualIn, manualOut, autoIn, autoOut, seekIn, seekOut});
-        m_bufferSize->setMinimum(maxFadeValue);
-        if(m_bufferSize->value() < maxFadeValue) {
-            m_bufferSize->setValue(maxFadeValue);
+        const bool fading    = m_fadingBox->isChecked();
+        const bool crossfade = m_crossfadeBox->isChecked();
+
+        auto enabledValue = [](bool groupOn, QAbstractButton* enabled, QSpinBox* spin) {
+            return (groupOn && enabled->isChecked()) ? spin->value() : 0;
+        };
+
+        const std::array<int, 11> values{
+            MinBufferSize,
+            enabledValue(fading, m_fadingPauseEnabled, m_fadingPauseIn),
+            enabledValue(fading, m_fadingPauseEnabled, m_fadingPauseOut),
+            enabledValue(fading, m_fadingStopEnabled, m_fadingStopIn),
+            enabledValue(fading, m_fadingStopEnabled, m_fadingStopOut),
+            enabledValue(crossfade, m_crossfadeManualEnabled, m_crossfadeManualIn),
+            enabledValue(crossfade, m_crossfadeManualEnabled, m_crossfadeManualOut),
+            enabledValue(crossfade, m_crossfadeAutoEnabled, m_crossfadeAutoIn),
+            enabledValue(crossfade, m_crossfadeAutoEnabled, m_crossfadeAutoOut),
+            enabledValue(crossfade, m_crossfadeSeekEnabled, m_crossfadeSeekIn),
+            enabledValue(crossfade, m_crossfadeSeekEnabled, m_crossfadeSeekOut),
+        };
+
+        const int minBufferSize = std::ranges::max(values);
+
+        m_bufferSize->setMinimum(minBufferSize);
+        if(m_bufferSize->value() < minBufferSize) {
+            m_bufferSize->setValue(minBufferSize);
         }
     };
 
@@ -286,6 +340,23 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
         m_crossfadeAutoOut->setEnabled(m_crossfadeAutoEnabled->isChecked());
     };
 
+    const auto syncWatermarkRatioBounds = [this]() {
+        const int lowRatio  = m_decodeLowWatermark->value();
+        const int highRatio = m_decodeHighWatermark->value();
+        if(lowRatio > highRatio) {
+            m_decodeHighWatermark->setValue(lowRatio);
+        }
+    };
+
+    const auto updateWatermarkHint = [this]() {
+        const int bufferMs = m_bufferSize->value();
+        const int lowPct   = m_decodeLowWatermark->value();
+        const int highPct  = m_decodeHighWatermark->value();
+        const int lowMs    = static_cast<int>(std::lround((static_cast<double>(bufferMs) * lowPct) / 100.0));
+        const int highMs   = static_cast<int>(std::lround((static_cast<double>(bufferMs) * highPct) / 100.0));
+        m_decodeWatermarkHint->setText(tr("Low %1 ms, High %2 ms").arg(lowMs).arg(highMs));
+    };
+
     const auto updateState = [syncBufferBounds, updateRowStates]() {
         updateRowStates();
         syncBufferBounds();
@@ -302,23 +373,52 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     QObject::connect(m_crossfadeAutoOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
     QObject::connect(m_crossfadeSeekIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
     QObject::connect(m_crossfadeSeekOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_bufferSize, &QSpinBox::valueChanged, this, [updateWatermarkHint]() { updateWatermarkHint(); });
 
     QObject::connect(m_fadingPauseEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_fadingStopEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_crossfadeSeekEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_crossfadeManualEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_crossfadeAutoEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
+    QObject::connect(m_decodeLowWatermark, &QSpinBox::valueChanged, this,
+                     [syncWatermarkRatioBounds]() { syncWatermarkRatioBounds(); });
+    QObject::connect(m_decodeHighWatermark, &QSpinBox::valueChanged, this, [this](int value) {
+        if(value < m_decodeLowWatermark->value()) {
+            m_decodeLowWatermark->setValue(value);
+        }
+    });
+    QObject::connect(m_decodeLowWatermark, &QSpinBox::valueChanged, this,
+                     [updateWatermarkHint]() { updateWatermarkHint(); });
+    QObject::connect(m_decodeHighWatermark, &QSpinBox::valueChanged, this,
+                     [updateWatermarkHint]() { updateWatermarkHint(); });
 
     updateRowStates();
     syncBufferBounds();
+    syncWatermarkRatioBounds();
+    updateWatermarkHint();
 }
 
 void OutputPageWidget::load()
 {
+    const auto sanitiseRatios = [](double lowRatio, double highRatio) {
+        lowRatio  = std::clamp(lowRatio, 0.05, 1.0);
+        highRatio = std::clamp(highRatio, 0.05, 1.0);
+        if(lowRatio > highRatio) {
+            std::swap(lowRatio, highRatio);
+        }
+        return std::pair{lowRatio, highRatio};
+    };
+
     setupOutputs();
     setupDevices(m_outputBox->currentText());
     m_gaplessPlayback->setChecked(m_settings->value<Settings::Core::GaplessPlayback>());
     m_bufferSize->setValue(m_settings->value<Settings::Core::BufferLength>());
+
+    const auto [lowWatermarkRatio, highWatermarkRatio]
+        = sanitiseRatios(m_settings->value<Settings::Core::Internal::DecodeLowWatermarkRatio>(),
+                         m_settings->value<Settings::Core::Internal::DecodeHighWatermarkRatio>());
+    m_decodeLowWatermark->setValue(static_cast<int>(std::lround(lowWatermarkRatio * 100.0)));
+    m_decodeHighWatermark->setValue(static_cast<int>(std::lround(highWatermarkRatio * 100.0)));
 
     const int bitDepthSetting = m_settings->value<Settings::Core::OutputBitDepth>();
     const bool ditherSetting
@@ -363,10 +463,25 @@ void OutputPageWidget::load()
 
 void OutputPageWidget::apply()
 {
+    const auto sanitiseRatios = [](double lowRatio, double highRatio) {
+        lowRatio  = std::clamp(lowRatio, 0.05, 1.0);
+        highRatio = std::clamp(highRatio, 0.05, 1.0);
+        if(lowRatio > highRatio) {
+            std::swap(lowRatio, highRatio);
+        }
+        return std::pair{lowRatio, highRatio};
+    };
+
     const QString output = m_outputBox->currentText() + u"|"_s + m_deviceBox->currentData().toString();
     m_settings->set<Settings::Core::AudioOutput>(output);
     m_settings->set<Settings::Core::GaplessPlayback>(m_gaplessPlayback->isChecked());
     m_settings->set<Settings::Core::BufferLength>(m_bufferSize->value());
+
+    const auto [lowWatermarkRatio, highWatermarkRatio]
+        = sanitiseRatios(static_cast<double>(m_decodeLowWatermark->value()) / 100.0,
+                         static_cast<double>(m_decodeHighWatermark->value()) / 100.0);
+    m_settings->set<Settings::Core::Internal::DecodeLowWatermarkRatio>(lowWatermarkRatio);
+    m_settings->set<Settings::Core::Internal::DecodeHighWatermarkRatio>(highWatermarkRatio);
 
     const int selectedBitDepth = m_bitDepthBox->currentData().toInt();
     bool ditherEnabled         = m_bitDepthBox->currentData(Qt::UserRole + 1).toBool();
@@ -408,6 +523,8 @@ void OutputPageWidget::reset()
     m_settings->reset<Settings::Core::BufferLength>();
     m_settings->reset<Settings::Core::OutputBitDepth>();
     m_settings->reset<Settings::Core::OutputDither>();
+    m_settings->reset<Settings::Core::Internal::DecodeLowWatermarkRatio>();
+    m_settings->reset<Settings::Core::Internal::DecodeHighWatermarkRatio>();
     m_settings->reset<Settings::Core::Internal::EngineFading>();
     m_settings->reset<Settings::Core::Internal::FadingValues>();
     m_settings->reset<Settings::Core::Internal::EngineCrossfading>();

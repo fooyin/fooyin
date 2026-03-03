@@ -1238,6 +1238,24 @@ PipelineStatus AudioPipeline::currentStatus() const
     return status;
 }
 
+AudioPipeline::OutputQueueSnapshot AudioPipeline::outputQueueSnapshot() const
+{
+    return onAudioThread([](const AudioPipeline& pipeline) {
+        OutputQueueSnapshot snapshot;
+
+        if(!pipeline.m_outputUnit.isOutputInitialized() || !pipeline.m_outputUnit.output()
+           || !pipeline.m_outputUnit.output()->initialised()) {
+            return snapshot;
+        }
+
+        snapshot.state        = pipeline.m_outputUnit.output()->currentState();
+        snapshot.bufferFrames = std::max(0, pipeline.m_outputUnit.bufferFrames());
+        snapshot.valid        = true;
+
+        return snapshot;
+    });
+}
+
 uint64_t AudioPipeline::playbackDelayMs() const
 {
     return m_timelineUnit.playbackDelayMs();
