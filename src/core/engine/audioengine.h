@@ -187,8 +187,9 @@ private:
     bool signalTrackEndOnce(bool flushDspOnEnd);
     void clearTrackEndLatch();
     TrackEndingResult checkTrackEnding(const AudioStreamPtr& stream, uint64_t relativePosMs);
-    std::optional<AutoTransitionEligibility> evaluateAutoTransitionEligibility(const Track& track,
-                                                                               bool isManualChange) const;
+    std::optional<AutoTransitionEligibility> evaluateAutoTransitionEligibility(const Track& track, bool isManualChange,
+                                                                               bool requireTransitionReady
+                                                                               = true) const;
     bool isAutoTransitionEligible(const Track& track) const;
     void setCurrentTrackContext(const Track& track);
     void setStreamToTrackOriginForTrack(const Track& track);

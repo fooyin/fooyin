@@ -376,4 +376,61 @@ TEST(PlaybackTransitionCoordinatorTest, ZeroFadeInDefersSwitchUntilTrackBoundary
     EXPECT_TRUE(ready.readyToSwitch);
 }
 
+TEST(PlaybackTransitionCoordinatorTest, GaplessDrainWindowAccountsForOutputDelayWhenEndOfInput)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs             = 0;
+    input.durationMs             = 0;
+    input.remainingOutputMs      = 801;
+    input.endOfInput             = true;
+    input.bufferEmpty            = false;
+    input.autoCrossfadeEnabled   = false;
+    input.gaplessEnabled         = true;
+    input.autoFadeOutMs          = 0;
+    input.autoFadeInMs           = 0;
+    input.gaplessPrepareWindowMs = 300;
+    input.outputDelayMs          = 500;
+
+    const auto aboutToFinish = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(aboutToFinish.aboutToFinish);
+    EXPECT_FALSE(aboutToFinish.readyToSwitch);
+    EXPECT_TRUE(state.isReadyForGaplessHandoff());
+
+    input.remainingOutputMs = 800;
+    const auto ready        = state.evaluateTrackEnding(input);
+    EXPECT_FALSE(ready.aboutToFinish);
+    EXPECT_TRUE(ready.readyToSwitch);
+}
+
+TEST(PlaybackTransitionCoordinatorTest, CrossfadeDrainWindowAccountsForOutputDelayWhenEndOfInput)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs             = 0;
+    input.durationMs             = 0;
+    input.remainingOutputMs      = 901;
+    input.endOfInput             = true;
+    input.bufferEmpty            = false;
+    input.autoCrossfadeEnabled   = true;
+    input.gaplessEnabled         = false;
+    input.autoFadeOutMs          = 500;
+    input.autoFadeInMs           = 500;
+    input.gaplessPrepareWindowMs = 300;
+    input.outputDelayMs          = 400;
+
+    const auto pending = state.evaluateTrackEnding(input);
+    EXPECT_FALSE(pending.aboutToFinish);
+    EXPECT_FALSE(pending.readyToSwitch);
+    EXPECT_FALSE(state.isReadyForAutoCrossfade());
+
+    input.remainingOutputMs = 900;
+    const auto ready        = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(ready.aboutToFinish);
+    EXPECT_TRUE(ready.readyToSwitch);
+    EXPECT_TRUE(state.isReadyForAutoCrossfade());
+}
+
 } // namespace Fooyin::Testing

@@ -93,7 +93,7 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
         const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
         const uint64_t timelineWindowMs = saturatingAddWindow(fadeOutWindowMs, input.outputDelayMs);
         const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= fadeOutWindowMs;
+        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
         crossfadeReady                  = readyByTimeline || readyByDrain;
     }
 
@@ -101,7 +101,7 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
     if(input.gaplessEnabled) {
         const uint64_t timelineWindowMs = saturatingAddWindow(input.gaplessPrepareWindowMs, input.outputDelayMs);
         const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= input.gaplessPrepareWindowMs;
+        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
         gaplessReady                    = input.endOfInput || readyByTimeline || readyByDrain;
     }
 
@@ -137,14 +137,14 @@ bool PlaybackTransitionCoordinator::shouldSignalReadyToSwitch(const TrackEndingI
             const uint64_t overlapWindowMs  = std::min(fadeOutWindowMs, fadeInWindowMs);
             const uint64_t timelineWindowMs = saturatingAddWindow(overlapWindowMs, input.outputDelayMs);
             const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-            const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= overlapWindowMs;
+            const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
             return readyByTimeline || readyByDrain;
         }
         case AutoTransitionMode::Gapless: {
             const uint64_t switchLeadMs     = input.gaplessPrepareWindowMs;
             const uint64_t timelineWindowMs = saturatingAddWindow(switchLeadMs, input.outputDelayMs);
             const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-            const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= switchLeadMs;
+            const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
             return readyByTimeline || readyByDrain;
         }
         case AutoTransitionMode::None:

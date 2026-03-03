@@ -983,8 +983,16 @@ void AudioEngine::updatePosition()
     uint64_t trackEndingPosMs = decoderRelativePosMs;
 
     if(hasRenderedSegment) {
-        // Track-ending decisions must not advance beyond the active stream decode head
-        trackEndingPosMs = std::min(relativePosMs, decoderRelativePosMs);
+        if(stream->endOfInput()) {
+            // Once decoder input has ended, decode-head can stall while buffered
+            // and DSP/output-delayed audio continues. Use rendered progress.
+            trackEndingPosMs = relativePosMs;
+        }
+        else {
+            // Before end-of-input, don't allow mapped timeline to run ahead of
+            // decode-head for track-ending transitions.
+            trackEndingPosMs = std::min(relativePosMs, decoderRelativePosMs);
+        }
     }
 
     const auto result = checkTrackEnding(stream, trackEndingPosMs);
@@ -1292,10 +1300,18 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
         return {};
     }
 
-    const uint64_t bufferedMs    = stream->bufferedDurationMs();
-    const uint64_t outputDelayMs = m_pipeline.transitionPlaybackDelayMs();
-    uint64_t remainingOutputMs{bufferedMs};
+    const uint64_t bufferedMs        = stream->bufferedDurationMs();
+    const uint64_t transitionDelayMs = m_pipeline.transitionPlaybackDelayMs();
+    const double delayToTrackScale   = std::clamp(m_pipeline.playbackDelayToTrackScale(), 0.05, 8.0);
 
+    uint64_t outputDelayMs{transitionDelayMs};
+    if(transitionDelayMs > 0) {
+        const auto scaledDelay = std::llround(static_cast<long double>(transitionDelayMs) * delayToTrackScale);
+        outputDelayMs          = static_cast<uint64_t>(
+            std::clamp<long double>(scaledDelay, 0.0L, static_cast<long double>(std::numeric_limits<uint64_t>::max())));
+    }
+
+    uint64_t remainingOutputMs{bufferedMs};
     if(remainingOutputMs > std::numeric_limits<uint64_t>::max() - outputDelayMs) {
         remainingOutputMs = std::numeric_limits<uint64_t>::max();
     }
@@ -1321,7 +1337,8 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
 }
 
 std::optional<AudioEngine::AutoTransitionEligibility>
-AudioEngine::evaluateAutoTransitionEligibility(const Track& track, bool isManualChange) const
+AudioEngine::evaluateAutoTransitionEligibility(const Track& track, bool isManualChange,
+                                               bool requireTransitionReady) const
 {
     if(!isManualChange && m_fadeController.hasPendingFade()) {
         return {};
@@ -1348,7 +1365,7 @@ AudioEngine::evaluateAutoTransitionEligibility(const Track& track, bool isManual
         return {};
     }
 
-    if(!isManualChange) {
+    if(!isManualChange && requireTransitionReady) {
         if(!m_transitions.isReadyForAutoTransition()) {
             return {};
         }
@@ -1422,7 +1439,7 @@ AudioEngine::evaluateAutoTransitionEligibility(const Track& track, bool isManual
 
 bool AudioEngine::isAutoTransitionEligible(const Track& track) const
 {
-    return evaluateAutoTransitionEligibility(track, false).has_value();
+    return evaluateAutoTransitionEligibility(track, false, false).has_value();
 }
 
 void AudioEngine::setCurrentTrackContext(const Track& track)
