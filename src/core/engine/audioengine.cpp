@@ -2088,6 +2088,7 @@ void AudioEngine::stopImmediate()
     m_pipeline.stopPlayback();
     cleanupDecoderActiveStreamFromPipeline(false);
     m_pipeline.cleanupOrphanImmediate();
+    m_outputController.uninitOutput();
 
     clearPreparedNextTrackAndCancelPendingJobs();
     m_decoder.reset();

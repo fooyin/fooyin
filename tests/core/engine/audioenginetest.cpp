@@ -512,6 +512,7 @@ TEST(AudioEngineTest, PlayPauseStopWithFadeCompletesStateTransitions)
     harness.engine.stop();
     ASSERT_TRUE(
         pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Stopped; }, 3000ms));
+    EXPECT_GE(harness.outputStats->uninitCalls.load(), 1);
     EXPECT_EQ(harness.engine.trackStatus(), Engine::TrackStatus::NoTrack);
     EXPECT_TRUE(pumpUntil([&harness]() { return harness.engine.position() == 0; }, 1000ms));
     EXPECT_EQ(harness.engine.position(), 0U);
