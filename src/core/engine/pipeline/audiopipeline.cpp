@@ -645,13 +645,7 @@ void AudioPipeline::play()
         if(pipeline.m_outputUnit.output() && pipeline.m_outputUnit.output()->initialised()) {
             pipeline.m_outputUnit.output()->setPaused(false);
 
-            if(previousState == PipelinePlaybackState::Paused) {
-                const auto state = pipeline.m_outputUnit.output()->currentState();
-                if(state.queuedFrames > 0 || state.delay > 0.0) {
-                    pipeline.m_renderPhase = RenderPhase::Running;
-                }
-            }
-            else {
+            if(previousState != PipelinePlaybackState::Paused) {
                 pipeline.clearPendingOutput();
             }
         }
