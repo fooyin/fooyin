@@ -32,6 +32,7 @@
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
@@ -52,6 +53,7 @@ namespace Fooyin {
 MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, MusicLibrary* library,
                        SettingsManager* settings, QWidget* parent)
     : QMainWindow{parent}
+    , m_actionManager{actionManager}
     , m_mainMenu{menubar}
     , m_library{library}
     , m_settings{settings}
@@ -266,6 +268,21 @@ void MainWindow::showScanProgress(const ScanProgress& progress)
 
     m_statusWidget->setScanProgress(scanText,
                                     [library = m_library, scanId = progress.id]() { library->cancelScan(scanId); });
+}
+
+void MainWindow::mousePressEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::BackButton) {
+        if(auto* prevCmd = m_actionManager->command(Constants::Actions::Previous)) {
+            prevCmd->action()->activate(QAction::Trigger);
+        }
+    }
+    if(event->button() == Qt::ForwardButton) {
+        if(auto* nextCmd = m_actionManager->command(Constants::Actions::Next)) {
+            nextCmd->action()->activate(QAction::Trigger);
+        }
+    }
+    QMainWindow::mousePressEvent(event);
 }
 
 MainWindow::WindowState MainWindow::currentState()
