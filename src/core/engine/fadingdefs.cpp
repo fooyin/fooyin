@@ -84,6 +84,7 @@ QDataStream& operator<<(QDataStream& stream, const FadingValues& fading)
 {
     stream << fading.pause;
     stream << fading.stop;
+    stream << fading.boundary;
 
     return stream;
 }
@@ -92,6 +93,14 @@ QDataStream& operator>>(QDataStream& stream, FadingValues& fading)
 {
     stream >> fading.pause;
     stream >> fading.stop;
+
+    FadeSpec boundary;
+
+    stream.startTransaction();
+    stream >> boundary;
+    if(stream.commitTransaction()) {
+        fading.boundary = boundary;
+    }
 
     return stream;
 }

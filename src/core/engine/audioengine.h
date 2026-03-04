@@ -201,7 +201,10 @@ private:
                          AudioClock::UpdateMode mode, bool emitNow = true);
     void updatePositionContext(uint64_t timelineEpoch);
     void maybeBeginAutoCrossfadeTailFadeOut(const AudioStreamPtr& stream, uint64_t relativePosMs);
+    void maybeBeginAutoBoundaryFadeOut(uint64_t relativePosMs);
+    void applyAutoBoundaryFadeIn(bool allowFadeInOnly = false);
     void clearAutoCrossfadeTailFadeState();
+    void clearAutoBoundaryFadeState(bool restoreOutput = false);
     void handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_t trackEndingPosMs, bool preparedCrossfadeArmed,
                                   bool boundaryFallbackReached);
     void updatePosition();
@@ -295,6 +298,7 @@ private:
         Track targetTrack;
         uint64_t sourceGeneration{0};
         StreamId streamId{InvalidStreamId};
+        bool boundaryFadeMode{false};
     };
     PreparedGaplessTransition m_preparedGaplessTransition;
 
@@ -332,5 +336,7 @@ private:
     bool m_autoCrossfadeTailFadeActive;
     StreamId m_autoCrossfadeTailFadeStreamId;
     uint64_t m_autoCrossfadeTailFadeGeneration;
+    bool m_autoBoundaryFadeActive;
+    uint64_t m_autoBoundaryFadeGeneration;
 };
 } // namespace Fooyin

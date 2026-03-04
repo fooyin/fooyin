@@ -204,6 +204,8 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_autoCrossfadeTailFadeActive{false}
     , m_autoCrossfadeTailFadeStreamId{InvalidStreamId}
     , m_autoCrossfadeTailFadeGeneration{0}
+    , m_autoBoundaryFadeActive{false}
+    , m_autoBoundaryFadeGeneration{0}
 {
     setupSettings();
 
@@ -380,6 +382,7 @@ bool AudioEngine::startTrackCrossfade(const Track& track, bool isManualChange)
     const bool skipFadeOutStart = hasEarlyAutoTailFade && overlapDurationMs <= 0;
 
     clearAutoCrossfadeTailFadeState();
+    clearAutoBoundaryFadeState(true);
 
     setCurrentTrackContext(track);
     updateTrackStatus(Engine::TrackStatus::Loading);
@@ -465,6 +468,7 @@ void AudioEngine::performSeek(uint64_t positionMs, uint64_t requestId)
     m_positionCoordinator.clearGaplessHold();
 
     clearAutoCrossfadeTailFadeState();
+    clearAutoBoundaryFadeState(true);
 
     if(m_analysisBus) {
         m_analysisBus->flush();
@@ -768,6 +772,7 @@ void AudioEngine::reinitOutputForCurrentFormat()
     }
 
     clearAutoCrossfadeTailFadeState();
+    clearAutoBoundaryFadeState();
     m_transitions.cancelPendingSeek();
     m_transitions.setSeekInProgress(false);
     clearPendingAnalysisData();
@@ -959,11 +964,80 @@ void AudioEngine::maybeBeginAutoCrossfadeTailFadeOut(const AudioStreamPtr& strea
     m_autoCrossfadeTailFadeGeneration = m_trackGeneration;
 }
 
+void AudioEngine::maybeBeginAutoBoundaryFadeOut(uint64_t relativePosMs)
+{
+    if(!hasPlaybackState(Engine::PlaybackState::Playing)) {
+        return;
+    }
+
+    if(m_transitions.autoTransitionMode() != AutoTransitionMode::BoundaryFade) {
+        return;
+    }
+
+    const auto& boundarySpec = m_fadingValues.boundary;
+    if(!boundarySpec.enabled) {
+        return;
+    }
+
+    const int fadeOutMs = std::max(0, boundarySpec.effectiveOutMs());
+    if(fadeOutMs <= 0) {
+        return;
+    }
+
+    if(m_fadeController.hasPendingFade()) {
+        return;
+    }
+
+    if(m_autoBoundaryFadeActive && m_autoBoundaryFadeGeneration == m_trackGeneration) {
+        return;
+    }
+
+    if(m_currentTrack.duration() == 0 || relativePosMs >= m_currentTrack.duration()) {
+        return;
+    }
+
+    const uint64_t remainingTrackMs = m_currentTrack.duration() - relativePosMs;
+    const int remainingWindowMs
+        = static_cast<int>(std::min<uint64_t>(remainingTrackMs, std::numeric_limits<int>::max()));
+    const int tailFadeOutMs = std::min(fadeOutMs, remainingWindowMs);
+
+    if(tailFadeOutMs <= 0) {
+        return;
+    }
+
+    m_pipeline.setFaderCurve(boundarySpec.curve);
+    m_pipeline.faderFadeOut(tailFadeOutMs, m_volume, 0);
+    m_autoBoundaryFadeActive     = true;
+    m_autoBoundaryFadeGeneration = m_trackGeneration;
+}
+
+void AudioEngine::applyAutoBoundaryFadeIn(const bool allowFadeInOnly)
+{
+    if(!allowFadeInOnly && !m_autoBoundaryFadeActive) {
+        return;
+    }
+
+    const int fadeInMs = std::max(0, m_fadingValues.boundary.effectiveInMs());
+    m_pipeline.setFaderCurve(m_fadingValues.boundary.curve);
+    m_pipeline.faderFadeIn(fadeInMs, m_volume, 0);
+    clearAutoBoundaryFadeState();
+}
+
 void AudioEngine::clearAutoCrossfadeTailFadeState()
 {
     m_autoCrossfadeTailFadeActive     = false;
     m_autoCrossfadeTailFadeStreamId   = InvalidStreamId;
     m_autoCrossfadeTailFadeGeneration = 0;
+}
+
+void AudioEngine::clearAutoBoundaryFadeState(bool restoreOutput)
+{
+    if(restoreOutput && m_autoBoundaryFadeActive) {
+        m_pipeline.faderFadeIn(0, m_volume, 0);
+    }
+
+    m_autoBoundaryFadeActive     = false;
+    m_autoBoundaryFadeGeneration = 0;
 }
 
 void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_t trackEndingPosMs,
@@ -974,6 +1048,7 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
 
     if(result.aboutToFinish) {
         maybeBeginAutoCrossfadeTailFadeOut(stream, trackEndingPosMs);
+        maybeBeginAutoBoundaryFadeOut(trackEndingPosMs);
         emit trackAboutToFinish(m_currentTrack, m_trackGeneration);
     }
     if(result.readyToSwitch && transitionMode == AutoTransitionMode::Crossfade) {
@@ -1452,6 +1527,8 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
     input.gaplessEnabled                 = m_gaplessEnabled;
     input.autoFadeOutMs                  = m_crossfadingValues.autoChange.effectiveOutMs();
     input.autoFadeInMs                   = m_crossfadingValues.autoChange.effectiveInMs();
+    input.boundaryFadeEnabled            = m_fadingValues.boundary.isConfigured();
+    input.boundaryFadeOutMs              = m_fadingValues.boundary.effectiveOutMs();
     input.autoPrepareLeadMs              = preferredPreparedPrefillMs();
     input.gaplessPrepareWindowMs         = GaplessPrepareLeadMs;
 
@@ -1499,9 +1576,13 @@ AudioEngine::evaluateAutoTransitionEligibility(const Track& track, bool isManual
     const int baseFadeOutMs    = transitionSpec.effectiveOutMs();
     const int baseFadeInMs     = transitionSpec.effectiveInMs();
 
-    const bool crossfadeMix   = m_crossfadeEnabled && (baseFadeInMs > 0 || baseFadeOutMs > 0);
-    const bool gaplessHandoff = !isManualChange && m_gaplessEnabled
-                             && (!m_crossfadeEnabled || !m_crossfadingValues.autoChange.isConfigured());
+    const bool crossfadeMix = m_crossfadeEnabled && (baseFadeInMs > 0 || baseFadeOutMs > 0);
+    const bool boundaryFadeEnabled
+        = !isManualChange && m_fadingEnabled && m_fadingValues.boundary.isConfigured() && !crossfadeMix;
+    const bool gaplessHandoff
+        = !isManualChange && !crossfadeMix
+       && (boundaryFadeEnabled
+           || (m_gaplessEnabled && (!m_crossfadeEnabled || !m_crossfadingValues.autoChange.isConfigured())));
 
     if(!crossfadeMix && !gaplessHandoff) {
         return {};
@@ -1515,7 +1596,10 @@ AudioEngine::evaluateAutoTransitionEligibility(const Track& track, bool isManual
         if(crossfadeMix && readyMode != AutoTransitionMode::Crossfade) {
             return {};
         }
-        if(!crossfadeMix && gaplessHandoff && readyMode != AutoTransitionMode::Gapless) {
+        if(!crossfadeMix && gaplessHandoff && boundaryFadeEnabled && readyMode != AutoTransitionMode::BoundaryFade) {
+            return {};
+        }
+        if(!crossfadeMix && gaplessHandoff && !boundaryFadeEnabled && readyMode != AutoTransitionMode::Gapless) {
             return {};
         }
     }
@@ -1772,6 +1856,7 @@ void AudioEngine::clearPreparedGaplessTransition()
     m_preparedGaplessTransition.targetTrack      = {};
     m_preparedGaplessTransition.sourceGeneration = 0;
     m_preparedGaplessTransition.streamId         = InvalidStreamId;
+    m_preparedGaplessTransition.boundaryFadeMode = false;
 }
 
 void AudioEngine::disarmStalePreparedTransitions(const Track& contextTrack, uint64_t contextGeneration)
@@ -1931,6 +2016,7 @@ TrackLoadContext AudioEngine::buildLoadContext(const Track& track, bool manualCh
 bool AudioEngine::executeSegmentSwitchLoad(const Track& track, bool preserveTransportFade)
 {
     clearAutoCrossfadeTailFadeState();
+    clearAutoBoundaryFadeState(true);
 
     uint64_t streamPosMs{0};
     if(const auto stream = m_decoder.activeStream()) {
@@ -2015,6 +2101,7 @@ void AudioEngine::executeFullReinitLoad(const Track& track, bool manualChange, b
     qCDebug(ENGINE) << "Loading track:" << track.filenameExt();
 
     clearAutoCrossfadeTailFadeState();
+    clearAutoBoundaryFadeState(true);
     clearPendingAnalysisData();
     m_decoder.stopDecoding();
     cleanupActiveStream();
@@ -2264,6 +2351,7 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t ge
         = (m_currentTrack.duration() > currentRelativePosMs) ? (m_currentTrack.duration() - currentRelativePosMs) : 0;
 
     clearAutoCrossfadeTailFadeState();
+    clearAutoBoundaryFadeState(true);
 
     AudioPipeline::TransitionRequest request;
     request.type             = AudioPipeline::TransitionType::Crossfade;
@@ -2344,6 +2432,7 @@ bool AudioEngine::commitPreparedCrossfadeTransition(const Track& track)
     m_format = m_decoder.format();
     m_decoder.startDecoding();
     clearAutoCrossfadeTailFadeState();
+    clearAutoBoundaryFadeState(true);
 
     setCurrentTrackContext(track);
     setStreamToTrackOriginForTrack(track);
@@ -2382,7 +2471,8 @@ bool AudioEngine::armPreparedGaplessTransition(const Track& track, uint64_t gene
         return false;
     }
 
-    if(m_transitions.autoTransitionMode() != AutoTransitionMode::Gapless
+    const auto transitionMode = m_transitions.autoTransitionMode();
+    if((transitionMode != AutoTransitionMode::Gapless && transitionMode != AutoTransitionMode::BoundaryFade)
        || isMultiTrackFileTransition(m_currentTrack, track)) {
         return false;
     }
@@ -2412,6 +2502,7 @@ bool AudioEngine::armPreparedGaplessTransition(const Track& track, uint64_t gene
     m_preparedGaplessTransition.targetTrack      = track;
     m_preparedGaplessTransition.sourceGeneration = generation;
     m_preparedGaplessTransition.streamId         = transitionResult.streamId;
+    m_preparedGaplessTransition.boundaryFadeMode = (transitionMode == AutoTransitionMode::BoundaryFade);
     clearPreparedCrossfadeTransition();
     return true;
 }
@@ -2420,14 +2511,22 @@ bool AudioEngine::commitPreparedGaplessTransition(const Track& track)
 {
     disarmStalePreparedTransitions(track, m_trackGeneration);
 
+    const bool boundaryFadeMode = m_preparedGaplessTransition.boundaryFadeMode;
+
     if(!track.isValid() || !m_preparedGaplessTransition.active
        || !sameTrackIdentity(track, m_preparedGaplessTransition.targetTrack)) {
+        if(boundaryFadeMode) {
+            clearAutoBoundaryFadeState(true);
+        }
         return false;
     }
 
     const StreamId preparedStreamId = m_preparedGaplessTransition.streamId;
 
     if(!initDecoder(track, true)) {
+        if(boundaryFadeMode) {
+            clearAutoBoundaryFadeState(true);
+        }
         clearPreparedGaplessTransition();
         return false;
     }
@@ -2437,6 +2536,9 @@ bool AudioEngine::commitPreparedGaplessTransition(const Track& track)
         qCWarning(ENGINE) << "Prepared gapless commit could not adopt armed stream:"
                           << "expectedStreamId=" << preparedStreamId
                           << "actualStreamId=" << (preparedStream ? preparedStream->id() : InvalidStreamId);
+        if(boundaryFadeMode) {
+            clearAutoBoundaryFadeState(true);
+        }
         clearPreparedGaplessTransition();
         return false;
     }
@@ -2444,6 +2546,9 @@ bool AudioEngine::commitPreparedGaplessTransition(const Track& track)
     m_format = m_decoder.format();
     m_decoder.startDecoding();
     clearAutoCrossfadeTailFadeState();
+    if(!boundaryFadeMode) {
+        clearAutoBoundaryFadeState();
+    }
 
     setCurrentTrackContext(track);
     setStreamToTrackOriginForTrack(track);
@@ -2451,6 +2556,10 @@ bool AudioEngine::commitPreparedGaplessTransition(const Track& track)
     m_transitions.clearTrackEnding();
 
     m_positionCoordinator.setGaplessHold(preparedStreamId);
+
+    if(boundaryFadeMode) {
+        applyAutoBoundaryFadeIn(true);
+    }
 
     updateTrackStatus(Engine::TrackStatus::Buffered);
     clearPreparedGaplessTransition();
@@ -2612,6 +2721,7 @@ void AudioEngine::stop()
 void AudioEngine::stopImmediate()
 {
     clearAutoCrossfadeTailFadeState();
+    clearAutoBoundaryFadeState();
     m_transitions.setSeekInProgress(false);
     m_transitions.clearForStop();
 

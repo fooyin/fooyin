@@ -119,6 +119,16 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
         crossfadeReady                  = readyByTimeline || readyByDrain;
     }
 
+    bool boundaryFadeReady = false;
+    if(input.boundaryFadeEnabled) {
+        const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.boundaryFadeOutMs));
+        const uint64_t prepareWindowMs  = std::max(fadeOutWindowMs, input.gaplessPrepareWindowMs);
+        const uint64_t timelineWindowMs = saturatingAddWindow(prepareWindowMs, input.timelineDelayMs);
+        const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
+        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
+        boundaryFadeReady               = readyByTimeline || readyByDrain;
+    }
+
     bool gaplessReady = false;
     if(input.gaplessEnabled) {
         const uint64_t timelineWindowMs = saturatingAddWindow(input.gaplessPrepareWindowMs, input.timelineDelayMs);
@@ -127,10 +137,20 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
         gaplessReady                    = input.endOfInput || readyByTimeline || readyByDrain;
     }
 
-    if(crossfadeReady || gaplessReady) {
-        // When both are enabled, auto crossfade should own transition mode;
-        // gapless is only a readiness lead/fallback for non-crossfade paths
-        m_autoTransitionMode = input.autoCrossfadeEnabled ? AutoTransitionMode::Crossfade : AutoTransitionMode::Gapless;
+    const bool crossfadeConfigured = input.autoCrossfadeEnabled;
+    const bool boundaryConfigured  = input.boundaryFadeEnabled;
+
+    if(crossfadeReady || boundaryFadeReady || gaplessReady) {
+        // Keep configured transition ownership stable when gapless lead trips first.
+        if(crossfadeConfigured) {
+            m_autoTransitionMode = AutoTransitionMode::Crossfade;
+        }
+        else if(boundaryConfigured) {
+            m_autoTransitionMode = AutoTransitionMode::BoundaryFade;
+        }
+        else {
+            m_autoTransitionMode = AutoTransitionMode::Gapless;
+        }
         return true;
     }
 
@@ -143,7 +163,7 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
     }
 
     clearAutoTransitionReadiness();
-    if(input.autoCrossfadeEnabled || input.gaplessEnabled) {
+    if(input.autoCrossfadeEnabled || input.boundaryFadeEnabled || input.gaplessEnabled) {
         return false;
     }
 
@@ -169,6 +189,8 @@ bool PlaybackTransitionCoordinator::shouldSignalReadyToSwitch(const TrackEndingI
             const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
             return readyByTimeline || readyByDrain;
         }
+        case AutoTransitionMode::BoundaryFade:
+            return false;
         case AutoTransitionMode::None:
             return false;
     }
@@ -233,7 +255,8 @@ bool PlaybackTransitionCoordinator::isReadyForAutoCrossfade() const
 
 bool PlaybackTransitionCoordinator::isReadyForGaplessHandoff() const
 {
-    return m_autoTransitionMode == AutoTransitionMode::Gapless;
+    return m_autoTransitionMode == AutoTransitionMode::Gapless
+        || m_autoTransitionMode == AutoTransitionMode::BoundaryFade;
 }
 
 void PlaybackTransitionCoordinator::clearForStop()

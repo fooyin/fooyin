@@ -76,16 +76,17 @@ struct FadeSpec
 //! Fading policy group used for transport operations.
 struct FadingValues
 {
-    FadeSpec pause;
-    FadeSpec stop;
+    FadeSpec pause{.in = 120, .out = 120, .curve = FadeCurve::Linear};
+    FadeSpec stop{.in = 120, .out = 300, .curve = FadeCurve::Linear};
+    FadeSpec boundary{.in = 700, .out = 700, .curve = FadeCurve::Linear, .enabled = false};
 };
 
 //! Crossfade policy for manual/automatic track changes and seek transitions.
 struct CrossfadingValues
 {
-    FadeSpec manualChange;
-    FadeSpec autoChange;
-    FadeSpec seek;
+    FadeSpec manualChange{.in = 300, .out = 300, .curve = FadeCurve::Linear};
+    FadeSpec autoChange{.in = 700, .out = 700, .curve = FadeCurve::Linear};
+    FadeSpec seek{.in = 120, .out = 120, .curve = FadeCurve::Linear};
 };
 
 FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const FadeSpec& fading);
@@ -97,5 +98,6 @@ FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, CrossfadingValues& fa
 } // namespace Fooyin::Engine
 
 Q_DECLARE_METATYPE(Fooyin::Engine::FadeCurve)
+Q_DECLARE_METATYPE(Fooyin::Engine::FadeSpec)
 Q_DECLARE_METATYPE(Fooyin::Engine::FadingValues)
 Q_DECLARE_METATYPE(Fooyin::Engine::CrossfadingValues)
