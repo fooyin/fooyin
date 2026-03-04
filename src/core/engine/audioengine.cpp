@@ -2110,8 +2110,8 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t ge
         return false;
     }
 
-    int fadeOutDurationMs      = eligibility->fadeOutDurationMs;
-    const int fadeInDurationMs = eligibility->fadeInDurationMs;
+    int fadeOutDurationMs = eligibility->fadeOutDurationMs;
+    int fadeInDurationMs  = eligibility->fadeInDurationMs;
 
     auto currentStream = m_decoder.activeStream();
     if(!currentStream) {
@@ -2127,23 +2127,57 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t ge
         fadeOutDurationMs = std::min(fadeOutDurationMs, static_cast<int>(currentStream->bufferedDurationMs()));
     }
 
+    const uint64_t transitionDelayMs  = m_pipeline.transitionPlaybackDelayMs();
+    const uint64_t preparedBufferedMs = m_preparedNext->preparedStream->bufferedDurationMs();
+    const uint64_t safetyWindowMs{100};
+
+    int overlapDurationMs = std::min(std::max(0, fadeOutDurationMs), std::max(0, fadeInDurationMs));
+    if(overlapDurationMs > 0) {
+        const uint64_t availableOverlapMs = preparedBufferedMs > (transitionDelayMs + safetyWindowMs)
+                                              ? (preparedBufferedMs - (transitionDelayMs + safetyWindowMs))
+                                              : 0;
+        const auto requestedOverlapMs     = static_cast<uint64_t>(overlapDurationMs);
+
+        if(availableOverlapMs < requestedOverlapMs) {
+            const int clampedOverlapMs
+                = static_cast<int>(std::min<uint64_t>(availableOverlapMs, std::numeric_limits<int>::max()));
+            if(clampedOverlapMs <= 0) {
+                qCWarning(ENGINE) << "Prepared crossfade arm rejected: insufficient prebuffer for boundary overlap:"
+                                  << "trackId=" << track.id() << "generation=" << generation
+                                  << "preparedBufferedMs=" << preparedBufferedMs << "requiredBufferedMs="
+                                  << saturatingAddWindow(saturatingAddWindow(requestedOverlapMs, transitionDelayMs),
+                                                         safetyWindowMs)
+                                  << "overlapWindowMs=" << requestedOverlapMs
+                                  << "transitionDelayMs=" << transitionDelayMs;
+                return false;
+            }
+
+            qCWarning(ENGINE) << "Prepared crossfade arm overlap clamped due prebuffer shortfall:"
+                              << "trackId=" << track.id() << "generation=" << generation
+                              << "preparedBufferedMs=" << preparedBufferedMs
+                              << "requestedOverlapMs=" << requestedOverlapMs << "clampedOverlapMs=" << clampedOverlapMs
+                              << "transitionDelayMs=" << transitionDelayMs;
+            fadeOutDurationMs = std::min(fadeOutDurationMs, clampedOverlapMs);
+            fadeInDurationMs  = std::min(fadeInDurationMs, clampedOverlapMs);
+            overlapDurationMs = std::min(std::max(0, fadeOutDurationMs), std::max(0, fadeInDurationMs));
+        }
+    }
+
     const StreamId activeStreamId   = currentStream->id();
     const bool hasEarlyAutoTailFade = m_autoCrossfadeTailFadeActive && m_autoCrossfadeTailFadeGeneration == generation
                                    && m_autoCrossfadeTailFadeStreamId == activeStreamId
                                    && activeStreamId != InvalidStreamId;
-    const int overlapDurationMs = std::min(std::max(0, fadeOutDurationMs), std::max(0, fadeInDurationMs));
     const bool skipFadeOutStart = hasEarlyAutoTailFade && overlapDurationMs <= 0;
 
     const uint64_t overlapWindowMs = static_cast<uint64_t>(std::max(0, overlapDurationMs));
     const uint64_t requiredBufferedMs
-        = saturatingAddWindow(saturatingAddWindow(overlapWindowMs, m_pipeline.transitionPlaybackDelayMs()), 100);
-    const uint64_t preparedBufferedMs = m_preparedNext->preparedStream->bufferedDurationMs();
+        = saturatingAddWindow(saturatingAddWindow(overlapWindowMs, transitionDelayMs), safetyWindowMs);
+
     if(preparedBufferedMs < requiredBufferedMs) {
         qCWarning(ENGINE) << "Prepared crossfade arm rejected: insufficient prebuffer for boundary overlap:"
                           << "trackId=" << track.id() << "generation=" << generation
                           << "preparedBufferedMs=" << preparedBufferedMs << "requiredBufferedMs=" << requiredBufferedMs
-                          << "overlapWindowMs=" << overlapWindowMs
-                          << "transitionDelayMs=" << m_pipeline.transitionPlaybackDelayMs();
+                          << "overlapWindowMs=" << overlapWindowMs << "transitionDelayMs=" << transitionDelayMs;
         return false;
     }
 
@@ -2189,8 +2223,7 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t ge
     qCDebug(ENGINE) << "Prepared crossfade transition armed:" << "trackId=" << track.id() << "generation=" << generation
                     << "streamId=" << transitionResult.streamId << "preparedBufferedMs=" << preparedBufferedMs
                     << "preparedPosMs=" << m_preparedNext->preparedDecodePositionMs
-                    << "remainingToBoundaryMs=" << remainingToBoundaryMs
-                    << "transitionDelayMs=" << m_pipeline.transitionPlaybackDelayMs();
+                    << "remainingToBoundaryMs=" << remainingToBoundaryMs << "transitionDelayMs=" << transitionDelayMs;
     return true;
 }
 
