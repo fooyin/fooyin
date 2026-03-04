@@ -24,6 +24,7 @@
 #include <core/engine/audiobuffer.h>
 
 #include <pipewire/keys.h>
+#include <pipewire/version.h>
 #include <spa/param/props.h>
 
 #include <QDebug>
@@ -31,6 +32,15 @@
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wgnu-statement-expression-from-macro-expansion"
 #endif
+
+namespace {
+#if !PW_CHECK_VERSION(0, 3, 50)
+int pw_stream_get_time_n(struct pw_stream* stream, struct pw_time* time, size_t /*size*/)
+{
+    return pw_stream_get_time(stream, time);
+}
+#endif
+} // namespace
 
 namespace Fooyin::Pipewire {
 PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const int targetBufferFrames,
@@ -79,15 +89,19 @@ std::optional<PipewireStream::TimeInfo> PipewireStream::time() const
     }
 
     TimeInfo info;
-    info.now           = streamTime.now;
-    info.rate          = streamTime.rate;
-    info.ticks         = streamTime.ticks;
-    info.delay         = streamTime.delay;
-    info.queued        = streamTime.queued;
+    info.now    = streamTime.now;
+    info.rate   = streamTime.rate;
+    info.ticks  = streamTime.ticks;
+    info.delay  = streamTime.delay;
+    info.queued = streamTime.queued;
+#if PW_CHECK_VERSION(0, 3, 50)
     info.buffered      = streamTime.buffered;
     info.queuedBuffers = streamTime.queued_buffers;
     info.availBuffers  = streamTime.avail_buffers;
-    info.size          = streamTime.size;
+#endif
+#if PW_CHECK_VERSION(1, 1, 0)
+    info.size = streamTime.size;
+#endif
 
     return info;
 }
