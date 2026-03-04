@@ -38,7 +38,9 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto MinBufferSize = 500;
+constexpr auto MinBufferSize                 = 500;
+constexpr auto DecodeHighWatermarkMaxRatio   = 0.99;
+constexpr auto DecodeHighWatermarkMaxPercent = 99;
 
 namespace Fooyin {
 class OutputPageWidget : public SettingsPageWidget
@@ -141,7 +143,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     const auto setupWatermarkRatioSpinBox = [](QSpinBox* spinBox) {
         spinBox->setSingleStep(1);
         spinBox->setMinimum(5);
-        spinBox->setMaximum(100);
+        spinBox->setMaximum(DecodeHighWatermarkMaxPercent);
         spinBox->setSuffix(u"%"_s);
     };
 
@@ -401,8 +403,8 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 void OutputPageWidget::load()
 {
     const auto sanitiseRatios = [](double lowRatio, double highRatio) {
-        lowRatio  = std::clamp(lowRatio, 0.05, 1.0);
-        highRatio = std::clamp(highRatio, 0.05, 1.0);
+        lowRatio  = std::clamp(lowRatio, 0.05, DecodeHighWatermarkMaxRatio);
+        highRatio = std::clamp(highRatio, 0.05, DecodeHighWatermarkMaxRatio);
         if(lowRatio > highRatio) {
             std::swap(lowRatio, highRatio);
         }
@@ -464,8 +466,8 @@ void OutputPageWidget::load()
 void OutputPageWidget::apply()
 {
     const auto sanitiseRatios = [](double lowRatio, double highRatio) {
-        lowRatio  = std::clamp(lowRatio, 0.05, 1.0);
-        highRatio = std::clamp(highRatio, 0.05, 1.0);
+        lowRatio  = std::clamp(lowRatio, 0.05, DecodeHighWatermarkMaxRatio);
+        highRatio = std::clamp(highRatio, 0.05, DecodeHighWatermarkMaxRatio);
         if(lowRatio > highRatio) {
             std::swap(lowRatio, highRatio);
         }

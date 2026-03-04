@@ -36,6 +36,9 @@ constexpr auto BurstShortfallLogThresholdMs = 200;
 constexpr auto BurstRecoveryMinChunks       = 8;
 constexpr auto DecodeTimerGapWarnMs         = 500;
 constexpr auto DecodeLoopDurationWarnMs     = 500;
+constexpr auto DecodeHighWatermarkMaxRatio  = 0.99;
+constexpr auto DecodeWatermarkMinHeadroomMs = 20;
+constexpr auto DecodeWatermarkMinGapMs      = 30;
 
 Q_DECLARE_LOGGING_CATEGORY(ENGINE)
 
@@ -74,9 +77,17 @@ std::pair<int, int> effectiveWatermarksForStream(const Fooyin::AudioStreamPtr& s
         return {low, high};
     }
 
-    const int effectiveHigh = std::clamp(high, 1, capacityMs);
-    const int configuredGap = high - low;
-    const int effectiveLow  = std::clamp(effectiveHigh - configuredGap, 1, effectiveHigh);
+    const int maxHighByRatioMs
+        = std::max(1, static_cast<int>(std::floor(static_cast<double>(capacityMs) * DecodeHighWatermarkMaxRatio)));
+    const int maxHighByHeadroomMs = std::max(1, capacityMs - DecodeWatermarkMinHeadroomMs);
+    const int maxHighMs           = std::max(1, std::min({capacityMs, maxHighByRatioMs, maxHighByHeadroomMs}));
+    const int effectiveHigh       = std::clamp(high, 1, maxHighMs);
+
+    const int configuredGap   = std::max(0, high - low);
+    const int desiredGapMs    = std::max(configuredGap, DecodeWatermarkMinGapMs);
+    const int effectiveGapMs  = std::min(desiredGapMs, effectiveHigh - 1);
+    const int lowCeilForGapMs = effectiveHigh - effectiveGapMs;
+    const int effectiveLow    = std::clamp(low, 1, lowCeilForGapMs);
 
     return {effectiveLow, effectiveHigh};
 }

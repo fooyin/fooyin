@@ -65,11 +65,14 @@ constexpr auto MaxCrossfadePrefillMs           = 1000;
 constexpr auto GaplessHandoffPrefillMs         = 250;
 constexpr uint64_t MaxContinuousPositionJumpMs = 750;
 constexpr uint64_t MaxBackwardDriftToleranceMs = 50;
+constexpr auto DecodeHighWatermarkMaxRatio     = 0.99;
+constexpr auto DecodeWatermarkMinHeadroomMs    = 20;
+constexpr auto DecodeWatermarkMinGapMs         = 30;
 
 std::pair<double, double> sanitiseWatermarkRatios(double lowRatio, double highRatio)
 {
-    lowRatio  = std::clamp(lowRatio, 0.05, 1.0);
-    highRatio = std::clamp(highRatio, 0.05, 1.0);
+    lowRatio  = std::clamp(lowRatio, 0.05, DecodeHighWatermarkMaxRatio);
+    highRatio = std::clamp(highRatio, 0.05, DecodeHighWatermarkMaxRatio);
 
     if(lowRatio > highRatio) {
         std::swap(lowRatio, highRatio);
@@ -83,10 +86,23 @@ std::pair<int, int> decodeWatermarksForBufferMs(int bufferLengthMs, double lowRa
     const int clampedBufferMs = std::max(200, bufferLengthMs);
 
     const auto [safeLowRatio, safeHighRatio] = sanitiseWatermarkRatios(lowRatio, highRatio);
-    const int lowMs  = std::clamp(static_cast<int>(std::lround(static_cast<double>(clampedBufferMs) * safeLowRatio)),
-                                  100, clampedBufferMs);
-    const int highMs = std::clamp(static_cast<int>(std::lround(static_cast<double>(clampedBufferMs) * safeHighRatio)),
-                                  lowMs, clampedBufferMs);
+    const int requestedLowMs                 = std::clamp(
+        static_cast<int>(std::lround(static_cast<double>(clampedBufferMs) * safeLowRatio)), 1, clampedBufferMs);
+    const int requestedHighMs
+        = std::clamp(static_cast<int>(std::lround(static_cast<double>(clampedBufferMs) * safeHighRatio)),
+                     requestedLowMs, clampedBufferMs);
+
+    const int minLowMs = std::clamp(100, 1, clampedBufferMs);
+    const int maxHighByRatioMs
+        = std::max(1, static_cast<int>(std::floor(static_cast<double>(clampedBufferMs) * DecodeHighWatermarkMaxRatio)));
+    const int maxHighByHeadroomMs = std::max(1, clampedBufferMs - DecodeWatermarkMinHeadroomMs);
+    const int maxHighMs           = std::max(1, std::min({clampedBufferMs, maxHighByRatioMs, maxHighByHeadroomMs}));
+    const int highMs              = std::clamp(requestedHighMs, minLowMs, maxHighMs);
+
+    const int lowFloorMs        = std::min(minLowMs, highMs);
+    const int effectiveMinGapMs = std::min(DecodeWatermarkMinGapMs, highMs - lowFloorMs);
+    const int lowCeilForGapMs   = highMs - effectiveMinGapMs;
+    const int lowMs             = std::clamp(requestedLowMs, lowFloorMs, lowCeilForGapMs);
 
     return {lowMs, highMs};
 }
@@ -1218,8 +1234,23 @@ void AudioEngine::setupSettings()
     };
 
     const auto updateDecodeWatermarks = [this]() {
+        const auto [safeLowRatio, safeHighRatio]
+            = sanitiseWatermarkRatios(m_decodeLowWatermarkRatio, m_decodeHighWatermarkRatio);
         const auto [lowWatermarkMs, highWatermarkMs]
-            = decodeWatermarksForBufferMs(m_bufferLengthMs, m_decodeLowWatermarkRatio, m_decodeHighWatermarkRatio);
+            = decodeWatermarksForBufferMs(m_bufferLengthMs, safeLowRatio, safeHighRatio);
+
+        const int clampedBufferMs = std::max(200, m_bufferLengthMs);
+        const int requestedLowMs  = std::clamp(
+            static_cast<int>(std::lround(static_cast<double>(clampedBufferMs) * safeLowRatio)), 1, clampedBufferMs);
+        const int requestedHighMs
+            = std::clamp(static_cast<int>(std::lround(static_cast<double>(clampedBufferMs) * safeHighRatio)),
+                         requestedLowMs, clampedBufferMs);
+
+        if(lowWatermarkMs != requestedLowMs || highWatermarkMs != requestedHighMs) {
+            qCWarning(ENGINE) << "Decode watermarks safety-clamped:" << "requestedLow=" << requestedLowMs
+                              << "ms requestedHigh=" << requestedHighMs << "ms appliedLow=" << lowWatermarkMs
+                              << "ms appliedHigh=" << highWatermarkMs << "ms bufferMs=" << clampedBufferMs;
+        }
         m_decoder.setBufferWatermarksMs(lowWatermarkMs, highWatermarkMs);
     };
 
