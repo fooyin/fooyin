@@ -24,6 +24,7 @@
 #include <pipewire/stream.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include <QString>
@@ -35,10 +36,25 @@ namespace Pipewire {
 class PipewireStream
 {
 public:
-    PipewireStream(PipewireCore* core, const AudioFormat& format, const QString& device = {});
+    PipewireStream(PipewireCore* core, const AudioFormat& format, int targetBufferFrames = 0,
+                   const QString& device = {});
     ~PipewireStream();
 
+    struct TimeInfo
+    {
+        int64_t now{0};
+        spa_fraction rate{0, 1};
+        uint64_t ticks{0};
+        int64_t delay{0};
+        uint64_t queued{0};
+        uint64_t buffered{0};
+        uint32_t queuedBuffers{0};
+        uint32_t availBuffers{0};
+        uint64_t size{0};
+    };
+
     pw_stream_state state();
+    [[nodiscard]] std::optional<TimeInfo> time() const;
 
     void setActive(bool active);
     void setVolume(float volume);
