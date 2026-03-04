@@ -94,7 +94,7 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
     QObject::connect(m_waveBarSettingsPage.get(), &WaveBarSettingsPage::clearCache, this, &WaveBarPlugin::clearCache);
 
     m_widgetProvider->registerWidget(u"WaveBar"_s, [this]() { return createWavebar(); }, tr("Waveform Seekbar"));
-    m_widgetProvider->setSubMenus(u"WaveBar"_s, {tr("Controls")});
+    m_widgetProvider->setSubMenus(u"WaveBar"_s, {tr("Visualisations")});
 
     auto* selectionMenu = m_actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
     auto* utilitiesMenu = m_actionManager->createMenu(::Fooyin::Constants::Menus::Context::Utilities);
