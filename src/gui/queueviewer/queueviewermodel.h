@@ -62,6 +62,11 @@ public:
     void currentTrackChanged();
     [[nodiscard]] int queueIndex(const QModelIndex& index) const;
 
+    void setScripts(const QString& titleScript, const QString& subtitleScript);
+    void setShowCurrent(bool showCurrent);
+    void setShowIcon(bool showIcon);
+    void setIconSize(const QSize& iconSize);
+
 signals:
     void queueChanged();
     void tracksDropped(int row, const QByteArray& data);
@@ -73,12 +78,17 @@ private:
     void updateShowCurrent();
 
     PlayerController* m_playerController;
-    SettingsManager* m_settings;
 
     CoverProvider m_coverProvider;
     ScriptParser m_scriptParser;
+
     std::vector<std::unique_ptr<QueueViewerItem>> m_trackItems;
     std::unordered_map<QString, std::vector<QueueViewerItem*>> m_trackParents;
+
+    QString m_titleScript;
+    QString m_subtitleScript;
+
+    bool m_showCurrent;
     bool m_showIcon;
     CoverProvider::ThumbnailSize m_iconSize;
 

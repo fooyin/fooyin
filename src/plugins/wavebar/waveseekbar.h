@@ -29,21 +29,28 @@
 #include <QPointer>
 #include <QWidget>
 
-namespace Fooyin {
-class SettingsManager;
-
-namespace WaveBar {
+namespace Fooyin::WaveBar {
 class WaveSeekBar : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit WaveSeekBar(SettingsManager* settings, QWidget* parent = nullptr);
+    explicit WaveSeekBar(QWidget* parent = nullptr);
 
     void processData(const WaveformData<float>& waveData);
 
     void setPlayState(Player::PlayState state);
     void setPosition(uint64_t pos);
+    void setShowCursor(bool show);
+    void setCursorWidth(int width);
+    void setChannelScale(double scale);
+    void setBarWidth(int width);
+    void setBarGap(int gap);
+    void setMaxScale(double scale);
+    void setCentreGap(int gap);
+    void setMode(WaveModes mode);
+    void setColours(const Colours& colours);
+
     [[nodiscard]] bool isSeeking() const;
     void stopSeeking();
 
@@ -70,8 +77,6 @@ private:
     void drawSilence(QPainter& painter, double first, double last, double y);
     void drawSeekTip();
 
-    SettingsManager* m_settings;
-
     Player::PlayState m_playState;
     WaveformData<float> m_data;
     double m_scale;
@@ -92,5 +97,4 @@ private:
     WaveModes m_mode;
     Colours m_colours;
 };
-} // namespace WaveBar
-} // namespace Fooyin
+} // namespace Fooyin::WaveBar

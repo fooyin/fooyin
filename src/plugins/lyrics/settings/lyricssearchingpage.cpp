@@ -97,35 +97,36 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
 
 void LyricsSearchingPageWidget::load()
 {
-    m_autoSearch->setChecked(m_settings->value<Settings::Lyrics::AutoSearch>());
-    m_skipRemaining->setChecked(m_settings->value<Settings::Lyrics::SkipRemaining>());
-    m_skipExternal->setChecked(m_settings->value<Settings::Lyrics::SkipExternal>());
-    m_titleParam->setText(m_settings->value<Settings::Lyrics::TitleField>());
-    m_artistParam->setText(m_settings->value<Settings::Lyrics::ArtistField>());
-    m_albumParam->setText(m_settings->value<Settings::Lyrics::AlbumField>());
-    m_matchThreshold->setValue(m_settings->value<Settings::Lyrics::MatchThreshold>());
+    m_autoSearch->setChecked(m_settings->fileValue(Settings::AutoSearch, true).toBool());
+    m_skipRemaining->setChecked(m_settings->fileValue(Settings::SkipRemaining, true).toBool());
+    m_skipExternal->setChecked(m_settings->fileValue(Settings::SkipExternal, true).toBool());
+    m_titleParam->setText(m_settings->fileValue(Settings::TitleField, u"%title%"_s).toString());
+    m_artistParam->setText(m_settings->fileValue(Settings::ArtistField, u"%artist%"_s).toString());
+    m_albumParam->setText(m_settings->fileValue(Settings::AlbumField, u"%album%"_s).toString());
+    m_matchThreshold->setValue(m_settings->fileValue(Settings::MatchThreshold, 75).toInt());
 }
 
 void LyricsSearchingPageWidget::apply()
 {
-    m_settings->set<Settings::Lyrics::AutoSearch>(m_autoSearch->isChecked());
-    m_settings->set<Settings::Lyrics::SkipRemaining>(m_skipRemaining->isChecked());
-    m_settings->set<Settings::Lyrics::SkipExternal>(m_skipExternal->isChecked());
-    m_settings->set<Settings::Lyrics::TitleField>(m_titleParam->text());
-    m_settings->set<Settings::Lyrics::ArtistField>(m_artistParam->text());
-    m_settings->set<Settings::Lyrics::AlbumField>(m_albumParam->text());
-    m_settings->set<Settings::Lyrics::MatchThreshold>(m_matchThreshold->value());
+    m_settings->fileSet(Settings::AutoSearch, m_autoSearch->isChecked());
+    m_settings->fileSet(Settings::SkipRemaining, m_skipRemaining->isChecked());
+    m_settings->fileSet(Settings::SkipExternal, m_skipExternal->isChecked());
+    m_settings->fileSet(Settings::TitleField, m_titleParam->text());
+    m_settings->fileSet(Settings::ArtistField, m_artistParam->text());
+    m_settings->fileSet(Settings::AlbumField, m_albumParam->text());
+    m_settings->fileSet(Settings::MatchThreshold, m_matchThreshold->value());
 }
 
 void LyricsSearchingPageWidget::reset()
 {
-    m_settings->reset<Settings::Lyrics::AutoSearch>();
-    m_settings->reset<Settings::Lyrics::SkipRemaining>();
-    m_settings->reset<Settings::Lyrics::SkipExternal>();
-    m_settings->reset<Settings::Lyrics::TitleField>();
-    m_settings->reset<Settings::Lyrics::ArtistField>();
-    m_settings->reset<Settings::Lyrics::AlbumField>();
-    m_settings->reset<Settings::Lyrics::MatchThreshold>();
+    m_settings->fileRemove(Settings::AutoSearch);
+    m_settings->fileRemove(Settings::SkipRemaining);
+    m_settings->fileRemove(Settings::SkipExternal);
+    m_settings->fileRemove(Settings::TitleField);
+    m_settings->fileRemove(Settings::ArtistField);
+    m_settings->fileRemove(Settings::AlbumField);
+    m_settings->fileRemove(Settings::MatchThreshold);
+    load();
 }
 
 LyricsSearchingPage::LyricsSearchingPage(SettingsManager* settings, QObject* parent)

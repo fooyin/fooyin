@@ -22,7 +22,6 @@
 #include "filtercolumnregistry.h"
 #include "filtermanager.h"
 #include "filterwidget.h"
-#include "settings/filtersettings.h"
 
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
@@ -37,6 +36,7 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QAction>
 #include <QMenu>
 
 #include <ranges>
@@ -65,11 +65,11 @@ namespace Fooyin::Filters {
 class FilterControllerPrivate
 {
 public:
-    explicit FilterControllerPrivate(FilterController* self, const CorePluginContext& core,
-                                     TrackSelectionController* trackSelection, EditableLayout* editableLayout,
-                                     SettingsManager* settings);
+    explicit FilterControllerPrivate(FilterController* self, ActionManager* actionManager,
+                                     const CorePluginContext& core, TrackSelectionController* trackSelection,
+                                     EditableLayout* editableLayout, SettingsManager* settings);
 
-    void handleAction(const TrackAction& action) const;
+    void handleAction(FilterWidget* filter, const TrackAction& action) const;
     Id findContainingGroup(FilterWidget* widget);
     void handleFilterUpdated(FilterWidget* widget);
     void filterContextMenu(FilterWidget* widget, const QPoint& pos) const;
@@ -97,6 +97,7 @@ public:
 
     FilterController* m_self;
 
+    ActionManager* m_actionManager;
     MusicLibrary* m_library;
     LibraryManager* m_libraryManager;
     TrackSelectionController* m_trackSelection;
@@ -111,15 +112,14 @@ public:
     Id m_defaultId{"Default"};
     FilterGroups m_groups;
     std::unordered_map<Id, FilterWidget*, Id::IdHash> m_ungrouped;
-
-    TrackAction m_doubleClickAction;
-    TrackAction m_middleClickAction;
 };
 
-FilterControllerPrivate::FilterControllerPrivate(FilterController* self, const CorePluginContext& core,
+FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionManager* actionManager,
+                                                 const CorePluginContext& core,
                                                  TrackSelectionController* trackSelection,
                                                  EditableLayout* editableLayout, SettingsManager* settings)
     : m_self{self}
+    , m_actionManager{actionManager}
     , m_library{core.library}
     , m_libraryManager{core.libraryManager}
     , m_trackSelection{trackSelection}
@@ -129,25 +129,22 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, const C
     , m_manager{new FilterManager(m_self, m_editableLayout, m_self)}
     , m_columnRegistry{new FilterColumnRegistry(settings, m_self)}
     , m_sorter{core.libraryManager}
-    , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Filters::FilterDoubleClick>())}
-    , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Filters::FilterMiddleClick>())}
 {
-    m_settings->subscribe<Settings::Filters::FilterDoubleClick>(
-        m_self, [this](int action) { m_doubleClickAction = static_cast<TrackAction>(action); });
-    m_settings->subscribe<Settings::Filters::FilterMiddleClick>(
-        m_self, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
-    m_settings->subscribe<Settings::Filters::FilterSendPlayback>(m_self, [this]() { updateAllPlaylistActions(); });
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(m_self, [this]() { resetAll(); });
 }
 
-void FilterControllerPrivate::handleAction(const TrackAction& action) const
+void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackAction& action) const
 {
+    if(!filter || action == TrackAction::None) {
+        return;
+    }
+
     PlaylistAction::ActionOptions options;
 
-    if(m_settings->value<Settings::Filters::FilterAutoSwitch>()) {
+    if(filter->autoSwitch()) {
         options |= PlaylistAction::Switch;
     }
-    if(m_settings->value<Settings::Filters::FilterSendPlayback>()) {
+    if(filter->sendPlayback()) {
         options |= PlaylistAction::StartPlayback;
     }
 
@@ -220,16 +217,25 @@ void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoi
     auto* menu = new QMenu(widget);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    m_trackSelection->addTrackPlaylistContextMenu(menu);
-    m_trackSelection->addTrackQueueContextMenu(menu);
-    menu->addSeparator();
+    const bool hasSelection = widget->hasSelection();
+    if(hasSelection) {
+        m_trackSelection->addTrackPlaylistContextMenu(menu);
+        m_trackSelection->addTrackQueueContextMenu(menu);
+        menu->addSeparator();
+    }
 
     auto* headerMenu = new QMenu(FilterWidget::tr("Filter options"), menu);
     menu->addMenu(headerMenu);
     widget->addFilterHeaderMenu(headerMenu, pos);
-    menu->addSeparator();
 
-    m_trackSelection->addTrackContextMenu(menu);
+    auto* configure = new QAction(FilterWidget::tr("Configure..."), menu);
+    QObject::connect(configure, &QAction::triggered, widget, [widget]() { widget->openConfigDialog(); });
+    menu->addAction(configure);
+
+    if(hasSelection) {
+        menu->addSeparator();
+        m_trackSelection->addTrackContextMenu(menu);
+    }
 
     menu->popup(pos);
 }
@@ -336,9 +342,7 @@ void FilterControllerPrivate::clearActiveFilters(const Id& group, int index)
 
 void FilterControllerPrivate::updateFilterPlaylistActions(FilterWidget* filterWidget) const
 {
-    const bool startPlayback = m_settings->value<Settings::Filters::FilterSendPlayback>();
-
-    m_trackSelection->changePlaybackOnSend(filterWidget->widgetContext(), startPlayback);
+    m_trackSelection->changePlaybackOnSend(filterWidget->widgetContext(), filterWidget->sendPlayback());
 }
 
 void FilterControllerPrivate::updateAllPlaylistActions()
@@ -348,24 +352,26 @@ void FilterControllerPrivate::updateAllPlaylistActions()
             updateFilterPlaylistActions(filterWidget);
         }
     }
+    for(FilterWidget* filterWidget : m_ungrouped | std::views::values) {
+        updateFilterPlaylistActions(filterWidget);
+    }
 }
 
 void FilterControllerPrivate::selectionChanged(FilterWidget* filter)
 {
     m_trackSelection->changeSelectedTracks(filter->widgetContext(), filter->filteredTracks());
 
-    if(m_settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
+    if(filter->playlistEnabled()) {
         PlaylistAction::ActionOptions options{PlaylistAction::None};
 
-        if(m_settings->value<Settings::Filters::FilterKeepAlive>()) {
+        if(filter->keepAlive()) {
             options |= PlaylistAction::KeepActive;
         }
-        if(m_settings->value<Settings::Filters::FilterAutoSwitch>()) {
+        if(filter->autoSwitch()) {
             options |= PlaylistAction::Switch;
         }
 
-        const QString autoPlaylist = m_settings->value<Settings::Filters::FilterAutoPlaylist>();
-        m_trackSelection->executeAction(TrackAction::SendNewPlaylist, options, autoPlaylist);
+        m_trackSelection->executeAction(TrackAction::SendNewPlaylist, options, filter->playlistName());
     }
 
     const Id group       = filter->group();
@@ -506,10 +512,11 @@ void FilterControllerPrivate::searchChanged(FilterWidget* filter, const QString&
     }).then(m_self, [filter](const TrackList& filteredTracks) { filter->reset(filteredTracks); });
 }
 
-FilterController::FilterController(const CorePluginContext& core, TrackSelectionController* trackSelection,
-                                   EditableLayout* editableLayout, SettingsManager* settings, QObject* parent)
+FilterController::FilterController(ActionManager* actionManager, const CorePluginContext& core,
+                                   TrackSelectionController* trackSelection, EditableLayout* editableLayout,
+                                   SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<FilterControllerPrivate>(this, core, trackSelection, editableLayout, settings)}
+    , p{std::make_unique<FilterControllerPrivate>(this, actionManager, core, trackSelection, editableLayout, settings)}
 {
     QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this,
                      [this](const TrackList& tracks) { p->handleTracksAddedUpdated(tracks); });
@@ -537,7 +544,8 @@ QString FilterController::defaultPlaylistName()
 
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget = new FilterWidget(p->m_columnRegistry, p->m_libraryManager, &p->m_coverProvider, p->m_settings);
+    auto* widget = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_libraryManager, &p->m_coverProvider,
+                                    p->m_settings);
 
     auto& group = p->m_groups[p->m_defaultId];
     group.id    = p->m_defaultId;
@@ -545,8 +553,10 @@ FilterWidget* FilterController::createFilter()
     widget->setIndex(static_cast<int>(group.filters.size()));
     group.filters.push_back(widget);
 
-    QObject::connect(widget, &FilterWidget::doubleClicked, this, [this]() { p->handleAction(p->m_doubleClickAction); });
-    QObject::connect(widget, &FilterWidget::middleClicked, this, [this]() { p->handleAction(p->m_middleClickAction); });
+    QObject::connect(widget, &FilterWidget::doubleClicked, this,
+                     [this, widget]() { p->handleAction(widget, widget->doubleClickAction()); });
+    QObject::connect(widget, &FilterWidget::middleClicked, this,
+                     [this, widget]() { p->handleAction(widget, widget->middleClickAction()); });
     QObject::connect(widget, &FilterWidget::requestSearch, this,
                      [this, widget](const QString& search) { p->searchChanged(widget, search); });
     QObject::connect(widget, &FilterWidget::requestContextMenu, this,
@@ -554,6 +564,8 @@ FilterWidget* FilterController::createFilter()
     QObject::connect(widget, &FilterWidget::selectionChanged, this, [this, widget]() { p->selectionChanged(widget); });
     QObject::connect(widget, &FilterWidget::filterUpdated, this, [this, widget]() { p->handleFilterUpdated(widget); });
     QObject::connect(widget, &FilterWidget::filterDeleted, this, [this, widget]() { removeFilter(widget); });
+    QObject::connect(widget, &FilterWidget::configChanged, this,
+                     [this, widget]() { p->updateFilterPlaylistActions(widget); });
     QObject::connect(widget, &FilterWidget::requestEditConnections, this,
                      [this]() { p->m_manager->setupWidgetConnections(); });
     QObject::connect(this, &FilterController::tracksChanged, widget, &FilterWidget::tracksChanged);

@@ -53,6 +53,7 @@ private:
     std::shared_ptr<NetworkAccessManager> m_networkAccess;
     WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
+
     std::unique_ptr<LyricsSettings> m_lyricsSettings;
     LyricsFinder* m_lyricsFinder;
     LyricsSaver* m_lyricsSaver;

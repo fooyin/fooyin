@@ -44,7 +44,7 @@ void LocalLyrics::search(const SearchParams& params)
 {
     QStringList filters;
 
-    const auto paths = settings()->value<Settings::Lyrics::Paths>();
+    const auto paths = settings()->fileValue(Settings::Paths, Defaults::paths()).toStringList();
     for(const QString& path : paths) {
         filters.emplace_back(m_parser.evaluate(path.trimmed(), params.track));
     }

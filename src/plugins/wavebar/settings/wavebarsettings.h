@@ -29,17 +29,7 @@ Q_NAMESPACE
 
 enum WaveBarSettings : uint32_t
 {
-    Downmix       = 1 | Type::Int,
-    ShowCursor    = 2 | Type::Bool,
-    CursorWidth   = 3 | Type::Int,
-    ColourOptions = 4 | Type::Variant,
-    Mode          = 5 | Type::Int,
-    BarWidth      = 6 | Type::Int,
-    BarGap        = 7 | Type::Int,
-    MaxScale      = 8 | Type::Double,
-    CentreGap     = 9 | Type::Int,
-    ChannelScale  = 10 | Type::Double,
-    NumSamples    = 11 | Type::Int,
+    NumSamples = 11 | Type::Int,
 };
 Q_ENUM_NS(WaveBarSettings)
 } // namespace Settings::WaveBar

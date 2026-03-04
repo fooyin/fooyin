@@ -17,15 +17,12 @@
  *
  */
 
-#include "vumetersettingspage.h"
+#include "vumeterconfigwidget.h"
 
 #include "vumetercolours.h"
-#include "vumetersettings.h"
 
 #include <gui/framerate.h>
-#include <gui/guisettings.h>
 #include <gui/widgets/colourbutton.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <QComboBox>
 #include <QGridLayout>
@@ -35,40 +32,11 @@
 
 using namespace Qt::StringLiterals;
 
+constexpr auto DefaultFps = Fooyin::Gui::FrameRate::Preset::Fps40;
+
 namespace Fooyin::VuMeter {
-class VuMeterSettingsPageWidget : public SettingsPageWidget
-{
-    Q_OBJECT
-
-public:
-    explicit VuMeterSettingsPageWidget(SettingsManager* settings);
-
-    void load() override;
-    void apply() override;
-    void reset() override;
-
-private:
-    SettingsManager* m_settings;
-
-    QDoubleSpinBox* m_peakHold;
-    QDoubleSpinBox* m_falloff;
-    QComboBox* m_updateFps;
-    QSpinBox* m_channelSpacing;
-    QSpinBox* m_barSize;
-    QSpinBox* m_barSpacing;
-    QSpinBox* m_barSections;
-    QSpinBox* m_sectionSpacing;
-
-    QGroupBox* m_colourGroup;
-    ColourButton* m_bgColour;
-    ColourButton* m_peakColour;
-    ColourButton* m_legendColour;
-    ColourButton* m_leftColour;
-    ColourButton* m_rightColour;
-};
-
-VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
-    : m_settings{settings}
+VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidget* parent)
+    : WidgetConfigDialog{vuMeter, tr("Configure %1").arg(vuMeter->name()), parent}
     , m_peakHold{new QDoubleSpinBox(this)}
     , m_falloff{new QDoubleSpinBox(this)}
     , m_updateFps{new QComboBox(this)}
@@ -87,9 +55,9 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
 
-    m_peakHold->setRange(0.1, 30);
+    m_peakHold->setRange(0.1, 30.0);
     m_peakHold->setSuffix(" "_L1 + tr("seconds"));
-    m_falloff->setRange(0.1, 96);
+    m_falloff->setRange(0.1, 96.0);
     m_falloff->setSuffix(" "_L1 + tr("dB per second"));
 
     for(const auto preset : Gui::FrameRate::Presets) {
@@ -97,7 +65,7 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
         m_updateFps->addItem(tr("%1 FPS").arg(fps), fps);
     }
 
-    int row{0};
+    int row = 0;
     generalLayout->addWidget(new QLabel(tr("Peak hold time") + ":"_L1, this), row, 0);
     generalLayout->addWidget(m_peakHold, row++, 1);
     generalLayout->addWidget(new QLabel(tr("Falloff time") + ":"_L1, this), row, 0);
@@ -111,17 +79,13 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
 
     m_channelSpacing->setRange(0, 20);
     m_channelSpacing->setSuffix(u" px"_s);
-
     m_barSize->setRange(0, 50);
     m_barSize->setSuffix(u" px"_s);
-
-    m_barSections->setRange(1, 20);
-
-    m_barSpacing->setSuffix(u" px"_s);
     m_barSpacing->setRange(1, 20);
-
-    m_sectionSpacing->setSuffix(u" px"_s);
+    m_barSpacing->setSuffix(u" px"_s);
+    m_barSections->setRange(1, 20);
     m_sectionSpacing->setRange(1, 20);
+    m_sectionSpacing->setSuffix(u" px"_s);
 
     row = 0;
     dimensionLayout->addWidget(new QLabel(tr("Channel spacing") + ":"_L1, this), row, 0);
@@ -130,7 +94,6 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
     dimensionLayout->addWidget(m_barSize, row++, 1);
     dimensionLayout->addWidget(new QLabel(tr("Bar spacing") + ":"_L1, this), row, 0);
     dimensionLayout->addWidget(m_barSpacing, row++, 1);
-
     row = 0;
     dimensionLayout->addWidget(new QLabel(tr("Sections") + ":"_L1, this), row, 2);
     dimensionLayout->addWidget(m_barSections, row++, 3);
@@ -154,96 +117,68 @@ VuMeterSettingsPageWidget::VuMeterSettingsPageWidget(SettingsManager* settings)
     coloursLayout->setColumnStretch(1, 1);
     coloursLayout->setColumnStretch(2, 1);
 
-    auto* layout = new QGridLayout(this);
-
-    row = 0;
-    layout->addWidget(generalGroup, row++, 0);
-    layout->addWidget(dimensionGroup, row++, 0);
-    layout->addWidget(m_colourGroup, row++, 0);
+    auto* layout = contentLayout();
+    layout->addWidget(generalGroup, 0, 0);
+    layout->addWidget(dimensionGroup, 1, 0);
+    layout->addWidget(m_colourGroup, 2, 0);
     layout->setRowStretch(layout->rowCount(), 1);
 
-    m_settings->subscribe<Settings::Gui::Theme>(this, &SettingsPageWidget::load);
-    m_settings->subscribe<Settings::Gui::Style>(this, &SettingsPageWidget::load);
+    loadCurrentConfig();
 }
 
-void VuMeterSettingsPageWidget::load()
+VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
 {
-    m_peakHold->setValue(m_settings->value<Settings::VuMeter::PeakHoldTime>());
-    m_falloff->setValue(m_settings->value<Settings::VuMeter::FalloffTime>());
-
-    const int fps     = m_settings->value<Settings::VuMeter::UpdateFps>();
-    const int nearest = Gui::FrameRate::nearestPresetFps(fps);
-    int fpsIndex      = m_updateFps->findData(nearest);
-    if(fpsIndex < 0) {
-        fpsIndex = m_updateFps->findData(Gui::FrameRate::toFps(Gui::FrameRate::Preset::Fps40));
-    }
-    m_updateFps->setCurrentIndex(fpsIndex);
-
-    m_channelSpacing->setValue(m_settings->value<Settings::VuMeter::ChannelSpacing>());
-    m_barSize->setValue(m_settings->value<Settings::VuMeter::BarSize>());
-    m_barSpacing->setValue(m_settings->value<Settings::VuMeter::BarSpacing>());
-    m_barSections->setValue(m_settings->value<Settings::VuMeter::BarSections>());
-    m_sectionSpacing->setValue(m_settings->value<Settings::VuMeter::SectionSpacing>());
-
-    const auto currentColours = m_settings->value<Settings::VuMeter::MeterColours>().value<Colours>();
-    m_colourGroup->setChecked(currentColours != Colours{});
-
-    m_bgColour->setColour(currentColours.colour(Colours::Type::Background));
-    m_peakColour->setColour(currentColours.colour(Colours::Type::Peak));
-    m_legendColour->setColour(currentColours.colour(Colours::Type::Legend));
-    m_leftColour->setColour(currentColours.colour(Colours::Type::Gradient1));
-    m_rightColour->setColour(currentColours.colour(Colours::Type::Gradient2));
-}
-
-void VuMeterSettingsPageWidget::apply()
-{
-    m_settings->set<Settings::VuMeter::PeakHoldTime>(m_peakHold->value());
-    m_settings->set<Settings::VuMeter::FalloffTime>(m_falloff->value());
-    m_settings->set<Settings::VuMeter::UpdateFps>(m_updateFps->currentData().toInt());
-    m_settings->set<Settings::VuMeter::ChannelSpacing>(m_channelSpacing->value());
-    m_settings->set<Settings::VuMeter::BarSize>(m_barSize->value());
-    m_settings->set<Settings::VuMeter::BarSpacing>(m_barSpacing->value());
-    m_settings->set<Settings::VuMeter::BarSections>(m_barSections->value());
-    m_settings->set<Settings::VuMeter::SectionSpacing>(m_sectionSpacing->value());
-
-    Colours colours;
+    VuMeterWidget::ConfigData config{
+        .peakHoldTime   = m_peakHold->value(),
+        .falloffTime    = m_falloff->value(),
+        .updateFps      = m_updateFps->currentData().toInt(),
+        .channelSpacing = m_channelSpacing->value(),
+        .barSize        = m_barSize->value(),
+        .barSpacing     = m_barSpacing->value(),
+        .barSections    = m_barSections->value(),
+        .sectionSpacing = m_sectionSpacing->value(),
+        .meterColours   = QVariant{},
+    };
 
     if(m_colourGroup->isChecked()) {
+        Colours colours;
         colours.setColour(Colours::Type::Background, m_bgColour->colour());
         colours.setColour(Colours::Type::Peak, m_peakColour->colour());
         colours.setColour(Colours::Type::Legend, m_legendColour->colour());
         colours.setColour(Colours::Type::Gradient1, m_leftColour->colour());
         colours.setColour(Colours::Type::Gradient2, m_rightColour->colour());
-        m_settings->set<Settings::VuMeter::MeterColours>(QVariant::fromValue(colours));
+        config.meterColours = QVariant::fromValue(colours);
     }
-    else {
-        m_settings->set<Settings::VuMeter::MeterColours>(QVariant{});
-        load();
-    }
+
+    return config;
 }
 
-void VuMeterSettingsPageWidget::reset()
+void VuMeterConfigDialog::setConfig(const VuMeterWidget::ConfigData& config)
 {
-    m_settings->reset<Settings::VuMeter::PeakHoldTime>();
-    m_settings->reset<Settings::VuMeter::FalloffTime>();
-    m_settings->reset<Settings::VuMeter::UpdateFps>();
-    m_settings->reset<Settings::VuMeter::ChannelSpacing>();
-    m_settings->reset<Settings::VuMeter::BarSize>();
-    m_settings->reset<Settings::VuMeter::BarSpacing>();
-    m_settings->reset<Settings::VuMeter::BarSections>();
-    m_settings->reset<Settings::VuMeter::SectionSpacing>();
-    m_settings->reset<Settings::VuMeter::MeterColours>();
-}
+    m_peakHold->setValue(config.peakHoldTime);
+    m_falloff->setValue(config.falloffTime);
 
-VuMeterSettingsPage::VuMeterSettingsPage(SettingsManager* settings, QObject* parent)
-    : SettingsPage{settings->settingsDialog(), parent}
-{
-    setId(VuMeterPage);
-    setName(tr("General"));
-    setCategory({tr("Widgets"), tr("VU Meter")});
-    setWidgetCreator([settings] { return new VuMeterSettingsPageWidget(settings); });
+    const int nearest = Gui::FrameRate::nearestPresetFps(config.updateFps);
+    int fpsIndex      = m_updateFps->findData(nearest);
+    if(fpsIndex < 0) {
+        fpsIndex = m_updateFps->findData(Gui::FrameRate::toFps(DefaultFps));
+    }
+    m_updateFps->setCurrentIndex(fpsIndex);
+
+    m_channelSpacing->setValue(config.channelSpacing);
+    m_barSize->setValue(config.barSize);
+    m_barSpacing->setValue(config.barSpacing);
+    m_barSections->setValue(config.barSections);
+    m_sectionSpacing->setValue(config.sectionSpacing);
+
+    const bool customColours = config.meterColours.isValid() && config.meterColours.canConvert<Colours>();
+    const Colours colours    = customColours ? config.meterColours.value<Colours>() : Colours{};
+
+    m_colourGroup->setChecked(customColours);
+    m_bgColour->setColour(colours.colour(Colours::Type::Background));
+    m_peakColour->setColour(colours.colour(Colours::Type::Peak));
+    m_legendColour->setColour(colours.colour(Colours::Type::Legend));
+    m_leftColour->setColour(colours.colour(Colours::Type::Gradient1));
+    m_rightColour->setColour(colours.colour(Colours::Type::Gradient2));
 }
 } // namespace Fooyin::VuMeter
-
-#include "moc_vumetersettingspage.cpp"
-#include "vumetersettingspage.moc"

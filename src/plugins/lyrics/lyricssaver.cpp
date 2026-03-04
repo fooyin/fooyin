@@ -159,7 +159,7 @@ void LyricsSaver::autoSaveLyrics(const Lyrics& lyrics, const Track& track)
         return;
     }
 
-    const auto preferType = static_cast<SavePrefer>(m_settings->value<Settings::Lyrics::SavePrefer>());
+    const auto preferType = static_cast<SavePrefer>(m_settings->fileValue(Settings::SavePrefer, 0).toInt());
     if(preferType == SavePrefer::Unsynced && lyrics.type != Lyrics::Type::Unsynced) {
         return;
     }
@@ -168,7 +168,7 @@ void LyricsSaver::autoSaveLyrics(const Lyrics& lyrics, const Track& track)
     }
 
     const auto saveToMethod = [this, lyrics, track]() {
-        const auto saveMethod = static_cast<SaveMethod>(m_settings->value<Settings::Lyrics::SaveMethod>());
+        const auto saveMethod = static_cast<SaveMethod>(m_settings->fileValue(Settings::SaveMethod, 0).toInt());
         switch(saveMethod) {
             case(SaveMethod::Tag):
                 saveLyricsToTag(lyrics, track);
@@ -179,7 +179,7 @@ void LyricsSaver::autoSaveLyrics(const Lyrics& lyrics, const Track& track)
         }
     };
 
-    const auto saveScheme = static_cast<SaveScheme>(m_settings->value<Settings::Lyrics::SaveScheme>());
+    const auto saveScheme = static_cast<SaveScheme>(m_settings->fileValue(Settings::SaveScheme, 0).toInt());
 
     switch(saveScheme) {
         case(SaveScheme::Autosave):
@@ -207,7 +207,7 @@ void LyricsSaver::saveLyrics(const Lyrics& lyrics, const Track& track)
         return;
     }
 
-    const auto saveMethod = static_cast<SaveMethod>(m_settings->value<Settings::Lyrics::SaveMethod>());
+    const auto saveMethod = static_cast<SaveMethod>(m_settings->fileValue(Settings::SaveMethod, 0).toInt());
     switch(saveMethod) {
         case(SaveMethod::Tag):
             saveLyricsToTag(lyrics, track);
@@ -224,8 +224,8 @@ void LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
         return;
     }
 
-    const QString dir      = m_settings->value<Settings::Lyrics::SaveDir>();
-    const QString filename = m_settings->value<Settings::Lyrics::SaveFilename>() + ".lrc"_L1;
+    const QString dir      = m_settings->fileValue(Settings::SaveDir, u"%path%"_s).toString();
+    const QString filename = m_settings->fileValue(Settings::SaveFilename, u"%filename%"_s).toString() + ".lrc"_L1;
 
     const QString filepath = QDir::cleanPath(m_parser.evaluate(dir + "/"_L1 + filename, track));
 
@@ -235,7 +235,7 @@ void LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
         return;
     }
 
-    lyricsToLrc(lyrics, &file, static_cast<SaveOptions>(m_settings->value<Settings::Lyrics::SaveOptions>()));
+    lyricsToLrc(lyrics, &file, static_cast<SaveOptions>(m_settings->fileValue(Settings::SaveOptions, 0).toInt()));
     file.close();
 }
 
@@ -245,15 +245,16 @@ void LyricsSaver::saveLyricsToTag(const Lyrics& lyrics, const Track& track)
         return;
     }
 
-    const QString tag = lyrics.type == Lyrics::Type::Unsynced ? m_settings->value<Settings::Lyrics::SaveUnsyncedTag>()
-                                                              : m_settings->value<Settings::Lyrics::SaveSyncedTag>();
+    const QString tag = lyrics.type == Lyrics::Type::Unsynced
+                          ? m_settings->fileValue(Settings::SaveUnsyncedTag, u"UNSYNCED LYRICS"_s).toString()
+                          : m_settings->fileValue(Settings::SaveSyncedTag, u"LYRICS"_s).toString();
     if(tag.isEmpty()) {
         qCInfo(LYRICS) << "Unable to save lyrics to an empty tag";
         return;
     }
 
     const QString lrc
-        = lyricsToLrc(lyrics, static_cast<SaveOptions>(m_settings->value<Settings::Lyrics::SaveOptions>()));
+        = lyricsToLrc(lyrics, static_cast<SaveOptions>(m_settings->fileValue(Settings::SaveOptions, 0).toInt()));
 
     Track updatedTrack{track};
     updatedTrack.replaceExtraTag(tag, lrc);

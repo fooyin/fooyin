@@ -175,27 +175,30 @@ LyricsSavingPageWidget::LyricsSavingPageWidget(SettingsManager* settings)
 
 void LyricsSavingPageWidget::load()
 {
-    const auto saveScheme = static_cast<SaveScheme>(m_settings->value<Settings::Lyrics::SaveScheme>());
+    const auto saveScheme = static_cast<SaveScheme>(
+        m_settings->fileValue(Settings::SaveScheme, static_cast<int>(SaveScheme::Manual)).toInt());
     m_manual->setChecked(saveScheme == SaveScheme::Manual);
     m_autosave->setChecked(saveScheme == SaveScheme::Autosave);
     m_autosavePeriod->setChecked(saveScheme == SaveScheme::AutosavePeriod);
 
-    const auto saveMethod = static_cast<SaveMethod>(m_settings->value<Settings::Lyrics::SaveMethod>());
+    const auto saveMethod = static_cast<SaveMethod>(
+        m_settings->fileValue(Settings::SaveMethod, static_cast<int>(SaveMethod::Tag)).toInt());
     m_tag->setChecked(saveMethod == SaveMethod::Tag);
     m_directory->setChecked(saveMethod == SaveMethod::Directory);
 
-    const auto savePrefer = static_cast<SavePrefer>(m_settings->value<Settings::Lyrics::SavePrefer>());
+    const auto savePrefer = static_cast<SavePrefer>(
+        m_settings->fileValue(Settings::SavePrefer, static_cast<int>(SavePrefer::None)).toInt());
     m_noPreference->setChecked(savePrefer == SavePrefer::None);
     m_saveSynced->setChecked(savePrefer == SavePrefer::Synced);
     m_saveUnsynced->setChecked(savePrefer == SavePrefer::Unsynced);
 
-    m_syncedTag->setText(m_settings->value<Settings::Lyrics::SaveSyncedTag>());
-    m_unyncedTag->setText(m_settings->value<Settings::Lyrics::SaveUnsyncedTag>());
+    m_syncedTag->setText(m_settings->fileValue(Settings::SaveSyncedTag, u"LYRICS"_s).toString());
+    m_unyncedTag->setText(m_settings->fileValue(Settings::SaveUnsyncedTag, u"UNSYNCED LYRICS"_s).toString());
 
-    m_path->setText(m_settings->value<Settings::Lyrics::SaveDir>());
-    m_filename->setText(m_settings->value<Settings::Lyrics::SaveFilename>());
+    m_path->setText(m_settings->fileValue(Settings::SaveDir, u"%path%"_s).toString());
+    m_filename->setText(m_settings->fileValue(Settings::SaveFilename, u"%filename%"_s).toString());
 
-    const auto opts = static_cast<LyricsSaver::SaveOptions>(m_settings->value<Settings::Lyrics::SaveOptions>());
+    const auto opts = static_cast<LyricsSaver::SaveOptions>(m_settings->fileValue(Settings::SaveOptions, 0).toInt());
     m_collapse->setChecked(opts & LyricsSaver::Collapse);
     m_metadata->setChecked(opts & LyricsSaver::Metadata);
 }
@@ -212,7 +215,7 @@ void LyricsSavingPageWidget::apply()
     else {
         saveScheme = SaveScheme::AutosavePeriod;
     }
-    m_settings->set<Settings::Lyrics::SaveScheme>(static_cast<int>(saveScheme));
+    m_settings->fileSet(Settings::SaveScheme, static_cast<int>(saveScheme));
 
     SaveMethod saveMethod{SaveMethod::Tag};
     if(m_tag->isChecked()) {
@@ -221,7 +224,7 @@ void LyricsSavingPageWidget::apply()
     else {
         saveMethod = SaveMethod::Directory;
     }
-    m_settings->set<Settings::Lyrics::SaveMethod>(static_cast<int>(saveMethod));
+    m_settings->fileSet(Settings::SaveMethod, static_cast<int>(saveMethod));
 
     SavePrefer savePrefer{SavePrefer::None};
     if(m_noPreference->isChecked()) {
@@ -233,13 +236,13 @@ void LyricsSavingPageWidget::apply()
     else {
         savePrefer = SavePrefer::Unsynced;
     }
-    m_settings->set<Settings::Lyrics::SavePrefer>(static_cast<int>(savePrefer));
+    m_settings->fileSet(Settings::SavePrefer, static_cast<int>(savePrefer));
 
-    m_settings->set<Settings::Lyrics::SaveSyncedTag>(m_syncedTag->text());
-    m_settings->set<Settings::Lyrics::SaveUnsyncedTag>(m_unyncedTag->text());
+    m_settings->fileSet(Settings::SaveSyncedTag, m_syncedTag->text());
+    m_settings->fileSet(Settings::SaveUnsyncedTag, m_unyncedTag->text());
 
-    m_settings->set<Settings::Lyrics::SaveDir>(m_path->text());
-    m_settings->set<Settings::Lyrics::SaveFilename>(m_filename->text());
+    m_settings->fileSet(Settings::SaveDir, m_path->text());
+    m_settings->fileSet(Settings::SaveFilename, m_filename->text());
 
     LyricsSaver::SaveOptions opts;
     if(m_collapse->isChecked()) {
@@ -248,19 +251,20 @@ void LyricsSavingPageWidget::apply()
     if(m_metadata->isChecked()) {
         opts |= LyricsSaver::Metadata;
     }
-    m_settings->set<Settings::Lyrics::SaveOptions>(static_cast<int>(opts));
+    m_settings->fileSet(Settings::SaveOptions, static_cast<int>(opts));
 }
 
 void LyricsSavingPageWidget::reset()
 {
-    m_settings->reset<Settings::Lyrics::SaveScheme>();
-    m_settings->reset<Settings::Lyrics::SaveMethod>();
-    m_settings->reset<Settings::Lyrics::SavePrefer>();
-    m_settings->reset<Settings::Lyrics::SaveSyncedTag>();
-    m_settings->reset<Settings::Lyrics::SaveUnsyncedTag>();
-    m_settings->reset<Settings::Lyrics::SaveDir>();
-    m_settings->reset<Settings::Lyrics::SaveFilename>();
-    m_settings->reset<Settings::Lyrics::SaveOptions>();
+    m_settings->fileRemove(Settings::SaveScheme);
+    m_settings->fileRemove(Settings::SaveMethod);
+    m_settings->fileRemove(Settings::SavePrefer);
+    m_settings->fileRemove(Settings::SaveSyncedTag);
+    m_settings->fileRemove(Settings::SaveUnsyncedTag);
+    m_settings->fileRemove(Settings::SaveDir);
+    m_settings->fileRemove(Settings::SaveFilename);
+    m_settings->fileRemove(Settings::SaveOptions);
+    load();
 }
 
 void LyricsSavingPageWidget::browseDestination() const

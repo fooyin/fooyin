@@ -92,8 +92,8 @@ void LyricsSourcesPageWidget::load()
 {
     m_sourceModel->setup(m_lyricsFinder->sources());
 
-    m_lyricTags->setText(m_settings->value<Settings::Lyrics::SearchTags>().join(u';'));
-    const auto paths = m_settings->value<Settings::Lyrics::Paths>();
+    m_lyricTags->setText(m_settings->fileValue(Settings::SearchTags, Defaults::searchTags()).toStringList().join(u';'));
+    const auto paths = m_settings->fileValue(Settings::Paths, Defaults::paths()).toStringList();
     m_lyricPaths->setPlainText(paths.join(u"\n"_s));
 }
 
@@ -117,8 +117,8 @@ void LyricsSourcesPageWidget::apply()
 
     m_lyricsFinder->sort();
 
-    m_settings->set<Settings::Lyrics::SearchTags>(m_lyricTags->text().split(u';', Qt::SkipEmptyParts));
-    m_settings->set<Settings::Lyrics::Paths>(m_lyricPaths->toPlainText().split(u'\n', Qt::SkipEmptyParts));
+    m_settings->fileSet(Settings::SearchTags, m_lyricTags->text().split(u';', Qt::SkipEmptyParts));
+    m_settings->fileSet(Settings::Paths, m_lyricPaths->toPlainText().split(u'\n', Qt::SkipEmptyParts));
 
     load();
 }
@@ -127,8 +127,8 @@ void LyricsSourcesPageWidget::reset()
 {
     m_lyricsFinder->reset();
 
-    m_settings->reset<Settings::Lyrics::SearchTags>();
-    m_settings->reset<Settings::Lyrics::Paths>();
+    m_settings->fileRemove(Settings::SearchTags);
+    m_settings->fileRemove(Settings::Paths);
 
     load();
 }

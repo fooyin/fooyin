@@ -21,6 +21,8 @@
 
 #include <gui/fywidget.h>
 
+class QJsonObject;
+
 namespace Fooyin {
 class ActionManager;
 class Command;
@@ -43,6 +45,25 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
+
+    struct ConfigData
+    {
+        QString leftScript;
+        QString rightScript;
+        bool showCurrent{true};
+        bool showIcon{true};
+        QSize iconSize{36, 36};
+        bool showHeader{true};
+        bool showScrollBar{true};
+        bool alternatingRows{false};
+    };
+
+    [[nodiscard]] ConfigData defaultConfig() const;
+    [[nodiscard]] const ConfigData& currentConfig() const;
+    void saveDefaults(const ConfigData& config) const;
+    void applyConfig(const ConfigData& config);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -62,6 +83,10 @@ private:
     void handleQueueChanged();
     void handleQueueDoubleClicked(const QModelIndex& index) const;
 
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
+    void openConfigDialog() override;
+
     ActionManager* m_actionManager;
     PlaylistInteractor* m_playlistInteractor;
     PlayerController* m_playerController;
@@ -71,6 +96,7 @@ private:
     QueueViewerModel* m_model;
     WidgetContext* m_context;
     bool m_changingQueue{false};
+    ConfigData m_config;
 
     QAction* m_remove;
     Command* m_removeCmd;

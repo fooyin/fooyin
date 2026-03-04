@@ -48,6 +48,9 @@ public:
     void generateAndScale(const Track& track, bool update = false);
     void rescale(int width);
 
+    void setSampleWidth(int width);
+    void setDownmix(DownmixOption option);
+
 signals:
     void generatingWaveform();
     void waveformGenerated(const Fooyin::Track& track);
@@ -66,6 +69,8 @@ private:
 
     int m_width;
     int m_samplesPerChannel;
+    int m_sampleWidth;
+    DownmixOption m_downmix;
     bool m_rescale;
 };
 } // namespace WaveBar

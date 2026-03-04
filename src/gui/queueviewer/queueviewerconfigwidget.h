@@ -19,18 +19,37 @@
 
 #pragma once
 
-#include <utils/settings/settingspage.h>
+#include "queueviewer.h"
+
+#include <gui/configdialog.h>
+
+class QCheckBox;
+class QGroupBox;
+class QSpinBox;
 
 namespace Fooyin {
-class SettingsManager;
+class ScriptLineEdit;
 
-namespace Lyrics {
-class LyricsGuiPage : public SettingsPage
+class QueueViewerConfigDialog : public WidgetConfigDialog<QueueViewer, QueueViewer::ConfigData>
 {
     Q_OBJECT
 
 public:
-    explicit LyricsGuiPage(SettingsManager* settings, QObject* parent = nullptr);
+    explicit QueueViewerConfigDialog(QueueViewer* queueViewer, QWidget* parent = nullptr);
+
+private:
+    void setConfig(const QueueViewer::ConfigData& config) override;
+    [[nodiscard]] QueueViewer::ConfigData config() const override;
+
+    ScriptLineEdit* m_titleScript;
+    ScriptLineEdit* m_subtitleScript;
+
+    QCheckBox* m_headers;
+    QCheckBox* m_scrollBars;
+    QCheckBox* m_altRowColours;
+    QCheckBox* m_showCurrent;
+    QGroupBox* m_showIcon;
+    QSpinBox* m_iconWidth;
+    QSpinBox* m_iconHeight;
 };
-} // namespace Lyrics
 } // namespace Fooyin

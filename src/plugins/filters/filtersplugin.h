@@ -26,10 +26,6 @@
 
 namespace Fooyin::Filters {
 class FilterController;
-class FiltersColumnPage;
-class FiltersGeneralPage;
-class FiltersGuiPage;
-class FiltersSettings;
 
 class FiltersPlugin : public QObject,
                       public Plugin,
@@ -51,10 +47,5 @@ private:
     LayoutProvider* m_layoutProvider;
 
     FilterController* m_filterController;
-    std::unique_ptr<FiltersSettings> m_filterSettings;
-
-    FiltersGeneralPage* m_generalPage;
-    FiltersGuiPage* m_guiPage;
-    FiltersColumnPage* m_columnsPage;
 };
 } // namespace Fooyin::Filters

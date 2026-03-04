@@ -32,17 +32,6 @@ WaveBarSettings::WaveBarSettings(SettingsManager* settingsManager)
     using namespace Settings::WaveBar;
 
     qRegisterMetaType<Fooyin::WaveBar::Colours>("Fooyin::WaveBar::Colours");
-
-    m_settings->createSetting<Downmix>(0, u"WaveBar/Downmix"_s);
-    m_settings->createSetting<ShowCursor>(true, u"WaveBar/ShowCursor"_s);
-    m_settings->createSetting<CursorWidth>(3, u"WaveBar/CursorWidth"_s);
-    m_settings->createSetting<ColourOptions>(QVariant{}, u"WaveBar/Colours"_s);
-    m_settings->createSetting<Mode>(static_cast<int>(Default), u"WaveBar/Mode"_s);
-    m_settings->createSetting<BarWidth>(1, u"WaveBar/BarWidth"_s);
-    m_settings->createSetting<BarGap>(0, u"WaveBar/BarGap"_s);
-    m_settings->createSetting<MaxScale>(1.0, u"WaveBar/MaxScale"_s);
-    m_settings->createSetting<CentreGap>(0, u"WaveBar/CentreGap"_s);
-    m_settings->createSetting<ChannelScale>(0.9, u"WaveBar/ChannelScale"_s);
     m_settings->createSetting<NumSamples>(2048, u"WaveBar/NumSamples"_s);
 }
 } // namespace Fooyin::WaveBar

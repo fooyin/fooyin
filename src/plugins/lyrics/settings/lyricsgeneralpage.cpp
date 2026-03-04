@@ -21,6 +21,7 @@
 
 #include "lyricsconstants.h"
 #include "lyricssettings.h"
+#include "lyricswidget.h"
 
 #include <gui/guisettings.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -118,26 +119,29 @@ LyricsGeneralPageWidget::LyricsGeneralPageWidget(SettingsManager* settings)
 
 void LyricsGeneralPageWidget::load()
 {
-    m_seekOnClick->setChecked(m_settings->value<Settings::Lyrics::SeekOnClick>());
-    m_scrollDuration->setValue(m_settings->value<Settings::Lyrics::ScrollDuration>());
-    setScrollMode(static_cast<ScrollMode>(m_settings->value<Settings::Lyrics::ScrollMode>()));
-    m_noLyricsScript->setText(m_settings->value<Settings::Lyrics::NoLyricsScript>());
+    m_seekOnClick->setChecked(m_settings->fileValue(Settings::SeekOnClick, true).toBool());
+    m_scrollDuration->setValue(m_settings->fileValue(Settings::ScrollDuration, 500).toInt());
+    setScrollMode(static_cast<ScrollMode>(
+        m_settings->fileValue(Settings::ScrollMode, static_cast<int>(ScrollMode::Synced)).toInt()));
+    m_noLyricsScript->setText(
+        m_settings->fileValue(Settings::NoLyricsScript, LyricsWidget::defaultNoLyricsScript()).toString());
 }
 
 void LyricsGeneralPageWidget::apply()
 {
-    m_settings->set<Settings::Lyrics::SeekOnClick>(m_seekOnClick->isChecked());
-    m_settings->set<Settings::Lyrics::ScrollDuration>(m_scrollDuration->value());
-    m_settings->set<Settings::Lyrics::ScrollMode>(static_cast<int>(getScrollMode()));
-    m_settings->set<Settings::Lyrics::NoLyricsScript>(m_noLyricsScript->text());
+    m_settings->fileSet(Settings::SeekOnClick, m_seekOnClick->isChecked());
+    m_settings->fileSet(Settings::ScrollDuration, m_scrollDuration->value());
+    m_settings->fileSet(Settings::ScrollMode, static_cast<int>(getScrollMode()));
+    m_settings->fileSet(Settings::NoLyricsScript, m_noLyricsScript->text());
 }
 
 void LyricsGeneralPageWidget::reset()
 {
-    m_settings->reset<Settings::Lyrics::SeekOnClick>();
-    m_settings->reset<Settings::Lyrics::ScrollDuration>();
-    m_settings->reset<Settings::Lyrics::ScrollMode>();
-    m_settings->reset<Settings::Lyrics::NoLyricsScript>();
+    m_settings->fileRemove(Settings::SeekOnClick);
+    m_settings->fileRemove(Settings::ScrollDuration);
+    m_settings->fileRemove(Settings::ScrollMode);
+    m_settings->fileRemove(Settings::NoLyricsScript);
+    load();
 }
 
 ScrollMode LyricsGeneralPageWidget::getScrollMode() const

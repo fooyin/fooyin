@@ -20,22 +20,22 @@
 #include "vumeterwidget.h"
 
 #include "vumetercolours.h"
-#include "vumetersettings.h"
 
 #include <core/player/playercontroller.h>
+#include <gui/configdialog.h>
 #include <gui/framerate.h>
 #include <gui/guisettings.h>
-#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QActionGroup>
 #include <QBasicTimer>
 #include <QContextMenuEvent>
+#include <QDialog>
 #include <QElapsedTimer>
 #include <QJsonObject>
+#include <QLabel>
 #include <QMenu>
 #include <QPainter>
-#include <QPixmap>
 #include <QTimerEvent>
 #include <QWindow>
 
@@ -50,6 +50,17 @@ constexpr auto DbRange       = MaxDb - MinDb;
 constexpr auto TickInterval  = 10;
 constexpr auto LegendPadding = 10;
 constexpr auto DefaultFps    = Fooyin::Gui::FrameRate::Preset::Fps40;
+
+// Settings
+constexpr auto PeakHoldTimeKey   = u"VuMeter/PeakHoldTime";
+constexpr auto FalloffTimeKey    = u"VuMeter/FalloffTime";
+constexpr auto UpdateFpsKey      = u"VuMeter/UpdateFps";
+constexpr auto ChannelSpacingKey = u"VuMeter/ChannelSpacing";
+constexpr auto BarSizeKey        = u"VuMeter/BarSize";
+constexpr auto BarSpacingKey     = u"VuMeter/BarSpacing";
+constexpr auto BarSectionsKey    = u"VuMeter/BarSections";
+constexpr auto SectionSpacingKey = u"VuMeter/SectionSpacing";
+constexpr auto MeterColoursKey   = u"VuMeter/Colours";
 
 namespace {
 float dbScale(float db)
@@ -93,12 +104,13 @@ int updateIntervalFromFps(int fps)
 }
 } // namespace
 
+#include "vumeterconfigwidget.h"
+
 namespace Fooyin::VuMeter {
 class VuMeterWidgetPrivate
 {
 public:
-    explicit VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::Type type, PlayerController* playerController,
-                                  SettingsManager* settings);
+    explicit VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::Type type, PlayerController* playerController);
 
     void reset();
     void updateSize();
@@ -136,7 +148,6 @@ public:
 
     VuMeterWidget* m_self;
     PlayerController* m_playerController;
-    SettingsManager* m_settings;
 
     AudioFormat m_format;
     std::array<float, MaxChannels> m_channelDbLevels;
@@ -146,12 +157,14 @@ public:
     VuMeterWidget::Type m_type{VuMeterWidget::Type::Peak};
     Qt::Orientation m_orientation{Qt::Horizontal};
     bool m_showPeaks{false};
-    float m_channelSpacing;
+    float m_channelSpacing{1};
     bool m_showLegend{false};
-    float m_barSize;
-    float m_barSpacing;
-    int m_barSections;
-    float m_sectionSpacing;
+    float m_barSize{0};
+    float m_barSpacing{1};
+    int m_barSections{1};
+    float m_sectionSpacing{1};
+    qint64 m_peakHoldTimeMs{1500};
+    float m_falloffPerMs{13.0F / 1000.0F};
 
     float m_meterWidth{0};
     float m_meterHeight{0};
@@ -179,17 +192,10 @@ public:
 };
 
 VuMeterWidgetPrivate::VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::Type type,
-                                           PlayerController* playerController, SettingsManager* settings)
+                                           PlayerController* playerController)
     : m_self{self}
     , m_playerController{playerController}
-    , m_settings{settings}
     , m_type{type}
-    , m_channelSpacing{static_cast<float>(m_settings->value<Settings::VuMeter::ChannelSpacing>())}
-    , m_barSize{static_cast<float>(m_settings->value<Settings::VuMeter::BarSize>())}
-    , m_barSpacing{static_cast<float>(m_settings->value<Settings::VuMeter::BarSpacing>())}
-    , m_barSections{m_settings->value<Settings::VuMeter::BarSections>()}
-    , m_sectionSpacing{static_cast<float>(m_settings->value<Settings::VuMeter::SectionSpacing>())}
-    , m_colours{m_settings->value<Settings::VuMeter::MeterColours>().value<Colours>()}
 {
     m_format.setSampleFormat(SampleFormat::F32);
 
@@ -202,7 +208,6 @@ VuMeterWidgetPrivate::VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::T
 
     reset();
     updateSize();
-    setUpdateFps(m_settings->value<Settings::VuMeter::UpdateFps>());
 }
 
 void VuMeterWidgetPrivate::reset()
@@ -252,8 +257,8 @@ void VuMeterWidgetPrivate::updateSize()
 void VuMeterWidgetPrivate::calculatePeak()
 {
     const qint64 elapsedTime = m_elapsedTimer.restart();
-    const auto peakTime      = static_cast<qint64>(m_settings->value<Settings::VuMeter::PeakHoldTime>() * 1000);
-    const auto falloff       = static_cast<float>(m_settings->value<Settings::VuMeter::FalloffTime>() / 1000.0);
+    const auto peakTime      = m_peakHoldTimeMs;
+    const auto falloff       = m_falloffPerMs;
 
     QRect updateRect;
 
@@ -732,26 +737,25 @@ void VuMeterWidgetPrivate::playStateChanged(Player::PlayState state)
 
 VuMeterWidget::VuMeterWidget(Type type, PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<VuMeterWidgetPrivate>(this, type, playerController, settings)}
+    , m_settings{settings}
+    , p{std::make_unique<VuMeterWidgetPrivate>(this, type, playerController)}
 {
     setObjectName(VuMeterWidget::name());
+    m_config = defaultConfig();
+    applyConfig(m_config);
 
-    p->m_settings->subscribe<Settings::VuMeter::ChannelSpacing>(this, &VuMeterWidget::setChannelSpacing);
-    p->m_settings->subscribe<Settings::VuMeter::BarSize>(this, &VuMeterWidget::setBarSize);
-    p->m_settings->subscribe<Settings::VuMeter::BarSpacing>(this, &VuMeterWidget::setBarSpacing);
-    p->m_settings->subscribe<Settings::VuMeter::BarSections>(this, &VuMeterWidget::setBarSections);
-    p->m_settings->subscribe<Settings::VuMeter::SectionSpacing>(this, &VuMeterWidget::setSectionSpacing);
-    p->m_settings->subscribe<Settings::VuMeter::UpdateFps>(this, [this](int fps) { p->setUpdateFps(fps); });
+    auto updateThemeColours = [this]() {
+        if(m_config.meterColours.isValid()) {
+            return;
+        }
 
-    auto updateColours = [this]() {
-        p->m_colours = p->m_settings->value<Settings::VuMeter::MeterColours>().value<Colours>();
+        p->m_colours = Colours{};
         p->createGradient();
         p->invalidateStaticLayer();
         update();
     };
-    p->m_settings->subscribe<Settings::VuMeter::MeterColours>(this, updateColours);
-    p->m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
-    p->m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
+    m_settings->subscribe<Settings::Gui::Theme>(this, updateThemeColours);
+    m_settings->subscribe<Settings::Gui::Style>(this, updateThemeColours);
 }
 
 VuMeterWidget::~VuMeterWidget() = default;
@@ -768,6 +772,7 @@ QString VuMeterWidget::layoutName() const
 
 void VuMeterWidget::saveLayoutData(QJsonObject& layout)
 {
+    saveConfigToLayout(m_config, layout);
     layout["Orientation"_L1] = p->m_orientation;
     layout["ShowLegend"_L1]  = p->m_showLegend;
     layout["ShowPeaks"_L1]   = p->m_showPeaks;
@@ -775,6 +780,8 @@ void VuMeterWidget::saveLayoutData(QJsonObject& layout)
 
 void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
 {
+    applyConfig(configFromLayout(layout));
+
     if(layout.contains("Orientation"_L1)) {
         const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
         if(isVisible()) {
@@ -792,6 +799,171 @@ void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
 
     if(layout.contains("ShowPeaks"_L1)) {
         p->m_showPeaks = layout.value("ShowPeaks"_L1).toBool();
+    }
+}
+
+VuMeterWidget::ConfigData VuMeterWidget::defaultConfig() const
+{
+    return {
+        .peakHoldTime   = m_settings->fileValue(PeakHoldTimeKey, 1.5).toDouble(),
+        .falloffTime    = m_settings->fileValue(FalloffTimeKey, 13.0).toDouble(),
+        .updateFps      = m_settings->fileValue(UpdateFpsKey, Gui::FrameRate::toFps(DefaultFps)).toInt(),
+        .channelSpacing = m_settings->fileValue(ChannelSpacingKey, 1).toInt(),
+        .barSize        = m_settings->fileValue(BarSizeKey, 0).toInt(),
+        .barSpacing     = m_settings->fileValue(BarSpacingKey, 1).toInt(),
+        .barSections    = m_settings->fileValue(BarSectionsKey, 1).toInt(),
+        .sectionSpacing = m_settings->fileValue(SectionSpacingKey, 1).toInt(),
+        .meterColours   = m_settings->fileValue(MeterColoursKey, QVariant{}),
+    };
+}
+
+const VuMeterWidget::ConfigData& VuMeterWidget::currentConfig() const
+{
+    return m_config;
+}
+
+void VuMeterWidget::saveDefaults(const ConfigData& config) const
+{
+    auto validated{config};
+
+    validated.peakHoldTime   = std::clamp(validated.peakHoldTime, 0.1, 30.0);
+    validated.falloffTime    = std::clamp(validated.falloffTime, 0.1, 96.0);
+    validated.updateFps      = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+    validated.channelSpacing = std::clamp(validated.channelSpacing, 0, 20);
+    validated.barSize        = std::clamp(validated.barSize, 0, 50);
+    validated.barSpacing     = std::clamp(validated.barSpacing, 1, 20);
+    validated.barSections    = std::clamp(validated.barSections, 1, 20);
+    validated.sectionSpacing = std::clamp(validated.sectionSpacing, 1, 20);
+
+    if(!validated.meterColours.canConvert<Colours>()) {
+        validated.meterColours = QVariant{};
+    }
+
+    m_settings->fileSet(PeakHoldTimeKey, validated.peakHoldTime);
+    m_settings->fileSet(FalloffTimeKey, validated.falloffTime);
+    m_settings->fileSet(UpdateFpsKey, validated.updateFps);
+    m_settings->fileSet(ChannelSpacingKey, validated.channelSpacing);
+    m_settings->fileSet(BarSizeKey, validated.barSize);
+    m_settings->fileSet(BarSpacingKey, validated.barSpacing);
+    m_settings->fileSet(BarSectionsKey, validated.barSections);
+    m_settings->fileSet(SectionSpacingKey, validated.sectionSpacing);
+    m_settings->fileSet(MeterColoursKey, validated.meterColours);
+}
+
+void VuMeterWidget::applyConfig(const ConfigData& config)
+{
+    auto validated{config};
+
+    validated.peakHoldTime   = std::clamp(validated.peakHoldTime, 0.1, 30.0);
+    validated.falloffTime    = std::clamp(validated.falloffTime, 0.1, 96.0);
+    validated.updateFps      = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+    validated.channelSpacing = std::clamp(validated.channelSpacing, 0, 20);
+    validated.barSize        = std::clamp(validated.barSize, 0, 50);
+    validated.barSpacing     = std::clamp(validated.barSpacing, 1, 20);
+    validated.barSections    = std::clamp(validated.barSections, 1, 20);
+    validated.sectionSpacing = std::clamp(validated.sectionSpacing, 1, 20);
+
+    if(!validated.meterColours.canConvert<Colours>()) {
+        validated.meterColours = QVariant{};
+    }
+
+    m_config = validated;
+
+    p->m_peakHoldTimeMs = static_cast<qint64>(m_config.peakHoldTime * 1000.0);
+    p->m_falloffPerMs   = static_cast<float>(m_config.falloffTime / 1000.0);
+    p->setUpdateFps(m_config.updateFps);
+
+    p->m_channelSpacing = static_cast<float>(m_config.channelSpacing);
+    p->m_barSize        = static_cast<float>(m_config.barSize);
+    p->m_barSpacing     = static_cast<float>(m_config.barSpacing);
+    p->m_barSections    = m_config.barSections;
+    p->m_sectionSpacing = static_cast<float>(m_config.sectionSpacing);
+    p->m_colours        = m_config.meterColours.isValid() ? m_config.meterColours.value<Colours>() : Colours{};
+
+    p->updateSize();
+    update();
+}
+
+VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config = defaultConfig();
+
+    if(layout.contains("PeakHoldTime"_L1)) {
+        config.peakHoldTime = layout.value("PeakHoldTime"_L1).toDouble();
+    }
+    if(layout.contains("FalloffTime"_L1)) {
+        config.falloffTime = layout.value("FalloffTime"_L1).toDouble();
+    }
+    if(layout.contains("UpdateFps"_L1)) {
+        config.updateFps = layout.value("UpdateFps"_L1).toInt();
+    }
+    if(layout.contains("ChannelSpacing"_L1)) {
+        config.channelSpacing = layout.value("ChannelSpacing"_L1).toInt();
+    }
+    if(layout.contains("BarSize"_L1)) {
+        config.barSize = layout.value("BarSize"_L1).toInt();
+    }
+    if(layout.contains("BarSpacing"_L1)) {
+        config.barSpacing = layout.value("BarSpacing"_L1).toInt();
+    }
+    if(layout.contains("BarSections"_L1)) {
+        config.barSections = layout.value("BarSections"_L1).toInt();
+    }
+    if(layout.contains("SectionSpacing"_L1)) {
+        config.sectionSpacing = layout.value("SectionSpacing"_L1).toInt();
+    }
+
+    if(layout.contains("UseCustomColours"_L1)) {
+        if(layout.value("UseCustomColours"_L1).toBool()) {
+            Colours colours;
+
+            const auto setColour = [&layout, &colours](const QString& key, Colours::Type type) {
+                if(!layout.contains(key)) {
+                    return;
+                }
+
+                const QColor colour{layout.value(key).toString()};
+                if(colour.isValid()) {
+                    colours.setColour(type, colour);
+                }
+            };
+
+            setColour(u"BackgroundColour"_s, Colours::Type::Background);
+            setColour(u"PeakColour"_s, Colours::Type::Peak);
+            setColour(u"LegendColour"_s, Colours::Type::Legend);
+            setColour(u"Gradient1Colour"_s, Colours::Type::Gradient1);
+            setColour(u"Gradient2Colour"_s, Colours::Type::Gradient2);
+            config.meterColours = QVariant::fromValue(colours);
+        }
+        else {
+            config.meterColours = QVariant{};
+        }
+    }
+
+    return config;
+}
+
+void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
+{
+    layout["PeakHoldTime"_L1]   = config.peakHoldTime;
+    layout["FalloffTime"_L1]    = config.falloffTime;
+    layout["UpdateFps"_L1]      = config.updateFps;
+    layout["ChannelSpacing"_L1] = config.channelSpacing;
+    layout["BarSize"_L1]        = config.barSize;
+    layout["BarSpacing"_L1]     = config.barSpacing;
+    layout["BarSections"_L1]    = config.barSections;
+    layout["SectionSpacing"_L1] = config.sectionSpacing;
+
+    const bool customColours      = config.meterColours.isValid() && config.meterColours.canConvert<Colours>();
+    layout["UseCustomColours"_L1] = customColours;
+
+    if(customColours) {
+        const Colours colours         = config.meterColours.value<Colours>();
+        layout["BackgroundColour"_L1] = colours.colour(Colours::Type::Background).name(QColor::HexArgb);
+        layout["PeakColour"_L1]       = colours.colour(Colours::Type::Peak).name(QColor::HexArgb);
+        layout["LegendColour"_L1]     = colours.colour(Colours::Type::Legend).name(QColor::HexArgb);
+        layout["Gradient1Colour"_L1]  = colours.colour(Colours::Type::Gradient1).name(QColor::HexArgb);
+        layout["Gradient2Colour"_L1]  = colours.colour(Colours::Type::Gradient2).name(QColor::HexArgb);
     }
 }
 
@@ -889,6 +1061,11 @@ void VuMeterWidget::setSectionSpacing(int size)
     update();
 }
 
+void VuMeterWidget::openConfigDialog()
+{
+    showConfigDialog(new VuMeterConfigDialog(this, this));
+}
+
 QSize VuMeterWidget::minimumSizeHint() const
 {
     return {5, 5};
@@ -957,6 +1134,7 @@ void VuMeterWidget::paintEvent(QPaintEvent* event)
 void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
 
     auto* showPeaks = new QAction(tr("Show peaks"), menu);
     showPeaks->setCheckable(true);
@@ -986,16 +1164,11 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
     orientationMenu->addAction(horizontal);
     orientationMenu->addAction(vertical);
 
-    auto* gotoSettings = new QAction(tr("Settings…"), menu);
-    QObject::connect(gotoSettings, &QAction::triggered, this,
-                     [this]() { p->m_settings->settingsDialog()->openAtPage(VuMeterPage); });
-
     menu->addAction(showPeaks);
     menu->addAction(showLegend);
     menu->addSeparator();
     menu->addMenu(orientationMenu);
-    menu->addSeparator();
-    menu->addAction(gotoSettings);
+    addConfigureAction(menu);
 
     menu->popup(event->globalPos());
 }

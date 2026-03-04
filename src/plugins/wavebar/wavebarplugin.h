@@ -25,14 +25,17 @@
 #include <gui/plugins/guiplugin.h>
 #include <utils/database/dbconnectionpool.h>
 
+#include <QPointer>
+
+#include <vector>
+
 namespace Fooyin {
 class FyWidget;
 
 namespace WaveBar {
 class WaveBarSettings;
-class WaveBarSettingsPage;
-class WaveBarGuiSettingsPage;
 class WaveformBuilder;
+class WaveBarWidget;
 
 class WaveBarPlugin : public QObject,
                       public Plugin,
@@ -52,11 +55,15 @@ public:
 
 private:
     FyWidget* createWavebar();
-    void regenerateSelection(bool onlyMissing = false) const;
+    void registerWaveBar(WaveBarWidget* widget);
+    void pruneWaveBars();
+    void refreshWaveBars(const Track& track, bool update = false);
+
+    void regenerateSelection(bool onlyMissing = false);
     void removeTrack(const Track& track);
     void removeTracks(const TrackList& tracks);
     void removeSelection();
-    void clearCache() const;
+    void clearCache();
 
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
@@ -68,11 +75,9 @@ private:
 
     Track m_playingTrack;
     DbConnectionPoolPtr m_dbPool;
-    std::unique_ptr<WaveformBuilder> m_waveBuilder;
+    std::vector<QPointer<WaveBarWidget>> m_waveBars;
 
     std::unique_ptr<WaveBarSettings> m_waveBarSettings;
-    std::unique_ptr<WaveBarSettingsPage> m_waveBarSettingsPage;
-    std::unique_ptr<WaveBarGuiSettingsPage> m_waveBarGuiSettingsPage;
 };
 } // namespace WaveBar
 } // namespace Fooyin

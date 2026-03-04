@@ -50,14 +50,11 @@
 #include "settings/artwork/artworkgeneralpage.h"
 #include "settings/artwork/artworksearchingpage.h"
 #include "settings/artwork/artworksourcespage.h"
-#include "settings/dirbrowser/dirbrowserpage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
 #include "settings/guithemespage.h"
 #include "settings/library/librarygeneralpage.h"
 #include "settings/library/librarysortingpage.h"
-#include "settings/librarytree/librarytreegrouppage.h"
-#include "settings/librarytree/librarytreepage.h"
 #include "settings/networkpage.h"
 #include "settings/playback/decoderpage.h"
 #include "settings/playback/dspmanagerpage.h"
@@ -72,7 +69,6 @@
 #include "settings/searchpage.h"
 #include "settings/shellintegrationpage.h"
 #include "settings/shortcuts/shortcutspage.h"
-#include "settings/widgets/playbackqueuepage.h"
 #include "settings/widgets/statuswidgetpage.h"
 #include "splitters/splitterwidget.h"
 #include "splitters/tabstackwidget.h"
@@ -276,10 +272,6 @@ void Widgets::registerPages()
     new ReplayGainPage(m_settings, this);
     new NetworkPage(m_settings, this);
     new SearchPage(m_settings, this);
-    new DirBrowserPage(m_settings, this);
-    new LibraryTreePage(m_settings, this);
-    new LibraryTreeGroupPage(m_gui->actionManager(), m_libraryTreeController->groupRegistry(), m_settings, this);
-    new PlaybackQueuePage(m_settings, this);
     new StatusWidgetPage(m_settings, this);
 }
 

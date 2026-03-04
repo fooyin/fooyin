@@ -1,11 +1,12 @@
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/coverprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/configdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/editablelayout.h
     ${CMAKE_SOURCE_DIR}/include/gui/fylayout.h
     ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
-        ${CMAKE_SOURCE_DIR}/include/gui/framerate.h
+    ${CMAKE_SOURCE_DIR}/include/gui/framerate.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiconstants.h
     ${CMAKE_SOURCE_DIR}/include/gui/guipaths.h
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
@@ -89,6 +90,7 @@ set(SOURCES
     dialog/aboutdialog.h
     dialog/autoplaylistdialog.cpp
     dialog/autoplaylistdialog.h
+    dialog/configdialog.cpp
     dialog/exportlayoutdialog.cpp
     dialog/exportlayoutdialog.h
     dialog/propertiesdialog.cpp
@@ -98,6 +100,8 @@ set(SOURCES
     dialog/searchdialog.h
     dirbrowser/dirbrowser.cpp
     dirbrowser/dirbrowser.h
+    dirbrowser/dirbrowserconfigwidget.cpp
+    dirbrowser/dirbrowserconfigwidget.h
     dirbrowser/dirdelegate.cpp
     dirbrowser/dirdelegate.h
     dirbrowser/dirproxymodel.cpp
@@ -147,6 +151,10 @@ set(SOURCES
     librarytree/librarytreeview.h
     librarytree/librarytreewidget.cpp
     librarytree/librarytreewidget.h
+    librarytree/librarytreeconfigwidget.cpp
+    librarytree/librarytreeconfigwidget.h
+    librarytree/librarytreegroupeditordialog.cpp
+    librarytree/librarytreegroupeditordialog.h
     mainwindow.cpp
     mainwindow.h
     menubar/editmenu.cpp
@@ -209,6 +217,8 @@ set(SOURCES
     playlist/presetregistry.h
     queueviewer/queueviewer.cpp
     queueviewer/queueviewer.h
+    queueviewer/queueviewerconfigwidget.cpp
+    queueviewer/queueviewerconfigwidget.h
     queueviewer/queueviewerdelegate.cpp
     queueviewer/queueviewerdelegate.h
     queueviewer/queuevieweritem.cpp
@@ -266,8 +276,6 @@ set(SOURCES
     settings/artwork/artworksourcesmodel.h
     settings/artwork/artworksourcespage.cpp
     settings/artwork/artworksourcespage.h
-    settings/dirbrowser/dirbrowserpage.cpp
-    settings/dirbrowser/dirbrowserpage.h
     settings/generalpage.cpp
     settings/generalpage.h
     settings/guigeneralpage.cpp
@@ -284,10 +292,6 @@ set(SOURCES
     settings/library/sortingmodel.h
     settings/librarytree/librarytreegroupmodel.cpp
     settings/librarytree/librarytreegroupmodel.h
-    settings/librarytree/librarytreegrouppage.cpp
-    settings/librarytree/librarytreegrouppage.h
-    settings/librarytree/librarytreepage.cpp
-    settings/librarytree/librarytreepage.h
     settings/networkpage.cpp
     settings/networkpage.h
     settings/playback/decodermodel.cpp
@@ -330,8 +334,6 @@ set(SOURCES
     settings/shortcuts/shortcutsmodel.h
     settings/shortcuts/shortcutspage.cpp
     settings/shortcuts/shortcutspage.h
-    settings/widgets/playbackqueuepage.cpp
-    settings/widgets/playbackqueuepage.h
     settings/widgets/statuswidgetpage.cpp
     settings/widgets/statuswidgetpage.h
     splitters/splitterwidget.cpp

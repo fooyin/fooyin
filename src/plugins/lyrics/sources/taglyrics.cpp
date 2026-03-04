@@ -40,7 +40,7 @@ void TagLyrics::search(const SearchParams& params)
 {
     std::vector<LyricData> data;
 
-    const auto searchTags = settings()->value<Settings::Lyrics::SearchTags>();
+    const auto searchTags = settings()->fileValue(Settings::SearchTags, Defaults::searchTags()).toStringList();
     for(const QString& tag : searchTags) {
         const QStringList lyrics = params.track.extraTag(tag);
         if(!lyrics.empty()) {

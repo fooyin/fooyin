@@ -19,14 +19,11 @@
 
 #include "lyricsmodel.h"
 
-#include "settings/lyricssettings.h"
-
 #include <QSize>
 
 namespace Fooyin::Lyrics {
-LyricsModel::LyricsModel(SettingsManager* settings, QObject* parent)
+LyricsModel::LyricsModel(QObject* parent)
     : QAbstractListModel{parent}
-    , m_settings{settings}
     , m_alignment{Qt::AlignCenter}
     , m_lineSpacing{5}
     , m_currentTime{0}
@@ -36,13 +33,8 @@ LyricsModel::LyricsModel(SettingsManager* settings, QObject* parent)
     , m_wordLineFont{Lyrics::defaultFont()}
     , m_wordFont{Lyrics::defaultFont()}
 {
-    loadColours();
-    loadFonts();
-
-    m_settings->subscribe<Settings::Lyrics::Colours>(this, &LyricsModel::loadColours);
-    m_settings->subscribe<Settings::Lyrics::LineFont>(this, &LyricsModel::loadFonts);
-    m_settings->subscribe<Settings::Lyrics::WordLineFont>(this, &LyricsModel::loadFonts);
-    m_settings->subscribe<Settings::Lyrics::WordFont>(this, &LyricsModel::loadFonts);
+    setColours(Colours{});
+    setFonts({}, {}, {});
 }
 
 void LyricsModel::setLyrics(const Lyrics& lyrics)
@@ -91,6 +83,37 @@ void LyricsModel::setAlignment(Qt::Alignment alignment)
 void LyricsModel::setLineSpacing(int spacing)
 {
     m_lineSpacing = spacing;
+}
+
+void LyricsModel::setColours(const Colours& colours)
+{
+    m_colours = colours;
+
+    beginResetModel();
+
+    m_text.clear();
+    for(const auto& line : m_lyrics.lines) {
+        m_text.push_back(textForLine(line));
+    }
+
+    endResetModel();
+}
+
+void LyricsModel::setFonts(const QString& lineFont, const QString& wordLineFont, const QString& wordFont)
+{
+    if(lineFont.isEmpty() || !m_lineFont.fromString(lineFont)) {
+        m_lineFont = Lyrics::defaultLineFont();
+    }
+
+    if(wordLineFont.isEmpty() || !m_wordLineFont.fromString(wordLineFont)) {
+        m_wordLineFont = Lyrics::defaultWordLineFont();
+    }
+
+    if(wordFont.isEmpty() || !m_wordFont.fromString(wordFont)) {
+        m_wordFont = Lyrics::defaultWordFont();
+    }
+
+    updateCurrentLine();
 }
 
 void LyricsModel::setCurrentTime(uint64_t time)
@@ -183,50 +206,6 @@ QVariant LyricsModel::data(const QModelIndex& index, int role) const
         default:
             return {};
     }
-}
-
-void LyricsModel::loadColours()
-{
-    m_colours = m_settings->value<Settings::Lyrics::Colours>().value<Colours>();
-
-    beginResetModel();
-
-    m_text.clear();
-
-    for(const auto& line : m_lyrics.lines) {
-        m_text.push_back(textForLine(line));
-    }
-
-    endResetModel();
-}
-
-void LyricsModel::loadFonts()
-{
-    const QString lineFontStr = m_settings->value<Settings::Lyrics::LineFont>();
-    if(!lineFontStr.isEmpty()) {
-        m_lineFont.fromString(lineFontStr);
-    }
-    else {
-        m_lineFont = Lyrics::defaultLineFont();
-    }
-
-    const QString wordLineFontStr = m_settings->value<Settings::Lyrics::WordLineFont>();
-    if(!wordLineFontStr.isEmpty()) {
-        m_wordLineFont.fromString(wordLineFontStr);
-    }
-    else {
-        m_wordLineFont = Lyrics::defaultWordLineFont();
-    }
-
-    const QString wordFontStr = m_settings->value<Settings::Lyrics::WordFont>();
-    if(!wordFontStr.isEmpty()) {
-        m_wordFont.fromString(wordFontStr);
-    }
-    else {
-        m_wordFont = Lyrics::defaultWordFont();
-    }
-
-    updateCurrentLine();
 }
 
 void LyricsModel::updateCurrentLine()

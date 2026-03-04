@@ -19,8 +19,6 @@
 
 #include "queueviewermodel.h"
 
-#include "internalguisettings.h"
-
 #include <core/player/playbackqueue.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
@@ -69,11 +67,10 @@ QueueViewerModel::QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, Pla
                                    SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
     , m_playerController{playerController}
-    , m_settings{settings}
     , m_coverProvider{std::move(audioLoader), settings}
-    , m_showIcon{m_settings->value<Settings::Gui::Internal::QueueViewerShowIcon>()}
-    , m_iconSize{CoverProvider::findThumbnailSize(
-          m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize())}
+    , m_showCurrent{false}
+    , m_showIcon{true}
+    , m_iconSize{CoverProvider::findThumbnailSize({36, 36})}
     , m_currentTrackItem{nullptr}
 {
     QObject::connect(&m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
@@ -87,18 +84,6 @@ QueueViewerModel::QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, Pla
     });
 
     updateShowCurrent();
-
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowCurrent>(this, &QueueViewerModel::updateShowCurrent);
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerLeftScript>(this, &QueueViewerModel::regenerateTitles);
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerRightScript>(this, &QueueViewerModel::regenerateTitles);
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowIcon>(this, [this](const bool show) {
-        m_showIcon = show;
-        invalidateData();
-    });
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerIconSize>(this, [this](const auto& size) {
-        m_iconSize = CoverProvider::findThumbnailSize(size.toSize());
-        invalidateData();
-    });
 }
 
 Qt::ItemFlags QueueViewerModel::flags(const QModelIndex& index) const
@@ -189,7 +174,7 @@ bool QueueViewerModel::canDropMimeData(const QMimeData* data, Qt::DropAction act
                                        const QModelIndex& parent) const
 {
     if(action == Qt::MoveAction && data->hasFormat(QString::fromLatin1(ViewerItems))) {
-        return !m_settings->value<Settings::Gui::Internal::QueueViewerShowCurrent>() || row > 0;
+        return !m_showCurrent || row > 0;
     }
     if((action == Qt::CopyAction || action == Qt::MoveAction)
        && (data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))
@@ -244,9 +229,6 @@ bool QueueViewerModel::dropMimeData(const QMimeData* data, Qt::DropAction action
 
 void QueueViewerModel::insertTracks(const QueueTracks& tracks, int row)
 {
-    const auto titleScript    = m_settings->value<Settings::Gui::Internal::QueueViewerLeftScript>();
-    const auto subtitleScript = m_settings->value<Settings::Gui::Internal::QueueViewerRightScript>();
-
     int first = row < 0 ? rowCount({}) : row;
     if(m_currentTrackItem) {
         ++first;
@@ -259,7 +241,7 @@ void QueueViewerModel::insertTracks(const QueueTracks& tracks, int row)
         m_trackItems.insert(m_trackItems.begin() + first, std::make_unique<QueueViewerItem>(track));
         auto* item = m_trackItems.at(first).get();
 
-        item->generateTitle(&m_scriptParser, titleScript, subtitleScript);
+        item->generateTitle(&m_scriptParser, m_titleScript, m_subtitleScript);
         rootItem()->insertChild(first, item);
         m_trackParents[track.track.albumHash()].emplace_back(item);
 
@@ -362,9 +344,6 @@ void QueueViewerModel::removeIndexes(const std::vector<int>& indexes)
 
 void QueueViewerModel::reset(const QueueTracks& tracks)
 {
-    const auto titleScript    = m_settings->value<Settings::Gui::Internal::QueueViewerLeftScript>();
-    const auto subtitleScript = m_settings->value<Settings::Gui::Internal::QueueViewerRightScript>();
-
     beginResetModel();
     resetRoot();
     m_currentTrackItem.reset();
@@ -373,7 +352,7 @@ void QueueViewerModel::reset(const QueueTracks& tracks)
 
     for(const auto& track : tracks) {
         auto* item = m_trackItems.emplace_back(std::make_unique<QueueViewerItem>(track)).get();
-        item->generateTitle(&m_scriptParser, titleScript, subtitleScript);
+        item->generateTitle(&m_scriptParser, m_titleScript, m_subtitleScript);
         rootItem()->appendChild(item);
         m_trackParents[track.track.albumHash()].emplace_back(item);
     }
@@ -432,17 +411,56 @@ int QueueViewerModel::queueIndex(const QModelIndex& index) const
 
 void QueueViewerModel::regenerateTitles()
 {
-    const auto titleScript    = m_settings->value<Settings::Gui::Internal::QueueViewerLeftScript>();
-    const auto subtitleScript = m_settings->value<Settings::Gui::Internal::QueueViewerRightScript>();
-
     for(const auto& item : m_trackItems) {
-        item->generateTitle(&m_scriptParser, titleScript, subtitleScript);
+        item->generateTitle(&m_scriptParser, m_titleScript, m_subtitleScript);
     }
 
     if(m_currentTrackItem) {
-        m_currentTrackItem->generateTitle(&m_scriptParser, titleScript, subtitleScript);
+        m_currentTrackItem->generateTitle(&m_scriptParser, m_titleScript, m_subtitleScript);
     }
 
+    invalidateData();
+}
+
+void QueueViewerModel::setScripts(const QString& titleScript, const QString& subtitleScript)
+{
+    if(m_titleScript == titleScript && m_subtitleScript == subtitleScript) {
+        return;
+    }
+
+    m_titleScript    = titleScript;
+    m_subtitleScript = subtitleScript;
+    regenerateTitles();
+}
+
+void QueueViewerModel::setShowCurrent(const bool showCurrent)
+{
+    if(m_showCurrent == showCurrent) {
+        return;
+    }
+
+    m_showCurrent = showCurrent;
+    updateShowCurrent();
+}
+
+void QueueViewerModel::setShowIcon(const bool showIcon)
+{
+    if(m_showIcon == showIcon) {
+        return;
+    }
+
+    m_showIcon = showIcon;
+    invalidateData();
+}
+
+void QueueViewerModel::setIconSize(const QSize& iconSize)
+{
+    const auto thumbnailSize = CoverProvider::findThumbnailSize(iconSize);
+    if(m_iconSize == thumbnailSize) {
+        return;
+    }
+
+    m_iconSize = thumbnailSize;
     invalidateData();
 }
 
@@ -496,13 +514,9 @@ void QueueViewerModel::moveTracks(int row, const QModelIndexList& indexes)
 
 void QueueViewerModel::updateShowCurrent()
 {
-    if(m_settings->value<Settings::Gui::Internal::QueueViewerShowCurrent>() && !m_currentTrackItem
-       && m_playerController->currentIsQueueTrack()) {
-        const auto titleScript    = m_settings->value<Settings::Gui::Internal::QueueViewerLeftScript>();
-        const auto subtitleScript = m_settings->value<Settings::Gui::Internal::QueueViewerRightScript>();
-
+    if(m_showCurrent && !m_currentTrackItem && m_playerController->currentIsQueueTrack()) {
         m_currentTrackItem = std::make_unique<QueueViewerItem>(m_playerController->currentPlaylistTrack());
-        m_currentTrackItem->generateTitle(&m_scriptParser, titleScript, subtitleScript);
+        m_currentTrackItem->generateTitle(&m_scriptParser, m_titleScript, m_subtitleScript);
 
         beginInsertRows({}, 0, 0);
         rootItem()->insertChild(0, m_currentTrackItem.get());

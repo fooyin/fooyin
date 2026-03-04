@@ -4,10 +4,8 @@ create_fooyin_plugin_internal(
     SOURCES vumetercolours.h
             vumeterplugin.cpp
             vumeterplugin.h
-            vumetersettings.cpp
-            vumetersettings.h
-            vumetersettingspage.cpp
-            vumetersettingspage.h
             vumeterwidget.cpp
             vumeterwidget.h
+            vumeterconfigwidget.cpp
+            vumeterconfigwidget.h
 )

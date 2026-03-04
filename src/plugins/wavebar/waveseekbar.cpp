@@ -19,16 +19,13 @@
 
 #include "waveseekbar.h"
 
-#include "settings/wavebarsettings.h"
-
-#include <gui/guisettings.h>
-#include <utils/settings/settingsmanager.h>
 #include <utils/stringutils.h>
 
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStyle>
 
+#include <algorithm>
 #include <cmath>
 
 using namespace Qt::StringLiterals;
@@ -66,70 +63,23 @@ void setupPainter(QPainter& painter, bool isInProgress, bool isPlayed, int barWi
 } // namespace
 
 namespace Fooyin::WaveBar {
-WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
+WaveSeekBar::WaveSeekBar(QWidget* parent)
     : QWidget{parent}
-    , m_settings{settings}
     , m_playState{Player::PlayState::Stopped}
     , m_scale{1.0}
     , m_position{0}
-    , m_showCursor{settings->value<Settings::WaveBar::ShowCursor>()}
-    , m_cursorWidth{settings->value<Settings::WaveBar::CursorWidth>()}
-    , m_channelScale{settings->value<Settings::WaveBar::ChannelScale>()}
-    , m_barWidth{settings->value<Settings::WaveBar::BarWidth>()}
-    , m_barGap{settings->value<Settings::WaveBar::BarGap>()}
+    , m_showCursor{true}
+    , m_cursorWidth{3}
+    , m_channelScale{0.9}
+    , m_barWidth{1}
+    , m_barGap{0}
     , m_sampleWidth{m_barWidth + m_barGap}
-    , m_maxScale{settings->value<Settings::WaveBar::MaxScale>()}
-    , m_centreGap{settings->value<Settings::WaveBar::CentreGap>()}
-    , m_mode{static_cast<WaveModes>(settings->value<Settings::WaveBar::Mode>())}
-    , m_colours{settings->value<Settings::WaveBar::ColourOptions>().value<Colours>()}
+    , m_maxScale{1.0}
+    , m_centreGap{0}
+    , m_mode{WaveMode::Default}
+    , m_colours{}
 {
     setFocusPolicy(Qt::FocusPolicy(style()->styleHint(QStyle::SH_Button_FocusPolicy)));
-
-    m_settings->subscribe<Settings::WaveBar::ShowCursor>(this, [this](const bool show) {
-        m_showCursor = show;
-        update();
-    });
-    m_settings->subscribe<Settings::WaveBar::CursorWidth>(this, [this](const int width) {
-        m_cursorWidth = width;
-        update();
-    });
-    m_settings->subscribe<Settings::WaveBar::ChannelScale>(this, [this](const double scale) {
-        m_channelScale = scale;
-        update();
-    });
-    m_settings->subscribe<Settings::WaveBar::BarWidth>(this, [this](const int width) {
-        m_barWidth    = width;
-        m_sampleWidth = m_barWidth + m_barGap;
-        update();
-    });
-    m_settings->subscribe<Settings::WaveBar::BarGap>(this, [this](const int gap) {
-        m_barGap      = gap;
-        m_sampleWidth = m_barWidth + m_barGap;
-        update();
-    });
-    m_settings->subscribe<Settings::WaveBar::MaxScale>(this, [this](const double scale) {
-        m_maxScale = scale;
-        update();
-    });
-    m_settings->subscribe<Settings::WaveBar::CentreGap>(this, [this](const int gap) {
-        m_centreGap = gap;
-        update();
-    });
-    m_settings->subscribe<Settings::WaveBar::Mode>(this, [this](const int mode) {
-        m_mode = static_cast<WaveModes>(mode);
-        update();
-    });
-    m_settings->subscribe<Settings::WaveBar::ColourOptions>(this, [this](const QVariant& var) {
-        m_colours = var.value<Colours>();
-        update();
-    });
-
-    auto updateColours = [this]() {
-        m_colours = m_settings->value<Settings::WaveBar::ColourOptions>().value<Colours>();
-        update();
-    };
-    m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
-    m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
 }
 
 void WaveSeekBar::processData(const WaveformData<float>& waveData)
@@ -161,6 +111,77 @@ void WaveSeekBar::setPosition(uint64_t pos)
     const double x    = positionFromValue(static_cast<double>(pos));
 
     updateRange(oldX, x);
+}
+
+void WaveSeekBar::setShowCursor(bool show)
+{
+    if(std::exchange(m_showCursor, show) != show) {
+        update();
+    }
+}
+
+void WaveSeekBar::setCursorWidth(int width)
+{
+    const int validatedWidth = std::max(1, width);
+    if(std::exchange(m_cursorWidth, validatedWidth) != validatedWidth) {
+        update();
+    }
+}
+
+void WaveSeekBar::setChannelScale(double scale)
+{
+    const double validatedScale = std::clamp(scale, 0.0, 1.0);
+    if(std::exchange(m_channelScale, validatedScale) != validatedScale) {
+        update();
+    }
+}
+
+void WaveSeekBar::setBarWidth(int width)
+{
+    const int validatedWidth = std::max(1, width);
+    if(std::exchange(m_barWidth, validatedWidth) != validatedWidth) {
+        m_sampleWidth = m_barWidth + m_barGap;
+        update();
+    }
+}
+
+void WaveSeekBar::setBarGap(int gap)
+{
+    const int validatedGap = std::max(0, gap);
+    if(std::exchange(m_barGap, validatedGap) != validatedGap) {
+        m_sampleWidth = m_barWidth + m_barGap;
+        update();
+    }
+}
+
+void WaveSeekBar::setMaxScale(double scale)
+{
+    const double validatedScale = std::clamp(scale, 0.0, 2.0);
+    if(std::exchange(m_maxScale, validatedScale) != validatedScale) {
+        update();
+    }
+}
+
+void WaveSeekBar::setCentreGap(int gap)
+{
+    const int validatedGap = std::max(0, gap);
+    if(std::exchange(m_centreGap, validatedGap) != validatedGap) {
+        update();
+    }
+}
+
+void WaveSeekBar::setMode(WaveModes mode)
+{
+    if(std::exchange(m_mode, mode) != mode) {
+        update();
+    }
+}
+
+void WaveSeekBar::setColours(const Colours& colours)
+{
+    if(std::exchange(m_colours, colours) != colours) {
+        update();
+    }
 }
 
 bool WaveSeekBar::isSeeking() const
@@ -202,7 +223,7 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         = ((static_cast<double>(rect.right()) + 1.0) * invScale) / static_cast<double>(m_sampleWidth);
     const int first     = std::max(0, static_cast<int>(std::floor(firstSample)));
     const int last      = std::max(first, static_cast<int>(std::ceil(lastSample)));
-    const double firstX = static_cast<double>(first * m_sampleWidth);
+    const double firstX = first * m_sampleWidth;
     const double posX   = positionFromValue(static_cast<double>(m_position)) / m_scale;
 
     painter.fillRect(rect, m_colours.bgUnplayed);
@@ -307,11 +328,11 @@ double WaveSeekBar::positionFromValue(double value) const
     }
 
     if(value >= m_data.duration) {
-        return static_cast<double>(width());
+        return width();
     }
 
     const auto max   = static_cast<double>(m_data.duration);
-    const auto ratio = static_cast<double>(value) / max;
+    const auto ratio = value / max;
 
     return ratio * static_cast<double>(width());
 }
@@ -386,7 +407,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     const double centreGap = drawMax && drawMin ? m_centreGap : 0;
 
     double rmsScale{1.0};
-    if(m_mode & WaveMode::Rms && !(m_mode & WaveMode::MinMax)) {
+    if(m_mode & Rms && !(m_mode & MinMax)) {
         rmsScale = *std::ranges::max_element(rms);
     }
 
@@ -399,7 +420,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         const auto centreY = static_cast<double>(centre + (centreGap > 0 ? centreGap / 2 : 0));
         drawSilence(painter, finalX, endX, centreY);
     }
-    else if(m_mode & WaveMode::Silence && drawMax && drawMin) {
+    else if(m_mode & Silence && drawMax && drawMin) {
         const auto firstX  = static_cast<double>(first * m_sampleWidth);
         const auto lastX   = static_cast<double>((last + 1) * m_sampleWidth);
         const auto centreY = static_cast<double>(centre + (centreGap > 0 ? centreGap / 2 : 0));
@@ -425,17 +446,17 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     };
 
     auto drawBar = [&](int i, bool inProgress, bool isPlayed, double progress) {
-        const double x        = static_cast<double>(i * m_sampleWidth);
-        const double barWidth = static_cast<double>(m_barWidth);
+        const double x        = i * m_sampleWidth;
+        const double barWidth = m_barWidth;
 
-        if(m_mode & WaveMode::MinMax) {
+        if(m_mode & MinMax) {
             drawComponent(x, barWidth, centre, max[i], maxScale, drawMax, m_colours.maxUnplayed, m_colours.maxPlayed,
                           m_colours.maxBorder, inProgress, isPlayed, progress);
             drawComponent(x, barWidth, centre + centreGap, min[i], minScale, drawMin, m_colours.minUnplayed,
                           m_colours.minPlayed, m_colours.minBorder, inProgress, isPlayed, progress);
         }
 
-        if(m_mode & WaveMode::Rms) {
+        if(m_mode & Rms) {
             const double rmsAmp = rms[i] / rmsScale;
             drawComponent(x, barWidth, centre, rmsAmp, maxScale, drawMax, m_colours.rmsMaxUnplayed,
                           m_colours.rmsMaxPlayed, m_colours.rmsMaxBorder, inProgress, isPlayed, progress);
@@ -477,7 +498,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     }
     else {
         for(int i{drawFirst}; i <= last && i < total; ++i) {
-            const double sampleEnd   = static_cast<double>((i + 1) * m_sampleWidth);
+            const double sampleEnd   = (i + 1) * m_sampleWidth;
             const double sampleStart = sampleEnd - static_cast<double>(m_sampleWidth);
 
             double progress{0.0};
@@ -500,7 +521,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
 void WaveSeekBar::drawSilence(QPainter& painter, double first, double last, double y)
 {
     const auto currentPosition = positionFromValue(static_cast<double>(m_position)) / m_scale;
-    const bool showRms         = m_data.complete && m_mode & WaveMode::Rms;
+    const bool showRms         = m_data.complete && m_mode & Rms;
     const auto unplayedColour  = showRms ? m_colours.rmsMaxUnplayed : m_colours.maxUnplayed;
     const auto playedColour    = showRms ? m_colours.rmsMaxPlayed : m_colours.maxPlayed;
 

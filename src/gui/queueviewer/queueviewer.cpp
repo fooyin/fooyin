@@ -21,15 +21,16 @@
 
 #include "guiutils.h"
 #include "internalguisettings.h"
-#include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
+#include "queueviewerconfigwidget.h"
 #include "queueviewerdelegate.h"
 #include "queueviewermodel.h"
 #include "queueviewerview.h"
 
 #include <core/player/playercontroller.h>
+#include <gui/configdialog.h>
 #include <gui/guiconstants.h>
-#include <gui/widgets/expandedtreeview.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -37,12 +38,28 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QGridLayout>
+#include <QHBoxLayout>
 #include <QHeaderView>
+#include <QJsonObject>
+#include <QLabel>
 #include <QMenu>
+#include <QPushButton>
 #include <QScrollBar>
-#include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
+
+// Settings
+constexpr auto QueueViewerShowIconKey    = u"PlaybackQueue/ShowIcon";
+constexpr auto QueueViewerIconSizeKey    = u"PlaybackQueue/IconSize";
+constexpr auto QueueViewerHeaderKey      = u"PlaybackQueue/Header";
+constexpr auto QueueViewerScrollBarKey   = u"PlaybackQueue/Scrollbar";
+constexpr auto QueueViewerAltColoursKey  = u"PlaybackQueue/AlternatingColours";
+constexpr auto QueueViewerLeftScriptKey  = u"PlaybackQueue/LeftScript";
+constexpr auto QueueViewerRightScriptKey = u"PlaybackQueue/RightScript";
+constexpr auto QueueViewerShowCurrentKey = u"PlaybackQueue/ShowCurrent";
 
 namespace Fooyin {
 QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
@@ -67,10 +84,8 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
     m_view->setModel(m_model);
     m_view->setItemDelegate(new QueueViewerDelegate(this));
 
-    m_view->changeIconSize(m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize());
-    m_view->header()->setHidden(!m_settings->value<Settings::Gui::Internal::QueueViewerHeader>());
-    m_view->verticalScrollBar()->setVisible(m_settings->value<Settings::Gui::Internal::QueueViewerScrollBar>());
-    m_view->setAlternatingRowColors(m_settings->value<Settings::Gui::Internal::QueueViewerAltColours>());
+    m_config = defaultConfig();
+    applyConfig(m_config);
 
     setupActions();
     setupConnections();
@@ -85,6 +100,16 @@ QString QueueViewer::name() const
 QString QueueViewer::layoutName() const
 {
     return u"PlaybackQueue"_s;
+}
+
+void QueueViewer::saveLayoutData(QJsonObject& layout)
+{
+    saveConfigToLayout(m_config, layout);
+}
+
+void QueueViewer::loadLayoutData(const QJsonObject& layout)
+{
+    applyConfig(configFromLayout(layout));
 }
 
 void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
@@ -103,13 +128,18 @@ void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
 
     auto* showCurrent = new QAction(tr("Show playing queue track"), menu);
     showCurrent->setCheckable(true);
-    showCurrent->setChecked(m_settings->value<Settings::Gui::Internal::QueueViewerShowCurrent>());
+    showCurrent->setChecked(m_config.showCurrent);
     QObject::connect(showCurrent, &QAction::triggered, showCurrent, [this](bool enabled) {
-        m_settings->set<Settings::Gui::Internal::QueueViewerShowCurrent>(enabled);
+        auto config        = m_config;
+        config.showCurrent = enabled;
+        applyConfig(config);
     });
 
     menu->addSeparator();
     menu->addAction(showCurrent);
+    menu->addSeparator();
+
+    addConfigureAction(menu, false);
 
     menu->popup(event->globalPos());
 }
@@ -159,21 +189,14 @@ void QueueViewer::setupConnections()
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &QueueViewer::handleRowsChanged);
     QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, &QueueViewer::handleRowsChanged);
     QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, this, [this](const QSize& size) {
-        m_settings->set<Settings::Gui::Internal::QueueViewerIconSize>(size);
+        if(m_config.iconSize == size) {
+            return;
+        }
+
+        m_config.iconSize = size;
+        m_model->setIconSize(size);
     });
     QObject::connect(m_view, &QAbstractItemView::doubleClicked, this, &QueueViewer::handleQueueDoubleClicked);
-
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowIcon>(m_view, [this]() {
-        QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
-    });
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerIconSize>(
-        m_view, [this](const auto& size) { m_view->changeIconSize(size.toSize()); });
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerHeader>(
-        m_view, [this](const bool show) { m_view->header()->setHidden(!show); });
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerScrollBar>(m_view->verticalScrollBar(),
-                                                                         &QScrollBar::setVisible);
-    m_settings->subscribe<Settings::Gui::Internal::QueueViewerAltColours>(m_view,
-                                                                          &ExpandedTreeView::setAlternatingRowColors);
 }
 
 void QueueViewer::resetModel() const
@@ -262,5 +285,107 @@ void QueueViewer::handleQueueDoubleClicked(const QModelIndex& index) const
     m_model->removeIndexes(indexes);
 
     m_playerController->next();
+}
+
+QueueViewer::ConfigData QueueViewer::defaultConfig() const
+{
+    return {
+        .leftScript      = m_settings->fileValue(QueueViewerLeftScriptKey, u"%title%$crlf()%album%"_s).toString(),
+        .rightScript     = m_settings->fileValue(QueueViewerRightScriptKey, u"%duration%"_s).toString(),
+        .showCurrent     = m_settings->fileValue(QueueViewerShowCurrentKey, true).toBool(),
+        .showIcon        = m_settings->fileValue(QueueViewerShowIconKey, true).toBool(),
+        .iconSize        = m_settings->fileValue(QueueViewerIconSizeKey, QSize{36, 36}).toSize(),
+        .showHeader      = m_settings->fileValue(QueueViewerHeaderKey, true).toBool(),
+        .showScrollBar   = m_settings->fileValue(QueueViewerScrollBarKey, true).toBool(),
+        .alternatingRows = m_settings->fileValue(QueueViewerAltColoursKey, false).toBool(),
+    };
+}
+
+const QueueViewer::ConfigData& QueueViewer::currentConfig() const
+{
+    return m_config;
+}
+
+void QueueViewer::saveDefaults(const ConfigData& config) const
+{
+    m_settings->fileSet(QueueViewerLeftScriptKey, config.leftScript);
+    m_settings->fileSet(QueueViewerRightScriptKey, config.rightScript);
+    m_settings->fileSet(QueueViewerShowCurrentKey, config.showCurrent);
+    m_settings->fileSet(QueueViewerShowIconKey, config.showIcon);
+    m_settings->fileSet(QueueViewerIconSizeKey, config.iconSize);
+    m_settings->fileSet(QueueViewerHeaderKey, config.showHeader);
+    m_settings->fileSet(QueueViewerScrollBarKey, config.showScrollBar);
+    m_settings->fileSet(QueueViewerAltColoursKey, config.alternatingRows);
+}
+
+void QueueViewer::applyConfig(const ConfigData& config)
+{
+    m_config = config;
+
+    m_model->setScripts(m_config.leftScript, m_config.rightScript);
+    m_model->setShowCurrent(m_config.showCurrent);
+    m_model->setShowIcon(m_config.showIcon);
+    m_model->setIconSize(m_config.iconSize);
+
+    m_view->changeIconSize(m_config.iconSize);
+    m_view->header()->setHidden(!m_config.showHeader);
+    m_view->verticalScrollBar()->setVisible(m_config.showScrollBar);
+    m_view->setAlternatingRowColors(m_config.alternatingRows);
+
+    QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+}
+
+QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+
+    if(layout.contains("LeftScript"_L1)) {
+        config.leftScript = layout.value("LeftScript"_L1).toString();
+    }
+    if(layout.contains("RightScript"_L1)) {
+        config.rightScript = layout.value("RightScript"_L1).toString();
+    }
+    if(layout.contains("ShowCurrent"_L1)) {
+        config.showCurrent = layout.value("ShowCurrent"_L1).toBool();
+    }
+    if(layout.contains("ShowIcon"_L1)) {
+        config.showIcon = layout.value("ShowIcon"_L1).toBool();
+    }
+    if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
+        config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
+    }
+    if(layout.contains("ShowHeader"_L1)) {
+        config.showHeader = layout.value("ShowHeader"_L1).toBool();
+    }
+    if(layout.contains("ShowScrollbar"_L1)) {
+        config.showScrollBar = layout.value("ShowScrollbar"_L1).toBool();
+    }
+    if(layout.contains("AlternatingRows"_L1)) {
+        config.alternatingRows = layout.value("AlternatingRows"_L1).toBool();
+    }
+
+    if(!config.iconSize.isValid()) {
+        config.iconSize = defaultConfig().iconSize;
+    }
+
+    return config;
+}
+
+void QueueViewer::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
+{
+    layout["LeftScript"_L1]      = config.leftScript;
+    layout["RightScript"_L1]     = config.rightScript;
+    layout["ShowCurrent"_L1]     = config.showCurrent;
+    layout["ShowIcon"_L1]        = config.showIcon;
+    layout["IconWidth"_L1]       = config.iconSize.width();
+    layout["IconHeight"_L1]      = config.iconSize.height();
+    layout["ShowHeader"_L1]      = config.showHeader;
+    layout["ShowScrollbar"_L1]   = config.showScrollBar;
+    layout["AlternatingRows"_L1] = config.alternatingRows;
+}
+
+void QueueViewer::openConfigDialog()
+{
+    showConfigDialog(new QueueViewerConfigDialog(this, this));
 }
 } // namespace Fooyin
