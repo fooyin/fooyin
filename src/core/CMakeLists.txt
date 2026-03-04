@@ -128,7 +128,6 @@ set(SOURCES
     engine/input/ffmpeg/ffmpegutils.h
     engine/input/taglibparser.cpp
     engine/input/taglibparser.h
-    engine/lockfreeringbuffer.h
     engine/output/fadecontroller.cpp
     engine/output/fadecontroller.h
     engine/output/outputcontroller.cpp

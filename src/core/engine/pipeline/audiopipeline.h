@@ -23,7 +23,6 @@
 
 #include "audiopipelinefader.h"
 #include "buffereddspstage.h"
-#include "core/engine/lockfreeringbuffer.h"
 #include "core/engine/output/outputfader.h"
 #include "core/engine/pipeline/audiostream.h"
 #include "mixer/audiomixer.h"
@@ -38,6 +37,7 @@
 #include <core/engine/audiooutput.h>
 #include <core/engine/enginedefs.h>
 #include <utils/compatutils.h>
+#include <utils/lockfreeringbuffer.h>
 
 #include <QDebug>
 

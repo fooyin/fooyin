@@ -24,8 +24,8 @@
 #include <core/engine/audioformat.h>
 #include <core/engine/audiooutput.h>
 #include <core/engine/enginedefs.h>
-#include <core/engine/lockfreeringbuffer.h>
 #include <core/track.h>
+#include <utils/lockfreeringbuffer.h>
 
 #include "audioclock.h"
 #include "control/enginetaskqueue.h"
@@ -214,6 +214,7 @@ private:
     void clearTransportTransition();
     [[nodiscard]] uint64_t nextTransitionId();
     void setupSettings();
+    void reconfigureActiveStreamBuffering(uint64_t positionMs);
     void updatePlaybackState(Engine::PlaybackState state);
     void updateTrackStatus(Engine::TrackStatus status, bool flushDspOnEnd = true);
     void setPhase(Playback::Phase phase, PhaseChangeReason reason);

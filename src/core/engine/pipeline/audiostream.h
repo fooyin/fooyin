@@ -21,7 +21,7 @@
 
 #include "fycore_export.h"
 
-#include "core/engine/lockfreeringbuffer.h"
+#include <utils/lockfreeringbuffer.h>
 
 #include <core/engine/audioformat.h>
 #include <core/engine/enginedefs.h>
