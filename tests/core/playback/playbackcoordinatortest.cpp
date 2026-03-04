@@ -88,4 +88,25 @@ TEST(PlaybackCoordinatorTest, EvaluateEndFallsBackToSegmentIdentityWhenIdsUnknow
     EXPECT_EQ(PlaybackCoordinator::evaluateEndForAutoAdvance(currentTrack, mismatchedDuration, 2, suppressedGeneration),
               PlaybackCoordinator::EndAction::IgnoreStale);
 }
+
+TEST(PlaybackCoordinatorTest, PreparedArmResultRejectsStaleGenerationAndMismatchedTrack)
+{
+    const Track expectedNextTrack = makeTrack(u"/music/next.flac"_s, 0, 0, 1000, 2);
+    const Track differentTrack    = makeTrack(u"/music/other.flac"_s, 0, 0, 1000, 3);
+
+    EXPECT_FALSE(PlaybackCoordinator::isPreparedArmResultRelevant(std::optional<uint64_t>{5}, expectedNextTrack, true,
+                                                                  expectedNextTrack, 4));
+    EXPECT_FALSE(PlaybackCoordinator::isPreparedArmResultRelevant(std::optional<uint64_t>{5}, expectedNextTrack, true,
+                                                                  differentTrack, 5));
+}
+
+TEST(PlaybackCoordinatorTest, PreparedArmResultRequiresInFlightAndMatchingContext)
+{
+    const Track expectedNextTrack = makeTrack(u"/music/next.flac"_s, 0, 0, 1000, 2);
+
+    EXPECT_FALSE(PlaybackCoordinator::isPreparedArmResultRelevant(std::optional<uint64_t>{7}, expectedNextTrack, false,
+                                                                  expectedNextTrack, 7));
+    EXPECT_TRUE(PlaybackCoordinator::isPreparedArmResultRelevant(std::optional<uint64_t>{7}, expectedNextTrack, true,
+                                                                 expectedNextTrack, 7));
+}
 } // namespace Fooyin::Testing

@@ -84,8 +84,14 @@ signals:
     void trackAboutToFinish(const Fooyin::Engine::AboutToFinishContext& context);
     //! Callback fired when transition timing reaches the switch anchor.
     void trackReadyToSwitch(const Fooyin::Engine::AboutToFinishContext& context);
+    //! Callback fired when active logical track reaches its exact boundary.
+    void trackBoundaryReached(const Fooyin::Engine::AboutToFinishContext& context);
     //! Prepared-next-track readiness notification.
     void nextTrackReadiness(const Fooyin::Track& track, bool ready, uint64_t requestId);
+    //! Result of async prepared-crossfade arm attempt for a specific boundary generation.
+    void preparedCrossfadeArmResult(const Fooyin::Track& track, uint64_t generation, bool armed);
+    //! Result of async prepared-gapless arm attempt for a specific boundary generation.
+    void preparedGaplessArmResult(const Fooyin::Track& track, uint64_t generation, bool armed);
 
     //! Emitted after stop teardown completes.
     void finished();

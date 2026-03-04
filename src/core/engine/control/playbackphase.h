@@ -19,10 +19,14 @@
 
 #pragma once
 
+#include <QObject>
+
 #include <cstdint>
 
-namespace Fooyin {
-enum class PlaybackPhase : uint8_t
+namespace Fooyin::Playback {
+Q_NAMESPACE
+
+enum class Phase : uint8_t
 {
     Stopped = 0,
     Loading,
@@ -36,31 +40,31 @@ enum class PlaybackPhase : uint8_t
     FadingToManualChange,
     Error
 };
+Q_ENUM_NS(Phase)
 
-[[nodiscard]] constexpr bool isPlaybackActive(PlaybackPhase phase)
+[[nodiscard]] constexpr bool isPlaybackActive(Phase phase)
 {
     switch(phase) {
-        case PlaybackPhase::Playing:
-        case PlaybackPhase::Seeking:
-        case PlaybackPhase::SeekCrossfading:
-        case PlaybackPhase::TrackCrossfading:
-        case PlaybackPhase::FadingToPause:
-        case PlaybackPhase::FadingToStop:
-        case PlaybackPhase::FadingToManualChange:
+        case Phase::Playing:
+        case Phase::Seeking:
+        case Phase::SeekCrossfading:
+        case Phase::TrackCrossfading:
+        case Phase::FadingToPause:
+        case Phase::FadingToStop:
+        case Phase::FadingToManualChange:
             return true;
         default:
             return false;
     }
 }
 
-[[nodiscard]] constexpr bool isCrossfading(PlaybackPhase phase)
+[[nodiscard]] constexpr bool isCrossfading(Phase phase)
 {
-    return phase == PlaybackPhase::SeekCrossfading || phase == PlaybackPhase::TrackCrossfading;
+    return phase == Phase::SeekCrossfading || phase == Phase::TrackCrossfading;
 }
 
-[[nodiscard]] constexpr bool isFadingTransport(PlaybackPhase phase)
+[[nodiscard]] constexpr bool isFadingTransport(Phase phase)
 {
-    return phase == PlaybackPhase::FadingToPause || phase == PlaybackPhase::FadingToStop
-        || phase == PlaybackPhase::FadingToManualChange;
+    return phase == Phase::FadingToPause || phase == Phase::FadingToStop || phase == Phase::FadingToManualChange;
 }
-} // namespace Fooyin
+} // namespace Fooyin::Playback

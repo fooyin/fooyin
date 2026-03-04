@@ -182,6 +182,13 @@ enum class DspChainScope : uint8_t
     Master
 };
 
+//! UI track-switch anchor policy during crossfade overlap.
+enum class CrossfadeSwitchPolicy : uint8_t
+{
+    OverlapStart = 0,
+    Boundary,
+};
+
 //! Patch payload for live settings updates to a DSP instance.
 struct LiveDspSettingsUpdate
 {

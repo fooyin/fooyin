@@ -30,6 +30,7 @@
 #include "audioclock.h"
 #include "control/enginetaskqueue.h"
 #include "control/playbackphase.h"
+#include "control/positioncoordinator.h"
 #include "control/trackloadplanner.h"
 #include "control/transitionorchestrator.h"
 #include "decode/decodingcontroller.h"
@@ -80,6 +81,28 @@ public:
         AudioFormat nextMixFormat;
     };
 
+    enum class PhaseChangeReason : uint8_t
+    {
+        Unknown = 0,
+        PlaybackStatePlaying,
+        PlaybackStatePaused,
+        PlaybackStateStopped,
+        PlaybackStateError,
+        TrackStatusLoading,
+        ManualChangeFadeQueued,
+        AutoTransitionCrossfadeActive,
+        AutoTransitionPlayingNoOrphan,
+        SeekCrossfadeActive,
+        SeekSimpleActive,
+        SeekRestorePlaying,
+        SeekRestorePaused,
+        SeekRestoreStopped,
+        CrossfadeCleanupResumePlaying,
+        TransportPauseFadeQueued,
+        TransportStopFadeQueued,
+    };
+    Q_ENUM(PhaseChangeReason)
+
     AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, DspRegistry* dspRegistry,
                 QObject* parent = nullptr);
     ~AudioEngine() override;
@@ -99,6 +122,14 @@ public slots:
     void loadTrack(const Fooyin::Track& track, bool manualChange = false);
     //! Schedule/prepare candidate next track for seamless transition.
     void prepareNextTrack(const Fooyin::Track& track, uint64_t requestId = 0);
+    //! Stage a prepared crossfade stream in the pipeline without committing UI track context.
+    [[nodiscard]] bool armPreparedCrossfadeTransition(const Fooyin::Track& track, uint64_t generation);
+    //! Commit a previously armed prepared crossfade transition after UI track context changes.
+    [[nodiscard]] bool commitPreparedCrossfadeTransition(const Fooyin::Track& track);
+    //! Stage a prepared gapless stream in the pipeline without committing UI track context.
+    [[nodiscard]] bool armPreparedGaplessTransition(const Fooyin::Track& track, uint64_t generation);
+    //! Commit a previously armed prepared gapless transition after UI track context changes.
+    [[nodiscard]] bool commitPreparedGaplessTransition(const Fooyin::Track& track);
 
     void play();
     void pause();
@@ -129,6 +160,7 @@ signals:
 
     void trackAboutToFinish(const Fooyin::Track& track, uint64_t generation);
     void trackReadyToSwitch(const Fooyin::Track& track, uint64_t generation);
+    void trackBoundaryReached(const Fooyin::Track& track, uint64_t generation);
     void nextTrackReadiness(const Fooyin::Track& track, bool ready, uint64_t requestId);
 
     void finished();
@@ -168,6 +200,8 @@ private:
     void updatePositionContext(uint64_t timelineEpoch);
     void maybeBeginAutoCrossfadeTailFadeOut(const AudioStreamPtr& stream, uint64_t relativePosMs);
     void clearAutoCrossfadeTailFadeState();
+    void handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_t trackEndingPosMs, bool preparedCrossfadeArmed,
+                                  bool boundaryFallbackReached);
     void updatePosition();
     void handleTimerTick(int timerId);
     void clearPendingAnalysisData();
@@ -182,11 +216,12 @@ private:
     void setupSettings();
     void updatePlaybackState(Engine::PlaybackState state);
     void updateTrackStatus(Engine::TrackStatus status, bool flushDspOnEnd = true);
-    void setPhase(PlaybackPhase phase);
+    void setPhase(Playback::Phase phase, PhaseChangeReason reason);
     bool hasPlaybackState(Engine::PlaybackState state) const;
     bool signalTrackEndOnce(bool flushDspOnEnd);
     void clearTrackEndLatch();
     TrackEndingResult checkTrackEnding(const AudioStreamPtr& stream, uint64_t relativePosMs);
+    [[nodiscard]] uint64_t preferredPreparedPrefillMs() const;
     std::optional<AutoTransitionEligibility> evaluateAutoTransitionEligibility(const Track& track, bool isManualChange,
                                                                                bool requireTransitionReady
                                                                                = true) const;
@@ -200,6 +235,9 @@ private:
     [[nodiscard]] bool registerAndSwitchStream(const AudioStreamPtr& stream, const char* failureMessage);
     void cleanupDecoderActiveStreamFromPipeline(bool removeFromMixer);
     void clearPreparedNextTrack();
+    void clearPreparedCrossfadeTransition();
+    void clearPreparedGaplessTransition();
+    void disarmStalePreparedTransitions(const Track& contextTrack, uint64_t contextGeneration);
     void clearPreparedNextTrackAndCancelPendingJobs();
     [[nodiscard]] bool prepareNextTrackImmediate(const Track& track);
     void cancelPendingPrepareJobs();
@@ -223,7 +261,7 @@ private:
 
     std::atomic<Engine::PlaybackState> m_playbackState;
     std::atomic<Engine::TrackStatus> m_trackStatus;
-    PlaybackPhase m_phase;
+    Playback::Phase m_phase;
 
     Track m_currentTrack;
     Track m_lastEndedTrack;
@@ -235,6 +273,27 @@ private:
     DecodingController m_decoder;
 
     std::optional<NextTrackPreparationState> m_preparedNext;
+
+    struct PreparedCrossfadeTransition
+    {
+        bool active{false};
+        Track targetTrack;
+        uint64_t sourceGeneration{0};
+        StreamId streamId{InvalidStreamId};
+        uint64_t boundaryLeadMs{0};
+        uint64_t bufferedAtArmMs{0};
+        bool boundarySignalled{false};
+    };
+    PreparedCrossfadeTransition m_preparedCrossfadeTransition;
+
+    struct PreparedGaplessTransition
+    {
+        bool active{false};
+        Track targetTrack;
+        uint64_t sourceGeneration{0};
+        StreamId streamId{InvalidStreamId};
+    };
+    PreparedGaplessTransition m_preparedGaplessTransition;
 
     LockFreeRingBuffer<LevelFrame> m_levelFrameMailbox;
     std::atomic<bool> m_levelFrameDispatchQueued;
@@ -260,9 +319,8 @@ private:
     AudioClock m_audioClock;
     int m_lastReportedBitrate;
     NextTrackPrepareWorker m_nextTrackPrepareWorker;
+    PositionCoordinator m_positionCoordinator;
 
-    bool m_lastSourcePositionValid;
-    uint64_t m_lastSourcePositionMs;
     uint64_t m_lastAppliedSeekRequestId;
     uint64_t m_positionContextTrackGeneration;
     uint64_t m_positionContextTimelineEpoch;

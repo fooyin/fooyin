@@ -139,6 +139,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ProxyPassword>(u""_s, u"Networking/ProxyPassword"_s);
     m_settings->createSetting<Internal::DecodeLowWatermarkRatio>(0.50, u"Engine/DecodeLowWatermarkRatio"_s);
     m_settings->createSetting<Internal::DecodeHighWatermarkRatio>(0.95, u"Engine/DecodeHighWatermarkRatio"_s);
+    m_settings->createSetting<Internal::CrossfadeSwitchPolicy>(
+        static_cast<int>(Engine::CrossfadeSwitchPolicy::OverlapStart), u"Playback/CrossfadeSwitchPolicy"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 

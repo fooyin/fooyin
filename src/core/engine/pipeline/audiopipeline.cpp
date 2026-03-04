@@ -1143,10 +1143,12 @@ AudioPipeline::TransitionResult AudioPipeline::executeTransition(const Transitio
                     targetStream->applyCommand(AudioStream::Command::Play);
                 }
 
-                const uint64_t targetPosMs = targetStream->positionMs();
-                pipeline.clearMappedPositionState(targetPosMs);
-                pipeline.beginTimelineEpoch(targetPosMs);
-                pipeline.resetMasterRateObservation();
+                if(request.reanchorTimeline) {
+                    const uint64_t targetPosMs = targetStream->positionMs();
+                    pipeline.clearMappedPositionState(targetPosMs);
+                    pipeline.beginTimelineEpoch(targetPosMs);
+                    pipeline.resetMasterRateObservation();
+                }
 
                 return true;
             }
@@ -1163,19 +1165,31 @@ AudioPipeline::TransitionResult AudioPipeline::executeTransition(const Transitio
                 uint64_t targetPosMs          = targetStream->positionMs();
                 const bool liveGaplessHandoff = pipeline.m_playing.load(std::memory_order_acquire) && currentPrimary
                                              && currentPrimary->id() != newStreamId;
-                if(liveGaplessHandoff && currentPrimary->state() != AudioStream::State::Stopped) {
+                if(liveGaplessHandoff && request.signalCurrentEndOfInput
+                   && currentPrimary->state() != AudioStream::State::Stopped) {
                     // Decoder ownership has moved to the next track stream, so end this one
                     currentPrimary->setEndOfInput();
                 }
 
                 const uint64_t bufferedMs = targetStream->bufferedDurationMs();
                 if(liveGaplessHandoff) {
+                    const uint64_t transitionDelayMs = pipeline.m_timelineUnit.transitionPlaybackDelayMs();
+                    if(bufferedMs < transitionDelayMs) {
+                        qCWarning(PIPELINE) << "Gapless handoff prebuffer below transition delay:"
+                                            << "newStreamId=" << newStreamId << "bufferedMs=" << bufferedMs
+                                            << "transitionDelayMs=" << transitionDelayMs
+                                            << "streamCount=" << pipeline.m_renderer.streamCount();
+                    }
+                }
+                if(liveGaplessHandoff) {
                     targetPosMs = targetPosMs > bufferedMs ? (targetPosMs - bufferedMs) : 0;
                 }
 
-                pipeline.clearMappedPositionState(targetPosMs);
-                pipeline.beginTimelineEpoch(targetPosMs);
-                pipeline.resetMasterRateObservation();
+                if(request.reanchorTimeline) {
+                    pipeline.clearMappedPositionState(targetPosMs);
+                    pipeline.beginTimelineEpoch(targetPosMs);
+                    pipeline.resetMasterRateObservation();
+                }
 
                 return true;
             }
@@ -1456,6 +1470,25 @@ void AudioPipeline::processAudio()
         const int framesRead = pullResult.framesRead;
 
         if(framesRead <= 0) {
+            if(pullResult.mixerBuffering) {
+                // Per-track/master DSP may need additional warmup reads before
+                // first output appears after a handoff.
+                sawMixerUnderrun      = true;
+                sawMasterChainStarved = true;
+
+                static std::atomic_uint32_t bufferingNoOutputCount{0};
+                if(shouldLogEveryN(bufferingNoOutputCount, 64U)) {
+                    qCWarning(PIPELINE) << "DSP buffering produced no output frames during render pull:"
+                                        << "pull=" << pull << "maxTopUpPulls=" << maxTopUpPulls
+                                        << "framesToProcess=" << framesToProcess
+                                        << "queuedPendingFrames=" << queuedFrames
+                                        << "desiredBufferedFrames=" << desiredBufferedFrames
+                                        << "streamCount=" << m_renderer.streamCount()
+                                        << "transitionDelayMs=" << m_timelineUnit.transitionPlaybackDelayMs();
+                }
+                continue;
+            }
+
             sawMixerUnderrun    = true;
             sawMixerReadStarved = true;
             break;
@@ -1615,8 +1648,9 @@ bool AudioPipeline::drainPendingOutput(const OutputState& state, int& freeFrames
         return false;
     }
 
-    const int queuedPendingFrames = pendingOutputFrames();
-    if(OutputPump::shouldHoldForPreroll(queuedPendingFrames, minBufferedFramesToDrain)) {
+    const int queuedPendingFrames    = pendingOutputFrames();
+    const bool belowPrerollThreshold = OutputPump::shouldHoldForPreroll(queuedPendingFrames, minBufferedFramesToDrain);
+    if(m_renderPhase == RenderPhase::Preroll && belowPrerollThreshold) {
         const auto outputStateWithWrites = stateWithWrites(state, framesWrittenThisCycle);
         const auto basis
             = m_timelineUnit.positionIsMapped() ? PositionBasis::RenderedSource : PositionBasis::DecodeHead;

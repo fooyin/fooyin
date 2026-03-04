@@ -58,6 +58,7 @@ public:
     {
         bool aboutToFinish{false};
         bool readyToSwitch{false};
+        bool boundaryReached{false};
         bool endReached{false};
     };
 
@@ -113,6 +114,7 @@ private:
     CrossfadeParams m_crossfadeParams;
     bool m_trackEnding;
     bool m_switchReady;
+    bool m_boundaryReached;
     bool m_seekInProgress;
     bool m_pendingSeekActive;
 

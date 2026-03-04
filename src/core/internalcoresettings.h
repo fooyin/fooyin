@@ -72,6 +72,7 @@ enum CoreInternalSettings : uint32_t
     ProxyPassword            = 14 | Type::String,
     DecodeLowWatermarkRatio  = 15 | Type::Double,
     DecodeHighWatermarkRatio = 16 | Type::Double,
+    CrossfadeSwitchPolicy    = 17 | Type::Int,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal
