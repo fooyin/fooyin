@@ -249,6 +249,8 @@ public:
         int fadeOutMs{0};
         int fadeInMs{0};
         bool skipFadeOutStart{false};
+        bool signalCurrentEndOfInput{true};
+        bool reanchorTimeline{true};
     };
 
     struct TransitionResult

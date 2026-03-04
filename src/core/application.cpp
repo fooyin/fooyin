@@ -25,6 +25,7 @@
 #include "engine/dsp/dspchainstore.h"
 #include "engine/dsp/dspregistry.h"
 #include "engine/enginehandler.h"
+#include "engine/enginehelpers.h"
 #include "engine/input/archiveinput.h"
 #include "engine/input/ffmpeg/ffmpeginput.h"
 #include "engine/input/taglibparser.h"
@@ -156,7 +157,8 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_library, m_settings, m_self)}
     , m_playerController{new PlayerController(m_settings, m_playlistHandler, m_self)}
     , m_engine{m_audioLoader, m_playerController, m_settings, &m_dspRegistry}
-    , m_playbackCoordinator{new PlaybackCoordinator(&m_engine, m_playerController, m_playlistHandler, m_self)}
+    , m_playbackCoordinator{new PlaybackCoordinator(&m_engine, m_playerController, m_playlistHandler, m_settings,
+                                                    m_self)}
     , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
     , m_networkManager{new NetworkAccessManager(m_settings, m_self)}
     , m_pluginManager{m_settings}
@@ -488,8 +490,12 @@ Application::Application(QObject* parent)
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
     QObject::connect(&p->m_engine, &EngineHandler::trackChanged, p->m_library, [this](const Track& track) {
+        auto currentTrack = p->m_playerController->currentPlaylistTrack();
+        if(!sameTrackIdentity(track, currentTrack.track)) {
+            return;
+        }
+
         p->m_library->updateTrackMetadata({track});
-        auto currentTrack  = p->m_playerController->currentPlaylistTrack();
         currentTrack.track = track;
         p->m_playerController->changeCurrentTrack(currentTrack);
     });

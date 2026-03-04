@@ -67,6 +67,10 @@ public:
 
     //! Queue next-track prep and return request id + immediate readiness snapshot.
     [[nodiscard]] Engine::NextTrackPrepareRequest prepareNextTrackForPlayback(const Track& track);
+    //! Arm an already-prepared crossfade transition on the engine without changing UI track context.
+    void armPreparedCrossfadeTransition(const Track& track, uint64_t generation);
+    //! Arm an already-prepared gapless transition on the engine without changing UI track context.
+    void armPreparedGaplessTransition(const Track& track, uint64_t generation);
 
     //! Get current engine playback state
     [[nodiscard]] Engine::PlaybackState engineState() const override;
@@ -129,6 +133,10 @@ private:
 
     [[nodiscard]] uint64_t nextPrepareRequestId();
     [[nodiscard]] Engine::NextTrackPrepareRequest requestPrepareNextTrack(const Track& track);
+    void requestArmPreparedCrossfadeTransition(const Track& track, uint64_t generation);
+    void requestCommitPreparedCrossfadeTransition(const Track& track, bool manualChange);
+    void requestArmPreparedGaplessTransition(const Track& track, uint64_t generation);
+    void requestCommitPreparedGaplessTransition(const Track& track, bool manualChange);
 
     void changeOutput(const QString& output);
     void updateVolume(double volume);

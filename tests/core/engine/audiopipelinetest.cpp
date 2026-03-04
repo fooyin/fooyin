@@ -822,6 +822,62 @@ TEST(AudioPipelineTest, GaplessTransitionLiveHandoffAnchorsToAudibleStart)
     pipeline.stop();
 }
 
+TEST(AudioPipelineTest, CrossfadeTransitionWithoutTimelineReanchorPreservesCurrentPositionSnapshot)
+{
+    AudioPipeline pipeline;
+    auto output   = std::make_unique<FakeAudioOutput>(64);
+    auto* backend = output.get();
+    backend->setFreeFrames(64);
+
+    pipeline.setOutput(std::move(output));
+    pipeline.start();
+    ASSERT_TRUE(pipeline.init(testFormat()));
+
+    auto first = makeStream(std::vector<double>(256, 0.3), true);
+    first->setEndOfInput();
+    const auto firstId = pipeline.registerStream(first);
+    pipeline.addStream(firstId);
+    pipeline.play();
+
+    ASSERT_TRUE(waitUntil(
+        [&pipeline]() {
+            const auto status = pipeline.currentStatus();
+            return status.state == PipelinePlaybackState::Playing && status.positionIsMapped
+                && status.renderedSegment.valid && status.position > 0;
+        },
+        1500ms));
+
+    const auto statusBefore = pipeline.currentStatus();
+    ASSERT_GT(statusBefore.position, 0U);
+    ASSERT_TRUE(statusBefore.positionIsMapped);
+    ASSERT_TRUE(statusBefore.renderedSegment.valid);
+
+    auto replacement = makeStream(std::vector<double>(256, 0.8), false);
+    replacement->setPosition(200); // 2000 ms @ 100 Hz mono
+    const uint64_t replacementPosMs = replacement->positionMs();
+
+    AudioPipeline::TransitionRequest request;
+    request.type             = AudioPipeline::TransitionType::Crossfade;
+    request.stream           = replacement;
+    request.fadeOutMs        = 80;
+    request.fadeInMs         = 80;
+    request.reanchorTimeline = false;
+
+    const auto result = pipeline.executeTransition(request);
+    ASSERT_TRUE(result.success);
+    ASSERT_NE(result.streamId, InvalidStreamId);
+
+    const auto statusAfter = pipeline.currentStatus();
+    EXPECT_EQ(statusAfter.state, PipelinePlaybackState::Playing);
+    EXPECT_GT(statusAfter.position, 0U);
+    EXPECT_TRUE(statusAfter.positionIsMapped);
+    EXPECT_TRUE(statusAfter.renderedSegment.valid);
+    EXPECT_GE(statusAfter.position, statusBefore.position);
+    EXPECT_NE(statusAfter.position, replacementPosMs);
+
+    pipeline.stop();
+}
+
 TEST(AudioPipelineTest, GaplessTransitionLiveHandoffMarksPreviousPrimaryEndOfInput)
 {
     AudioPipeline pipeline;
@@ -851,6 +907,58 @@ TEST(AudioPipelineTest, GaplessTransitionLiveHandoffMarksPreviousPrimaryEndOfInp
     ASSERT_NE(result.streamId, InvalidStreamId);
 
     EXPECT_TRUE(first->endOfInput());
+
+    pipeline.stop();
+}
+
+TEST(AudioPipelineTest, GaplessTransitionWithoutTimelineReanchorPreservesCurrentPositionSnapshot)
+{
+    AudioPipeline pipeline;
+    auto output   = std::make_unique<FakeAudioOutput>(64);
+    auto* backend = output.get();
+    backend->setFreeFrames(64);
+
+    pipeline.setOutput(std::move(output));
+    pipeline.start();
+    ASSERT_TRUE(pipeline.init(testFormat()));
+
+    auto first = makeStream(std::vector<double>(256, 0.3), true);
+    first->setEndOfInput();
+    const auto firstId = pipeline.registerStream(first);
+    pipeline.addStream(firstId);
+    pipeline.play();
+
+    ASSERT_TRUE(waitUntil(
+        [&pipeline]() {
+            const auto status = pipeline.currentStatus();
+            return status.state == PipelinePlaybackState::Playing && status.positionIsMapped
+                && status.renderedSegment.valid && status.position > 0;
+        },
+        1500ms));
+
+    const auto statusBefore = pipeline.currentStatus();
+    ASSERT_GT(statusBefore.position, 0U);
+    ASSERT_TRUE(statusBefore.positionIsMapped);
+    ASSERT_TRUE(statusBefore.renderedSegment.valid);
+
+    auto replacement = makeStream(std::vector<double>(256, 0.8), false);
+    replacement->setPosition(200); // 2000 ms @ 100 Hz mono
+
+    AudioPipeline::TransitionRequest request;
+    request.type                    = AudioPipeline::TransitionType::Gapless;
+    request.stream                  = replacement;
+    request.signalCurrentEndOfInput = false;
+    request.reanchorTimeline        = false;
+
+    const auto result = pipeline.executeTransition(request);
+    ASSERT_TRUE(result.success);
+    ASSERT_NE(result.streamId, InvalidStreamId);
+
+    const auto statusAfter = pipeline.currentStatus();
+    EXPECT_EQ(statusAfter.state, PipelinePlaybackState::Playing);
+    EXPECT_GT(statusAfter.position, 0U);
+    EXPECT_TRUE(statusAfter.positionIsMapped);
+    EXPECT_TRUE(statusAfter.renderedSegment.valid);
 
     pipeline.stop();
 }
