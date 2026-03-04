@@ -335,6 +335,57 @@ void PlaylistOrganiserModel::playlistRemoved(Playlist* playlist)
     m_nodes.erase(key);
 }
 
+void PlaylistOrganiserModel::sortAllPlaylists(const SortOrder order)
+{
+    for(auto& m_node : m_nodes) {
+        // find root
+        if(m_node.second.parent()->type() == PlaylistOrganiserItem::Type::Root) {
+            emit layoutAboutToBeChanged();
+
+            // sort children of root
+            m_node.second.parent()->sortChildren(
+                [order](const PlaylistOrganiserItem* first, const PlaylistOrganiserItem* second) {
+                    if(order == Descending) {
+                        return 0 < QString::localeAwareCompare(first->title(), second->title());
+                    }
+
+                    return 0 >= QString::localeAwareCompare(first->title(), second->title());
+                });
+
+            emit layoutChanged();
+
+            // exit
+            break;
+        }
+    }
+}
+
+void PlaylistOrganiserModel::sortGroupPlaylists(const QModelIndexList& indices, const SortOrder order)
+{
+    // abort unless we only have a single playlist selected
+    if(indices.size() != 1) {
+        return;
+    }
+
+    auto* sortGroup = itemForIndex(indices.first());
+
+    if(sortGroup->type() != PlaylistOrganiserItem::Type::GroupItem) {
+        return;
+    }
+
+    emit layoutAboutToBeChanged();
+
+    // TODO: share this function with sortAllPlaylist somehow
+    sortGroup->sortChildren([order](const PlaylistOrganiserItem* first, const PlaylistOrganiserItem* second) {
+        if(order == Descending) {
+            return 0 < QString::localeAwareCompare(first->title(), second->title());
+        }
+        return 0 >= QString::localeAwareCompare(first->title(), second->title());
+    });
+
+    emit layoutChanged();
+}
+
 QModelIndex PlaylistOrganiserModel::indexForPlaylist(Playlist* playlist)
 {
     if(!playlist) {
