@@ -49,7 +49,10 @@ PlaybackTransitionCoordinator::evaluateTrackEnding(const TrackEndingInput& input
 {
     TrackEndingResult result;
 
-    if(!m_boundaryReached && input.durationMs > 0 && input.positionMs >= input.durationMs) {
+    const bool durationBoundaryReached
+        = input.durationBoundaryEnabled && input.durationMs > 0 && input.positionMs >= input.durationMs;
+
+    if(!m_boundaryReached && durationBoundaryReached) {
         m_boundaryReached      = true;
         result.boundaryReached = true;
     }
@@ -69,6 +72,12 @@ PlaybackTransitionCoordinator::evaluateTrackEnding(const TrackEndingInput& input
     if(!m_trackEnding && shouldSignalTrackEnding(input)) {
         m_trackEnding        = true;
         result.aboutToFinish = true;
+    }
+
+    // Cue-style logical segments may continue decoding on the same stream.
+    // Treat duration boundary as a logical end even without decoder EOF.
+    if(durationBoundaryReached && input.durationBoundaryEnabled) {
+        result.endReached = true;
     }
 
     if(m_trackEnding && !m_switchReady && shouldSignalReadyToSwitch(input)) {
@@ -96,13 +105,18 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
         return true;
     }
 
-    const bool durationBoundaryReached = input.durationMs > 0 && input.positionMs >= input.durationMs;
+    const bool durationBoundaryReached
+        = input.durationBoundaryEnabled && input.durationMs > 0 && input.positionMs >= input.durationMs;
+
+    // DecoderEofOnly mode: do not derive "about to finish" from timeline.
+    // Wait until decoder end-of-input is observed.
+    const bool timelineWindowEligible = input.durationBoundaryEnabled;
 
     bool crossfadeReady = false;
     if(input.autoCrossfadeEnabled) {
         const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
         const uint64_t timelineWindowMs = saturatingAddWindow(fadeOutWindowMs, input.outputDelayMs);
-        const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
+        const bool readyByTimeline      = timelineWindowEligible && inTimelineWindow(input, timelineWindowMs);
         const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
         crossfadeReady                  = readyByTimeline || readyByDrain;
     }
@@ -110,7 +124,7 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
     bool gaplessReady = false;
     if(input.gaplessEnabled) {
         const uint64_t timelineWindowMs = saturatingAddWindow(input.gaplessPrepareWindowMs, input.outputDelayMs);
-        const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
+        const bool readyByTimeline      = timelineWindowEligible && inTimelineWindow(input, timelineWindowMs);
         const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
         gaplessReady                    = input.endOfInput || readyByTimeline || readyByDrain;
     }

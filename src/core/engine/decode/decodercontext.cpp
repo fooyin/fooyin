@@ -40,22 +40,6 @@ namespace {
     return endPosMs != std::numeric_limits<uint64_t>::max() && positionMs >= endPosMs;
 }
 
-[[nodiscard]] uint64_t endPositionForTrack(const Fooyin::Track& track)
-{
-    // Keep decoder running continuously for cue-backed logical segments.
-    // Segment boundaries are handled by transition/control logic.
-    if(track.hasCue() || track.duration() == 0) {
-        return std::numeric_limits<uint64_t>::max();
-    }
-
-    const uint64_t duration = track.duration();
-    if(track.offset() > (std::numeric_limits<uint64_t>::max() - duration)) {
-        return std::numeric_limits<uint64_t>::max();
-    }
-
-    return track.offset() + duration;
-}
-
 [[nodiscard]] std::optional<Fooyin::AudioBuffer> trimBufferToTrackWindow(const Fooyin::AudioBuffer& buffer,
                                                                          uint64_t windowStartMs, uint64_t windowEndMs)
 {
@@ -118,7 +102,7 @@ namespace Fooyin {
 DecoderContext::DecoderContext()
     : m_currentPos{0}
     , m_startPos{0}
-    , m_endPos{0}
+    , m_endPolicy{EndPolicy::DecoderEofOnly}
     , m_isDecoding{false}
 { }
 
@@ -188,9 +172,9 @@ bool DecoderContext::init(std::unique_ptr<AudioDecoder> decoder, const Track& tr
 
     m_format = format.value();
 
-    // Set track boundaries
-    m_startPos   = track.offset();
-    m_endPos     = endPositionForTrack(track);
+    // Default to decoder-reported EOF for end detection.
+    m_startPos = track.offset();
+    setEndPolicy(EndPolicy::DecoderEofOnly);
     m_currentPos = m_startPos;
 
     return true;
@@ -211,10 +195,10 @@ bool DecoderContext::adoptPreparedDecoder(std::unique_ptr<AudioDecoder> decoder,
         m_source.device = m_file.get();
     }
 
-    m_track      = track;
-    m_format     = format;
-    m_startPos   = track.offset();
-    m_endPos     = endPositionForTrack(track);
+    m_track    = track;
+    m_format   = format;
+    m_startPos = track.offset();
+    setEndPolicy(EndPolicy::DecoderEofOnly);
     m_currentPos = m_startPos;
 
     m_isDecoding = false;
@@ -271,6 +255,39 @@ bool DecoderContext::seek(uint64_t positionMs)
     return true;
 }
 
+bool DecoderContext::switchContiguousTrack(const Track& track)
+{
+    if(!m_decoder || !track.isValid()) {
+        return false;
+    }
+
+    m_track    = track;
+    m_startPos = track.offset();
+    setEndPolicy(EndPolicy::DecoderEofOnly);
+
+    // Keep decoder continuity across contiguous logical segments.
+    m_currentPos = std::max(m_currentPos, m_startPos);
+    m_isDecoding = true;
+
+    if(m_activeStream) {
+        m_activeStream->setTrack(track);
+        m_activeStream->resetEndOfInput();
+    }
+
+    return true;
+}
+
+void DecoderContext::setEndPolicy(EndPolicy policy, std::optional<uint64_t> windowEndMs)
+{
+    m_endPolicy    = policy;
+    m_windowEndPos = windowEndMs;
+}
+
+DecoderContext::EndPolicy DecoderContext::endPolicy() const
+{
+    return m_endPolicy;
+}
+
 int DecoderContext::decodeChunk(size_t maxFrames)
 {
     if(!m_isDecoding || !m_decoder || !m_activeStream) {
@@ -287,7 +304,10 @@ int DecoderContext::decodeChunk(size_t maxFrames)
         return 0;
     }
 
-    if(reachedTrackEnd(m_currentPos, m_endPos)) {
+    const bool windowBounded = m_endPolicy == EndPolicy::WindowOrDecoderEof && m_windowEndPos.has_value();
+    const uint64_t windowEnd = windowBounded ? *m_windowEndPos : std::numeric_limits<uint64_t>::max();
+
+    if(windowBounded && reachedTrackEnd(m_currentPos, windowEnd)) {
         m_activeStream->setEndOfInput();
         m_isDecoding = false;
         return 0;
@@ -318,10 +338,10 @@ int DecoderContext::decodeChunk(size_t maxFrames)
         }
 
         const uint64_t chunkEndMs  = audioBuffer.endTime();
-        const bool chunkReachedEnd = reachedTrackEnd(chunkEndMs, m_endPos);
-        const auto boundedInput    = trimBufferToTrackWindow(audioBuffer, m_startPos, m_endPos);
+        const bool chunkReachedEnd = windowBounded && reachedTrackEnd(chunkEndMs, windowEnd);
+        const auto boundedInput    = trimBufferToTrackWindow(audioBuffer, m_startPos, windowEnd);
 
-        m_currentPos = std::min(chunkEndMs, m_endPos);
+        m_currentPos = windowBounded ? std::min(chunkEndMs, windowEnd) : chunkEndMs;
 
         if(!boundedInput.has_value()) {
             if(chunkReachedEnd) {
@@ -358,9 +378,9 @@ int DecoderContext::decodeChunk(size_t maxFrames)
                               << samplesWritten;
         }
 
-        m_currentPos = std::min(boundedInput->endTime(), m_endPos);
+        m_currentPos = windowBounded ? std::min(boundedInput->endTime(), windowEnd) : boundedInput->endTime();
 
-        if(chunkReachedEnd || reachedTrackEnd(m_currentPos, m_endPos)) {
+        if(windowBounded && (chunkReachedEnd || reachedTrackEnd(m_currentPos, windowEnd))) {
             m_activeStream->setEndOfInput();
             m_isDecoding = false;
         }
@@ -438,7 +458,7 @@ int DecoderContext::prefillActiveStreamMs(uint64_t targetMs, int maxChunks, size
         return {};
     }
 
-    const auto targetSamples = static_cast<size_t>((targetMs * sampleRate * channels) / 1000);
+    const auto targetSamples = targetMs * sampleRate * channels / 1000;
     return prefillActiveStream(targetSamples, maxChunks, maxFramesPerChunk);
 }
 
@@ -465,7 +485,7 @@ bool DecoderContext::refreshTrackMetadata()
 
     m_track    = changed;
     m_startPos = changed.offset();
-    m_endPos   = endPositionForTrack(changed);
+    setEndPolicy(EndPolicy::DecoderEofOnly);
 
     m_currentPos = std::max(m_currentPos, m_startPos);
 
@@ -512,7 +532,8 @@ void DecoderContext::reset()
     m_format     = {};
     m_currentPos = 0;
     m_startPos   = 0;
-    m_endPos     = 0;
+    m_windowEndPos.reset();
+    m_endPolicy = EndPolicy::DecoderEofOnly;
     std::vector<double>{}.swap(m_decodeScratch);
 }
 } // namespace Fooyin

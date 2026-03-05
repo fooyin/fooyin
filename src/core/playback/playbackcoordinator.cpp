@@ -188,6 +188,27 @@ void PlaybackCoordinator::handleTrackBoundaryReached(const Engine::AboutToFinish
     m_pendingBoundarySwitchGateOpen = true;
     m_pendingBoundarySwitchAnchor   = SwitchAnchor::BoundarySignal;
     markBoundaryTransition(BoundaryTransitionReason::BoundarySignalAnchorSet);
+
+    // Same-file multi-track transitions do not use prepare-readiness request IDs.
+    // Commit immediately on boundary signal to avoid waiting for TrackStatus::End.
+    if(!m_pendingBoundaryPrepareRequestId.has_value()) {
+        const Track currentTrack = m_playerController->currentTrack();
+        const Track nextTrack    = m_playerController->upcomingTrack();
+        if(!sameTrackIdentity(currentTrack, m_pendingBoundaryExpectedTrack)
+           || !sameTrackIdentity(nextTrack, m_pendingBoundaryExpectedNextTrack)
+           || !isMultiTrackFileTransition(currentTrack, nextTrack)) {
+            clearPendingBoundaryAdvance(BoundaryTransitionReason::ClearTrackMismatch);
+            return;
+        }
+
+        m_suppressedEndGeneration = m_pendingBoundaryAdvanceGeneration;
+        markBoundaryTransition(BoundaryTransitionReason::AdvancingPreparedTransition);
+        clearPendingBoundaryAdvance(BoundaryTransitionReason::AdvancingPreparedTransition);
+        m_playlistHandler->prepareUpcomingTrack();
+        m_playerController->advance(Player::AdvanceReason::PreparedCrossfade);
+        return;
+    }
+
     tryAdvancePreparedBoundary();
     armBoundaryCommitWatchdog();
 }

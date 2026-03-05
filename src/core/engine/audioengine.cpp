@@ -1399,17 +1399,18 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
 
     PlaybackTransitionCoordinator::TrackEndingInput input;
 
-    input.positionMs             = relativePosMs;
-    input.durationMs             = m_currentTrack.duration();
-    input.outputDelayMs          = outputDelayMs;
-    input.remainingOutputMs      = remainingOutputMs;
-    input.endOfInput             = stream->endOfInput();
-    input.bufferEmpty            = stream->bufferEmpty();
-    input.autoCrossfadeEnabled   = m_crossfadeEnabled && m_crossfadingValues.autoChange.isConfigured();
-    input.gaplessEnabled         = m_gaplessEnabled;
-    input.autoFadeOutMs          = m_crossfadingValues.autoChange.effectiveOutMs();
-    input.autoFadeInMs           = m_crossfadingValues.autoChange.effectiveInMs();
-    input.gaplessPrepareWindowMs = GaplessPrepareLeadMs;
+    input.positionMs              = relativePosMs;
+    input.durationMs              = m_currentTrack.duration();
+    input.durationBoundaryEnabled = m_currentTrack.hasCue();
+    input.outputDelayMs           = outputDelayMs;
+    input.remainingOutputMs       = remainingOutputMs;
+    input.endOfInput              = stream->endOfInput();
+    input.bufferEmpty             = stream->bufferEmpty();
+    input.autoCrossfadeEnabled    = m_crossfadeEnabled && m_crossfadingValues.autoChange.isConfigured();
+    input.gaplessEnabled          = m_gaplessEnabled;
+    input.autoFadeOutMs           = m_crossfadingValues.autoChange.effectiveOutMs();
+    input.autoFadeInMs            = m_crossfadingValues.autoChange.effectiveInMs();
+    input.gaplessPrepareWindowMs  = GaplessPrepareLeadMs;
 
     return m_transitions.evaluateTrackEnding(input);
 }
@@ -1887,6 +1888,15 @@ bool AudioEngine::executeSegmentSwitchLoad(const Track& track, bool preserveTran
 
     if(setStreamToTrackOriginForSegmentSwitch(track, streamPosMs)) {
         qCDebug(ENGINE) << "Switching contiguous segment on active stream:" << track.filenameExt();
+
+        const auto previousTrackStatus = m_trackStatus.load(std::memory_order_relaxed);
+
+        if(!m_decoder.switchContiguousTrack(track)) {
+            qCWarning(ENGINE) << "Contiguous segment switch could not retarget decoder state; falling back:"
+                              << track.filenameExt();
+            return false;
+        }
+
         clearPreparedNextTrack();
         setCurrentTrackContext(track);
         clearTrackEndLatch();
@@ -1896,12 +1906,28 @@ bool AudioEngine::executeSegmentSwitchLoad(const Track& track, bool preserveTran
             m_fadeController.invalidateActiveFade();
         }
 
-        if(const auto stream = m_decoder.activeStream()) {
-            stream->setTrack(track);
+        if(previousTrackStatus == Engine::TrackStatus::End) {
+            updateTrackStatus(Engine::TrackStatus::Buffered);
         }
 
-        if(m_trackStatus.load(std::memory_order_relaxed) == Engine::TrackStatus::End) {
-            updateTrackStatus(Engine::TrackStatus::Buffered);
+        const auto stream           = m_decoder.activeStream();
+        const bool streamWasStopped = stream && stream->state() == AudioStream::State::Stopped;
+
+        if(stream && streamWasStopped) {
+            m_pipeline.switchToStream(stream->id());
+        }
+
+        if(hasPlaybackState(Engine::PlaybackState::Playing)) {
+            if(streamWasStopped) {
+                const int restartPrefillMs = std::max(20, m_decoder.lowWatermarkMs());
+                prefillActiveStream(restartPrefillMs);
+            }
+
+            if(const auto activeStream = m_decoder.activeStream()) {
+                m_pipeline.sendStreamCommand(activeStream->id(), AudioStream::Command::Play);
+            }
+            m_pipeline.play();
+            m_decoder.ensureDecodeTimerRunning();
         }
 
         updatePositionContext(m_pipeline.currentStatus().timelineEpoch);

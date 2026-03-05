@@ -761,4 +761,22 @@ TEST(AudioEngineTest, ManualChangeCrossfadeReanchorsPositionWithoutStoppingPlayb
     EXPECT_GT(positionBeforeSwitch, 0U);
     EXPECT_EQ(harness.outputStats->uninitCalls.load(), outputUninitBefore);
 }
+
+TEST(AudioEngineTest, NonCueTracksDoNotForceEndAtMetadataDurationBoundary)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+
+    static constexpr uint64_t trackDurationMs = 200;
+    const Track track = harness.createTrack(u"non-cue-duration-boundary.fyt"_s, 0, trackDurationMs);
+    harness.engine.loadTrack(track, false);
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.position() > trackDurationMs + 600; }, 3000ms));
+    EXPECT_NE(harness.engine.trackStatus(), Engine::TrackStatus::End);
+}
+
 } // namespace Fooyin::Testing

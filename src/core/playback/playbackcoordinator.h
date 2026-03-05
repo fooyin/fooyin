@@ -120,13 +120,16 @@ private:
     std::optional<uint64_t> m_pendingBoundaryPrepareRequestId;
     Track m_pendingBoundaryExpectedTrack;
     Track m_pendingBoundaryExpectedNextTrack;
+
     Engine::CrossfadeSwitchPolicy m_crossfadeSwitchPolicy;
+
     bool m_pendingBoundaryReady;
     bool m_pendingBoundarySwitchGateOpen;
     bool m_pendingBoundaryCrossfadeArmAttempted;
     bool m_pendingBoundaryCrossfadeArmInFlight;
     bool m_pendingBoundaryGaplessArmAttempted;
     bool m_pendingBoundaryGaplessArmInFlight;
+
     PreparedTransition m_pendingBoundaryPreparedTransition;
     SwitchAnchor m_pendingBoundarySwitchAnchor;
     std::optional<uint64_t> m_pendingBoundaryWatchdogGeneration;

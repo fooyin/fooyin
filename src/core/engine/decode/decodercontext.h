@@ -30,6 +30,7 @@
 #include <QFile>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace Fooyin {
@@ -44,6 +45,12 @@ namespace Fooyin {
 class FYCORE_EXPORT DecoderContext
 {
 public:
+    enum class EndPolicy : uint8_t
+    {
+        DecoderEofOnly = 0,
+        WindowOrDecoderEof,
+    };
+
     DecoderContext();
     ~DecoderContext() = default;
 
@@ -80,6 +87,12 @@ public:
     void stop();
     //! Seek decoder position (caller is responsible for stream reset/position sync).
     bool seek(uint64_t positionMs);
+    //! Retarget decoder context to a contiguous logical segment on the same source.
+    //! Re-arms decode and clears end-of-input on the active stream.
+    [[nodiscard]] bool switchContiguousTrack(const Track& track);
+    //! Set how decode end is determined; optional bounded window end can be supplied.
+    void setEndPolicy(EndPolicy policy, std::optional<uint64_t> windowEndMs = {});
+    [[nodiscard]] EndPolicy endPolicy() const;
     /*!
      * Decode up to @p maxFrames into the active stream ring buffer.
      * @return Number of frames decoded; 0 on end/error/no writable space.
@@ -128,7 +141,8 @@ private:
 
     uint64_t m_currentPos;
     uint64_t m_startPos;
-    uint64_t m_endPos;
+    std::optional<uint64_t> m_windowEndPos;
+    EndPolicy m_endPolicy;
 
     bool m_isDecoding;
     std::vector<double> m_decodeScratch;

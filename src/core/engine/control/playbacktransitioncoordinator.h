@@ -66,6 +66,7 @@ public:
     {
         uint64_t positionMs{0};
         uint64_t durationMs{0};
+        bool durationBoundaryEnabled{true};
         uint64_t remainingOutputMs{0};
         bool endOfInput{false};
         bool bufferEmpty{false};
