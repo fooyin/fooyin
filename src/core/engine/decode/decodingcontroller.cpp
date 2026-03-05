@@ -207,7 +207,9 @@ DecodingController::DecodingController(QObject* timerHost)
 
 void DecodingController::startDecoding()
 {
-    start();
+    if(!isDecoding()) {
+        start();
+    }
     m_fillUntilTarget         = true;
     m_hasLastDecodeTimerTick  = false;
     m_decodeTimerGapLogActive = false;

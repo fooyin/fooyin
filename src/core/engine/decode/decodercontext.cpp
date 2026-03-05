@@ -42,12 +42,18 @@ namespace {
 
 [[nodiscard]] uint64_t endPositionForTrack(const Fooyin::Track& track)
 {
-    if(track.hasCue()) {
-        // Cue-based tracks should keep decoding continuously
+    // Keep decoder running continuously for cue-backed logical segments.
+    // Segment boundaries are handled by transition/control logic.
+    if(track.hasCue() || track.duration() == 0) {
         return std::numeric_limits<uint64_t>::max();
     }
 
-    return track.offset() + (track.duration() > 0 ? track.duration() : std::numeric_limits<uint64_t>::max());
+    const uint64_t duration = track.duration();
+    if(track.offset() > (std::numeric_limits<uint64_t>::max() - duration)) {
+        return std::numeric_limits<uint64_t>::max();
+    }
+
+    return track.offset() + duration;
 }
 
 [[nodiscard]] std::optional<Fooyin::AudioBuffer> trimBufferToTrackWindow(const Fooyin::AudioBuffer& buffer,
@@ -236,10 +242,12 @@ AudioStreamPtr DecoderContext::detachStream()
 
 void DecoderContext::start()
 {
-    if(m_decoder) {
-        m_decoder->start();
-        m_isDecoding = true;
+    if(!m_decoder || m_isDecoding) {
+        return;
     }
+
+    m_decoder->start();
+    m_isDecoding = true;
 }
 
 void DecoderContext::stop()
@@ -259,6 +267,30 @@ bool DecoderContext::seek(uint64_t positionMs)
 
     m_decoder->seek(positionMs);
     m_currentPos = positionMs;
+
+    return true;
+}
+
+bool DecoderContext::switchContiguousTrack(const Track& track)
+{
+    if(!m_decoder || !track.isValid()) {
+        return false;
+    }
+
+    m_track    = track;
+    m_startPos = track.offset();
+    m_endPos   = endPositionForTrack(track);
+
+    // Keep decoder continuity across contiguous logical segments.
+    if(m_currentPos < m_startPos) {
+        m_currentPos = m_startPos;
+    }
+    m_isDecoding = true;
+
+    if(m_activeStream) {
+        m_activeStream->setTrack(track);
+        m_activeStream->resetEndOfInput();
+    }
 
     return true;
 }
