@@ -848,12 +848,12 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="86"/>
         <source>Show symlinks</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать символьные ссылки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
         <source>Show hidden</source>
-        <translation type="unfinished">Скрывать</translation>
+        <translation>Показать скрытое</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="90"/>
@@ -883,7 +883,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="113"/>
         <source>Browser Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтры браузера</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="119"/>
@@ -1005,12 +1005,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="839"/>
         <source>Playback</source>
-        <translation type="unfinished">Воспроизведение</translation>
+        <translation>Воспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="839"/>
         <source>DSP Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Менеджер DSP</translation>
     </message>
 </context>
 <context>
@@ -1018,32 +1018,32 @@
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="203"/>
         <source>Load</source>
-        <translation type="unfinished">Загрузить</translation>
+        <translation>Загрузить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="204"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="205"/>
         <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="234"/>
         <source>Per-Track DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP для каждой дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="235"/>
         <source>Master DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Мастер DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="237"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed. During crossfades, each track is processed independently.</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP для каждой дорожки применяются к каждому потоку отдельно перед микшированием. Во время плавных переходов каждая дорожка обрабатывается независимо.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="239"/>
@@ -1104,7 +1104,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="645"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="663"/>
@@ -1285,7 +1285,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="481"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
 </context>
 <context>
@@ -1415,7 +1415,7 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="146"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="186"/>
@@ -1674,7 +1674,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="178"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
@@ -1757,7 +1757,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
@@ -3971,12 +3971,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="121"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="122"/>
         <source>Remove All</source>
-        <translation>Удалить все</translation>
+        <translation>Убрать все</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="85"/>
@@ -5748,7 +5748,7 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="126"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="128"/>
@@ -6077,7 +6077,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="188"/>
         <source>&amp;Remove</source>
-        <translation>&amp;Удалить</translation>
+        <translation>&amp;Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="189"/>
@@ -6413,7 +6413,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="58"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="60"/>
@@ -8527,12 +8527,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="116"/>
         <source>Remove waveform data</source>
-        <translation>Удалить данные</translation>
+        <translation>Удалить данные волноформы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="117"/>
         <source>Remove any existing waveform data for the selected tracks</source>
-        <translation>Удалить все существующие данные формы сигнала для выбранных дорожек</translation>
+        <translation>Удалить все существующие данные волноформы для выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
