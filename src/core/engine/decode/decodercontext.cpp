@@ -103,6 +103,7 @@ DecoderContext::DecoderContext()
     : m_currentPos{0}
     , m_startPos{0}
     , m_endPolicy{EndPolicy::DecoderEofOnly}
+    , m_playbackHints{AudioDecoder::NoHints}
     , m_isDecoding{false}
 { }
 
@@ -151,10 +152,26 @@ uint64_t DecoderContext::startPosition() const
     return m_startPos;
 }
 
+AudioDecoder::PlaybackHints DecoderContext::playbackHints() const
+{
+    return m_playbackHints;
+}
+
+void DecoderContext::setPlaybackHints(AudioDecoder::PlaybackHints hints)
+{
+    m_playbackHints = hints;
+
+    if(m_decoder) {
+        m_decoder->setPlaybackHints(m_playbackHints);
+    }
+}
+
 bool DecoderContext::init(std::unique_ptr<AudioDecoder> decoder, const Track& track)
 {
     m_decoder = std::move(decoder);
     m_track   = track;
+
+    m_decoder->setPlaybackHints(m_playbackHints);
 
     if(!track.isInArchive()) {
         m_file = std::make_unique<QFile>(track.filepath());
@@ -188,8 +205,9 @@ bool DecoderContext::adoptPreparedDecoder(std::unique_ptr<AudioDecoder> decoder,
     }
 
     m_decoder = std::move(decoder);
-    m_file    = std::move(file);
-    m_source  = std::move(source);
+    m_decoder->setPlaybackHints(m_playbackHints);
+    m_file   = std::move(file);
+    m_source = std::move(source);
 
     if(m_file) {
         m_source.device = m_file.get();

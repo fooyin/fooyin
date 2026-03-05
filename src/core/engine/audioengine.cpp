@@ -39,6 +39,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/playlist/playlist.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -139,6 +140,16 @@ int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnap
     const int delayDemandMs     = std::max(0, static_cast<int>(std::llround(delaySeconds * 1000.0)));
 
     return std::max(framesToMs(queueDemandFrames), delayDemandMs);
+}
+
+Fooyin::AudioDecoder::PlaybackHints decoderPlaybackHintsForPlayMode(Fooyin::Playlist::PlayModes playMode)
+{
+    Fooyin::AudioDecoder::PlaybackHints hints{Fooyin::AudioDecoder::NoHints};
+
+    hints.setFlag(Fooyin::AudioDecoder::PlaybackHint::RepeatTrackEnabled,
+                  (playMode & Fooyin::Playlist::PlayMode::RepeatTrack) != 0);
+
+    return hints;
 }
 
 size_t prefillFramesPerChunk(int sampleRate)
@@ -1261,9 +1272,31 @@ void AudioEngine::setupSettings()
     const auto refreshReplayGainSettings = [this]() {
         ReplayGainProcessor::refreshSharedSettings(*m_settings, *m_replayGainSharedSettings);
     };
+
+    const auto refreshDecoderPlaybackHints = [this](bool invalidatePreparedState) {
+        const auto playMode = static_cast<Playlist::PlayModes>(m_settings->value<Settings::Core::PlayMode>());
+        const auto hints    = decoderPlaybackHintsForPlayMode(playMode);
+
+        if(hints == m_decoderPlaybackHints) {
+            return;
+        }
+
+        m_decoderPlaybackHints = hints;
+        m_decoder.setPlaybackHints(m_decoderPlaybackHints);
+
+        if(invalidatePreparedState) {
+            clearPreparedCrossfadeTransition();
+            clearPreparedGaplessTransition();
+            clearPreparedNextTrackAndCancelPendingJobs();
+        }
+    };
+
     refreshReplayGainSettings();
+    refreshDecoderPlaybackHints(false);
 
     m_settings->subscribe<Settings::Core::PlayMode>(this, refreshReplayGainSettings);
+    m_settings->subscribe<Settings::Core::PlayMode>(
+        this, [refreshDecoderPlaybackHints]() { refreshDecoderPlaybackHints(true); });
     m_settings->subscribe<Settings::Core::RGMode>(this, refreshReplayGainSettings);
     m_settings->subscribe<Settings::Core::RGType>(this, refreshReplayGainSettings);
     m_settings->subscribe<Settings::Core::RGPreAmp>(this, refreshReplayGainSettings);
@@ -1785,6 +1818,7 @@ bool AudioEngine::prepareNextTrackImmediate(const Track& track)
     context.audioLoader        = m_audioLoader;
     context.currentTrack       = m_currentTrack;
     context.playbackState      = m_playbackState.load(std::memory_order_relaxed);
+    context.playbackHints      = m_decoderPlaybackHints;
     context.bufferLengthMs     = m_bufferLengthMs;
     context.preferredPrefillMs = preferredPreparedPrefillMs();
 
@@ -1811,6 +1845,7 @@ void AudioEngine::enqueuePrepareNextTrack(const Track& track, uint64_t requestId
     request.context.audioLoader        = m_audioLoader;
     request.context.currentTrack       = m_currentTrack;
     request.context.playbackState      = m_playbackState.load(std::memory_order_relaxed);
+    request.context.playbackHints      = m_decoderPlaybackHints;
     request.context.bufferLengthMs     = m_bufferLengthMs;
     request.context.preferredPrefillMs = preferredPreparedPrefillMs();
 

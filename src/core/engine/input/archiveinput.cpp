@@ -81,6 +81,9 @@ std::optional<AudioFormat> ArchiveDecoder::init(const AudioSource& /*source*/, c
         return {};
     }
 
+    // Forward current playback hints to the wrapped decoder
+    m_decoder->setPlaybackHints(playbackHints());
+
     AudioSource aSource;
     aSource.filepath      = filepath;
     aSource.device        = m_device.get();
@@ -112,7 +115,11 @@ void ArchiveDecoder::seek(uint64_t pos)
 
 AudioBuffer ArchiveDecoder::readBuffer(size_t bytes)
 {
-    return m_decoder ? m_decoder->readBuffer(bytes) : AudioBuffer{};
+    if(!m_decoder) {
+        return {};
+    }
+
+    return m_decoder->readBuffer(bytes);
 }
 
 Fooyin::GeneralArchiveReader::GeneralArchiveReader(std::shared_ptr<AudioLoader> audioLoader)

@@ -19,26 +19,32 @@
 
 #include <core/engine/audioinput.h>
 
-#include <core/coresettings.h>
-#include <core/playlist/playlist.h>
-
-#include <QUrl>
-
-using namespace Qt::StringLiterals;
-
-namespace {
-bool isRepeatTrackMode()
-{
-    const Fooyin::FySettings settings;
-    const auto playMode = settings.value(Fooyin::Settings::Core::PlayModeKey).value<Fooyin::Playlist::PlayModes>();
-    return playMode & Fooyin::Playlist::PlayMode::RepeatTrack;
-}
-} // namespace
-
 namespace Fooyin {
+class AudioDecoderPrivate
+{
+public:
+    AudioDecoder::PlaybackHints playbackHints{AudioDecoder::NoHints};
+};
+
+AudioDecoder::AudioDecoder()
+    : p{std::make_unique<AudioDecoderPrivate>()}
+{ }
+
+AudioDecoder::~AudioDecoder() = default;
+
+AudioDecoder::PlaybackHints AudioDecoder::playbackHints() const
+{
+    return p->playbackHints;
+}
+
+void AudioDecoder::setPlaybackHints(PlaybackHints hints)
+{
+    p->playbackHints = hints;
+}
+
 bool AudioDecoder::isRepeatingTrack() const
 {
-    return isRepeatTrackMode();
+    return playbackHints().testFlag(RepeatTrackEnabled);
 }
 
 bool AudioDecoder::trackHasChanged() const
@@ -66,11 +72,6 @@ bool AudioReader::canWriteCover() const
 int AudioReader::subsongCount() const
 {
     return 1;
-}
-
-bool AudioReader::isRepeatingTrack() const
-{
-    return isRepeatTrackMode();
 }
 
 bool AudioReader::init(const AudioSource& /*source*/)

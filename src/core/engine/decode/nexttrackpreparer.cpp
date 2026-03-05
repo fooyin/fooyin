@@ -72,6 +72,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
     }
 
     DecoderContext decoderContext;
+    decoderContext.setPlaybackHints(context.playbackHints);
 
     auto decoder = context.audioLoader->decoderForTrack(track);
     if(!decoder) {

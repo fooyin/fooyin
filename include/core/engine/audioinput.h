@@ -27,7 +27,10 @@
 #include <QIODevice>
 #include <QObject>
 
+#include <memory>
+
 namespace Fooyin {
+class AudioDecoderPrivate;
 class ArchiveReader;
 
 /*!
@@ -56,6 +59,9 @@ struct AudioSource
  * 3. repeated `readBuffer()`
  * 4. optional `seek()`
  * 5. `stop()` for teardown/reset
+ *
+ * Runtime playback policy is provided via `PlaybackHints`, which can be
+ * injected before and during playback by the engine.
  */
 class FYCORE_EXPORT AudioDecoder
 {
@@ -78,7 +84,17 @@ public:
     Q_DECLARE_FLAGS(DecoderOptions, DecoderFlag)
     Q_FLAG(DecoderOptions)
 
-    virtual ~AudioDecoder() = default;
+    enum PlaybackHint : uint8_t
+    {
+        NoHints = 0,
+        //! Current playback session is in repeat-track mode.
+        RepeatTrackEnabled = 1 << 0,
+    };
+    Q_DECLARE_FLAGS(PlaybackHints, PlaybackHint)
+    Q_FLAG(PlaybackHints)
+
+    AudioDecoder();
+    virtual ~AudioDecoder();
 
     /*!
      * Returns a list of file extensions this decoder supports.
@@ -94,7 +110,7 @@ public:
      * Returns @c true if the current track is being repeated/looped forever.
      * @note Called only after `init()` succeeds.
      */
-    [[nodiscard]] virtual bool isRepeatingTrack() const;
+    [[nodiscard]] bool isRepeatingTrack() const;
     /*!
      * Returns @c true if the track passed to `init()` has changed in some way.
      * Useful for properties like duration which may change due to loop count.
@@ -112,6 +128,15 @@ public:
      * @note the base class implementation of this function returns 0.
      */
     [[nodiscard]] virtual int bitrate() const;
+
+    /*!
+     * Returns current playback hint flags for this decoder instance.
+     */
+    [[nodiscard]] PlaybackHints playbackHints() const;
+    /*!
+     * Updates playback hint flags for this decoder instance.
+     */
+    void setPlaybackHints(PlaybackHints hints);
 
     /*!
      * Initialise decoder for `track` and `source`.
@@ -140,6 +165,9 @@ public:
      * Read up to `bytes` of interleaved PCM in the format returned by `init()`.
      */
     virtual AudioBuffer readBuffer(size_t bytes) = 0;
+
+private:
+    std::unique_ptr<AudioDecoderPrivate> p;
 };
 using DecoderCreator = std::function<std::unique_ptr<AudioDecoder>()>;
 
@@ -183,12 +211,6 @@ public:
      * Base class implementation returns `1` (no subsongs).
      */
     [[nodiscard]] virtual int subsongCount() const;
-    /*!
-     * Returns @c true if the current track is being repeated/looped forever.
-     * @note Called only after `init()` returns true.
-     */
-    [[nodiscard]] virtual bool isRepeatingTrack() const;
-
     /*!
      * Prepares the audio source @p source for reading.
      * If the source has subsongs, expose count via `subsongCount()`.
@@ -277,4 +299,5 @@ using ArchiveReaderCreator = std::function<std::unique_ptr<ArchiveReader>()>;
 } // namespace Fooyin
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioDecoder::DecoderOptions)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioDecoder::PlaybackHints)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioReader::WriteOptions)

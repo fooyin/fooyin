@@ -68,6 +68,8 @@ public:
     [[nodiscard]] const AudioFormat& format() const;
     [[nodiscard]] uint64_t currentPosition() const;
     [[nodiscard]] uint64_t startPosition() const;
+    [[nodiscard]] AudioDecoder::PlaybackHints playbackHints() const;
+    void setPlaybackHints(AudioDecoder::PlaybackHints hints);
 
     //! Initialise decoder/source for @p track (does not attach a stream).
     bool init(std::unique_ptr<AudioDecoder> decoder, const Track& track);
@@ -143,6 +145,7 @@ private:
     uint64_t m_startPos;
     std::optional<uint64_t> m_windowEndPos;
     EndPolicy m_endPolicy;
+    AudioDecoder::PlaybackHints m_playbackHints;
 
     bool m_isDecoding;
     std::vector<double> m_decodeScratch;

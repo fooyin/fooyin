@@ -314,6 +314,7 @@ private:
     bool m_fadingEnabled;
     bool m_crossfadeEnabled;
     bool m_gaplessEnabled;
+    AudioDecoder::PlaybackHints m_decoderPlaybackHints{AudioDecoder::NoHints};
     Engine::FadingValues m_fadingValues;
     Engine::CrossfadingValues m_crossfadingValues;
 
