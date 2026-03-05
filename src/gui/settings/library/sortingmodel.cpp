@@ -137,14 +137,7 @@ Qt::ItemFlags SortingModel::flags(const QModelIndex& index) const
         return Qt::NoItemFlags;
     }
 
-    auto flags = ExtendableTableModel::flags(index);
-
-    auto* item = static_cast<SortingItem*>(index.internalPointer());
-    if(item && !item->sortScript().isDefault) {
-        flags |= Qt::ItemIsEditable;
-    }
-
-    return flags;
+    return ExtendableTableModel::flags(index) | Qt::ItemIsEditable;
 }
 
 QVariant SortingModel::headerData(int section, Qt::Orientation orientation, int role) const

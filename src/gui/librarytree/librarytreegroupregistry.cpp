@@ -23,7 +23,7 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{u"LibraryTree/LibraryTreeGroups"_s, settings, parent}
+    : ItemRegistry{u"LibraryTree/LibraryTreeGroups"_s, settings, u"LibraryTree/LibraryTreeGroupOverrides"_s, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         if(const auto grouping = itemById(id)) {

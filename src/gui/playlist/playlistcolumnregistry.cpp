@@ -27,7 +27,7 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{u"PlaylistWidget/PlaylistColumns"_s, settings, parent}
+    : ItemRegistry{u"PlaylistWidget/PlaylistColumns"_s, settings, u"PlaylistWidget/PlaylistColumnOverrides"_s, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         if(const auto column = itemById(id)) {

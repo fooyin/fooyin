@@ -139,14 +139,7 @@ Qt::ItemFlags LibraryTreeGroupModel::flags(const QModelIndex& index) const
         return Qt::NoItemFlags;
     }
 
-    auto flags = ExtendableTableModel::flags(index);
-
-    auto* item = static_cast<LibraryTreeGroupItem*>(index.internalPointer());
-    if(item && !item->group().isDefault) {
-        flags |= Qt::ItemIsEditable;
-    }
-
-    return flags;
+    return ExtendableTableModel::flags(index) | Qt::ItemIsEditable;
 }
 
 QVariant LibraryTreeGroupModel::headerData(int section, Qt::Orientation orientation, int role) const

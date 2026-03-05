@@ -111,17 +111,17 @@ void FiltersColumnPageWidget::reset()
 
 void FiltersColumnPageWidget::updateButtonState()
 {
-    const auto selection  = m_columnList->selectionModel()->selectedIndexes();
-    const bool allDefault = std::ranges::all_of(
-        selection, [](const QModelIndex& index) { return index.data(Qt::UserRole).value<FilterColumn>().isDefault; });
-
-    if(selection.empty() || allDefault) {
+    const auto selection = m_columnList->selectionModel()->selectedIndexes();
+    if(selection.empty()) {
         m_openEditor->setDisabled(true);
         m_columnList->removeRowAction()->setDisabled(true);
         return;
     }
 
-    m_columnList->removeRowAction()->setEnabled(true);
+    const bool hasCustom = std::ranges::any_of(
+        selection, [](const QModelIndex& index) { return !index.data(Qt::UserRole).value<FilterColumn>().isDefault; });
+
+    m_columnList->removeRowAction()->setEnabled(hasCustom);
     m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 2);
 }
 

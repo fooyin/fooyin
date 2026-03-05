@@ -136,14 +136,7 @@ Qt::ItemFlags FiltersColumnModel::flags(const QModelIndex& index) const
         return Qt::NoItemFlags;
     }
 
-    auto flags = ExtendableTableModel::flags(index);
-
-    auto* item = static_cast<ColumnItem*>(index.internalPointer());
-    if(item && !item->column().isDefault) {
-        flags |= Qt::ItemIsEditable;
-    }
-
-    return flags;
+    return ExtendableTableModel::flags(index) | Qt::ItemIsEditable;
 }
 
 QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation, int role) const

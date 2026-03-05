@@ -110,18 +110,18 @@ void LibraryTreeGroupPageWidget::reset()
 
 void LibraryTreeGroupPageWidget::updateButtonState()
 {
-    const auto selection  = m_groupList->selectionModel()->selectedIndexes();
-    const bool allDefault = std::ranges::all_of(selection, [](const QModelIndex& index) {
-        return index.data(Qt::UserRole).value<LibraryTreeGrouping>().isDefault;
-    });
-
-    if(selection.empty() || allDefault) {
+    const auto selection = m_groupList->selectionModel()->selectedIndexes();
+    if(selection.empty()) {
         m_openEditor->setDisabled(true);
         m_groupList->removeRowAction()->setDisabled(true);
         return;
     }
 
-    m_groupList->removeRowAction()->setEnabled(true);
+    const bool hasCustom = std::ranges::any_of(selection, [](const QModelIndex& index) {
+        return !index.data(Qt::UserRole).value<LibraryTreeGrouping>().isDefault;
+    });
+
+    m_groupList->removeRowAction()->setEnabled(hasCustom);
     m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 2);
 }
 

@@ -124,17 +124,17 @@ void LibrarySortingPageWidget::reset()
 
 void LibrarySortingPageWidget::updateButtonState()
 {
-    const auto selection  = m_sortList->selectionModel()->selectedIndexes();
-    const bool allDefault = std::ranges::all_of(
-        selection, [](const QModelIndex& index) { return index.data(Qt::UserRole).value<SortScript>().isDefault; });
-
-    if(selection.empty() || allDefault) {
+    const auto selection = m_sortList->selectionModel()->selectedIndexes();
+    if(selection.empty()) {
         m_openEditor->setDisabled(true);
         m_sortList->removeRowAction()->setDisabled(true);
         return;
     }
 
-    m_sortList->removeRowAction()->setEnabled(true);
+    const bool hasCustom = std::ranges::any_of(
+        selection, [](const QModelIndex& index) { return !index.data(Qt::UserRole).value<SortScript>().isDefault; });
+
+    m_sortList->removeRowAction()->setEnabled(hasCustom);
     m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 2);
 }
 

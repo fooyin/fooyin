@@ -23,7 +23,7 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::Filters {
 FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{u"Filters/FilterColumns"_s, settings, parent}
+    : ItemRegistry{u"Filters/FilterColumns"_s, settings, u"Filters/FilterColumnOverrides"_s, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         if(const auto field = itemById(id)) {
@@ -36,11 +36,11 @@ FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* p
 
 void FilterColumnRegistry::loadDefaults()
 {
-    addDefaultItem({.name = tr("Genre"), .field = u"%<genre>%"_s});
-    addDefaultItem({.name = tr("Album Artist"), .field = u"%<albumartist>%"_s});
-    addDefaultItem({.name = tr("Artist"), .field = u"%<artist>%"_s});
-    addDefaultItem({.name = tr("Album"), .field = u"%album%"_s});
-    addDefaultItem({.name = tr("Date"), .field = u"%date%"_s});
+    addDefaultItem({.id = 0, .name = tr("Genre"), .field = u"%<genre>%"_s});
+    addDefaultItem({.id = 1, .name = tr("Album Artist"), .field = u"%<albumartist>%"_s});
+    addDefaultItem({.id = 2, .name = tr("Artist"), .field = u"%<artist>%"_s});
+    addDefaultItem({.id = 3, .name = tr("Album"), .field = u"%album%"_s});
+    addDefaultItem({.id = 4, .name = tr("Date"), .field = u"%date%"_s});
 }
 } // namespace Fooyin::Filters
 
