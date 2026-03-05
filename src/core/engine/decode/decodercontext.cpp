@@ -271,30 +271,6 @@ bool DecoderContext::seek(uint64_t positionMs)
     return true;
 }
 
-bool DecoderContext::switchContiguousTrack(const Track& track)
-{
-    if(!m_decoder || !track.isValid()) {
-        return false;
-    }
-
-    m_track    = track;
-    m_startPos = track.offset();
-    m_endPos   = endPositionForTrack(track);
-
-    // Keep decoder continuity across contiguous logical segments.
-    if(m_currentPos < m_startPos) {
-        m_currentPos = m_startPos;
-    }
-    m_isDecoding = true;
-
-    if(m_activeStream) {
-        m_activeStream->setTrack(track);
-        m_activeStream->resetEndOfInput();
-    }
-
-    return true;
-}
-
 int DecoderContext::decodeChunk(size_t maxFrames)
 {
     if(!m_isDecoding || !m_decoder || !m_activeStream) {
