@@ -22,6 +22,8 @@
 #include "audioanalysisbus.h"
 #include "chunktimelineassembler.h"
 #include "dsp/dspregistry.h"
+#include "enginehelpers.h"
+
 #include <utils/timeconstants.h>
 
 #include <QDebug>
@@ -515,7 +517,14 @@ bool AudioPipeline::init(const AudioFormat& format)
 
         pipeline.configureInputAndDspForFormat(format);
 
-        AudioFormat requestedOutput        = pipeline.m_renderer.outputFormat();
+        AudioFormat requestedOutput = normaliseChannelLayout(pipeline.m_renderer.outputFormat());
+        if(requestedOutput != pipeline.m_renderer.outputFormat()) {
+            qCDebug(PIPELINE) << "Normalised output channel layout before backend negotiation:"
+                              << describeFormat(requestedOutput);
+            pipeline.m_renderer.setOutputFormat(requestedOutput);
+            pipeline.m_outputSnapshot.store(makeSnapshot(requestedOutput), std::memory_order_release);
+        }
+
         const AudioFormat negotiatedOutput = pipeline.m_outputUnit.output()->negotiateFormat(requestedOutput);
         if(negotiatedOutput.isValid() && negotiatedOutput.sampleRate() == requestedOutput.sampleRate()
            && negotiatedOutput.channelCount() == requestedOutput.channelCount()

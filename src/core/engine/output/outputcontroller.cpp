@@ -20,6 +20,7 @@
 #include "outputcontroller.h"
 
 #include "audiopipeline.h"
+#include "enginehelpers.h"
 
 #include <QLoggingCategory>
 #include <QMetaObject>
@@ -39,7 +40,6 @@ QString describeFormat(const Fooyin::AudioFormat& format)
     return u"%1Hz %2ch %3"_s.arg(format.sampleRate()).arg(format.channelCount()).arg(format.prettyFormat())
          + u" [%1]"_s.arg(format.prettyChannelLayout());
 }
-
 } // namespace
 
 namespace Fooyin {
@@ -89,7 +89,8 @@ bool OutputController::initOutput(const AudioFormat& format, double volume)
 
     m_pipeline->setOutput(std::move(output));
 
-    if(!m_pipeline->init(format)) {
+    const AudioFormat normFormat = normaliseChannelLayout(format);
+    if(!m_pipeline->init(normFormat)) {
         QString error = m_pipeline->lastInitError().trimmed();
         if(error.isEmpty()) {
             error = u"Failed to initialise audio output"_s;
@@ -103,15 +104,15 @@ bool OutputController::initOutput(const AudioFormat& format, double volume)
 
     const auto actualOutput = m_pipeline->outputFormat();
 
-    const QString inputFormat  = describeFormat(format);
+    const QString inputFormat  = describeFormat(normFormat);
     const QString actualFormat = describeFormat(actualOutput);
     const QString deviceLabel  = m_outputDevice.isEmpty() ? u"default"_s : m_outputDevice;
 
     if(inputFormat == actualFormat) {
-        qCInfo(ENGINE) << "Output initialized:" << actualFormat << "(device:" << deviceLabel << ")";
+        qCInfo(ENGINE) << "Output initialised:" << actualFormat << "(device:" << deviceLabel << ")";
     }
     else {
-        qCInfo(ENGINE) << "Output initialized: input" << inputFormat << "-> output" << actualFormat
+        qCInfo(ENGINE) << "Output initialised: input" << inputFormat << "-> output" << actualFormat
                        << "(device:" << deviceLabel << ")";
     }
 

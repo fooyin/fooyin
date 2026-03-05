@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include "core/engine/audioformat.h"
 #include <core/track.h>
 
 namespace Fooyin {
@@ -41,4 +42,6 @@ FYCORE_EXPORT uint64_t absoluteTrackPositionMs(uint64_t streamPosMs, uint64_t st
 FYCORE_EXPORT uint64_t relativeTrackPositionMs(uint64_t streamPosMs, uint64_t streamOriginMs, uint64_t trackOffsetMs);
 //! Latch helper to emit track-end signal only once per logical segment.
 FYCORE_EXPORT bool shouldEmitTrackEndOnce(Track& lastEndedTrack, const Track& currentTrack);
+//! Infer a default channel layout when positions are missing but channel count is known.
+FYCORE_EXPORT AudioFormat normaliseChannelLayout(const AudioFormat& format);
 } // namespace Fooyin

@@ -96,4 +96,36 @@ bool shouldEmitTrackEndOnce(Track& lastEndedTrack, const Track& currentTrack)
     lastEndedTrack = currentTrack;
     return true;
 }
+
+AudioFormat normaliseChannelLayout(const AudioFormat& format)
+{
+    if(!format.isValid()) {
+        return format;
+    }
+
+    const int channels = format.channelCount();
+    if(channels <= 0 || channels > 8) {
+        return format;
+    }
+
+    bool needsInference = !format.hasChannelLayout();
+    if(!needsInference) {
+        for(int i{0}; i < channels; ++i) {
+            if(format.channelPosition(i) == Fooyin::AudioFormat::ChannelPosition::UnknownPosition) {
+                needsInference = true;
+                break;
+            }
+        }
+    }
+
+    if(!needsInference) {
+        return format;
+    }
+
+    auto inferred{format};
+    const auto fallback = Fooyin::AudioFormat::defaultChannelLayoutForChannelCount(channels);
+    inferred.setChannelLayout(fallback);
+
+    return inferred;
+}
 } // namespace Fooyin
