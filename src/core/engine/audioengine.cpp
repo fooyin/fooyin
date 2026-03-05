@@ -1634,18 +1634,25 @@ bool AudioEngine::initDecoder(const Track& track, bool allowPreparedStream)
         return true;
     }
 
-    auto decoder = m_audioLoader->decoderForTrack(track);
-    if(!decoder) {
+    bool decodersFound = false;
+    for(auto& decoder : m_audioLoader->decodersForTrack(track)) {
+        decodersFound = true;
+
+        if(!m_decoder.init(std::move(decoder), track)) {
+            continue;
+        }
+
+        return true;
+    }
+
+    if(!decodersFound) {
         qCWarning(ENGINE) << "No decoder available for track";
-        return false;
     }
-
-    if(!m_decoder.init(std::move(decoder), track)) {
+    else {
         qCWarning(ENGINE) << "Failed to initialse decoder";
-        return false;
     }
 
-    return true;
+    return false;
 }
 
 bool AudioEngine::setupNewTrackStream(const Track& track, bool applyPendingSeek)

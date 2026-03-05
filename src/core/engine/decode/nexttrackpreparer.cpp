@@ -74,20 +74,20 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
     DecoderContext decoderContext;
     decoderContext.setPlaybackHints(context.playbackHints);
 
-    auto decoder = context.audioLoader->decoderForTrack(track);
-    if(!decoder) {
-        return {};
+    bool decoderFound = false;
+    for(auto& decoder : context.audioLoader->decodersForTrack(track)) {
+        if(canceled()) {
+            return {};
+        }
+
+        if(!decoderContext.init(std::move(decoder), track)) {
+            continue;
+        }
+        decoderFound = true;
+        break;
     }
 
-    if(canceled()) {
-        return {};
-    }
-
-    if(!decoderContext.init(std::move(decoder), track)) {
-        return {};
-    }
-
-    if(canceled()) {
+    if(!decoderFound || canceled()) {
         return {};
     }
 

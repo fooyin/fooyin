@@ -76,20 +76,23 @@ std::optional<AudioFormat> ArchiveDecoder::init(const AudioSource& /*source*/, c
         return {};
     }
 
-    m_decoder = m_audioLoader->decoderForFile(filepath);
-    if(!m_decoder) {
-        return {};
+    for(auto& decoder : m_audioLoader->decodersForFile(filepath)) {
+        AudioSource aSource;
+        aSource.filepath      = filepath;
+        aSource.device        = m_device.get();
+        aSource.archiveReader = m_archiveReader.get();
+
+        // Forward current playback hints to the wrapped decoder
+        decoder->setPlaybackHints(playbackHints());
+
+        auto ret = decoder->init(aSource, track, options);
+        if(ret) {
+            m_decoder = std::move(decoder);
+            return ret;
+        }
     }
 
-    // Forward current playback hints to the wrapped decoder
-    m_decoder->setPlaybackHints(playbackHints());
-
-    AudioSource aSource;
-    aSource.filepath      = filepath;
-    aSource.device        = m_device.get();
-    aSource.archiveReader = m_archiveReader.get();
-
-    return m_decoder->init(aSource, track, options);
+    return {};
 }
 
 void ArchiveDecoder::start()
@@ -180,17 +183,19 @@ bool GeneralArchiveReader::init(const AudioSource& source)
         return false;
     }
 
-    m_reader = m_audioLoader->readerForFile(filepath);
-    if(!m_reader) {
-        return false;
+    for(auto& reader : m_audioLoader->readersForFile(filepath)) {
+        AudioSource aSource;
+        aSource.filepath      = filepath;
+        aSource.device        = m_device.get();
+        aSource.archiveReader = m_archiveReader.get();
+
+        if(reader->init(aSource)) {
+            m_reader = std::move(reader);
+            return true;
+        }
     }
 
-    AudioSource aSource;
-    aSource.filepath      = filepath;
-    aSource.device        = m_device.get();
-    aSource.archiveReader = m_archiveReader.get();
-
-    return m_reader->init(aSource);
+    return false;
 }
 
 bool GeneralArchiveReader::readTrack(const AudioSource& source, Track& track)
