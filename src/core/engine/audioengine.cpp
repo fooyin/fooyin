@@ -39,12 +39,12 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCoreApplication>
 #include <QEvent>
 #include <QLoggingCategory>
-#include <QMetaObject>
 #include <QThread>
 
 #include <algorithm>
@@ -56,18 +56,21 @@
 Q_LOGGING_CATEGORY(ENGINE, "fy.engine")
 
 namespace {
-constexpr auto BasePrefillDecodeFrames         = 4096;
-constexpr auto MaxPrefillDecodeFrames          = 262144;
-constexpr auto PrefillChunkDurationMs          = 10;
-constexpr auto PositionSyncTimerCoalesceKey    = 0;
-constexpr uint64_t GaplessPrepareLeadMs        = 300;
-constexpr auto MaxCrossfadePrefillMs           = 1000;
-constexpr auto GaplessHandoffPrefillMs         = 250;
-constexpr uint64_t MaxContinuousPositionJumpMs = 750;
-constexpr uint64_t MaxBackwardDriftToleranceMs = 50;
-constexpr auto DecodeHighWatermarkMaxRatio     = 0.99;
-constexpr auto DecodeWatermarkMinHeadroomMs    = 20;
-constexpr auto DecodeWatermarkMinGapMs         = 30;
+constexpr auto BasePrefillDecodeFrames      = 4096;
+constexpr auto MaxPrefillDecodeFrames       = 262144;
+constexpr auto PrefillChunkDurationMs       = 10;
+constexpr auto PositionSyncTimerCoalesceKey = 0;
+constexpr uint64_t GaplessPrepareLeadMs     = 300;
+constexpr auto MaxCrossfadePrefillMs        = 1000;
+constexpr auto GaplessHandoffPrefillMs      = 250;
+constexpr auto DecodeHighWatermarkMaxRatio  = 0.99;
+constexpr auto DecodeWatermarkMinHeadroomMs = 20;
+constexpr auto DecodeWatermarkMinGapMs      = 30;
+
+uint64_t saturatingAddWindow(const uint64_t lhs, const uint64_t rhs)
+{
+    return lhs > (std::numeric_limits<uint64_t>::max() - rhs) ? std::numeric_limits<uint64_t>::max() : lhs + rhs;
+}
 
 std::pair<double, double> sanitiseWatermarkRatios(double lowRatio, double highRatio)
 {
@@ -147,8 +150,7 @@ size_t prefillFramesPerChunk(int sampleRate)
     const uint64_t desiredFrames
         = (static_cast<uint64_t>(sampleRate) * static_cast<uint64_t>(PrefillChunkDurationMs)) / 1000ULL;
 
-    return static_cast<size_t>(std::clamp<uint64_t>(desiredFrames, static_cast<uint64_t>(BasePrefillDecodeFrames),
-                                                    static_cast<uint64_t>(MaxPrefillDecodeFrames)));
+    return std::clamp<uint64_t>(desiredFrames, BasePrefillDecodeFrames, MaxPrefillDecodeFrames);
 }
 
 } // namespace
@@ -165,7 +167,7 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_engineTaskQueue{this, AudioEngine::engineTaskEventType()}
     , m_playbackState{Engine::PlaybackState::Stopped}
     , m_trackStatus{Engine::TrackStatus::NoTrack}
-    , m_phase{PlaybackPhase::Stopped}
+    , m_phase{Playback::Phase::Stopped}
     , m_trackGeneration{0}
     , m_streamToTrackOriginMs{0}
     , m_nextTransitionId{1}
@@ -184,8 +186,6 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_gaplessEnabled{m_settings->value<Settings::Core::GaplessPlayback>()}
     , m_audioClock{this}
     , m_lastReportedBitrate{0}
-    , m_lastSourcePositionValid{false}
-    , m_lastSourcePositionMs{0}
     , m_lastAppliedSeekRequestId{0}
     , m_positionContextTrackGeneration{0}
     , m_positionContextTimelineEpoch{0}
@@ -308,7 +308,7 @@ bool AudioEngine::handleManualChangeFade(const Track& track)
     if(m_fadeController.handleManualChangeFade(track, m_crossfadeEnabled, m_crossfadingValues,
                                                hasPlaybackState(Engine::PlaybackState::Playing), m_volume,
                                                transitionId)) {
-        setPhase(PlaybackPhase::FadingToManualChange);
+        setPhase(Playback::Phase::FadingToManualChange, PhaseChangeReason::ManualChangeFadeQueued);
         return true;
     }
 
@@ -338,11 +338,13 @@ bool AudioEngine::startTrackCrossfade(const Track& track, bool isManualChange)
         return false;
     }
 
-    const bool crossfadeMix   = eligibility->crossfadeMix;
-    const bool gaplessHandoff = eligibility->gaplessHandoff;
+    const bool crossfadeMix       = eligibility->crossfadeMix;
+    const bool gaplessHandoff     = eligibility->gaplessHandoff;
+    const bool autoGaplessHandoff = !isManualChange && gaplessHandoff && !crossfadeMix;
 
     const uint64_t activeGeneration = m_trackGeneration;
-    const StreamId activeStreamId   = (m_decoder.activeStream() ? m_decoder.activeStream()->id() : InvalidStreamId);
+    const auto activeStream         = m_decoder.activeStream();
+    const StreamId activeStreamId   = (activeStream ? activeStream->id() : InvalidStreamId);
     const bool hasEarlyAutoTailFade = crossfadeMix && !isManualChange && m_autoCrossfadeTailFadeActive
                                    && m_autoCrossfadeTailFadeGeneration == activeGeneration
                                    && m_autoCrossfadeTailFadeStreamId == activeStreamId
@@ -414,12 +416,19 @@ bool AudioEngine::startTrackCrossfade(const Track& track, bool isManualChange)
         return true;
     }
 
+    if(autoGaplessHandoff) {
+        m_positionCoordinator.setGaplessHold(result.streamId);
+    }
+    else {
+        m_positionCoordinator.clearGaplessHold();
+    }
+
     const bool crossfadeInProgress = crossfadeMix && m_pipeline.hasOrphanStream();
     if(crossfadeInProgress) {
-        setPhase(PlaybackPhase::TrackCrossfading);
+        setPhase(Playback::Phase::TrackCrossfading, PhaseChangeReason::AutoTransitionCrossfadeActive);
     }
     else if(hasPlaybackState(Engine::PlaybackState::Playing)) {
-        setPhase(PlaybackPhase::Playing);
+        setPhase(Playback::Phase::Playing, PhaseChangeReason::AutoTransitionPlayingNoOrphan);
     }
 
     if(wasDecoding || hasPlaybackState(Engine::PlaybackState::Playing)) {
@@ -441,6 +450,8 @@ void AudioEngine::performSeek(uint64_t positionMs, uint64_t requestId)
     if(!m_decoder.isValid()) {
         return;
     }
+
+    m_positionCoordinator.clearGaplessHold();
 
     clearAutoCrossfadeTailFadeState();
 
@@ -573,10 +584,10 @@ void AudioEngine::startSeekCrossfade(uint64_t positionMs, int fadeOutDurationMs,
     }
 
     if(m_pipeline.hasOrphanStream()) {
-        setPhase(PlaybackPhase::SeekCrossfading);
+        setPhase(Playback::Phase::SeekCrossfading, PhaseChangeReason::SeekCrossfadeActive);
     }
     else {
-        setPhase(PlaybackPhase::Seeking);
+        setPhase(Playback::Phase::Seeking, PhaseChangeReason::SeekSimpleActive);
     }
 
     m_transitions.clearTrackEnding();
@@ -601,7 +612,7 @@ void AudioEngine::startSeekCrossfade(uint64_t positionMs, int fadeOutDurationMs,
     }
 
     if(!m_pipeline.hasOrphanStream() && hasPlaybackState(Engine::PlaybackState::Playing)) {
-        setPhase(PlaybackPhase::Playing);
+        setPhase(Playback::Phase::Playing, PhaseChangeReason::SeekRestorePlaying);
     }
 }
 
@@ -611,19 +622,19 @@ void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId, int
 
     const bool wasPlaying  = hasPlaybackState(Engine::PlaybackState::Playing);
     const bool wasDecoding = m_decoder.isDecodeTimerActive();
-    setPhase(PlaybackPhase::Seeking);
+    setPhase(Playback::Phase::Seeking, PhaseChangeReason::SeekSimpleActive);
 
     const auto restorePhaseFromTransport = [this]() {
         if(hasPlaybackState(Engine::PlaybackState::Playing)) {
-            setPhase(PlaybackPhase::Playing);
+            setPhase(Playback::Phase::Playing, PhaseChangeReason::SeekRestorePlaying);
             return;
         }
         if(hasPlaybackState(Engine::PlaybackState::Paused)) {
-            setPhase(PlaybackPhase::Paused);
+            setPhase(Playback::Phase::Paused, PhaseChangeReason::SeekRestorePaused);
             return;
         }
         if(hasPlaybackState(Engine::PlaybackState::Stopped)) {
-            setPhase(PlaybackPhase::Stopped);
+            setPhase(Playback::Phase::Stopped, PhaseChangeReason::SeekRestoreStopped);
         }
     };
 
@@ -864,8 +875,7 @@ void AudioEngine::publishPosition(uint64_t sourcePositionMs, uint64_t outputDela
 {
     m_audioClock.applyPosition(sourcePositionMs, outputDelayMs, delayToSourceScale, m_trackGeneration, mode, emitNow);
     if(mode == AudioClock::UpdateMode::Discontinuity) {
-        m_lastSourcePositionMs    = sourcePositionMs;
-        m_lastSourcePositionValid = true;
+        m_positionCoordinator.notePublishedDiscontinuity(sourcePositionMs);
     }
 }
 
@@ -920,8 +930,8 @@ void AudioEngine::maybeBeginAutoCrossfadeTailFadeOut(const AudioStreamPtr& strea
     }
 
     const uint64_t remainingTrackMs = m_currentTrack.duration() - relativePosMs;
-    const int remainingWindowMs     = static_cast<int>(
-        std::min<uint64_t>(remainingTrackMs, static_cast<uint64_t>(std::numeric_limits<int>::max())));
+    const int remainingWindowMs
+        = static_cast<int>(std::min<uint64_t>(remainingTrackMs, std::numeric_limits<int>::max()));
 
     const int tailFadeOutMs = std::min(fadeOutMs, remainingWindowMs);
     if(tailFadeOutMs <= 0) {
@@ -945,135 +955,103 @@ void AudioEngine::clearAutoCrossfadeTailFadeState()
     m_autoCrossfadeTailFadeGeneration = 0;
 }
 
-void AudioEngine::updatePosition()
+void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_t trackEndingPosMs,
+                                           bool preparedCrossfadeArmed, bool boundaryFallbackReached)
 {
-    if(hasPlaybackState(Engine::PlaybackState::Stopped)) {
-        return;
-    }
+    const auto result         = checkTrackEnding(stream, trackEndingPosMs);
+    const auto transitionMode = m_transitions.autoTransitionMode();
 
-    if(m_transitions.isSeekInProgress()) {
-        return;
-    }
-
-    // During crossfade, report position from active (fade-in) stream
-    auto stream = m_decoder.activeStream();
-    if(!stream) {
-        return;
-    }
-
-    const uint64_t decodeLowWatermarkMs = static_cast<uint64_t>(std::max(1, m_decoder.lowWatermarkMs()));
-    if(hasPlaybackState(Engine::PlaybackState::Playing) && !m_decoder.isDecodeTimerActive()
-       && stream->state() != AudioStream::State::Pending && stream->state() != AudioStream::State::Paused
-       && !stream->endOfInput() && stream->bufferedDurationMs() < decodeLowWatermarkMs) {
-        // Safety rearm: recover from rare command-ordering races where decode
-        // demand notification is missed after seek/transition.
-        m_decoder.ensureDecodeTimerRunning();
-    }
-
-    const uint64_t pipelineDelayMs   = m_pipeline.playbackDelayMs();
-    const double delayToSourceScale  = m_pipeline.playbackDelayToTrackScale();
-    const auto pipelineStatus        = m_pipeline.currentStatus();
-    const uint64_t decodeSourcePosMs = stream->positionMs();
-    const bool mappedForActiveStream
-        = pipelineStatus.renderedSegment.valid && pipelineStatus.renderedSegment.streamId == stream->id();
-
-    bool activeStreamMapped = mappedForActiveStream;
-    bool hasRenderedSegment = mappedForActiveStream;
-    uint64_t sourcePosMs    = decodeSourcePosMs;
-
-    // Gapless transitions can prefill a pending stream far ahead of
-    // audible output. Until that stream has rendered timeline data, clamp
-    // source position to stream start.
-    const bool pendingWithoutMappedAudio = stream->state() == AudioStream::State::Pending && !mappedForActiveStream;
-    if(pendingWithoutMappedAudio) {
-        sourcePosMs = 0;
-    }
-
-    if(hasRenderedSegment) {
-        const uint64_t mappedSourcePosMs = pipelineStatus.renderedSegment.sourceEndMs;
-        if(mappedSourcePosMs <= decodeSourcePosMs) {
-            // Active-stream mapped timeline can legitimately lag decode-head
-            // during gapless warmup/prefill. Keep mapped authority in that case.
-            sourcePosMs = mappedSourcePosMs;
-        }
-        else {
-            const auto expectedGapMs
-                = static_cast<uint64_t>(std::llround(static_cast<double>(pipelineDelayMs) * delayToSourceScale));
-            const uint64_t maxAllowedGapMs = expectedGapMs + std::max<uint64_t>(1000, MaxContinuousPositionJumpMs);
-            const uint64_t aheadGapMs      = mappedSourcePosMs - decodeSourcePosMs;
-            if(aheadGapMs <= maxAllowedGapMs) {
-                sourcePosMs = mappedSourcePosMs;
-            }
-            else {
-                hasRenderedSegment = false;
-                activeStreamMapped = false;
-            }
-        }
-    }
-    updatePositionContext(pipelineStatus.timelineEpoch);
-
-    const bool activeStreamUnmapped = !activeStreamMapped;
-
-    uint64_t relativePosMs = relativeTrackPositionMs(sourcePosMs, m_streamToTrackOriginMs, m_currentTrack.offset());
-    if(activeStreamUnmapped && m_lastSourcePositionValid) {
-        relativePosMs = std::min(relativePosMs, m_lastSourcePositionMs);
-    }
-
-    auto updateMode = AudioClock::UpdateMode::Continuous;
-    bool emitNow    = false;
-
-    if(m_lastSourcePositionValid) {
-        const bool backwardDrift = relativePosMs < m_lastSourcePositionMs
-                                && (m_lastSourcePositionMs - relativePosMs) > MaxBackwardDriftToleranceMs;
-        const bool forwardJump = relativePosMs > m_lastSourcePositionMs
-                              && (relativePosMs - m_lastSourcePositionMs) > MaxContinuousPositionJumpMs;
-
-        if(backwardDrift || forwardJump) {
-            updateMode = AudioClock::UpdateMode::Discontinuity;
-            emitNow    = true;
-        }
-    }
-
-    publishPosition(relativePosMs, pipelineDelayMs, delayToSourceScale, updateMode, emitNow);
-    m_lastSourcePositionMs    = relativePosMs;
-    m_lastSourcePositionValid = true;
-
-    const uint64_t decoderRelativePosMs
-        = (pendingWithoutMappedAudio || activeStreamUnmapped)
-            ? relativePosMs
-            : relativeTrackPositionMs(stream->positionMs(), m_streamToTrackOriginMs, m_currentTrack.offset());
-    uint64_t trackEndingPosMs = decoderRelativePosMs;
-
-    if(hasRenderedSegment) {
-        if(stream->endOfInput()) {
-            // Once decoder input has ended, decode-head can stall while buffered
-            // and DSP/output-delayed audio continues. Use rendered progress.
-            trackEndingPosMs = relativePosMs;
-        }
-        else {
-            // Before end-of-input, don't allow mapped timeline to run ahead of
-            // decode-head for track-ending transitions.
-            trackEndingPosMs = std::min(relativePosMs, decoderRelativePosMs);
-        }
-    }
-
-    const auto result = checkTrackEnding(stream, trackEndingPosMs);
     if(result.aboutToFinish) {
         maybeBeginAutoCrossfadeTailFadeOut(stream, trackEndingPosMs);
         emit trackAboutToFinish(m_currentTrack, m_trackGeneration);
     }
-    if(result.readyToSwitch) {
+    if(result.readyToSwitch && transitionMode == AutoTransitionMode::Crossfade) {
         emit trackReadyToSwitch(m_currentTrack, m_trackGeneration);
+    }
+    if(result.boundaryReached || (preparedCrossfadeArmed && boundaryFallbackReached)) {
+        qCDebug(ENGINE) << "Prepared boundary signal:"
+                        << "trackId=" << m_currentTrack.id() << "generation=" << m_trackGeneration
+                        << "trackPosMs=" << trackEndingPosMs << "durationMs=" << m_currentTrack.duration()
+                        << "boundaryReached=" << result.boundaryReached << "fallbackReached=" << boundaryFallbackReached
+                        << "preparedCrossfadeArmed=" << preparedCrossfadeArmed
+                        << "streamBufferedMs=" << (stream ? stream->bufferedDurationMs() : 0)
+                        << "streamEndOfInput=" << (stream ? stream->endOfInput() : false);
+        m_preparedCrossfadeTransition.boundarySignalled = true;
+        emit trackBoundaryReached(m_currentTrack, m_trackGeneration);
     }
     if(result.endReached) {
         // Same-file logical segment transitions can reach "track end" before
         // the underlying stream is actually drained. In that case, avoid
         // flushing DSP state.
         const bool shouldFlushDspOnEnd = stream->endOfInput() && stream->bufferEmpty();
-        if(!shouldFlushDspOnEnd) {
-            qCDebug(ENGINE) << "Logical track end detected before stream drain; skipping EndOfTrack DSP flush";
-        }
         signalTrackEndOnce(shouldFlushDspOnEnd);
+    }
+}
+
+void AudioEngine::updatePosition()
+{
+    auto stream = m_decoder.activeStream();
+    if(!stream) {
+        return;
+    }
+
+    const uint64_t pipelineDelayMs  = m_pipeline.playbackDelayMs();
+    const double delayToSourceScale = m_pipeline.playbackDelayToTrackScale();
+    const auto pipelineStatus       = m_pipeline.currentStatus();
+    const bool preparedCrossfadeArmed
+        = m_preparedCrossfadeTransition.active && m_preparedCrossfadeTransition.sourceGeneration == m_trackGeneration;
+
+    PositionCoordinator::Input input;
+    input.playbackState                       = playbackState();
+    input.seekInProgress                      = m_transitions.isSeekInProgress();
+    input.decoderTimerActive                  = m_decoder.isDecodeTimerActive();
+    input.decoderLowWatermarkMs               = m_decoder.lowWatermarkMs();
+    input.streamId                            = stream->id();
+    input.streamState                         = stream->state();
+    input.streamEndOfInput                    = stream->endOfInput();
+    input.streamBufferedDurationMs            = stream->bufferedDurationMs();
+    input.streamPositionMs                    = stream->positionMs();
+    input.streamToTrackOriginMs               = m_streamToTrackOriginMs;
+    input.trackOffsetMs                       = m_currentTrack.offset();
+    input.pipelineDelayMs                     = pipelineDelayMs;
+    input.delayToSourceScale                  = delayToSourceScale;
+    input.pipelineStatus                      = pipelineStatus;
+    input.preparedCrossfade.armed             = preparedCrossfadeArmed;
+    input.preparedCrossfade.streamId          = m_preparedCrossfadeTransition.streamId;
+    input.preparedCrossfade.bufferedAtArmMs   = m_preparedCrossfadeTransition.bufferedAtArmMs;
+    input.preparedCrossfade.boundaryLeadMs    = m_preparedCrossfadeTransition.boundaryLeadMs;
+    input.preparedCrossfade.boundarySignalled = m_preparedCrossfadeTransition.boundarySignalled;
+
+    const auto output = m_positionCoordinator.evaluate(input);
+
+    if(output.shouldEnsureDecodeTimer) {
+        m_decoder.ensureDecodeTimerRunning();
+    }
+
+    if(!output.positionAvailable) {
+        return;
+    }
+
+    updatePositionContext(pipelineStatus.timelineEpoch);
+
+    const auto updateMode
+        = output.discontinuity ? AudioClock::UpdateMode::Discontinuity : AudioClock::UpdateMode::Continuous;
+    publishPosition(output.relativePosMs, pipelineDelayMs, delayToSourceScale, updateMode, output.emitNow);
+
+    bool boundaryFallbackReached = output.boundaryFallbackReached;
+    if(!boundaryFallbackReached && output.preparedCrossfadeArmed && !m_preparedCrossfadeTransition.boundarySignalled
+       && m_preparedNext && m_preparedNext->preparedStream
+       && m_preparedNext->preparedStream->id() == m_preparedCrossfadeTransition.streamId) {
+        const uint64_t preparedBufferedMs = m_preparedNext->preparedStream->bufferedDurationMs();
+        const uint64_t consumedMs         = (m_preparedCrossfadeTransition.bufferedAtArmMs > preparedBufferedMs)
+                                              ? (m_preparedCrossfadeTransition.bufferedAtArmMs - preparedBufferedMs)
+                                              : 0;
+        boundaryFallbackReached           = consumedMs >= m_preparedCrossfadeTransition.boundaryLeadMs;
+    }
+
+    if(output.evaluateTrackEnding) {
+        handleTrackEndingSignals(stream, output.trackEndingPosMs, output.preparedCrossfadeArmed,
+                                 boundaryFallbackReached);
     }
 }
 
@@ -1320,20 +1298,20 @@ void AudioEngine::updatePlaybackState(Engine::PlaybackState state)
         switch(state) {
             case Engine::PlaybackState::Playing:
                 m_audioClock.setPlaying(m_audioClock.position());
-                if(!isCrossfading(m_phase) && !isFadingTransport(m_phase) && m_phase != PlaybackPhase::Seeking) {
-                    setPhase(PlaybackPhase::Playing);
+                if(!isCrossfading(m_phase) && !isFadingTransport(m_phase) && m_phase != Playback::Phase::Seeking) {
+                    setPhase(Playback::Phase::Playing, PhaseChangeReason::PlaybackStatePlaying);
                 }
                 break;
             case Engine::PlaybackState::Paused:
                 m_audioClock.setPaused();
-                setPhase(PlaybackPhase::Paused);
+                setPhase(Playback::Phase::Paused, PhaseChangeReason::PlaybackStatePaused);
                 break;
             case Engine::PlaybackState::Stopped:
-                setPhase(PlaybackPhase::Stopped);
+                setPhase(Playback::Phase::Stopped, PhaseChangeReason::PlaybackStateStopped);
                 m_audioClock.setStopped();
                 break;
             case Engine::PlaybackState::Error:
-                setPhase(PlaybackPhase::Error);
+                setPhase(Playback::Phase::Error, PhaseChangeReason::PlaybackStateError);
                 m_audioClock.setStopped();
                 break;
         }
@@ -1349,7 +1327,7 @@ void AudioEngine::updateTrackStatus(Engine::TrackStatus status, bool flushDspOnE
     }
 
     if(status == Engine::TrackStatus::Loading) {
-        setPhase(PlaybackPhase::Loading);
+        setPhase(Playback::Phase::Loading, PhaseChangeReason::TrackStatusLoading);
     }
 
     if(status == Engine::TrackStatus::End && flushDspOnEnd) {
@@ -1357,8 +1335,20 @@ void AudioEngine::updateTrackStatus(Engine::TrackStatus status, bool flushDspOnE
     }
 }
 
-void AudioEngine::setPhase(PlaybackPhase phase)
+void AudioEngine::setPhase(const Playback::Phase phase, const PhaseChangeReason reason)
 {
+    if(m_phase == phase) {
+        return;
+    }
+
+    const QString previousPhaseName = Utils::Enum::toString(m_phase);
+    const QString nextPhaseName     = Utils::Enum::toString(phase);
+    const QString reasonName        = Utils::Enum::toString(reason);
+
+    qCDebug(ENGINE) << "Playback phase changed:"
+                    << (previousPhaseName.isEmpty() ? QStringLiteral("Unknown") : previousPhaseName) << "->"
+                    << (nextPhaseName.isEmpty() ? QStringLiteral("Unknown") : nextPhaseName)
+                    << "reason=" << (reasonName.isEmpty() ? QStringLiteral("Unknown") : reasonName);
     m_phase = phase;
 }
 
@@ -1422,6 +1412,26 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
     input.gaplessPrepareWindowMs = GaplessPrepareLeadMs;
 
     return m_transitions.evaluateTrackEnding(input);
+}
+
+uint64_t AudioEngine::preferredPreparedPrefillMs() const
+{
+    const uint64_t transitionDelayMs = m_pipeline.transitionPlaybackDelayMs();
+    const double delayToTrackScale   = std::clamp(m_pipeline.playbackDelayToTrackScale(), 0.05, 8.0);
+    const auto scaledDelay           = static_cast<uint64_t>(std::max<long double>(
+        0.0, std::llround(static_cast<long double>(transitionDelayMs) * static_cast<long double>(delayToTrackScale))));
+
+    uint64_t overlapLeadMs{0};
+    if(m_crossfadeEnabled && m_crossfadingValues.autoChange.isConfigured()) {
+        const uint64_t fadeOutMs = static_cast<uint64_t>(std::max(0, m_crossfadingValues.autoChange.effectiveOutMs()));
+        const uint64_t fadeInMs  = static_cast<uint64_t>(std::max(0, m_crossfadingValues.autoChange.effectiveInMs()));
+        overlapLeadMs            = std::min(fadeOutMs, fadeInMs);
+    }
+
+    static constexpr uint64_t PrefillSafetyMarginMs = 100;
+
+    const auto withOverlap = saturatingAddWindow(scaledDelay, overlapLeadMs);
+    return saturatingAddWindow(withOverlap, PrefillSafetyMarginMs);
 }
 
 std::optional<AudioEngine::AutoTransitionEligibility>
@@ -1507,8 +1517,8 @@ AudioEngine::evaluateAutoTransitionEligibility(const Track& track, bool isManual
             = relativeTrackPositionMs(currentStream->positionMs(), m_streamToTrackOriginMs, m_currentTrack.offset());
         const uint64_t remainingTrackMs
             = relativePosMs < m_currentTrack.duration() ? (m_currentTrack.duration() - relativePosMs) : 0;
-        const int remainingWindowMs = static_cast<int>(
-            std::min<uint64_t>(remainingTrackMs, static_cast<uint64_t>(std::numeric_limits<int>::max())));
+        const int remainingWindowMs
+            = static_cast<int>(std::min<uint64_t>(remainingTrackMs, std::numeric_limits<int>::max()));
         fadeOutDurationMs = std::min(fadeOutDurationMs, remainingWindowMs);
     }
 
@@ -1535,8 +1545,7 @@ void AudioEngine::setCurrentTrackContext(const Track& track)
     m_currentTrack = track;
     ++m_trackGeneration;
     m_lastAppliedSeekRequestId = 0;
-    m_lastSourcePositionValid  = false;
-    m_lastSourcePositionMs     = 0;
+    m_positionCoordinator.resetContinuity();
 
     updatePositionContext(m_pipeline.currentStatus().timelineEpoch);
     publishBitrate(track.bitrate());
@@ -1692,6 +1701,71 @@ void AudioEngine::cleanupDecoderActiveStreamFromPipeline(bool removeFromMixer)
 void AudioEngine::clearPreparedNextTrack()
 {
     m_preparedNext.reset();
+    clearPreparedCrossfadeTransition();
+    clearPreparedGaplessTransition();
+}
+
+void AudioEngine::clearPreparedCrossfadeTransition()
+{
+    m_preparedCrossfadeTransition.active            = false;
+    m_preparedCrossfadeTransition.targetTrack       = {};
+    m_preparedCrossfadeTransition.sourceGeneration  = 0;
+    m_preparedCrossfadeTransition.streamId          = InvalidStreamId;
+    m_preparedCrossfadeTransition.boundaryLeadMs    = 0;
+    m_preparedCrossfadeTransition.bufferedAtArmMs   = 0;
+    m_preparedCrossfadeTransition.boundarySignalled = false;
+}
+
+void AudioEngine::clearPreparedGaplessTransition()
+{
+    m_preparedGaplessTransition.active           = false;
+    m_preparedGaplessTransition.targetTrack      = {};
+    m_preparedGaplessTransition.sourceGeneration = 0;
+    m_preparedGaplessTransition.streamId         = InvalidStreamId;
+}
+
+void AudioEngine::disarmStalePreparedTransitions(const Track& contextTrack, uint64_t contextGeneration)
+{
+    const auto clearStaleCrossfade = [&]() {
+        if(!m_preparedCrossfadeTransition.active) {
+            return;
+        }
+
+        const bool generationMismatch = m_preparedCrossfadeTransition.sourceGeneration != contextGeneration;
+        const bool trackMismatch      = !sameTrackIdentity(m_preparedCrossfadeTransition.targetTrack, contextTrack);
+        if(!generationMismatch && !trackMismatch) {
+            return;
+        }
+
+        qCDebug(ENGINE) << "Disarming stale prepared crossfade transition:"
+                        << "contextTrackId=" << contextTrack.id() << "contextGeneration=" << contextGeneration
+                        << "preparedTrackId=" << m_preparedCrossfadeTransition.targetTrack.id()
+                        << "preparedGeneration=" << m_preparedCrossfadeTransition.sourceGeneration
+                        << "trackMismatch=" << trackMismatch << "generationMismatch=" << generationMismatch;
+        clearPreparedCrossfadeTransition();
+    };
+
+    const auto clearStaleGapless = [&]() {
+        if(!m_preparedGaplessTransition.active) {
+            return;
+        }
+
+        const bool generationMismatch = m_preparedGaplessTransition.sourceGeneration != contextGeneration;
+        const bool trackMismatch      = !sameTrackIdentity(m_preparedGaplessTransition.targetTrack, contextTrack);
+        if(!generationMismatch && !trackMismatch) {
+            return;
+        }
+
+        qCDebug(ENGINE) << "Disarming stale prepared gapless transition:"
+                        << "contextTrackId=" << contextTrack.id() << "contextGeneration=" << contextGeneration
+                        << "preparedTrackId=" << m_preparedGaplessTransition.targetTrack.id()
+                        << "preparedGeneration=" << m_preparedGaplessTransition.sourceGeneration
+                        << "trackMismatch=" << trackMismatch << "generationMismatch=" << generationMismatch;
+        clearPreparedGaplessTransition();
+    };
+
+    clearStaleCrossfade();
+    clearStaleGapless();
 }
 
 void AudioEngine::clearPreparedNextTrackAndCancelPendingJobs()
@@ -1707,10 +1781,11 @@ bool AudioEngine::prepareNextTrackImmediate(const Track& track)
     }
 
     NextTrackPreparer::Context context;
-    context.audioLoader    = m_audioLoader;
-    context.currentTrack   = m_currentTrack;
-    context.playbackState  = m_playbackState.load(std::memory_order_relaxed);
-    context.bufferLengthMs = m_bufferLengthMs;
+    context.audioLoader        = m_audioLoader;
+    context.currentTrack       = m_currentTrack;
+    context.playbackState      = m_playbackState.load(std::memory_order_relaxed);
+    context.bufferLengthMs     = m_bufferLengthMs;
+    context.preferredPrefillMs = preferredPreparedPrefillMs();
 
     auto prepared = NextTrackPreparer::prepare(track, context);
     if(!prepared.isValid()) {
@@ -1730,12 +1805,13 @@ void AudioEngine::cancelPendingPrepareJobs()
 void AudioEngine::enqueuePrepareNextTrack(const Track& track, uint64_t requestId)
 {
     NextTrackPrepareWorker::Request request;
-    request.requestId              = requestId;
-    request.track                  = track;
-    request.context.audioLoader    = m_audioLoader;
-    request.context.currentTrack   = m_currentTrack;
-    request.context.playbackState  = m_playbackState.load(std::memory_order_relaxed);
-    request.context.bufferLengthMs = m_bufferLengthMs;
+    request.requestId                  = requestId;
+    request.track                      = track;
+    request.context.audioLoader        = m_audioLoader;
+    request.context.currentTrack       = m_currentTrack;
+    request.context.playbackState      = m_playbackState.load(std::memory_order_relaxed);
+    request.context.bufferLengthMs     = m_bufferLengthMs;
+    request.context.preferredPrefillMs = preferredPreparedPrefillMs();
 
     m_nextTrackPrepareWorker.replacePending(std::move(request));
 }
@@ -1773,7 +1849,7 @@ void AudioEngine::cleanupOrphanedStream()
 
         if(hadCrossfadePhase && hasPlaybackState(Engine::PlaybackState::Playing)) {
             updateTrackStatus(Engine::TrackStatus::Buffered);
-            setPhase(PlaybackPhase::Playing);
+            setPhase(Playback::Phase::Playing, PhaseChangeReason::CrossfadeCleanupResumePlaying);
         }
         return;
     }
@@ -1974,6 +2050,14 @@ void AudioEngine::executeLoadPlan(const Track& track, bool manualChange, const T
 
 void AudioEngine::loadTrack(const Track& track, bool manualChange)
 {
+    if(manualChange) {
+        clearPreparedCrossfadeTransition();
+        clearPreparedGaplessTransition();
+    }
+    else {
+        disarmStalePreparedTransitions(track, m_trackGeneration);
+    }
+
     const TrackLoadContext loadContext = buildLoadContext(track, manualChange);
     const LoadPlan loadPlan            = planTrackLoad(loadContext);
     executeLoadPlan(track, manualChange, loadContext, loadPlan);
@@ -1995,6 +2079,293 @@ void AudioEngine::prepareNextTrack(const Track& track, uint64_t requestId)
 
     clearPreparedNextTrack();
     enqueuePrepareNextTrack(track, requestId);
+}
+
+bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t generation)
+{
+    disarmStalePreparedTransitions(track, generation);
+
+    if(!track.isValid() || generation != m_trackGeneration || !hasPlaybackState(Engine::PlaybackState::Playing)
+       || m_transitions.isSeekInProgress()) {
+        return false;
+    }
+
+    if(m_transitions.autoTransitionMode() != AutoTransitionMode::Crossfade
+       || isMultiTrackFileTransition(m_currentTrack, track)) {
+        return false;
+    }
+
+    if(m_preparedCrossfadeTransition.active) {
+        return m_preparedCrossfadeTransition.sourceGeneration == generation
+            && sameTrackIdentity(track, m_preparedCrossfadeTransition.targetTrack);
+    }
+
+    if(!m_preparedNext || !sameTrackIdentity(track, m_preparedNext->track) || !m_preparedNext->format.isValid()
+       || !m_preparedNext->preparedStream) {
+        return false;
+    }
+
+    const auto eligibility = evaluateAutoTransitionEligibility(track, false);
+    if(!eligibility.has_value() || !eligibility->crossfadeMix) {
+        return false;
+    }
+
+    int fadeOutDurationMs = eligibility->fadeOutDurationMs;
+    int fadeInDurationMs  = eligibility->fadeInDurationMs;
+
+    auto currentStream = m_decoder.activeStream();
+    if(!currentStream) {
+        return false;
+    }
+
+    if(fadeOutDurationMs > 0) {
+        prefillActiveStream(std::min(fadeOutDurationMs, m_bufferLengthMs));
+        currentStream = m_decoder.activeStream();
+        if(!currentStream) {
+            return false;
+        }
+        fadeOutDurationMs = std::min(fadeOutDurationMs, static_cast<int>(currentStream->bufferedDurationMs()));
+    }
+
+    const uint64_t transitionDelayMs  = m_pipeline.transitionPlaybackDelayMs();
+    const uint64_t preparedBufferedMs = m_preparedNext->preparedStream->bufferedDurationMs();
+    const uint64_t safetyWindowMs{100};
+
+    int overlapDurationMs = std::min(std::max(0, fadeOutDurationMs), std::max(0, fadeInDurationMs));
+    if(overlapDurationMs > 0) {
+        const uint64_t availableOverlapMs = preparedBufferedMs > (transitionDelayMs + safetyWindowMs)
+                                              ? (preparedBufferedMs - (transitionDelayMs + safetyWindowMs))
+                                              : 0;
+        const auto requestedOverlapMs     = static_cast<uint64_t>(overlapDurationMs);
+
+        if(availableOverlapMs < requestedOverlapMs) {
+            const int clampedOverlapMs
+                = static_cast<int>(std::min<uint64_t>(availableOverlapMs, std::numeric_limits<int>::max()));
+            if(clampedOverlapMs <= 0) {
+                qCWarning(ENGINE) << "Prepared crossfade arm rejected: insufficient prebuffer for boundary overlap:"
+                                  << "trackId=" << track.id() << "generation=" << generation
+                                  << "preparedBufferedMs=" << preparedBufferedMs << "requiredBufferedMs="
+                                  << saturatingAddWindow(saturatingAddWindow(requestedOverlapMs, transitionDelayMs),
+                                                         safetyWindowMs)
+                                  << "overlapWindowMs=" << requestedOverlapMs
+                                  << "transitionDelayMs=" << transitionDelayMs;
+                return false;
+            }
+
+            qCWarning(ENGINE) << "Prepared crossfade arm overlap clamped due prebuffer shortfall:"
+                              << "trackId=" << track.id() << "generation=" << generation
+                              << "preparedBufferedMs=" << preparedBufferedMs
+                              << "requestedOverlapMs=" << requestedOverlapMs << "clampedOverlapMs=" << clampedOverlapMs
+                              << "transitionDelayMs=" << transitionDelayMs;
+            fadeOutDurationMs = std::min(fadeOutDurationMs, clampedOverlapMs);
+            fadeInDurationMs  = std::min(fadeInDurationMs, clampedOverlapMs);
+            overlapDurationMs = std::min(std::max(0, fadeOutDurationMs), std::max(0, fadeInDurationMs));
+        }
+    }
+
+    const StreamId activeStreamId   = currentStream->id();
+    const bool hasEarlyAutoTailFade = m_autoCrossfadeTailFadeActive && m_autoCrossfadeTailFadeGeneration == generation
+                                   && m_autoCrossfadeTailFadeStreamId == activeStreamId
+                                   && activeStreamId != InvalidStreamId;
+    const bool skipFadeOutStart = hasEarlyAutoTailFade && overlapDurationMs <= 0;
+
+    const uint64_t overlapWindowMs = static_cast<uint64_t>(std::max(0, overlapDurationMs));
+    const uint64_t requiredBufferedMs
+        = saturatingAddWindow(saturatingAddWindow(overlapWindowMs, transitionDelayMs), safetyWindowMs);
+
+    if(preparedBufferedMs < requiredBufferedMs) {
+        qCWarning(ENGINE) << "Prepared crossfade arm rejected: insufficient prebuffer for boundary overlap:"
+                          << "trackId=" << track.id() << "generation=" << generation
+                          << "preparedBufferedMs=" << preparedBufferedMs << "requiredBufferedMs=" << requiredBufferedMs
+                          << "overlapWindowMs=" << overlapWindowMs << "transitionDelayMs=" << transitionDelayMs;
+        return false;
+    }
+
+    const uint64_t currentRelativePosMs
+        = relativeTrackPositionMs(currentStream->positionMs(), m_streamToTrackOriginMs, m_currentTrack.offset());
+    const uint64_t remainingToBoundaryMs
+        = (m_currentTrack.duration() > currentRelativePosMs) ? (m_currentTrack.duration() - currentRelativePosMs) : 0;
+
+    clearAutoCrossfadeTailFadeState();
+
+    AudioPipeline::TransitionRequest request;
+    request.type             = AudioPipeline::TransitionType::Crossfade;
+    request.stream           = m_preparedNext->preparedStream;
+    request.fadeOutMs        = fadeOutDurationMs;
+    request.fadeInMs         = fadeInDurationMs;
+    request.skipFadeOutStart = skipFadeOutStart;
+    request.reanchorTimeline = false;
+
+    const auto transitionResult = m_pipeline.executeTransition(request);
+    if(!transitionResult.success || transitionResult.streamId == InvalidStreamId) {
+        return false;
+    }
+
+    if(m_pipeline.hasOrphanStream()) {
+        setPhase(Playback::Phase::TrackCrossfading, PhaseChangeReason::AutoTransitionCrossfadeActive);
+    }
+    else if(hasPlaybackState(Engine::PlaybackState::Playing)) {
+        setPhase(Playback::Phase::Playing, PhaseChangeReason::AutoTransitionPlayingNoOrphan);
+    }
+
+    if(m_decoder.isDecodeTimerActive() || hasPlaybackState(Engine::PlaybackState::Playing)) {
+        m_decoder.ensureDecodeTimerRunning();
+    }
+
+    m_preparedCrossfadeTransition.active            = true;
+    m_preparedCrossfadeTransition.targetTrack       = track;
+    m_preparedCrossfadeTransition.sourceGeneration  = generation;
+    m_preparedCrossfadeTransition.streamId          = transitionResult.streamId;
+    m_preparedCrossfadeTransition.boundaryLeadMs    = remainingToBoundaryMs;
+    m_preparedCrossfadeTransition.bufferedAtArmMs   = preparedBufferedMs;
+    m_preparedCrossfadeTransition.boundarySignalled = false;
+    clearPreparedGaplessTransition();
+    qCDebug(ENGINE) << "Prepared crossfade transition armed:" << "trackId=" << track.id() << "generation=" << generation
+                    << "streamId=" << transitionResult.streamId << "preparedBufferedMs=" << preparedBufferedMs
+                    << "preparedPosMs=" << m_preparedNext->preparedDecodePositionMs
+                    << "remainingToBoundaryMs=" << remainingToBoundaryMs << "transitionDelayMs=" << transitionDelayMs;
+    return true;
+}
+
+bool AudioEngine::commitPreparedCrossfadeTransition(const Track& track)
+{
+    disarmStalePreparedTransitions(track, m_trackGeneration);
+
+    if(!track.isValid() || !m_preparedCrossfadeTransition.active
+       || !sameTrackIdentity(track, m_preparedCrossfadeTransition.targetTrack)) {
+        return false;
+    }
+
+    const StreamId preparedStreamId = m_preparedCrossfadeTransition.streamId;
+
+    if(!initDecoder(track, true)) {
+        clearPreparedCrossfadeTransition();
+        return false;
+    }
+
+    const auto preparedStream = m_decoder.activeStream();
+    if(!preparedStream || preparedStream->id() != preparedStreamId) {
+        qCWarning(ENGINE) << "Prepared crossfade commit could not adopt armed stream:"
+                          << "expectedStreamId=" << preparedStreamId
+                          << "actualStreamId=" << (preparedStream ? preparedStream->id() : InvalidStreamId);
+        clearPreparedCrossfadeTransition();
+        return false;
+    }
+
+    m_format = m_decoder.format();
+    m_decoder.startDecoding();
+    clearAutoCrossfadeTailFadeState();
+
+    setCurrentTrackContext(track);
+    setStreamToTrackOriginForTrack(track);
+    clearTrackEndLatch();
+    m_transitions.clearTrackEnding();
+
+    m_positionCoordinator.clearGaplessHold();
+
+    const uint64_t committedSourcePosMs = (preparedStream->positionMs() > preparedStream->bufferedDurationMs())
+                                            ? (preparedStream->positionMs() - preparedStream->bufferedDurationMs())
+                                            : 0;
+    const uint64_t committedRelativePosMs
+        = relativeTrackPositionMs(committedSourcePosMs, m_streamToTrackOriginMs, track.offset());
+    const uint64_t pipelineDelayMs  = m_pipeline.playbackDelayMs();
+    const double delayToSourceScale = std::clamp(m_pipeline.playbackDelayToTrackScale(), 0.05, 8.0);
+    updatePositionContext(m_pipeline.currentStatus().timelineEpoch);
+    publishPosition(committedRelativePosMs, pipelineDelayMs, delayToSourceScale, AudioClock::UpdateMode::Discontinuity,
+                    true);
+
+    qCDebug(ENGINE) << "Prepared crossfade commit accepted:" << "trackId=" << track.id()
+                    << "streamId=" << preparedStreamId << "preparedBufferedMs=" << preparedStream->bufferedDurationMs()
+                    << "preparedPosMs=" << preparedStream->positionMs();
+
+    updateTrackStatus(Engine::TrackStatus::Buffered);
+    clearPreparedCrossfadeTransition();
+    clearPreparedGaplessTransition();
+    return true;
+}
+
+bool AudioEngine::armPreparedGaplessTransition(const Track& track, uint64_t generation)
+{
+    disarmStalePreparedTransitions(track, generation);
+
+    if(!track.isValid() || generation != m_trackGeneration || !hasPlaybackState(Engine::PlaybackState::Playing)
+       || m_transitions.isSeekInProgress()) {
+        return false;
+    }
+
+    if(m_transitions.autoTransitionMode() != AutoTransitionMode::Gapless
+       || isMultiTrackFileTransition(m_currentTrack, track)) {
+        return false;
+    }
+
+    if(m_preparedGaplessTransition.active) {
+        return m_preparedGaplessTransition.sourceGeneration == generation
+            && sameTrackIdentity(track, m_preparedGaplessTransition.targetTrack);
+    }
+
+    if(!m_preparedNext || !sameTrackIdentity(track, m_preparedNext->track) || !m_preparedNext->format.isValid()
+       || !m_preparedNext->preparedStream) {
+        return false;
+    }
+
+    AudioPipeline::TransitionRequest request;
+    request.type                    = AudioPipeline::TransitionType::Gapless;
+    request.stream                  = m_preparedNext->preparedStream;
+    request.signalCurrentEndOfInput = false;
+    request.reanchorTimeline        = false;
+
+    const auto transitionResult = m_pipeline.executeTransition(request);
+    if(!transitionResult.success || transitionResult.streamId == InvalidStreamId) {
+        return false;
+    }
+
+    m_preparedGaplessTransition.active           = true;
+    m_preparedGaplessTransition.targetTrack      = track;
+    m_preparedGaplessTransition.sourceGeneration = generation;
+    m_preparedGaplessTransition.streamId         = transitionResult.streamId;
+    clearPreparedCrossfadeTransition();
+    return true;
+}
+
+bool AudioEngine::commitPreparedGaplessTransition(const Track& track)
+{
+    disarmStalePreparedTransitions(track, m_trackGeneration);
+
+    if(!track.isValid() || !m_preparedGaplessTransition.active
+       || !sameTrackIdentity(track, m_preparedGaplessTransition.targetTrack)) {
+        return false;
+    }
+
+    const StreamId preparedStreamId = m_preparedGaplessTransition.streamId;
+
+    if(!initDecoder(track, true)) {
+        clearPreparedGaplessTransition();
+        return false;
+    }
+
+    const auto preparedStream = m_decoder.activeStream();
+    if(!preparedStream || preparedStream->id() != preparedStreamId) {
+        qCWarning(ENGINE) << "Prepared gapless commit could not adopt armed stream:"
+                          << "expectedStreamId=" << preparedStreamId
+                          << "actualStreamId=" << (preparedStream ? preparedStream->id() : InvalidStreamId);
+        clearPreparedGaplessTransition();
+        return false;
+    }
+
+    m_format = m_decoder.format();
+    m_decoder.startDecoding();
+    clearAutoCrossfadeTailFadeState();
+
+    setCurrentTrackContext(track);
+    setStreamToTrackOriginForTrack(track);
+    clearTrackEndLatch();
+    m_transitions.clearTrackEnding();
+
+    m_positionCoordinator.setGaplessHold(preparedStreamId);
+
+    updateTrackStatus(Engine::TrackStatus::Buffered);
+    clearPreparedGaplessTransition();
+    return true;
 }
 
 void AudioEngine::play()
@@ -2086,7 +2457,7 @@ void AudioEngine::pause()
     if(pauseAction == PlaybackAction::BeginFade) {
         const uint64_t transitionId = beginTransportTransition();
         if(m_fadeController.beginPauseFade(m_fadingEnabled, m_fadingValues, m_volume, transitionId)) {
-            setPhase(PlaybackPhase::FadingToPause);
+            setPhase(Playback::Phase::FadingToPause, PhaseChangeReason::TransportPauseFadeQueued);
             return;
         }
         clearTransportTransition();
@@ -2136,7 +2507,7 @@ void AudioEngine::stop()
     if(stopAction == PlaybackAction::BeginFade) {
         const uint64_t transitionId = beginTransportTransition();
         if(m_fadeController.beginStopFade(m_fadingEnabled, m_fadingValues, m_volume, state, transitionId)) {
-            setPhase(PlaybackPhase::FadingToStop);
+            setPhase(Playback::Phase::FadingToStop, PhaseChangeReason::TransportStopFadeQueued);
             return;
         }
         clearTransportTransition();
@@ -2172,8 +2543,7 @@ void AudioEngine::stopImmediate()
     resetStreamToTrackOrigin();
     clearTrackEndLatch();
     clearPendingAnalysisData();
-    m_lastSourcePositionValid = false;
-    m_lastSourcePositionMs    = 0;
+    m_positionCoordinator.reset();
     updatePositionContext(m_pipeline.currentStatus().timelineEpoch);
 
     publishPosition(0, 0, 1.0, AudioClock::UpdateMode::Discontinuity, true);

@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <core/engine/audiobuffer.h>
 #include <core/engine/audiooutput.h>
+#include <utils/lockfreeringbuffer.h>
 
 #include "pipewirecontext.h"
 #include "pipewirecore.h"
@@ -28,6 +28,8 @@
 #include "pipewirestream.h"
 #include "pipewirethreadloop.h"
 
+#include <atomic>
+#include <cstddef>
 #include <memory>
 
 namespace Fooyin::Pipewire {
@@ -62,15 +64,16 @@ private:
     bool initStream();
     void uninitCore();
     static void process(void* userData);
-    static void handleStateChanged(void* userdata, pw_stream_state old, pw_stream_state state, const char* /*error*/);
+    static void handleStateChanged(void* userdata, pw_stream_state old, pw_stream_state state, const char* error);
     static void drained(void* userdata);
 
     QString m_device;
     float m_volume{1.0};
     AudioFormat m_format;
 
-    AudioBuffer m_buffer;
-    uint32_t m_bufferPos{0};
+    std::unique_ptr<LockFreeRingBuffer<std::byte>> m_buffer;
+    std::atomic_size_t m_lastPwWriteBytes{0};
+    int m_targetBufferFrames{0};
 
     std::unique_ptr<PipewireThreadLoop> m_loop;
     std::unique_ptr<PipewireContext> m_context;

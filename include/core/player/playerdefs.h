@@ -43,6 +43,8 @@ enum class AdvanceReason : uint8_t
     ManualPrevious,
     NaturalEnd,
     PreparedCrossfade,
+    PreparedCommit,
+    PreparedCrossfadeCommit,
 };
 Q_ENUM_NS(AdvanceReason)
 

@@ -17,7 +17,7 @@
  *
  */
 
-#include <core/engine/lockfreeringbuffer.h>
+#include <utils/lockfreeringbuffer.h>
 
 #include <gtest/gtest.h>
 

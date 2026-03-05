@@ -24,6 +24,7 @@
 #include <core/engine/audiobuffer.h>
 
 #include <pipewire/keys.h>
+#include <pipewire/version.h>
 #include <spa/param/props.h>
 
 #include <QDebug>
@@ -32,14 +33,28 @@
 #pragma clang diagnostic ignored "-Wgnu-statement-expression-from-macro-expansion"
 #endif
 
+namespace {
+#if !PW_CHECK_VERSION(0, 3, 50)
+int pw_stream_get_time_n(struct pw_stream* stream, struct pw_time* time, size_t /*size*/)
+{
+    return pw_stream_get_time(stream, time);
+}
+#endif
+} // namespace
+
 namespace Fooyin::Pipewire {
-PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const QString& device)
+PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const int targetBufferFrames,
+                               const QString& device)
 {
     struct pw_properties* props = pw_properties_new(PW_KEY_MEDIA_TYPE, "Audio", PW_KEY_MEDIA_CATEGORY, "Playback",
                                                     PW_KEY_MEDIA_ROLE, "Music", PW_KEY_APP_ID, "fooyin",
                                                     PW_KEY_APP_ICON_NAME, "fooyin", PW_KEY_APP_NAME, "fooyin", nullptr);
 
     pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", format.sampleRate());
+    if(targetBufferFrames > 0 && format.sampleRate() > 0) {
+        pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", static_cast<uint32_t>(targetBufferFrames),
+                           static_cast<uint32_t>(format.sampleRate()));
+    }
 
     if(!device.isEmpty()) {
         pw_properties_setf(props, PW_KEY_TARGET_OBJECT, "%s", device.toUtf8().constData());
@@ -60,6 +75,35 @@ PipewireStream::~PipewireStream()
 pw_stream_state PipewireStream::state()
 {
     return pw_stream_get_state(m_stream.get(), nullptr);
+}
+
+std::optional<PipewireStream::TimeInfo> PipewireStream::time() const
+{
+    if(!m_stream) {
+        return {};
+    }
+
+    pw_time streamTime{};
+    if(pw_stream_get_time_n(m_stream.get(), &streamTime, sizeof(streamTime)) < 0) {
+        return {};
+    }
+
+    TimeInfo info;
+    info.now    = streamTime.now;
+    info.rate   = streamTime.rate;
+    info.ticks  = streamTime.ticks;
+    info.delay  = streamTime.delay;
+    info.queued = streamTime.queued;
+#if PW_CHECK_VERSION(0, 3, 50)
+    info.buffered      = streamTime.buffered;
+    info.queuedBuffers = streamTime.queued_buffers;
+    info.availBuffers  = streamTime.avail_buffers;
+#endif
+#if PW_CHECK_VERSION(1, 1, 0)
+    info.size = streamTime.size;
+#endif
+
+    return info;
 }
 
 void PipewireStream::setActive(bool active)

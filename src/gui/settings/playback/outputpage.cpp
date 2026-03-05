@@ -89,6 +89,7 @@ private:
     QSpinBox* m_crossfadeManualOut;
     QSpinBox* m_crossfadeAutoIn;
     QSpinBox* m_crossfadeAutoOut;
+    QComboBox* m_crossfadeAutoSwitchPolicy;
     QSpinBox* m_crossfadeSeekIn;
     QSpinBox* m_crossfadeSeekOut;
 };
@@ -121,6 +122,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     , m_crossfadeManualOut{new QSpinBox(this)}
     , m_crossfadeAutoIn{new QSpinBox(this)}
     , m_crossfadeAutoOut{new QSpinBox(this)}
+    , m_crossfadeAutoSwitchPolicy{new QComboBox(this)}
     , m_crossfadeSeekIn{new QSpinBox(this)}
     , m_crossfadeSeekOut{new QSpinBox(this)}
 {
@@ -263,6 +265,12 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     m_crossfadeSeekIn->setSingleStep(100);
     m_crossfadeSeekOut->setSingleStep(100);
 
+    m_crossfadeAutoSwitchPolicy->addItem(tr("Overlap start"),
+                                         static_cast<int>(Engine::CrossfadeSwitchPolicy::OverlapStart));
+    m_crossfadeAutoSwitchPolicy->addItem(tr("Boundary"), static_cast<int>(Engine::CrossfadeSwitchPolicy::Boundary));
+    m_crossfadeAutoSwitchPolicy->setToolTip(
+        tr("Controls when the UI switches tracks during automatic crossfade transitions"));
+
     row = 0;
     crossmixLayout->addWidget(new QLabel(tr("Fade In"), this), row, 1);
     crossmixLayout->addWidget(new QLabel(tr("Fade Out"), this), row++, 2);
@@ -278,7 +286,8 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     crossmixLayout->addWidget(m_crossfadeAutoEnabled, row, 0);
     crossmixLayout->addWidget(m_crossfadeAutoIn, row, 1);
     crossmixLayout->addWidget(m_crossfadeAutoOut, row++, 2);
-
+    crossmixLayout->addWidget(new QLabel(tr("Auto switch policy"), this), row, 0);
+    crossmixLayout->addWidget(m_crossfadeAutoSwitchPolicy, row++, 1, 1, 2);
     crossmixLayout->setColumnStretch(3, 1);
 
     auto* mainLayout = new QGridLayout(this);
@@ -340,6 +349,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
         m_crossfadeManualOut->setEnabled(m_crossfadeManualEnabled->isChecked());
         m_crossfadeAutoIn->setEnabled(m_crossfadeAutoEnabled->isChecked());
         m_crossfadeAutoOut->setEnabled(m_crossfadeAutoEnabled->isChecked());
+        m_crossfadeAutoSwitchPolicy->setEnabled(m_crossfadeAutoEnabled->isChecked());
     };
 
     const auto syncWatermarkRatioBounds = [this]() {
@@ -461,6 +471,12 @@ void OutputPageWidget::load()
     loadFadeSpec(crossfadingValues.manualChange, m_crossfadeManualEnabled, m_crossfadeManualIn, m_crossfadeManualOut);
     loadFadeSpec(crossfadingValues.autoChange, m_crossfadeAutoEnabled, m_crossfadeAutoIn, m_crossfadeAutoOut);
     loadFadeSpec(crossfadingValues.seek, m_crossfadeSeekEnabled, m_crossfadeSeekIn, m_crossfadeSeekOut);
+
+    const auto policy = static_cast<Engine::CrossfadeSwitchPolicy>(
+        m_settings->value<Settings::Core::Internal::CrossfadeSwitchPolicy>());
+    const int policyIndex
+        = m_crossfadeAutoSwitchPolicy->findData(static_cast<int>(policy), Qt::UserRole, Qt::MatchExactly);
+    m_crossfadeAutoSwitchPolicy->setCurrentIndex(policyIndex >= 0 ? policyIndex : 0);
 }
 
 void OutputPageWidget::apply()
@@ -516,6 +532,8 @@ void OutputPageWidget::apply()
     m_settings->set<Settings::Core::Internal::FadingValues>(QVariant::fromValue(fadingValues));
     m_settings->set<Settings::Core::Internal::EngineCrossfading>(m_crossfadeBox->isChecked());
     m_settings->set<Settings::Core::Internal::CrossfadingValues>(QVariant::fromValue(crossfadingValues));
+    m_settings->set<Settings::Core::Internal::CrossfadeSwitchPolicy>(
+        m_crossfadeAutoSwitchPolicy->currentData().toInt());
 }
 
 void OutputPageWidget::reset()
@@ -531,6 +549,7 @@ void OutputPageWidget::reset()
     m_settings->reset<Settings::Core::Internal::FadingValues>();
     m_settings->reset<Settings::Core::Internal::EngineCrossfading>();
     m_settings->reset<Settings::Core::Internal::CrossfadingValues>();
+    m_settings->reset<Settings::Core::Internal::CrossfadeSwitchPolicy>();
 }
 
 void OutputPageWidget::setupOutputs()

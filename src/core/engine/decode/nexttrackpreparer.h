@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include "core/engine/pipeline/audiostream.h"
 
 #include <core/engine/audioformat.h>
@@ -37,7 +39,7 @@ class QFile;
 namespace Fooyin {
 class AudioLoader;
 
-struct NextTrackPreparationState
+struct FYCORE_EXPORT NextTrackPreparationState
 {
     Track track;
     std::unique_ptr<AudioDecoder> decoder;
@@ -59,7 +61,7 @@ struct NextTrackPreparationState
  * Called by `NextTrackPrepareWorker` to pre-open decoder resources and
  * optionally pre-create/prefill a stream for transition handoff.
  */
-class NextTrackPreparer
+class FYCORE_EXPORT NextTrackPreparer
 {
 public:
     struct Context
@@ -67,7 +69,8 @@ public:
         std::shared_ptr<AudioLoader> audioLoader;
         Track currentTrack; // Used to check for same-file transition
         Engine::PlaybackState playbackState{Engine::PlaybackState::Stopped};
-        uint64_t bufferLengthMs{0}; // Preferred stream buffer target for prefill
+        uint64_t bufferLengthMs{0};     // Preferred stream buffer target for prefill
+        uint64_t preferredPrefillMs{0}; // Minimum prepared prefill target before handoff
         std::shared_ptr<std::atomic<bool>> cancelFlag;
     };
 
@@ -86,7 +89,7 @@ public:
  * Queue semantics are replace-latest: at most one pending request is retained.
  * Completion callback is invoked from the worker thread.
  */
-class NextTrackPrepareWorker
+class FYCORE_EXPORT NextTrackPrepareWorker
 {
 public:
     struct Request

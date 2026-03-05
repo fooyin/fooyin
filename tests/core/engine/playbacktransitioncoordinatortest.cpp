@@ -433,4 +433,38 @@ TEST(PlaybackTransitionCoordinatorTest, CrossfadeDrainWindowAccountsForOutputDel
     EXPECT_TRUE(state.isReadyForAutoCrossfade());
 }
 
+TEST(PlaybackTransitionCoordinatorTest, BoundaryReachedEmitsOnceAtDuration)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs = 9999;
+    input.durationMs = 10000;
+
+    const auto beforeBoundary = state.evaluateTrackEnding(input);
+    EXPECT_FALSE(beforeBoundary.boundaryReached);
+
+    input.positionMs      = 10000;
+    const auto atBoundary = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(atBoundary.boundaryReached);
+
+    input.positionMs        = 10100;
+    const auto pastBoundary = state.evaluateTrackEnding(input);
+    EXPECT_FALSE(pastBoundary.boundaryReached);
+}
+
+TEST(PlaybackTransitionCoordinatorTest, HardEndSignalsBoundaryWhenDurationUnknown)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.endOfInput  = true;
+    input.bufferEmpty = true;
+    input.durationMs  = 0;
+
+    const auto ended = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(ended.boundaryReached);
+    EXPECT_TRUE(ended.endReached);
+}
+
 } // namespace Fooyin::Testing

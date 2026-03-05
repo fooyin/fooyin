@@ -21,8 +21,8 @@
 
 #include <core/engine/enginedefs.h>
 #include <core/engine/levelframe.h>
-#include <core/engine/lockfreeringbuffer.h>
 #include <utils/compatutils.h>
+#include <utils/lockfreeringbuffer.h>
 
 #include <array>
 #include <atomic>

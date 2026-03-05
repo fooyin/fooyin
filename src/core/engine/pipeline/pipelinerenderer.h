@@ -66,6 +66,7 @@ public:
     struct RenderResult
     {
         int framesRead{0};
+        bool mixerBuffering{false};
         StreamId primaryStreamId{InvalidStreamId};
         //! Optional fade completion emitted during master fader processing.
         std::optional<OutputFader::Completion> fadeCompletion;

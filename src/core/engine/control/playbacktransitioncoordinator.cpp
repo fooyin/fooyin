@@ -35,6 +35,7 @@ PlaybackTransitionCoordinator::PlaybackTransitionCoordinator()
     : m_autoTransitionMode{AutoTransitionMode::None}
     , m_trackEnding{false}
     , m_switchReady{false}
+    , m_boundaryReached{false}
     , m_seekInProgress{false}
     , m_pendingSeekActive{false}
     , m_pendingInitialSeekActive{false}
@@ -48,9 +49,18 @@ PlaybackTransitionCoordinator::evaluateTrackEnding(const TrackEndingInput& input
 {
     TrackEndingResult result;
 
+    if(!m_boundaryReached && input.durationMs > 0 && input.positionMs >= input.durationMs) {
+        m_boundaryReached      = true;
+        result.boundaryReached = true;
+    }
+
     if(input.endOfInput && input.bufferEmpty) {
         m_trackEnding = true;
         m_switchReady = false;
+        if(!m_boundaryReached) {
+            m_boundaryReached      = true;
+            result.boundaryReached = true;
+        }
         clearAutoTransitionReadiness();
         result.endReached = true;
         return result;
@@ -220,14 +230,16 @@ void PlaybackTransitionCoordinator::clearForStop()
     clearAutoTransitionReadiness();
     m_trackEnding                 = false;
     m_switchReady                 = false;
+    m_boundaryReached             = false;
     m_pendingInitialSeekActive    = false;
     m_pendingInitialSeekRequestId = 0;
 }
 
 void PlaybackTransitionCoordinator::clearTrackEnding()
 {
-    m_trackEnding = false;
-    m_switchReady = false;
+    m_trackEnding     = false;
+    m_switchReady     = false;
+    m_boundaryReached = false;
     clearAutoTransitionReadiness();
 }
 

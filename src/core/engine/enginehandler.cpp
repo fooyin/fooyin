@@ -28,6 +28,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QLoggingCategory>
+#include <QPointer>
 
 #include <utility>
 
@@ -58,6 +59,10 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> audioLoader, PlayerCon
     QObject::connect(m_engine, &AudioEngine::trackReadyToSwitch, this, [this](const Track& track, uint64_t generation) {
         emit trackReadyToSwitch(Engine::AboutToFinishContext{track, generation});
     });
+    QObject::connect(m_engine, &AudioEngine::trackBoundaryReached, this,
+                     [this](const Track& track, uint64_t generation) {
+                         emit trackBoundaryReached(Engine::AboutToFinishContext{track, generation});
+                     });
     QObject::connect(m_engine, &AudioEngine::finished, this, &EngineHandler::finished);
     QObject::connect(m_engine, &AudioEngine::positionContextChanged, this, &EngineHandler::handlePositionContext);
     QObject::connect(m_engine, &AudioEngine::positionChangedWithContext, this, &EngineHandler::handlePositionSample);
@@ -151,6 +156,82 @@ Engine::NextTrackPrepareRequest EngineHandler::requestPrepareNextTrack(const Tra
     };
 }
 
+void EngineHandler::requestArmPreparedCrossfadeTransition(const Track& track, uint64_t generation)
+{
+    QPointer<EngineHandler> self{this};
+
+    QMetaObject::invokeMethod(
+        m_engine,
+        [engine = m_engine, self, track, generation]() {
+            const bool armed = engine->armPreparedCrossfadeTransition(track, generation);
+            if(!self) {
+                return;
+            }
+
+            QMetaObject::invokeMethod(
+                self,
+                [self, track, generation, armed]() {
+                    if(!self) {
+                        return;
+                    }
+                    emit self->preparedCrossfadeArmResult(track, generation, armed);
+                },
+                Qt::QueuedConnection);
+        },
+        Qt::QueuedConnection);
+}
+
+void EngineHandler::requestCommitPreparedCrossfadeTransition(const Track& track, bool manualChange)
+{
+    QMetaObject::invokeMethod(
+        m_engine,
+        [engine = m_engine, track, manualChange]() {
+            if(engine->commitPreparedCrossfadeTransition(track)) {
+                return;
+            }
+            engine->loadTrack(track, manualChange);
+        },
+        Qt::QueuedConnection);
+}
+
+void EngineHandler::requestArmPreparedGaplessTransition(const Track& track, uint64_t generation)
+{
+    QPointer<EngineHandler> self{this};
+
+    QMetaObject::invokeMethod(
+        m_engine,
+        [engine = m_engine, self, track, generation]() {
+            const bool armed = engine->armPreparedGaplessTransition(track, generation);
+            if(!self) {
+                return;
+            }
+
+            QMetaObject::invokeMethod(
+                self,
+                [self, track, generation, armed]() {
+                    if(!self) {
+                        return;
+                    }
+                    emit self->preparedGaplessArmResult(track, generation, armed);
+                },
+                Qt::QueuedConnection);
+        },
+        Qt::QueuedConnection);
+}
+
+void EngineHandler::requestCommitPreparedGaplessTransition(const Track& track, bool manualChange)
+{
+    QMetaObject::invokeMethod(
+        m_engine,
+        [engine = m_engine, track, manualChange]() {
+            if(engine->commitPreparedGaplessTransition(track)) {
+                return;
+            }
+            engine->loadTrack(track, manualChange);
+        },
+        Qt::QueuedConnection);
+}
+
 void EngineHandler::handleStateChange(Engine::PlaybackState state)
 {
     switch(state) {
@@ -175,10 +256,20 @@ void EngineHandler::handleTrackChange(const Track& track)
     if(!track.isValid()) {
         return;
     }
+
     clearNextTrackReadiness();
     clearPositionAcceptanceFloor();
 
-    const bool manualChange = m_playerController->lastTrackChangeContext().userInitiated;
+    const auto changeContext = m_playerController->lastTrackChangeContext();
+    const bool manualChange  = changeContext.userInitiated;
+    if(changeContext.reason == Player::AdvanceReason::PreparedCrossfadeCommit) {
+        requestCommitPreparedCrossfadeTransition(track, manualChange);
+        return;
+    }
+    else if(changeContext.reason == Player::AdvanceReason::PreparedCommit) {
+        requestCommitPreparedGaplessTransition(track, manualChange);
+        return;
+    }
 
     dispatchCommand(&AudioEngine::loadTrack, track, manualChange);
 }
@@ -437,6 +528,16 @@ void EngineHandler::updateLiveDspSettings(const Engine::LiveDspSettingsUpdate& u
 Engine::NextTrackPrepareRequest EngineHandler::prepareNextTrackForPlayback(const Track& track)
 {
     return requestPrepareNextTrack(track);
+}
+
+void EngineHandler::armPreparedCrossfadeTransition(const Track& track, uint64_t generation)
+{
+    requestArmPreparedCrossfadeTransition(track, generation);
+}
+
+void EngineHandler::armPreparedGaplessTransition(const Track& track, uint64_t generation)
+{
+    requestArmPreparedGaplessTransition(track, generation);
 }
 
 Engine::PlaybackState EngineHandler::engineState() const

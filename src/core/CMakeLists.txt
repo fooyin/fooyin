@@ -70,6 +70,8 @@ set(SOURCES
     engine/control/playbackintentreducer.cpp
     engine/control/playbackintentreducer.h
     engine/control/playbackphase.h
+    engine/control/positioncoordinator.cpp
+    engine/control/positioncoordinator.h
     engine/control/playbacktransitioncoordinator.cpp
     engine/control/playbacktransitioncoordinator.h
     engine/control/seekplanner.cpp
@@ -126,7 +128,6 @@ set(SOURCES
     engine/input/ffmpeg/ffmpegutils.h
     engine/input/taglibparser.cpp
     engine/input/taglibparser.h
-    engine/lockfreeringbuffer.h
     engine/output/fadecontroller.cpp
     engine/output/fadecontroller.h
     engine/output/outputcontroller.cpp

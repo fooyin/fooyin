@@ -19,14 +19,15 @@
 
 #include "nexttrackpreparer.h"
 
+#include "core/engine/enginehelpers.h"
 #include "decodercontext.h"
-#include "enginehelpers.h"
 
 #include <core/engine/audioloader.h>
 
 #include <limits>
 
 constexpr uint64_t PreparedStreamPrefillMs = 300;
+constexpr uint64_t MaxPreparedStreamMs     = 30000;
 
 namespace {
 size_t bufferSamplesFromMs(uint64_t ms, int sampleRate, int channels)
@@ -100,7 +101,10 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
         const int sampleRate = state.format.sampleRate();
 
         if(channels > 0 && sampleRate > 0 && context.bufferLengthMs > 0) {
-            const uint64_t preparedBufferMs = context.bufferLengthMs;
+            const auto targetPrefillMs = std::max<uint64_t>(PreparedStreamPrefillMs, context.preferredPrefillMs);
+            const uint64_t clampedPrefillMs
+                = std::clamp<uint64_t>(targetPrefillMs, PreparedStreamPrefillMs, MaxPreparedStreamMs);
+            const uint64_t preparedBufferMs = std::max<uint64_t>(context.bufferLengthMs, clampedPrefillMs);
             const size_t bufferSamples      = bufferSamplesFromMs(preparedBufferMs, sampleRate, channels);
             auto preparedStream             = decoderContext.createStream(bufferSamples);
             decoderContext.setActiveStream(preparedStream);
@@ -115,8 +119,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
 
             decoderContext.start();
 
-            const auto prefillMs     = std::min<uint64_t>(preparedBufferMs, PreparedStreamPrefillMs);
-            const auto chunksDecoded = decoderContext.prefillActiveStreamMs(prefillMs);
+            const auto chunksDecoded = decoderContext.prefillActiveStreamMs(clampedPrefillMs);
 
             if(canceled()) {
                 return {};

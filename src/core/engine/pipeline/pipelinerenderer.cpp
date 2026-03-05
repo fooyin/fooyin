@@ -197,6 +197,7 @@ PipelineRenderer::RenderResult PipelineRenderer::render(int framesToProcess, Out
 
     const auto mixerRead   = m_mixer.readWithStatus(m_processBuffer, framesToProcess);
     result.framesRead      = mixerRead.producedFrames;
+    result.mixerBuffering  = mixerRead.buffering;
     result.primaryStreamId = mixerRead.primaryStreamId;
 
     if(result.framesRead <= 0) {

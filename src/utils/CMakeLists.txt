@@ -23,6 +23,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/helpers.h
     ${CMAKE_SOURCE_DIR}/include/utils/id.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
+    ${CMAKE_SOURCE_DIR}/include/utils/lockfreeringbuffer.h
     ${CMAKE_SOURCE_DIR}/include/utils/logging/messagehandler.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
