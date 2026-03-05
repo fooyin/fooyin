@@ -2,6 +2,10 @@
 
 This document outlines the upcoming features for fooyin.
 
+## Next Release
+
+**0.10.0** - 2026/03/27
+
 ## New Features
 
 | Feature                                       | Release   |
@@ -18,8 +22,8 @@ This document outlines the upcoming features for fooyin.
 | Smart playlists                               | ✅ 0.9.0   |
 | Album artwork downloading/saving              | ✅ 0.9.0   |
 | Synchronised lyric support                    | ✅ 0.9.0   |
-| DSP plugin support                            | 🚧 0.10.0  |
-| Equaliser                                     | 🚧 0.10.0  |
+| DSP plugin support                            | ✅ 0.10.0  |
+| Equaliser                                     | ✅ 0.10.0  |
 | Audio conversion                              | ❓ TBD     |
 | Metadata lookup                               | ❓ TBD     |
 | Internet radio support                        | ❓ TBD     |
@@ -38,11 +42,11 @@ This document outlines the upcoming features for fooyin.
 
 ## Widgets
 
-| Widget                | Release |
-|-----------------------|---------|
-| Directory browser     | ✅ 0.4.0 |
-| Waveform seekbar      | ✅ 0.4.0 |
-| Playback queue viewer | ✅ 0.5.2 |
-| VU meter              | ✅ 0.8.0 |
-| Musical spectrum      | ❓ TBD   |
-| Spectrogram           | ❓ TBD   |
+| Widget                | Release   |
+|-----------------------|-----------|
+| Directory browser     | ✅ 0.4.0   |
+| Waveform seekbar      | ✅ 0.4.0   |
+| Playback queue viewer | ✅ 0.5.2   |
+| VU meter              | ✅ 0.8.0   |
+| Musical spectrum      | 🚧 0.11.0 |
+| Spectrogram           | ❓ TBD     |
