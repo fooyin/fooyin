@@ -227,11 +227,6 @@ std::optional<AudioFormat> GmeDecoder::init(const AudioSource& source, const Tra
 
     gme_enable_accuracy(m_emu.get(), 1);
 
-    return m_format;
-}
-
-void GmeDecoder::start()
-{
     gme_start_track(m_emu.get(), m_subsong);
 
     if(m_loopLength != 0 && m_repeatTrack) {
@@ -246,11 +241,19 @@ void GmeDecoder::start()
         gme_set_fade(m_emu.get(), m_duration - 8000);
 #endif
     }
+
+    return m_format;
+}
+
+void GmeDecoder::start()
+{
+    m_isDecoding = true;
 }
 
 void GmeDecoder::stop()
 {
     m_emu.reset();
+    m_isDecoding = false;
 }
 
 void GmeDecoder::seek(uint64_t pos)
@@ -263,6 +266,10 @@ void GmeDecoder::seek(uint64_t pos)
 
 AudioBuffer GmeDecoder::readBuffer(size_t bytes)
 {
+    if(!m_isDecoding) {
+        return {};
+    }
+
     if(gme_track_ended(m_emu.get())) {
         return {};
     }

@@ -52,6 +52,7 @@ public:
 
 private:
     bool m_repeatTrack;
+    bool m_isDecoding;
     FySettings m_settings;
     AudioFormat m_format;
     MusicEmuPtr m_emu;
