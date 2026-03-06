@@ -19,12 +19,14 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include "core/engine/pipeline/audiopipeline.h"
 
 #include <core/engine/enginedefs.h>
 
 namespace Fooyin {
-class PositionCoordinator
+class FYCORE_EXPORT PositionCoordinator
 {
 public:
     struct PreparedCrossfadeContext

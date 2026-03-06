@@ -24,6 +24,8 @@
 #include "core/engine/audioformat.h"
 #include <core/track.h>
 
+#include <limits>
+
 namespace Fooyin {
 //! True when two track handles refer to the same logical track request.
 //! Uses DB id when available, otherwise falls back to segment identity.
@@ -44,4 +46,9 @@ FYCORE_EXPORT uint64_t relativeTrackPositionMs(uint64_t streamPosMs, uint64_t st
 FYCORE_EXPORT bool shouldEmitTrackEndOnce(Track& lastEndedTrack, const Track& currentTrack);
 //! Infer a default channel layout when positions are missing but channel count is known.
 FYCORE_EXPORT AudioFormat normaliseChannelLayout(const AudioFormat& format);
+//! Add two unsigned timeline values without overflow.
+[[nodiscard]] constexpr uint64_t saturatingAdd(uint64_t lhs, uint64_t rhs) noexcept
+{
+    return lhs > (std::numeric_limits<uint64_t>::max() - rhs) ? std::numeric_limits<uint64_t>::max() : lhs + rhs;
+}
 } // namespace Fooyin

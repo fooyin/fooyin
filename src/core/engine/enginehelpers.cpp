@@ -75,11 +75,7 @@ uint64_t relativeTrackPositionMs(uint64_t absolutePosMs, uint64_t offsetMs)
 
 uint64_t absoluteTrackPositionMs(uint64_t streamPosMs, uint64_t streamOriginMs)
 {
-    if(streamPosMs > std::numeric_limits<uint64_t>::max() - streamOriginMs) {
-        return std::numeric_limits<uint64_t>::max();
-    }
-
-    return streamOriginMs + streamPosMs;
+    return saturatingAdd(streamOriginMs, streamPosMs);
 }
 
 uint64_t relativeTrackPositionMs(uint64_t streamPosMs, uint64_t streamOriginMs, uint64_t trackOffsetMs)

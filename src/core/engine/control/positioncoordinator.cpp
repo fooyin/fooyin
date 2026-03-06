@@ -23,6 +23,7 @@
 
 constexpr uint64_t MaxContinuousPositionJumpMs = 750;
 constexpr uint64_t MaxBackwardDriftToleranceMs = 50;
+constexpr uint64_t GaplessHoldFallbackGraceMs  = 250;
 
 namespace Fooyin {
 PositionCoordinator::PositionCoordinator()
@@ -91,19 +92,28 @@ PositionCoordinator::Output PositionCoordinator::evaluate(const Input& input)
 
     if(m_holdGaplessPositionUntilRendered && m_gaplessHoldStreamId == input.streamId) {
         const bool hasRenderedProgress = mappedForActiveStream && input.pipelineStatus.renderedSegment.outputFrames > 0;
+        const auto expectedRenderedLeadMs   = static_cast<uint64_t>(std::max<long double>(
+            0.0, std::llround(static_cast<long double>(input.pipelineDelayMs) * input.delayToSourceScale)));
+        const uint64_t holdFallbackWindowMs = saturatingAdd(expectedRenderedLeadMs, GaplessHoldFallbackGraceMs);
+        const uint64_t relativeStreamPosMs
+            = relativeTrackPositionMs(input.streamPositionMs, input.streamToTrackOriginMs, input.trackOffsetMs);
+        const bool fallbackReached = relativeStreamPosMs > holdFallbackWindowMs;
+
         if(!hasRenderedProgress) {
-            output.positionAvailable         = true;
-            output.discontinuity             = true;
-            output.emitNow                   = true;
-            output.relativePosMs             = 0;
-            m_lastSourcePositionMs           = 0;
-            m_lastSourcePositionValid        = true;
-            output.pendingWithoutMappedAudio = false;
-            output.hasRenderedSegment        = mappedForActiveStream;
-            output.preparedCrossfadeArmed    = input.preparedCrossfade.armed;
-            output.trackEndingPosMs          = 0;
-            output.boundaryFallbackReached   = false;
-            return output;
+            if(!fallbackReached) {
+                output.positionAvailable         = true;
+                output.discontinuity             = true;
+                output.emitNow                   = true;
+                output.relativePosMs             = 0;
+                m_lastSourcePositionMs           = 0;
+                m_lastSourcePositionValid        = true;
+                output.pendingWithoutMappedAudio = false;
+                output.hasRenderedSegment        = mappedForActiveStream;
+                output.preparedCrossfadeArmed    = input.preparedCrossfade.armed;
+                output.trackEndingPosMs          = 0;
+                output.boundaryFallbackReached   = false;
+                return output;
+            }
         }
 
         m_holdGaplessPositionUntilRendered = false;

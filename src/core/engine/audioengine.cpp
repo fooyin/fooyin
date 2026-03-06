@@ -68,11 +68,6 @@ constexpr auto DecodeHighWatermarkMaxRatio  = 0.99;
 constexpr auto DecodeWatermarkMinHeadroomMs = 20;
 constexpr auto DecodeWatermarkMinGapMs      = 30;
 
-uint64_t saturatingAddWindow(const uint64_t lhs, const uint64_t rhs)
-{
-    return lhs > (std::numeric_limits<uint64_t>::max() - rhs) ? std::numeric_limits<uint64_t>::max() : lhs + rhs;
-}
-
 std::pair<double, double> sanitiseWatermarkRatios(double lowRatio, double highRatio)
 {
     lowRatio  = std::clamp(lowRatio, 0.05, DecodeHighWatermarkMaxRatio);
@@ -1551,8 +1546,8 @@ uint64_t AudioEngine::preferredPreparedPrefillMs() const
 
     static constexpr uint64_t PrefillSafetyMarginMs = 100;
 
-    const auto withOverlap = saturatingAddWindow(scaledDelay, overlapLeadMs);
-    return saturatingAddWindow(withOverlap, PrefillSafetyMarginMs);
+    const auto withOverlap = saturatingAdd(scaledDelay, overlapLeadMs);
+    return saturatingAdd(withOverlap, PrefillSafetyMarginMs);
 }
 
 std::optional<AudioEngine::AutoTransitionEligibility>
@@ -2309,8 +2304,7 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t ge
                 qCWarning(ENGINE) << "Prepared crossfade arm rejected: insufficient prebuffer for boundary overlap:"
                                   << "trackId=" << track.id() << "generation=" << generation
                                   << "preparedBufferedMs=" << preparedBufferedMs << "requiredBufferedMs="
-                                  << saturatingAddWindow(saturatingAddWindow(requestedOverlapMs, transitionDelayMs),
-                                                         safetyWindowMs)
+                                  << saturatingAdd(saturatingAdd(requestedOverlapMs, transitionDelayMs), safetyWindowMs)
                                   << "overlapWindowMs=" << requestedOverlapMs
                                   << "transitionDelayMs=" << transitionDelayMs;
                 return false;
@@ -2335,7 +2329,7 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t ge
 
     const uint64_t overlapWindowMs = static_cast<uint64_t>(std::max(0, overlapDurationMs));
     const uint64_t requiredBufferedMs
-        = saturatingAddWindow(saturatingAddWindow(overlapWindowMs, transitionDelayMs), safetyWindowMs);
+        = saturatingAdd(saturatingAdd(overlapWindowMs, transitionDelayMs), safetyWindowMs);
 
     if(preparedBufferedMs < requiredBufferedMs) {
         qCWarning(ENGINE) << "Prepared crossfade arm rejected: insufficient prebuffer for boundary overlap:"
