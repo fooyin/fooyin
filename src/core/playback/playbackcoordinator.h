@@ -90,6 +90,7 @@ public:
     [[nodiscard]] static EndAction evaluateEndForAutoAdvance(const Track& currentTrack, const Track& endedTrack,
                                                              uint64_t generation,
                                                              std::optional<uint64_t>& suppressedGeneration);
+    [[nodiscard]] static bool canArmPreparedCrossfade(SwitchAnchor switchAnchor);
     [[nodiscard]] static bool isPreparedArmResultRelevant(std::optional<uint64_t> pendingGeneration,
                                                           const Track& expectedNextTrack, bool armInFlight,
                                                           const Track& resultTrack, uint64_t resultGeneration);

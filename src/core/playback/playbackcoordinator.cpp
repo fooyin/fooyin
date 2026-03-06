@@ -108,6 +108,11 @@ bool PlaybackCoordinator::isPreparedArmResultRelevant(std::optional<uint64_t> pe
     return armInFlight;
 }
 
+bool PlaybackCoordinator::canArmPreparedCrossfade(const SwitchAnchor switchAnchor)
+{
+    return switchAnchor != SwitchAnchor::Unknown;
+}
+
 void PlaybackCoordinator::handleTrackAboutToFinish(const Engine::AboutToFinishContext& context)
 {
     const Track currentTrack = m_playerController->currentTrack();
@@ -335,6 +340,12 @@ void PlaybackCoordinator::tryAdvancePreparedBoundary()
     const uint64_t generation = *m_pendingBoundaryAdvanceGeneration;
 
     if(m_pendingBoundaryPreparedTransition == PreparedTransition::None) {
+        // Prepared crossfades should start from the switch anchor window, not
+        // immediately when the next track becomes ready.
+        if(!canArmPreparedCrossfade(m_pendingBoundarySwitchAnchor)) {
+            return;
+        }
+
         if(m_pendingBoundaryCrossfadeArmInFlight) {
             return;
         }
