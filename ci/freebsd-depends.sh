@@ -21,4 +21,5 @@ sudo pkg install -y \
      libarchive \
      ebur128 \
      soundtouch \
+     libsoxr \
      googletest

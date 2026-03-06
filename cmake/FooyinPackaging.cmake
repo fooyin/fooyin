@@ -62,7 +62,8 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
         libarchive13,
         libsndfile1,
         libebur128-1,
-        libsoundtouch1"
+        libsoundtouch1,
+        libsoxr0"
 )
 
 set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")

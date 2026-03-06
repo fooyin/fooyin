@@ -22,6 +22,7 @@ add_subdirectory(scrobbler)
 add_subdirectory(sndfile)
 add_subdirectory(tageditor)
 add_subdirectory(soundtouch)
+add_subdirectory(soxresampler)
 add_subdirectory(vumeter)
 add_subdirectory(wavebar)
 
