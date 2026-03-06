@@ -107,15 +107,13 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
 
     const bool durationBoundaryReached
         = input.durationBoundaryEnabled && input.durationMs > 0 && input.positionMs >= input.durationMs;
-
-    // DecoderEofOnly mode: do not derive "about to finish" from timeline.
-    // Wait until decoder end-of-input is observed.
-    const bool timelineWindowEligible = input.durationBoundaryEnabled;
+    const bool timelineWindowEligible = input.predictiveTimelineHintsEnabled && input.durationMs > 0;
 
     bool crossfadeReady = false;
     if(input.autoCrossfadeEnabled) {
         const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
-        const uint64_t timelineWindowMs = saturatingAddWindow(fadeOutWindowMs, input.timelineDelayMs);
+        const uint64_t prepareLeadMs    = saturatingAddWindow(input.timelineDelayMs, input.autoPrepareLeadMs);
+        const uint64_t timelineWindowMs = saturatingAddWindow(fadeOutWindowMs, prepareLeadMs);
         const bool readyByTimeline      = timelineWindowEligible && inTimelineWindow(input, timelineWindowMs);
         const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
         crossfadeReady                  = readyByTimeline || readyByDrain;

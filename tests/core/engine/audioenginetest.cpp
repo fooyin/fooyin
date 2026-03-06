@@ -779,4 +779,20 @@ TEST(AudioEngineTest, NonCueTracksDoNotForceEndAtMetadataDurationBoundary)
     EXPECT_NE(harness.engine.trackStatus(), Engine::TrackStatus::End);
 }
 
+TEST(AudioEngineTest, TimelineTransitionHintsAreDisabledForRepeatTrackPlayback)
+{
+    Track finiteTrack{u"/music/test.fyt"_s};
+    finiteTrack.setDuration(6000);
+
+    EXPECT_TRUE(AudioEngine::shouldEnableTimelineTransitionHints(finiteTrack, AudioDecoder::PlaybackHints{}));
+
+    AudioDecoder::PlaybackHints repeatHints{};
+    repeatHints.setFlag(AudioDecoder::PlaybackHint::RepeatTrackEnabled, true);
+    EXPECT_FALSE(AudioEngine::shouldEnableTimelineTransitionHints(finiteTrack, repeatHints));
+
+    Track unknownDuration{u"/music/test.fyt"_s};
+    unknownDuration.setDuration(0);
+    EXPECT_FALSE(AudioEngine::shouldEnableTimelineTransitionHints(unknownDuration, AudioDecoder::PlaybackHints{}));
+}
+
 } // namespace Fooyin::Testing

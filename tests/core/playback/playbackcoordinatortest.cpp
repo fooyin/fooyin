@@ -18,7 +18,6 @@
  */
 
 #include "core/playback/playbackcoordinator.h"
-#include "core/engine/enginehelpers.h"
 
 #include <core/track.h>
 
@@ -108,5 +107,27 @@ TEST(PlaybackCoordinatorTest, PreparedArmResultRequiresInFlightAndMatchingContex
                                                                   expectedNextTrack, 7));
     EXPECT_TRUE(PlaybackCoordinator::isPreparedArmResultRelevant(std::optional<uint64_t>{7}, expectedNextTrack, true,
                                                                  expectedNextTrack, 7));
+}
+
+TEST(PlaybackCoordinatorTest, PreparedArmDispatchAttemptsGaplessAlongsideCrossfade)
+{
+    const auto dispatch = PlaybackCoordinator::evaluatePreparedArmDispatch(
+        PlaybackCoordinator::PreparedTransition::None, PlaybackCoordinator::SwitchAnchor::BoundarySignal, false, false,
+        false, false);
+
+    EXPECT_TRUE(dispatch.armCrossfade);
+    EXPECT_TRUE(dispatch.armGapless);
+    EXPECT_TRUE(dispatch.waitForArmResult);
+}
+
+TEST(PlaybackCoordinatorTest, PreparedArmDispatchFallsBackToGaplessWithoutAnchor)
+{
+    const auto dispatch = PlaybackCoordinator::evaluatePreparedArmDispatch(
+        PlaybackCoordinator::PreparedTransition::None, PlaybackCoordinator::SwitchAnchor::Unknown, false, false, false,
+        false);
+
+    EXPECT_FALSE(dispatch.armCrossfade);
+    EXPECT_TRUE(dispatch.armGapless);
+    EXPECT_TRUE(dispatch.waitForArmResult);
 }
 } // namespace Fooyin::Testing

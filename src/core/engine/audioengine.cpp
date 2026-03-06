@@ -1440,18 +1440,20 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
 
     PlaybackTransitionCoordinator::TrackEndingInput input;
 
-    input.positionMs              = relativePosMs;
-    input.durationMs              = m_currentTrack.duration();
-    input.durationBoundaryEnabled = m_currentTrack.hasCue();
-    input.timelineDelayMs         = timelineDelayMs;
-    input.remainingOutputMs       = remainingOutputMs;
-    input.endOfInput              = stream->endOfInput();
-    input.bufferEmpty             = stream->bufferEmpty();
-    input.autoCrossfadeEnabled    = m_crossfadeEnabled && m_crossfadingValues.autoChange.isConfigured();
-    input.gaplessEnabled          = m_gaplessEnabled;
-    input.autoFadeOutMs           = m_crossfadingValues.autoChange.effectiveOutMs();
-    input.autoFadeInMs            = m_crossfadingValues.autoChange.effectiveInMs();
-    input.gaplessPrepareWindowMs  = GaplessPrepareLeadMs;
+    input.positionMs                     = relativePosMs;
+    input.durationMs                     = m_currentTrack.duration();
+    input.durationBoundaryEnabled        = m_currentTrack.hasCue();
+    input.predictiveTimelineHintsEnabled = shouldEnableTimelineTransitionHints(m_currentTrack, m_decoderPlaybackHints);
+    input.timelineDelayMs                = timelineDelayMs;
+    input.remainingOutputMs              = remainingOutputMs;
+    input.endOfInput                     = stream->endOfInput();
+    input.bufferEmpty                    = stream->bufferEmpty();
+    input.autoCrossfadeEnabled           = m_crossfadeEnabled && m_crossfadingValues.autoChange.isConfigured();
+    input.gaplessEnabled                 = m_gaplessEnabled;
+    input.autoFadeOutMs                  = m_crossfadingValues.autoChange.effectiveOutMs();
+    input.autoFadeInMs                   = m_crossfadingValues.autoChange.effectiveInMs();
+    input.autoPrepareLeadMs              = preferredPreparedPrefillMs();
+    input.gaplessPrepareWindowMs         = GaplessPrepareLeadMs;
 
     return m_transitions.evaluateTrackEnding(input);
 }
@@ -1580,6 +1582,12 @@ AudioEngine::evaluateAutoTransitionEligibility(const Track& track, bool isManual
 bool AudioEngine::isAutoTransitionEligible(const Track& track) const
 {
     return evaluateAutoTransitionEligibility(track, false, false).has_value();
+}
+
+bool AudioEngine::shouldEnableTimelineTransitionHints(const Track& track,
+                                                      const AudioDecoder::PlaybackHints playbackHints)
+{
+    return track.duration() > 0 && !playbackHints.testFlag(AudioDecoder::PlaybackHint::RepeatTrackEnabled);
 }
 
 void AudioEngine::setCurrentTrackContext(const Track& track)

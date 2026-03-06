@@ -126,6 +126,8 @@ public slots:
     [[nodiscard]] bool armPreparedCrossfadeTransition(const Fooyin::Track& track, uint64_t generation);
     //! Commit a previously armed prepared crossfade transition after UI track context changes.
     [[nodiscard]] bool commitPreparedCrossfadeTransition(const Fooyin::Track& track);
+    [[nodiscard]] static bool shouldEnableTimelineTransitionHints(const Fooyin::Track& track,
+                                                                  Fooyin::AudioDecoder::PlaybackHints playbackHints);
     //! Stage a prepared gapless stream in the pipeline without committing UI track context.
     [[nodiscard]] bool armPreparedGaplessTransition(const Fooyin::Track& track, uint64_t generation);
     //! Commit a previously armed prepared gapless transition after UI track context changes.

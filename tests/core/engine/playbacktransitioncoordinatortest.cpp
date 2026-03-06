@@ -237,6 +237,34 @@ TEST(PlaybackTransitionCoordinatorTest, CrossfadeReadyWindowAccountsForOutputDel
     EXPECT_TRUE(ready.readyToSwitch);
 }
 
+TEST(PlaybackTransitionCoordinatorTest, CrossfadePreparationLeadQueuesBeforeOverlapWindow)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs             = 7000;
+    input.durationMs             = 10000;
+    input.remainingOutputMs      = 3000;
+    input.endOfInput             = false;
+    input.bufferEmpty            = false;
+    input.autoCrossfadeEnabled   = true;
+    input.gaplessEnabled         = false;
+    input.autoFadeOutMs          = 2000;
+    input.autoFadeInMs           = 2000;
+    input.autoPrepareLeadMs      = 1000;
+    input.gaplessPrepareWindowMs = 300;
+
+    const auto aboutToFinish = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(aboutToFinish.aboutToFinish);
+    EXPECT_FALSE(aboutToFinish.readyToSwitch);
+    EXPECT_TRUE(state.isReadyForAutoCrossfade());
+
+    input.positionMs = 8000;
+    const auto ready = state.evaluateTrackEnding(input);
+    EXPECT_FALSE(ready.aboutToFinish);
+    EXPECT_TRUE(ready.readyToSwitch);
+}
+
 TEST(PlaybackTransitionCoordinatorTest, EndOfInputWithoutTransitionsWaitsForBufferDrain)
 {
     PlaybackTransitionCoordinator state;
@@ -477,22 +505,49 @@ TEST(PlaybackTransitionCoordinatorTest, DurationBoundaryIgnoredWhenDisabled)
     EXPECT_FALSE(result.endReached);
 }
 
-TEST(PlaybackTransitionCoordinatorTest, DecoderEofOnlySkipsTimelineAutoTransitionHints)
+TEST(PlaybackTransitionCoordinatorTest, TimelineHintsCanBeUsedWithoutDurationBoundary)
 {
     PlaybackTransitionCoordinator state;
 
     PlaybackTransitionCoordinator::TrackEndingInput input;
-    input.positionMs              = 9900;
-    input.durationMs              = 10000;
-    input.durationBoundaryEnabled = false;
-    input.remainingOutputMs       = 500;
-    input.endOfInput              = false;
-    input.bufferEmpty             = false;
-    input.autoCrossfadeEnabled    = true;
-    input.gaplessEnabled          = false;
-    input.autoFadeOutMs           = 300;
-    input.autoFadeInMs            = 300;
-    input.gaplessPrepareWindowMs  = 300;
+    input.positionMs                     = 9900;
+    input.durationMs                     = 10000;
+    input.durationBoundaryEnabled        = false;
+    input.predictiveTimelineHintsEnabled = true;
+    input.remainingOutputMs              = 500;
+    input.endOfInput                     = false;
+    input.bufferEmpty                    = false;
+    input.autoCrossfadeEnabled           = true;
+    input.gaplessEnabled                 = false;
+    input.autoFadeOutMs                  = 300;
+    input.autoFadeInMs                   = 300;
+    input.gaplessPrepareWindowMs         = 300;
+
+    const auto result = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(result.aboutToFinish);
+    EXPECT_TRUE(result.readyToSwitch);
+    EXPECT_FALSE(result.boundaryReached);
+    EXPECT_FALSE(result.endReached);
+    EXPECT_TRUE(state.isReadyForAutoTransition());
+}
+
+TEST(PlaybackTransitionCoordinatorTest, TimelineHintsCanBeDisabledIndependentlyFromDurationBoundary)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs                     = 9900;
+    input.durationMs                     = 10000;
+    input.durationBoundaryEnabled        = false;
+    input.predictiveTimelineHintsEnabled = false;
+    input.remainingOutputMs              = 500;
+    input.endOfInput                     = false;
+    input.bufferEmpty                    = false;
+    input.autoCrossfadeEnabled           = true;
+    input.gaplessEnabled                 = false;
+    input.autoFadeOutMs                  = 300;
+    input.autoFadeInMs                   = 300;
+    input.gaplessPrepareWindowMs         = 300;
 
     const auto result = state.evaluateTrackEnding(input);
     EXPECT_FALSE(result.aboutToFinish);

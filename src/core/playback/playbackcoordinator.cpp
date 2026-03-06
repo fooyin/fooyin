@@ -113,6 +113,21 @@ bool PlaybackCoordinator::canArmPreparedCrossfade(const SwitchAnchor switchAncho
     return switchAnchor != SwitchAnchor::Unknown;
 }
 
+PlaybackCoordinator::PreparedArmDispatchPlan PlaybackCoordinator::evaluatePreparedArmDispatch(
+    const PreparedTransition preparedTransition, const SwitchAnchor switchAnchor, const bool crossfadeArmAttempted,
+    const bool crossfadeArmInFlight, const bool gaplessArmAttempted, const bool gaplessArmInFlight)
+{
+    PreparedArmDispatchPlan plan;
+    if(preparedTransition != PreparedTransition::None) {
+        return plan;
+    }
+
+    plan.armCrossfade     = !crossfadeArmInFlight && !crossfadeArmAttempted && canArmPreparedCrossfade(switchAnchor);
+    plan.armGapless       = !gaplessArmInFlight && !gaplessArmAttempted;
+    plan.waitForArmResult = crossfadeArmInFlight || gaplessArmInFlight || plan.armCrossfade || plan.armGapless;
+    return plan;
+}
+
 void PlaybackCoordinator::handleTrackAboutToFinish(const Engine::AboutToFinishContext& context)
 {
     const Track currentTrack = m_playerController->currentTrack();
@@ -339,36 +354,25 @@ void PlaybackCoordinator::tryAdvancePreparedBoundary()
 
     const uint64_t generation = *m_pendingBoundaryAdvanceGeneration;
 
-    if(m_pendingBoundaryPreparedTransition == PreparedTransition::None) {
-        // Prepared crossfades should start from the switch anchor window, not
-        // immediately when the next track becomes ready.
-        if(!canArmPreparedCrossfade(m_pendingBoundarySwitchAnchor)) {
-            return;
-        }
+    const auto armDispatch
+        = evaluatePreparedArmDispatch(m_pendingBoundaryPreparedTransition, m_pendingBoundarySwitchAnchor,
+                                      m_pendingBoundaryCrossfadeArmAttempted, m_pendingBoundaryCrossfadeArmInFlight,
+                                      m_pendingBoundaryGaplessArmAttempted, m_pendingBoundaryGaplessArmInFlight);
 
-        if(m_pendingBoundaryCrossfadeArmInFlight) {
-            return;
-        }
-
-        if(!m_pendingBoundaryCrossfadeArmAttempted) {
-            m_pendingBoundaryCrossfadeArmAttempted = true;
-            m_pendingBoundaryCrossfadeArmInFlight  = true;
-            m_engine->armPreparedCrossfadeTransition(m_pendingBoundaryExpectedNextTrack, generation);
-            return;
-        }
+    if(armDispatch.armCrossfade) {
+        m_pendingBoundaryCrossfadeArmAttempted = true;
+        m_pendingBoundaryCrossfadeArmInFlight  = true;
+        m_engine->armPreparedCrossfadeTransition(m_pendingBoundaryExpectedNextTrack, generation);
     }
 
-    if(m_pendingBoundaryPreparedTransition == PreparedTransition::None) {
-        if(m_pendingBoundaryGaplessArmInFlight) {
-            return;
-        }
+    if(armDispatch.armGapless) {
+        m_pendingBoundaryGaplessArmAttempted = true;
+        m_pendingBoundaryGaplessArmInFlight  = true;
+        m_engine->armPreparedGaplessTransition(m_pendingBoundaryExpectedNextTrack, generation);
+    }
 
-        if(!m_pendingBoundaryGaplessArmAttempted) {
-            m_pendingBoundaryGaplessArmAttempted = true;
-            m_pendingBoundaryGaplessArmInFlight  = true;
-            m_engine->armPreparedGaplessTransition(m_pendingBoundaryExpectedNextTrack, generation);
-            return;
-        }
+    if(m_pendingBoundaryPreparedTransition == PreparedTransition::None && armDispatch.waitForArmResult) {
+        return;
     }
 
     if(!m_pendingBoundarySwitchGateOpen) {

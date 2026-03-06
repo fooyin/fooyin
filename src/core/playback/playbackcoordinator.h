@@ -39,6 +39,13 @@ class FYCORE_EXPORT PlaybackCoordinator : public QObject
     Q_OBJECT
 
 public:
+    struct PreparedArmDispatchPlan
+    {
+        bool armCrossfade{false};
+        bool armGapless{false};
+        bool waitForArmResult{false};
+    };
+
     enum class EndAction : uint8_t
     {
         Advance = 0,
@@ -91,6 +98,10 @@ public:
                                                              uint64_t generation,
                                                              std::optional<uint64_t>& suppressedGeneration);
     [[nodiscard]] static bool canArmPreparedCrossfade(SwitchAnchor switchAnchor);
+    [[nodiscard]] static PreparedArmDispatchPlan
+    evaluatePreparedArmDispatch(PreparedTransition preparedTransition, SwitchAnchor switchAnchor,
+                                bool crossfadeArmAttempted, bool crossfadeArmInFlight, bool gaplessArmAttempted,
+                                bool gaplessArmInFlight);
     [[nodiscard]] static bool isPreparedArmResultRelevant(std::optional<uint64_t> pendingGeneration,
                                                           const Track& expectedNextTrack, bool armInFlight,
                                                           const Track& resultTrack, uint64_t resultGeneration);

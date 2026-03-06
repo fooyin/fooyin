@@ -67,6 +67,7 @@ public:
         uint64_t positionMs{0};
         uint64_t durationMs{0};
         bool durationBoundaryEnabled{true};
+        bool predictiveTimelineHintsEnabled{true};
         uint64_t remainingOutputMs{0};
         bool endOfInput{false};
         bool bufferEmpty{false};
@@ -74,6 +75,7 @@ public:
         bool gaplessEnabled{false};
         int autoFadeOutMs{0};
         int autoFadeInMs{0};
+        uint64_t autoPrepareLeadMs{0};
         uint64_t gaplessPrepareWindowMs{0};
         uint64_t timelineDelayMs{0};
     };
