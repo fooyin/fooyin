@@ -61,6 +61,7 @@
 #include "settings/networkpage.h"
 #include "settings/playback/decoderpage.h"
 #include "settings/playback/dspmanagerpage.h"
+#include "settings/playback/fadingpage.h"
 #include "settings/playback/outputpage.h"
 #include "settings/playback/playbackpage.h"
 #include "settings/playback/replaygainpage.h"
@@ -263,6 +264,7 @@ void Widgets::registerPages()
     new LibrarySortingPage(m_gui->actionManager(), m_core->sortingRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);
     new DspManagerPage(m_core->dspChainStore(), m_dspPresetRegistry, m_dspSettingsRegistry.get(), m_settings, this);
+    new FadingPage(m_settings, this);
     new PlaylistGeneralPage(m_core->playlistLoader()->supportedSaveExtensions(), m_settings, this);
     new PlaylistColumnPage(m_gui->actionManager(), m_playlistController->columnRegistry(), m_settings, this);
     new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
