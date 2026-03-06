@@ -29,3 +29,7 @@ if(WIN32)
     add_subdirectory(mediacontrol)
     add_subdirectory(thumbnailtoolbar)
 endif()
+
+if (APPLE)
+    add_subdirectory(nowplaying)
+endif()

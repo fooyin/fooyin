@@ -1,11 +1,38 @@
 function(fooyin_set_rpath target prefix)
     get_filename_component(path "${CMAKE_INSTALL_PREFIX}/${prefix}" ABSOLUTE)
     file(RELATIVE_PATH relative ${path} "${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}")
-    set(rpath "\$ORIGIN/${relative}")
+
+    if(prefix STREQUAL "bin")
+        if(APPLE)
+            set(rpath "@executable_path/../lib/fooyin")
+        else()
+            set(rpath "\$ORIGIN/../lib/fooyin")
+        endif()
+    else()
+        if(APPLE)
+            set(rpath "@loader_path")
+            if(prefix STREQUAL "lib/fooyin/plugins")
+                set(rpath "@loader_path/..")
+            endif()
+        else()
+            set(rpath "\$ORIGIN")
+            if(prefix STREQUAL "lib/fooyin/plugins")
+                set(rpath "\$ORIGIN/..")
+            endif()
+        endif()
+    endif()
+
     if(CMAKE_INSTALL_RPATH)
         list(APPEND rpath ${CMAKE_INSTALL_RPATH})
     endif()
+
     set_target_properties(${target} PROPERTIES INSTALL_RPATH "${rpath}")
+
+    if(APPLE AND NOT prefix STREQUAL "bin")
+        set_target_properties(${target} PROPERTIES
+            INSTALL_NAME_DIR "@rpath"
+            BUILD_WITH_INSTALL_RPATH TRUE)
+    endif()
 endfunction()
 
 function(create_fooyin_plugin plugin_name)
