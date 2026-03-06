@@ -150,6 +150,78 @@ TEST(PlaybackTransitionCoordinatorTest, GaplessReadinessIsIndependentFromCrossfa
     EXPECT_EQ(state.autoTransitionMode(), PlaybackTransitionCoordinator::AutoTransitionMode::Gapless);
 }
 
+TEST(PlaybackTransitionCoordinatorTest, BoundaryFadeReadinessSignalsAboutToFinishButNotReadyToSwitch)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs             = 9500;
+    input.durationMs             = 10000;
+    input.remainingOutputMs      = 700;
+    input.endOfInput             = false;
+    input.bufferEmpty            = false;
+    input.autoCrossfadeEnabled   = false;
+    input.boundaryFadeEnabled    = true;
+    input.gaplessEnabled         = false;
+    input.boundaryFadeOutMs      = 500;
+    input.gaplessPrepareWindowMs = 300;
+
+    const auto aboutToFinish = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(aboutToFinish.aboutToFinish);
+    EXPECT_FALSE(aboutToFinish.readyToSwitch);
+    EXPECT_FALSE(aboutToFinish.endReached);
+    EXPECT_TRUE(state.isReadyForGaplessHandoff());
+    EXPECT_EQ(state.autoTransitionMode(), PlaybackTransitionCoordinator::AutoTransitionMode::BoundaryFade);
+}
+
+TEST(PlaybackTransitionCoordinatorTest, BoundaryFadeModePreferredOverGaplessWhenBothReady)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs             = 9700;
+    input.durationMs             = 10000;
+    input.remainingOutputMs      = 450;
+    input.endOfInput             = false;
+    input.bufferEmpty            = false;
+    input.autoCrossfadeEnabled   = false;
+    input.boundaryFadeEnabled    = true;
+    input.gaplessEnabled         = true;
+    input.boundaryFadeOutMs      = 200;
+    input.gaplessPrepareWindowMs = 300;
+
+    const auto aboutToFinish = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(aboutToFinish.aboutToFinish);
+    EXPECT_FALSE(aboutToFinish.readyToSwitch);
+    EXPECT_FALSE(aboutToFinish.endReached);
+    EXPECT_TRUE(state.isReadyForGaplessHandoff());
+    EXPECT_EQ(state.autoTransitionMode(), PlaybackTransitionCoordinator::AutoTransitionMode::BoundaryFade);
+}
+
+TEST(PlaybackTransitionCoordinatorTest, BoundaryFadeWithZeroFadeOutStillPreparesAsBoundaryFade)
+{
+    PlaybackTransitionCoordinator state;
+
+    PlaybackTransitionCoordinator::TrackEndingInput input;
+    input.positionMs             = 9700;
+    input.durationMs             = 10000;
+    input.remainingOutputMs      = 450;
+    input.endOfInput             = false;
+    input.bufferEmpty            = false;
+    input.autoCrossfadeEnabled   = false;
+    input.boundaryFadeEnabled    = true;
+    input.gaplessEnabled         = false;
+    input.boundaryFadeOutMs      = 0;
+    input.gaplessPrepareWindowMs = 300;
+
+    const auto aboutToFinish = state.evaluateTrackEnding(input);
+    EXPECT_TRUE(aboutToFinish.aboutToFinish);
+    EXPECT_FALSE(aboutToFinish.readyToSwitch);
+    EXPECT_FALSE(aboutToFinish.endReached);
+    EXPECT_TRUE(state.isReadyForGaplessHandoff());
+    EXPECT_EQ(state.autoTransitionMode(), PlaybackTransitionCoordinator::AutoTransitionMode::BoundaryFade);
+}
+
 TEST(PlaybackTransitionCoordinatorTest, CrossfadeModeIsPreferredWhenGaplessBecomesReadyFirst)
 {
     PlaybackTransitionCoordinator state;

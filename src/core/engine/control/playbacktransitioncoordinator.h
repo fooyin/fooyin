@@ -37,7 +37,8 @@ public:
     {
         None = 0,
         Gapless,
-        Crossfade
+        Crossfade,
+        BoundaryFade
     };
 
     struct CrossfadeParams
@@ -72,10 +73,12 @@ public:
         bool endOfInput{false};
         bool bufferEmpty{false};
         bool autoCrossfadeEnabled{false};
+        bool boundaryFadeEnabled{false};
         bool gaplessEnabled{false};
         int autoFadeOutMs{0};
         int autoFadeInMs{0};
         uint64_t autoPrepareLeadMs{0};
+        int boundaryFadeOutMs{0};
         uint64_t gaplessPrepareWindowMs{0};
         uint64_t timelineDelayMs{0};
     };

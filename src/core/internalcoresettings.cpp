@@ -36,32 +36,6 @@ using namespace Qt::StringLiterals;
 constexpr auto LogLevel = "LogLevel";
 
 namespace Fooyin {
-namespace {
-Engine::FadingValues defaultFadingValues()
-{
-    Engine::FadingValues values;
-    values.pause.in    = 120;
-    values.pause.out   = 120;
-    values.pause.curve = Engine::FadeCurve::Linear;
-    values.stop.in     = 120;
-    values.stop.out    = 300;
-    values.stop.curve  = Engine::FadeCurve::Linear;
-    return values;
-}
-
-Engine::CrossfadingValues defaultCrossfadingValues()
-{
-    Engine::CrossfadingValues values;
-    values.manualChange.in  = 300;
-    values.manualChange.out = 300;
-    values.autoChange.in    = 700;
-    values.autoChange.out   = 700;
-    values.seek.in          = 80;
-    values.seek.out         = 80;
-    return values;
-}
-} // namespace
-
 FySettings::FySettings(QObject* parent)
     : QSettings{Core::settingsPath(), QSettings::IniFormat, parent}
 { }
@@ -77,6 +51,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     qRegisterMetaType<Engine::FadingValues>("FadingValues");
     qRegisterMetaType<Engine::CrossfadingValues>("CrossfadingValues");
+    qRegisterMetaType<Engine::FadeSpec>("FadeSpec");
 
     m_settings->createTempSetting<FirstRun>(true);
     m_settings->createTempSetting<Version>(QString::fromLatin1(VERSION));
@@ -122,10 +97,10 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
     m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, u"Plugins/Disabled"_s);
     m_settings->createSetting<Internal::EngineFading>(false, u"Engine/Fading"_s);
-    m_settings->createSetting<Internal::FadingValues>(QVariant::fromValue(defaultFadingValues()),
+    m_settings->createSetting<Internal::FadingValues>(QVariant::fromValue(Engine::FadingValues{}),
                                                       u"Engine/FadingValues"_s);
     m_settings->createSetting<Internal::EngineCrossfading>(false, u"Engine/Crossfading"_s);
-    m_settings->createSetting<Internal::CrossfadingValues>(QVariant::fromValue(defaultCrossfadingValues()),
+    m_settings->createSetting<Internal::CrossfadingValues>(QVariant::fromValue(Engine::CrossfadingValues{}),
                                                            u"Engine/CrossfadingValues"_s);
     m_settings->createSetting<Internal::VBRUpdateInterval>(1000, u"Engine/VBRUpdateInterval"_s);
     m_settings->createSetting<Internal::ProxyMode>(static_cast<int>(NetworkAccessManager::Mode::None),

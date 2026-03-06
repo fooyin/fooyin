@@ -78,8 +78,12 @@ private:
     QSpinBox* m_fadingPauseOut;
     QSpinBox* m_fadingStopIn;
     QSpinBox* m_fadingStopOut;
+    QCheckBox* m_fadingBoundaryEnabled;
+    QSpinBox* m_fadingBoundaryIn;
+    QSpinBox* m_fadingBoundaryOut;
     QComboBox* m_pauseFadeCurve;
     QComboBox* m_stopFadeCurve;
+    QComboBox* m_boundaryFadeCurve;
 
     QGroupBox* m_crossfadeBox;
     QCheckBox* m_crossfadeSeekEnabled;
@@ -89,6 +93,7 @@ private:
     QSpinBox* m_crossfadeManualOut;
     QSpinBox* m_crossfadeAutoIn;
     QSpinBox* m_crossfadeAutoOut;
+    QLabel* m_crossfadeAutoSwitchPolicyLabel;
     QComboBox* m_crossfadeAutoSwitchPolicy;
     QSpinBox* m_crossfadeSeekIn;
     QSpinBox* m_crossfadeSeekOut;
@@ -112,8 +117,12 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     , m_fadingPauseOut{new QSpinBox(this)}
     , m_fadingStopIn{new QSpinBox(this)}
     , m_fadingStopOut{new QSpinBox(this)}
+    , m_fadingBoundaryEnabled{new QCheckBox(tr("Boundary"), this)}
+    , m_fadingBoundaryIn{new QSpinBox(this)}
+    , m_fadingBoundaryOut{new QSpinBox(this)}
     , m_pauseFadeCurve{new QComboBox(this)}
     , m_stopFadeCurve{new QComboBox(this)}
+    , m_boundaryFadeCurve{new QComboBox(this)}
     , m_crossfadeBox{new QGroupBox(tr("Crossfading"), this)}
     , m_crossfadeSeekEnabled{new QCheckBox(tr("Seek"), this)}
     , m_crossfadeManualEnabled{new QCheckBox(tr("Manual track change"), this)}
@@ -122,6 +131,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     , m_crossfadeManualOut{new QSpinBox(this)}
     , m_crossfadeAutoIn{new QSpinBox(this)}
     , m_crossfadeAutoOut{new QSpinBox(this)}
+    , m_crossfadeAutoSwitchPolicyLabel{new QLabel(tr("Auto switch policy") + u":"_s, this)}
     , m_crossfadeAutoSwitchPolicy{new QComboBox(this)}
     , m_crossfadeSeekIn{new QSpinBox(this)}
     , m_crossfadeSeekOut{new QSpinBox(this)}
@@ -188,6 +198,9 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     bufferLayout->addWidget(m_decodeWatermarkHint, 2, 1, 1, 2);
     bufferLayout->setColumnStretch(2, 1);
 
+    m_fadingBoundaryEnabled->setToolTip(tr("Cannot be enabled together with auto track change crossfade"));
+    m_crossfadeAutoEnabled->setToolTip(tr("Cannot be enabled together with track boundary fades"));
+
     auto* fadingLayout = new QGridLayout(m_fadingBox);
 
     m_fadingBox->setCheckable(true);
@@ -196,6 +209,8 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     m_fadingPauseOut->setSuffix(u"ms"_s);
     m_fadingStopIn->setSuffix(u"ms"_s);
     m_fadingStopOut->setSuffix(u"ms"_s);
+    m_fadingBoundaryIn->setSuffix(u"ms"_s);
+    m_fadingBoundaryOut->setSuffix(u"ms"_s);
     m_crossfadeManualIn->setSuffix(u"ms"_s);
     m_crossfadeManualOut->setSuffix(u"ms"_s);
     m_crossfadeAutoIn->setSuffix(u"ms"_s);
@@ -207,11 +222,15 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     m_fadingPauseOut->setMaximum(10000);
     m_fadingStopIn->setMaximum(10000);
     m_fadingStopOut->setMaximum(10000);
+    m_fadingBoundaryIn->setMaximum(10000);
+    m_fadingBoundaryOut->setMaximum(10000);
 
     m_fadingPauseIn->setSingleStep(100);
     m_fadingPauseOut->setSingleStep(100);
     m_fadingStopIn->setSingleStep(100);
     m_fadingStopOut->setSingleStep(100);
+    m_fadingBoundaryIn->setSingleStep(100);
+    m_fadingBoundaryOut->setSingleStep(100);
 
     const auto addFadeCurveItems = [](QComboBox* combo) {
         combo->addItem(tr("Linear"), static_cast<int>(Engine::FadeCurve::Linear));
@@ -224,6 +243,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 
     addFadeCurveItems(m_pauseFadeCurve);
     addFadeCurveItems(m_stopFadeCurve);
+    addFadeCurveItems(m_boundaryFadeCurve);
 
     int row{0};
     fadingLayout->addWidget(new QLabel(tr("Fade In"), this), row, 1);
@@ -240,6 +260,10 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     fadingLayout->addWidget(m_fadingStopOut, row, 2);
     fadingLayout->addWidget(m_stopFadeCurve, row++, 3);
 
+    fadingLayout->addWidget(m_fadingBoundaryEnabled, row, 0);
+    fadingLayout->addWidget(m_fadingBoundaryIn, row, 1);
+    fadingLayout->addWidget(m_fadingBoundaryOut, row, 2);
+    fadingLayout->addWidget(m_boundaryFadeCurve, row++, 3);
     fadingLayout->setColumnStretch(4, 1);
 
     auto* crossmixLayout = new QGridLayout(m_crossfadeBox);
@@ -253,8 +277,8 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 
     m_crossfadeManualIn->setMaximum(30000);
     m_crossfadeManualOut->setMaximum(30000);
-    m_crossfadeAutoIn->setMaximum(30000);
-    m_crossfadeAutoOut->setMaximum(30000);
+    m_crossfadeAutoIn->setRange(100, 30000);
+    m_crossfadeAutoOut->setRange(100, 30000);
     m_crossfadeSeekIn->setMaximum(10000);
     m_crossfadeSeekOut->setMaximum(10000);
 
@@ -286,7 +310,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     crossmixLayout->addWidget(m_crossfadeAutoEnabled, row, 0);
     crossmixLayout->addWidget(m_crossfadeAutoIn, row, 1);
     crossmixLayout->addWidget(m_crossfadeAutoOut, row++, 2);
-    crossmixLayout->addWidget(new QLabel(tr("Auto switch policy"), this), row, 0);
+    crossmixLayout->addWidget(m_crossfadeAutoSwitchPolicyLabel, row, 0);
     crossmixLayout->addWidget(m_crossfadeAutoSwitchPolicy, row++, 1, 1, 2);
     crossmixLayout->setColumnStretch(3, 1);
 
@@ -305,7 +329,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
-    auto syncBufferBounds = [this]() {
+    const auto syncBufferBounds = [this]() {
         const bool fading    = m_fadingBox->isChecked();
         const bool crossfade = m_crossfadeBox->isChecked();
 
@@ -313,12 +337,14 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
             return (groupOn && enabled->isChecked()) ? spin->value() : 0;
         };
 
-        const std::array<int, 11> values{
+        const std::array<int, 13> values{
             MinBufferSize,
             enabledValue(fading, m_fadingPauseEnabled, m_fadingPauseIn),
             enabledValue(fading, m_fadingPauseEnabled, m_fadingPauseOut),
             enabledValue(fading, m_fadingStopEnabled, m_fadingStopIn),
             enabledValue(fading, m_fadingStopEnabled, m_fadingStopOut),
+            enabledValue(fading, m_fadingBoundaryEnabled, m_fadingBoundaryIn),
+            enabledValue(fading, m_fadingBoundaryEnabled, m_fadingBoundaryOut),
             enabledValue(crossfade, m_crossfadeManualEnabled, m_crossfadeManualIn),
             enabledValue(crossfade, m_crossfadeManualEnabled, m_crossfadeManualOut),
             enabledValue(crossfade, m_crossfadeAutoEnabled, m_crossfadeAutoIn),
@@ -335,21 +361,43 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
         }
     };
 
-    auto updateRowStates = [this]() {
-        m_fadingPauseIn->setEnabled(m_fadingPauseEnabled->isChecked());
-        m_fadingPauseOut->setEnabled(m_fadingPauseEnabled->isChecked());
-        m_pauseFadeCurve->setEnabled(m_fadingPauseEnabled->isChecked());
-        m_fadingStopIn->setEnabled(m_fadingStopEnabled->isChecked());
-        m_fadingStopOut->setEnabled(m_fadingStopEnabled->isChecked());
-        m_stopFadeCurve->setEnabled(m_fadingStopEnabled->isChecked());
+    const auto enforceExclusiveOptions = [this]() {
+        if(m_fadingBoundaryEnabled->isChecked()) {
+            m_crossfadeAutoEnabled->setChecked(false);
+        }
+        else if(m_crossfadeAutoEnabled->isChecked()) {
+            m_fadingBoundaryEnabled->setChecked(false);
+        }
+    };
 
-        m_crossfadeSeekIn->setEnabled(m_crossfadeSeekEnabled->isChecked());
-        m_crossfadeSeekOut->setEnabled(m_crossfadeSeekEnabled->isChecked());
-        m_crossfadeManualIn->setEnabled(m_crossfadeManualEnabled->isChecked());
-        m_crossfadeManualOut->setEnabled(m_crossfadeManualEnabled->isChecked());
-        m_crossfadeAutoIn->setEnabled(m_crossfadeAutoEnabled->isChecked());
-        m_crossfadeAutoOut->setEnabled(m_crossfadeAutoEnabled->isChecked());
-        m_crossfadeAutoSwitchPolicy->setEnabled(m_crossfadeAutoEnabled->isChecked());
+    const auto updateRowStates = [this]() {
+        auto setEnabled = []<typename... Widgets>(bool enabled, Widgets... widgets) {
+            (widgets->setEnabled(enabled), ...);
+        };
+
+        const bool fadingEnabled      = m_fadingBox->isChecked();
+        const bool crossfadingEnabled = m_crossfadeBox->isChecked();
+
+        setEnabled(fadingEnabled && !m_crossfadeAutoEnabled->isChecked(), m_fadingBoundaryEnabled);
+        setEnabled(crossfadingEnabled && !m_fadingBoundaryEnabled->isChecked(), m_crossfadeAutoEnabled,
+                   m_crossfadeAutoSwitchPolicyLabel, m_crossfadeAutoSwitchPolicy);
+
+        const bool boundaryFadeActive    = m_fadingBoundaryEnabled->isChecked();
+        const bool autoCrossfadeActive   = m_crossfadeAutoEnabled->isChecked();
+        const bool pauseFadeActive       = m_fadingPauseEnabled->isChecked();
+        const bool stopFadeActive        = m_fadingStopEnabled->isChecked();
+        const bool seekCrossfadeActive   = m_crossfadeSeekEnabled->isChecked();
+        const bool manualCrossfadeActive = m_crossfadeManualEnabled->isChecked();
+
+        setEnabled(fadingEnabled && pauseFadeActive, m_fadingPauseIn, m_fadingPauseOut, m_pauseFadeCurve);
+        setEnabled(fadingEnabled && stopFadeActive, m_fadingStopIn, m_fadingStopOut, m_stopFadeCurve);
+        setEnabled(fadingEnabled && boundaryFadeActive, m_fadingBoundaryIn, m_fadingBoundaryOut, m_boundaryFadeCurve);
+
+        setEnabled(crossfadingEnabled && seekCrossfadeActive, m_crossfadeSeekIn, m_crossfadeSeekOut);
+        setEnabled(crossfadingEnabled && manualCrossfadeActive, m_crossfadeManualIn, m_crossfadeManualOut);
+        setEnabled(crossfadingEnabled && autoCrossfadeActive, m_crossfadeAutoIn, m_crossfadeAutoOut);
+        setEnabled(crossfadingEnabled && autoCrossfadeActive && m_crossfadeAutoEnabled->isEnabled(),
+                   m_crossfadeAutoSwitchPolicyLabel, m_crossfadeAutoSwitchPolicy);
     };
 
     const auto syncWatermarkRatioBounds = [this]() {
@@ -369,7 +417,8 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
         m_decodeWatermarkHint->setText(tr("Low %1 ms, High %2 ms").arg(lowMs).arg(highMs));
     };
 
-    const auto updateState = [syncBufferBounds, updateRowStates]() {
+    const auto updateState = [enforceExclusiveOptions, syncBufferBounds, updateRowStates]() {
+        enforceExclusiveOptions();
         updateRowStates();
         syncBufferBounds();
     };
@@ -379,6 +428,8 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     QObject::connect(m_fadingPauseOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
     QObject::connect(m_fadingStopIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
     QObject::connect(m_fadingStopOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_fadingBoundaryIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
+    QObject::connect(m_fadingBoundaryOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
     QObject::connect(m_crossfadeManualIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
     QObject::connect(m_crossfadeManualOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
     QObject::connect(m_crossfadeAutoIn, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
@@ -387,11 +438,15 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     QObject::connect(m_crossfadeSeekOut, &QSpinBox::valueChanged, this, [syncBufferBounds]() { syncBufferBounds(); });
     QObject::connect(m_bufferSize, &QSpinBox::valueChanged, this, [updateWatermarkHint]() { updateWatermarkHint(); });
 
+    QObject::connect(m_fadingBox, &QGroupBox::toggled, this, [updateRowStates]() { updateRowStates(); });
+    QObject::connect(m_crossfadeBox, &QGroupBox::toggled, this, [updateRowStates]() { updateRowStates(); });
     QObject::connect(m_fadingPauseEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_fadingStopEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
+    QObject::connect(m_fadingBoundaryEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_crossfadeSeekEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_crossfadeManualEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_crossfadeAutoEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
+
     QObject::connect(m_decodeLowWatermark, &QSpinBox::valueChanged, this,
                      [syncWatermarkRatioBounds]() { syncWatermarkRatioBounds(); });
     QObject::connect(m_decodeHighWatermark, &QSpinBox::valueChanged, this, [this](int value) {
@@ -463,6 +518,8 @@ void OutputPageWidget::load()
 
     loadFadeSpec(fadingValues.pause, m_fadingPauseEnabled, m_fadingPauseIn, m_fadingPauseOut, m_pauseFadeCurve);
     loadFadeSpec(fadingValues.stop, m_fadingStopEnabled, m_fadingStopIn, m_fadingStopOut, m_stopFadeCurve);
+    loadFadeSpec(fadingValues.boundary, m_fadingBoundaryEnabled, m_fadingBoundaryIn, m_fadingBoundaryOut,
+                 m_boundaryFadeCurve);
 
     m_crossfadeBox->setChecked(m_settings->value<Settings::Core::Internal::EngineCrossfading>());
     const auto crossfadingValues
@@ -477,6 +534,10 @@ void OutputPageWidget::load()
     const int policyIndex
         = m_crossfadeAutoSwitchPolicy->findData(static_cast<int>(policy), Qt::UserRole, Qt::MatchExactly);
     m_crossfadeAutoSwitchPolicy->setCurrentIndex(policyIndex >= 0 ? policyIndex : 0);
+
+    if(m_crossfadeAutoEnabled->isChecked() && m_fadingBoundaryEnabled->isChecked()) {
+        m_fadingBoundaryEnabled->setChecked(false);
+    }
 }
 
 void OutputPageWidget::apply()
@@ -522,11 +583,17 @@ void OutputPageWidget::apply()
     Engine::FadingValues fadingValues;
     saveFadeSpec(fadingValues.pause, m_fadingPauseEnabled, m_fadingPauseIn, m_fadingPauseOut, m_pauseFadeCurve);
     saveFadeSpec(fadingValues.stop, m_fadingStopEnabled, m_fadingStopIn, m_fadingStopOut, m_stopFadeCurve);
+    saveFadeSpec(fadingValues.boundary, m_fadingBoundaryEnabled, m_fadingBoundaryIn, m_fadingBoundaryOut,
+                 m_boundaryFadeCurve);
 
     Engine::CrossfadingValues crossfadingValues;
     saveFadeSpec(crossfadingValues.manualChange, m_crossfadeManualEnabled, m_crossfadeManualIn, m_crossfadeManualOut);
     saveFadeSpec(crossfadingValues.autoChange, m_crossfadeAutoEnabled, m_crossfadeAutoIn, m_crossfadeAutoOut);
     saveFadeSpec(crossfadingValues.seek, m_crossfadeSeekEnabled, m_crossfadeSeekIn, m_crossfadeSeekOut);
+
+    if(crossfadingValues.autoChange.enabled && fadingValues.boundary.enabled) {
+        fadingValues.boundary.enabled = false;
+    }
 
     m_settings->set<Settings::Core::Internal::EngineFading>(m_fadingBox->isChecked());
     m_settings->set<Settings::Core::Internal::FadingValues>(QVariant::fromValue(fadingValues));
