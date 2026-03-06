@@ -29,7 +29,6 @@
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QSizePolicy>
 #include <QSpinBox>
@@ -66,7 +65,8 @@ private:
     QSpinBox* m_bufferSize;
     QSpinBox* m_decodeLowWatermark;
     QSpinBox* m_decodeHighWatermark;
-    QLabel* m_decodeWatermarkHint;
+    QLabel* m_decodeLowWatermarkHint;
+    QLabel* m_decodeHighWatermarkHint;
     ExpandingComboBox* m_bitDepthBox;
 };
 
@@ -79,7 +79,8 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     , m_bufferSize{new QSpinBox(this)}
     , m_decodeLowWatermark{new QSpinBox(this)}
     , m_decodeHighWatermark{new QSpinBox(this)}
-    , m_decodeWatermarkHint{new QLabel(this)}
+    , m_decodeLowWatermarkHint{new QLabel(this)}
+    , m_decodeHighWatermarkHint{new QLabel(this)}
     , m_bitDepthBox{new ExpandingComboBox(this)}
 {
     auto* generalBox    = new QGroupBox(tr("General"), this);
@@ -107,21 +108,12 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 
     setupWatermarkRatioSpinBox(m_decodeLowWatermark);
     setupWatermarkRatioSpinBox(m_decodeHighWatermark);
-    m_decodeLowWatermark->setPrefix(tr("Low "));
-    m_decodeHighWatermark->setPrefix(tr("High "));
-    m_decodeLowWatermark->setMinimumWidth(95);
-    m_decodeHighWatermark->setMinimumWidth(95);
+    m_decodeLowWatermark->setMinimumWidth(80);
+    m_decodeHighWatermark->setMinimumWidth(80);
     m_decodeLowWatermark->setToolTip(tr("Decode starts/resumes when buffered audio drops below this watermark"));
     m_decodeHighWatermark->setToolTip(tr("Decode pauses when buffered audio reaches this watermark"));
-    m_decodeWatermarkHint->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-
-    auto* decodeWatermarkLayout = new QHBoxLayout();
-    decodeWatermarkLayout->setContentsMargins(0, 0, 0, 0);
-    decodeWatermarkLayout->setSpacing(8);
-    decodeWatermarkLayout->addWidget(m_decodeLowWatermark);
-    decodeWatermarkLayout->addSpacing(10);
-    decodeWatermarkLayout->addWidget(m_decodeHighWatermark);
-    decodeWatermarkLayout->addStretch(1);
+    m_decodeLowWatermarkHint->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    m_decodeHighWatermarkHint->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
     m_bitDepthBox->addItem(tr("Automatic"), static_cast<int>(SampleFormat::Unknown));
     m_bitDepthBox->addItem(tr("16-bit"), static_cast<int>(SampleFormat::S16));
@@ -137,11 +129,14 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     generalLayout->addWidget(m_bitDepthBox, 1, 1);
     generalLayout->setColumnStretch(2, 1);
 
-    bufferLayout->addWidget(new QLabel(tr("Buffer length") + u":"_s, this), 0, 0);
+    bufferLayout->addWidget(new QLabel(tr("Length") + u":"_s, this), 0, 0);
     bufferLayout->addWidget(m_bufferSize, 0, 1, Qt::AlignLeft);
-    bufferLayout->addWidget(new QLabel(tr("Watermarks") + u":"_s, this), 1, 0);
-    bufferLayout->addLayout(decodeWatermarkLayout, 1, 1);
-    bufferLayout->addWidget(m_decodeWatermarkHint, 2, 1, 1, 2);
+    bufferLayout->addWidget(new QLabel(tr("Low watermark") + u":"_s, this), 1, 0);
+    bufferLayout->addWidget(m_decodeLowWatermark, 1, 1, Qt::AlignLeft);
+    bufferLayout->addWidget(m_decodeLowWatermarkHint, 1, 2);
+    bufferLayout->addWidget(new QLabel(tr("High watermark") + u":"_s, this), 2, 0);
+    bufferLayout->addWidget(m_decodeHighWatermark, 2, 1, Qt::AlignLeft);
+    bufferLayout->addWidget(m_decodeHighWatermarkHint, 2, 2);
     bufferLayout->setColumnStretch(2, 1);
 
     auto* mainLayout = new QGridLayout(this);
@@ -170,7 +165,8 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
         const int highPct  = m_decodeHighWatermark->value();
         const int lowMs    = static_cast<int>(std::lround((static_cast<double>(bufferMs) * lowPct) / 100.0));
         const int highMs   = static_cast<int>(std::lround((static_cast<double>(bufferMs) * highPct) / 100.0));
-        m_decodeWatermarkHint->setText(tr("Low %1 ms, High %2 ms").arg(lowMs).arg(highMs));
+        m_decodeLowWatermarkHint->setText(tr("Resume decoding below %1 ms").arg(lowMs));
+        m_decodeHighWatermarkHint->setText(tr("Pause decoding at %1 ms").arg(highMs));
     };
 
     QObject::connect(m_outputBox, &QComboBox::currentTextChanged, this, &OutputPageWidget::setupDevices);
