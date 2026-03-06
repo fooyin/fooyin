@@ -671,6 +671,7 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
 void AutoHeaderView::mousePressEvent(QMouseEvent* event)
 {
     if(p->m_state != SectionState::None || event->button() != Qt::LeftButton) {
+        event->ignore();
         return;
     }
 
@@ -770,6 +771,11 @@ void AutoHeaderView::mouseReleaseEvent(QMouseEvent* event)
 
 void AutoHeaderView::mouseDoubleClickEvent(QMouseEvent* event)
 {
+    if(event->button() != Qt::LeftButton) {
+        event->ignore();
+        return;
+    }
+
     p->m_state = SectionState::Resizing;
 
     QHeaderView::mouseDoubleClickEvent(event);

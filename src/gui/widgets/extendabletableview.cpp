@@ -439,6 +439,15 @@ void ExtendableTableView::resizeEvent(QResizeEvent* event)
 
     p->updateToolArea();
 }
+
+void ExtendableTableView::mousePressEvent(QMouseEvent* event)
+{
+    if(event->button() > Qt::RightButton) {
+        event->ignore();
+        return;
+    }
+    QTableView::mousePressEvent(event);
+}
 } // namespace Fooyin
 
 #include "extendabletableview.moc"
