@@ -334,9 +334,7 @@ void PlaybackCoordinator::tryAdvancePreparedBoundary()
 
     const uint64_t generation = *m_pendingBoundaryAdvanceGeneration;
 
-    if(m_pendingBoundaryPreparedTransition == PreparedTransition::None
-       && m_crossfadeSwitchPolicy == Engine::CrossfadeSwitchPolicy::Boundary
-       && m_pendingBoundarySwitchAnchor == SwitchAnchor::ReadySignal) {
+    if(m_pendingBoundaryPreparedTransition == PreparedTransition::None) {
         if(m_pendingBoundaryCrossfadeArmInFlight) {
             return;
         }

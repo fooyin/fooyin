@@ -1412,22 +1412,30 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
     }
 
     const uint64_t bufferedMs        = stream->bufferedDurationMs();
+    const uint64_t playbackDelayMs   = m_pipeline.playbackDelayMs();
     const uint64_t transitionDelayMs = m_pipeline.transitionPlaybackDelayMs();
     const double delayToTrackScale   = std::clamp(m_pipeline.playbackDelayToTrackScale(), 0.05, 8.0);
 
-    uint64_t outputDelayMs{transitionDelayMs};
+    uint64_t timelineDelayMs{playbackDelayMs};
+    if(playbackDelayMs > 0) {
+        const auto scaledDelay = std::llround(static_cast<long double>(playbackDelayMs) * delayToTrackScale);
+        timelineDelayMs        = static_cast<uint64_t>(
+            std::clamp<long double>(scaledDelay, 0.0L, static_cast<long double>(std::numeric_limits<uint64_t>::max())));
+    }
+
+    uint64_t drainDelayMs{transitionDelayMs};
     if(transitionDelayMs > 0) {
         const auto scaledDelay = std::llround(static_cast<long double>(transitionDelayMs) * delayToTrackScale);
-        outputDelayMs          = static_cast<uint64_t>(
+        drainDelayMs           = static_cast<uint64_t>(
             std::clamp<long double>(scaledDelay, 0.0L, static_cast<long double>(std::numeric_limits<uint64_t>::max())));
     }
 
     uint64_t remainingOutputMs{bufferedMs};
-    if(remainingOutputMs > std::numeric_limits<uint64_t>::max() - outputDelayMs) {
+    if(remainingOutputMs > std::numeric_limits<uint64_t>::max() - drainDelayMs) {
         remainingOutputMs = std::numeric_limits<uint64_t>::max();
     }
     else {
-        remainingOutputMs += outputDelayMs;
+        remainingOutputMs += drainDelayMs;
     }
 
     PlaybackTransitionCoordinator::TrackEndingInput input;
@@ -1435,7 +1443,7 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
     input.positionMs              = relativePosMs;
     input.durationMs              = m_currentTrack.duration();
     input.durationBoundaryEnabled = m_currentTrack.hasCue();
-    input.outputDelayMs           = outputDelayMs;
+    input.timelineDelayMs         = timelineDelayMs;
     input.remainingOutputMs       = remainingOutputMs;
     input.endOfInput              = stream->endOfInput();
     input.bufferEmpty             = stream->bufferEmpty();
@@ -2262,7 +2270,9 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t ge
         return false;
     }
 
-    if(m_pipeline.hasOrphanStream()) {
+    const bool armedWithOrphan = m_pipeline.hasOrphanStream();
+
+    if(armedWithOrphan) {
         setPhase(Playback::Phase::TrackCrossfading, PhaseChangeReason::AutoTransitionCrossfadeActive);
     }
     else if(hasPlaybackState(Engine::PlaybackState::Playing)) {
@@ -2281,6 +2291,16 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t ge
     m_preparedCrossfadeTransition.bufferedAtArmMs   = preparedBufferedMs;
     m_preparedCrossfadeTransition.boundarySignalled = false;
     clearPreparedGaplessTransition();
+
+    // If the current stream has already ended by the time we arm the prepared
+    // transition, there is no live source stream left to provide an overlap
+    // anchor. Treat the arm as an immediate boundary handoff so the prepared
+    // stream is committed before its prebuffer drains.
+    if(!armedWithOrphan) {
+        m_preparedCrossfadeTransition.boundarySignalled = true;
+        emit trackBoundaryReached(m_currentTrack, m_trackGeneration);
+    }
+
     qCDebug(ENGINE) << "Prepared crossfade transition armed:" << "trackId=" << track.id() << "generation=" << generation
                     << "streamId=" << transitionResult.streamId << "preparedBufferedMs=" << preparedBufferedMs
                     << "preparedPosMs=" << m_preparedNext->preparedDecodePositionMs

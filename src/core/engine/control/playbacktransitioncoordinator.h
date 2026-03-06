@@ -75,7 +75,7 @@ public:
         int autoFadeOutMs{0};
         int autoFadeInMs{0};
         uint64_t gaplessPrepareWindowMs{0};
-        uint64_t outputDelayMs{0};
+        uint64_t timelineDelayMs{0};
     };
 
     [[nodiscard]] TrackEndingResult evaluateTrackEnding(const TrackEndingInput& input);

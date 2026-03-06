@@ -196,7 +196,7 @@ TEST(PlaybackTransitionCoordinatorTest, GaplessTimelineWindowAccountsForOutputDe
     input.autoFadeOutMs          = 0;
     input.autoFadeInMs           = 0;
     input.gaplessPrepareWindowMs = 300;
-    input.outputDelayMs          = 400;
+    input.timelineDelayMs        = 400;
 
     const auto beforeWindow = state.evaluateTrackEnding(input);
     EXPECT_FALSE(beforeWindow.aboutToFinish);
@@ -224,7 +224,7 @@ TEST(PlaybackTransitionCoordinatorTest, CrossfadeReadyWindowAccountsForOutputDel
     input.autoFadeOutMs          = 500;
     input.autoFadeInMs           = 200;
     input.gaplessPrepareWindowMs = 300;
-    input.outputDelayMs          = 400;
+    input.timelineDelayMs        = 400;
 
     const auto aboutToFinish = state.evaluateTrackEnding(input);
     EXPECT_TRUE(aboutToFinish.aboutToFinish);
@@ -391,7 +391,7 @@ TEST(PlaybackTransitionCoordinatorTest, GaplessDrainWindowAccountsForOutputDelay
     input.autoFadeOutMs          = 0;
     input.autoFadeInMs           = 0;
     input.gaplessPrepareWindowMs = 300;
-    input.outputDelayMs          = 500;
+    input.timelineDelayMs        = 500;
 
     const auto aboutToFinish = state.evaluateTrackEnding(input);
     EXPECT_TRUE(aboutToFinish.aboutToFinish);
@@ -419,7 +419,7 @@ TEST(PlaybackTransitionCoordinatorTest, CrossfadeDrainWindowAccountsForOutputDel
     input.autoFadeOutMs          = 500;
     input.autoFadeInMs           = 500;
     input.gaplessPrepareWindowMs = 300;
-    input.outputDelayMs          = 400;
+    input.timelineDelayMs        = 400;
 
     const auto pending = state.evaluateTrackEnding(input);
     EXPECT_FALSE(pending.aboutToFinish);
