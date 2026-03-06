@@ -106,9 +106,6 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     , m_crossfadeSeekIn{new QSpinBox(this)}
     , m_crossfadeSeekOut{new QSpinBox(this)}
 {
-    m_fadingBoundaryEnabled->setToolTip(tr("Cannot be enabled together with auto track change crossfade"));
-    m_crossfadeAutoEnabled->setToolTip(tr("Cannot be enabled together with boundary fades"));
-
     auto* fadingLayout = new QGridLayout(m_fadingBox);
     m_fadingBox->setCheckable(true);
     m_fadingBox->setFlat(true);
@@ -184,10 +181,6 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     fadingLayout->setContentsMargins(14, 18, 14, 14);
     fadingLayout->setHorizontalSpacing(12);
     fadingLayout->setVerticalSpacing(10);
-    fadingLayout->setColumnMinimumWidth(0, 172);
-    fadingLayout->setColumnMinimumWidth(1, 108);
-    fadingLayout->setColumnMinimumWidth(2, 108);
-    fadingLayout->setColumnMinimumWidth(3, 170);
 
     fadingLayout->addWidget(fadingHelp, row++, 0, 1, 4);
     fadingLayout->addWidget(new QLabel(tr("Fade In"), this), row, 1);
@@ -236,7 +229,7 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
 
     auto* crossfadeHelp = new QLabel(
         tr("Overlapping fades for seek and track changes. Auto track change uses overlap; use Boundary above for "
-           "non-overlapping handoff fades."),
+           "non-overlapping fades."),
         this);
     crossfadeHelp->setWordWrap(true);
 
@@ -244,10 +237,6 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     crossmixLayout->setContentsMargins(14, 18, 14, 14);
     crossmixLayout->setHorizontalSpacing(12);
     crossmixLayout->setVerticalSpacing(10);
-    crossmixLayout->setColumnMinimumWidth(0, 172);
-    crossmixLayout->setColumnMinimumWidth(1, 108);
-    crossmixLayout->setColumnMinimumWidth(2, 108);
-    crossmixLayout->setColumnMinimumWidth(3, 170);
 
     crossmixLayout->addWidget(crossfadeHelp, row++, 0, 1, 4);
     crossmixLayout->addWidget(new QLabel(tr("Fade In"), this), row, 1);
@@ -266,7 +255,9 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     crossmixLayout->addWidget(m_crossfadeAutoOut, row++, 2);
     crossmixLayout->setRowMinimumHeight(row - 1, 30);
     crossmixLayout->addWidget(m_crossfadeAutoSwitchPolicyLabel, row, 0);
-    crossmixLayout->addWidget(m_crossfadeAutoSwitchPolicy, row++, 1, 1, 3);
+    crossmixLayout->addWidget(m_crossfadeAutoSwitchPolicy, row, 1, 1, 2);
+    crossmixLayout->setColumnStretch(4, 1);
+    ++row;
     crossmixLayout->setColumnStretch(3, 1);
 
     auto* mainLayout = new QVBoxLayout(this);
