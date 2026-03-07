@@ -21,14 +21,18 @@
 
 #include "fycore_export.h"
 
-#include <QList>
+#include <QByteArray>
+#include <QMap>
 #include <QSharedDataPointer>
+#include <QString>
 
 #include <map>
+#include <memory>
 
 namespace Fooyin {
 class Track;
 class TrackPrivate;
+class TrackMetadataStore;
 
 using TrackList = std::vector<Track>;
 using TrackIds  = std::vector<int>;
@@ -61,8 +65,11 @@ public:
     using ExtraProperties = QMap<QString, QString>;
 
     Track();
+    explicit Track(std::shared_ptr<TrackMetadataStore> store);
     explicit Track(const QString& filepath);
+    Track(const QString& filepath, std::shared_ptr<TrackMetadataStore> store);
     Track(const QString& filepath, int subsong);
+    Track(const QString& filepath, int subsong, std::shared_ptr<TrackMetadataStore> store);
     ~Track();
 
     Track(const Track& other);
@@ -100,20 +107,32 @@ public:
     [[nodiscard]] QString filenameExt() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString effectiveTitle() const;
+    [[nodiscard]] bool hasArtists() const;
+    [[nodiscard]] qsizetype artistCount() const;
+    [[nodiscard]] QString artistAt(qsizetype index) const;
     [[nodiscard]] QStringList artists() const;
+    [[nodiscard]] QString artistsJoined(const QString& sep) const;
     [[nodiscard]] QStringList uniqueArtists() const;
     [[nodiscard]] QString artist() const;
     [[nodiscard]] QString primaryArtist() const;
     [[nodiscard]] QString uniqueArtist() const;
     [[nodiscard]] QString album() const;
+    [[nodiscard]] bool hasAlbumArtists() const;
+    [[nodiscard]] qsizetype albumArtistCount() const;
+    [[nodiscard]] QString albumArtistAt(qsizetype index) const;
     [[nodiscard]] QStringList albumArtists() const;
+    [[nodiscard]] QString albumArtistsJoined(const QString& sep) const;
     [[nodiscard]] QString albumArtist() const;
     [[nodiscard]] QString effectiveAlbumArtist(bool useVarious = false) const;
     [[nodiscard]] QString trackNumber() const;
     [[nodiscard]] QString trackTotal() const;
     [[nodiscard]] QString discNumber() const;
     [[nodiscard]] QString discTotal() const;
+    [[nodiscard]] bool hasGenres() const;
+    [[nodiscard]] qsizetype genreCount() const;
+    [[nodiscard]] QString genreAt(qsizetype index) const;
     [[nodiscard]] QStringList genres() const;
+    [[nodiscard]] QString genresJoined(const QString& sep) const;
     [[nodiscard]] QString genre() const;
     [[nodiscard]] QStringList composers() const;
     [[nodiscard]] QString composer() const;
@@ -179,8 +198,10 @@ public:
     [[nodiscard]] uint64_t lastPlayed() const;
 
     [[nodiscard]] bool hasMatch(const QString& term) const;
+    [[nodiscard]] std::shared_ptr<TrackMetadataStore> metadataStore() const;
 
     void setLibraryId(int id);
+    void setMetadataStore(std::shared_ptr<TrackMetadataStore> store);
     void setIsEnabled(bool enabled);
     void setId(int id);
     void setHash(const QString& hash);

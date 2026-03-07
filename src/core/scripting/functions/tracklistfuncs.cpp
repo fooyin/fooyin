@@ -45,9 +45,9 @@ QString genres(const TrackList& tracks)
     std::set<QString> uniqueGenres;
 
     for(const auto& track : tracks) {
-        const auto trackGenres = track.genres();
-        const std::set<QString> genreSet{trackGenres.cbegin(), trackGenres.cend()};
-        uniqueGenres.insert(genreSet.cbegin(), genreSet.cend());
+        for(qsizetype index{0}; index < track.genreCount(); ++index) {
+            uniqueGenres.insert(track.genreAt(index));
+        }
     }
 
     const QStringList genreList{uniqueGenres.cbegin(), uniqueGenres.cend()};

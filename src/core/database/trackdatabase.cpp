@@ -21,6 +21,7 @@
 
 #include <core/constants.h>
 #include <core/track.h>
+#include <core/trackmetadatastore.h>
 #include <utils/database/dbquery.h>
 #include <utils/database/dbtransaction.h>
 #include <utils/fileutils.h>
@@ -125,9 +126,9 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {u":rgAlbumPeak"_s, track.rgAlbumPeak()}};
 }
 
-Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
+Fooyin::Track readToTrack(const Fooyin::DbQuery& q, const std::shared_ptr<Fooyin::TrackMetadataStore>& store)
 {
-    Fooyin::Track track;
+    Fooyin::Track track{store};
 
     track.setId(q.value(0).toInt());
     track.setFilePath(q.value(1).toString());
@@ -191,6 +192,11 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
 } // namespace
 
 namespace Fooyin {
+void TrackDatabase::setMetadataStore(std::shared_ptr<TrackMetadataStore> store)
+{
+    m_metadataStore = std::move(store);
+}
+
 bool TrackDatabase::storeTracks(TrackList& tracks)
 {
     if(tracks.empty()) {
@@ -246,7 +252,7 @@ bool TrackDatabase::reloadTrack(Track& track) const
     }
 
     if(query.next()) {
-        track = readToTrack(query);
+        track = readToTrack(query, m_metadataStore);
     }
 
     return true;
@@ -271,7 +277,7 @@ bool TrackDatabase::reloadTracks(TrackList& tracks) const
     tracks.clear();
 
     while(q.next()) {
-        tracks.emplace_back(readToTrack(q));
+        tracks.emplace_back(readToTrack(q, m_metadataStore));
     }
 
     return true;
@@ -295,7 +301,7 @@ TrackList TrackDatabase::getAllTracks() const
     }
 
     while(q.next()) {
-        tracks.emplace_back(readToTrack(q));
+        tracks.emplace_back(readToTrack(q, m_metadataStore));
     }
 
     return tracks;
@@ -316,7 +322,7 @@ TrackList TrackDatabase::tracksByHash(const QString& hash) const
     }
 
     while(q.next()) {
-        tracks.emplace_back(readToTrack(q));
+        tracks.emplace_back(readToTrack(q, m_metadataStore));
     }
 
     return tracks;

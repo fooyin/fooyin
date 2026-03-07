@@ -30,6 +30,7 @@ class AudioLoader;
 class LibraryThreadHandlerPrivate;
 class MusicLibrary;
 class PlaylistLoader;
+class TrackMetadataStore;
 struct ScanProgress;
 struct ScanResult;
 struct ScanRequest;
@@ -44,6 +45,7 @@ class LibraryThreadHandler : public QObject
 public:
     explicit LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                   std::shared_ptr<PlaylistLoader> playlistLoader,
+                                  std::shared_ptr<TrackMetadataStore> metadataStore,
                                   std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
                                   QObject* parent = nullptr);
     ~LibraryThreadHandler() override;

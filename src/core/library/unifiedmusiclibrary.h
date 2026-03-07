@@ -60,6 +60,7 @@ public:
     [[nodiscard]] TrackList tracks() const override;
     [[nodiscard]] Track trackForId(int id) const override;
     [[nodiscard]] TrackList tracksForIds(const TrackIds& ids) const override;
+    [[nodiscard]] std::shared_ptr<TrackMetadataStore> metadataStore() const override;
 
     void updateTrack(const Track& track) override;
     void updateTracks(const TrackList& tracks) override;

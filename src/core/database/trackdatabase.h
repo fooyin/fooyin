@@ -24,12 +24,17 @@
 #include <core/track.h>
 #include <utils/database/dbmodule.h>
 
+#include <memory>
 #include <set>
 
 namespace Fooyin {
+class TrackMetadataStore;
+
 class FYCORE_EXPORT TrackDatabase : public DbModule
 {
 public:
+    void setMetadataStore(std::shared_ptr<TrackMetadataStore> store);
+
     bool storeTracks(TrackList& tracks);
     bool updateTracks(TrackList& tracks);
 
@@ -59,5 +64,7 @@ private:
     void removeUnmanagedTracks() const;
     void updateLastSeenStats() const;
     void deleteExpiredStats() const;
+
+    std::shared_ptr<TrackMetadataStore> m_metadataStore;
 };
 } // namespace Fooyin

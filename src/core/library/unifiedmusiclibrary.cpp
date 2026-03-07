@@ -26,6 +26,7 @@
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/tracksort.h>
+#include <core/trackmetadatastore.h>
 #include <utils/async.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
@@ -45,22 +46,23 @@ public:
                                std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<AudioLoader> audioLoader,
                                SettingsManager* settings);
 
-    void loadTracks(const TrackList& trackToLoad);
-    QFuture<void> addTracks(const TrackList& newTracks);
+    void loadTracks(TrackList tracksToLoad);
+    QFuture<void> addTracks(TrackList newTracks);
     void updateLibraryTracks(const TrackList& updatedTracks);
-    QFuture<void> updateTracksMetadata(const TrackList& tracksToUpdate);
-    QFuture<void> updateTracks(const TrackList& tracksToUpdate);
+    QFuture<void> updateTracksMetadata(TrackList tracksToUpdate);
+    QFuture<void> updateTracks(TrackList tracksToUpdate);
     void removeTracks(const TrackList& tracksToRemove);
 
     void handleScanResult(const ScanResult& result);
-    void scannedTracks(int id, const TrackList& tracks);
-    void playlistLoaded(int id, const TrackList& tracks);
+    void scannedTracks(int id, TrackList tracks);
+    void playlistLoaded(int id, TrackList tracks);
 
     void removeLibrary(const LibraryInfo& library, const std::set<int>& tracksRemoved);
     void libraryStatusChanged(const LibraryInfo& library) const;
 
     void changeSort(const QString& sort);
-    QFuture<TrackList> recalSortTracks(const QString& sort, const TrackList& tracks);
+    QFuture<TrackList> recalSortTracks(const QString& sort, TrackList tracks);
+    void attachMetadataStore(TrackList& tracks) const;
 
     void handleTracksLoaded();
 
@@ -69,6 +71,7 @@ public:
     LibraryManager* m_libraryManager;
     DbConnectionPoolPtr m_dbPool;
     SettingsManager* m_settings;
+    std::shared_ptr<TrackMetadataStore> m_metadataStore;
 
     LibraryThreadHandler m_threadHandler;
     TrackSorter m_sorter;
@@ -85,7 +88,8 @@ UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self
     , m_libraryManager{libraryManager}
     , m_dbPool{std::move(dbPool)}
     , m_settings{settings}
-    , m_threadHandler{m_dbPool, m_self, std::move(playlistLoader), std::move(audioLoader), m_settings}
+    , m_metadataStore{std::make_shared<TrackMetadataStore>()}
+    , m_threadHandler{m_dbPool, m_self, std::move(playlistLoader), m_metadataStore, std::move(audioLoader), m_settings}
     , m_sorter{m_libraryManager}
 {
     m_settings->subscribe<Settings::Core::LibrarySortScript>(m_self, [this](const QString& sort) { changeSort(sort); });
@@ -93,31 +97,33 @@ UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self
         m_self, [this](bool enabled) { m_threadHandler.setupWatchers(m_libraryManager->allLibraries(), enabled); });
 }
 
-void UnifiedMusicLibraryPrivate::loadTracks(const TrackList& trackToLoad)
+void UnifiedMusicLibraryPrivate::loadTracks(TrackList tracksToLoad)
 {
-    if(trackToLoad.empty()) {
+    if(tracksToLoad.empty()) {
         emit m_self->tracksLoaded({});
         return;
     }
 
-    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), trackToLoad);
+    attachMetadataStore(tracksToLoad);
+    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), std::move(tracksToLoad));
 
-    sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
-        m_tracks = sortedTracks;
+    sortTracks.then(m_self, [this](TrackList sortedTracks) {
+        m_tracks = std::move(sortedTracks);
         emit m_self->tracksLoaded(m_tracks);
     });
 }
 
-QFuture<void> UnifiedMusicLibraryPrivate::addTracks(const TrackList& newTracks)
+QFuture<void> UnifiedMusicLibraryPrivate::addTracks(TrackList newTracks)
 {
-    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), newTracks);
+    attachMetadataStore(newTracks);
+    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), std::move(newTracks));
 
-    return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
+    return sortTracks.then(m_self, [this](TrackList sortedTracks) {
         std::ranges::copy(sortedTracks, std::back_inserter(m_tracks));
 
         recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), m_tracks)
-            .then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-                m_tracks = sortedLibraryTracks;
+            .then(m_self, [this, sortedTracks = std::move(sortedTracks)](TrackList sortedLibraryTracks) mutable {
+                m_tracks = std::move(sortedLibraryTracks);
 
                 emit m_self->tracksAdded(sortedTracks);
             });
@@ -136,31 +142,35 @@ void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTra
     }
 }
 
-QFuture<void> UnifiedMusicLibraryPrivate::updateTracksMetadata(const TrackList& tracksToUpdate)
+QFuture<void> UnifiedMusicLibraryPrivate::updateTracksMetadata(TrackList tracksToUpdate)
 {
-    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
+    attachMetadataStore(tracksToUpdate);
+    auto sortTracks
+        = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), std::move(tracksToUpdate));
 
-    return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
+    return sortTracks.then(m_self, [this](TrackList sortedTracks) {
         updateLibraryTracks(sortedTracks);
 
         recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), m_tracks)
-            .then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-                m_tracks = sortedLibraryTracks;
+            .then(m_self, [this, sortedTracks = std::move(sortedTracks)](TrackList sortedLibraryTracks) mutable {
+                m_tracks = std::move(sortedLibraryTracks);
                 emit m_self->tracksMetadataChanged(sortedTracks);
             });
     });
 }
 
-QFuture<void> UnifiedMusicLibraryPrivate::updateTracks(const TrackList& tracksToUpdate)
+QFuture<void> UnifiedMusicLibraryPrivate::updateTracks(TrackList tracksToUpdate)
 {
-    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
+    attachMetadataStore(tracksToUpdate);
+    auto sortTracks
+        = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), std::move(tracksToUpdate));
 
-    return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
+    return sortTracks.then(m_self, [this](TrackList sortedTracks) {
         updateLibraryTracks(sortedTracks);
 
         recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), m_tracks)
-            .then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-                m_tracks = sortedLibraryTracks;
+            .then(m_self, [this, sortedTracks = std::move(sortedTracks)](TrackList sortedLibraryTracks) mutable {
+                m_tracks = std::move(sortedLibraryTracks);
                 emit m_self->tracksUpdated(sortedTracks);
             });
     });
@@ -198,19 +208,24 @@ void UnifiedMusicLibraryPrivate::handleScanResult(const ScanResult& result)
     }
 }
 
-void UnifiedMusicLibraryPrivate::scannedTracks(int id, const TrackList& tracks)
+void UnifiedMusicLibraryPrivate::scannedTracks(int id, TrackList tracks)
 {
-    addTracks(tracks).then([this, id, tracks]() {
-        recalSortTracks(m_settings->value<Settings::Core::ExternalSortScript>(), tracks)
-            .then(m_self, [this, id](const TrackList& sortedScannedTracks) {
-                emit m_self->tracksScanned(id, sortedScannedTracks);
-            });
+    TrackList scannedTracks{tracks};
+
+    addTracks(std::move(tracks)).then([this, id, scannedTracks = std::move(scannedTracks)]() mutable {
+        recalSortTracks(m_settings->value<Settings::Core::ExternalSortScript>(), std::move(scannedTracks))
+            .then(m_self,
+                  [this, id](TrackList sortedScannedTracks) { emit m_self->tracksScanned(id, sortedScannedTracks); });
     });
 }
 
-void UnifiedMusicLibraryPrivate::playlistLoaded(int id, const TrackList& tracks)
+void UnifiedMusicLibraryPrivate::playlistLoaded(int id, TrackList tracks)
 {
-    addTracks(tracks).then(m_self, [this, id, tracks]() { emit m_self->tracksScanned(id, tracks); });
+    TrackList playlistTracks{tracks};
+
+    addTracks(std::move(tracks)).then(m_self, [this, id, playlistTracks = std::move(playlistTracks)]() mutable {
+        emit m_self->tracksScanned(id, playlistTracks);
+    });
 }
 
 void UnifiedMusicLibraryPrivate::removeLibrary(const LibraryInfo& library, const std::set<int>& tracksRemoved)
@@ -255,9 +270,18 @@ void UnifiedMusicLibraryPrivate::changeSort(const QString& sort)
     });
 }
 
-QFuture<TrackList> UnifiedMusicLibraryPrivate::recalSortTracks(const QString& sort, const TrackList& tracks)
+QFuture<TrackList> UnifiedMusicLibraryPrivate::recalSortTracks(const QString& sort, TrackList tracks)
 {
-    return Utils::asyncExec([this, sort, tracks]() { return m_sorter.calcSortTracks(sort, tracks); });
+    return Utils::asyncExec([this, sort, tracks = std::move(tracks)]() mutable {
+        return m_sorter.calcSortTracks(sort, std::move(tracks));
+    });
+}
+
+void UnifiedMusicLibraryPrivate::attachMetadataStore(TrackList& tracks) const
+{
+    for(auto& track : tracks) {
+        track.setMetadataStore(m_metadataStore);
+    }
 }
 
 void UnifiedMusicLibraryPrivate::handleTracksLoaded()
@@ -293,9 +317,9 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::scanUpdate, this,
                      [this](const ScanResult& result) { p->handleScanResult(result); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::scannedTracks, this,
-                     [this](int id, const TrackList& tracks) { p->scannedTracks(id, tracks); });
+                     [this](int id, TrackList tracks) { p->scannedTracks(id, std::move(tracks)); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::playlistLoaded, this,
-                     [this](int id, const TrackList& tracks) { p->playlistLoaded(id, tracks); });
+                     [this](int id, TrackList tracks) { p->playlistLoaded(id, std::move(tracks)); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksUpdated, this,
                      [this](const TrackList& tracks) { p->updateTracksMetadata(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksStatsUpdated, this,
@@ -303,7 +327,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksRemoved, this,
                      [this](const TrackList& tracks) { p->removeTracks(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::gotTracks, this,
-                     [this](const TrackList& tracks) { p->loadTracks(tracks); });
+                     [this](TrackList tracks) { p->loadTracks(std::move(tracks)); });
 
     QObject::connect(
         this, &MusicLibrary::tracksLoaded, this, [this]() { p->handleTracksLoaded(); }, Qt::QueuedConnection);
@@ -415,6 +439,11 @@ TrackList UnifiedMusicLibrary::tracksForIds(const TrackIds& ids) const
     }
 
     return tracks;
+}
+
+std::shared_ptr<TrackMetadataStore> UnifiedMusicLibrary::metadataStore() const
+{
+    return p->m_metadataStore;
 }
 
 void UnifiedMusicLibrary::updateTrack(const Track& track)

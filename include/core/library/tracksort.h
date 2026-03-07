@@ -57,7 +57,7 @@ public:
      * @param order the order in which to sort the tracks
      * @returns a new sorted TrackList
      */
-    TrackList calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortOrder order = Qt::AscendingOrder);
+    TrackList calcSortTracks(const QString& sort, TrackList tracks, Qt::SortOrder order = Qt::AscendingOrder);
 
     /*!
      * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
@@ -67,7 +67,7 @@ public:
      * @param order the order in which to sort the tracks
      * @returns a new sorted TrackList
      */
-    TrackList calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int>& indexes,
+    TrackList calcSortTracks(const QString& sort, TrackList tracks, const std::vector<int>& indexes,
                              Qt::SortOrder order = Qt::AscendingOrder);
 
     /*!
@@ -77,7 +77,7 @@ public:
      * @param order the order in which to sort the tracks
      * @returns a new sorted TrackList
      */
-    TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
+    TrackList calcSortTracks(const ParsedScript& sortScript, TrackList tracks,
                              Qt::SortOrder order = Qt::AscendingOrder);
 
     /*!
@@ -89,7 +89,7 @@ public:
      * @param order the order in which to sort the tracks
      * @returns a new sorted TrackList
      */
-    TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, const std::vector<int>& indexes,
+    TrackList calcSortTracks(const ParsedScript& sortScript, TrackList tracks, const std::vector<int>& indexes,
                              Qt::SortOrder order = Qt::AscendingOrder);
 
     template <typename Container, typename SortScript, typename Extractor>
@@ -111,12 +111,30 @@ public:
     }
 
     template <typename Container, typename SortScript, typename Extractor>
+    auto calcOwnedSortEntries(const SortScript& sort, Container items, Extractor extractor)
+        -> std::vector<SortEntry<typename Container::value_type>>
+    {
+        using Item = typename Container::value_type;
+        std::vector<SortEntry<Item>> entries;
+        entries.reserve(items.size());
+
+        const std::scoped_lock lock{m_parserGuard};
+
+        for(auto& item : items) {
+            const Track& track = extractor(item);
+            entries.push_back({std::move(item), m_parser.evaluate(sort, track)});
+        }
+
+        return entries;
+    }
+
+    template <typename Container, typename SortScript, typename Extractor>
     Container calcSortTracks(const SortScript& sort, const Container& items, Extractor extractor,
                              Qt::SortOrder order = Qt::AscendingOrder)
     {
         auto sortEntries = calcSortEntries(sort, items, extractor);
         sortSortEntries(sortEntries, order);
-        return stripSortEntries<Container>(sortEntries);
+        return stripSortEntries<Container>(std::move(sortEntries));
     }
 
     template <typename Container, typename SortScript, typename Extractor>
@@ -136,7 +154,7 @@ public:
 
         auto sortEntries = calcSortEntries(sortScript, tracksToSort, extractor);
         sortSortEntries(sortEntries, order);
-        Container sortedSubTracks = stripSortEntries<Container>(sortEntries);
+        Container sortedSubTracks = stripSortEntries<Container>(std::move(sortEntries));
 
         for(auto i{0}; const int index : validIndexes) {
             sortedTracks[index] = sortedSubTracks.at(i++);
@@ -149,13 +167,13 @@ private:
     ParsedScript parseScript(const QString& sort);
 
     template <typename Container>
-    static Container stripSortEntries(const std::vector<SortEntry<typename Container::value_type>>& sortEntries)
+    static Container stripSortEntries(std::vector<SortEntry<typename Container::value_type>> sortEntries)
     {
         Container items;
         items.reserve(sortEntries.size());
 
-        for(const auto& entry : sortEntries) {
-            items.push_back(entry.item);
+        for(auto& entry : sortEntries) {
+            items.push_back(std::move(entry.item));
         }
         return items;
     }

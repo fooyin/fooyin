@@ -18,6 +18,7 @@
  */
 
 #include <core/stringpool.h>
+#include <core/track.h>
 #include <core/trackmetadatastore.h>
 
 #include <gtest/gtest.h>
@@ -57,5 +58,19 @@ TEST(StringPoolTest, ResolvesPackedLists)
     EXPECT_EQ(pool.resolveList(StringPool::Domain::Artist, ref),
               (QStringList{u"Shared Artist"_s, u"Featured Artist"_s}));
     EXPECT_EQ(pool.joined(StringPool::Domain::Artist, ref, u"; "_s), u"Shared Artist; Featured Artist"_s);
+}
+
+TEST(StringPoolTest, InternsExtraTagKeysInUpperCase)
+{
+    Track track;
+    track.addExtraTag(u"custom"_s, u"value"_s);
+    track.addExtraTag(u"CUSTOM"_s, u"value2"_s);
+
+    const auto extraTags = track.extraTags();
+    ASSERT_TRUE(extraTags.contains(u"CUSTOM"_s));
+    EXPECT_FALSE(extraTags.contains(u"custom"_s));
+
+    const QStringList values = track.metadataStore()->values(StringPool::Domain::ExtraTagKey);
+    EXPECT_EQ(std::count(values.cbegin(), values.cend(), u"CUSTOM"_s), 1);
 }
 } // namespace Fooyin::Testing

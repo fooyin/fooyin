@@ -49,7 +49,7 @@ constexpr auto MinScrobbleDelayOnError = 30000;
 namespace {
 bool canBeScrobbled(const Fooyin::Track& track)
 {
-    return track.isValid() && !track.artists().empty() && !track.title().isEmpty() && track.duration() >= 30000;
+    return track.isValid() && track.hasArtists() && !track.title().isEmpty() && track.duration() >= 30000;
 }
 } // namespace
 

@@ -536,7 +536,7 @@ ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const 
         case VariableKind::Title:
             return calculateResult(track.effectiveTitle());
         case VariableKind::UniqueArtist:
-            return calculateResult(track.uniqueArtists());
+            return calculateResult(track.uniqueArtist());
         case VariableKind::PlayCount:
             return calculateResult(track.playCount());
         case VariableKind::Duration: {
@@ -548,7 +548,7 @@ ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const 
         case VariableKind::Album:
             return calculateResult(track.album());
         case VariableKind::Genres:
-            return calculateResult(track.genres());
+            return calculateResult(track.genre());
         case VariableKind::TrackCount:
         case VariableKind::Playtime:
         case VariableKind::PlaylistDuration:

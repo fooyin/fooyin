@@ -18,19 +18,18 @@
  */
 
 #include "core/constants.h"
+#include <core/stringpool.h>
 #include <core/track.h>
+#include <core/trackmetadatastore.h>
 
 #include <utils/crypto.h>
-#include <utils/utils.h>
 
-#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QIODevice>
 #include <QRegularExpression>
 
 #include <chrono>
-#include <ranges>
 
 using namespace Qt::StringLiterals;
 
@@ -75,6 +74,106 @@ const MetaMap& metaMap()
     // clang-format on
     return metaMap;
 }
+
+/*!
+ * Dense in-memory storage for decoded extra tags.
+ *
+ * Extra tags are usually cold metadata and many tracks never decode them at all.
+ * When they are decoded, keeping them in a `QMap<QString, QStringList>` is
+ * unnecessarily expensive for the common case of only a few keys per track.
+ *
+ * This structure keeps the resident form compact by storing key/value pairs in
+ * insertion order inside a flat vector. Lookups are linear by design; the
+ * expected key count per track is small enough that the lower memory overhead is
+ * a better trade than node-based map storage.
+ *
+ * Conversion back to `Track::ExtraTags` is kept at the API/serialization
+ * boundary only.
+ */
+class CompactExtraTags
+{
+public:
+    struct Entry
+    {
+        QString key;
+        QStringList values;
+    };
+
+    [[nodiscard]] bool contains(const QString& key) const
+    {
+        return findIndex(key) >= 0;
+    }
+
+    [[nodiscard]] QStringList value(const QString& key) const
+    {
+        if(const auto index = findIndex(key); index >= 0) {
+            return m_entries.at(index).values;
+        }
+        return {};
+    }
+
+    [[nodiscard]] bool empty() const
+    {
+        return m_entries.empty();
+    }
+
+    void clear()
+    {
+        m_entries.clear();
+    }
+
+    void reserve(qsizetype size)
+    {
+        m_entries.reserve(size);
+    }
+
+    QStringList& valuesFor(const QString& key)
+    {
+        if(const auto index = findIndex(key); index >= 0) {
+            return m_entries.at(index).values;
+        }
+
+        m_entries.emplace_back(Entry{key, {}});
+        return m_entries.back().values;
+    }
+
+    void setValues(const QString& key, const QStringList& values)
+    {
+        valuesFor(key) = values;
+    }
+
+    bool remove(const QString& key)
+    {
+        if(const auto index = findIndex(key); index >= 0) {
+            m_entries.erase(m_entries.begin() + index);
+            return true;
+        }
+        return false;
+    }
+
+    [[nodiscard]] Fooyin::Track::ExtraTags toMap() const
+    {
+        Fooyin::Track::ExtraTags tags;
+        for(const auto& entry : m_entries) {
+            tags.insert(entry.key, entry.values);
+        }
+        return tags;
+    }
+
+private:
+    [[nodiscard]] qsizetype findIndex(const QString& key) const
+    {
+        for(qsizetype index{0}; index < static_cast<qsizetype>(m_entries.size()); ++index) {
+            if(m_entries.at(index).key == key) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    std::vector<Entry> m_entries;
+};
+
 } // namespace
 
 namespace Fooyin {
@@ -82,25 +181,29 @@ class TrackPrivate : public QSharedData
 {
 public:
     void splitArchiveUrl();
+    [[nodiscard]] QString directory() const;
+    [[nodiscard]] QString filename() const;
+    [[nodiscard]] QString extension() const;
 
+    void ensureExtraTagsLoaded() const;
+    [[nodiscard]] StringPool& stringPool() const;
+
+    std::shared_ptr<TrackMetadataStore> metadataStore{std::make_shared<TrackMetadataStore>()};
     int libraryId{-1};
     bool enabled{true};
     int id{-1};
     QString hash;
-    QString codec;
+    StringPool::StringId codec{StringPool::EmptyStringId};
     QString filepath;
-    QString directory;
-    QString filename;
-    QString extension;
     QString title;
-    QStringList artists;
-    QString album;
-    QStringList albumArtists;
+    StringPool::StringListRef artists;
+    StringPool::StringId album{StringPool::EmptyStringId};
+    StringPool::StringListRef albumArtists;
     QString trackNumber;
     QString trackTotal;
     QString discNumber;
     QString discTotal;
-    QStringList genres;
+    StringPool::StringListRef genres;
     QStringList composers;
     QStringList performers;
     QString comment;
@@ -108,7 +211,10 @@ public:
     int year{-1};
     int64_t dateSinceEpoch;
     int64_t yearSinceEpoch;
-    Track::ExtraTags extraTags;
+    mutable CompactExtraTags extraTags;
+    mutable QByteArray extraTagsBlob;
+    mutable bool extraTagsLoaded{true};
+    bool extraTagsDirty{false};
     QStringList removedTags;
     Track::ExtraProperties extraProps;
 
@@ -125,7 +231,7 @@ public:
     QString codecProfile;
     QString tool;
     QStringList tagTypes;
-    QString encoding;
+    StringPool::StringId encoding{StringPool::EmptyStringId};
 
     float rating{-1};
     int playcount{0};
@@ -161,28 +267,145 @@ void TrackPrivate::splitArchiveUrl()
 
     archivePath           = path.left(archivePathLength);
     filepathWithinArchive = path.mid(archivePathLength + 1);
+}
 
-    const QFileInfo info{filepathWithinArchive};
-    filename  = info.completeBaseName();
-    extension = info.suffix().toLower();
-    directory = info.dir().dirName();
-    if(directory == "."_L1) {
-        directory = QFileInfo{archivePath}.fileName();
+QString TrackPrivate::directory() const
+{
+    const QFileInfo info{isInArchive ? filepathWithinArchive : filepath};
+    QString dir = info.dir().dirName();
+    if(isInArchive && dir == "."_L1) {
+        dir = QFileInfo{archivePath}.fileName();
+    }
+    return dir;
+}
+
+QString TrackPrivate::filename() const
+{
+    return QFileInfo{isInArchive ? filepathWithinArchive : filepath}.completeBaseName();
+}
+
+QString TrackPrivate::extension() const
+{
+    return QFileInfo{isInArchive ? filepathWithinArchive : filepath}.suffix().toLower();
+}
+
+void TrackPrivate::ensureExtraTagsLoaded() const
+{
+    if(extraTagsLoaded) {
+        return;
+    }
+
+    extraTagsLoaded = true;
+    extraTags.clear();
+
+    if(extraTagsBlob.isEmpty()) {
+        return;
+    }
+
+    QByteArray in{extraTagsBlob};
+    QDataStream stream(&in, QIODevice::ReadOnly);
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    Track::ExtraTags loaded;
+    stream >> loaded;
+    extraTags.reserve(loaded.size());
+
+    for(auto it = loaded.cbegin(); it != loaded.cend(); ++it) {
+        extraTags.setValues(stringPool().intern(StringPool::Domain::ExtraTagKey, it.key().toUpper()), it.value());
     }
 }
 
+StringPool& TrackPrivate::stringPool() const
+{
+    return metadataStore->stringPool();
+}
+
+QString internString(const TrackPrivate& track, StringPool::Domain domain, const QString& value)
+{
+    return track.stringPool().intern(domain, value);
+}
+
+Fooyin::StringPool::StringId internStringId(const TrackPrivate& track, StringPool::Domain domain, const QString& value)
+{
+    return track.stringPool().internId(domain, value);
+}
+
+Fooyin::StringPool::StringListRef internStrings(const TrackPrivate& track, StringPool::Domain domain,
+                                                const QStringList& values)
+{
+    return track.stringPool().internList(domain, values);
+}
+
+QString resolveString(const TrackPrivate& track, StringPool::Domain domain, StringPool::StringId id)
+{
+    return track.stringPool().resolve(domain, id);
+}
+
+QStringList resolveStrings(const TrackPrivate& track, StringPool::Domain domain, StringPool::StringListRef ref)
+{
+    return track.stringPool().resolveList(domain, ref);
+}
+
+QString joinStrings(const TrackPrivate& track, StringPool::Domain domain, StringPool::StringListRef ref,
+                    const QString& separator)
+{
+    return track.stringPool().joined(domain, ref, separator);
+}
+
+QString stringAt(const TrackPrivate& track, StringPool::Domain domain, StringPool::StringListRef ref, qsizetype index)
+{
+    return track.stringPool().valueAt(domain, ref, index);
+}
+
+bool containsString(const TrackPrivate& track, StringPool::Domain domain, StringPool::StringListRef ref,
+                    const QString& value)
+{
+    return track.stringPool().contains(domain, ref, value);
+}
+
+QString internExtraTagKey(const TrackPrivate& track, const QString& tag)
+{
+    return internString(track, StringPool::Domain::ExtraTagKey, tag.toUpper());
+}
+
+CompactExtraTags internExtraTags(const TrackPrivate& track, const Track::ExtraTags& tags)
+{
+    CompactExtraTags interned;
+    interned.reserve(tags.size());
+
+    for(auto it = tags.cbegin(); it != tags.cend(); ++it) {
+        interned.setValues(internExtraTagKey(track, it.key()), it.value());
+    }
+
+    return interned;
+}
+
 Track::Track()
-    : Track{{}}
+    : Track{std::shared_ptr<TrackMetadataStore>{}}
 { }
 
-Track::Track(const QString& filepath)
+Track::Track(std::shared_ptr<TrackMetadataStore> store)
     : p{new TrackPrivate()}
+{
+    p->metadataStore = store ? std::move(store) : std::make_shared<TrackMetadataStore>();
+}
+
+Track::Track(const QString& filepath)
+    : Track{filepath, std::shared_ptr<TrackMetadataStore>{}}
+{ }
+
+Track::Track(const QString& filepath, std::shared_ptr<TrackMetadataStore> store)
+    : Track{std::move(store)}
 {
     setFilePath(filepath);
 }
 
 Track::Track(const QString& filepath, int subsong)
-    : Track{filepath}
+    : Track{filepath, subsong, std::shared_ptr<TrackMetadataStore>{}}
+{ }
+
+Track::Track(const QString& filepath, int subsong, std::shared_ptr<TrackMetadataStore> store)
+    : Track{filepath, std::move(store)}
 {
     setSubsong(subsong);
 }
@@ -210,11 +433,12 @@ QString Track::generateHash()
 {
     QString title = p->title;
     if(title.isEmpty()) {
-        title = p->directory + p->filename;
+        title = p->directory() + p->filename();
     }
 
-    p->hash = Utils::generateHash(p->artists.join(","_L1), p->album, p->discNumber, p->trackNumber, title,
-                                  QString::number(p->subsong));
+    p->hash = Utils::generateHash(joinStrings(*p, StringPool::Domain::Artist, p->artists, ","_L1),
+                                  resolveString(*p, StringPool::Domain::Album, p->album), p->discNumber, p->trackNumber,
+                                  title, QString::number(p->subsong));
     return p->hash;
 }
 
@@ -296,21 +520,25 @@ QString Track::albumHash() const
 {
     QStringList hash;
 
+    const auto albumArtists = this->albumArtists();
+    const auto artists      = this->artists();
+    const auto album        = this->album();
+
     if(!p->date.isEmpty()) {
         hash.append(p->date);
     }
-    if(!p->albumArtists.isEmpty()) {
-        hash.append(p->albumArtists.join(","_L1));
+    if(!albumArtists.isEmpty()) {
+        hash.append(albumArtists.join(","_L1));
     }
-    if(!p->artists.isEmpty()) {
-        hash.append(p->artists.join(","_L1));
+    if(!artists.isEmpty()) {
+        hash.append(artists.join(","_L1));
     }
 
-    if(!p->album.isEmpty()) {
-        hash.append(p->album);
+    if(!album.isEmpty()) {
+        hash.append(album);
     }
     else {
-        hash.append(p->directory);
+        hash.append(p->directory());
     }
 
     return hash.join("|"_L1);
@@ -343,7 +571,7 @@ QString Track::prettyFilepath() const
 
 QString Track::filename() const
 {
-    return p->filename;
+    return p->filename();
 }
 
 QString Track::path() const
@@ -357,12 +585,12 @@ QString Track::path() const
 
 QString Track::directory() const
 {
-    return p->directory;
+    return p->directory();
 }
 
 QString Track::extension() const
 {
-    return p->extension;
+    return p->extension();
 }
 
 QString Track::filenameExt() const
@@ -377,36 +605,59 @@ QString Track::title() const
 
 QString Track::effectiveTitle() const
 {
-    return !p->title.isEmpty() ? p->title : p->filename;
+    return !p->title.isEmpty() ? p->title : p->filename();
+}
+
+bool Track::hasArtists() const
+{
+    return !p->artists.isEmpty();
+}
+
+qsizetype Track::artistCount() const
+{
+    return p->artists.size;
+}
+
+QString Track::artistAt(qsizetype index) const
+{
+    return stringAt(*p, StringPool::Domain::Artist, p->artists, index);
 }
 
 QStringList Track::artists() const
 {
-    return p->artists;
+    return resolveStrings(*p, StringPool::Domain::Artist, p->artists);
+}
+
+QString Track::artistsJoined(const QString& sep) const
+{
+    return joinStrings(*p, StringPool::Domain::Artist, p->artists, sep);
 }
 
 QStringList Track::uniqueArtists() const
 {
-    QStringList artists;
-    for(const QString& artist : p->artists) {
-        if(!p->albumArtists.contains(artist)) {
-            artists.emplace_back(artist);
+    QStringList uniqueArtists;
+    uniqueArtists.reserve(artistCount());
+
+    for(qsizetype index{0}; index < artistCount(); ++index) {
+        const QString artist = artistAt(index);
+        if(!containsString(*p, StringPool::Domain::AlbumArtist, p->albumArtists, artist)) {
+            uniqueArtists.emplace_back(artist);
         }
     }
-    return artists;
+    return uniqueArtists;
 }
 
 QString Track::artist() const
 {
-    return p->artists.empty() ? QString{} : p->artists.join(QLatin1String{Constants::UnitSeparator});
+    return artistsJoined(QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::primaryArtist() const
 {
-    if(!artists().empty()) {
+    if(hasArtists()) {
         return artist();
     }
-    if(!albumArtists().empty()) {
+    if(hasAlbumArtists()) {
         return albumArtist();
     }
     if(!composer().isEmpty()) {
@@ -423,22 +674,42 @@ QString Track::uniqueArtist() const
 
 QString Track::album() const
 {
-    return p->album;
+    return resolveString(*p, StringPool::Domain::Album, p->album);
+}
+
+bool Track::hasAlbumArtists() const
+{
+    return !p->albumArtists.isEmpty();
+}
+
+qsizetype Track::albumArtistCount() const
+{
+    return p->albumArtists.size;
+}
+
+QString Track::albumArtistAt(qsizetype index) const
+{
+    return stringAt(*p, StringPool::Domain::AlbumArtist, p->albumArtists, index);
 }
 
 QStringList Track::albumArtists() const
 {
-    return p->albumArtists;
+    return resolveStrings(*p, StringPool::Domain::AlbumArtist, p->albumArtists);
+}
+
+QString Track::albumArtistsJoined(const QString& sep) const
+{
+    return joinStrings(*p, StringPool::Domain::AlbumArtist, p->albumArtists, sep);
 }
 
 QString Track::albumArtist() const
 {
-    return p->albumArtists.empty() ? QString{} : p->albumArtists.join(QLatin1String{Constants::UnitSeparator});
+    return albumArtistsJoined(QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::effectiveAlbumArtist(bool useVarious) const
 {
-    if(!albumArtists().empty()) {
+    if(hasAlbumArtists()) {
         return albumArtist();
     }
     if(useVarious && hasExtraTag(u"COMPILATION"_s)) {
@@ -447,7 +718,7 @@ QString Track::effectiveAlbumArtist(bool useVarious) const
             return u"Various Artists"_s;
         }
     }
-    if(!artists().empty()) {
+    if(hasArtists()) {
         return artist();
     }
     if(!composers().isEmpty()) {
@@ -476,14 +747,34 @@ QString Track::discTotal() const
     return p->discTotal;
 }
 
+bool Track::hasGenres() const
+{
+    return !p->genres.isEmpty();
+}
+
+qsizetype Track::genreCount() const
+{
+    return p->genres.size;
+}
+
+QString Track::genreAt(qsizetype index) const
+{
+    return stringAt(*p, StringPool::Domain::Genre, p->genres, index);
+}
+
 QStringList Track::genres() const
 {
-    return p->genres;
+    return resolveStrings(*p, StringPool::Domain::Genre, p->genres);
+}
+
+QString Track::genresJoined(const QString& sep) const
+{
+    return joinStrings(*p, StringPool::Domain::Genre, p->genres, sep);
 }
 
 QString Track::genre() const
 {
-    return p->genres.empty() ? QString{} : p->genres.join(QLatin1String{Constants::UnitSeparator});
+    return genresJoined(QLatin1String{Constants::UnitSeparator});
 }
 
 QStringList Track::composers() const
@@ -622,11 +913,13 @@ bool Track::isExtraTag(const QString& tag)
 
 bool Track::hasExtraTag(const QString& tag) const
 {
+    p->ensureExtraTagsLoaded();
     return p->extraTags.contains(tag);
 }
 
 QStringList Track::extraTag(const QString& tag) const
 {
+    p->ensureExtraTagsLoaded();
     if(p->extraTags.contains(tag)) {
         return p->extraTags.value(tag);
     }
@@ -635,7 +928,8 @@ QStringList Track::extraTag(const QString& tag) const
 
 Track::ExtraTags Track::extraTags() const
 {
-    return p->extraTags;
+    p->ensureExtraTagsLoaded();
+    return p->extraTags.toMap();
 }
 
 QStringList Track::removedTags() const
@@ -645,6 +939,12 @@ QStringList Track::removedTags() const
 
 QByteArray Track::serialiseExtraTags() const
 {
+    if(!p->extraTagsDirty && !p->extraTagsLoaded) {
+        return p->extraTagsBlob;
+    }
+
+    p->ensureExtraTagsLoaded();
+
     if(p->extraTags.empty()) {
         return {};
     }
@@ -653,7 +953,7 @@ QByteArray Track::serialiseExtraTags() const
     QDataStream stream(&out, QIODevice::WriteOnly);
     stream.setVersion(QDataStream::Qt_6_0);
 
-    stream << p->extraTags;
+    stream << p->extraTags.toMap();
 
     return out;
 }
@@ -692,14 +992,14 @@ QMap<QString, QString> Track::metadata() const
     static const QString DateKey        = QString::fromLatin1(MetaData::Date);
 
     addField(TitleKey, p->title);
-    addField(ArtistKey, p->artists);
-    addField(AlbumKey, p->album);
-    addField(AlbumArtistKey, p->albumArtists);
+    addField(ArtistKey, artists());
+    addField(AlbumKey, album());
+    addField(AlbumArtistKey, albumArtists());
     addField(TrackKey, p->trackNumber);
     addField(TrackTotalKey, p->trackTotal);
     addField(DiscKey, p->discNumber);
     addField(DiscTotalKey, p->discTotal);
-    addField(GenreKey, p->genres);
+    addField(GenreKey, genres());
     addField(ComposerKey, p->composers);
     addField(PerformerKey, p->performers);
     addField(CommentKey, p->comment);
@@ -775,7 +1075,7 @@ int Track::bitDepth() const
 
 QString Track::codec() const
 {
-    return p->codec;
+    return resolveString(*p, StringPool::Domain::Codec, p->codec);
 }
 
 QString Track::codecProfile() const
@@ -801,7 +1101,7 @@ QStringList Track::tagTypes() const
 
 QString Track::encoding() const
 {
-    return p->encoding;
+    return resolveString(*p, StringPool::Domain::Encoding, p->encoding);
 }
 
 int Track::playCount() const
@@ -852,6 +1152,50 @@ bool Track::hasMatch(const QString& term) const
     // clang-format on
 }
 
+std::shared_ptr<TrackMetadataStore> Track::metadataStore() const
+{
+    return p->metadataStore;
+}
+
+void Track::setMetadataStore(std::shared_ptr<TrackMetadataStore> store)
+{
+    if(!store) {
+        store = std::make_shared<TrackMetadataStore>();
+    }
+
+    if(p->metadataStore == store) {
+        return;
+    }
+
+    p.detach();
+
+    const auto oldStore = p->metadataStore;
+
+    const auto resolveOld = [&oldStore](StringPool::Domain domain, StringPool::StringId id) {
+        return oldStore ? oldStore->stringPool().resolve(domain, id) : QString{};
+    };
+    const auto resolveOldList = [&oldStore](StringPool::Domain domain, StringPool::StringListRef ref) {
+        return oldStore ? oldStore->stringPool().resolveList(domain, ref) : QStringList{};
+    };
+
+    p->codec = store->stringPool().internId(StringPool::Domain::Codec, resolveOld(StringPool::Domain::Codec, p->codec));
+    p->artists = store->stringPool().internList(StringPool::Domain::Artist,
+                                                resolveOldList(StringPool::Domain::Artist, p->artists));
+    p->album = store->stringPool().internId(StringPool::Domain::Album, resolveOld(StringPool::Domain::Album, p->album));
+    p->albumArtists = store->stringPool().internList(StringPool::Domain::AlbumArtist,
+                                                     resolveOldList(StringPool::Domain::AlbumArtist, p->albumArtists));
+    p->genres       = store->stringPool().internList(StringPool::Domain::Genre,
+                                                     resolveOldList(StringPool::Domain::Genre, p->genres));
+    p->encoding     = store->stringPool().internId(StringPool::Domain::Encoding,
+                                                   resolveOld(StringPool::Domain::Encoding, p->encoding));
+
+    p->metadataStore = store;
+
+    if(p->extraTagsLoaded && !p->extraTags.empty()) {
+        p->extraTags = internExtraTags(*p, p->extraTags.toMap());
+    }
+}
+
 void Track::setLibraryId(int id)
 {
     p->libraryId = id;
@@ -886,10 +1230,8 @@ void Track::setFilePath(const QString& path)
     }
     else {
         p->isInArchive = false;
-        const QFileInfo info{p->filepath};
-        p->filename  = info.completeBaseName();
-        p->extension = info.suffix().toLower();
-        p->directory = info.dir().dirName();
+        p->archivePath.clear();
+        p->filepathWithinArchive.clear();
     }
 }
 
@@ -905,10 +1247,10 @@ void Track::setTitle(const QString& title)
 void Track::setArtists(const QStringList& artists)
 {
     if(artists.size() == 1 && artists.front().isEmpty()) {
-        p->artists.clear();
+        p->artists = {};
     }
     else {
-        p->artists = artists;
+        p->artists = internStrings(*p, StringPool::Domain::Artist, artists);
     }
 
     if(!p->hash.isEmpty()) {
@@ -918,7 +1260,7 @@ void Track::setArtists(const QStringList& artists)
 
 void Track::setAlbum(const QString& title)
 {
-    p->album = title;
+    p->album = internStringId(*p, StringPool::Domain::Album, title);
 
     if(!p->hash.isEmpty()) {
         generateHash();
@@ -928,10 +1270,10 @@ void Track::setAlbum(const QString& title)
 void Track::setAlbumArtists(const QStringList& artists)
 {
     if(artists.size() == 1 && artists.front().isEmpty()) {
-        p->albumArtists.clear();
+        p->albumArtists = {};
     }
     else {
-        p->albumArtists = artists;
+        p->albumArtists = internStrings(*p, StringPool::Domain::AlbumArtist, artists);
     }
 }
 
@@ -988,10 +1330,10 @@ void Track::setDiscTotal(const QString& total)
 void Track::setGenres(const QStringList& genres)
 {
     if(genres.size() == 1 && genres.front().isEmpty()) {
-        p->genres.clear();
+        p->genres = {};
     }
     else {
-        p->genres = genres;
+        p->genres = internStrings(*p, StringPool::Domain::Genre, genres);
     }
 }
 
@@ -1219,7 +1561,10 @@ void Track::addExtraTag(const QString& tag, const QString& value)
     if(tag.isEmpty() || value.isEmpty()) {
         return;
     }
-    p->extraTags[tag.toUpper()].push_back(value);
+    p->ensureExtraTagsLoaded();
+    p->extraTags.valuesFor(internExtraTagKey(*p, tag)).push_back(value);
+    p->extraTagsBlob.clear();
+    p->extraTagsDirty = true;
 }
 
 void Track::addExtraTag(const QString& tag, const QStringList& value)
@@ -1227,57 +1572,67 @@ void Track::addExtraTag(const QString& tag, const QStringList& value)
     if(tag.isEmpty() || value.isEmpty()) {
         return;
     }
-    p->extraTags[tag.toUpper()].append(value);
+    p->ensureExtraTagsLoaded();
+    p->extraTags.valuesFor(internExtraTagKey(*p, tag)).append(value);
+    p->extraTagsBlob.clear();
+    p->extraTagsDirty = true;
 }
 
 void Track::removeExtraTag(const QString& tag)
 {
+    p->ensureExtraTagsLoaded();
     const QString extraTag = tag.toUpper();
     if(p->extraTags.contains(extraTag)) {
-        p->removedTags.append(extraTag);
+        p->removedTags.append(internExtraTagKey(*p, extraTag));
         p->extraTags.remove(extraTag);
+        p->extraTagsBlob.clear();
+        p->extraTagsDirty = true;
     }
 }
 
 void Track::replaceExtraTag(const QString& tag, const QString& value)
 {
-    const QString extraTag = tag.toUpper();
+    p->ensureExtraTagsLoaded();
+    const QString extraTag = internExtraTagKey(*p, tag);
     if(value.isEmpty()) {
         removeExtraTag(extraTag);
     }
     else {
-        p->extraTags[extraTag] = {value};
+        p->extraTags.setValues(extraTag, {value});
+        p->extraTagsBlob.clear();
+        p->extraTagsDirty = true;
     }
 }
 
 void Track::replaceExtraTag(const QString& tag, const QStringList& value)
 {
-    const QString extraTag = tag.toUpper();
+    p->ensureExtraTagsLoaded();
+    const QString extraTag = internExtraTagKey(*p, tag);
 
     if(value.isEmpty()) {
         removeExtraTag(extraTag);
     }
     else {
-        p->extraTags[extraTag] = value;
+        p->extraTags.setValues(extraTag, value);
+        p->extraTagsBlob.clear();
+        p->extraTagsDirty = true;
     }
 }
 
 void Track::clearExtraTags()
 {
+    p->ensureExtraTagsLoaded();
     p->extraTags.clear();
+    p->extraTagsBlob.clear();
+    p->extraTagsDirty = true;
 }
 
 void Track::storeExtraTags(const QByteArray& tags)
 {
-    if(tags.isEmpty()) {
-        return;
-    }
-
-    QByteArray in{tags};
-    QDataStream stream(&in, QIODevice::ReadOnly);
-    stream.setVersion(QDataStream::Qt_6_0);
-
-    stream >> p->extraTags;
+    p->extraTags.clear();
+    p->extraTagsBlob   = tags;
+    p->extraTagsLoaded = tags.isEmpty();
+    p->extraTagsDirty  = false;
 }
 
 void Track::setExtraProperty(const QString& prop, const QString& value)
@@ -1354,7 +1709,7 @@ void Track::setBitDepth(int depth)
 
 void Track::setCodec(const QString& codec)
 {
-    p->codec = codec;
+    p->codec = internStringId(*p, StringPool::Domain::Codec, codec);
 }
 
 void Track::setCodecProfile(const QString& profile)
@@ -1374,7 +1729,7 @@ void Track::setTagTypes(const QStringList& tagTypes)
 
 void Track::setEncoding(const QString& encoding)
 {
-    p->encoding = encoding;
+    p->encoding = internStringId(*p, StringPool::Domain::Encoding, encoding);
 }
 
 void Track::setPlayCount(int count)

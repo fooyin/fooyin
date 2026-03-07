@@ -27,6 +27,7 @@
 #include <QObject>
 
 namespace Fooyin {
+class TrackMetadataStore;
 /*!
  * There are four types of scan request:
  * - Files: Scans a list of files; emits tracksScanned when finished.
@@ -137,6 +138,8 @@ public:
     [[nodiscard]] virtual Track trackForId(int id) const = 0;
     /** Returns a TrackList containing each track (if) found with an id from @p ids  */
     [[nodiscard]] virtual TrackList tracksForIds(const TrackIds& ids) const = 0;
+    /** Returns the metadata store used by resident library tracks. */
+    [[nodiscard]] virtual std::shared_ptr<TrackMetadataStore> metadataStore() const = 0;
 
     /** Updates the track @p track in the library.  */
     virtual void updateTrack(const Track& track) = 0;

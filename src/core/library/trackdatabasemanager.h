@@ -21,6 +21,7 @@
 
 #include "database/trackdatabase.h"
 
+#include <core/trackmetadatastore.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/worker.h>
 
@@ -36,7 +37,8 @@ class TrackDatabaseManager : public Worker
 
 public:
     explicit TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
-                                  SettingsManager* settings, QObject* parent = nullptr);
+                                  SettingsManager* settings, std::shared_ptr<TrackMetadataStore> metadataStore = {},
+                                  QObject* parent = nullptr);
 
     void initialiseThread() override;
 
@@ -58,6 +60,7 @@ private:
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
+    std::shared_ptr<TrackMetadataStore> m_metadataStore;
 
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
     TrackDatabase m_trackDatabase;

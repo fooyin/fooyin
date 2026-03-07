@@ -36,11 +36,13 @@ Q_LOGGING_CATEGORY(TRK_DBMAN, "fy.trackdbmanager")
 
 namespace Fooyin {
 TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
-                                           SettingsManager* settings, QObject* parent)
+                                           SettingsManager* settings, std::shared_ptr<TrackMetadataStore> metadataStore,
+                                           QObject* parent)
     : Worker{parent}
     , m_dbPool{std::move(dbPool)}
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
+    , m_metadataStore{std::move(metadataStore)}
 { }
 
 void TrackDatabaseManager::initialiseThread()
@@ -49,6 +51,7 @@ void TrackDatabaseManager::initialiseThread()
 
     m_dbHandler = std::make_unique<DbConnectionHandler>(m_dbPool);
     m_trackDatabase.initialise(DbConnectionProvider{m_dbPool});
+    m_trackDatabase.setMetadataStore(m_metadataStore);
 }
 
 void TrackDatabaseManager::getAllTracks()

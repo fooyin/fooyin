@@ -233,8 +233,8 @@ void MediaControlPlugin::updateDisplay()
 
         auto genres = updater.MusicProperties().Genres();
         genres.Clear();
-        for(const auto& genre : track.genres()) {
-            genres.Append(genre.toStdWString());
+        for(qsizetype index{0}; index < track.genreCount(); ++index) {
+            genres.Append(track.genreAt(index).toStdWString());
         }
 
         m_coverProvider->trackCoverFull(track, Track::Cover::Front).then([this, updater](const QPixmap& cover) {

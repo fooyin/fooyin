@@ -30,44 +30,45 @@ TrackSorter::TrackSorter(LibraryManager* libraryManager)
 
 TrackSorter::~TrackSorter() = default;
 
-TrackList TrackSorter::calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortOrder order)
+TrackList TrackSorter::calcSortTracks(const QString& sort, TrackList tracks, Qt::SortOrder order)
 {
-    return calcSortTracks(parseScript(sort), tracks, order);
+    return calcSortTracks(parseScript(sort), std::move(tracks), order);
 }
 
-TrackList TrackSorter::calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int>& indexes,
+TrackList TrackSorter::calcSortTracks(const QString& sort, TrackList tracks, const std::vector<int>& indexes,
                                       Qt::SortOrder order)
 {
-    return calcSortTracks(parseScript(sort), tracks, indexes, order);
+    return calcSortTracks(parseScript(sort), std::move(tracks), indexes, order);
 }
 
-TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, Qt::SortOrder order)
+TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, TrackList tracks, Qt::SortOrder order)
 {
-    auto sortEntries = calcSortEntries(sortScript, tracks, std::identity{});
+    auto sortEntries = calcOwnedSortEntries(sortScript, std::move(tracks), std::identity{});
     sortSortEntries(sortEntries, order);
-    return stripSortEntries<TrackList>(sortEntries);
+    return stripSortEntries<TrackList>(std::move(sortEntries));
 }
 
-TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
-                                      const std::vector<int>& indexes, Qt::SortOrder order)
+TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, TrackList tracks, const std::vector<int>& indexes,
+                                      Qt::SortOrder order)
 {
-    TrackList sortedTracks{tracks};
+    TrackList sortedTracks{std::move(tracks)};
     TrackList tracksToSort;
+    tracksToSort.reserve(indexes.size());
 
-    auto validIndexes = indexes | std::views::filter([&tracks](int index) {
-                            return (index >= 0 && index < static_cast<int>(tracks.size()));
+    auto validIndexes = indexes | std::views::filter([&sortedTracks](int index) {
+                            return (index >= 0 && index < static_cast<int>(sortedTracks.size()));
                         });
 
     for(const int index : validIndexes) {
-        tracksToSort.push_back(tracks.at(index));
+        tracksToSort.push_back(sortedTracks.at(index));
     }
 
-    auto sortEntries = calcSortEntries(sortScript, tracksToSort, std::identity{});
+    auto sortEntries = calcOwnedSortEntries(sortScript, std::move(tracksToSort), std::identity{});
     sortSortEntries(sortEntries, order);
-    const auto sortedSubTracks = stripSortEntries<TrackList>(sortEntries);
+    auto sortedSubTracks = stripSortEntries<TrackList>(std::move(sortEntries));
 
     for(auto i{0}; const int index : validIndexes) {
-        sortedTracks[index] = sortedSubTracks.at(i++);
+        sortedTracks[index] = std::move(sortedSubTracks.at(i++));
     }
 
     return sortedTracks;

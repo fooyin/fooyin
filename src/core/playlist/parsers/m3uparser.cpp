@@ -163,7 +163,7 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
                 if(track.title().isEmpty() && !metadata.title.isEmpty()) {
                     track.setTitle(metadata.title);
                 }
-                if(track.artists().empty() && !metadata.artist.isEmpty()) {
+                if(!track.hasArtists() && !metadata.artist.isEmpty()) {
                     track.setArtists({metadata.artist});
                 }
                 tracks.push_back(track);
