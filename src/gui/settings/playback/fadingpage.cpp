@@ -108,7 +108,6 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
 {
     auto* fadingLayout = new QGridLayout(m_fadingBox);
     m_fadingBox->setCheckable(true);
-    m_fadingBox->setFlat(true);
 
     m_fadingPauseIn->setSuffix(u"ms"_s);
     m_fadingPauseOut->setSuffix(u"ms"_s);
@@ -205,7 +204,6 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
 
     auto* crossmixLayout = new QGridLayout(m_crossfadeBox);
     m_crossfadeBox->setCheckable(true);
-    m_crossfadeBox->setFlat(true);
 
     m_crossfadeManualIn->setMaximum(30000);
     m_crossfadeManualOut->setMaximum(30000);
@@ -261,8 +259,6 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     crossmixLayout->setColumnStretch(3, 1);
 
     auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(14);
     mainLayout->addWidget(m_fadingBox);
     mainLayout->addWidget(m_crossfadeBox);
     mainLayout->addStretch(1);
