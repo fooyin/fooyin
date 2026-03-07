@@ -41,7 +41,9 @@ public:
     [[nodiscard]] virtual bool canApply() const;
     [[nodiscard]] virtual bool hasTools() const;
 
+    virtual void load();
     virtual void apply();
+    virtual void finish();
     virtual void addTools(QMenu* menu);
 };
 
@@ -58,6 +60,7 @@ public:
     [[nodiscard]] PropertiesTabWidget* widget(const TrackList& tracks) const;
     [[nodiscard]] bool hasVisited() const;
 
+    void load(const TrackList& tracks);
     void updateIndex(int index);
     void setVisited(bool visited);
 
@@ -69,6 +72,7 @@ private:
     QString m_title;
     WidgetBuilder m_widgetBuilder;
     mutable QPointer<PropertiesTabWidget> m_widget;
+    bool m_loaded;
     bool m_visited;
 };
 

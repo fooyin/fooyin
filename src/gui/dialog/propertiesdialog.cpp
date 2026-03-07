@@ -46,7 +46,11 @@ bool PropertiesTabWidget::hasTools() const
     return false;
 }
 
+void PropertiesTabWidget::load() { }
+
 void PropertiesTabWidget::apply() { }
+
+void PropertiesTabWidget::finish() { }
 
 void PropertiesTabWidget::addTools(QMenu* /*menu*/) { }
 
@@ -55,6 +59,7 @@ PropertiesTab::PropertiesTab(QString title, WidgetBuilder widgetBuilder, int ind
     , m_title{std::move(title)}
     , m_widgetBuilder{std::move(widgetBuilder)}
     , m_widget{nullptr}
+    , m_loaded{false}
     , m_visited{false}
 { }
 
@@ -83,6 +88,18 @@ bool PropertiesTab::hasVisited() const
     return m_visited;
 }
 
+void PropertiesTab::load(const TrackList& tracks)
+{
+    if(m_loaded) {
+        return;
+    }
+
+    if(auto* propertiesWidget = widget(tracks)) {
+        propertiesWidget->load();
+        m_loaded = true;
+    }
+}
+
 void PropertiesTab::updateIndex(int index)
 {
     m_index = index;
@@ -102,10 +119,16 @@ void PropertiesTab::apply()
 
 void PropertiesTab::finish()
 {
+    m_loaded = false;
     setVisited(false);
+
     if(m_widget) {
-        delete m_widget;
-        m_widget = nullptr;
+        auto* widget = m_widget.data();
+        m_widget     = nullptr;
+        widget->finish();
+        widget->hide();
+        widget->setParent(nullptr);
+        widget->deleteLater();
     }
 }
 
@@ -195,6 +218,8 @@ PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialo
             tabWidget->insertTab(tab.index(), tabPage, tab.title());
         }
     }
+
+    currentTabChanged(tabWidget->currentIndex());
 }
 
 void PropertiesDialogWidget::done(int value)
@@ -248,6 +273,7 @@ void PropertiesDialogWidget::currentTabChanged(int index)
     setWindowTitle(tr("Properties") + subtitle);
 
     if(auto* widget = tabIt->widget(m_tracks)) {
+        tabIt->load(m_tracks);
         if(m_applyButton) {
             m_applyButton->setHidden(!widget->canApply());
         }
