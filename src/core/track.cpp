@@ -49,7 +49,7 @@ QString validNum(auto num)
 };
 
 using MetaMap = std::unordered_map<QString, std::function<QString(const Fooyin::Track& track)>>;
-MetaMap metaMap()
+const MetaMap& metaMap()
 {
     using namespace Fooyin::Constants::MetaData;
     // clang-format off
@@ -608,7 +608,7 @@ bool Track::isMultiValueTag(const QString& tag)
 {
     const QString trackTag = tag.toUpper();
 
-    const auto map = metaMap();
+    const auto& map = metaMap();
     if(!map.contains(trackTag)) {
         return true;
     }
@@ -624,7 +624,7 @@ bool Track::isExtraTag(const QString& tag)
 {
     const QString trackTag = tag.toUpper();
 
-    const auto map = metaMap();
+    const auto& map = metaMap();
     return !map.contains(trackTag);
 }
 
@@ -1151,7 +1151,7 @@ QString Track::metaValue(const QString& name) const
 {
     const QString tag = name.toUpper();
 
-    const auto map = metaMap();
+    const auto& map = metaMap();
     if(map.contains(tag)) {
         return map.at(tag)(*this);
     }
