@@ -20,13 +20,13 @@
 #include "tageditorwidget.h"
 
 #include "settings/tageditorfieldregistry.h"
+#include "tageditorautocompletedelegate.h"
 #include "tageditorconstants.h"
 #include "tageditormodel.h"
 #include "tageditorview.h"
 
 #include <core/constants.h>
 #include <core/coresettings.h>
-#include <gui/guiconstants.h>
 #include <gui/widgets/multilinedelegate.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -55,6 +55,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TagEditorFieldReg
     , m_readOnly{false}
     , m_view{new TagEditorView(actionManager, this)}
     , m_model{new TagEditorModel(settings, this)}
+    , m_autocompleteDelegate{new TagEditorAutocompleteDelegate(this)}
     , m_multilineDelegate{nullptr}
     , m_starDelegate{nullptr}
     , m_autoTrackNum{new QAction(tr("Auto &track number"), this)}
@@ -70,6 +71,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TagEditorFieldReg
     layout->addWidget(m_view);
 
     m_view->setExtendableModel(m_model);
+    m_view->setItemDelegateForColumn(1, m_autocompleteDelegate);
     m_view->setupActions();
 
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, m_view, &QTableView::resizeRowsToContents);
@@ -125,6 +127,7 @@ void TagEditorWidget::setTracks(const TrackList& tracks)
     }
 
     m_model->reset(tracks, items);
+    m_autocompleteDelegate->setTracks(tracks);
 
     const auto refreshModel = [this]() {
         setTracks(m_model->tracks());

@@ -110,11 +110,15 @@ void TagEditorModelPrivate::updateFields()
                 editorField.name        = field;
                 editorField.scriptField = field;
                 editorField.isDefault   = isDefault;
-                editorField.multivalue  = Track::isMultiValueTag(field);
+                editorField.multivalue  = Track::isMultiValueTag(field) || value.size() > 1;
                 auto* item              = &m_tags.emplace(field, TagEditorItem{editorField, &m_root}).first->second;
                 m_root.appendChild(item);
             }
+
             auto& node = m_tags.at(field);
+            if(value.size() > 1) {
+                node.setFieldMultiValue(true);
+            }
             node.addTrackValue(value);
         }
     };
@@ -437,6 +441,14 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         return item->isDefault();
     }
 
+    if(role == TagEditorItem::ScriptField) {
+        const QString scriptField = item->field().scriptField;
+        if(!scriptField.isEmpty()) {
+            return scriptField;
+        }
+        return item->titleChanged() ? item->changedTitle() : item->title();
+    }
+
     if(role == Qt::DisplayRole || role == Qt::EditRole || role == TagEditorItem::Title) {
         if(index.column() == 0) {
             const QString title = item->titleChanged() ? item->changedTitle() : item->title();
@@ -504,7 +516,7 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
             break;
         }
         case(1): {
-            QString setValue = value.toString().trimmed();
+            QString setValue = value.toString();
 
             if(index.row() == p->m_ratingRow) {
                 const auto rating = value.value<StarRating>();

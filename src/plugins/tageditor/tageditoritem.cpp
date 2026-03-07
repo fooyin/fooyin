@@ -34,6 +34,16 @@ bool canAppendValue(int currentCharCount, const QString& value)
     return currentCharCount == 0 || currentCharCount + value.length() <= CharLimit;
 }
 
+QString normaliseSingleValue(const QString& value)
+{
+    QString normalised = value;
+
+    normalised.replace(u"\r\n"_s, u"\n"_s);
+    normalised.replace(u'\r', u'\n');
+
+    return normalised;
+}
+
 bool containsValue(const QStringList& values, const QString& value)
 {
     return std::ranges::find(values, value) != values.cend();
@@ -219,12 +229,26 @@ bool TagEditorItem::setValue(int newValue)
 
 bool TagEditorItem::setValue(const QString& newValue)
 {
-    QStringList values = newValue.split(u";"_s, Qt::SkipEmptyParts);
-    std::ranges::transform(values, values.begin(), [](const auto& val) { return val.trimmed(); });
+    const bool isMultiValueEdit = m_field.multivalue || m_splitTrackValues;
 
-    if(value() == newValue) {
+    QStringList values;
+
+    if(isMultiValueEdit) {
+        values = newValue.split(u";"_s, Qt::SkipEmptyParts);
+        std::ranges::transform(values, values.begin(), [](const auto& val) { return val.trimmed(); });
+    }
+    else {
+        values = {newValue};
+    }
+
+    const QString currentValue = value();
+    const bool sameValue       = isMultiValueEdit ? (currentValue == newValue)
+                                                  : (normaliseSingleValue(currentValue) == normaliseSingleValue(newValue));
+
+    if(sameValue) {
         if(status() == None
-           && (m_values == values || (m_values.size() == 1 && m_values.front().isEmpty() && values.empty()))) {
+           && (!isMultiValueEdit || m_values == values
+               || (m_values.size() == 1 && m_values.front().isEmpty() && values.empty()))) {
             return false;
         }
         if(status() == Changed) {
@@ -241,8 +265,8 @@ bool TagEditorItem::setValue(const QString& newValue)
     m_valueChanged   = true;
     m_multipleValues = false;
 
-    if(status() != TagEditorItem::Added) {
-        setStatus(TagEditorItem::Changed);
+    if(status() != Added) {
+        setStatus(Changed);
     }
 
     return true;
@@ -265,11 +289,16 @@ bool TagEditorItem::setTitle(const QString& title)
     m_changedTitle = title;
     m_titleChanged = true;
 
-    if(status() != TagEditorItem::Added) {
-        setStatus(TagEditorItem::Changed);
+    if(status() != Added) {
+        setStatus(Changed);
     }
 
     return true;
+}
+
+void TagEditorItem::setFieldMultiValue(bool multivalue)
+{
+    m_field.multivalue = multivalue;
 }
 
 void TagEditorItem::setMultipleValues(bool multiple)

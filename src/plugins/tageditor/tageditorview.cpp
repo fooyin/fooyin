@@ -23,7 +23,6 @@
 #include "tageditormodel.h"
 
 #include <gui/guiconstants.h>
-#include <gui/widgets/multilinedelegate.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -36,6 +35,7 @@
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QTimer>
 
 using namespace Qt::StringLiterals;
 
@@ -43,7 +43,7 @@ namespace Fooyin::TagEditor {
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{actionManager, parent}
     , m_actionManager{actionManager}
-    , m_editTrigger{EditTrigger::AllEditTriggers}
+    , m_editTrigger{AllEditTriggers}
     , m_context{new WidgetContext(this, Context{"Context.TagEditor"}, this)}
     , m_copyAction{new QAction(tr("Copy"), this)}
     , m_pasteAction{new QAction(tr("Paste"), this)}
@@ -54,7 +54,7 @@ TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     actionManager->addContextObject(m_context);
 
     setTextElideMode(Qt::ElideRight);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionBehavior(SelectRows);
     setMouseTracking(true);
     horizontalHeader()->setStretchLastSection(true);
     horizontalHeader()->setSectionsClickable(false);
@@ -64,7 +64,7 @@ TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
 void TagEditorView::setTagEditTriggers(EditTriggers triggers)
 {
     m_editTrigger = triggers;
-    setEditTriggers(triggers);
+    setEditTriggers(triggers & EditKeyPressed);
 }
 
 void TagEditorView::setupActions()
@@ -145,17 +145,6 @@ void TagEditorView::mousePressEvent(QMouseEvent* event)
 {
     const QModelIndex index = indexAt(event->pos());
 
-    if(event->button() == Qt::RightButton || (index.isValid() && index.row() == m_ratingRow)) {
-        // Don't start editing on right-click
-        setEditTriggers(QAbstractItemView::NoEditTriggers);
-    }
-    else if(index.column() == 1) {
-        setEditTriggers(m_editTrigger | QAbstractItemView::CurrentChanged);
-    }
-    else {
-        setEditTriggers(m_editTrigger);
-    }
-
     if(event->button() == Qt::LeftButton) {
         if(!index.isValid() || index.column() != 1) {
             ExtendableTableView::mousePressEvent(event);
@@ -175,6 +164,28 @@ void TagEditorView::mousePressEvent(QMouseEvent* event)
     }
 
     ExtendableTableView::mousePressEvent(event);
+}
+
+void TagEditorView::mouseReleaseEvent(QMouseEvent* event)
+{
+    const QModelIndex index = indexAt(event->pos());
+
+    ExtendableTableView::mouseReleaseEvent(event);
+
+    if(event->button() == Qt::LeftButton) {
+        reopenEditor(index);
+    }
+}
+
+void TagEditorView::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    const QModelIndex index = indexAt(event->pos());
+
+    ExtendableTableView::mouseDoubleClickEvent(event);
+
+    if(event->button() == Qt::LeftButton && index.isValid() && index.row() != m_ratingRow) {
+        reopenEditor(index);
+    }
 }
 
 void TagEditorView::keyPressEvent(QKeyEvent* event)
@@ -204,6 +215,20 @@ void TagEditorView::leaveEvent(QEvent* event)
     }
 
     ExtendableTableView::leaveEvent(event);
+}
+
+void TagEditorView::reopenEditor(const QModelIndex& index)
+{
+    if(m_editTrigger == NoEditTriggers || !index.isValid() || index.row() == m_ratingRow
+       || (model()->flags(index) & Qt::ItemIsEditable) == 0) {
+        return;
+    }
+
+    QTimer::singleShot(0, this, [this, index]() {
+        if(state() != EditingState && currentIndex() == index) {
+            edit(index);
+        }
+    });
 }
 
 void TagEditorView::copySelection()

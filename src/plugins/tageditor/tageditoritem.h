@@ -31,7 +31,8 @@ public:
     enum Role
     {
         IsDefault = Qt::UserRole,
-        Title
+        Title,
+        ScriptField
     };
 
     TagEditorItem();
@@ -64,6 +65,7 @@ public:
     bool setValue(const QString& newValue);
 
     bool setTitle(const QString& title);
+    void setFieldMultiValue(bool multivalue);
     void setMultipleValues(bool multiple);
     void setSplitTrackValues(bool enabled);
 

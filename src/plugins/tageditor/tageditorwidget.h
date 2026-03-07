@@ -37,6 +37,7 @@ class WidgetContext;
 
 namespace TagEditor {
 class TagEditorFieldRegistry;
+class TagEditorAutocompleteDelegate;
 class TagEditorModel;
 class TagEditorView;
 
@@ -75,6 +76,7 @@ private:
     TagEditorModel* m_model;
 
     std::set<int> m_delegateRows;
+    TagEditorAutocompleteDelegate* m_autocompleteDelegate;
     MultiLineEditDelegate* m_multilineDelegate;
     StarDelegate* m_starDelegate;
 
