@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fycore_export.h"
 
 #include <core/stringpool.h>
 
@@ -31,11 +31,9 @@ namespace Fooyin {
  * instances intern repeated strings through it. Standalone tracks may also own
  * their own store when no library is involved.
  */
-class FYUTILS_EXPORT TrackMetadataStore
+class FYCORE_EXPORT TrackMetadataStore
 {
 public:
-    TrackMetadataStore() = default;
-
     [[nodiscard]] StringPool& stringPool()
     {
         return m_stringPool;
