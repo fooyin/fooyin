@@ -217,8 +217,8 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, QWidget* pare
     appearancePageLayout->addWidget(m_coloursGroup);
     appearancePageLayout->addStretch();
 
-    m_tabs->addTab(generalPage, tr("General"));
     m_tabs->addTab(appearancePage, tr("Appearance"));
+    m_tabs->addTab(generalPage, tr("General"));
 
     auto* layout = contentLayout();
     layout->addWidget(m_tabs);

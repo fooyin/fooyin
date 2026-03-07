@@ -245,9 +245,14 @@ LyricsWidget::ConfigData LyricsWidget::defaultConfig() const
     config.showScrollbar  = m_settings->fileValue(Settings::ShowScrollbar, config.showScrollbar).toBool();
     config.alignment      = m_settings->fileValue(Settings::Alignment, config.alignment).toInt();
     config.lineSpacing    = m_settings->fileValue(Settings::LineSpacing, config.lineSpacing).toInt();
-    config.margins  = m_settings->fileValue(Settings::Margins, QVariant::fromValue(config.margins)).value<QMargins>();
-    config.colours  = m_settings->fileValue(Settings::Colours, config.colours);
-    config.lineFont = m_settings->fileValue(Settings::LineFont, config.lineFont).toString();
+
+    const QVariant margins = m_settings->fileValue(Settings::Margins);
+    if(margins.isValid() && margins.canConvert<QMargins>()) {
+        config.margins = margins.value<QMargins>();
+    }
+
+    config.colours      = m_settings->fileValue(Settings::Colours, config.colours);
+    config.lineFont     = m_settings->fileValue(Settings::LineFont, config.lineFont).toString();
     config.wordLineFont = m_settings->fileValue(Settings::WordLineFont, config.wordLineFont).toString();
     config.wordFont     = m_settings->fileValue(Settings::WordFont, config.wordFont).toString();
 
