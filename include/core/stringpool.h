@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fycore_export.h"
 
 #include <QStringList>
 
@@ -41,7 +41,7 @@ class StringPoolPrivate;
  * All public methods are internally synchronized. Returned ids and list refs
  * remain valid for the process lifetime.
  */
-class FYUTILS_EXPORT StringPool
+class FYCORE_EXPORT StringPool
 {
 public:
     using StringId = uint32_t;
