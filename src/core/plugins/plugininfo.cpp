@@ -49,7 +49,7 @@ PluginInfo::PluginInfo(QString filepath, const QJsonObject& allMetadata)
 void PluginInfo::load()
 {
     if(!m_loader.load()) {
-        m_error  = u"Plugin (%1) couldn't be loaded: %2"_s.arg(m_name, m_error);
+        m_error  = u"Plugin (%1) couldn't be loaded: %2"_s.arg(m_name, m_loader.errorString());
         m_status = Status::Invalid;
         return;
     }
