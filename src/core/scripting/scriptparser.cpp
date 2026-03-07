@@ -281,6 +281,7 @@ public:
     ScriptResult compareDates(const Expression& exp, const auto& tracks, const auto& comparator);
     ScriptResult compareDateRange(const Expression& exp, const auto& tracks);
     Expression checkOperator(const Expression& expr);
+    Expression normaliseQueryField(Expression field) const;
 
     void reset();
 
@@ -625,14 +626,7 @@ Expression ScriptParserPrivate::notKeyword(const Expression& key)
 
             Expression equals{Expr::Equals};
             ExpressionList equalsArgs;
-            Expression field{key};
-            if(field.type == Expr::Literal) {
-                field.type = Expr::Variable;
-                field.resolvedKind
-                    = static_cast<uint16_t>(m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value))
-                                                       : VariableKind::Generic);
-            }
-            equalsArgs.emplace_back(field);
+            equalsArgs.emplace_back(normaliseQueryField(key));
 
             const Expression argExpr = expression();
             if(argExpr.type != Expr::Null) {
@@ -680,13 +674,7 @@ Expression ScriptParserPrivate::relationalOperator(const Expression& key, Expr::
 
     advance();
 
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type         = Expr::Variable;
-        field.resolvedKind = static_cast<uint16_t>(
-            m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value)) : VariableKind::Generic);
-    }
-    args.emplace_back(field);
+    args.emplace_back(normaliseQueryField(key));
 
     if(equalsType != Expr::Null && match(TokenType::TokEquals)) {
         expr.type = equalsType;
@@ -710,13 +698,7 @@ Expression ScriptParserPrivate::metadataKeyword(const Expression& key, Expr::Typ
 
     advance();
 
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type         = Expr::Variable;
-        field.resolvedKind = static_cast<uint16_t>(
-            m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value)) : VariableKind::Generic);
-    }
-    args.emplace_back(field);
+    args.emplace_back(normaliseQueryField(key));
 
     expr.value = args;
     return expr;
@@ -729,13 +711,7 @@ Expression ScriptParserPrivate::timeKeyword(const Expression& key, Expr::Type ty
 
     advance();
 
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type         = Expr::Variable;
-        field.resolvedKind = static_cast<uint16_t>(
-            m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value)) : VariableKind::Generic);
-    }
-    args.emplace_back(field);
+    args.emplace_back(normaliseQueryField(key));
 
     if(!currentToken(TokenType::TokEos)) {
         Expression argExpr   = expression();
@@ -758,13 +734,7 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
 
     advance();
 
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type         = Expr::Variable;
-        field.resolvedKind = static_cast<uint16_t>(
-            m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value)) : VariableKind::Generic);
-    }
-    args.emplace_back(field);
+    args.emplace_back(normaliseQueryField(key));
 
     if(currentToken(TokenType::TokLast)) {
         advance();
@@ -832,6 +802,21 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
 
     expr.value = args;
     return expr;
+}
+
+Expression ScriptParserPrivate::normaliseQueryField(Expression field) const
+{
+    if(field.type != Expr::Literal) {
+        return field;
+    }
+
+    auto& value = std::get<QString>(field.value);
+    value       = value.trimmed().toUpper();
+    field.type  = Expr::Variable;
+    field.resolvedKind
+        = static_cast<uint16_t>(m_registry ? m_registry->resolveVariableKind(value) : VariableKind::Generic);
+
+    return field;
 }
 
 Expression ScriptParserPrivate::sort()
@@ -1684,10 +1669,7 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
         if(sort.expressions.size() == 1) {
             auto& sortExpr = sort.expressions.front();
             if(sortExpr.type == Expr::Literal) {
-                sortExpr.type         = Expr::Variable;
-                sortExpr.resolvedKind = static_cast<uint16_t>(
-                    m_registry ? m_registry->resolveVariableKind(std::get<QString>(sortExpr.value))
-                               : VariableKind::Generic);
+                sortExpr = normaliseQueryField(sortExpr);
             }
         }
         if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
