@@ -24,6 +24,8 @@
 
 #include <QDateTime>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Testing {
 class ScriptParserTest : public ::testing::Test
 {
@@ -53,6 +55,7 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"01", m_parser.evaluate(QStringLiteral("$num(1,2)")));
     EXPECT_EQ(u"04", m_parser.evaluate(QStringLiteral("$num(04,2)")));
     EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$num()")));
+    EXPECT_EQ(u"01", m_parser.evaluate(QStringLiteral("[$num(1,2)]")));
     EXPECT_EQ(u"A replace cesc", m_parser.evaluate(QStringLiteral("$replace(A replace test,t,c)")));
     EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$replace()")));
     EXPECT_EQ(u"test", m_parser.evaluate(QStringLiteral("$slice(A slice test,8)")));
@@ -68,6 +71,10 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"est", m_parser.evaluate(QStringLiteral("$right(Right test,3)")));
     EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$right()")));
     EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$right(1,2,3,4,5)")));
+    EXPECT_EQ(u"a  ", m_parser.evaluate(QStringLiteral("[$pad(a,3)]")));
+    EXPECT_EQ(u"  a", m_parser.evaluate(QStringLiteral("[$padright(a,3)]")));
+    EXPECT_EQ(u"x", m_parser.evaluate(QStringLiteral("[$if2(,x)]")));
+    EXPECT_EQ(u"          X", m_parser.evaluate(QStringLiteral("$padright(,$mul($sub(3,1),5))X")));
     EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$if($stricmp(cmp,cMp),true,false)")));
     EXPECT_EQ(u"false", m_parser.evaluate(QStringLiteral("$if($strcmp(cmp,cMp),true,false)")));
 }
@@ -79,6 +86,11 @@ TEST_F(ScriptParserTest, MathTest)
     EXPECT_EQ(99, m_parser.evaluate(QStringLiteral("$mul(3,33)")).toInt());
     EXPECT_EQ(11, m_parser.evaluate(QStringLiteral("$div(33,3)")).toInt());
     EXPECT_EQ(1, m_parser.evaluate(QStringLiteral("$mod(10,3)")).toInt());
+    EXPECT_EQ(u"3", m_parser.evaluate(QStringLiteral("[$add(1,2)]")));
+    EXPECT_EQ(u"2", m_parser.evaluate(QStringLiteral("[$sub(10,8)]")));
+    EXPECT_EQ(u"99", m_parser.evaluate(QStringLiteral("[$mul(3,33)]")));
+    EXPECT_EQ(u"11", m_parser.evaluate(QStringLiteral("[$div(33,3)]")));
+    EXPECT_EQ(u"1", m_parser.evaluate(QStringLiteral("[$mod(10,3)]")));
     EXPECT_EQ(2, m_parser.evaluate(QStringLiteral("$min(3,2,3,9,23,100,4)")).toInt());
     EXPECT_EQ(100, m_parser.evaluate(QStringLiteral("$max(3,2,3,9,23,100,4)")).toInt());
 }
@@ -88,6 +100,11 @@ TEST_F(ScriptParserTest, ConditionalTest)
     EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$ifequal(1,1,true,false)")));
     EXPECT_EQ(u"false", m_parser.evaluate(QStringLiteral("$ifgreater(23,32,true,false)")));
     EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$iflonger(aaa,2,true,false)")));
+    EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("[$if(1,true,false)]")));
+    EXPECT_EQ(u"first", m_parser.evaluate(QStringLiteral("[$if2(first,second)]")));
+    EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("[$ifequal(1,1,true,false)]")));
+    EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("[$ifgreater(5,3,true,false)]")));
+    EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("[$iflonger(aaa,2,true,false)]")));
 }
 
 TEST_F(ScriptParserTest, MetadataTest)
@@ -96,10 +113,12 @@ TEST_F(ScriptParserTest, MetadataTest)
     track.setTitle(QStringLiteral("A Test"));
 
     EXPECT_EQ(u"A Test", m_parser.evaluate(QStringLiteral("%title%"), track));
+    EXPECT_EQ(u"A Test", m_parser.evaluate(QStringLiteral("[%title%]"), track));
     EXPECT_EQ(u"A Test", m_parser.evaluate(QStringLiteral("%title%[ - %album%]"), track));
 
     track.setAlbum(QStringLiteral("A Test Album"));
 
+    EXPECT_EQ(u"A Test Album", m_parser.evaluate(QStringLiteral("[%album%]"), track));
     EXPECT_EQ(u"A Test - A Test Album", m_parser.evaluate(QStringLiteral("%title%[ - %album%]"), track));
 
     track.setGenres({QStringLiteral("Pop"), QStringLiteral("Rock")});
@@ -112,6 +131,12 @@ TEST_F(ScriptParserTest, MetadataTest)
     EXPECT_EQ(u"Pop, Rock - Me, You", m_parser.evaluate(QStringLiteral("%genre% - %artist%"), track));
     EXPECT_EQ(u"Pop - Me\037Rock - Me\037Pop - You\037Rock - You",
               m_parser.evaluate(QStringLiteral("%<genre>% - %<artist>%"), track));
+
+    track.setTrackNumber(u"7"_s);
+    EXPECT_EQ(u"7", m_parser.evaluate(QStringLiteral("[%track%]"), track));
+    EXPECT_EQ(u"07", m_parser.evaluate(QStringLiteral("$num(%track%,2)"), track));
+    EXPECT_EQ(u"07", m_parser.evaluate(QStringLiteral("[$num(%track%,2)]"), track));
+    EXPECT_EQ(u"07.  ", m_parser.evaluate(QStringLiteral("[$num(%track%,2).  ]"), track));
 
     EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("[%disc% - %track%]"), track));
 }

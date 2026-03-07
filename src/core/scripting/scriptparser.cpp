@@ -988,7 +988,8 @@ ScriptResult ScriptParserPrivate::evalFunction(const Expression& exp, const auto
 {
     const auto& func = std::get<FuncValue>(exp.value);
     auto toResult    = [](QString value) {
-        return ScriptResult{.value = std::move(value), .cond = !value.isEmpty()};
+        const bool cond = !value.isEmpty();
+        return ScriptResult{.value = std::move(value), .cond = cond};
     };
 
     switch(func.kind) {
@@ -1182,7 +1183,7 @@ ScriptResult ScriptParserPrivate::evalFunctionArg(const Expression& exp, const a
 {
     const auto& arg = std::get<ExpressionList>(exp.value);
     if(arg.empty()) {
-        return {};
+        return {.value = QString{}, .cond = false};
     }
 
     if(arg.size() == 1) {
