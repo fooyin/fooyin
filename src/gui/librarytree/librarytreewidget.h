@@ -93,9 +93,11 @@ public:
         QSize iconSize{36, 36};
     };
 
+    [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;
     [[nodiscard]] const ConfigData& currentConfig() const;
     void saveDefaults(const ConfigData& config) const;
+    void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
 
 protected:

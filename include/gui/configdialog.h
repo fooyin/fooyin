@@ -31,10 +31,11 @@ namespace Fooyin {
  *
  * ConfigDialog provides a shared button layout for applying the current config to
  * the active widget instance, saving the current values as defaults for new
- * instances, and restoring the editor to those default values.
+ * instances, and restoring the editor to either saved defaults or the original
+ * factory defaults.
  *
  * Subclasses are responsible for building their controls in @fn contentLayout()
- * and implementing the three actions below.
+ * and implementing the four actions below.
  */
 class FYGUI_EXPORT ConfigDialog : public QDialog
 {
@@ -53,9 +54,17 @@ public:
      */
     virtual void saveDefaults() = 0;
     /*!
-     * Replaces the dialog's current values with the stored defaults.
+     * Replaces the dialog's current values with the saved defaults for new instances.
      */
-    virtual void restoreDefaults() = 0;
+    virtual void restoreSavedDefaults() = 0;
+    /*!
+     * Replaces the dialog's current values with the application factory defaults.
+     */
+    virtual void restoreFactoryDefaults() = 0;
+    /*!
+     * Clears any user-saved defaults so future instances fall back to factory defaults.
+     */
+    virtual void clearSavedDefaults() = 0;
 
 protected:
     /*!
@@ -72,6 +81,7 @@ private:
  *
  * WidgetType is expected to provide:
  * - `ConfigType defaultConfig() const`
+ * - `ConfigType factoryConfig() const`
  * - `const ConfigType& currentConfig() const`
  * - `void applyConfig(const ConfigType&)`
  * - `void saveDefaults(const ConfigType&) const`
@@ -99,9 +109,20 @@ public:
         m_widget->saveDefaults(config());
     }
 
-    void restoreDefaults() override
+    void restoreSavedDefaults() override
     {
         setConfig(m_widget->defaultConfig());
+    }
+
+    void restoreFactoryDefaults() override
+    {
+        setConfig(m_widget->factoryConfig());
+    }
+
+    void clearSavedDefaults() override
+    {
+        m_widget->clearSavedDefaults();
+        setConfig(m_widget->factoryConfig());
     }
 
 protected:

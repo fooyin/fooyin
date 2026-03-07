@@ -236,19 +236,39 @@ void LyricsWidget::loadLayoutData(const QJsonObject& layout)
 
 LyricsWidget::ConfigData LyricsWidget::defaultConfig() const
 {
+    auto config{factoryConfig()};
+
+    config.seekOnClick    = m_settings->fileValue(Settings::SeekOnClick, config.seekOnClick).toBool();
+    config.noLyricsScript = m_settings->fileValue(Settings::NoLyricsScript, config.noLyricsScript).toString();
+    config.scrollDuration = m_settings->fileValue(Settings::ScrollDuration, config.scrollDuration).toInt();
+    config.scrollMode     = m_settings->fileValue(Settings::ScrollMode, config.scrollMode).toInt();
+    config.showScrollbar  = m_settings->fileValue(Settings::ShowScrollbar, config.showScrollbar).toBool();
+    config.alignment      = m_settings->fileValue(Settings::Alignment, config.alignment).toInt();
+    config.lineSpacing    = m_settings->fileValue(Settings::LineSpacing, config.lineSpacing).toInt();
+    config.margins  = m_settings->fileValue(Settings::Margins, QVariant::fromValue(config.margins)).value<QMargins>();
+    config.colours  = m_settings->fileValue(Settings::Colours, config.colours);
+    config.lineFont = m_settings->fileValue(Settings::LineFont, config.lineFont).toString();
+    config.wordLineFont = m_settings->fileValue(Settings::WordLineFont, config.wordLineFont).toString();
+    config.wordFont     = m_settings->fileValue(Settings::WordFont, config.wordFont).toString();
+
+    return config;
+}
+
+LyricsWidget::ConfigData LyricsWidget::factoryConfig() const
+{
     return {
-        .seekOnClick    = m_settings->fileValue(Settings::SeekOnClick, true).toBool(),
-        .noLyricsScript = m_settings->fileValue(Settings::NoLyricsScript, defaultNoLyricsScript()).toString(),
-        .scrollDuration = m_settings->fileValue(Settings::ScrollDuration, 500).toInt(),
-        .scrollMode     = m_settings->fileValue(Settings::ScrollMode, static_cast<int>(ScrollMode::Synced)).toInt(),
-        .showScrollbar  = m_settings->fileValue(Settings::ShowScrollbar, true).toBool(),
-        .alignment      = m_settings->fileValue(Settings::Alignment, static_cast<int>(Qt::AlignCenter)).toInt(),
-        .lineSpacing    = m_settings->fileValue(Settings::LineSpacing, 5).toInt(),
-        .margins = m_settings->fileValue(Settings::Margins, QVariant::fromValue(Defaults::margins())).value<QMargins>(),
-        .colours = m_settings->fileValue(Settings::Colours),
-        .lineFont     = m_settings->fileValue(Settings::LineFont).toString(),
-        .wordLineFont = m_settings->fileValue(Settings::WordLineFont).toString(),
-        .wordFont     = m_settings->fileValue(Settings::WordFont).toString(),
+        .seekOnClick    = true,
+        .noLyricsScript = defaultNoLyricsScript(),
+        .scrollDuration = 500,
+        .scrollMode     = static_cast<int>(ScrollMode::Synced),
+        .showScrollbar  = true,
+        .alignment      = static_cast<int>(Qt::AlignCenter),
+        .lineSpacing    = 5,
+        .margins        = Defaults::margins(),
+        .colours        = QVariant{},
+        .lineFont       = {},
+        .wordLineFont   = {},
+        .wordFont       = {},
     };
 }
 
@@ -288,6 +308,22 @@ void LyricsWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(Settings::LineFont, validated.lineFont);
     m_settings->fileSet(Settings::WordLineFont, validated.wordLineFont);
     m_settings->fileSet(Settings::WordFont, validated.wordFont);
+}
+
+void LyricsWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(Settings::SeekOnClick);
+    m_settings->fileRemove(Settings::NoLyricsScript);
+    m_settings->fileRemove(Settings::ScrollDuration);
+    m_settings->fileRemove(Settings::ScrollMode);
+    m_settings->fileRemove(Settings::ShowScrollbar);
+    m_settings->fileRemove(Settings::Alignment);
+    m_settings->fileRemove(Settings::LineSpacing);
+    m_settings->fileRemove(Settings::Margins);
+    m_settings->fileRemove(Settings::Colours);
+    m_settings->fileRemove(Settings::LineFont);
+    m_settings->fileRemove(Settings::WordLineFont);
+    m_settings->fileRemove(Settings::WordFont);
 }
 
 void LyricsWidget::applyConfig(const ConfigData& config)

@@ -331,9 +331,23 @@ void WaveBarConfigDialog::saveDefaults()
     applyGlobalCacheConfig();
 }
 
-void WaveBarConfigDialog::restoreDefaults()
+void WaveBarConfigDialog::restoreSavedDefaults()
 {
-    WidgetConfigDialog::restoreDefaults();
+    WidgetConfigDialog::restoreSavedDefaults();
+    setGlobalCacheConfig(widget()->globalNumSamples());
+    updateCacheSize();
+}
+
+void WaveBarConfigDialog::restoreFactoryDefaults()
+{
+    WidgetConfigDialog::restoreFactoryDefaults();
+    setGlobalCacheConfig(2048);
+    updateCacheSize();
+}
+
+void WaveBarConfigDialog::clearSavedDefaults()
+{
+    WidgetConfigDialog::clearSavedDefaults();
     setGlobalCacheConfig(2048);
     updateCacheSize();
 }

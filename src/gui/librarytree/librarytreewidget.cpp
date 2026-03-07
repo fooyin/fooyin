@@ -832,23 +832,43 @@ void LibraryTreeWidget::restoreState(const QByteArray& state)
 
 LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
 {
-    const auto* settings = m_settings;
+    auto config{factoryConfig()};
+
+    config.doubleClickAction = m_settings->fileValue(LibTreeDoubleClickKey, config.doubleClickAction).toInt();
+    config.middleClickAction = m_settings->fileValue(LibTreeMiddleClickKey, config.middleClickAction).toInt();
+    config.sendPlayback      = m_settings->fileValue(LibTreeSendPlaybackKey, config.sendPlayback).toBool();
+    config.playlistEnabled   = m_settings->fileValue(LibTreePlaylistEnabledKey, config.playlistEnabled).toBool();
+    config.autoSwitch        = m_settings->fileValue(LibTreeAutoSwitchKey, config.autoSwitch).toBool();
+    config.keepAlive         = m_settings->fileValue(LibTreeKeepAliveKey, config.keepAlive).toBool();
+    config.playlistName      = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
+    config.restoreState      = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
+    config.animated          = m_settings->fileValue(LibTreeAnimatedKey, config.animated).toBool();
+    config.showHeader        = m_settings->fileValue(LibTreeHeaderKey, config.showHeader).toBool();
+    config.showScrollbar     = m_settings->fileValue(LibTreeScrollBarKey, config.showScrollbar).toBool();
+    config.alternatingRows   = m_settings->fileValue(LibTreeAltColoursKey, config.alternatingRows).toBool();
+    config.rowHeight         = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
+    config.iconSize          = m_settings->value<LibTreeIconSize>().toSize();
+
+    return config;
+}
+
+LibraryTreeWidget::ConfigData LibraryTreeWidget::factoryConfig() const
+{
     return {
-        .doubleClickAction = settings->fileValue(LibTreeDoubleClickKey, 0).toInt(),
-        .middleClickAction = settings->fileValue(LibTreeMiddleClickKey, 0).toInt(),
-        .sendPlayback      = settings->fileValue(LibTreeSendPlaybackKey, true).toBool(),
-        .playlistEnabled   = settings->fileValue(LibTreePlaylistEnabledKey, false).toBool(),
-        .autoSwitch        = settings->fileValue(LibTreeAutoSwitchKey, true).toBool(),
-        .keepAlive         = settings->fileValue(LibTreeKeepAliveKey, false).toBool(),
-        .playlistName
-        = settings->fileValue(LibTreeAutoPlaylistKey, LibraryTreeController::defaultPlaylistName()).toString(),
-        .restoreState    = settings->fileValue(LibTreeRestoreStateKey, true).toBool(),
-        .animated        = settings->fileValue(LibTreeAnimatedKey, true).toBool(),
-        .showHeader      = settings->fileValue(LibTreeHeaderKey, true).toBool(),
-        .showScrollbar   = settings->fileValue(LibTreeScrollBarKey, true).toBool(),
-        .alternatingRows = settings->fileValue(LibTreeAltColoursKey, false).toBool(),
-        .rowHeight       = settings->fileValue(LibTreeRowHeightKey, 0).toInt(),
-        .iconSize        = settings->value<LibTreeIconSize>().toSize(),
+        .doubleClickAction = 0,
+        .middleClickAction = 0,
+        .sendPlayback      = true,
+        .playlistEnabled   = false,
+        .autoSwitch        = true,
+        .keepAlive         = false,
+        .playlistName      = LibraryTreeController::defaultPlaylistName(),
+        .restoreState      = true,
+        .animated          = true,
+        .showHeader        = true,
+        .showScrollbar     = true,
+        .alternatingRows   = false,
+        .rowHeight         = 0,
+        .iconSize          = QSize{36, 36},
     };
 }
 
@@ -859,21 +879,38 @@ const LibraryTreeWidget::ConfigData& LibraryTreeWidget::currentConfig() const
 
 void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
 {
-    auto* settings = m_settings;
-    settings->fileSet(LibTreeDoubleClickKey, config.doubleClickAction);
-    settings->fileSet(LibTreeMiddleClickKey, config.middleClickAction);
-    settings->fileSet(LibTreeSendPlaybackKey, config.sendPlayback);
-    settings->fileSet(LibTreePlaylistEnabledKey, config.playlistEnabled);
-    settings->fileSet(LibTreeAutoSwitchKey, config.autoSwitch);
-    settings->fileSet(LibTreeKeepAliveKey, config.keepAlive);
-    settings->fileSet(LibTreeAutoPlaylistKey, config.playlistName);
-    settings->fileSet(LibTreeRestoreStateKey, config.restoreState);
-    settings->fileSet(LibTreeAnimatedKey, config.animated);
-    settings->fileSet(LibTreeHeaderKey, config.showHeader);
-    settings->fileSet(LibTreeScrollBarKey, config.showScrollbar);
-    settings->fileSet(LibTreeAltColoursKey, config.alternatingRows);
-    settings->fileSet(LibTreeRowHeightKey, config.rowHeight);
-    settings->set<LibTreeIconSize>(config.iconSize);
+    m_settings->fileSet(LibTreeDoubleClickKey, config.doubleClickAction);
+    m_settings->fileSet(LibTreeMiddleClickKey, config.middleClickAction);
+    m_settings->fileSet(LibTreeSendPlaybackKey, config.sendPlayback);
+    m_settings->fileSet(LibTreePlaylistEnabledKey, config.playlistEnabled);
+    m_settings->fileSet(LibTreeAutoSwitchKey, config.autoSwitch);
+    m_settings->fileSet(LibTreeKeepAliveKey, config.keepAlive);
+    m_settings->fileSet(LibTreeAutoPlaylistKey, config.playlistName);
+    m_settings->fileSet(LibTreeRestoreStateKey, config.restoreState);
+    m_settings->fileSet(LibTreeAnimatedKey, config.animated);
+    m_settings->fileSet(LibTreeHeaderKey, config.showHeader);
+    m_settings->fileSet(LibTreeScrollBarKey, config.showScrollbar);
+    m_settings->fileSet(LibTreeAltColoursKey, config.alternatingRows);
+    m_settings->fileSet(LibTreeRowHeightKey, config.rowHeight);
+    m_settings->set<LibTreeIconSize>(config.iconSize);
+}
+
+void LibraryTreeWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(LibTreeDoubleClickKey);
+    m_settings->fileRemove(LibTreeMiddleClickKey);
+    m_settings->fileRemove(LibTreeSendPlaybackKey);
+    m_settings->fileRemove(LibTreePlaylistEnabledKey);
+    m_settings->fileRemove(LibTreeAutoSwitchKey);
+    m_settings->fileRemove(LibTreeKeepAliveKey);
+    m_settings->fileRemove(LibTreeAutoPlaylistKey);
+    m_settings->fileRemove(LibTreeRestoreStateKey);
+    m_settings->fileRemove(LibTreeAnimatedKey);
+    m_settings->fileRemove(LibTreeHeaderKey);
+    m_settings->fileRemove(LibTreeScrollBarKey);
+    m_settings->fileRemove(LibTreeAltColoursKey);
+    m_settings->fileRemove(LibTreeRowHeightKey);
+    m_settings->reset<LibTreeIconSize>();
 }
 
 void LibraryTreeWidget::applyConfig(const ConfigData& config)
@@ -881,7 +918,7 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
     m_config = config;
 
     if(!m_config.iconSize.isValid()) {
-        m_config.iconSize = defaultConfig().iconSize;
+        m_config.iconSize = factoryConfig().iconSize;
     }
 
     m_config.rowHeight = std::max(m_config.rowHeight, 0);
@@ -950,7 +987,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
     }
 
     if(!config.iconSize.isValid()) {
-        config.iconSize = defaultConfig().iconSize;
+        config.iconSize = factoryConfig().iconSize;
     }
 
     config.rowHeight = std::max(config.rowHeight, 0);

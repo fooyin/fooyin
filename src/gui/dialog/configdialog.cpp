@@ -22,6 +22,7 @@
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QMenu>
 #include <QPushButton>
 
 namespace Fooyin {
@@ -36,10 +37,24 @@ ConfigDialog::ConfigDialog(const QString& title, QWidget* parent)
     mainLayout->addLayout(m_contentLayout);
 
     auto* defaultsButtons = new QDialogButtonBox(this);
+
+    auto* restoreDefaultsButton
+        = defaultsButtons->addButton(tr("Restore defaults"), QDialogButtonBox::ButtonRole::ActionRole);
     auto* saveDefaultsButton
         = defaultsButtons->addButton(tr("Save as default"), QDialogButtonBox::ButtonRole::ActionRole);
-    auto* resetDefaultsButton
-        = defaultsButtons->addButton(tr("Reset to default"), QDialogButtonBox::ButtonRole::ActionRole);
+
+    auto* restoreDefaultsMenu = new QMenu(restoreDefaultsButton);
+
+    auto* restoreSavedDefaultsAction   = new QAction(tr("Restore saved defaults"), restoreDefaultsMenu);
+    auto* restoreFactoryDefaultsAction = new QAction(tr("Restore factory defaults"), restoreDefaultsMenu);
+    auto* clearSavedDefaultsAction     = new QAction(tr("Clear saved defaults"), restoreDefaultsMenu);
+
+    restoreDefaultsMenu->addAction(restoreSavedDefaultsAction);
+    restoreDefaultsMenu->addAction(restoreFactoryDefaultsAction);
+    restoreDefaultsMenu->addSeparator();
+    restoreDefaultsMenu->addAction(clearSavedDefaultsAction);
+
+    restoreDefaultsButton->setMenu(restoreDefaultsMenu);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::StandardButton::Ok | QDialogButtonBox::StandardButton::Apply
                                              | QDialogButtonBox::StandardButton::Cancel,
@@ -49,8 +64,10 @@ ConfigDialog::ConfigDialog(const QString& title, QWidget* parent)
         okButton->setDefault(true);
     }
 
+    QObject::connect(restoreSavedDefaultsAction, &QAction::triggered, this, &ConfigDialog::restoreSavedDefaults);
+    QObject::connect(restoreFactoryDefaultsAction, &QAction::triggered, this, &ConfigDialog::restoreFactoryDefaults);
+    QObject::connect(clearSavedDefaultsAction, &QAction::triggered, this, &ConfigDialog::clearSavedDefaults);
     QObject::connect(saveDefaultsButton, &QPushButton::clicked, this, &ConfigDialog::saveDefaults);
-    QObject::connect(resetDefaultsButton, &QPushButton::clicked, this, &ConfigDialog::restoreDefaults);
     QObject::connect(buttons->button(QDialogButtonBox::StandardButton::Apply), &QPushButton::clicked, this,
                      &ConfigDialog::apply);
     QObject::connect(buttons, &QDialogButtonBox::accepted, this, [this]() {

@@ -769,18 +769,37 @@ void DirBrowser::loadLayoutData(const QJsonObject& layout)
 
 DirBrowser::ConfigData DirBrowser::defaultConfig() const
 {
+    auto config{factoryConfig()};
+
+    config.doubleClickAction  = m_settings->fileValue(DirBrowserDoubleClickKey, config.doubleClickAction).toInt();
+    config.middleClickAction  = m_settings->fileValue(DirBrowserMiddleClickKey, config.middleClickAction).toInt();
+    config.sendPlayback       = m_settings->fileValue(DirBrowserSendPlaybackKey, config.sendPlayback).toBool();
+    config.showIcons          = m_settings->fileValue(DirBrowserIconsKey, config.showIcons).toBool();
+    config.indentList         = m_settings->fileValue(DirBrowserListIndentKey, config.indentList).toBool();
+    config.showHorizScrollbar = m_settings->fileValue(DirBrowserShowHorizScrollKey, config.showHorizScrollbar).toBool();
+    config.mode = static_cast<Mode>(m_settings->fileValue(DirBrowserModeKey, static_cast<int>(config.mode)).toInt());
+    config.showControls = m_settings->fileValue(DirBrowserControlsKey, config.showControls).toBool();
+    config.showLocation = m_settings->fileValue(DirBrowserLocationKey, config.showLocation).toBool();
+    config.showSymLinks = m_settings->fileValue(DirBrowserShowSymLinksKey, config.showSymLinks).toBool();
+    config.showHidden   = m_settings->fileValue(DirBrowserShowHiddenKey, config.showHidden).toBool();
+
+    return config;
+}
+
+DirBrowser::ConfigData DirBrowser::factoryConfig() const
+{
     return {
-        .doubleClickAction  = m_settings->fileValue(DirBrowserDoubleClickKey, 5).toInt(),
-        .middleClickAction  = m_settings->fileValue(DirBrowserMiddleClickKey, 0).toInt(),
-        .sendPlayback       = m_settings->fileValue(DirBrowserSendPlaybackKey, true).toBool(),
-        .showIcons          = m_settings->fileValue(DirBrowserIconsKey, true).toBool(),
-        .indentList         = m_settings->fileValue(DirBrowserListIndentKey, true).toBool(),
-        .showHorizScrollbar = m_settings->fileValue(DirBrowserShowHorizScrollKey, true).toBool(),
-        .mode               = static_cast<Mode>(m_settings->fileValue(DirBrowserModeKey, 1).toInt()),
-        .showControls       = m_settings->fileValue(DirBrowserControlsKey, true).toBool(),
-        .showLocation       = m_settings->fileValue(DirBrowserLocationKey, true).toBool(),
-        .showSymLinks       = m_settings->fileValue(DirBrowserShowSymLinksKey, false).toBool(),
-        .showHidden         = m_settings->fileValue(DirBrowserShowHiddenKey, false).toBool(),
+        .doubleClickAction  = 5,
+        .middleClickAction  = 0,
+        .sendPlayback       = true,
+        .showIcons          = true,
+        .indentList         = true,
+        .showHorizScrollbar = true,
+        .mode               = Mode::List,
+        .showControls       = true,
+        .showLocation       = true,
+        .showSymLinks       = false,
+        .showHidden         = false,
         .rootPath           = QDir::homePath(),
     };
 }
@@ -803,6 +822,21 @@ void DirBrowser::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(DirBrowserLocationKey, config.showLocation);
     m_settings->fileSet(DirBrowserShowSymLinksKey, config.showSymLinks);
     m_settings->fileSet(DirBrowserShowHiddenKey, config.showHidden);
+}
+
+void DirBrowser::clearSavedDefaults() const
+{
+    m_settings->fileRemove(DirBrowserDoubleClickKey);
+    m_settings->fileRemove(DirBrowserMiddleClickKey);
+    m_settings->fileRemove(DirBrowserSendPlaybackKey);
+    m_settings->fileRemove(DirBrowserIconsKey);
+    m_settings->fileRemove(DirBrowserListIndentKey);
+    m_settings->fileRemove(DirBrowserShowHorizScrollKey);
+    m_settings->fileRemove(DirBrowserModeKey);
+    m_settings->fileRemove(DirBrowserControlsKey);
+    m_settings->fileRemove(DirBrowserLocationKey);
+    m_settings->fileRemove(DirBrowserShowSymLinksKey);
+    m_settings->fileRemove(DirBrowserShowHiddenKey);
 }
 
 void DirBrowser::applyConfig(const ConfigData& config)

@@ -21,7 +21,7 @@
 
 #include "filtercolumneditordialog.h"
 #include "filtercolumnregistry.h"
-#include "filterconstants.h"
+#include "filterconfigwidget.h"
 #include "filtercontroller.h"
 #include "filterdelegate.h"
 #include "filterfwd.h"
@@ -46,6 +46,7 @@
 #include <QJsonObject>
 #include <QMenu>
 
+#include <algorithm>
 #include <set>
 
 using namespace Qt::StringLiterals;
@@ -87,8 +88,6 @@ Fooyin::TrackList fetchAllTracks(QAbstractItemView* view)
     return tracks;
 }
 } // namespace
-
-#include "filterconfigwidget.h"
 
 namespace Fooyin::Filters {
 class FilterView : public ExpandedTreeView
@@ -427,18 +426,33 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
 
 FilterWidget::ConfigData FilterWidget::defaultConfig() const
 {
-    const auto* settings = m_settings;
+    auto config{factoryConfig()};
 
+    config.doubleClickAction = m_settings->fileValue(FilterDoubleClickKey, config.doubleClickAction).toInt();
+    config.middleClickAction = m_settings->fileValue(FilterMiddleClickKey, config.middleClickAction).toInt();
+    config.sendPlayback      = m_settings->fileValue(FilterSendPlaybackKey, config.sendPlayback).toBool();
+    config.playlistEnabled   = m_settings->fileValue(FilterPlaylistEnabledKey, config.playlistEnabled).toBool();
+    config.autoSwitch        = m_settings->fileValue(FilterAutoSwitchKey, config.autoSwitch).toBool();
+    config.keepAlive         = m_settings->fileValue(FilterKeepAliveKey, config.keepAlive).toBool();
+    config.playlistName      = m_settings->fileValue(FilterAutoPlaylistKey, config.playlistName).toString();
+    config.rowHeight         = m_settings->fileValue(FilterRowHeightKey, config.rowHeight).toInt();
+    config.iconSize          = m_settings->fileValue(FilterIconSizeKey, config.iconSize).toSize();
+
+    return config;
+}
+
+FilterWidget::ConfigData FilterWidget::factoryConfig() const
+{
     return {
-        .doubleClickAction = settings->fileValue(FilterDoubleClickKey, 1).toInt(),
-        .middleClickAction = settings->fileValue(FilterMiddleClickKey, 0).toInt(),
-        .sendPlayback      = settings->fileValue(FilterSendPlaybackKey, true).toBool(),
-        .playlistEnabled   = settings->fileValue(FilterPlaylistEnabledKey, true).toBool(),
-        .autoSwitch        = settings->fileValue(FilterAutoSwitchKey, true).toBool(),
-        .keepAlive         = settings->fileValue(FilterKeepAliveKey, false).toBool(),
-        .playlistName = settings->fileValue(FilterAutoPlaylistKey, FilterController::defaultPlaylistName()).toString(),
-        .rowHeight    = settings->fileValue(FilterRowHeightKey, 0).toInt(),
-        .iconSize     = settings->fileValue(FilterIconSizeKey, QSize{100, 100}).toSize(),
+        .doubleClickAction = 1,
+        .middleClickAction = 0,
+        .sendPlayback      = true,
+        .playlistEnabled   = true,
+        .autoSwitch        = true,
+        .keepAlive         = false,
+        .playlistName      = FilterController::defaultPlaylistName(),
+        .rowHeight         = 0,
+        .iconSize          = QSize{100, 100},
     };
 }
 
@@ -449,30 +463,43 @@ const FilterWidget::ConfigData& FilterWidget::currentConfig() const
 
 void FilterWidget::saveDefaults(const ConfigData& config) const
 {
-    auto* settings = m_settings;
-    settings->fileSet(FilterDoubleClickKey, config.doubleClickAction);
-    settings->fileSet(FilterMiddleClickKey, config.middleClickAction);
-    settings->fileSet(FilterSendPlaybackKey, config.sendPlayback);
-    settings->fileSet(FilterPlaylistEnabledKey, config.playlistEnabled);
-    settings->fileSet(FilterAutoSwitchKey, config.autoSwitch);
-    settings->fileSet(FilterKeepAliveKey, config.keepAlive);
-    settings->fileSet(FilterAutoPlaylistKey, config.playlistName);
-    settings->fileSet(FilterRowHeightKey, config.rowHeight);
-    settings->fileSet(FilterIconSizeKey, config.iconSize);
+    m_settings->fileSet(FilterDoubleClickKey, config.doubleClickAction);
+    m_settings->fileSet(FilterMiddleClickKey, config.middleClickAction);
+    m_settings->fileSet(FilterSendPlaybackKey, config.sendPlayback);
+    m_settings->fileSet(FilterPlaylistEnabledKey, config.playlistEnabled);
+    m_settings->fileSet(FilterAutoSwitchKey, config.autoSwitch);
+    m_settings->fileSet(FilterKeepAliveKey, config.keepAlive);
+    m_settings->fileSet(FilterAutoPlaylistKey, config.playlistName);
+    m_settings->fileSet(FilterRowHeightKey, config.rowHeight);
+    m_settings->fileSet(FilterIconSizeKey, config.iconSize);
+}
+
+void FilterWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(FilterDoubleClickKey);
+    m_settings->fileRemove(FilterMiddleClickKey);
+    m_settings->fileRemove(FilterSendPlaybackKey);
+    m_settings->fileRemove(FilterPlaylistEnabledKey);
+    m_settings->fileRemove(FilterAutoSwitchKey);
+    m_settings->fileRemove(FilterKeepAliveKey);
+    m_settings->fileRemove(FilterAutoPlaylistKey);
+    m_settings->fileRemove(FilterRowHeightKey);
+    m_settings->fileRemove(FilterIconSizeKey);
 }
 
 void FilterWidget::applyConfig(const ConfigData& config)
 {
-    auto validated = config;
-    if(validated.rowHeight < 0) {
-        validated.rowHeight = 0;
-    }
+    auto validated{config};
+
+    validated.rowHeight = std::max(validated.rowHeight, 0);
+
     if(!validated.iconSize.isValid()) {
-        validated.iconSize = defaultConfig().iconSize;
+        validated.iconSize = factoryConfig().iconSize;
     }
 
     const bool sendPlaybackChanged = m_config.sendPlayback != validated.sendPlayback;
-    m_config                       = validated;
+
+    m_config = validated;
 
     m_model->setRowHeight(m_config.rowHeight);
     m_model->setIconSize(m_config.iconSize);
@@ -519,7 +546,7 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     config.rowHeight = std::max(config.rowHeight, 0);
 
     if(!config.iconSize.isValid()) {
-        config.iconSize = defaultConfig().iconSize;
+        config.iconSize = factoryConfig().iconSize;
     }
 
     return config;

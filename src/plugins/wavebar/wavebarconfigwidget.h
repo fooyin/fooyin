@@ -45,7 +45,9 @@ public:
 
     void apply() override;
     void saveDefaults() override;
-    void restoreDefaults() override;
+    void restoreSavedDefaults() override;
+    void restoreFactoryDefaults() override;
+    void clearSavedDefaults() override;
 
 protected:
     [[nodiscard]] WaveBarWidget::ConfigData config() const override;

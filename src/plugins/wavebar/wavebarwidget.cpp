@@ -146,19 +146,39 @@ void WaveBarWidget::loadLayoutData(const QJsonObject& layout)
 
 WaveBarWidget::ConfigData WaveBarWidget::defaultConfig() const
 {
+    auto config{factoryConfig()};
+
+    config.showLabels    = m_settings->fileValue(ShowLabelsKey, config.showLabels).toBool();
+    config.elapsedTotal  = m_settings->fileValue(ElapsedTotalKey, config.elapsedTotal).toBool();
+    config.showCursor    = m_settings->fileValue(ShowCursorKey, config.showCursor).toBool();
+    config.cursorWidth   = m_settings->fileValue(CursorWidthKey, config.cursorWidth).toInt();
+    config.mode          = m_settings->fileValue(ModeKey, config.mode).toInt();
+    config.downmix       = m_settings->fileValue(DownmixKey, config.downmix).toInt();
+    config.barWidth      = m_settings->fileValue(BarWidthKey, config.barWidth).toInt();
+    config.barGap        = m_settings->fileValue(BarGapKey, config.barGap).toInt();
+    config.maxScale      = m_settings->fileValue(MaxScaleKey, config.maxScale).toDouble();
+    config.centreGap     = m_settings->fileValue(CentreGapKey, config.centreGap).toInt();
+    config.channelScale  = m_settings->fileValue(ChannelScaleKey, config.channelScale).toDouble();
+    config.colourOptions = m_settings->fileValue(ColoursKey, config.colourOptions);
+
+    return config;
+}
+
+WaveBarWidget::ConfigData WaveBarWidget::factoryConfig() const
+{
     return {
-        .showLabels    = m_settings->fileValue(ShowLabelsKey, false).toBool(),
-        .elapsedTotal  = m_settings->fileValue(ElapsedTotalKey, false).toBool(),
-        .showCursor    = m_settings->fileValue(ShowCursorKey, true).toBool(),
-        .cursorWidth   = m_settings->fileValue(CursorWidthKey, 3).toInt(),
-        .mode          = m_settings->fileValue(ModeKey, static_cast<int>(Default)).toInt(),
-        .downmix       = m_settings->fileValue(DownmixKey, 0).toInt(),
-        .barWidth      = m_settings->fileValue(BarWidthKey, 1).toInt(),
-        .barGap        = m_settings->fileValue(BarGapKey, 0).toInt(),
-        .maxScale      = m_settings->fileValue(MaxScaleKey, 1.0).toDouble(),
-        .centreGap     = m_settings->fileValue(CentreGapKey, 0).toInt(),
-        .channelScale  = m_settings->fileValue(ChannelScaleKey, 0.9).toDouble(),
-        .colourOptions = m_settings->fileValue(ColoursKey, QVariant{}),
+        .showLabels    = false,
+        .elapsedTotal  = false,
+        .showCursor    = true,
+        .cursorWidth   = 3,
+        .mode          = static_cast<int>(Default),
+        .downmix       = 0,
+        .barWidth      = 1,
+        .barGap        = 0,
+        .maxScale      = 1.0,
+        .centreGap     = 0,
+        .channelScale  = 0.9,
+        .colourOptions = QVariant{},
     };
 }
 
@@ -218,6 +238,23 @@ void WaveBarWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(CentreGapKey, validated.centreGap);
     m_settings->fileSet(ChannelScaleKey, validated.channelScale);
     m_settings->fileSet(ColoursKey, validated.colourOptions);
+}
+
+void WaveBarWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(ShowLabelsKey);
+    m_settings->fileRemove(ElapsedTotalKey);
+    m_settings->fileRemove(ShowCursorKey);
+    m_settings->fileRemove(CursorWidthKey);
+    m_settings->fileRemove(ModeKey);
+    m_settings->fileRemove(DownmixKey);
+    m_settings->fileRemove(BarWidthKey);
+    m_settings->fileRemove(BarGapKey);
+    m_settings->fileRemove(MaxScaleKey);
+    m_settings->fileRemove(CentreGapKey);
+    m_settings->fileRemove(ChannelScaleKey);
+    m_settings->fileRemove(ColoursKey);
+    m_settings->reset<Settings::WaveBar::NumSamples>();
 }
 
 void WaveBarWidget::applyConfig(const ConfigData& config)

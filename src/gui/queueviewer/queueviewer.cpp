@@ -289,15 +289,31 @@ void QueueViewer::handleQueueDoubleClicked(const QModelIndex& index) const
 
 QueueViewer::ConfigData QueueViewer::defaultConfig() const
 {
+    auto config{factoryConfig()};
+
+    config.leftScript      = m_settings->fileValue(QueueViewerLeftScriptKey, config.leftScript).toString();
+    config.rightScript     = m_settings->fileValue(QueueViewerRightScriptKey, config.rightScript).toString();
+    config.showCurrent     = m_settings->fileValue(QueueViewerShowCurrentKey, config.showCurrent).toBool();
+    config.showIcon        = m_settings->fileValue(QueueViewerShowIconKey, config.showIcon).toBool();
+    config.iconSize        = m_settings->fileValue(QueueViewerIconSizeKey, config.iconSize).toSize();
+    config.showHeader      = m_settings->fileValue(QueueViewerHeaderKey, config.showHeader).toBool();
+    config.showScrollBar   = m_settings->fileValue(QueueViewerScrollBarKey, config.showScrollBar).toBool();
+    config.alternatingRows = m_settings->fileValue(QueueViewerAltColoursKey, config.alternatingRows).toBool();
+
+    return config;
+}
+
+QueueViewer::ConfigData QueueViewer::factoryConfig() const
+{
     return {
-        .leftScript      = m_settings->fileValue(QueueViewerLeftScriptKey, u"%title%$crlf()%album%"_s).toString(),
-        .rightScript     = m_settings->fileValue(QueueViewerRightScriptKey, u"%duration%"_s).toString(),
-        .showCurrent     = m_settings->fileValue(QueueViewerShowCurrentKey, true).toBool(),
-        .showIcon        = m_settings->fileValue(QueueViewerShowIconKey, true).toBool(),
-        .iconSize        = m_settings->fileValue(QueueViewerIconSizeKey, QSize{36, 36}).toSize(),
-        .showHeader      = m_settings->fileValue(QueueViewerHeaderKey, true).toBool(),
-        .showScrollBar   = m_settings->fileValue(QueueViewerScrollBarKey, true).toBool(),
-        .alternatingRows = m_settings->fileValue(QueueViewerAltColoursKey, false).toBool(),
+        .leftScript      = u"%title%$crlf()%album%"_s,
+        .rightScript     = u"%duration%"_s,
+        .showCurrent     = true,
+        .showIcon        = true,
+        .iconSize        = QSize{36, 36},
+        .showHeader      = true,
+        .showScrollBar   = true,
+        .alternatingRows = false,
     };
 }
 
@@ -316,6 +332,18 @@ void QueueViewer::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(QueueViewerHeaderKey, config.showHeader);
     m_settings->fileSet(QueueViewerScrollBarKey, config.showScrollBar);
     m_settings->fileSet(QueueViewerAltColoursKey, config.alternatingRows);
+}
+
+void QueueViewer::clearSavedDefaults() const
+{
+    m_settings->fileRemove(QueueViewerLeftScriptKey);
+    m_settings->fileRemove(QueueViewerRightScriptKey);
+    m_settings->fileRemove(QueueViewerShowCurrentKey);
+    m_settings->fileRemove(QueueViewerShowIconKey);
+    m_settings->fileRemove(QueueViewerIconSizeKey);
+    m_settings->fileRemove(QueueViewerHeaderKey);
+    m_settings->fileRemove(QueueViewerScrollBarKey);
+    m_settings->fileRemove(QueueViewerAltColoursKey);
 }
 
 void QueueViewer::applyConfig(const ConfigData& config)
@@ -365,7 +393,7 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
     }
 
     if(!config.iconSize.isValid()) {
-        config.iconSize = defaultConfig().iconSize;
+        config.iconSize = factoryConfig().iconSize;
     }
 
     return config;

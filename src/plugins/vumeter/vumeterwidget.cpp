@@ -804,16 +804,33 @@ void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
 
 VuMeterWidget::ConfigData VuMeterWidget::defaultConfig() const
 {
+    auto config{factoryConfig()};
+
+    config.peakHoldTime   = m_settings->fileValue(PeakHoldTimeKey, config.peakHoldTime).toDouble();
+    config.falloffTime    = m_settings->fileValue(FalloffTimeKey, config.falloffTime).toDouble();
+    config.updateFps      = m_settings->fileValue(UpdateFpsKey, config.updateFps).toInt();
+    config.channelSpacing = m_settings->fileValue(ChannelSpacingKey, config.channelSpacing).toInt();
+    config.barSize        = m_settings->fileValue(BarSizeKey, config.barSize).toInt();
+    config.barSpacing     = m_settings->fileValue(BarSpacingKey, config.barSpacing).toInt();
+    config.barSections    = m_settings->fileValue(BarSectionsKey, config.barSections).toInt();
+    config.sectionSpacing = m_settings->fileValue(SectionSpacingKey, config.sectionSpacing).toInt();
+    config.meterColours   = m_settings->fileValue(MeterColoursKey, config.meterColours);
+
+    return config;
+}
+
+VuMeterWidget::ConfigData VuMeterWidget::factoryConfig() const
+{
     return {
-        .peakHoldTime   = m_settings->fileValue(PeakHoldTimeKey, 1.5).toDouble(),
-        .falloffTime    = m_settings->fileValue(FalloffTimeKey, 13.0).toDouble(),
-        .updateFps      = m_settings->fileValue(UpdateFpsKey, Gui::FrameRate::toFps(DefaultFps)).toInt(),
-        .channelSpacing = m_settings->fileValue(ChannelSpacingKey, 1).toInt(),
-        .barSize        = m_settings->fileValue(BarSizeKey, 0).toInt(),
-        .barSpacing     = m_settings->fileValue(BarSpacingKey, 1).toInt(),
-        .barSections    = m_settings->fileValue(BarSectionsKey, 1).toInt(),
-        .sectionSpacing = m_settings->fileValue(SectionSpacingKey, 1).toInt(),
-        .meterColours   = m_settings->fileValue(MeterColoursKey, QVariant{}),
+        .peakHoldTime   = 1.5,
+        .falloffTime    = 13.0,
+        .updateFps      = Gui::FrameRate::toFps(DefaultFps),
+        .channelSpacing = 1,
+        .barSize        = 0,
+        .barSpacing     = 1,
+        .barSections    = 1,
+        .sectionSpacing = 1,
+        .meterColours   = QVariant{},
     };
 }
 
@@ -848,6 +865,19 @@ void VuMeterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(BarSectionsKey, validated.barSections);
     m_settings->fileSet(SectionSpacingKey, validated.sectionSpacing);
     m_settings->fileSet(MeterColoursKey, validated.meterColours);
+}
+
+void VuMeterWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(PeakHoldTimeKey);
+    m_settings->fileRemove(FalloffTimeKey);
+    m_settings->fileRemove(UpdateFpsKey);
+    m_settings->fileRemove(ChannelSpacingKey);
+    m_settings->fileRemove(BarSizeKey);
+    m_settings->fileRemove(BarSpacingKey);
+    m_settings->fileRemove(BarSectionsKey);
+    m_settings->fileRemove(SectionSpacingKey);
+    m_settings->fileRemove(MeterColoursKey);
 }
 
 void VuMeterWidget::applyConfig(const ConfigData& config)
