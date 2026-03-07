@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,21 @@
 
 #pragma once
 
-#include <utils/settings/settingspage.h>
+#include <QDialog>
 
 namespace Fooyin {
-class SettingsManager;
+class ActionManager;
 
-class LibraryTreePage : public SettingsPage
+namespace Filters {
+class FilterColumnRegistry;
+
+class FilterColumnEditorDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit LibraryTreePage(SettingsManager* settings, QObject* parent = nullptr);
+    explicit FilterColumnEditorDialog(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
+                                      QWidget* parent = nullptr);
 };
+} // namespace Filters
 } // namespace Fooyin

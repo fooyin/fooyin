@@ -22,8 +22,6 @@
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <utility>
-
 namespace Fooyin::WaveBar {
 WaveformBuilder::WaveformBuilder(std::shared_ptr<AudioLoader> decoderProvider, DbConnectionPoolPtr dbPool,
                                  SettingsManager* settings, QObject* parent)
@@ -32,6 +30,8 @@ WaveformBuilder::WaveformBuilder(std::shared_ptr<AudioLoader> decoderProvider, D
     , m_generator{std::move(decoderProvider), std::move(dbPool)}
     , m_width{0}
     , m_samplesPerChannel{settings->value<Settings::WaveBar::NumSamples>()}
+    , m_sampleWidth{1}
+    , m_downmix{false}
     , m_rescale{false}
 {
     updateRescaler();
@@ -50,9 +50,6 @@ WaveformBuilder::WaveformBuilder(std::shared_ptr<AudioLoader> decoderProvider, D
                      });
     QObject::connect(&m_rescaler, &WaveformRescaler::waveformRescaled, this, &WaveformBuilder::waveformRescaled);
 
-    m_settings->subscribe<Settings::WaveBar::BarWidth>(this, &WaveformBuilder::updateRescaler);
-    m_settings->subscribe<Settings::WaveBar::BarGap>(this, &WaveformBuilder::updateRescaler);
-    m_settings->subscribe<Settings::WaveBar::Downmix>(this, &WaveformBuilder::updateRescaler);
     m_settings->subscribe<Settings::WaveBar::NumSamples>(this, [this](const int num) { m_samplesPerChannel = num; });
 
     m_generatorThread.start();
@@ -98,13 +95,27 @@ void WaveformBuilder::rescale(const int width)
     }
 }
 
+void WaveformBuilder::setSampleWidth(int width)
+{
+    const int validatedWidth = std::max(1, width);
+    if(std::exchange(m_sampleWidth, validatedWidth) != validatedWidth) {
+        updateRescaler();
+    }
+}
+
+void WaveformBuilder::setDownmix(DownmixOption option)
+{
+    if(std::exchange(m_downmix, option) != option) {
+        updateRescaler();
+    }
+}
+
 void WaveformBuilder::updateRescaler()
 {
     m_rescaler.stopThread();
     QMetaObject::invokeMethod(&m_rescaler, [this]() {
-        m_rescaler.changeSampleWidth(m_settings->value<Settings::WaveBar::BarWidth>()
-                                     + m_settings->value<Settings::WaveBar::BarGap>());
-        m_rescaler.changeDownmix(static_cast<DownmixOption>(m_settings->value<Settings::WaveBar::Downmix>()));
+        m_rescaler.changeSampleWidth(m_sampleWidth);
+        m_rescaler.changeDownmix(m_downmix);
     });
 }
 } // namespace Fooyin::WaveBar

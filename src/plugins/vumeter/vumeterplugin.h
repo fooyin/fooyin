@@ -25,7 +25,6 @@
 #include <gui/plugins/guiplugin.h>
 
 namespace Fooyin::VuMeter {
-class VuMeterSettings;
 class VuMeterWidget;
 
 class VuMeterPlugin : public QObject,
@@ -46,7 +45,5 @@ private:
     EngineController* m_engine;
     SettingsManager* m_settings;
     WidgetProvider* m_widgetProvider;
-
-    std::unique_ptr<VuMeterSettings> m_vuMeterSettings;
 };
 } // namespace Fooyin::VuMeter

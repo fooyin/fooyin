@@ -25,6 +25,7 @@
 #include <QObject>
 
 namespace Fooyin {
+class ActionManager;
 struct CorePluginContext;
 class EditableLayout;
 class MusicLibrary;
@@ -53,8 +54,9 @@ class FilterController : public QObject
     Q_OBJECT
 
 public:
-    FilterController(const CorePluginContext& core, TrackSelectionController* trackSelection,
-                     EditableLayout* editableLayout, SettingsManager* settings, QObject* parent = nullptr);
+    FilterController(ActionManager* actionManager, const CorePluginContext& core,
+                     TrackSelectionController* trackSelection, EditableLayout* editableLayout,
+                     SettingsManager* settings, QObject* parent = nullptr);
     ~FilterController() override;
 
     [[nodiscard]] FilterColumnRegistry* columnRegistry() const;

@@ -3,6 +3,10 @@ create_fooyin_plugin_internal(
     DEPENDS Fooyin::Gui
     SOURCES filtercolumnregistry.cpp
             filtercolumnregistry.h
+            filtercolumneditordialog.cpp
+            filtercolumneditordialog.h
+            filterscolumnmodel.cpp
+            filterscolumnmodel.h
             filterconstants.h
             filtercontroller.cpp
             filtercontroller.h
@@ -21,14 +25,6 @@ create_fooyin_plugin_internal(
             filtersplugin.h
             filterwidget.cpp
             filterwidget.h
-            settings/filterscolumnmodel.cpp
-            settings/filterscolumnmodel.h
-            settings/filterscolumnpage.cpp
-            settings/filterscolumnpage.h
-            settings/filtersettings.cpp
-            settings/filtersettings.h
-            settings/filtersgeneralpage.cpp
-            settings/filtersgeneralpage.h
-            settings/filtersguipage.cpp
-            settings/filtersguipage.h
+            filterconfigwidget.cpp
+            filterconfigwidget.h
 )

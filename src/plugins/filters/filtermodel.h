@@ -63,6 +63,7 @@ public:
     [[nodiscard]] Track::Cover coverType() const;
 
     void setRowHeight(int height);
+    void setIconSize(const QSize& size);
     void setShowSummary(bool show);
     void setShowDecoration(bool show);
     void setShowLabels(bool show);

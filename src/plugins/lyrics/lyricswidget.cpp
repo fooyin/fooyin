@@ -19,7 +19,8 @@
 
 #include "lyricswidget.h"
 
-#include "lyricsconstants.h"
+#include "lyricscolours.h"
+#include "lyricsconfigwidget.h"
 #include "lyricsdelegate.h"
 #include "lyricseditor.h"
 #include "lyricsfinder.h"
@@ -30,12 +31,21 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <core/scripting/scriptparser.h>
-#include <utils/settings/settingsdialogcontroller.h>
+#include <gui/configdialog.h>
+#include <gui/guisettings.h>
+#include <gui/widgets/colourbutton.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QActionGroup>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QContextMenuEvent>
+#include <QDialog>
+#include <QFont>
+#include <QGridLayout>
+#include <QHBoxLayout>
 #include <QJsonObject>
 #include <QLoggingCategory>
 #include <QMainWindow>
@@ -43,7 +53,9 @@
 #include <QPropertyAnimation>
 #include <QScrollBar>
 #include <QTimerEvent>
-#include <QVBoxLayout>
+
+#include <algorithm>
+#include <utility>
 
 Q_LOGGING_CATEGORY(LYRICS_WIDGET, "fy.lyrics")
 
@@ -56,6 +68,40 @@ constexpr auto ScrollTimeout = 100ms;
 constexpr auto ScrollTimeout = 100;
 #endif
 
+namespace {
+QMargins clampedMargins(const QMargins& margins)
+{
+    return {
+        std::clamp(margins.left(), 0, 100),
+        std::clamp(margins.top(), 0, 100),
+        std::clamp(margins.right(), 0, 100),
+        std::clamp(margins.bottom(), 0, 100),
+    };
+}
+
+int validatedAlignment(int alignment)
+{
+    switch(alignment) {
+        case(Qt::AlignLeft):
+        case(Qt::AlignRight):
+        case(Qt::AlignCenter):
+            return alignment;
+        default:
+            return static_cast<int>(Qt::AlignCenter);
+    }
+}
+
+QString validatedFontString(const QString& fontString)
+{
+    if(fontString.isEmpty()) {
+        return {};
+    }
+
+    QFont font;
+    return font.fromString(fontString) ? fontString : QString{};
+}
+} // namespace
+
 namespace Fooyin::Lyrics {
 LyricsWidget::LyricsWidget(PlayerController* playerController, EngineController* engine, LyricsFinder* lyricsFinder,
                            LyricsSaver* lyricsSaver, SettingsManager* settings, QWidget* parent)
@@ -64,13 +110,13 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, EngineController*
     , m_engine{engine}
     , m_settings{settings}
     , m_lyricsView{new LyricsView(this)}
-    , m_model{new LyricsModel(settings, this)}
+    , m_model{new LyricsModel(this)}
     , m_delegate{new LyricsDelegate(this)}
     , m_lyricsFinder{lyricsFinder}
     , m_lyricsSaver{lyricsSaver}
     , m_currentTime{0}
     , m_currentLine{-1}
-    , m_scrollMode{static_cast<ScrollMode>(m_settings->value<Settings::Lyrics::ScrollMode>())}
+    , m_scrollMode{ScrollMode::Synced}
     , m_isUserScrolling{false}
 {
     setObjectName(LyricsWidget::name());
@@ -82,13 +128,10 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, EngineController*
     layout->setContentsMargins({});
     layout->addWidget(m_lyricsView);
 
-    m_lyricsView->setVerticalScrollBarPolicy(
-        !m_settings->value<Settings::Lyrics::ShowScrollbar>() ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
     m_lyricsView->setMinimumWidth(150);
 
-    m_model->setMargins(m_settings->value<Settings::Lyrics::Margins>().value<QMargins>());
-    m_model->setLineSpacing(m_settings->value<Settings::Lyrics::LineSpacing>());
-    m_model->setAlignment(static_cast<Qt::Alignment>(m_settings->value<Settings::Lyrics::Alignment>()));
+    m_config = defaultConfig();
+    applyConfig(m_config);
 
     QObject::connect(m_engine, &EngineController::engineStateChanged, this, &LyricsWidget::playStateChanged);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
@@ -120,20 +163,16 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, EngineController*
         m_scrollTimer.start(ScrollTimeout, this);
     });
 
-    m_settings->subscribe<Settings::Lyrics::NoLyricsScript>(
-        this, [this]() { updateLyrics(m_playerController->currentTrack()); });
-    m_settings->subscribe<Settings::Lyrics::ScrollMode>(
-        this, [this](const int mode) { updateScrollMode(static_cast<ScrollMode>(mode)); });
-    m_settings->subscribe<Settings::Lyrics::ShowScrollbar>(this, [this](const bool show) {
-        m_lyricsView->setVerticalScrollBarPolicy(!show ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
-    });
+    auto updateThemeDefaults = [this]() {
+        if(m_config.colours.isValid() && !m_config.lineFont.isEmpty() && !m_config.wordLineFont.isEmpty()
+           && !m_config.wordFont.isEmpty()) {
+            return;
+        }
 
-    m_settings->subscribe<Settings::Lyrics::Margins>(
-        this, [this](const QVariant& var) { m_model->setMargins(var.value<QMargins>()); });
-    m_settings->subscribe<Settings::Lyrics::LineSpacing>(
-        this, [this](const int spacing) { m_model->setLineSpacing(spacing); });
-    m_settings->subscribe<Settings::Lyrics::Alignment>(
-        this, [this](const int align) { m_model->setAlignment(static_cast<Qt::Alignment>(align)); });
+        applyConfig(m_config);
+    };
+    m_settings->subscribe<::Fooyin::Settings::Gui::Theme>(this, updateThemeDefaults);
+    m_settings->subscribe<::Fooyin::Settings::Gui::Style>(this, updateThemeDefaults);
 
     updateLyrics(m_playerController->currentTrack());
 }
@@ -163,12 +202,11 @@ void LyricsWidget::updateLyrics(const Track& track, bool force)
         return;
     }
 
-    const auto script = m_settings->value<Settings::Lyrics::NoLyricsScript>();
-    m_lyricsView->setDisplayString(m_parser.evaluate(script, track));
+    m_lyricsView->setDisplayString(m_parser.evaluate(m_config.noLyricsScript, track));
 
     m_finderConnection = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::loadLyrics);
 
-    if(m_settings->value<Settings::Lyrics::AutoSearch>()) {
+    if(m_settings->fileValue(Settings::AutoSearch, true).toBool()) {
         m_lyricsFinder->findLyrics(track);
     }
     else {
@@ -184,6 +222,260 @@ QString LyricsWidget::name() const
 QString LyricsWidget::layoutName() const
 {
     return u"Lyrics"_s;
+}
+
+void LyricsWidget::saveLayoutData(QJsonObject& layout)
+{
+    saveConfigToLayout(m_config, layout);
+}
+
+void LyricsWidget::loadLayoutData(const QJsonObject& layout)
+{
+    applyConfig(configFromLayout(layout));
+}
+
+LyricsWidget::ConfigData LyricsWidget::defaultConfig() const
+{
+    auto config{factoryConfig()};
+
+    config.seekOnClick    = m_settings->fileValue(Settings::SeekOnClick, config.seekOnClick).toBool();
+    config.noLyricsScript = m_settings->fileValue(Settings::NoLyricsScript, config.noLyricsScript).toString();
+    config.scrollDuration = m_settings->fileValue(Settings::ScrollDuration, config.scrollDuration).toInt();
+    config.scrollMode     = m_settings->fileValue(Settings::ScrollMode, config.scrollMode).toInt();
+    config.showScrollbar  = m_settings->fileValue(Settings::ShowScrollbar, config.showScrollbar).toBool();
+    config.alignment      = m_settings->fileValue(Settings::Alignment, config.alignment).toInt();
+    config.lineSpacing    = m_settings->fileValue(Settings::LineSpacing, config.lineSpacing).toInt();
+
+    const QVariant margins = m_settings->fileValue(Settings::Margins);
+    if(margins.isValid() && margins.canConvert<QMargins>()) {
+        config.margins = margins.value<QMargins>();
+    }
+
+    config.colours      = m_settings->fileValue(Settings::Colours, config.colours);
+    config.lineFont     = m_settings->fileValue(Settings::LineFont, config.lineFont).toString();
+    config.wordLineFont = m_settings->fileValue(Settings::WordLineFont, config.wordLineFont).toString();
+    config.wordFont     = m_settings->fileValue(Settings::WordFont, config.wordFont).toString();
+
+    return config;
+}
+
+LyricsWidget::ConfigData LyricsWidget::factoryConfig() const
+{
+    return {
+        .seekOnClick    = true,
+        .noLyricsScript = defaultNoLyricsScript(),
+        .scrollDuration = 500,
+        .scrollMode     = static_cast<int>(ScrollMode::Synced),
+        .showScrollbar  = true,
+        .alignment      = static_cast<int>(Qt::AlignCenter),
+        .lineSpacing    = 5,
+        .margins        = Defaults::margins(),
+        .colours        = QVariant{},
+        .lineFont       = {},
+        .wordLineFont   = {},
+        .wordFont       = {},
+    };
+}
+
+const LyricsWidget::ConfigData& LyricsWidget::currentConfig() const
+{
+    return m_config;
+}
+
+void LyricsWidget::saveDefaults(const ConfigData& config) const
+{
+    auto validated{config};
+
+    validated.scrollDuration = std::clamp(validated.scrollDuration, 0, 2000);
+    validated.scrollMode     = std::clamp(validated.scrollMode, static_cast<int>(ScrollMode::Manual),
+                                          static_cast<int>(ScrollMode::Automatic));
+    validated.alignment      = validatedAlignment(validated.alignment);
+    validated.lineSpacing    = std::clamp(validated.lineSpacing, 0, 100);
+    validated.margins        = clampedMargins(validated.margins);
+
+    if(!validated.colours.canConvert<Colours>()) {
+        validated.colours = QVariant{};
+    }
+
+    validated.lineFont     = validatedFontString(validated.lineFont);
+    validated.wordLineFont = validatedFontString(validated.wordLineFont);
+    validated.wordFont     = validatedFontString(validated.wordFont);
+
+    m_settings->fileSet(Settings::SeekOnClick, validated.seekOnClick);
+    m_settings->fileSet(Settings::NoLyricsScript, validated.noLyricsScript);
+    m_settings->fileSet(Settings::ScrollDuration, validated.scrollDuration);
+    m_settings->fileSet(Settings::ScrollMode, validated.scrollMode);
+    m_settings->fileSet(Settings::ShowScrollbar, validated.showScrollbar);
+    m_settings->fileSet(Settings::Alignment, validated.alignment);
+    m_settings->fileSet(Settings::LineSpacing, validated.lineSpacing);
+    m_settings->fileSet(Settings::Margins, QVariant::fromValue(validated.margins));
+    m_settings->fileSet(Settings::Colours, validated.colours);
+    m_settings->fileSet(Settings::LineFont, validated.lineFont);
+    m_settings->fileSet(Settings::WordLineFont, validated.wordLineFont);
+    m_settings->fileSet(Settings::WordFont, validated.wordFont);
+}
+
+void LyricsWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(Settings::SeekOnClick);
+    m_settings->fileRemove(Settings::NoLyricsScript);
+    m_settings->fileRemove(Settings::ScrollDuration);
+    m_settings->fileRemove(Settings::ScrollMode);
+    m_settings->fileRemove(Settings::ShowScrollbar);
+    m_settings->fileRemove(Settings::Alignment);
+    m_settings->fileRemove(Settings::LineSpacing);
+    m_settings->fileRemove(Settings::Margins);
+    m_settings->fileRemove(Settings::Colours);
+    m_settings->fileRemove(Settings::LineFont);
+    m_settings->fileRemove(Settings::WordLineFont);
+    m_settings->fileRemove(Settings::WordFont);
+}
+
+void LyricsWidget::applyConfig(const ConfigData& config)
+{
+    auto validated           = config;
+    validated.scrollDuration = std::clamp(validated.scrollDuration, 0, 2000);
+    validated.scrollMode     = std::clamp(validated.scrollMode, static_cast<int>(ScrollMode::Manual),
+                                          static_cast<int>(ScrollMode::Automatic));
+    validated.alignment      = validatedAlignment(validated.alignment);
+    validated.lineSpacing    = std::clamp(validated.lineSpacing, 0, 100);
+    validated.margins        = clampedMargins(validated.margins);
+    if(!validated.colours.canConvert<Colours>()) {
+        validated.colours = QVariant{};
+    }
+    validated.lineFont     = validatedFontString(validated.lineFont);
+    validated.wordLineFont = validatedFontString(validated.wordLineFont);
+    validated.wordFont     = validatedFontString(validated.wordFont);
+
+    m_config = validated;
+
+    m_lyricsView->setVerticalScrollBarPolicy(m_config.showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_model->setMargins(m_config.margins);
+    m_model->setLineSpacing(m_config.lineSpacing);
+    m_model->setAlignment(static_cast<Qt::Alignment>(m_config.alignment));
+    m_model->setColours(m_config.colours.isValid() ? m_config.colours.value<Colours>() : Colours{});
+    m_model->setFonts(m_config.lineFont, m_config.wordLineFont, m_config.wordFont);
+
+    updateScrollMode(static_cast<ScrollMode>(m_config.scrollMode));
+
+    if(!m_currentLyrics.isValid() && m_currentTrack.isValid()) {
+        m_lyricsView->setDisplayString(m_parser.evaluate(m_config.noLyricsScript, m_currentTrack));
+    }
+}
+
+LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+
+    if(layout.contains("SeekOnClick"_L1)) {
+        config.seekOnClick = layout.value("SeekOnClick"_L1).toBool();
+    }
+    if(layout.contains("NoLyricsScript"_L1)) {
+        config.noLyricsScript = layout.value("NoLyricsScript"_L1).toString();
+    }
+    if(layout.contains("ScrollDuration"_L1)) {
+        config.scrollDuration = layout.value("ScrollDuration"_L1).toInt();
+    }
+    if(layout.contains("ScrollMode"_L1)) {
+        config.scrollMode = layout.value("ScrollMode"_L1).toInt();
+    }
+    if(layout.contains("ShowScrollbar"_L1)) {
+        config.showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
+    }
+    if(layout.contains("Alignment"_L1)) {
+        config.alignment = layout.value("Alignment"_L1).toInt();
+    }
+    if(layout.contains("LineSpacing"_L1)) {
+        config.lineSpacing = layout.value("LineSpacing"_L1).toInt();
+    }
+
+    QMargins margins{config.margins};
+    if(layout.contains("LeftMargin"_L1)) {
+        margins.setLeft(layout.value("LeftMargin"_L1).toInt());
+    }
+    if(layout.contains("TopMargin"_L1)) {
+        margins.setTop(layout.value("TopMargin"_L1).toInt());
+    }
+    if(layout.contains("RightMargin"_L1)) {
+        margins.setRight(layout.value("RightMargin"_L1).toInt());
+    }
+    if(layout.contains("BottomMargin"_L1)) {
+        margins.setBottom(layout.value("BottomMargin"_L1).toInt());
+    }
+    config.margins = margins;
+
+    if(layout.contains("UseCustomColours"_L1)) {
+        if(layout.value("UseCustomColours"_L1).toBool()) {
+            Colours colours;
+
+            auto setColour = [&layout, &colours](const QString& key, Colours::Type type) {
+                if(!layout.contains(key)) {
+                    return;
+                }
+
+                const QColor colour{layout.value(key).toString()};
+                if(colour.isValid()) {
+                    colours.setColour(type, colour);
+                }
+            };
+
+            setColour(u"BackgroundColour"_s, Colours::Type::Background);
+            setColour(u"UnsyncedLineColour"_s, Colours::Type::LineUnsynced);
+            setColour(u"UnplayedLineColour"_s, Colours::Type::LineUnplayed);
+            setColour(u"PlayedLineColour"_s, Colours::Type::LinePlayed);
+            setColour(u"CurrentLineColour"_s, Colours::Type::LineSynced);
+            setColour(u"CurrentWordLineColour"_s, Colours::Type::WordLineSynced);
+            setColour(u"CurrentWordColour"_s, Colours::Type::WordSynced);
+            config.colours = QVariant::fromValue(colours);
+        }
+        else {
+            config.colours = QVariant{};
+        }
+    }
+
+    if(layout.contains("LineFont"_L1)) {
+        config.lineFont = layout.value("LineFont"_L1).toString();
+    }
+    if(layout.contains("WordLineFont"_L1)) {
+        config.wordLineFont = layout.value("WordLineFont"_L1).toString();
+    }
+    if(layout.contains("WordFont"_L1)) {
+        config.wordFont = layout.value("WordFont"_L1).toString();
+    }
+
+    return config;
+}
+
+void LyricsWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
+{
+    layout["SeekOnClick"_L1]    = config.seekOnClick;
+    layout["NoLyricsScript"_L1] = config.noLyricsScript;
+    layout["ScrollDuration"_L1] = config.scrollDuration;
+    layout["ScrollMode"_L1]     = config.scrollMode;
+    layout["ShowScrollbar"_L1]  = config.showScrollbar;
+    layout["Alignment"_L1]      = config.alignment;
+    layout["LineSpacing"_L1]    = config.lineSpacing;
+    layout["LeftMargin"_L1]     = config.margins.left();
+    layout["TopMargin"_L1]      = config.margins.top();
+    layout["RightMargin"_L1]    = config.margins.right();
+    layout["BottomMargin"_L1]   = config.margins.bottom();
+
+    const bool customColours      = config.colours.isValid() && config.colours.canConvert<Colours>();
+    layout["UseCustomColours"_L1] = customColours;
+    if(customColours) {
+        const Colours colours              = config.colours.value<Colours>();
+        layout["BackgroundColour"_L1]      = colours.colour(Colours::Type::Background).name(QColor::HexArgb);
+        layout["UnsyncedLineColour"_L1]    = colours.colour(Colours::Type::LineUnsynced).name(QColor::HexArgb);
+        layout["UnplayedLineColour"_L1]    = colours.colour(Colours::Type::LineUnplayed).name(QColor::HexArgb);
+        layout["PlayedLineColour"_L1]      = colours.colour(Colours::Type::LinePlayed).name(QColor::HexArgb);
+        layout["CurrentLineColour"_L1]     = colours.colour(Colours::Type::LineSynced).name(QColor::HexArgb);
+        layout["CurrentWordLineColour"_L1] = colours.colour(Colours::Type::WordLineSynced).name(QColor::HexArgb);
+        layout["CurrentWordColour"_L1]     = colours.colour(Colours::Type::WordSynced).name(QColor::HexArgb);
+    }
+
+    layout["LineFont"_L1]     = config.lineFont;
+    layout["WordLineFont"_L1] = config.wordLineFont;
+    layout["WordFont"_L1]     = config.wordFont;
 }
 
 void LyricsWidget::timerEvent(QTimerEvent* event)
@@ -242,12 +534,14 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* showScrollbar = new QAction(tr("Show scrollbar"), menu);
     showScrollbar->setCheckable(true);
-    showScrollbar->setChecked(m_settings->value<Settings::Lyrics::ShowScrollbar>());
-    QObject::connect(showScrollbar, &QAction::triggered, this,
-                     [this](const bool checked) { m_settings->set<Settings::Lyrics::ShowScrollbar>(checked); });
+    showScrollbar->setChecked(m_config.showScrollbar);
+    QObject::connect(showScrollbar, &QAction::triggered, this, [this](const bool checked) {
+        auto config          = m_config;
+        config.showScrollbar = checked;
+        applyConfig(config);
+    });
 
-    auto* alignMenu = new QMenu(tr("Text-align"), menu);
-
+    auto* alignMenu      = new QMenu(tr("Text-align"), menu);
     auto* alignmentGroup = new QActionGroup(menu);
 
     auto* alignCenter = new QAction(tr("Align to centre"), alignmentGroup);
@@ -258,14 +552,15 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     alignLeft->setCheckable(true);
     alignRight->setCheckable(true);
 
-    const auto currentAlignment = m_settings->value<Settings::Lyrics::Alignment>();
-
+    const auto currentAlignment = static_cast<Qt::Alignment>(m_config.alignment);
     alignCenter->setChecked(currentAlignment == Qt::AlignCenter);
     alignLeft->setChecked(currentAlignment == Qt::AlignLeft);
     alignRight->setChecked(currentAlignment == Qt::AlignRight);
 
     auto changeAlignment = [this](Qt::Alignment alignment) {
-        m_settings->set<Settings::Lyrics::Alignment>(static_cast<int>(alignment));
+        auto config      = m_config;
+        config.alignment = static_cast<int>(alignment);
+        applyConfig(config);
     };
 
     QObject::connect(alignCenter, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignCenter); });
@@ -276,14 +571,9 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     alignMenu->addAction(alignLeft);
     alignMenu->addAction(alignRight);
 
-    auto* openSettings = new QAction(tr("Settings…"), menu);
-    QObject::connect(openSettings, &QAction::triggered, this,
-                     [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::LyricsGeneral); });
-
     menu->addAction(showScrollbar);
     menu->addMenu(alignMenu);
-    menu->addSeparator();
-    menu->addAction(openSettings);
+    addConfigureAction(menu);
 
     menu->popup(event->globalPos());
 }
@@ -311,8 +601,7 @@ void LyricsWidget::changeLyrics(const Lyrics& lyrics)
         m_lyricsView->setDisplayString({});
     }
     else {
-        const auto script = m_settings->value<Settings::Lyrics::NoLyricsScript>();
-        m_lyricsView->setDisplayString(m_parser.evaluate(script, m_currentTrack));
+        m_lyricsView->setDisplayString(m_parser.evaluate(m_config.noLyricsScript, m_currentTrack));
         m_model->setLyrics({});
     }
 }
@@ -327,6 +616,11 @@ void LyricsWidget::openEditor(const Lyrics& lyrics)
 
     dlg->show();
     dlg->restoreState();
+}
+
+void LyricsWidget::openConfigDialog()
+{
+    showConfigDialog(new LyricsConfigDialog(this, this));
 }
 
 void LyricsWidget::playStateChanged(Engine::PlaybackState state)
@@ -365,7 +659,7 @@ void LyricsWidget::seekTo(const QModelIndex& index, const QPoint& pos)
         return;
     }
 
-    if(!m_currentLyrics.isSynced() || !m_settings->value<Settings::Lyrics::SeekOnClick>()) {
+    if(!m_currentLyrics.isSynced() || !m_config.seekOnClick) {
         return;
     }
 
@@ -436,8 +730,7 @@ void LyricsWidget::scrollToCurrentLine(int scrollValue)
     auto* scrollbar       = m_lyricsView->verticalScrollBar();
     const int targetValue = std::clamp(scrollValue - (m_lyricsView->height() / 2), 0, scrollbar->maximum());
 
-    const int scrollDuration = m_settings->value<Settings::Lyrics::ScrollDuration>();
-    if(scrollDuration == 0) {
+    if(m_config.scrollDuration == 0) {
         scrollbar->setValue(targetValue);
         return;
     }
@@ -447,7 +740,7 @@ void LyricsWidget::scrollToCurrentLine(int scrollValue)
     }
 
     m_scrollAnim = new QPropertyAnimation(scrollbar, "value", this);
-    m_scrollAnim->setDuration(scrollDuration);
+    m_scrollAnim->setDuration(m_config.scrollDuration);
     m_scrollAnim->setEasingCurve(QEasingCurve::OutCubic);
     m_scrollAnim->setStartValue(scrollbar->value());
     m_scrollAnim->setEndValue(targetValue);

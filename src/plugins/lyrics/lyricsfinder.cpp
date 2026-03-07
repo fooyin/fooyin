@@ -34,6 +34,8 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/stringutils.h>
 
+using namespace Qt::StringLiterals;
+
 constexpr auto SourceState = "Lyrics/SourceState";
 
 namespace {
@@ -146,10 +148,11 @@ void LyricsFinder::startLyricsSearch(const Track& track)
         QObject::disconnect(source, nullptr, this, nullptr);
     }
 
-    m_params = {.track  = track,
-                .title  = m_parser.evaluate(m_settings->value<Settings::Lyrics::TitleField>(), track),
-                .album  = m_parser.evaluate(m_settings->value<Settings::Lyrics::AlbumField>(), track),
-                .artist = m_parser.evaluate(m_settings->value<Settings::Lyrics::ArtistField>(), track)};
+    m_params
+        = {.track  = track,
+           .title  = m_parser.evaluate(m_settings->fileValue(Settings::TitleField, u"%title%"_s).toString(), track),
+           .album  = m_parser.evaluate(m_settings->fileValue(Settings::AlbumField, u"%album%"_s).toString(), track),
+           .artist = m_parser.evaluate(m_settings->fileValue(Settings::ArtistField, u"%artist%"_s).toString(), track)};
 
     m_currentSourceIndex = -1;
     m_currentSource      = nullptr;
@@ -193,7 +196,7 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
         return;
     }
 
-    const int matchThreshold = m_settings->value<Settings::Lyrics::MatchThreshold>();
+    const int matchThreshold = m_settings->fileValue(Settings::MatchThreshold, 75).toInt();
 
     const auto isSimilar = [matchThreshold](const QString& param, const QString& lyricParam) {
         if(param.isEmpty() || lyricParam.isEmpty()) {
@@ -236,8 +239,8 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
     }
 
     const bool foundLocal    = m_currentSource->isLocal();
-    const bool skipExternal  = m_settings->value<Settings::Lyrics::SkipExternal>();
-    const bool skipRemaining = m_settings->value<Settings::Lyrics::SkipRemaining>();
+    const bool skipExternal  = m_settings->fileValue(Settings::SkipExternal, true).toBool();
+    const bool skipRemaining = m_settings->fileValue(Settings::SkipRemaining, true).toBool();
 
     finishOrStartNextSource(skipRemaining || (skipExternal && foundLocal));
 }

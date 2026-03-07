@@ -119,7 +119,7 @@ StatusWidgetPage::StatusWidgetPage(SettingsManager* settings, QObject* parent)
 {
     setId(Constants::Page::StatusWidget);
     setName(tr("General"));
-    setCategory({tr("Widgets"), tr("Status Widget")});
+    setCategory({tr("Status Bar")});
     setWidgetCreator([settings] { return new StatusWidgetPageWidget(settings); });
 }
 } // namespace Fooyin

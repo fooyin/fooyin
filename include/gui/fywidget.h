@@ -23,18 +23,30 @@
 
 #include <utils/id.h>
 
+#include <QPointer>
 #include <QWidget>
 
+class QAction;
+class QDialog;
 class QMenu;
 
 namespace Fooyin {
 /*!
- * Base class for all widgets in fooyin.
- * A widget must be a subclass of FyWidget and registered using WidgetProvider::registerWidget
- * to be used with the layout system.
- * A unique id is generated for each widget instance. This is saved to the layout
- * to be restored on load. Reimplement @fn saveLayoutData and @fn loadLayoutData to
- * save/restore any extra widget data.
+ * Base class for all widgets that can participate in fooyin layouts.
+ *
+ * A widget must inherit FyWidget and be registered with WidgetProvider::registerWidget()
+ * to be created by the layout system. Each instance is assigned a unique id at construction
+ * time; this id can optionally be persisted in layout data and is also used by searchable
+ * widgets to form connections with Search widgets.
+ *
+ * Reimplement @fn saveLayoutData() and @fn loadLayoutData() to persist widget-specific state.
+ * For widgets that use the per-instance configuration model, these functions are expected to
+ * serialise and restore the current instance config from the layout JSON.
+ *
+ * Reimplement @fn openConfigDialog() and use @fn addConfigureAction() to expose per-widget
+ * configuration from a context menu. Use @fn showConfigDialog() to ensure only one config
+ * dialog is open for a widget instance at a time.
+ *
  * @note use WidgetContainer instead if your widget can contain other FyWidgets.
  *
  * @see WidgetProvider
@@ -70,11 +82,12 @@ public:
     [[nodiscard]] Id id() const;
     /*!
      * The name of this widget.
-     * Used in layout editing menus and widget containers.
+     * Used in layout editing menus, widget containers, and configuration dialogs.
      */
     [[nodiscard]] virtual QString name() const = 0;
     /*!
-     * Used when saving to a layout file.
+     * Stable type name written to layout files.
+     * This should identify the widget type rather than a specific instance.
      */
     [[nodiscard]] virtual QString layoutName() const = 0;
 
@@ -88,54 +101,80 @@ public:
     [[nodiscard]] QRect widgetGeometry() const;
 
     /*!
-     * Called when saving to a layout file (on close or exporting).
-     * Saves the unique id of this widget and calls @fn saveLayoutData.
+     * Serialises this widget into the layout array.
+     *
+     * Persists the widget id when required by the active features and then calls
+     * @fn saveLayoutData() for any widget-specific data.
      */
     void saveLayout(QJsonArray& layout);
     /*!
-     * Saves base widget data excluding any unique identifiers.
+     * Serialises only the widget type and widget-specific data.
+     *
+     * Unlike @fn saveLayout(), this intentionally omits any persisted widget id.
      */
     void saveBaseLayout(QJsonArray& layout);
     /*!
-     * Called when loading from a layout file (on open or importing).
-     * Replaces the unique id of this widget (if it exists) and calls @fn loadLayoutData.
+     * Restores this widget from saved layout data.
+     *
+     * Replaces the widget id if one was saved and then calls @fn loadLayoutData()
+     * for widget-specific restoration.
      */
     void loadLayout(const QJsonObject& layout);
 
     /*!
-     * A search event is sent to a widget from it's connected search widget.
-     * In order to receive search events, add the Search feature using @fn setFeature
-     * and connect an instance of this widget to a search widget.
+     * Receives a search term from a connected Search widget.
+     *
+     * In order to receive search events, enable Search or ExclusiveSearch using
+     * @fn setFeature() and connect this widget instance to a Search widget.
      */
     virtual void searchEvent(const QString& search);
 
     /*!
-     * Called when opening the context menu for this widget in layout editing mode.
-     * Reimplement to add additional actions/menus.
+     * Invoked when the widget context menu is built in layout editing mode.
+     * Reimplement to add widget-specific actions or submenus.
      * @note the base class implementation of this function does nothing.
      */
     virtual void layoutEditingMenu(QMenu* menu);
 
     /*!
-     * Called when saving layout in @fn saveLayout.
-     * Reimplement to save additional widget data to the layout file.
+     * Called by @fn saveLayout() and @fn saveBaseLayout().
+     * Reimplement to save widget-specific data to the layout object.
      * @note the base class implementation of this function does nothing.
      */
     virtual void saveLayoutData(QJsonObject& layout);
     /*!
-     * Called when loading layout in @fn loadLayout.
-     * Reimplement to load additional widget data previously saved to the layout file
-     * in @fn saveLayoutData.
+     * Called by @fn loadLayout().
+     * Reimplement to restore widget-specific data previously written by
+     * @fn saveLayoutData().
      * @note the base class implementation of this function does nothing.
      */
     virtual void loadLayoutData(const QJsonObject& layout);
 
     /*!
-     * Called either immediately after this widget has been instantiated or after
-     * it's data has been loaded from layout.
+     * Called after construction or after layout restoration has completed.
+     *
+     * Reimplement this if the widget needs to perform work that depends on its
+     * saved layout data already being available.
      * @note the base class implementation of this function does nothing.
      */
     virtual void finalise();
+
+protected:
+    /*!
+     * Opens this widget's configuration dialog.
+     * Reimplement for widgets that support per-instance configuration.
+     */
+    virtual void openConfigDialog();
+    /*!
+     * Adds a standard `Configure...` action to @p menu and connects it to
+     * @fn openConfigDialog().
+     */
+    QAction* addConfigureAction(QMenu* menu, bool addSeparator = true);
+    /*!
+     * Opens @p dialog and keeps it singleton per widget instance.
+     * If a config dialog is already open for this widget, that dialog is focused instead.
+     */
+    void showConfigDialog(QDialog* dialog);
 
 signals:
     /*!
@@ -147,6 +186,7 @@ signals:
 private:
     Id m_id;
     Features m_features;
+    QPointer<QDialog> m_configDialog;
 };
 using WidgetList = std::vector<FyWidget*>;
 } // namespace Fooyin

@@ -19,9 +19,7 @@
 
 #include "wavebarplugin.h"
 
-#include "settings/wavebarguisettingspage.h"
 #include "settings/wavebarsettings.h"
-#include "settings/wavebarsettingspage.h"
 #include "wavebarconstants.h"
 #include "wavebarwidget.h"
 #include "waveformbuilder.h"
@@ -60,10 +58,7 @@ WaveBarPlugin::WaveBarPlugin()
     : m_dbPool{DbConnectionPool::create(dbConnectionParams(), u"wavebar"_s)}
 { }
 
-WaveBarPlugin::~WaveBarPlugin()
-{
-    m_waveBuilder.reset();
-}
+WaveBarPlugin::~WaveBarPlugin() = default;
 
 void WaveBarPlugin::initialise(const CorePluginContext& context)
 {
@@ -87,11 +82,7 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
     m_trackSelection = context.trackSelection;
     m_widgetProvider = context.widgetProvider;
 
-    m_waveBarSettings        = std::make_unique<WaveBarSettings>(m_settings);
-    m_waveBarSettingsPage    = std::make_unique<WaveBarSettingsPage>(m_settings);
-    m_waveBarGuiSettingsPage = std::make_unique<WaveBarGuiSettingsPage>(m_settings);
-
-    QObject::connect(m_waveBarSettingsPage.get(), &WaveBarSettingsPage::clearCache, this, &WaveBarPlugin::clearCache);
+    m_waveBarSettings = std::make_unique<WaveBarSettings>(m_settings);
 
     m_widgetProvider->registerWidget(u"WaveBar"_s, [this]() { return createWavebar(); }, tr("Waveform Seekbar"));
     m_widgetProvider->setSubMenus(u"WaveBar"_s, {tr("Visualisations")});
@@ -121,21 +112,51 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 
 FyWidget* WaveBarPlugin::createWavebar()
 {
-    if(!m_waveBuilder) {
-        m_waveBuilder = std::make_unique<WaveformBuilder>(m_audioLoader, m_dbPool, m_settings);
-    }
+    auto* wavebar = new WaveBarWidget(m_audioLoader, m_dbPool, m_playerController, m_settings);
 
-    auto* wavebar = new WaveBarWidget(m_waveBuilder.get(), m_playerController, m_settings);
+    registerWaveBar(wavebar);
 
     const Track currTrack = m_playerController->currentTrack();
     if(currTrack.isValid()) {
-        m_waveBuilder->generateAndScale(currTrack);
+        wavebar->changeTrack(currTrack);
     }
 
     return wavebar;
 }
 
-void WaveBarPlugin::regenerateSelection(bool onlyMissing) const
+void WaveBarPlugin::registerWaveBar(WaveBarWidget* widget)
+{
+    if(!widget) {
+        return;
+    }
+
+    m_waveBars.emplace_back(widget);
+
+    QObject::connect(widget, &WaveBarWidget::clearCacheRequested, this, &WaveBarPlugin::clearCache);
+    QObject::connect(widget, &QObject::destroyed, this, [this]() { pruneWaveBars(); });
+}
+
+void WaveBarPlugin::pruneWaveBars()
+{
+    std::erase_if(m_waveBars, [](const QPointer<WaveBarWidget>& widget) { return widget.isNull(); });
+}
+
+void WaveBarPlugin::refreshWaveBars(const Track& track, bool update)
+{
+    if(!track.isValid()) {
+        return;
+    }
+
+    pruneWaveBars();
+
+    for(const auto& waveBar : m_waveBars) {
+        if(waveBar) {
+            waveBar->changeTrack(track, update);
+        }
+    }
+}
+
+void WaveBarPlugin::regenerateSelection(bool onlyMissing)
 {
     auto selectedTracks = m_trackSelection->selectedTracks();
     if(selectedTracks.empty()) {
@@ -144,9 +165,9 @@ void WaveBarPlugin::regenerateSelection(bool onlyMissing) const
 
     const Track currentTrack = m_playerController->currentTrack();
     auto currIt              = std::ranges::find(selectedTracks, currentTrack);
-    if(m_waveBuilder && currIt != selectedTracks.cend()) {
+    if(currIt != selectedTracks.cend()) {
         selectedTracks.erase(currIt);
-        m_waveBuilder->generateAndScale(currentTrack, !onlyMissing);
+        refreshWaveBars(currentTrack, !onlyMissing);
     }
 
     if(selectedTracks.empty()) {
@@ -188,7 +209,12 @@ void WaveBarPlugin::removeTracks(const TrackList& tracks)
         return;
     }
 
-    Utils::asyncExec([this, tracks]() {
+    const Track currentTrack = m_playerController->currentTrack();
+    const bool refreshCurrent
+        = currentTrack.isValid()
+       && std::ranges::any_of(tracks, [&currentTrack](const Track& track) { return track.id() == currentTrack.id(); });
+
+    Utils::asyncExec([this, tracks, currentTrack, refreshCurrent]() {
         QStringList keys;
         for(const Track& track : tracks) {
             keys.emplace_back(WaveBarDatabase::cacheKey(track));
@@ -202,6 +228,10 @@ void WaveBarPlugin::removeTracks(const TrackList& tracks)
         if(!waveDb.removeFromCache(keys)) {
             qCWarning(WAVEBAR) << "Unable to remove waveform data";
         }
+        if(refreshCurrent) {
+            QMetaObject::invokeMethod(
+                this, [this, currentTrack]() { refreshWaveBars(currentTrack, true); }, Qt::QueuedConnection);
+        }
     });
 }
 
@@ -210,7 +240,7 @@ void WaveBarPlugin::removeSelection()
     removeTracks(m_trackSelection->selectedTracks());
 }
 
-void WaveBarPlugin::clearCache() const
+void WaveBarPlugin::clearCache()
 {
     const DbConnectionHandler handler{m_dbPool};
     WaveBarDatabase waveDb;
@@ -219,6 +249,8 @@ void WaveBarPlugin::clearCache() const
     if(!waveDb.clearCache()) {
         qCWarning(WAVEBAR) << "Unable to clear waveform cache";
     }
+
+    refreshWaveBars(m_playerController->currentTrack(), true);
 }
 } // namespace Fooyin::WaveBar
 

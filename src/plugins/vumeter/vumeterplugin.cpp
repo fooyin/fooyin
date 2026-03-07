@@ -19,8 +19,7 @@
 
 #include "vumeterplugin.h"
 
-#include "vumetersettings.h"
-#include "vumetersettingspage.h"
+#include "vumetercolours.h"
 #include "vumeterwidget.h"
 
 #include <core/engine/enginecontroller.h>
@@ -43,8 +42,7 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
 {
     m_widgetProvider = context.widgetProvider;
 
-    m_vuMeterSettings = std::make_unique<VuMeterSettings>(m_settings);
-    new VuMeterSettingsPage(m_settings, this);
+    qRegisterMetaType<Fooyin::VuMeter::Colours>("Fooyin::VuMeter::Colours");
 
     m_widgetProvider->registerWidget(
         u"VUMeter"_s,

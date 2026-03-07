@@ -23,7 +23,6 @@
 #include "lyricscolours.h"
 
 #include <gui/scripting/richtext.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <QAbstractListModel>
 #include <QMargins>
@@ -44,7 +43,7 @@ public:
         LineSpacingRole
     };
 
-    explicit LyricsModel(SettingsManager* settings, QObject* parent = nullptr);
+    explicit LyricsModel(QObject* parent = nullptr);
 
     void setLyrics(const Lyrics& lyrics);
     [[nodiscard]] Lyrics lyrics() const;
@@ -52,6 +51,8 @@ public:
     void setMargins(const QMargins& margins);
     void setAlignment(Qt::Alignment alignment);
     void setLineSpacing(int spacing);
+    void setColours(const Colours& colours);
+    void setFonts(const QString& lineFont, const QString& wordLineFont, const QString& wordFont);
 
     void setCurrentTime(uint64_t time);
     [[nodiscard]] uint64_t currentTime() const;
@@ -62,17 +63,12 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
 private:
-    void loadColours();
-    void loadFonts();
-
     void updateCurrentLine();
 
     [[nodiscard]] RichText textForLine(const ParsedLine& line) const;
-    [[nodiscard]] std::vector<Fooyin::Lyrics::ParsedLine>::const_iterator lineForTimestamp(uint64_t timestamp) const;
-    [[nodiscard]] std::vector<Fooyin::Lyrics::ParsedWord>::const_iterator
-    wordForTimestamp(const Fooyin::Lyrics::ParsedLine& line, uint64_t timestamp) const;
-
-    SettingsManager* m_settings;
+    [[nodiscard]] std::vector<ParsedLine>::const_iterator lineForTimestamp(uint64_t timestamp) const;
+    [[nodiscard]] std::vector<ParsedWord>::const_iterator wordForTimestamp(const ParsedLine& line,
+                                                                           uint64_t timestamp) const;
 
     Lyrics m_lyrics;
     QMargins m_margins;

@@ -22,20 +22,20 @@ create_fooyin_plugin_internal(
             lyricsview.h
             lyricswidget.cpp
             lyricswidget.h
-        settings/lyricsgeneralpage.cpp
-        settings/lyricsgeneralpage.h
-        settings/lyricsguipage.cpp
-        settings/lyricsguipage.h
-        settings/lyricssavingpage.cpp
-        settings/lyricssavingpage.h
-        settings/lyricssearchingpage.cpp
-        settings/lyricssearchingpage.h
-        settings/lyricssettings.cpp
-        settings/lyricssettings.h
-        settings/lyricssourcesmodel.cpp
-        settings/lyricssourcesmodel.h
-        settings/lyricssourcespage.cpp
-        settings/lyricssourcespage.h
+            lyricsconfigwidget.cpp
+            lyricsconfigwidget.h
+            settings/lyricsgeneralpage.cpp
+            settings/lyricsgeneralpage.h
+            settings/lyricssavingpage.cpp
+            settings/lyricssavingpage.h
+            settings/lyricssearchingpage.cpp
+            settings/lyricssearchingpage.h
+            settings/lyricssettings.cpp
+            settings/lyricssettings.h
+            settings/lyricssourcesmodel.cpp
+            settings/lyricssourcesmodel.h
+            settings/lyricssourcespage.cpp
+            settings/lyricssourcespage.h
             sources/darklyrics.cpp
             sources/darklyrics.h
             sources/locallyrics.cpp

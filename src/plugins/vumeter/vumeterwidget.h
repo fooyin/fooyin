@@ -19,12 +19,13 @@
 
 #pragma once
 
-#include "vumetersettings.h"
-
 #include <core/engine/audioformat.h>
 #include <core/engine/levelframe.h>
-#include <core/player/playerdefs.h>
 #include <gui/fywidget.h>
+
+#include <QVariant>
+
+class QJsonObject;
 
 namespace Fooyin {
 class PlayerController;
@@ -65,6 +66,26 @@ public:
 
     [[nodiscard]] QSize minimumSizeHint() const override;
 
+    struct ConfigData
+    {
+        double peakHoldTime{1.5};
+        double falloffTime{13.0};
+        int updateFps{40};
+        int channelSpacing{1};
+        int barSize{0};
+        int barSpacing{1};
+        int barSections{1};
+        int sectionSpacing{1};
+        QVariant meterColours;
+    };
+
+    [[nodiscard]] ConfigData factoryConfig() const;
+    [[nodiscard]] ConfigData defaultConfig() const;
+    [[nodiscard]] const ConfigData& currentConfig() const;
+    void saveDefaults(const ConfigData& config) const;
+    void clearSavedDefaults() const;
+    void applyConfig(const ConfigData& config);
+
 protected:
     void showEvent(QShowEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
@@ -73,6 +94,13 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
+    void openConfigDialog() override;
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
+
+    SettingsManager* m_settings;
+    ConfigData m_config;
+
     std::unique_ptr<VuMeterWidgetPrivate> p;
 };
 } // namespace VuMeter

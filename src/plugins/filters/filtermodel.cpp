@@ -22,7 +22,6 @@
 #include "filterfwd.h"
 #include "filteritem.h"
 #include "filterpopulator.h"
-#include "settings/filtersettings.h"
 
 #include <core/coresettings.h>
 #include <core/track.h>
@@ -154,15 +153,12 @@ FilterModelPrivate::FilterModelPrivate(FilterModel* self, LibraryManager* librar
     , m_populator{libraryManager}
     , m_coverProvider{coverProvider}
     , m_decorationSize{
-          CoverProvider::findThumbnailSize(m_settings->value<Settings::Filters::FilterIconSize>().toSize())}
+          CoverProvider::findThumbnailSize(m_settings->fileValue(u"Filters/IconSize", QSize{100, 100}).toSize())}
 {
     m_populator.moveToThread(&m_populatorThread);
 
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, m_self,
                      [this](const Track& track) { coverUpdated(track); });
-
-    m_settings->subscribe<Settings::Filters::FilterIconSize>(
-        m_self, [this](const auto& size) { m_decorationSize = CoverProvider::findThumbnailSize(size.toSize()); });
 }
 
 void FilterModelPrivate::beginReset()
@@ -349,6 +345,16 @@ void FilterModel::setRowHeight(int height)
 {
     p->m_rowHeight = height;
     p->dataUpdated();
+}
+
+void FilterModel::setIconSize(const QSize& size)
+{
+    if(!size.isValid()) {
+        return;
+    }
+
+    p->m_decorationSize = CoverProvider::findThumbnailSize(size);
+    p->dataUpdated({Qt::DecorationRole});
 }
 
 void FilterModel::setShowSummary(bool show)

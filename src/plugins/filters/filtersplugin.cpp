@@ -21,10 +21,6 @@
 
 #include "filtercontroller.h"
 #include "filterwidget.h"
-#include "settings/filterscolumnpage.h"
-#include "settings/filtersettings.h"
-#include "settings/filtersgeneralpage.h"
-#include "settings/filtersguipage.h"
 
 #include <gui/coverprovider.h>
 #include <gui/editablelayout.h>
@@ -46,18 +42,12 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
 {
     m_layoutProvider = context.layoutProvider;
 
-    m_filterSettings = std::make_unique<FiltersSettings>(m_core->settingsManager);
-    m_filterController
-        = new FilterController(*m_core, context.trackSelection, context.editableLayout, m_core->settingsManager, this);
+    m_filterController = new FilterController(context.actionManager, *m_core, context.trackSelection,
+                                              context.editableLayout, m_core->settingsManager, this);
 
     context.widgetProvider->registerWidget(
         u"LibraryFilter"_s, [this]() { return m_filterController->createFilter(); }, tr("Library Filter"));
     context.themeRegistry->registerFontEntry(tr("Filters"), u"Fooyin::Filters::FilterView"_s);
-
-    m_generalPage = new FiltersGeneralPage(m_core->settingsManager, this);
-    m_guiPage     = new FiltersGuiPage(m_core->settingsManager, this);
-    m_columnsPage = new FiltersColumnPage(context.actionManager, m_filterController->columnRegistry(),
-                                          m_core->settingsManager, this);
 
     registerLayouts();
 }

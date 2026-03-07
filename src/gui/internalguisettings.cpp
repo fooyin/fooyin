@@ -110,26 +110,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::StatusSelectionScript>(StatusWidget::defaultSelectionScript(),
                                                                u"StatusWidget/SelectionScript"_s);
 
-    m_settings->createSetting<Internal::LibTreeDoubleClick>(0, u"LibraryTree/DoubleClickBehaviour"_s);
-    m_settings->createSetting<Internal::LibTreeMiddleClick>(0, u"LibraryTree/MiddleClickBehaviour"_s);
-    m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false, u"LibraryTree/SelectionPlaylistEnabled"_s);
-    m_settings->createSetting<Internal::LibTreeAutoSwitch>(true, u"LibraryTree/SelectionPlaylistAutoSwitch"_s);
-    m_settings->createSetting<Internal::LibTreeAutoPlaylist>(LibraryTreeController::defaultPlaylistName(),
-                                                             u"LibraryTree/SelectionPlaylistName"_s);
-    m_settings->createSetting<Internal::LibTreeScrollBar>(true, u"LibraryTree/Scrollbar"_s);
-    m_settings->createSetting<Internal::LibTreeAltColours>(false, u"LibraryTree/AlternatingColours"_s);
-    m_settings->createSetting<Internal::LibTreeRowHeight>(0, u"LibraryTree/RowHeight"_s);
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
-    m_settings->createSetting<Internal::DirBrowserPath>(QString{}, u"DirectoryBrowser/Path"_s);
-    m_settings->createSetting<Internal::DirBrowserIcons>(true, u"DirectoryBrowser/Icons"_s);
-    m_settings->createSetting<Internal::DirBrowserDoubleClick>(5, u"DirectoryBrowser/DoubleClickBehaviour"_s);
-    m_settings->createSetting<Internal::DirBrowserMiddleClick>(0, u"DirectoryBrowser/MiddleClickBehaviour"_s);
-    m_settings->createSetting<Internal::DirBrowserMode>(1, u"DirectoryBrowser/Mode"_s);
-    m_settings->createSetting<Internal::DirBrowserListIndent>(true, u"DirectoryBrowser/IndentList"_s);
-    m_settings->createSetting<Internal::DirBrowserControls>(true, u"DirectoryBrowser/Controls"_s);
-    m_settings->createSetting<Internal::DirBrowserLocation>(true, u"DirectoryBrowser/LocationBar"_s);
-    m_settings->createSetting<Internal::DirBrowserShowSymLinks>(false, u"DirectoryBrowser/SymLinks"_s);
-    m_settings->createSetting<Internal::DirBrowserShowHidden>(false, u"DirectoryBrowser/Hidden"_s);
     m_settings->createSetting<Internal::WindowTitleTrackScript>(u"[%albumartist% - ]%title% \"[fooyin]\""_s,
                                                                 u"Interface/WindowTitleTrackScript"_s);
     m_settings->createSetting<Internal::TrackCoverPaths>(QVariant::fromValue(defaultCoverPaths()), u"Artwork/Paths"_s);
@@ -138,35 +119,19 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistImagePaddingTop>(0, u"PlaylistWidget/ImagePaddingTop"_s);
     m_settings->createSetting<Internal::PixmapCacheSize>(
         static_cast<int>(PixmapCacheSize * std::pow(qApp->devicePixelRatio(), 2)), u"Interface/PixmapCacheSize"_s);
-    m_settings->createSetting<Internal::LibTreeSendPlayback>(true, u"LibraryTree/StartPlaybackOnSend"_s);
-    m_settings->createSetting<Internal::DirBrowserSendPlayback>(true, u"DirectoryBrowser/StartPlaybackOnSend"_s);
     m_settings->createSetting<Internal::EditableLayoutMargin>(-1, u"Interface/EditableLayoutMargin"_s);
     m_settings->createSetting<Internal::PlaylistTabsAddButton>(false, u"PlaylistTabs/ShowAddButton"_s);
-    m_settings->createSetting<Internal::LibTreeRestoreState>(true, u"LibraryTree/RestoreState"_s);
     m_settings->createSetting<Internal::ShowTrayIcon>(false, u"Interface/ShowTrayIcon"_s);
     m_settings->createSetting<Internal::TrayOnClose>(true, u"Interface/TrayOnClose"_s);
-    m_settings->createSetting<Internal::LibTreeKeepAlive>(false, u"LibraryTree/KeepAlive"_s);
     m_settings->createSetting<Internal::PlaylistTabsCloseButton>(false, u"PlaylistTabs/ShowCloseButton"_s);
     m_settings->createSetting<Internal::PlaylistTabsMiddleClose>(false, u"PlaylistTabs/CloseOnMiddleClick"_s);
     m_settings->createSetting<Internal::PlaylistTabsExpand>(false, u"PlaylistTabs/ExpandToFill"_s);
-    m_settings->createSetting<Internal::LibTreeAnimated>(true, u"LibraryTree/Animated"_s);
     m_settings->createSetting<Internal::PlaylistTabsClearButton>(false, u"PlaylistTabs/ShowClearButton"_s);
-    m_settings->createSetting<Internal::LibTreeHeader>(true, u"LibraryTree/Header"_s);
-    m_settings->createSetting<Internal::QueueViewerShowIcon>(true, u"PlaybackQueue/ShowIcon"_s);
-    m_settings->createSetting<Internal::QueueViewerIconSize>(QSize{36, 36}, u"PlaybackQueue/IconSize"_s);
-    m_settings->createSetting<Internal::QueueViewerHeader>(true, u"PlaybackQueue/Header"_s);
-    m_settings->createSetting<Internal::QueueViewerScrollBar>(true, u"PlaybackQueue/Scrollbar"_s);
-    m_settings->createSetting<Internal::QueueViewerAltColours>(false, u"PlaybackQueue/AlternatingColours"_s);
-    m_settings->createSetting<Internal::QueueViewerLeftScript>(u"%title%$crlf()%album%"_s,
-                                                               u"PlaybackQueue/LeftScript"_s);
-    m_settings->createSetting<Internal::QueueViewerRightScript>(u"%duration%"_s, u"PlaybackQueue/RightScript"_s);
-    m_settings->createSetting<Internal::QueueViewerShowCurrent>(true, u"PlaybackQueue/ShowCurrent"_s);
     m_settings->createSetting<Internal::PlaylistMiddleClick>(0, u"PlaylistWidget/MiddleClickBehaviour"_s);
     m_settings->createSetting<Internal::InfoDisplayPrefer>(0, u"SelectionInfo/PreferDisplay"_s);
     m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());
     m_settings->createTempSetting<Internal::SystemFont>(QApplication::font());
     m_settings->createTempSetting<Internal::SystemPalette>(QApplication::palette());
-    m_settings->createSetting<Internal::DirBrowserShowHorizScroll>(true, u"DirectoryBrowser/ShowHorizontalScrollbar"_s);
     m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, u"LibraryTree/IconSize"_s);
     m_settings->createSetting<Internal::ArtworkSaveMethods>(QVariant::fromValue(defaultArtworkSaveMethods()),
                                                             u"Artwork/SaveMethods"_s);

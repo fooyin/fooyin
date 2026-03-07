@@ -51,34 +51,37 @@ public:
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
 
-    void insertTracks(const QueueTracks& tracks, int row);
-    void removeTracks(const QueueTracks& tracks);
-    void removeIndexes(const std::vector<int>& indexes);
-
     void reset(const QueueTracks& tracks);
-    QueueTracks queueTracks() const;
 
     void playbackStateChanged();
-    void currentTrackChanged();
     [[nodiscard]] int queueIndex(const QModelIndex& index) const;
 
+    void setScripts(const QString& titleScript, const QString& subtitleScript);
+    void setShowCurrent(bool showCurrent);
+    void setShowIcon(bool showIcon);
+    void setIconSize(const QSize& iconSize);
+
 signals:
-    void queueChanged();
+    void queueTracksMoved(int row, const QList<int>& indexes);
     void tracksDropped(int row, const QByteArray& data);
     void playlistTracksDropped(int row, const QByteArray& data);
 
 private:
     void regenerateTitles();
-    void moveTracks(int row, const QModelIndexList& indexes);
     void updateShowCurrent();
 
     PlayerController* m_playerController;
-    SettingsManager* m_settings;
 
     CoverProvider m_coverProvider;
     ScriptParser m_scriptParser;
+
     std::vector<std::unique_ptr<QueueViewerItem>> m_trackItems;
     std::unordered_map<QString, std::vector<QueueViewerItem*>> m_trackParents;
+
+    QString m_titleScript;
+    QString m_subtitleScript;
+
+    bool m_showCurrent;
     bool m_showIcon;
     CoverProvider::ThumbnailSize m_iconSize;
 

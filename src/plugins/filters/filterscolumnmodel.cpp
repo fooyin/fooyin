@@ -20,11 +20,12 @@
 #include "filterscolumnmodel.h"
 
 #include "filtercolumnregistry.h"
-#include "filtersettings.h"
 
 #include <QFont>
 
 using namespace Qt::StringLiterals;
+
+Q_LOGGING_CATEGORY(FILTERS, "fy.filters")
 
 namespace Fooyin::Filters {
 ColumnItem::ColumnItem()

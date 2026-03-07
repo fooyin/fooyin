@@ -27,8 +27,11 @@
 #include <gui/fywidget.h>
 
 #include <QBasicTimer>
+#include <QMargins>
 #include <QPointer>
+#include <QVariant>
 
+class QJsonObject;
 class QPropertyAnimation;
 
 namespace Fooyin {
@@ -58,6 +61,31 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
+
+    struct ConfigData
+    {
+        bool seekOnClick{true};
+        QString noLyricsScript;
+        int scrollDuration{500};
+        int scrollMode{static_cast<int>(ScrollMode::Synced)};
+        bool showScrollbar{true};
+        int alignment{static_cast<int>(Qt::AlignCenter)};
+        int lineSpacing{5};
+        QMargins margins{20, 20, 20, 20};
+        QVariant colours;
+        QString lineFont;
+        QString wordLineFont;
+        QString wordFont;
+    };
+
+    [[nodiscard]] ConfigData factoryConfig() const;
+    [[nodiscard]] ConfigData defaultConfig() const;
+    [[nodiscard]] const ConfigData& currentConfig() const;
+    void saveDefaults(const ConfigData& config) const;
+    void clearSavedDefaults() const;
+    void applyConfig(const ConfigData& config);
 
 protected:
     void timerEvent(QTimerEvent* event) override;
@@ -67,6 +95,11 @@ private:
     void loadLyrics(const Lyrics& lyrics);
     void changeLyrics(const Lyrics& lyrics);
     void openEditor(const Lyrics& lyrics);
+
+    void openConfigDialog() override;
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
+
     void playStateChanged(Engine::PlaybackState state);
 
     void setCurrentTime(uint64_t time);
@@ -100,6 +133,7 @@ private:
     QMetaObject::Connection m_finderConnection;
     ScriptParser m_parser;
 
+    ConfigData m_config;
     ScrollMode m_scrollMode;
     QPointer<QPropertyAnimation> m_scrollAnim;
     bool m_isUserScrolling;

@@ -21,6 +21,8 @@
 
 #include <utils/crypto.h>
 
+#include <QAction>
+#include <QDialog>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QMenu>
@@ -128,6 +130,43 @@ void FyWidget::saveLayoutData(QJsonObject& /*object*/) { }
 void FyWidget::loadLayoutData(const QJsonObject& /*object*/) { }
 
 void FyWidget::finalise() { }
+
+void FyWidget::openConfigDialog() { }
+
+QAction* FyWidget::addConfigureAction(QMenu* menu, bool addSeparator)
+{
+    if(!menu) {
+        return nullptr;
+    }
+
+    if(addSeparator) {
+        menu->addSeparator();
+    }
+
+    auto* configure = new QAction(tr("Configure..."), menu);
+    QObject::connect(configure, &QAction::triggered, this, &FyWidget::openConfigDialog);
+    menu->addAction(configure);
+
+    return configure;
+}
+
+void FyWidget::showConfigDialog(QDialog* dialog)
+{
+    if(!dialog) {
+        return;
+    }
+
+    if(m_configDialog) {
+        dialog->deleteLater();
+        m_configDialog->raise();
+        m_configDialog->activateWindow();
+        return;
+    }
+
+    m_configDialog = dialog;
+    QObject::connect(dialog, &QDialog::destroyed, this, [this]() { m_configDialog = nullptr; });
+    dialog->open();
+}
 } // namespace Fooyin
 
 #include "gui/moc_fywidget.cpp"

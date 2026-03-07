@@ -27,25 +27,27 @@
 
 namespace Fooyin {
 class AutoHeaderView;
+class ActionManager;
 class CoverProvider;
 class LibraryManager;
 class SettingsManager;
 class SignalThrottler;
 class WidgetContext;
+enum class TrackAction;
 
 namespace Filters {
 class FilterColumnRegistry;
 class FilterModel;
 class FilterSortModel;
-class FilterWidgetPrivate;
 
 class FilterWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit FilterWidget(FilterColumnRegistry* columnRegistry, LibraryManager* libraryManager,
-                          CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
+                          LibraryManager* libraryManager, CoverProvider* coverProvider, SettingsManager* settings,
+                          QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     [[nodiscard]] Id group() const;
@@ -56,6 +58,15 @@ public:
     [[nodiscard]] TrackList filteredTracks() const;
     [[nodiscard]] QString searchFilter() const;
     [[nodiscard]] WidgetContext* widgetContext() const;
+    [[nodiscard]] TrackAction doubleClickAction() const;
+    [[nodiscard]] TrackAction middleClickAction() const;
+    [[nodiscard]] bool sendPlayback() const;
+    [[nodiscard]] bool playlistEnabled() const;
+    [[nodiscard]] bool autoSwitch() const;
+    [[nodiscard]] bool keepAlive() const;
+    [[nodiscard]] QString playlistName() const;
+    [[nodiscard]] bool hasSelection() const;
+    void openConfigDialog() override;
 
     void setGroup(const Id& group);
     void setIndex(int index);
@@ -74,6 +85,26 @@ public:
 
     void searchEvent(const QString& search) override;
 
+    struct ConfigData
+    {
+        int doubleClickAction{1};
+        int middleClickAction{0};
+        bool sendPlayback{true};
+        bool playlistEnabled{true};
+        bool autoSwitch{true};
+        bool keepAlive{false};
+        QString playlistName;
+        int rowHeight{0};
+        QSize iconSize{100, 100};
+    };
+
+    [[nodiscard]] ConfigData factoryConfig() const;
+    [[nodiscard]] ConfigData defaultConfig() const;
+    [[nodiscard]] const ConfigData& currentConfig() const;
+    void saveDefaults(const ConfigData& config) const;
+    void clearSavedDefaults() const;
+    void applyConfig(const ConfigData& config);
+
     void tracksAdded(const TrackList& tracks);
     void tracksChanged(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
@@ -89,6 +120,7 @@ signals:
     void filterUpdated();
     void finishedUpdating();
     void selectionChanged();
+    void configChanged();
     void requestHeaderMenu(Fooyin::AutoHeaderView* header, const QPoint& pos);
     void requestContextMenu(const QPoint& pos);
     void requestEditConnections();
@@ -114,6 +146,10 @@ private:
     void columnChanged(const FilterColumn& changedColumn);
     void columnRemoved(int id);
 
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
+
+    ActionManager* m_actionManager;
     FilterColumnRegistry* m_columnRegistry;
     SettingsManager* m_settings;
 
@@ -124,23 +160,24 @@ private:
     SignalThrottler* m_resetThrottler;
 
     Id m_group;
-    int m_index{-1};
+    int m_index;
     FilterColumnList m_columns;
-    bool m_multipleColumns{false};
+    bool m_multipleColumns;
     TrackList m_tracks;
     TrackList m_filteredTracks;
 
     WidgetContext* m_widgetContext;
 
     QString m_searchStr;
-    bool m_searching{false};
-    bool m_updating{false};
+    bool m_searching;
+    bool m_updating;
 
     QByteArray m_headerState;
 
     bool m_showHeader;
     bool m_showScrollbar;
     bool m_alternatingColours;
+    ConfigData m_config;
 };
 } // namespace Filters
 } // namespace Fooyin

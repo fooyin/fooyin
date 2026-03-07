@@ -19,36 +19,56 @@
 
 #include "wavebarwidget.h"
 
+#include "settings/wavebarsettings.h"
+#include "wavebarcolours.h"
+#include "wavebarconfigwidget.h"
 #include "wavebarconstants.h"
 #include "waveformbuilder.h"
 #include "waveseekbar.h"
 
-#include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/seekcontainer.h>
-#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/signalthrottler.h>
+#include <utils/stringutils.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
+#include <QDialog>
+#include <QFile>
+#include <QGridLayout>
+#include <QHBoxLayout>
 #include <QJsonObject>
+#include <QLabel>
 #include <QMenu>
-#include <QVBoxLayout>
 
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
+// Settings
+constexpr auto ShowLabelsKey   = u"WaveBar/ShowLabels";
+constexpr auto ElapsedTotalKey = u"WaveBar/ElapsedTotal";
+constexpr auto ShowCursorKey   = u"WaveBar/ShowCursor";
+constexpr auto CursorWidthKey  = u"WaveBar/CursorWidth";
+constexpr auto ModeKey         = u"WaveBar/Mode";
+constexpr auto DownmixKey      = u"WaveBar/Downmix";
+constexpr auto BarWidthKey     = u"WaveBar/BarWidth";
+constexpr auto BarGapKey       = u"WaveBar/BarGap";
+constexpr auto MaxScaleKey     = u"WaveBar/MaxScale";
+constexpr auto CentreGapKey    = u"WaveBar/CentreGap";
+constexpr auto ChannelScaleKey = u"WaveBar/ChannelScale";
+constexpr auto ColoursKey      = u"WaveBar/Colours";
+
 namespace Fooyin::WaveBar {
-WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerController, SettingsManager* settings,
-                             QWidget* parent)
+WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool,
+                             PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_settings{settings}
     , m_container{new SeekContainer(m_playerController, this)}
-    , m_seekbar{new WaveSeekBar(settings, this)}
-    , m_builder{builder}
+    , m_seekbar{new WaveSeekBar(this)}
+    , m_builder{std::make_unique<WaveformBuilder>(std::move(audioLoader), std::move(dbPool), settings, this)}
 {
     setMinimumSize(100, 20);
     resize(100, 100);
@@ -57,13 +77,16 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_container);
     m_container->insertWidget(1, m_seekbar);
-    m_container->setLabelsEnabled(false);
 
     m_seekbar->setPlayState(m_playerController->playState());
     m_seekbar->setPosition(m_playerController->currentPosition());
 
-    QObject::connect(m_builder, &WaveformBuilder::generatingWaveform, this, [this]() { m_seekbar->processData({}); });
-    QObject::connect(m_builder, &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
+    m_config = defaultConfig();
+    applyConfig(m_config);
+
+    QObject::connect(m_builder.get(), &WaveformBuilder::generatingWaveform, this,
+                     [this]() { m_seekbar->processData({}); });
+    QObject::connect(m_builder.get(), &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
 
     QObject::connect(playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
     QObject::connect(playerController, &PlayerController::playStateChanged, m_seekbar, &WaveSeekBar::setPlayState);
@@ -79,7 +102,9 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
                      [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStepSmall>()); });
 
     QObject::connect(m_container, &SeekContainer::totalClicked, this, [this]() {
-        rescaleWaveform(); // Switching to elapsed total may change the width
+        auto config         = m_config;
+        config.elapsedTotal = m_container->elapsedTotal();
+        applyConfig(config);
     });
 
     auto* throttler = new SignalThrottler(this);
@@ -87,6 +112,16 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, throttler, &SignalThrottler::throttle);
     QObject::connect(throttler, &SignalThrottler::triggered, this,
                      [this]() { changeTrack(m_playerController->currentTrack()); });
+
+    auto updateColours = [this]() {
+        if(m_config.colourOptions.isValid()) {
+            return;
+        }
+
+        m_seekbar->setColours(Colours{});
+    };
+    m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
+    m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
 }
 
 QString WaveBarWidget::name() const
@@ -101,26 +136,288 @@ QString WaveBarWidget::layoutName() const
 
 void WaveBarWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout["ShowLabels"_L1]   = m_container->labelsEnabled();
-    layout["ElapsedTotal"_L1] = m_container->elapsedTotal();
+    saveConfigToLayout(m_config, layout);
 }
 
 void WaveBarWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains("ShowLabels"_L1)) {
-        const bool showLabels = layout.value("ShowLabels"_L1).toBool();
-        m_container->setLabelsEnabled(showLabels);
-    }
-    if(layout.contains("ElapsedTotal"_L1)) {
-        const bool elapsedTotal = layout.value("ElapsedTotal"_L1).toBool();
-        m_container->setElapsedTotal(elapsedTotal);
-    }
+    applyConfig(configFromLayout(layout));
 }
 
-void WaveBarWidget::changeTrack(const Track& track)
+WaveBarWidget::ConfigData WaveBarWidget::defaultConfig() const
+{
+    auto config{factoryConfig()};
+
+    config.showLabels    = m_settings->fileValue(ShowLabelsKey, config.showLabels).toBool();
+    config.elapsedTotal  = m_settings->fileValue(ElapsedTotalKey, config.elapsedTotal).toBool();
+    config.showCursor    = m_settings->fileValue(ShowCursorKey, config.showCursor).toBool();
+    config.cursorWidth   = m_settings->fileValue(CursorWidthKey, config.cursorWidth).toInt();
+    config.mode          = m_settings->fileValue(ModeKey, config.mode).toInt();
+    config.downmix       = m_settings->fileValue(DownmixKey, config.downmix).toInt();
+    config.barWidth      = m_settings->fileValue(BarWidthKey, config.barWidth).toInt();
+    config.barGap        = m_settings->fileValue(BarGapKey, config.barGap).toInt();
+    config.maxScale      = m_settings->fileValue(MaxScaleKey, config.maxScale).toDouble();
+    config.centreGap     = m_settings->fileValue(CentreGapKey, config.centreGap).toInt();
+    config.channelScale  = m_settings->fileValue(ChannelScaleKey, config.channelScale).toDouble();
+    config.colourOptions = m_settings->fileValue(ColoursKey, config.colourOptions);
+
+    return config;
+}
+
+WaveBarWidget::ConfigData WaveBarWidget::factoryConfig() const
+{
+    return {
+        .showLabels    = false,
+        .elapsedTotal  = false,
+        .showCursor    = true,
+        .cursorWidth   = 3,
+        .mode          = static_cast<int>(Default),
+        .downmix       = 0,
+        .barWidth      = 1,
+        .barGap        = 0,
+        .maxScale      = 1.0,
+        .centreGap     = 0,
+        .channelScale  = 0.9,
+        .colourOptions = QVariant{},
+    };
+}
+
+const WaveBarWidget::ConfigData& WaveBarWidget::currentConfig() const
+{
+    return m_config;
+}
+
+int WaveBarWidget::globalNumSamples() const
+{
+    return m_settings->value<Settings::WaveBar::NumSamples>();
+}
+
+bool WaveBarWidget::setGlobalNumSamples(int samples) const
+{
+    return m_settings->set<Settings::WaveBar::NumSamples>(samples);
+}
+
+QString WaveBarWidget::cacheSizeText() const
+{
+    const QFile cacheFile{cachePath()};
+    return tr("Disk cache usage") + u": %1"_s.arg(Utils::formatFileSize(cacheFile.size()));
+}
+
+void WaveBarWidget::requestClearCache()
+{
+    emit clearCacheRequested();
+}
+
+void WaveBarWidget::saveDefaults(const ConfigData& config) const
+{
+    auto validated{config};
+
+    validated.cursorWidth  = std::clamp(validated.cursorWidth, 1, 20);
+    validated.barWidth     = std::clamp(validated.barWidth, 1, 50);
+    validated.barGap       = std::clamp(validated.barGap, 0, 50);
+    validated.maxScale     = std::clamp(validated.maxScale, 0.0, 2.0);
+    validated.centreGap    = std::clamp(validated.centreGap, 0, 10);
+    validated.channelScale = std::clamp(validated.channelScale, 0.0, 1.0);
+    validated.downmix
+        = std::clamp(validated.downmix, static_cast<int>(DownmixOption::Off), static_cast<int>(DownmixOption::Mono));
+    validated.mode &= static_cast<int>(MinMax | Rms | Silence);
+
+    if(!validated.colourOptions.canConvert<Colours>()) {
+        validated.colourOptions = QVariant{};
+    }
+
+    m_settings->fileSet(ShowLabelsKey, validated.showLabels);
+    m_settings->fileSet(ElapsedTotalKey, validated.elapsedTotal);
+    m_settings->fileSet(ShowCursorKey, validated.showCursor);
+    m_settings->fileSet(CursorWidthKey, validated.cursorWidth);
+    m_settings->fileSet(ModeKey, validated.mode);
+    m_settings->fileSet(DownmixKey, validated.downmix);
+    m_settings->fileSet(BarWidthKey, validated.barWidth);
+    m_settings->fileSet(BarGapKey, validated.barGap);
+    m_settings->fileSet(MaxScaleKey, validated.maxScale);
+    m_settings->fileSet(CentreGapKey, validated.centreGap);
+    m_settings->fileSet(ChannelScaleKey, validated.channelScale);
+    m_settings->fileSet(ColoursKey, validated.colourOptions);
+}
+
+void WaveBarWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(ShowLabelsKey);
+    m_settings->fileRemove(ElapsedTotalKey);
+    m_settings->fileRemove(ShowCursorKey);
+    m_settings->fileRemove(CursorWidthKey);
+    m_settings->fileRemove(ModeKey);
+    m_settings->fileRemove(DownmixKey);
+    m_settings->fileRemove(BarWidthKey);
+    m_settings->fileRemove(BarGapKey);
+    m_settings->fileRemove(MaxScaleKey);
+    m_settings->fileRemove(CentreGapKey);
+    m_settings->fileRemove(ChannelScaleKey);
+    m_settings->fileRemove(ColoursKey);
+    m_settings->reset<Settings::WaveBar::NumSamples>();
+}
+
+void WaveBarWidget::applyConfig(const ConfigData& config)
+{
+    auto validated{config};
+
+    validated.cursorWidth  = std::clamp(validated.cursorWidth, 1, 20);
+    validated.barWidth     = std::clamp(validated.barWidth, 1, 50);
+    validated.barGap       = std::clamp(validated.barGap, 0, 50);
+    validated.maxScale     = std::clamp(validated.maxScale, 0.0, 2.0);
+    validated.centreGap    = std::clamp(validated.centreGap, 0, 10);
+    validated.channelScale = std::clamp(validated.channelScale, 0.0, 1.0);
+    validated.downmix
+        = std::clamp(validated.downmix, static_cast<int>(DownmixOption::Off), static_cast<int>(DownmixOption::Mono));
+    validated.mode &= static_cast<int>(MinMax | Rms | Silence);
+
+    if(!validated.colourOptions.canConvert<Colours>()) {
+        validated.colourOptions = QVariant{};
+    }
+
+    m_config = validated;
+
+    m_container->setLabelsEnabled(m_config.showLabels);
+    m_container->setElapsedTotal(m_config.elapsedTotal);
+
+    m_seekbar->setShowCursor(m_config.showCursor);
+    m_seekbar->setCursorWidth(m_config.cursorWidth);
+    m_seekbar->setChannelScale(m_config.channelScale);
+    m_seekbar->setBarWidth(m_config.barWidth);
+    m_seekbar->setBarGap(m_config.barGap);
+    m_seekbar->setMaxScale(m_config.maxScale);
+    m_seekbar->setCentreGap(m_config.centreGap);
+    m_seekbar->setMode(static_cast<WaveModes>(m_config.mode));
+    m_seekbar->setColours(m_config.colourOptions.isValid() ? m_config.colourOptions.value<Colours>() : Colours{});
+
+    m_builder->setSampleWidth(m_config.barWidth + m_config.barGap);
+    m_builder->setDownmix(static_cast<DownmixOption>(m_config.downmix));
+
+    QMetaObject::invokeMethod(m_container, [this]() { rescaleWaveform(); }, Qt::QueuedConnection);
+}
+
+WaveBarWidget::ConfigData WaveBarWidget::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+
+    if(layout.contains("ShowLabels"_L1)) {
+        config.showLabels = layout.value("ShowLabels"_L1).toBool();
+    }
+    if(layout.contains("ElapsedTotal"_L1)) {
+        config.elapsedTotal = layout.value("ElapsedTotal"_L1).toBool();
+    }
+    if(layout.contains("ShowCursor"_L1)) {
+        config.showCursor = layout.value("ShowCursor"_L1).toBool();
+    }
+    if(layout.contains("CursorWidth"_L1)) {
+        config.cursorWidth = layout.value("CursorWidth"_L1).toInt();
+    }
+    if(layout.contains("Mode"_L1)) {
+        config.mode = layout.value("Mode"_L1).toInt();
+    }
+    if(layout.contains("Downmix"_L1)) {
+        config.downmix = layout.value("Downmix"_L1).toInt();
+    }
+    if(layout.contains("BarWidth"_L1)) {
+        config.barWidth = layout.value("BarWidth"_L1).toInt();
+    }
+    if(layout.contains("BarGap"_L1)) {
+        config.barGap = layout.value("BarGap"_L1).toInt();
+    }
+    if(layout.contains("MaxScale"_L1)) {
+        config.maxScale = layout.value("MaxScale"_L1).toDouble();
+    }
+    if(layout.contains("CentreGap"_L1)) {
+        config.centreGap = layout.value("CentreGap"_L1).toInt();
+    }
+    if(layout.contains("ChannelScale"_L1)) {
+        config.channelScale = layout.value("ChannelScale"_L1).toDouble();
+    }
+
+    if(layout.contains("UseCustomColours"_L1)) {
+        if(layout.value("UseCustomColours"_L1).toBool()) {
+            auto colours = Colours{};
+
+            auto setColour = [&layout](const QString& key, QColor* colour) {
+                if(!layout.contains(key)) {
+                    return;
+                }
+
+                const QColor loadedColour{layout.value(key).toString()};
+                if(loadedColour.isValid()) {
+                    *colour = loadedColour;
+                }
+            };
+
+            setColour(u"BgUnplayedColour"_s, &colours.bgUnplayed);
+            setColour(u"BgPlayedColour"_s, &colours.bgPlayed);
+            setColour(u"MaxUnplayedColour"_s, &colours.maxUnplayed);
+            setColour(u"MaxPlayedColour"_s, &colours.maxPlayed);
+            setColour(u"MaxBorderColour"_s, &colours.maxBorder);
+            setColour(u"MinUnplayedColour"_s, &colours.minUnplayed);
+            setColour(u"MinPlayedColour"_s, &colours.minPlayed);
+            setColour(u"MinBorderColour"_s, &colours.minBorder);
+            setColour(u"RmsMaxUnplayedColour"_s, &colours.rmsMaxUnplayed);
+            setColour(u"RmsMaxPlayedColour"_s, &colours.rmsMaxPlayed);
+            setColour(u"RmsMaxBorderColour"_s, &colours.rmsMaxBorder);
+            setColour(u"RmsMinUnplayedColour"_s, &colours.rmsMinUnplayed);
+            setColour(u"RmsMinPlayedColour"_s, &colours.rmsMinPlayed);
+            setColour(u"RmsMinBorderColour"_s, &colours.rmsMinBorder);
+            setColour(u"CursorColour"_s, &colours.cursor);
+            setColour(u"SeekingCursorColour"_s, &colours.seekingCursor);
+            config.colourOptions = QVariant::fromValue(colours);
+        }
+        else {
+            config.colourOptions = QVariant{};
+        }
+    }
+
+    return config;
+}
+
+void WaveBarWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
+{
+    layout["ShowLabels"_L1]   = config.showLabels;
+    layout["ElapsedTotal"_L1] = config.elapsedTotal;
+    layout["ShowCursor"_L1]   = config.showCursor;
+    layout["CursorWidth"_L1]  = config.cursorWidth;
+    layout["Mode"_L1]         = config.mode;
+    layout["Downmix"_L1]      = config.downmix;
+    layout["BarWidth"_L1]     = config.barWidth;
+    layout["BarGap"_L1]       = config.barGap;
+    layout["MaxScale"_L1]     = config.maxScale;
+    layout["CentreGap"_L1]    = config.centreGap;
+    layout["ChannelScale"_L1] = config.channelScale;
+
+    const bool customColours      = config.colourOptions.isValid() && config.colourOptions.canConvert<Colours>();
+    layout["UseCustomColours"_L1] = customColours;
+    if(!customColours) {
+        return;
+    }
+
+    const auto colours                = config.colourOptions.value<Colours>();
+    layout["BgUnplayedColour"_L1]     = colours.bgUnplayed.name(QColor::HexArgb);
+    layout["BgPlayedColour"_L1]       = colours.bgPlayed.name(QColor::HexArgb);
+    layout["MaxUnplayedColour"_L1]    = colours.maxUnplayed.name(QColor::HexArgb);
+    layout["MaxPlayedColour"_L1]      = colours.maxPlayed.name(QColor::HexArgb);
+    layout["MaxBorderColour"_L1]      = colours.maxBorder.name(QColor::HexArgb);
+    layout["MinUnplayedColour"_L1]    = colours.minUnplayed.name(QColor::HexArgb);
+    layout["MinPlayedColour"_L1]      = colours.minPlayed.name(QColor::HexArgb);
+    layout["MinBorderColour"_L1]      = colours.minBorder.name(QColor::HexArgb);
+    layout["RmsMaxUnplayedColour"_L1] = colours.rmsMaxUnplayed.name(QColor::HexArgb);
+    layout["RmsMaxPlayedColour"_L1]   = colours.rmsMaxPlayed.name(QColor::HexArgb);
+    layout["RmsMaxBorderColour"_L1]   = colours.rmsMaxBorder.name(QColor::HexArgb);
+    layout["RmsMinUnplayedColour"_L1] = colours.rmsMinUnplayed.name(QColor::HexArgb);
+    layout["RmsMinPlayedColour"_L1]   = colours.rmsMinPlayed.name(QColor::HexArgb);
+    layout["RmsMinBorderColour"_L1]   = colours.rmsMinBorder.name(QColor::HexArgb);
+    layout["CursorColour"_L1]         = colours.cursor.name(QColor::HexArgb);
+    layout["SeekingCursorColour"_L1]  = colours.seekingCursor.name(QColor::HexArgb);
+}
+
+void WaveBarWidget::changeTrack(const Track& track, bool update)
 {
     m_seekbar->setPosition(m_playerController->currentPosition());
-    m_builder->generateAndScale(track);
+    m_builder->generateAndScale(track, update);
 }
 
 void WaveBarWidget::showEvent(QShowEvent* event)
@@ -137,6 +434,11 @@ void WaveBarWidget::resizeEvent(QResizeEvent* event)
     rescaleWaveform();
 }
 
+void WaveBarWidget::openConfigDialog()
+{
+    showConfigDialog(new WaveBarConfigDialog(this, this));
+}
+
 void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     if(m_seekbar->isSeeking()) {
@@ -149,25 +451,29 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* showCursor = new QAction(tr("Show cursor"), menu);
     showCursor->setCheckable(true);
-    showCursor->setChecked(m_settings->value<Settings::WaveBar::ShowCursor>());
-    QObject::connect(showCursor, &QAction::triggered, this,
-                     [this](bool checked) { m_settings->set<Settings::WaveBar::ShowCursor>(checked); });
+    showCursor->setChecked(m_config.showCursor);
+    QObject::connect(showCursor, &QAction::triggered, this, [this](bool checked) {
+        auto config       = m_config;
+        config.showCursor = checked;
+        applyConfig(config);
+    });
 
     auto* showLabels = new QAction(tr("Show labels"), menu);
     showLabels->setCheckable(true);
-    showLabels->setChecked(m_container->labelsEnabled());
+    showLabels->setChecked(m_config.showLabels);
     QObject::connect(showLabels, &QAction::triggered, this, [this](bool checked) {
-        m_container->setLabelsEnabled(checked);
-        // Width won't be updated immediately, so use a queued connection
-        QMetaObject::invokeMethod(m_container, [this]() { rescaleWaveform(); }, Qt::QueuedConnection);
+        auto config       = m_config;
+        config.showLabels = checked;
+        applyConfig(config);
     });
 
     auto* showElapsed = new QAction(tr("Show elapsed total"), menu);
     showElapsed->setCheckable(true);
-    showElapsed->setChecked(m_container->elapsedTotal());
+    showElapsed->setChecked(m_config.elapsedTotal);
     QObject::connect(showElapsed, &QAction::triggered, this, [this](bool checked) {
-        m_container->setElapsedTotal(checked);
-        rescaleWaveform();
+        auto config         = m_config;
+        config.elapsedTotal = checked;
+        applyConfig(config);
     });
 
     auto* modeMenu = new QMenu(tr("Display"), menu);
@@ -180,28 +486,30 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     rmsMode->setCheckable(true);
     silenceMode->setCheckable(true);
 
-    const auto currentMode = static_cast<WaveModes>(m_settings->value<Settings::WaveBar::Mode>());
-    minMaxMode->setChecked(currentMode & WaveMode::MinMax);
-    rmsMode->setChecked(currentMode & WaveMode::Rms);
-    silenceMode->setChecked(currentMode & WaveMode::Silence);
+    const auto currentMode = static_cast<WaveModes>(m_config.mode);
+    minMaxMode->setChecked(currentMode & MinMax);
+    rmsMode->setChecked(currentMode & Rms);
+    silenceMode->setChecked(currentMode & Silence);
 
     auto updateMode = [this](WaveMode mode, bool enable) {
-        auto updatedMode = static_cast<WaveModes>(m_settings->value<Settings::WaveBar::Mode>());
+        auto updatedMode = static_cast<WaveModes>(m_config.mode);
         if(enable) {
             updatedMode |= mode;
         }
         else {
             updatedMode &= ~mode;
         }
-        m_settings->set<Settings::WaveBar::Mode>(static_cast<int>(updatedMode));
+
+        auto config = m_config;
+        config.mode = static_cast<int>(updatedMode);
+        applyConfig(config);
     };
 
     QObject::connect(minMaxMode, &QAction::triggered, this,
-                     [updateMode](bool checked) { updateMode(WaveMode::MinMax, checked); });
-    QObject::connect(rmsMode, &QAction::triggered, this,
-                     [updateMode](bool checked) { updateMode(WaveMode::Rms, checked); });
+                     [updateMode](bool checked) { updateMode(MinMax, checked); });
+    QObject::connect(rmsMode, &QAction::triggered, this, [updateMode](bool checked) { updateMode(Rms, checked); });
     QObject::connect(silenceMode, &QAction::triggered, this,
-                     [updateMode](bool checked) { updateMode(WaveMode::Silence, checked); });
+                     [updateMode](bool checked) { updateMode(Silence, checked); });
 
     modeMenu->addAction(minMaxMode);
     modeMenu->addAction(rmsMode);
@@ -218,7 +526,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     downmixStereo->setCheckable(true);
     downmixMono->setCheckable(true);
 
-    const auto downmixOption = static_cast<DownmixOption>(m_settings->value<Settings::WaveBar::Downmix>());
+    const auto downmixOption = static_cast<DownmixOption>(m_config.downmix);
     if(downmixOption == DownmixOption::Off) {
         downmixOff->setChecked(true);
     }
@@ -229,20 +537,25 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
         downmixMono->setChecked(true);
     }
 
-    QObject::connect(downmixOff, &QAction::triggered, this,
-                     [this]() { m_settings->set<Settings::WaveBar::Downmix>(0); });
-    QObject::connect(downmixStereo, &QAction::triggered, this,
-                     [this]() { m_settings->set<Settings::WaveBar::Downmix>(1); });
-    QObject::connect(downmixMono, &QAction::triggered, this,
-                     [this]() { m_settings->set<Settings::WaveBar::Downmix>(2); });
+    QObject::connect(downmixOff, &QAction::triggered, this, [this]() {
+        auto config    = m_config;
+        config.downmix = static_cast<int>(DownmixOption::Off);
+        applyConfig(config);
+    });
+    QObject::connect(downmixStereo, &QAction::triggered, this, [this]() {
+        auto config    = m_config;
+        config.downmix = static_cast<int>(DownmixOption::Stereo);
+        applyConfig(config);
+    });
+    QObject::connect(downmixMono, &QAction::triggered, this, [this]() {
+        auto config    = m_config;
+        config.downmix = static_cast<int>(DownmixOption::Mono);
+        applyConfig(config);
+    });
 
     downmixMenu->addAction(downmixOff);
     downmixMenu->addAction(downmixStereo);
     downmixMenu->addAction(downmixMono);
-
-    auto* gotoSettings = new QAction(tr("Settings…"), menu);
-    QObject::connect(gotoSettings, &QAction::triggered, this,
-                     [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::WaveBarGeneral); });
 
     menu->addAction(showCursor);
     menu->addAction(showLabels);
@@ -250,8 +563,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addSeparator();
     menu->addMenu(modeMenu);
     menu->addMenu(downmixMenu);
-    menu->addSeparator();
-    menu->addAction(gotoSettings);
+    addConfigureAction(menu);
 
     menu->popup(event->globalPos());
 }
