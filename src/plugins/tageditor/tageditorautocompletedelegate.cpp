@@ -101,6 +101,12 @@ std::optional<Domain> valueDomainForField(const QString& field)
     if(field == QLatin1String{Fooyin::Constants::MetaData::Genre}) {
         return Domain::Genre;
     }
+    if(field == QLatin1String{Fooyin::Constants::MetaData::Composer}) {
+        return Domain::Composer;
+    }
+    if(field == QLatin1String{Fooyin::Constants::MetaData::Performer}) {
+        return Domain::Performer;
+    }
     if(field == QLatin1String{Fooyin::Constants::MetaData::Codec}) {
         return Domain::Codec;
     }

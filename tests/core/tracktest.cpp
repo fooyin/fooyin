@@ -58,6 +58,8 @@ TEST(TrackTest, UsesCompactMetadataAccessors)
     track.setArtists({u"Artist A"_s, u"Artist B"_s});
     track.setAlbumArtists({u"Album Artist"_s});
     track.setGenres({u"Ambient"_s, u"Drone"_s});
+    track.setComposers({u"Composer A"_s, u"Composer B"_s});
+    track.setPerformers({u"Performer A"_s, u"Performer B"_s});
 
     EXPECT_TRUE(track.hasArtists());
     EXPECT_TRUE(track.hasAlbumArtists());
@@ -71,6 +73,10 @@ TEST(TrackTest, UsesCompactMetadataAccessors)
     EXPECT_EQ(track.artistsJoined(u" / "_s), u"Artist A / Artist B"_s);
     EXPECT_EQ(track.albumArtistsJoined(u" / "_s), u"Album Artist"_s);
     EXPECT_EQ(track.genresJoined(u" / "_s), u"Ambient / Drone"_s);
+    EXPECT_EQ(track.composers(), (QStringList{u"Composer A"_s, u"Composer B"_s}));
+    EXPECT_EQ(track.composer(), u"Composer A\037Composer B"_s);
+    EXPECT_EQ(track.performers(), (QStringList{u"Performer A"_s, u"Performer B"_s}));
+    EXPECT_EQ(track.performer(), u"Performer A\037Performer B"_s);
 }
 
 TEST(TrackTest, LazilyLoadsExtraTagsFromSerialisedData)
@@ -97,6 +103,8 @@ TEST(TrackTest, MigratesPooledMetadataToExplicitStore)
     track.setArtists({u"Artist A"_s, u"Artist B"_s});
     track.setAlbum(u"Shared Album"_s);
     track.setGenres({u"Ambient"_s});
+    track.setComposers({u"Composer A"_s});
+    track.setPerformers({u"Performer A"_s});
     track.addExtraTag(u"custom"_s, u"value"_s);
 
     auto sharedStore = std::make_shared<TrackMetadataStore>();
@@ -106,10 +114,14 @@ TEST(TrackTest, MigratesPooledMetadataToExplicitStore)
     EXPECT_EQ(track.artists(), (QStringList{u"Artist A"_s, u"Artist B"_s}));
     EXPECT_EQ(track.album(), u"Shared Album"_s);
     EXPECT_EQ(track.genre(), u"Ambient"_s);
+    EXPECT_EQ(track.composer(), u"Composer A"_s);
+    EXPECT_EQ(track.performer(), u"Performer A"_s);
     EXPECT_EQ(track.extraTag(u"CUSTOM"_s), (QStringList{u"value"_s}));
 
     EXPECT_EQ(sharedStore->values(StringPool::Domain::Artist), (QStringList{u"Artist A"_s, u"Artist B"_s}));
     EXPECT_EQ(sharedStore->values(StringPool::Domain::Album), (QStringList{u"Shared Album"_s}));
+    EXPECT_EQ(sharedStore->values(StringPool::Domain::Composer), (QStringList{u"Composer A"_s}));
+    EXPECT_EQ(sharedStore->values(StringPool::Domain::Performer), (QStringList{u"Performer A"_s}));
     EXPECT_EQ(sharedStore->values(StringPool::Domain::ExtraTagKey), (QStringList{u"CUSTOM"_s}));
 }
 } // namespace Fooyin::Testing

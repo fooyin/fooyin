@@ -204,8 +204,8 @@ public:
     QString discNumber;
     QString discTotal;
     StringPool::StringListRef genres;
-    QStringList composers;
-    QStringList performers;
+    StringPool::StringListRef composers;
+    StringPool::StringListRef performers;
     QString comment;
     QString date;
     int year{-1};
@@ -779,22 +779,22 @@ QString Track::genre() const
 
 QStringList Track::composers() const
 {
-    return p->composers;
+    return resolveStrings(*p, StringPool::Domain::Composer, p->composers);
 }
 
 QString Track::composer() const
 {
-    return p->composers.empty() ? QString{} : p->composers.join(QLatin1String{Constants::UnitSeparator});
+    return joinStrings(*p, StringPool::Domain::Composer, p->composers, QLatin1String{Constants::UnitSeparator});
 }
 
 QStringList Track::performers() const
 {
-    return p->performers;
+    return resolveStrings(*p, StringPool::Domain::Performer, p->performers);
 }
 
 QString Track::performer() const
 {
-    return p->performers.empty() ? QString{} : p->performers.join(QLatin1String{Constants::UnitSeparator});
+    return joinStrings(*p, StringPool::Domain::Performer, p->performers, QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::comment() const
@@ -994,8 +994,8 @@ QMap<QString, QString> Track::metadata() const
     addField(DiscKey, p->discNumber);
     addField(DiscTotalKey, p->discTotal);
     addField(GenreKey, genres());
-    addField(ComposerKey, p->composers);
-    addField(PerformerKey, p->performers);
+    addField(ComposerKey, composers());
+    addField(PerformerKey, performers());
     addField(CommentKey, p->comment);
     addField(DateKey, p->date);
 
@@ -1180,6 +1180,10 @@ void Track::setMetadataStore(std::shared_ptr<TrackMetadataStore> store)
                                                      resolveOldList(StringPool::Domain::AlbumArtist, p->albumArtists));
     p->genres       = store->stringPool().internList(StringPool::Domain::Genre,
                                                      resolveOldList(StringPool::Domain::Genre, p->genres));
+    p->composers    = store->stringPool().internList(StringPool::Domain::Composer,
+                                                     resolveOldList(StringPool::Domain::Composer, p->composers));
+    p->performers   = store->stringPool().internList(StringPool::Domain::Performer,
+                                                     resolveOldList(StringPool::Domain::Performer, p->performers));
     p->encoding     = store->stringPool().internId(StringPool::Domain::Encoding,
                                                    resolveOld(StringPool::Domain::Encoding, p->encoding));
 
@@ -1333,12 +1337,22 @@ void Track::setGenres(const QStringList& genres)
 
 void Track::setComposers(const QStringList& composers)
 {
-    p->composers = composers;
+    if(composers.size() == 1 && composers.front().isEmpty()) {
+        p->composers = {};
+    }
+    else {
+        p->composers = internStrings(*p, StringPool::Domain::Composer, composers);
+    }
 }
 
 void Track::setPerformers(const QStringList& performers)
 {
-    p->performers = performers;
+    if(performers.size() == 1 && performers.front().isEmpty()) {
+        p->performers = {};
+    }
+    else {
+        p->performers = internStrings(*p, StringPool::Domain::Performer, performers);
+    }
 }
 
 void Track::setComment(const QString& comment)

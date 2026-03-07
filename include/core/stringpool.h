@@ -71,6 +71,8 @@ public:
         Album,
         AlbumArtist,
         Genre,
+        Composer,
+        Performer,
         Codec,
         Encoding,
         ExtraTagKey,
