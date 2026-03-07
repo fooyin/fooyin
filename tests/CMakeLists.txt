@@ -11,6 +11,7 @@ function(fooyin_add_test name)
             PRIVATE Fooyin::Core
                     Fooyin::CorePrivate
                     Fooyin::Gui
+                    Fooyin::Utils
                     GTest::gtest_main
     )
     gtest_discover_tests(${name})
@@ -40,6 +41,8 @@ fooyin_add_test(test_m3uparser core/playlist/m3uparsertest.cpp data/playlists.qr
 
 fooyin_add_test(test_scriptformatter core/scripting/scriptformattertest.cpp)
 fooyin_add_test(test_scriptparser core/scripting/scriptparsertest.cpp)
+fooyin_add_test(test_stringpool core/stringpooltest.cpp)
+fooyin_add_test(test_track core/tracktest.cpp)
 
 fooyin_add_test(test_tagreader core/tagging/tagreadertest.cpp data/audio.qrc)
 fooyin_add_test(test_tagwriter core/tagging/tagwritertest.cpp data/audio.qrc)

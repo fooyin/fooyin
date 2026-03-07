@@ -35,7 +35,9 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptregistry.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptscanner.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptvalue.h
+    ${CMAKE_SOURCE_DIR}/include/core/stringpool.h
     ${CMAKE_SOURCE_DIR}/include/core/track.h
+    ${CMAKE_SOURCE_DIR}/include/core/trackmetadatastore.h
     application.cpp
     application.h
     corepaths.cpp
@@ -229,6 +231,7 @@ set(SOURCES
     scripting/scriptparser.cpp
     scripting/scriptregistry.cpp
     scripting/scriptscanner.cpp
+    stringpool.cpp
     track.cpp
     translationloader.cpp
     translationloader.h
