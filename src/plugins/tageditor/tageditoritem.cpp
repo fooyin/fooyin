@@ -21,16 +21,39 @@
 
 #include <utils/stringcollator.h>
 
+#include <numeric>
+
 using namespace Qt::StringLiterals;
 
-constexpr auto CharLimit = 2000;
+constexpr auto CharLimit         = 2000;
+constexpr auto PreviewValueLimit = 50;
 
 namespace {
-bool withinCharLimit(const QStringList& strings)
+bool canAppendValue(int currentCharCount, const QString& value)
 {
-    const int currentLength = std::accumulate(strings.cbegin(), strings.cend(), 0,
-                                              [](int sum, const QString& str) { return sum + str.length(); });
-    return currentLength <= CharLimit;
+    return currentCharCount == 0 || currentCharCount + value.length() <= CharLimit;
+}
+
+bool containsValue(const QStringList& values, const QString& value)
+{
+    return std::ranges::find(values, value) != values.cend();
+}
+
+bool appendPreviewValue(QStringList& previewValues, QString& cachedValue, int& currentCharCount, const QString& value)
+{
+    if(containsValue(previewValues, value)) {
+        return false;
+    }
+
+    if(previewValues.size() >= PreviewValueLimit || !canAppendValue(currentCharCount, value)) {
+        return false;
+    }
+
+    previewValues.append(value);
+    currentCharCount += value.length();
+    cachedValue.clear();
+
+    return true;
 }
 } // namespace
 
@@ -47,6 +70,7 @@ TagEditorItem::TagEditorItem(TagEditorField field, TagEditorItem* parent)
     , m_trackCount{0}
     , m_multipleValues{false}
     , m_splitTrackValues{false}
+    , m_valueCharCount{0}
 { }
 
 TagEditorField TagEditorItem::field() const
@@ -154,11 +178,15 @@ void TagEditorItem::addTrackValue(const QString& value)
 {
     m_trackCount++;
 
-    if(!m_values.contains(value)) {
-        if(m_trackCount == 0 || withinCharLimit(m_values)) {
-            m_values.append(value);
-        }
-        m_multipleValues = m_trackCount > 1;
+    if(containsValue(m_values, value)) {
+        return;
+    }
+
+    const bool hadPreviousValue = !m_values.empty() || m_multipleValues;
+    const bool appended         = appendPreviewValue(m_values, m_value, m_valueCharCount, value);
+
+    if(m_trackCount > 1 && (hadPreviousValue || !appended)) {
+        m_multipleValues = true;
     }
 }
 
@@ -171,15 +199,16 @@ void TagEditorItem::addTrackValue(const QStringList& values)
     }
 
     for(const auto& trackValue : values) {
-        if(m_values.contains(trackValue)) {
+        if(containsValue(m_values, trackValue)) {
             continue;
         }
 
-        if(m_trackCount == 0 || withinCharLimit(m_values)) {
-            m_values.append(trackValue);
-        }
+        const bool hadPreviousValue = !m_values.empty() || m_multipleValues;
+        const bool appended         = appendPreviewValue(m_values, m_value, m_valueCharCount, trackValue);
 
-        m_multipleValues = m_trackCount > 1;
+        if(m_trackCount > 1 && (hadPreviousValue || !appended)) {
+            m_multipleValues = true;
+        }
     }
 }
 
@@ -282,8 +311,10 @@ void TagEditorItem::applyChanges(const TagEditorField& field)
         m_field.name = m_changedTitle;
     }
 
-    m_values = m_changedValues;
-    m_value  = m_changedValue;
+    m_values         = m_changedValues;
+    m_valueCharCount = std::accumulate(m_values.cbegin(), m_values.cend(), 0,
+                                       [](int sum, const QString& str) { return sum + str.length(); });
+    m_value          = m_changedValue;
     reset();
 }
 

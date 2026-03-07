@@ -83,5 +83,6 @@ private:
     int m_trackCount;
     bool m_multipleValues;
     bool m_splitTrackValues;
+    int m_valueCharCount;
 };
 } // namespace Fooyin::TagEditor

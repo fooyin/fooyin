@@ -125,7 +125,6 @@ void TagEditorModelPrivate::updateFields()
             node.addTrackValue(result.split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts));
         }
 
-        iterateTags(track.metadata(), true);
         iterateTags(track.extraTags());
     }
 }
