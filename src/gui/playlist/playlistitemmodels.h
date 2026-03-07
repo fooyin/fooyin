@@ -25,6 +25,8 @@
 
 #include <QSize>
 
+#include <optional>
+
 namespace Fooyin {
 class PlaylistScriptRegistry;
 class ScriptParser;
@@ -34,62 +36,58 @@ class PlaylistContainerItem
 public:
     explicit PlaylistContainerItem(bool isSimple);
 
-    [[nodiscard]] TrackList tracks() const;
-    [[nodiscard]] int trackCount() const;
-
-    [[nodiscard]] RichScript title() const;
-    [[nodiscard]] RichScript subtitle() const;
-    [[nodiscard]] RichScript sideText() const;
-    [[nodiscard]] RichScript info() const;
+    [[nodiscard]] const RichText& title() const;
+    [[nodiscard]] const RichText& subtitle() const;
+    [[nodiscard]] const RichText& sideText() const;
+    [[nodiscard]] const RichText& info() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] QSize size() const;
+    [[nodiscard]] int scriptIndex() const;
+    [[nodiscard]] const std::optional<Track>& coverTrack() const;
 
-    void updateGroupText(ScriptParser* parser, ScriptFormatter* formatter);
-
-    void setTitle(const RichScript& title);
-    void setSubtitle(const RichScript& subtitle);
-    void setSideText(const RichScript& text);
-    void setInfo(const RichScript& info);
+    void setTitle(const RichText& title);
+    void setSubtitle(const RichText& subtitle);
+    void setSideText(const RichText& text);
+    void setInfo(const RichText& info);
     void setRowHeight(int height);
-
-    void addTrack(const Track& track);
-    void addTracks(const TrackList& tracks);
-    void clearTracks();
+    void setScriptIndex(int index);
+    void setCoverTrack(const Track& track);
+    void clearCoverTrack();
 
     void calculateSize();
 
 private:
-    TrackList m_tracks;
-
-    RichScript m_title;
-    RichScript m_subtitle;
-    RichScript m_sideText;
-    RichScript m_info;
+    RichText m_title;
+    RichText m_subtitle;
+    RichText m_sideText;
+    RichText m_info;
 
     bool m_simple;
     QSize m_size;
     int m_rowHeight;
+    int m_scriptIndex{-1};
+    std::optional<Track> m_coverTrack;
 };
 
 class PlaylistTrackItem
 {
 public:
     PlaylistTrackItem() = default;
-    PlaylistTrackItem(std::vector<RichScript> columns, const PlaylistTrack& track);
-    PlaylistTrackItem(RichScript left, RichScript right, const PlaylistTrack& track);
+    PlaylistTrackItem(std::vector<RichText> columns, const PlaylistTrack& track);
+    PlaylistTrackItem(RichText left, RichText right, const PlaylistTrack& track);
 
-    [[nodiscard]] std::vector<RichScript> columns() const;
-    [[nodiscard]] RichScript column(int column) const;
-    [[nodiscard]] RichScript left() const;
-    [[nodiscard]] RichScript right() const;
-    [[nodiscard]] PlaylistTrack track() const;
+    [[nodiscard]] const std::vector<RichText>& columns() const;
+    [[nodiscard]] const RichText& column(int column) const;
+    [[nodiscard]] const RichText& left() const;
+    [[nodiscard]] const RichText& right() const;
+    [[nodiscard]] const PlaylistTrack& track() const;
     [[nodiscard]] int index() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] int depth() const;
     [[nodiscard]] QSize size(int column = 0) const;
 
-    void setColumns(const std::vector<RichScript>& columns);
-    void setLeftRight(const RichScript& left, const RichScript& right);
+    void setColumns(const std::vector<RichText>& columns);
+    void setLeftRight(const RichText& left, const RichText& right);
     void setTrack(const PlaylistTrack& track);
     void setIndex(int index);
 
@@ -100,9 +98,9 @@ public:
     void calculateSize();
 
 private:
-    std::vector<RichScript> m_columns;
-    RichScript m_left;
-    RichScript m_right;
+    std::vector<RichText> m_columns;
+    RichText m_left;
+    RichText m_right;
 
     PlaylistTrack m_track;
     mutable std::vector<QSize> m_sizes;

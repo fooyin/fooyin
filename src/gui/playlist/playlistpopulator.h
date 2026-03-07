@@ -39,10 +39,18 @@ using NodeKeyMap     = std::unordered_map<UId, std::vector<UId>, UId::UIdHash>;
 using TrackIdNodeMap = std::unordered_map<int, std::vector<UId>>;
 using IndexGroupMap  = std::map<int, std::vector<UId>>;
 
+struct HeaderUpdateRequest
+{
+    PlaylistItem item;
+    TrackList tracks;
+};
+using HeaderUpdateList = std::vector<HeaderUpdateRequest>;
+
 struct PendingData
 {
     UId playlistId;
     ItemKeyMap items;
+    ItemKeyMap updatedItems;
     NodeKeyMap nodes;
     std::vector<UId> containerOrder;
     TrackIdNodeMap trackParents;
@@ -56,6 +64,7 @@ struct PendingData
     {
         playlistId = {};
         items.clear();
+        updatedItems.clear();
         nodes.clear();
         containerOrder.clear();
         trackParents.clear();
@@ -82,7 +91,7 @@ public:
                    const std::map<int, PlaylistTrackList>& tracks);
     void updateTracks(Playlist* playlist, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                       const std::set<int>& columnsToUpdate, const TrackItemMap& tracks);
-    void updateHeaders(const ItemList& headers);
+    void updateHeaders(Playlist* playlist, const PlaylistPreset& preset, const HeaderUpdateList& headers);
 
 signals:
     void populated(const Fooyin::PendingData& data);
