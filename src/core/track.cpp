@@ -890,12 +890,6 @@ bool Track::isArchivePath(const QString& path)
 bool Track::isMultiValueTag(const QString& tag)
 {
     const QString trackTag = tag.toUpper();
-
-    const auto& map = metaMap();
-    if(!map.contains(trackTag)) {
-        return true;
-    }
-
     return trackTag == QLatin1String{Constants::MetaData::Artist}
         || trackTag == QLatin1String{Constants::MetaData::AlbumArtist}
         || trackTag == QLatin1String{Constants::MetaData::Genre}
