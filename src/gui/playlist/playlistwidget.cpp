@@ -129,19 +129,11 @@ void getAllTrackIndexes(QAbstractItemModel* model, const QModelIndex& parent, QM
 
 QModelIndexList filterSelectedIndexes(const QAbstractItemView* view)
 {
-    QModelIndexList filteredIndexes;
-    const auto indexes = view->selectionModel()->selectedIndexes();
-
-    if(!indexes.isEmpty()) {
-        const int column = indexes.first().column();
-        for(const auto& index : indexes) {
-            if(index.column() == column) {
-                filteredIndexes.append(index);
-            }
-        }
+    if(!view || !view->selectionModel()) {
+        return {};
     }
 
-    return filteredIndexes;
+    return view->selectionModel()->selectedRows();
 }
 } // namespace
 
