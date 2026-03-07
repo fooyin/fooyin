@@ -46,6 +46,7 @@ public:
     void removeImage();
 
     void loadImage(const QByteArray& imageData, bool replace = false);
+    void setLoadedState(const QByteArray& imageData, int imageCount, int trackCount, bool multipleImages);
     void finalise(int trackCount);
     void reset();
 

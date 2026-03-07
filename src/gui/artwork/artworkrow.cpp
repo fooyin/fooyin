@@ -158,16 +158,49 @@ void ArtworkRow::loadImage(const QByteArray& imageData, bool replace)
     m_mimeType = mimeDb.mimeTypeForData(m_imageData).name();
 }
 
+void ArtworkRow::setLoadedState(const QByteArray& imageData, int imageCount, int trackCount, bool multipleImages)
+{
+    m_status         = Status::None;
+    m_multipleImages = multipleImages;
+    m_addedCount     = 0;
+    m_imageCount     = imageCount;
+    m_imageData      = (m_multipleImages ? QByteArray{} : imageData);
+
+    if(m_imageData.isEmpty()) {
+        m_imageHash.clear();
+        m_mimeType.clear();
+    }
+    else {
+        QCryptographicHash hash{QCryptographicHash::Sha256};
+        hash.addData(m_imageData);
+        m_imageHash = hash.result();
+
+        const QMimeDatabase mimeDb;
+        m_mimeType = mimeDb.mimeTypeForData(m_imageData).name();
+    }
+
+    finalise(trackCount);
+}
+
 void ArtworkRow::finalise(int trackCount)
 {
     m_addedCount = 0;
 
     if(m_multipleImages) {
+        m_image->setPixmap({});
         m_image->setText(tr("Multiple images"));
         m_details->setText(tr("%1 of %2 files have artwork").arg(m_imageCount).arg(trackCount));
         m_image->show();
         m_addButton->hide();
         m_removeButton->show();
+    }
+    else if(m_imageData.isEmpty()) {
+        m_image->hide();
+        m_image->setPixmap({});
+        m_image->setText({});
+        m_addButton->show();
+        m_removeButton->hide();
+        m_details->setText(tr("No artwork present"));
     }
     else if(!m_imageData.isEmpty()) {
         QBuffer buffer{&m_imageData};
@@ -187,6 +220,7 @@ void ArtworkRow::finalise(int trackCount)
 
         if(reader.canRead()) {
             reader.setScaledSize(m_image->size());
+            m_image->setText({});
             m_image->setPixmap(QPixmap::fromImageReader(&reader));
             m_image->show();
             m_addButton->hide();

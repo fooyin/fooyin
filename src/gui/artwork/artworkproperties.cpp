@@ -27,19 +27,39 @@
 #include <QFutureWatcher>
 #include <QGridLayout>
 #include <QPainter>
-#include <QtConcurrentMap>
+#include <QtConcurrentRun>
 
 using namespace Qt::StringLiterals;
 
+namespace {
+struct ArtworkLoadEntry
+{
+    Fooyin::Track::Cover type;
+    QByteArray imageData;
+    int imageCount{0};
+    bool multipleImages{false};
+    bool sawMissing{false};
+};
+
+} // namespace
+
 namespace Fooyin {
+struct ArtworkLoadResult
+{
+    std::array<ArtworkLoadEntry, 3> entries;
+    bool cancelled{false};
+};
+
 ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library, TrackList tracks, bool readOnly,
                                      QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_audioLoader{loader}
     , m_library{library}
     , m_tracks{std::move(tracks)}
-    , m_watcher{new QFutureWatcher<void>(this)}
-    , m_loading{true}
+    , m_watcher{new QFutureWatcher<std::shared_ptr<ArtworkLoadResult>>(this)}
+    , m_cancelLoading{std::make_shared<std::atomic_bool>(false)}
+    , m_loaded{false}
+    , m_loading{false}
     , m_writing{false}
     , m_artworkWidget{new QWidget(this)}
     , m_rows{new ArtworkRow(" "_L1 + tr("Front Cover"), Track::Cover::Front, readOnly, this),
@@ -62,31 +82,93 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
     artworkLayout->setRowStretch(artworkLayout->rowCount(), 1);
 
     m_artworkWidget->hide();
-
-    loadTrackArtwork();
 }
 
 ArtworkProperties::~ArtworkProperties()
 {
-    if(m_watcher) {
-        m_watcher->waitForFinished();
-    }
+    m_cancelLoading->store(true);
 }
 
 void ArtworkProperties::loadTrackArtwork()
 {
-    const auto processTrack = [this](const Track& track) {
-        for(ArtworkRow* artworkRow : m_rows) {
-            const QByteArray cover = m_audioLoader->readTrackCover(track, artworkRow->type());
-            QMetaObject::invokeMethod(artworkRow, [artworkRow, cover]() { artworkRow->loadImage(cover); });
+    if(m_loaded) {
+        return;
+    }
+
+    m_loaded  = true;
+    m_loading = true;
+    m_cancelLoading->store(false);
+
+    constexpr std::array coverTypes = {Track::Cover::Front, Track::Cover::Back, Track::Cover::Artist};
+
+    const auto processTracks = [tracks = m_tracks, loader = m_audioLoader, cancel = m_cancelLoading, coverTypes]() {
+        auto result = std::make_shared<ArtworkLoadResult>();
+
+        for(size_t i{0}; i < coverTypes.size(); ++i) {
+            result->entries[i].type = coverTypes[i];
         }
+
+        for(const Track& track : tracks) {
+            if(cancel->load()) {
+                result->cancelled = true;
+                return result;
+            }
+
+            for(size_t i{0}; i < coverTypes.size(); ++i) {
+                auto& entry            = result->entries[i];
+                const QByteArray cover = loader->readTrackCover(track, entry.type);
+
+                if(cancel->load()) {
+                    result->cancelled = true;
+                    return result;
+                }
+
+                if(cover.isEmpty()) {
+                    entry.sawMissing = true;
+                    if(!entry.imageData.isEmpty()) {
+                        entry.multipleImages = true;
+                    }
+                    continue;
+                }
+
+                ++entry.imageCount;
+
+                if(entry.multipleImages) {
+                    continue;
+                }
+
+                if(entry.sawMissing) {
+                    entry.multipleImages = true;
+                    entry.imageData.clear();
+                    continue;
+                }
+
+                if(entry.imageData.isEmpty()) {
+                    entry.imageData = cover;
+                    continue;
+                }
+
+                if(entry.imageData != cover) {
+                    entry.multipleImages = true;
+                    entry.imageData.clear();
+                }
+            }
+        }
+
+        return result;
     };
 
     const int trackCount = static_cast<int>(m_tracks.size());
 
     const auto finishLoading = [this, trackCount]() {
-        for(ArtworkRow* artworkRow : m_rows) {
-            artworkRow->finalise(trackCount);
+        const auto result = m_watcher->result();
+        if(!result || result->cancelled || m_cancelLoading->load()) {
+            return;
+        }
+
+        for(size_t i{0}; i < m_rows.size(); ++i) {
+            const auto& entry = result->entries[i];
+            m_rows[i]->setLoadedState(entry.imageData, entry.imageCount, trackCount, entry.multipleImages);
         }
 
         m_loading = false;
@@ -94,9 +176,15 @@ void ArtworkProperties::loadTrackArtwork()
         update();
     };
 
-    const auto future = QtConcurrent::map(m_tracks, processTrack);
+    QObject::disconnect(m_watcher, nullptr, this, nullptr);
+    const auto future = QtConcurrent::run(processTracks);
     QObject::connect(m_watcher, &QFutureWatcher<void>::finished, this, finishLoading);
     m_watcher->setFuture(future);
+}
+
+void ArtworkProperties::load()
+{
+    loadTrackArtwork();
 }
 
 QString ArtworkProperties::name() const

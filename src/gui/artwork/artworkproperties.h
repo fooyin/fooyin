@@ -24,6 +24,8 @@
 
 #include <QFutureWatcher>
 
+#include <atomic>
+
 class QGridLayout;
 class QLabel;
 class QPushButton;
@@ -31,6 +33,7 @@ class QPushButton;
 namespace Fooyin {
 class ArtworkRow;
 class AudioLoader;
+struct ArtworkLoadResult;
 class MusicLibrary;
 
 class ArtworkProperties : public PropertiesTabWidget
@@ -47,6 +50,7 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    void load() override;
     void apply() override;
 
 protected:
@@ -57,7 +61,9 @@ private:
     MusicLibrary* m_library;
 
     TrackList m_tracks;
-    QFutureWatcher<void>* m_watcher;
+    QFutureWatcher<std::shared_ptr<ArtworkLoadResult>>* m_watcher;
+    std::shared_ptr<std::atomic_bool> m_cancelLoading;
+    bool m_loaded;
     bool m_loading;
     bool m_writing;
 
