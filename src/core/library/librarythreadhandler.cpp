@@ -27,6 +27,7 @@
 #include <core/trackmetadatastore.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QBasicTimer>
 #include <QThread>
 #include <QTimerEvent>
 #include <QUrl>
