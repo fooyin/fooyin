@@ -80,7 +80,6 @@ public:
     [[nodiscard]] bool metadataWasRead() const;
     [[nodiscard]] bool metadataWasModified() const;
     [[nodiscard]] bool exists() const;
-    [[nodiscard]] bool isNewTrack() const;
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] bool isInArchive() const;
@@ -179,7 +178,6 @@ public:
     [[nodiscard]] uint64_t firstPlayed() const;
     [[nodiscard]] uint64_t lastPlayed() const;
 
-    [[nodiscard]] QString sort() const;
     [[nodiscard]] bool hasMatch(const QString& term) const;
 
     void setLibraryId(int id);
@@ -250,7 +248,6 @@ public:
     void setFirstPlayed(uint64_t time);
     void setLastPlayed(uint64_t time);
 
-    void setSort(const QString& sort);
     void clearWasModified();
 
     static QString findCommonField(const TrackList& tracks);

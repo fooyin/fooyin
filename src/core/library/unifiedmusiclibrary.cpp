@@ -61,7 +61,6 @@ public:
 
     void changeSort(const QString& sort);
     QFuture<TrackList> recalSortTracks(const QString& sort, const TrackList& tracks);
-    QFuture<TrackList> resortTracks(const TrackList& tracks);
 
     void handleTracksLoaded();
 
@@ -111,19 +110,17 @@ void UnifiedMusicLibraryPrivate::loadTracks(const TrackList& trackToLoad)
 
 QFuture<void> UnifiedMusicLibraryPrivate::addTracks(const TrackList& newTracks)
 {
-    TrackList tracksToAdd;
-    std::ranges::copy_if(newTracks, std::back_inserter(tracksToAdd),
-                         [](const Track& track) { return track.isNewTrack(); });
-    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToAdd);
+    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), newTracks);
 
     return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
         std::ranges::copy(sortedTracks, std::back_inserter(m_tracks));
 
-        resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-            m_tracks = sortedLibraryTracks;
+        recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), m_tracks)
+            .then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+                m_tracks = sortedLibraryTracks;
 
-            emit m_self->tracksAdded(sortedTracks);
-        });
+                emit m_self->tracksAdded(sortedTracks);
+            });
     });
 }
 
@@ -146,10 +143,11 @@ QFuture<void> UnifiedMusicLibraryPrivate::updateTracksMetadata(const TrackList& 
     return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
         updateLibraryTracks(sortedTracks);
 
-        resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-            m_tracks = sortedLibraryTracks;
-            emit m_self->tracksMetadataChanged(sortedTracks);
-        });
+        recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), m_tracks)
+            .then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+                m_tracks = sortedLibraryTracks;
+                emit m_self->tracksMetadataChanged(sortedTracks);
+            });
     });
 }
 
@@ -160,10 +158,11 @@ QFuture<void> UnifiedMusicLibraryPrivate::updateTracks(const TrackList& tracksTo
     return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
         updateLibraryTracks(sortedTracks);
 
-        resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-            m_tracks = sortedLibraryTracks;
-            emit m_self->tracksUpdated(sortedTracks);
-        });
+        recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), m_tracks)
+            .then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+                m_tracks = sortedLibraryTracks;
+                emit m_self->tracksUpdated(sortedTracks);
+            });
     });
 }
 
@@ -259,11 +258,6 @@ void UnifiedMusicLibraryPrivate::changeSort(const QString& sort)
 QFuture<TrackList> UnifiedMusicLibraryPrivate::recalSortTracks(const QString& sort, const TrackList& tracks)
 {
     return Utils::asyncExec([this, sort, tracks]() { return m_sorter.calcSortTracks(sort, tracks); });
-}
-
-QFuture<TrackList> UnifiedMusicLibraryPrivate::resortTracks(const TrackList& tracks)
-{
-    return Utils::asyncExec([tracks]() { return TrackSorter::sortTracks(tracks); });
 }
 
 void UnifiedMusicLibraryPrivate::handleTracksLoaded()

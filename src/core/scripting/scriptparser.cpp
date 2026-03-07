@@ -1674,8 +1674,7 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
             }
         }
         if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
-            filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, PlaylistTrack::extractor,
-                                                     PlaylistTrack::extractorConst, m_sortOrder);
+            filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, PlaylistTrack::extractor, m_sortOrder);
         }
         else {
             filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, m_sortOrder);

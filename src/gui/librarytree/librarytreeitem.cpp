@@ -143,8 +143,12 @@ void LibraryTreeItem::replaceTrack(const Track& track)
     std::ranges::replace_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); }, track);
 }
 
-void LibraryTreeItem::sortTracks()
+void LibraryTreeItem::sortTracks(TrackSorter& sorter, const QString& script)
 {
-    m_tracks = TrackSorter::sortTracks(m_tracks);
+    if(m_tracks.empty() || script.isEmpty()) {
+        return;
+    }
+
+    m_tracks = sorter.calcSortTracks(script, m_tracks);
 }
 } // namespace Fooyin

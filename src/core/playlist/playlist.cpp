@@ -80,12 +80,7 @@ PlaylistTrackList PlaylistTrack::updateIndexes(const PlaylistTrackList& playlist
     return tracks;
 }
 
-Track& PlaylistTrack::extractor(PlaylistTrack& item)
-{
-    return item.track;
-}
-
-const Track& PlaylistTrack::extractorConst(const PlaylistTrack& item)
+const Track& PlaylistTrack::extractor(const PlaylistTrack& item)
 {
     return item.track;
 }
@@ -257,8 +252,7 @@ void PlaylistPrivate::sortAlbumTracks(AlbumTracks& album, const QString& sortScr
         trackIndexes.emplace_back(m_tracks.at(trackIndex), m_id, trackIndex);
     }
 
-    trackIndexes
-        = m_sorter.calcSortTracks(sortScript, trackIndexes, PlaylistTrack::extractor, PlaylistTrack::extractorConst);
+    trackIndexes = m_sorter.calcSortTracks(sortScript, trackIndexes, PlaylistTrack::extractor);
 
     album.clear();
     for(const auto& track : trackIndexes) {

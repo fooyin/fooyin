@@ -21,12 +21,14 @@
 
 #include <core/track.h>
 #include <utils/crypto.h>
-#include <utils/id.h>
 #include <utils/treeitem.h>
 
 #include <QStringList>
 
-namespace Fooyin::Filters {
+namespace Fooyin {
+class TrackSorter;
+
+namespace Filters {
 class FilterItem;
 
 class FilterItem : public TreeItem<FilterItem>
@@ -60,7 +62,7 @@ public:
     void addTracks(const TrackList& tracks);
     void removeTrack(const Track& track);
     void replaceTrack(const Track& track);
-    void sortTracks();
+    void sortTracks(TrackSorter& sorter, const QString& script);
 
 private:
     Md5Hash m_key;
@@ -68,4 +70,5 @@ private:
     TrackList m_tracks;
     bool m_isSummary;
 };
-} // namespace Fooyin::Filters
+} // namespace Filters
+} // namespace Fooyin

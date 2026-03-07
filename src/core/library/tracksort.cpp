@@ -30,29 +30,6 @@ TrackSorter::TrackSorter(LibraryManager* libraryManager)
 
 TrackSorter::~TrackSorter() = default;
 
-TrackList TrackSorter::calcSortFields(const QString& sort, const TrackList& tracks)
-{
-    return calcSortFields(parseScript(sort), tracks);
-}
-
-TrackList TrackSorter::calcSortFields(const ParsedScript& sortScript, const TrackList& tracks)
-{
-    const std::scoped_lock lock{m_parserGuard};
-
-    TrackList calcTracks{tracks};
-    for(Track& track : calcTracks) {
-        track.setSort(m_parser.evaluate(sortScript, track));
-    }
-    return calcTracks;
-}
-
-TrackList TrackSorter::sortTracks(const TrackList& tracks, Qt::SortOrder order)
-{
-    TrackList sortedTracks{tracks};
-    sortTracks(sortedTracks, std::identity{}, order);
-    return sortedTracks;
-}
-
 TrackList TrackSorter::calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortOrder order)
 {
     return calcSortTracks(parseScript(sort), tracks, order);
@@ -66,8 +43,9 @@ TrackList TrackSorter::calcSortTracks(const QString& sort, const TrackList& trac
 
 TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, Qt::SortOrder order)
 {
-    const TrackList calcTracks = calcSortFields(sortScript, tracks);
-    return sortTracks(calcTracks, order);
+    auto sortEntries = calcSortEntries(sortScript, tracks, std::identity{});
+    sortSortEntries(sortEntries, order);
+    return stripSortEntries<TrackList>(sortEntries);
 }
 
 TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
@@ -84,8 +62,9 @@ TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const Trac
         tracksToSort.push_back(tracks.at(index));
     }
 
-    const TrackList calcTracks      = calcSortFields(sortScript, tracksToSort);
-    const TrackList sortedSubTracks = sortTracks(calcTracks, order);
+    auto sortEntries = calcSortEntries(sortScript, tracksToSort, std::identity{});
+    sortSortEntries(sortEntries, order);
+    const auto sortedSubTracks = stripSortEntries<TrackList>(sortEntries);
 
     for(auto i{0}; const int index : validIndexes) {
         sortedTracks[index] = sortedSubTracks.at(i++);

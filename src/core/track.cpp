@@ -139,10 +139,7 @@ public:
     float rgTrackPeak{Constants::InvalidPeak};
     float rgAlbumPeak{Constants::InvalidPeak};
 
-    QString sort;
-
     bool metadataWasModified{false};
-    bool isNewTrack{true};
 
     // Archive related
     bool isInArchive{false};
@@ -258,11 +255,6 @@ bool Track::exists() const
         return QFileInfo::exists(archivePath());
     }
     return QFileInfo::exists(filepath());
-}
-
-bool Track::isNewTrack() const
-{
-    return p->isNewTrack;
 }
 
 int Track::libraryId() const
@@ -842,11 +834,6 @@ uint64_t Track::lastPlayed() const
     return p->lastPlayed;
 }
 
-QString Track::sort() const
-{
-    return p->sort;
-}
-
 bool Track::hasMatch(const QString& term) const
 {
     const auto contains = [&term](const QString& text) {
@@ -1420,12 +1407,6 @@ void Track::setLastPlayed(uint64_t time)
     if(time > p->lastPlayed) {
         p->lastPlayed = time;
     }
-}
-
-void Track::setSort(const QString& sort)
-{
-    p->sort       = sort;
-    p->isNewTrack = false;
 }
 
 void Track::clearWasModified()

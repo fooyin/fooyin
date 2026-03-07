@@ -22,8 +22,8 @@
 #include "internalguisettings.h"
 #include "librarytreepopulator.h"
 
-#include <core/constants.h>
 #include <core/coresettings.h>
+#include <core/library/tracksort.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <utils/datastream.h>
@@ -32,9 +32,7 @@
 
 #include <QApplication>
 #include <QColor>
-#include <QFont>
 #include <QIODevice>
-#include <QIcon>
 #include <QMimeData>
 #include <QPalette>
 #include <QSize>
@@ -140,6 +138,7 @@ public:
     LibraryTreeModel* m_self;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
+    TrackSorter m_sorter;
 
     CoverProvider m_coverProvider;
 
@@ -172,6 +171,7 @@ LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, Library
     : m_self{self}
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
+    , m_sorter{libraryManager}
     , m_coverProvider{m_audioLoader, m_settings}
     , m_populator{libraryManager}
     , m_iconSize{
@@ -355,11 +355,13 @@ void LibraryTreeModelPrivate::updatePendingNodes(const PendingTreeData& data)
 
 void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
 {
+    const QString sortScript = m_settings->value<Settings::Core::LibrarySortScript>();
+
     for(const auto& [key, item] : data.items) {
         if(m_nodes.contains(key)) {
             auto& node = m_nodes.at(key);
             node.addTracks(item.tracks());
-            node.sortTracks();
+            node.sortTracks(m_sorter, sortScript);
         }
         else {
             m_nodes[key] = item;

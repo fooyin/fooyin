@@ -29,6 +29,7 @@
 
 #include <mutex>
 #include <ranges>
+#include <vector>
 
 namespace Fooyin {
 class LibraryManager;
@@ -38,33 +39,16 @@ class TrackSorterPrivate;
 class FYCORE_EXPORT TrackSorter
 {
 public:
+    template <typename Item>
+    struct SortEntry
+    {
+        Item item;
+        QString sortKey;
+    };
+
     TrackSorter();
     explicit TrackSorter(LibraryManager* libraryManager);
     ~TrackSorter();
-
-    /*!
-     * Calculates the sort fields @p tracks using the @p sort script
-     * @param sort the sort script as a string
-     * @param tracks the tracks to calculate
-     * @returns a new TrackList with the calculated sortFields
-     */
-    TrackList calcSortFields(const QString& sort, const TrackList& tracks);
-
-    /*!
-     * Calculates the sort fields of @p tracks using the parsed @p sort script
-     * @param sortScript the parsed sort script
-     * @param tracks the tracks to calculate
-     * @returns a new TrackList with the calculated sortFields
-     */
-    [[nodiscard]] TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks);
-
-    /*!
-     * Sorts @p tracks using their current sort fields
-     * @param tracks the tracks to sort
-     * @param order the order in which to sort the tracks
-     * @returns a new sorted TrackList
-     */
-    static TrackList sortTracks(const TrackList& tracks, Qt::SortOrder order = Qt::AscendingOrder);
 
     /*!
      * Calculates the sort fields and then sorts @p tracks
@@ -109,35 +93,35 @@ public:
                              Qt::SortOrder order = Qt::AscendingOrder);
 
     template <typename Container, typename SortScript, typename Extractor>
-    Container calcSortFields(const SortScript& sort, const Container& items, Extractor extractor)
+    auto calcSortEntries(const SortScript& sort, const Container& items, Extractor extractor)
+        -> std::vector<SortEntry<typename Container::value_type>>
     {
-        Container calculatedTracks;
-        calculatedTracks.reserve(items.size());
+        using Item = typename Container::value_type;
+        std::vector<SortEntry<Item>> entries;
+        entries.reserve(items.size());
 
         const std::scoped_lock lock{m_parserGuard};
 
         for(const auto& item : items) {
-            auto evalItem{item};
-            Track& track = extractor(evalItem);
-            track.setSort(m_parser.evaluate(sort, track));
-            calculatedTracks.push_back(evalItem);
+            const Track& track = extractor(item);
+            entries.push_back({item, m_parser.evaluate(sort, track)});
         }
 
-        return calculatedTracks;
+        return entries;
     }
 
-    template <typename Container, typename SortScript, typename SortExtractor, typename Extractor>
-    Container calcSortTracks(const SortScript& sort, const Container& items, SortExtractor sortExtractor,
-                             Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
+    template <typename Container, typename SortScript, typename Extractor>
+    Container calcSortTracks(const SortScript& sort, const Container& items, Extractor extractor,
+                             Qt::SortOrder order = Qt::AscendingOrder)
     {
-        Container sortedTracks = calcSortFields(sort, items, sortExtractor);
-        sortTracks(sortedTracks, extractor, order);
-        return sortedTracks;
+        auto sortEntries = calcSortEntries(sort, items, extractor);
+        sortSortEntries(sortEntries, order);
+        return stripSortEntries<Container>(sortEntries);
     }
 
-    template <typename Container, typename SortScript, typename SortExtractor, typename Extractor>
+    template <typename Container, typename SortScript, typename Extractor>
     Container calcSortTracks(const SortScript& sortScript, const Container& items, const std::vector<int>& indexes,
-                             SortExtractor sortExtractor, Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
+                             Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
     {
         Container sortedTracks{items};
         Container tracksToSort;
@@ -150,8 +134,9 @@ public:
             tracksToSort.push_back(items.at(index));
         }
 
-        Container sortedSubTracks = calcSortFields(sortScript, tracksToSort, sortExtractor);
-        sortTracks(sortedSubTracks, extractor, order);
+        auto sortEntries = calcSortEntries(sortScript, tracksToSort, extractor);
+        sortSortEntries(sortEntries, order);
+        Container sortedSubTracks = stripSortEntries<Container>(sortEntries);
 
         for(auto i{0}; const int index : validIndexes) {
             sortedTracks[index] = sortedSubTracks.at(i++);
@@ -163,17 +148,24 @@ public:
 private:
     ParsedScript parseScript(const QString& sort);
 
-    template <typename Container, typename Extractor>
-    static void sortTracks(Container& tracks, Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
+    template <typename Container>
+    static Container stripSortEntries(const std::vector<SortEntry<typename Container::value_type>>& sortEntries)
+    {
+        Container items;
+        items.reserve(sortEntries.size());
+
+        for(const auto& entry : sortEntries) {
+            items.push_back(entry.item);
+        }
+        return items;
+    }
+
+    template <typename Item>
+    static void sortSortEntries(std::vector<SortEntry<Item>>& sortEntries, Qt::SortOrder order = Qt::AscendingOrder)
     {
         StringCollator collator;
-
-        std::ranges::stable_sort(tracks, [order, &collator, extractor](const auto& lhs, const auto& rhs) {
-            const Track& leftTrack  = extractor(lhs);
-            const Track& rightTrack = extractor(rhs);
-
-            const auto cmp = collator.compare(leftTrack.sort(), rightTrack.sort());
-
+        std::ranges::stable_sort(sortEntries, [order, &collator](const auto& lhs, const auto& rhs) {
+            const auto cmp = collator.compare(lhs.sortKey, rhs.sortKey);
             if(cmp == 0) {
                 return false;
             }

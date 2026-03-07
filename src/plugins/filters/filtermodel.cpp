@@ -24,6 +24,7 @@
 #include "filterpopulator.h"
 
 #include <core/coresettings.h>
+#include <core/library/tracksort.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
@@ -33,8 +34,6 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
-#include <QColor>
-#include <QFont>
 #include <QIODevice>
 #include <QMimeData>
 #include <QSize>
@@ -120,6 +119,7 @@ public:
 
     FilterModel* m_self;
     SettingsManager* m_settings;
+    TrackSorter m_sorter;
 
     bool m_resetting{false};
     QThread m_populatorThread;
@@ -150,6 +150,7 @@ FilterModelPrivate::FilterModelPrivate(FilterModel* self, LibraryManager* librar
                                        SettingsManager* settings)
     : m_self{self}
     , m_settings{settings}
+    , m_sorter{libraryManager}
     , m_populator{libraryManager}
     , m_coverProvider{coverProvider}
     , m_decorationSize{
@@ -248,13 +249,15 @@ void FilterModelPrivate::batchFinished(PendingTreeData data)
 
 void FilterModelPrivate::populateModel(PendingTreeData& data)
 {
+    const QString sortScript = m_settings->value<Settings::Core::LibrarySortScript>();
+
     std::vector<FilterItem> newItems;
 
     for(const auto& [key, item] : data.items) {
         if(m_nodes.contains(key)) {
             auto& node = m_nodes.at(key);
             node.addTracks(item.tracks());
-            node.sortTracks();
+            node.sortTracks(m_sorter, sortScript);
         }
         else {
             newItems.push_back(item);

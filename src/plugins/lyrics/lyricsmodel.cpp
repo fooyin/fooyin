@@ -268,9 +268,6 @@ RichText LyricsModel::textForLine(const ParsedLine& line) const
         const bool highlightWord
             = highlightLine && m_lyrics.type == Lyrics::Type::SyncedWords && parsedWord.isCurrent(m_currentTime);
 
-        RichTextBlock block;
-        block.text = parsedWord.word;
-
         RichFormatting format;
 
         format.font   = Lyrics::defaultFont();
@@ -302,6 +299,8 @@ RichText LyricsModel::textForLine(const ParsedLine& line) const
                 break;
         }
 
+        RichTextBlock block;
+        block.text   = parsedWord.word;
         block.format = format;
         formattedText.blocks.push_back(block);
     }

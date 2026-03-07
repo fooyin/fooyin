@@ -24,11 +24,12 @@
 #include <utils/crypto.h>
 #include <utils/treeitem.h>
 
-#include <QObject>
 #include <QString>
 #include <QStyleOptionViewItem>
 
 namespace Fooyin {
+class TrackSorter;
+
 class LibraryTreeItem : public TreeItem<LibraryTreeItem>
 {
 public:
@@ -62,7 +63,7 @@ public:
     void addTracks(const TrackList& tracks);
     void removeTrack(const Track& track);
     void replaceTrack(const Track& track);
-    void sortTracks();
+    void sortTracks(TrackSorter& sorter, const QString& script);
 
 private:
     bool m_pending;

@@ -1456,15 +1456,13 @@ void PlaylistWidgetPrivate::sortTracks(const QString& script)
         std::ranges::sort(indexesToSort);
 
         Utils::asyncExec([this, currentTracks, script, indexesToSort]() {
-            auto tracks = m_sorter.calcSortTracks(script, currentTracks, indexesToSort, PlaylistTrack::extractor,
-                                                  PlaylistTrack::extractorConst);
+            auto tracks = m_sorter.calcSortTracks(script, currentTracks, indexesToSort, PlaylistTrack::extractor);
             return PlaylistTrack::updateIndexes(tracks);
         }).then(m_self, handleSortedTracks);
     }
     else {
         Utils::asyncExec([this, currentTracks, script]() {
-            auto tracks = m_sorter.calcSortTracks(script, currentTracks, PlaylistTrack::extractor,
-                                                  PlaylistTrack::extractorConst);
+            auto tracks = m_sorter.calcSortTracks(script, currentTracks, PlaylistTrack::extractor);
             return PlaylistTrack::updateIndexes(tracks);
         }).then(m_self, handleSortedTracks);
     }
@@ -1485,8 +1483,7 @@ void PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder order)
     const QString sortField = m_columns.at(column).field;
 
     Utils::asyncExec([this, sortField, currentTracks, order]() {
-        auto tracks = m_sorter.calcSortTracks(sortField, currentTracks, PlaylistTrack::extractor,
-                                              PlaylistTrack::extractorConst, order);
+        auto tracks = m_sorter.calcSortTracks(sortField, currentTracks, PlaylistTrack::extractor, order);
         return PlaylistTrack::updateIndexes(tracks);
     }).then(m_self, [this, currentPlaylist, currentTracks](const PlaylistTrackList& sortedTracks) {
         auto* sortCmd
