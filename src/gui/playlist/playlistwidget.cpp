@@ -230,6 +230,7 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library, [this](const TrackList& tracks) { m_library->updateTrackStats(tracks); });
     QObject::connect(m_playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidgetPrivate::doubleClicked);
     QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, this, &PlaylistWidgetPrivate::handleAboutToBeReset);
+    QObject::connect(m_model, &PlaylistModel::playlistLoaded, m_playlistView->viewport(), qOverload<>(&QWidget::update));
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksPlayed, m_model,[this](const std::vector<int>& indexes){m_model->refreshTracks(indexes);});
 
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this, &PlaylistWidgetPrivate::onColumnRemoved);

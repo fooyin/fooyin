@@ -247,22 +247,78 @@ int PlaylistTrackItem::depth() const
 
 QSize PlaylistTrackItem::size(int column) const
 {
-    if(column < 0 || std::cmp_greater_equal(column, m_sizes.size())) {
+    auto calculateScriptWidth = [](const RichScript& script) {
+        QSize blockSize;
+        for(const auto& [text, format] : script.text.blocks) {
+            const QFontMetrics fm{format.font};
+            const QRect br = fm.boundingRect(text);
+            blockSize.setWidth(blockSize.width() + br.width());
+        }
+
+        return blockSize;
+    };
+
+    if(column < 0) {
         return {};
     }
 
-    return m_sizes.at(column);
+    if(!m_columns.empty()) {
+        if(std::cmp_greater_equal(column, m_columns.size())) {
+            return {};
+        }
+
+        if(std::cmp_less(m_sizes.size(), m_columns.size())) {
+            m_sizes.resize(m_columns.size());
+        }
+
+        QSize& cachedSize = m_sizes[column];
+        if(!cachedSize.isValid()) {
+            cachedSize = calculateScriptWidth(m_columns.at(column));
+            if(m_rowHeight > 0) {
+                cachedSize.setHeight(m_rowHeight);
+            }
+        }
+        return cachedSize;
+    }
+
+    if(column > 0) {
+        return {};
+    }
+
+    if(m_sizes.empty()) {
+        m_sizes.resize(1);
+    }
+
+    QSize& cachedSize = m_sizes.front();
+    if(!cachedSize.isValid()) {
+        if(!m_left.text.empty()) {
+            cachedSize = calculateScriptWidth(m_left);
+        }
+
+        if(!m_right.text.empty()) {
+            const QSize rightSize = calculateScriptWidth(m_right);
+            cachedSize.setWidth(cachedSize.width() + rightSize.width());
+        }
+
+        if(m_rowHeight > 0) {
+            cachedSize.setHeight(m_rowHeight);
+        }
+    }
+
+    return cachedSize;
 }
 
 void PlaylistTrackItem::setColumns(const std::vector<RichScript>& columns)
 {
     m_columns = columns;
+    m_sizes.clear();
 }
 
 void PlaylistTrackItem::setLeftRight(const RichScript& left, const RichScript& right)
 {
     m_left  = left;
     m_right = right;
+    m_sizes.clear();
 }
 
 void PlaylistTrackItem::setTrack(const PlaylistTrack& track)
@@ -278,6 +334,7 @@ void PlaylistTrackItem::setIndex(int index)
 void PlaylistTrackItem::setRowHeight(int height)
 {
     m_rowHeight = height;
+    m_sizes.clear();
 }
 
 void PlaylistTrackItem::setDepth(int depth)
@@ -292,47 +349,11 @@ void PlaylistTrackItem::removeColumn(int column)
     }
 
     m_columns.erase(m_columns.cbegin() + column);
+    m_sizes.clear();
 }
 
 void PlaylistTrackItem::calculateSize()
 {
-    auto addSize = [](const RichScript& script) {
-        QSize blockSize;
-        for(const auto& title : script.text.blocks) {
-            const QFontMetrics fm{title.format.font};
-            const QRect br = fm.boundingRect(title.text);
-            blockSize.setWidth(blockSize.width() + br.width());
-        }
-
-        return blockSize;
-    };
-
-    if(!m_columns.empty()) {
-        for(const auto& col : m_columns) {
-            QSize colSize = addSize(col);
-            if(m_rowHeight > 0) {
-                colSize.setHeight(m_rowHeight);
-            }
-            m_sizes.emplace_back(colSize);
-        }
-    }
-    else {
-        QSize totalSize;
-
-        if(!m_left.text.empty()) {
-            totalSize = addSize(m_left);
-        }
-
-        if(!m_right.text.empty()) {
-            const QSize rightSize = addSize(m_right);
-            totalSize.setWidth(totalSize.width() + rightSize.width());
-        }
-
-        if(m_rowHeight > 0) {
-            totalSize.setHeight(m_rowHeight);
-        }
-
-        m_sizes.emplace_back(totalSize);
-    }
+    m_sizes.clear();
 }
 } // namespace Fooyin

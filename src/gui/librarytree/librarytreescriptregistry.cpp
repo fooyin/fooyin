@@ -26,13 +26,13 @@ using namespace Qt::StringLiterals;
 namespace Fooyin {
 bool LibraryTreeScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    if(var == "frontcover"_L1) {
+    if(var == "FRONTCOVER"_L1) {
         return true;
     }
-    if(var == "backcover"_L1) {
+    if(var == "BACKCOVER"_L1) {
         return true;
     }
-    if(var == "artistpicture"_L1) {
+    if(var == "ARTISTPICTURE"_L1) {
         return true;
     }
     return ScriptRegistry::isVariable(var, track);
@@ -40,13 +40,13 @@ bool LibraryTreeScriptRegistry::isVariable(const QString& var, const Track& trac
 
 ScriptResult LibraryTreeScriptRegistry::value(const QString& var, const Track& track) const
 {
-    if(var == "frontcover"_L1) {
+    if(var == "FRONTCOVER"_L1) {
         return {.value = QLatin1String{Constants::FrontCover}, .cond = true};
     }
-    if(var == "backcover"_L1) {
+    if(var == "BACKCOVER"_L1) {
         return {.value = QLatin1String{Constants::BackCover}, .cond = true};
     }
-    if(var == "artistpicture"_L1) {
+    if(var == "ARTISTPICTURE"_L1) {
         return {.value = QLatin1String{Constants::ArtistPicture}, .cond = true};
     }
     return ScriptRegistry::value(var, track);

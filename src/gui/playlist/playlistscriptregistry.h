@@ -20,7 +20,6 @@
 #pragma once
 
 #include <core/player/playbackqueue.h>
-#include <core/player/playerdefs.h>
 #include <core/scripting/scriptregistry.h>
 
 namespace Fooyin {
@@ -40,11 +39,13 @@ public:
     void setup(Playlist* playlist, const PlaybackQueue& queue);
     void setTrackProperties(int index, int depth);
 
+    [[nodiscard]] VariableKind resolveVariableKind(const QString& var) const override;
+    [[nodiscard]] ScriptResult value(VariableKind kind, const QString& var, const Track& track) const override;
     [[nodiscard]] bool isVariable(const QString& var, const Track& track) const override;
     [[nodiscard]] ScriptResult value(const QString& var, const Track& track) const override;
 
 protected:
-    [[nodiscard]] ScriptResult calculateResult(FuncRet funcRet) const override;
+    [[nodiscard]] ScriptResult calculateResult(const FuncRet& funcRet) const override;
 
 private:
     std::unique_ptr<PlaylistScriptRegistryPrivate> p;

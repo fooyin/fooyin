@@ -34,8 +34,7 @@ public:
     ScriptFormatterRegistry();
     ~ScriptFormatterRegistry();
 
-    [[nodiscard]] bool isFormatFunc(const QString& option) const;
-    void format(RichFormatting& formatting, const QString& func, const QString& option = {}) const;
+    [[nodiscard]] bool format(RichFormatting& formatting, const QString& func, const QString& option = {}) const;
 
 private:
     std::unique_ptr<ScriptFormatterRegistryPrivate> p;

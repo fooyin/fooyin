@@ -105,13 +105,15 @@ void ScriptScanner::setup(const QString& input)
     m_current = m_start;
 
     m_tokens.clear();
+    m_tokens.reserve(m_input.size());
+
     m_currentTokenIndex = 0;
     m_lastToken         = nullptr;
 
     while(!isAtEnd()) {
         const Token token = scanNext();
         if(m_lastToken && m_lastToken->type == TokLiteral && token.type == TokLiteral) {
-            m_lastToken->value += token.value;
+            m_lastToken->value = QStringView{m_lastToken->value.data(), m_lastToken->value.size() + token.value.size()};
         }
         else {
             m_lastToken = &m_tokens.emplace_back(token);
@@ -125,7 +127,7 @@ ScriptScanner::Token ScriptScanner::next()
         return makeToken(TokEos);
     }
 
-    return m_tokens.at(m_currentTokenIndex++);
+    return m_tokens[m_currentTokenIndex++];
 }
 
 ScriptScanner::Token ScriptScanner::peekNext(int delta)
@@ -136,7 +138,7 @@ ScriptScanner::Token ScriptScanner::peekNext(int delta)
         return makeToken(TokEos);
     }
 
-    return m_tokens.at(next);
+    return m_tokens[next];
 }
 
 void ScriptScanner::setSkipWhitespace(bool enabled)
@@ -211,7 +213,7 @@ ScriptScanner::Token ScriptScanner::makeToken(TokenType type) const
 {
     Token token;
     token.type     = type;
-    token.value    = QStringView{m_start, currentLength()}.toString();
+    token.value    = QStringView{m_start, currentLength()};
     token.position = static_cast<int>(m_start - m_input.cbegin());
     return token;
 }

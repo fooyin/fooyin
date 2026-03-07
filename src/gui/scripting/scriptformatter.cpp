@@ -70,7 +70,7 @@ void ScriptFormatterPrivate::advance()
 
     m_current = m_scanner.next();
     if(m_current.type == ScriptScanner::TokError) {
-        errorAtCurrent(m_current.value);
+        errorAtCurrent(m_current.value.toString());
     }
 }
 
@@ -108,13 +108,13 @@ void ScriptFormatterPrivate::errorAt(const ScriptScanner::Token& token, const QS
         errorMsg += u" at end of string"_s;
     }
     else {
-        errorMsg += u": '"_s + token.value + u"'"_s;
+        errorMsg += u": '"_s + token.value.toString() + u"'"_s;
     }
 
     errorMsg += u" (%1)"_s.arg(message);
 
     ScriptError currentError;
-    currentError.value    = token.value;
+    currentError.value    = token.value.toString();
     currentError.position = token.position;
     currentError.message  = errorMsg;
 
@@ -124,56 +124,15 @@ void ScriptFormatterPrivate::errorAt(const ScriptScanner::Token& token, const QS
 void ScriptFormatterPrivate::expression()
 {
     advance();
-    switch(m_previous.type) {
-        case(ScriptScanner::TokLeftAngle):
-            formatBlock();
-            break;
-        case(ScriptScanner::TokVar):
-        case(ScriptScanner::TokFunc):
-        case(ScriptScanner::TokQuote):
-        case(ScriptScanner::TokLeftSquare):
-        case(ScriptScanner::TokRightAngle):
-        case(ScriptScanner::TokComma):
-        case(ScriptScanner::TokLeftParen):
-        case(ScriptScanner::TokRightParen):
-        case(ScriptScanner::TokRightSquare):
-        case(ScriptScanner::TokSlash):
-        case(ScriptScanner::TokColon):
-        case(ScriptScanner::TokEquals):
-        case(ScriptScanner::TokNot):
-        case(ScriptScanner::TokLiteral):
-        case(ScriptScanner::TokAnd):
-        case(ScriptScanner::TokOr):
-        case(ScriptScanner::TokXOr):
-        case(ScriptScanner::TokMissing):
-        case(ScriptScanner::TokPresent):
-        case(ScriptScanner::TokAll):
-        case(ScriptScanner::TokSort):
-        case(ScriptScanner::TokBy):
-        case(ScriptScanner::TokBefore):
-        case(ScriptScanner::TokAfter):
-        case(ScriptScanner::TokSince):
-        case(ScriptScanner::TokDuring):
-        case(ScriptScanner::TokLast):
-        case(ScriptScanner::TokSecond):
-        case(ScriptScanner::TokMinute):
-        case(ScriptScanner::TokHour):
-        case(ScriptScanner::TokDay):
-        case(ScriptScanner::TokWeek):
-        case(ScriptScanner::TokAscending):
-        case(ScriptScanner::TokDescending):
-        case(ScriptScanner::TokPlus):
-        case(ScriptScanner::TokMinus):
-        case(ScriptScanner::TokLimit):
-            m_currentBlock.text += m_previous.value;
-            break;
-        case(ScriptScanner::TokEscape):
-            advance();
-            m_currentBlock.text += m_previous.value;
-            break;
-        case(ScriptScanner::TokEos):
-        case(ScriptScanner::TokError):
-            break;
+    if(m_previous.type == ScriptScanner::TokLeftAngle) {
+        formatBlock();
+    }
+    else if(m_previous.type == ScriptScanner::TokEscape) {
+        advance();
+        m_currentBlock.text += m_previous.value;
+    }
+    else if(m_previous.type != ScriptScanner::TokEos && m_previous.type != ScriptScanner::TokError) {
+        m_currentBlock.text += m_previous.value;
     }
 }
 
@@ -181,6 +140,8 @@ void ScriptFormatterPrivate::formatBlock()
 {
     QString func;
     QString option;
+    func.reserve(8);
+    option.reserve(16);
 
     bool formatOption{false};
     while(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
@@ -204,9 +165,11 @@ void ScriptFormatterPrivate::formatBlock()
 
 void ScriptFormatterPrivate::processFormat(const QString& func, const QString& option)
 {
-    if(m_registry.isFormatFunc(func)) {
+    RichFormatting nextFormatting{m_currentBlock.format};
+
+    if(m_registry.format(nextFormatting, func, option)) {
         addBlock();
-        m_registry.format(m_currentBlock.format, func, option);
+        m_currentBlock.format = std::move(nextFormatting);
     }
     else {
         error(u"Format option not found"_s);
@@ -214,9 +177,14 @@ void ScriptFormatterPrivate::processFormat(const QString& func, const QString& o
 
     consume(ScriptScanner::TokRightAngle, u"Expected '>' after expression"_s);
 
-    while(m_current.type != ScriptScanner::TokEos
-          && (m_current.type != ScriptScanner::TokLeftAngle
-              || (m_scanner.peekNext().type != ScriptScanner::TokSlash && m_scanner.peekNext(2).value != func))) {
+    while(m_current.type != ScriptScanner::TokEos) {
+        if(m_current.type == ScriptScanner::TokLeftAngle) {
+            const auto next     = m_scanner.peekNext();
+            const auto closeTag = m_scanner.peekNext(2);
+            if(next.type == ScriptScanner::TokSlash && closeTag.value == func) {
+                break;
+            }
+        }
         expression();
     }
 
@@ -224,6 +192,7 @@ void ScriptFormatterPrivate::processFormat(const QString& func, const QString& o
     consume(ScriptScanner::TokSlash);
 
     QString closeOption;
+    closeOption.reserve(func.size());
 
     while(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
         advance();
@@ -290,6 +259,13 @@ RichText ScriptFormatter::evaluate(const QString& input)
 
     p->resetFormat();
     p->m_formatResult.clear();
+
+    if(!input.contains(u'<') && !input.contains(u'\\')) {
+        p->m_currentBlock.text = input;
+        p->m_formatResult.blocks.emplace_back(p->m_currentBlock);
+        return p->m_formatResult;
+    }
+
     p->m_scanner.setup(input);
 
     p->advance();
@@ -305,7 +281,6 @@ RichText ScriptFormatter::evaluate(const QString& input)
 
     return p->m_formatResult;
 }
-
 void ScriptFormatter::setBaseFont(const QFont& font)
 {
     p->m_font = font;

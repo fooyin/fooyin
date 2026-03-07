@@ -24,8 +24,6 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-using FormatFunc = std::function<void(RichFormatting&, const QString&)>;
-
 void bold(RichFormatting& formatting, const QString& /*option*/)
 {
     formatting.font.setBold(true);
@@ -111,13 +109,7 @@ void colourRgb(RichFormatting& formatting, const QString& option)
 }
 
 class ScriptFormatterRegistryPrivate
-{
-public:
-    std::unordered_map<QString, FormatFunc> funcs{
-        {u"b"_s, bold},          {u"i"_s, italic},          {u"font"_s, fontFamily}, {u"size"_s, fontSize},
-        {u"sized"_s, fontDelta}, {u"alpha"_s, colourAlpha}, {u"rgb"_s, colourRgb},
-    };
-};
+{ };
 
 ScriptFormatterRegistry::ScriptFormatterRegistry()
     : p{std::make_unique<ScriptFormatterRegistryPrivate>()}
@@ -125,17 +117,37 @@ ScriptFormatterRegistry::ScriptFormatterRegistry()
 
 ScriptFormatterRegistry::~ScriptFormatterRegistry() = default;
 
-bool ScriptFormatterRegistry::isFormatFunc(const QString& option) const
+bool ScriptFormatterRegistry::format(RichFormatting& formatting, const QString& func, const QString& option) const
 {
-    return p->funcs.contains(option);
-}
-
-void ScriptFormatterRegistry::format(RichFormatting& formatting, const QString& func, const QString& option) const
-{
-    if(!isFormatFunc(func)) {
-        return;
+    if(func == "b"_L1) {
+        bold(formatting, option);
+        return true;
+    }
+    if(func == "i"_L1) {
+        italic(formatting, option);
+        return true;
+    }
+    if(func == "font"_L1) {
+        fontFamily(formatting, option);
+        return true;
+    }
+    if(func == "size"_L1) {
+        fontSize(formatting, option);
+        return true;
+    }
+    if(func == "sized"_L1) {
+        fontDelta(formatting, option);
+        return true;
+    }
+    if(func == "alpha"_L1) {
+        colourAlpha(formatting, option);
+        return true;
+    }
+    if(func == "rgb"_L1) {
+        colourRgb(formatting, option);
+        return true;
     }
 
-    p->funcs.at(func)(formatting, option);
+    return false;
 }
 } // namespace Fooyin

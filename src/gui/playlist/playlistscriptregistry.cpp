@@ -63,14 +63,14 @@ public:
     using PlaylistVar  = std::function<QString()>;
     using PlaylistVars = std::unordered_map<QString, PlaylistVar>;
     // clang-format off
-    PlaylistVars m_vars{{u"depth"_s, [this]() { return depth(); }},
-                        {u"list_index"_s, [this]() { return trackIndex(); }},
-                        {u"queueindex"_s, [this]() { return queueIndex(); }},
-                        {u"queueindexes"_s, [this]() { return queueIndexes(); }},
-                        {u"playingicon"_s, [this]() { return playingQueue(); }},
-                        {u"frontcover"_s, frontCover},
-                        {u"backcover"_s, backCover},
-                        {u"artistpicture"_s, artistPicture}};
+    PlaylistVars m_vars{{u"DEPTH"_s, [this]() { return depth(); }},
+                        {u"LIST_INDEX"_s, [this]() { return trackIndex(); }},
+                        {u"QUEUEINDEX"_s, [this]() { return queueIndex(); }},
+                        {u"QUEUEINDEXES"_s, [this]() { return queueIndexes(); }},
+                        {u"PLAYINGICON"_s, [this]() { return playingQueue(); }},
+                        {u"FRONTCOVER"_s, frontCover},
+                        {u"BACKCOVER"_s, backCover},
+                        {u"ARTISTPICTURE"_s, artistPicture}};
     // clang-format on
 };
 
@@ -144,32 +144,99 @@ void PlaylistScriptRegistry::setTrackProperties(int index, int depth)
     p->m_trackDepth = depth;
 }
 
+VariableKind PlaylistScriptRegistry::resolveVariableKind(const QString& var) const
+{
+    if(var == "DEPTH"_L1) {
+        return VariableKind::Depth;
+    }
+    if(var == "LIST_INDEX"_L1) {
+        return VariableKind::ListIndex;
+    }
+    if(var == "QUEUEINDEX"_L1) {
+        return VariableKind::QueueIndex;
+    }
+    if(var == "QUEUEINDEXES"_L1) {
+        return VariableKind::QueueIndexes;
+    }
+    if(var == "PLAYINGICON"_L1) {
+        return VariableKind::PlayingIcon;
+    }
+    if(var == "FRONTCOVER"_L1) {
+        return VariableKind::FrontCover;
+    }
+    if(var == "BACKCOVER"_L1) {
+        return VariableKind::BackCover;
+    }
+    if(var == "ARTISTPICTURE"_L1) {
+        return VariableKind::ArtistPicture;
+    }
+
+    return ScriptRegistry::resolveVariableKind(var);
+}
+
 bool PlaylistScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    if(isListVariable(var) || p->m_vars.contains(var)) {
+    if(resolveVariableKind(var) != VariableKind::Generic || isListVariable(var)) {
         return true;
     }
 
     return ScriptRegistry::isVariable(var, track);
 }
 
-ScriptResult PlaylistScriptRegistry::value(const QString& var, const Track& track) const
+ScriptResult PlaylistScriptRegistry::value(VariableKind kind, const QString& var, const Track& track) const
 {
-    if(isListVariable(var)) {
-        return {.value = u"|Loading|"_s, .cond = true};
+    switch(kind) {
+        case VariableKind::Depth:
+            return {.value = p->depth(), .cond = true};
+        case VariableKind::ListIndex: {
+            const QString value = p->trackIndex();
+            return {.value = value, .cond = !value.isEmpty()};
+        }
+        case VariableKind::QueueIndex: {
+            const QString value = p->queueIndex();
+            return {.value = value, .cond = !value.isEmpty()};
+        }
+        case VariableKind::QueueIndexes: {
+            const QString value = p->queueIndexes();
+            return {.value = value, .cond = !value.isEmpty()};
+        }
+        case VariableKind::PlayingIcon: {
+            const QString value = p->playingQueue();
+            return {.value = value, .cond = !value.isEmpty()};
+        }
+        case VariableKind::FrontCover:
+            return {.value = frontCover(), .cond = true};
+        case VariableKind::BackCover:
+            return {.value = backCover(), .cond = true};
+        case VariableKind::ArtistPicture:
+            return {.value = artistPicture(), .cond = true};
+        case VariableKind::TrackCount:
+        case VariableKind::Playtime:
+        case VariableKind::PlaylistDuration:
+            return {.value = u"|Loading|"_s, .cond = true};
+        case VariableKind::Generic:
+        case VariableKind::Track:
+        case VariableKind::Disc:
+        case VariableKind::DiscTotal:
+        case VariableKind::Title:
+        case VariableKind::UniqueArtist:
+        case VariableKind::PlayCount:
+        case VariableKind::Duration:
+        case VariableKind::AlbumArtist:
+        case VariableKind::Album:
+        case VariableKind::Genres:
+            break;
     }
 
-    if(p->m_vars.contains(var)) {
-        ScriptResult result;
-        result.value = p->m_vars.at(var)();
-        result.cond  = !result.value.isEmpty();
-        return result;
-    }
-
-    return ScriptRegistry::value(var, track);
+    return ScriptRegistry::value(kind, var, track);
 }
 
-ScriptResult PlaylistScriptRegistry::calculateResult(FuncRet funcRet) const
+ScriptResult PlaylistScriptRegistry::value(const QString& var, const Track& track) const
+{
+    return value(resolveVariableKind(var), var, track);
+}
+
+ScriptResult PlaylistScriptRegistry::calculateResult(const FuncRet& funcRet) const
 {
     ScriptResult result = ScriptRegistry::calculateResult(funcRet);
     result.value.replace(u'<', u"\\<"_s);

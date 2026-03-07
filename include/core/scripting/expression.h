@@ -62,9 +62,54 @@ enum Type : uint8_t
 struct Expression;
 using ExpressionList = std::vector<Expression>;
 
+enum class FunctionKind : uint8_t
+{
+    Generic = 0,
+    If,
+    If2,
+    IfEqual,
+    IfGreater,
+    IfLonger,
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Mod,
+    Num,
+    Pad,
+    PadRight,
+};
+
+enum class VariableKind : uint8_t
+{
+    Generic = 0,
+    Track,
+    Disc,
+    DiscTotal,
+    Title,
+    UniqueArtist,
+    PlayCount,
+    Duration,
+    AlbumArtist,
+    Album,
+    Genres,
+    TrackCount,
+    Playtime,
+    PlaylistDuration,
+    Depth,
+    ListIndex,
+    QueueIndex,
+    QueueIndexes,
+    PlayingIcon,
+    FrontCover,
+    BackCover,
+    ArtistPicture,
+};
+
 struct FuncValue
 {
     QString name;
+    FunctionKind kind{FunctionKind::Generic};
     ExpressionList args;
 };
 
@@ -72,7 +117,19 @@ using ExpressionValue = std::variant<QString, FuncValue, ExpressionList>;
 
 struct Expression
 {
+    Expression() = default;
+
+    Expression(Expr::Type exprType)
+        : type{exprType}
+    { }
+
+    Expression(Expr::Type exprType, ExpressionValue exprValue)
+        : type{exprType}
+        , value{std::move(exprValue)}
+    { }
+
     Expr::Type type{Expr::Null};
+    uint16_t resolvedKind{0};
     ExpressionValue value{QString{}};
 };
 } // namespace Fooyin

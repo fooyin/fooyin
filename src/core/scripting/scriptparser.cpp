@@ -26,6 +26,7 @@
 #include <core/scripting/scriptscanner.h>
 #include <core/track.h>
 #include <utils/helpers.h>
+#include <utils/stringutils.h>
 #include <utils/utils.h>
 
 #include <QDateTime>
@@ -168,6 +169,52 @@ bool isQueryExpression(Fooyin::Expr::Type type)
 
     return false;
 }
+
+Fooyin::FunctionKind resolveFunctionKind(const QString& name)
+{
+    using FunctionKind = Fooyin::FunctionKind;
+
+    if(name == "if"_L1) {
+        return FunctionKind::If;
+    }
+    if(name == "if2"_L1) {
+        return FunctionKind::If2;
+    }
+    if(name == "ifequal"_L1) {
+        return FunctionKind::IfEqual;
+    }
+    if(name == "ifgreater"_L1) {
+        return FunctionKind::IfGreater;
+    }
+    if(name == "iflonger"_L1) {
+        return FunctionKind::IfLonger;
+    }
+    if(name == "add"_L1) {
+        return FunctionKind::Add;
+    }
+    if(name == "sub"_L1) {
+        return FunctionKind::Sub;
+    }
+    if(name == "mul"_L1) {
+        return FunctionKind::Mul;
+    }
+    if(name == "div"_L1) {
+        return FunctionKind::Div;
+    }
+    if(name == "mod"_L1) {
+        return FunctionKind::Mod;
+    }
+    if(name == "num"_L1) {
+        return FunctionKind::Num;
+    }
+    if(name == "pad"_L1) {
+        return FunctionKind::Pad;
+    }
+    if(name == "padright"_L1) {
+        return FunctionKind::PadRight;
+    }
+    return FunctionKind::Generic;
+}
 } // namespace
 
 namespace Fooyin {
@@ -274,7 +321,7 @@ void ScriptParserPrivate::advance()
 
     m_current = m_scanner.next();
     if(m_current.type == TokenType::TokError) {
-        errorAtCurrent(m_current.value);
+        errorAtCurrent(m_current.value.toString());
     }
 }
 
@@ -314,13 +361,13 @@ void ScriptParserPrivate::errorAt(const ScriptScanner::Token& token, const QStri
         errorMsg += u" at end of string"_s;
     }
     else {
-        errorMsg += u": '"_s + token.value + u"'"_s;
+        errorMsg += u": '"_s + token.value.toString() + u"'"_s;
     }
 
     errorMsg += u" (%1)"_s.arg(message);
 
     ScriptError currentError;
-    currentError.value    = token.value;
+    currentError.value    = token.value.toString();
     currentError.position = token.position;
     currentError.message  = errorMsg;
 
@@ -398,7 +445,7 @@ Expression ScriptParserPrivate::expression()
 
 Expression ScriptParserPrivate::literal() const
 {
-    QString value = m_previous.value;
+    QString value = m_previous.value.toString();
 
     if(m_isQuery) {
         value = value.trimmed();
@@ -449,14 +496,17 @@ Expression ScriptParserPrivate::variable()
         advance();
         expr.type = Expr::VariableList;
         consumeVar(TokenType::TokRightAngle);
+        value = value.toUpper();
+        expr.resolvedKind
+            = static_cast<uint16_t>(m_registry ? m_registry->resolveVariableKind(value) : VariableKind::Generic);
         consume(TokenType::TokRightAngle, QObject::tr("Expected %1 to close variable list").arg("'>'"_L1));
     }
     else {
         expr.type = Expr::Variable;
         consumeVar(TokenType::TokVar);
-        if(m_isQuery) {
-            value = value.trimmed();
-        }
+        value = m_isQuery ? value.trimmed().toUpper() : value.toUpper();
+        expr.resolvedKind
+            = static_cast<uint16_t>(m_registry ? m_registry->resolveVariableKind(value) : VariableKind::Generic);
     }
 
     expr.value = value;
@@ -474,7 +524,8 @@ Expression ScriptParserPrivate::function()
 
     Expression expr{Expr::Function};
     FuncValue funcExpr;
-    funcExpr.name = m_previous.value.toLower();
+    funcExpr.name = m_previous.value.toString().toLower();
+    funcExpr.kind = resolveFunctionKind(funcExpr.name);
 
     if(!m_registry->isFunction(funcExpr.name)) {
         error(u"Function not found"_s);
@@ -577,6 +628,9 @@ Expression ScriptParserPrivate::notKeyword(const Expression& key)
             Expression field{key};
             if(field.type == Expr::Literal) {
                 field.type = Expr::Variable;
+                field.resolvedKind
+                    = static_cast<uint16_t>(m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value))
+                                                       : VariableKind::Generic);
             }
             equalsArgs.emplace_back(field);
 
@@ -628,7 +682,9 @@ Expression ScriptParserPrivate::relationalOperator(const Expression& key, Expr::
 
     Expression field{key};
     if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
+        field.type         = Expr::Variable;
+        field.resolvedKind = static_cast<uint16_t>(
+            m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value)) : VariableKind::Generic);
     }
     args.emplace_back(field);
 
@@ -656,7 +712,9 @@ Expression ScriptParserPrivate::metadataKeyword(const Expression& key, Expr::Typ
 
     Expression field{key};
     if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
+        field.type         = Expr::Variable;
+        field.resolvedKind = static_cast<uint16_t>(
+            m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value)) : VariableKind::Generic);
     }
     args.emplace_back(field);
 
@@ -673,7 +731,9 @@ Expression ScriptParserPrivate::timeKeyword(const Expression& key, Expr::Type ty
 
     Expression field{key};
     if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
+        field.type         = Expr::Variable;
+        field.resolvedKind = static_cast<uint16_t>(
+            m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value)) : VariableKind::Generic);
     }
     args.emplace_back(field);
 
@@ -700,7 +760,9 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
 
     Expression field{key};
     if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
+        field.type         = Expr::Variable;
+        field.resolvedKind = static_cast<uint16_t>(
+            m_registry ? m_registry->resolveVariableKind(std::get<QString>(field.value)) : VariableKind::Generic);
     }
     args.emplace_back(field);
 
@@ -811,7 +873,7 @@ Expression ScriptParserPrivate::limit()
 
     if(!currentToken(TokenType::TokEos)) {
         advance();
-        expr.value = m_previous.value;
+        expr.value = m_previous.value.toString();
     }
 
     return expr;
@@ -892,8 +954,9 @@ ScriptResult ScriptParserPrivate::evalLiteral(const Expression& exp)
 
 ScriptResult ScriptParserPrivate::evalVariable(const Expression& exp, const auto& tracks)
 {
-    const QString var   = std::get<QString>(exp.value);
-    ScriptResult result = m_registry->value(var.toLower(), tracks);
+    const auto& var     = std::get<QString>(exp.value);
+    const auto resolved = static_cast<VariableKind>(exp.resolvedKind);
+    ScriptResult result = m_registry->value(resolved, var, tracks);
 
     if(!result.cond) {
         return {};
@@ -908,13 +971,13 @@ ScriptResult ScriptParserPrivate::evalVariable(const Expression& exp, const auto
 
 ScriptResult ScriptParserPrivate::evalVariableList(const Expression& exp, const auto& tracks)
 {
-    const QString var = std::get<QString>(exp.value);
-    return m_registry->value(var.toLower(), tracks);
+    const auto& var = std::get<QString>(exp.value);
+    return m_registry->value(static_cast<VariableKind>(exp.resolvedKind), var, tracks);
 }
 
 ScriptResult ScriptParserPrivate::evalVariableRaw(const Expression& exp, const auto& tracks)
 {
-    const QString var = std::get<QString>(exp.value);
+    const auto& var = std::get<QString>(exp.value);
 
     ScriptResult result;
     if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
@@ -938,8 +1001,193 @@ ScriptResult ScriptParserPrivate::evalVariableRaw(const Expression& exp, const a
 
 ScriptResult ScriptParserPrivate::evalFunction(const Expression& exp, const auto& tracks)
 {
-    auto func = std::get<FuncValue>(exp.value);
+    const auto& func = std::get<FuncValue>(exp.value);
+    auto toResult    = [](QString value) {
+        return ScriptResult{.value = std::move(value), .cond = !value.isEmpty()};
+    };
+
+    switch(func.kind) {
+        case(FunctionKind::If): {
+            const auto size = func.args.size();
+            if(size < 2 || size > 3) {
+                return {};
+            }
+
+            const ScriptResult condition = evalExpression(func.args.at(0), tracks);
+            if(condition.cond) {
+                return evalExpression(func.args.at(1), tracks);
+            }
+            if(size == 3) {
+                return evalExpression(func.args.at(2), tracks);
+            }
+            return {};
+        }
+        case(FunctionKind::If2): {
+            const auto size = func.args.size();
+            if(size < 1 || size > 2) {
+                return {};
+            }
+
+            const ScriptResult first = evalExpression(func.args.at(0), tracks);
+            if(first.cond) {
+                return first;
+            }
+            if(size == 2) {
+                return evalExpression(func.args.at(1), tracks);
+            }
+            return {};
+        }
+        case(FunctionKind::IfEqual): {
+            if(func.args.size() != 4) {
+                return {};
+            }
+
+            const ScriptResult first  = evalExpression(func.args.at(0), tracks);
+            const ScriptResult second = evalExpression(func.args.at(1), tracks);
+            if(first.value.toDouble() == second.value.toDouble()) {
+                return evalExpression(func.args.at(2), tracks);
+            }
+            return evalExpression(func.args.at(3), tracks);
+        }
+        case(FunctionKind::IfGreater): {
+            const auto size = func.args.size();
+            if(size < 3 || size > 4) {
+                return {};
+            }
+
+            const ScriptResult first  = evalExpression(func.args.at(0), tracks);
+            const ScriptResult second = evalExpression(func.args.at(1), tracks);
+            if(first.value.toDouble() > second.value.toDouble()) {
+                return evalExpression(func.args.at(2), tracks);
+            }
+            if(size == 4) {
+                return evalExpression(func.args.at(3), tracks);
+            }
+            return {};
+        }
+        case(FunctionKind::IfLonger): {
+            if(func.args.size() != 4) {
+                return {};
+            }
+
+            const ScriptResult first  = evalExpression(func.args.at(0), tracks);
+            const ScriptResult second = evalExpression(func.args.at(1), tracks);
+
+            bool ok{false};
+            const auto length = second.value.toLongLong(&ok);
+            if(!ok) {
+                return {};
+            }
+
+            if(first.value.size() >= length) {
+                return evalExpression(func.args.at(2), tracks);
+            }
+            return evalExpression(func.args.at(3), tracks);
+        }
+        case(FunctionKind::Add):
+        case(FunctionKind::Sub):
+        case(FunctionKind::Mul):
+        case(FunctionKind::Div): {
+            const auto size = static_cast<qsizetype>(func.args.size());
+            if(size < 2) {
+                return {};
+            }
+
+            bool ok{false};
+            double total = evalExpression(func.args.front(), tracks).value.toDouble(&ok);
+            if(!ok) {
+                return {};
+            }
+
+            for(qsizetype i{1}; i < size; ++i) {
+                const double num = evalExpression(func.args.at(i), tracks).value.toDouble(&ok);
+                if(!ok) {
+                    continue;
+                }
+
+                if(func.kind == FunctionKind::Add) {
+                    total += num;
+                }
+                else if(func.kind == FunctionKind::Sub) {
+                    total -= num;
+                }
+                else if(func.kind == FunctionKind::Mul) {
+                    total *= num;
+                }
+                else {
+                    total /= num;
+                }
+            }
+
+            return toResult(QString::number(total));
+        }
+        case(FunctionKind::Mod): {
+            const qsizetype size = static_cast<qsizetype>(func.args.size());
+            if(size < 2) {
+                return {};
+            }
+
+            int total = evalExpression(func.args.front(), tracks).value.toInt();
+            for(qsizetype i{1}; i < size; ++i) {
+                total %= evalExpression(func.args.at(i), tracks).value.toInt();
+            }
+            return toResult(QString::number(total));
+        }
+        case(FunctionKind::Num): {
+            const auto size = func.args.size();
+            if(size < 1 || size > 2) {
+                return {};
+            }
+
+            const ScriptResult first = evalExpression(func.args.at(0), tracks);
+            if(size == 1) {
+                return toResult(first.value);
+            }
+
+            bool isInt{false};
+            const int number = first.value.toInt(&isInt);
+            if(!isInt) {
+                return toResult(first.value);
+            }
+
+            const int prefix = evalExpression(func.args.at(1), tracks).value.toInt(&isInt);
+            if(!isInt) {
+                return toResult(first.value);
+            }
+
+            return toResult(Utils::addLeadingZero(number, prefix));
+        }
+        case(FunctionKind::Pad):
+        case(FunctionKind::PadRight): {
+            const auto size = func.args.size();
+            if(size < 2 || size > 3) {
+                return {};
+            }
+
+            const QString str = evalExpression(func.args.at(0), tracks).value;
+            bool ok{false};
+            const int len = evalExpression(func.args.at(1), tracks).value.toInt(&ok);
+            if(!ok || len < 0) {
+                return {};
+            }
+
+            QChar padChar = u' ';
+            if(size == 3) {
+                const QString customPad = evalExpression(func.args.at(2), tracks).value;
+                if(!customPad.isEmpty()) {
+                    padChar = customPad.front();
+                }
+            }
+
+            return toResult(func.kind == FunctionKind::Pad ? str.leftJustified(len, padChar)
+                                                           : str.rightJustified(len, padChar));
+        }
+        case(FunctionKind::Generic):
+            break;
+    }
+
     ScriptValueList args;
+    args.reserve(func.args.size());
     std::ranges::transform(func.args, std::back_inserter(args),
                            [this, &tracks](const Expression& arg) { return evalExpression(arg, tracks); });
     return m_registry->function(func.name, args, tracks);
@@ -947,10 +1195,18 @@ ScriptResult ScriptParserPrivate::evalFunction(const Expression& exp, const auto
 
 ScriptResult ScriptParserPrivate::evalFunctionArg(const Expression& exp, const auto& tracks)
 {
+    const auto& arg = std::get<ExpressionList>(exp.value);
+    if(arg.empty()) {
+        return {};
+    }
+
+    if(arg.size() == 1) {
+        return evalExpression(arg.front(), tracks);
+    }
+
     ScriptResult result;
     bool allPassed{true};
 
-    auto arg = std::get<ExpressionList>(exp.value);
     for(const Expression& subArg : arg) {
         const auto subExpr = evalExpression(subArg, tracks);
         if(!subExpr.cond) {
@@ -973,11 +1229,31 @@ ScriptResult ScriptParserPrivate::evalFunctionArg(const Expression& exp, const a
 
 ScriptResult ScriptParserPrivate::evalConditional(const Expression& exp, const auto& tracks)
 {
+    const auto& arg = std::get<ExpressionList>(exp.value);
+    if(arg.empty()) {
+        return {};
+    }
+
+    if(arg.size() == 1) {
+        const Expression& subArg   = arg.front();
+        const ScriptResult subExpr = evalExpression(subArg, tracks);
+
+        if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
+            if(!subExpr.cond || subExpr.value.isEmpty()) {
+                return {};
+            }
+        }
+
+        ScriptResult result;
+        result.value = subExpr.value;
+        result.cond  = true;
+        return result;
+    }
+
     ScriptResult result;
     QStringList exprResult;
     result.cond = true;
 
-    auto arg = std::get<ExpressionList>(exp.value);
     for(const Expression& subArg : arg) {
         const auto subExpr = evalExpression(subArg, tracks);
 
@@ -1017,7 +1293,7 @@ ScriptResult ScriptParserPrivate::evalConditional(const Expression& exp, const a
 
 ScriptResult ScriptParserPrivate::evalNot(const Expression& exp, const auto& tracks)
 {
-    auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
 
     ScriptResult result;
     result.cond = true;
@@ -1033,7 +1309,7 @@ ScriptResult ScriptParserPrivate::evalNot(const Expression& exp, const auto& tra
 
 ScriptResult ScriptParserPrivate::evalGroup(const Expression& exp, const auto& tracks)
 {
-    auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
 
     ScriptResult result;
     result.cond = true;
@@ -1051,7 +1327,7 @@ ScriptResult ScriptParserPrivate::evalGroup(const Expression& exp, const auto& t
 
 ScriptResult ScriptParserPrivate::evalAnd(const Expression& exp, const auto& tracks)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
         return {};
     }
@@ -1070,7 +1346,7 @@ ScriptResult ScriptParserPrivate::evalAnd(const Expression& exp, const auto& tra
 
 ScriptResult ScriptParserPrivate::evalOr(const Expression& exp, const auto& tracks)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
         return {};
     }
@@ -1085,7 +1361,7 @@ ScriptResult ScriptParserPrivate::evalOr(const Expression& exp, const auto& trac
 
 ScriptResult ScriptParserPrivate::evalXOr(const Expression& exp, const auto& tracks)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
         return {};
     }
@@ -1100,7 +1376,7 @@ ScriptResult ScriptParserPrivate::evalXOr(const Expression& exp, const auto& tra
 
 ScriptResult ScriptParserPrivate::evalMissing(const Expression& exp, const auto& tracks)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() != 1) {
         return {};
     }
@@ -1113,7 +1389,7 @@ ScriptResult ScriptParserPrivate::evalMissing(const Expression& exp, const auto&
 
 ScriptResult ScriptParserPrivate::evalPresent(const Expression& exp, const auto& tracks)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() != 1) {
         return {};
     }
@@ -1125,7 +1401,7 @@ ScriptResult ScriptParserPrivate::evalPresent(const Expression& exp, const auto&
 
 ScriptResult ScriptParserPrivate::evalEquals(const Expression& exp, const auto& tracks)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
         return {};
     }
@@ -1150,7 +1426,7 @@ ScriptResult ScriptParserPrivate::evalEquals(const Expression& exp, const auto& 
 
 ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const auto& tracks)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
         return {};
     }
@@ -1173,7 +1449,7 @@ ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const auto
 
 ScriptResult ScriptParserPrivate::evalContains(const Expression& exp, const Track& track)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
         return {};
     }
@@ -1314,7 +1590,7 @@ QString ScriptParserPrivate::evaluate(const ParsedScript& input, const auto& tra
 
     reset();
 
-    const ExpressionList expressions = input.expressions;
+    const auto& expressions = input.expressions;
     for(const auto& expr : expressions) {
         const auto evalExpr = evalExpression(expr, tracks);
 
@@ -1366,7 +1642,7 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
         const auto& firstExpr = input.expressions.front();
         if(firstExpr.type == Expr::Literal || firstExpr.type == Expr::QuotedLiteral) {
             // Simple search query - just match all terms in metadata/filepath
-            const QString search = std::get<QString>(firstExpr.value);
+            const auto& search = std::get<QString>(firstExpr.value);
             return Utils::filter(tracks, [&search, &firstExpr](const auto& track) {
                 if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
                     return matchSearch(track.track, search, firstExpr.type == Expr::QuotedLiteral);
@@ -1408,7 +1684,10 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
         if(sort.expressions.size() == 1) {
             auto& sortExpr = sort.expressions.front();
             if(sortExpr.type == Expr::Literal) {
-                sortExpr.type = Expr::Variable;
+                sortExpr.type         = Expr::Variable;
+                sortExpr.resolvedKind = static_cast<uint16_t>(
+                    m_registry ? m_registry->resolveVariableKind(std::get<QString>(sortExpr.value))
+                               : VariableKind::Generic);
             }
         }
         if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
@@ -1425,7 +1704,7 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
 
 ScriptResult ScriptParserPrivate::compareValues(const Expression& exp, const auto& tracks, const auto& comparator)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
         return {};
     }
@@ -1458,14 +1737,14 @@ ScriptResult ScriptParserPrivate::compareValues(const Expression& exp, const aut
 
 ScriptResult ScriptParserPrivate::compareDates(const Expression& exp, const auto& tracks, const auto& comparator)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
         return {};
     }
 
     std::optional<int64_t> first;
 
-    const QString var = std::get<QString>(args.at(0).value);
+    const auto& var = std::get<QString>(args.at(0).value);
     if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
         first = tracks.dateValue(var);
     }
@@ -1487,14 +1766,14 @@ ScriptResult ScriptParserPrivate::compareDates(const Expression& exp, const auto
 
 ScriptResult ScriptParserPrivate::compareDateRange(const Expression& exp, const auto& tracks)
 {
-    const auto args = std::get<ExpressionList>(exp.value);
+    const auto& args = std::get<ExpressionList>(exp.value);
     if(args.size() < 3) {
         return {};
     }
 
     std::optional<int64_t> first;
 
-    const QString var = std::get<QString>(args.at(0).value);
+    const auto& var = std::get<QString>(args.at(0).value);
     if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
         first = tracks.dateValue(var);
     }

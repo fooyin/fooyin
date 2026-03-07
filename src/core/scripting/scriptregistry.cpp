@@ -33,7 +33,6 @@
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
-#include <QDateTime>
 #include <QDir>
 
 using namespace Qt::StringLiterals;
@@ -453,11 +452,58 @@ void ScriptRegistry::setUseVariousArtists(bool enabled)
 
 ScriptRegistry::~ScriptRegistry() = default;
 
+VariableKind ScriptRegistry::resolveVariableKind(const QString& var) const
+{
+    if(var == "TRACK"_L1) {
+        return VariableKind::Track;
+    }
+    if(var == "DISC"_L1) {
+        return VariableKind::Disc;
+    }
+    if(var == "DISCTOTAL"_L1) {
+        return VariableKind::DiscTotal;
+    }
+    if(var == "TITLE"_L1) {
+        return VariableKind::Title;
+    }
+    if(var == "UNIQUEARTIST"_L1) {
+        return VariableKind::UniqueArtist;
+    }
+    if(var == "PLAYCOUNT"_L1) {
+        return VariableKind::PlayCount;
+    }
+    if(var == "DURATION"_L1) {
+        return VariableKind::Duration;
+    }
+    if(var == "ALBUMARTIST"_L1) {
+        return VariableKind::AlbumArtist;
+    }
+    if(var == "ALBUM"_L1) {
+        return VariableKind::Album;
+    }
+    if(var == "GENRES"_L1) {
+        return VariableKind::Genres;
+    }
+    if(var == "TRACKCOUNT"_L1) {
+        return VariableKind::TrackCount;
+    }
+    if(var == "PLAYTIME"_L1) {
+        return VariableKind::Playtime;
+    }
+    if(var == "PLAYLIST_DURATION"_L1) {
+        return VariableKind::PlaylistDuration;
+    }
+    return VariableKind::Generic;
+}
+
 bool ScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    const QString variable = var.toUpper();
-    return p->m_metadata.contains(variable) || p->m_playbackVars.contains(variable)
-        || p->m_libraryVars.contains(variable) || track.hasExtraTag(variable);
+    if(resolveVariableKind(var) != VariableKind::Generic) {
+        return true;
+    }
+
+    return p->m_metadata.contains(var) || p->m_playbackVars.contains(var) || p->m_libraryVars.contains(var)
+        || track.hasExtraTag(var);
 }
 
 bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) const
@@ -478,80 +524,198 @@ bool ScriptRegistry::isFunction(const QString& func) const
     return p->m_funcs.contains(func);
 }
 
-ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
+ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const Track& track) const
 {
-    if(var.isEmpty() || (!isVariable(var, track) && !isListVariable(var))) {
-        return {};
+    switch(kind) {
+        case VariableKind::Track:
+            return calculateResult(track.trackNumber());
+        case VariableKind::Disc:
+            return calculateResult(track.discNumber());
+        case VariableKind::DiscTotal:
+            return calculateResult(track.discTotal());
+        case VariableKind::Title:
+            return calculateResult(track.effectiveTitle());
+        case VariableKind::UniqueArtist:
+            return calculateResult(track.uniqueArtists());
+        case VariableKind::PlayCount:
+            return calculateResult(track.playCount());
+        case VariableKind::Duration: {
+            const auto duration = track.duration();
+            return calculateResult(duration == 0 ? FuncRet{QString{}} : FuncRet{Utils::msToString(duration)});
+        }
+        case VariableKind::AlbumArtist:
+            return calculateResult(track.effectiveAlbumArtist(p->m_useVariousArtists));
+        case VariableKind::Album:
+            return calculateResult(track.album());
+        case VariableKind::Genres:
+            return calculateResult(track.genres());
+        case VariableKind::TrackCount:
+        case VariableKind::Playtime:
+        case VariableKind::PlaylistDuration:
+            return {.value = u"%%1%"_s.arg(var), .cond = true};
+        case VariableKind::Generic:
+        case VariableKind::Depth:
+        case VariableKind::ListIndex:
+        case VariableKind::QueueIndex:
+        case VariableKind::QueueIndexes:
+        case VariableKind::PlayingIcon:
+        case VariableKind::FrontCover:
+        case VariableKind::BackCover:
+        case VariableKind::ArtistPicture:
+            break;
     }
 
-    const QString variable = var.toUpper();
-
-    if(p->m_metadata.contains(variable)) {
-        return calculateResult(p->m_metadata.at(variable)(track));
+    if(const auto it = p->m_metadata.find(var); it != p->m_metadata.cend()) {
+        return calculateResult(it->second(track));
     }
-    if(p->m_playbackVars.contains(variable)) {
-        return calculateResult(p->m_playbackVars.at(variable)());
+    if(const auto it = p->m_playbackVars.find(var); it != p->m_playbackVars.cend()) {
+        return calculateResult(it->second());
     }
-    if(p->m_libraryVars.contains(variable)) {
-        return calculateResult(p->m_libraryVars.at(variable)(track));
+    if(const auto it = p->m_libraryVars.find(var); it != p->m_libraryVars.cend()) {
+        return calculateResult(it->second(track));
     }
-    if(p->m_listProperties.contains(variable)) {
+    if(p->m_listProperties.contains(var)) {
         return {.value = u"%%1%"_s.arg(var), .cond = true};
     }
 
-    return calculateResult(track.extraTag(variable));
+    return calculateResult(track.extraTag(var));
+}
+
+ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const TrackList& tracks) const
+{
+    switch(kind) {
+        case VariableKind::TrackCount:
+            return calculateResult(Scripting::trackCount(tracks));
+        case VariableKind::Playtime:
+        case VariableKind::PlaylistDuration:
+            return calculateResult(Scripting::playtime(tracks));
+        case VariableKind::Genres:
+            return calculateResult(Scripting::genres(tracks));
+        case VariableKind::Generic:
+        case VariableKind::Track:
+        case VariableKind::Disc:
+        case VariableKind::DiscTotal:
+        case VariableKind::Title:
+        case VariableKind::UniqueArtist:
+        case VariableKind::PlayCount:
+        case VariableKind::Duration:
+        case VariableKind::AlbumArtist:
+        case VariableKind::Album:
+        case VariableKind::Depth:
+        case VariableKind::ListIndex:
+        case VariableKind::QueueIndex:
+        case VariableKind::QueueIndexes:
+        case VariableKind::PlayingIcon:
+        case VariableKind::FrontCover:
+        case VariableKind::BackCover:
+        case VariableKind::ArtistPicture:
+            break;
+    }
+
+    if(var.isEmpty()) {
+        return {};
+    }
+
+    if(const auto it = p->m_listProperties.find(var); it != p->m_listProperties.cend()) {
+        return calculateResult(it->second(tracks));
+    }
+
+    if(tracks.empty()) {
+        return {};
+    }
+
+    if(const auto it = p->m_metadata.find(var); it != p->m_metadata.cend()) {
+        return calculateResult(it->second(tracks.front()));
+    }
+    if(const auto it = p->m_playbackVars.find(var); it != p->m_playbackVars.cend()) {
+        return calculateResult(it->second());
+    }
+    if(const auto it = p->m_libraryVars.find(var); it != p->m_libraryVars.cend()) {
+        return calculateResult(it->second(tracks.front()));
+    }
+
+    return calculateResult(tracks.front().extraTag(var));
+}
+
+ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const Playlist& playlist) const
+{
+    if(var.isEmpty()) {
+        return {};
+    }
+
+    switch(kind) {
+        case VariableKind::TrackCount:
+        case VariableKind::Playtime:
+        case VariableKind::PlaylistDuration:
+        case VariableKind::Genres:
+            return value(kind, var, playlist.tracks());
+        case VariableKind::Generic:
+        case VariableKind::Track:
+        case VariableKind::Disc:
+        case VariableKind::DiscTotal:
+        case VariableKind::Title:
+        case VariableKind::UniqueArtist:
+        case VariableKind::PlayCount:
+        case VariableKind::Duration:
+        case VariableKind::AlbumArtist:
+        case VariableKind::Album:
+        case VariableKind::Depth:
+        case VariableKind::ListIndex:
+        case VariableKind::QueueIndex:
+        case VariableKind::QueueIndexes:
+        case VariableKind::PlayingIcon:
+        case VariableKind::FrontCover:
+        case VariableKind::BackCover:
+        case VariableKind::ArtistPicture:
+            break;
+    }
+
+    if(auto track = playlist.track(playlist.currentTrackIndex())) {
+        return value(kind, var, track.value());
+    }
+
+    return {};
+}
+
+ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
+{
+    if(var.isEmpty()) {
+        return {};
+    }
+
+    return value(resolveVariableKind(var), var, track);
 }
 
 ScriptResult ScriptRegistry::value(const QString& var, const TrackList& tracks) const
 {
-    if(var.isEmpty() || !isVariable(var, tracks)) {
+    if(var.isEmpty()) {
         return {};
     }
 
-    const QString variable = var.toUpper();
-
-    if(p->m_listProperties.contains(variable)) {
-        return calculateResult(p->m_listProperties.at(variable)(tracks));
-    }
-
-    if(!tracks.empty()) {
-        if(p->m_metadata.contains(variable)) {
-            return calculateResult(p->m_metadata.at(variable)(tracks.front()));
-        }
-        return calculateResult(tracks.front().extraTag(variable.toUpper()));
-    }
-
-    return {};
+    return value(resolveVariableKind(var), var, tracks);
 }
 
 ScriptResult ScriptRegistry::value(const QString& var, const Playlist& playlist) const
 {
-    const TrackList tracks = playlist.tracks();
-
-    if(var.isEmpty() || !isVariable(var, tracks)) {
+    if(var.isEmpty()) {
         return {};
     }
 
-    const QString variable = var.toUpper();
-
-    if(p->m_listProperties.contains(variable)) {
-        return calculateResult(p->m_listProperties.at(variable)(tracks));
-    }
-
-    if(auto track = playlist.track(playlist.currentTrackIndex())) {
-        return value(var, track.value());
-    }
-
-    return {};
+    return value(resolveVariableKind(var), var, playlist);
 }
 
 ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const Track& track) const
 {
-    if(func.isEmpty() || !p->m_funcs.contains(func)) {
+    if(func.isEmpty()) {
         return {};
     }
 
-    const auto scriptFunc = p->m_funcs.at(func);
+    const auto it = p->m_funcs.find(func);
+    if(it == p->m_funcs.cend()) {
+        return {};
+    }
+
+    const auto& scriptFunc = it->second;
     if(std::holds_alternative<NativeFunc>(scriptFunc)) {
         const QString value = std::get<NativeFunc>(scriptFunc)(containerCast<QStringList>(args));
         return {.value = value, .cond = !value.isEmpty()};
@@ -576,7 +740,7 @@ ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList
 
 ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const TrackList& tracks) const
 {
-    if(func.isEmpty() || !p->m_funcs.contains(func)) {
+    if(func.isEmpty()) {
         return {};
     }
 
@@ -589,7 +753,7 @@ ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList
 
 ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const Playlist& playlist) const
 {
-    if(func.isEmpty() || !p->m_funcs.contains(func)) {
+    if(func.isEmpty()) {
         return {};
     }
 
@@ -632,10 +796,10 @@ void ScriptRegistry::setValue(const QString& var, const FuncRet& value, Track& t
 
 bool ScriptRegistry::isListVariable(const QString& var) const
 {
-    return p->m_listProperties.contains(var.toUpper());
+    return p->m_listProperties.contains(var);
 }
 
-ScriptResult ScriptRegistry::calculateResult(ScriptRegistry::FuncRet funcRet) const
+ScriptResult ScriptRegistry::calculateResult(const FuncRet& funcRet) const
 {
     ScriptResult result;
 

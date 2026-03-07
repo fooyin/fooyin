@@ -105,7 +105,7 @@ private:
     RichScript m_right;
 
     PlaylistTrack m_track;
-    std::vector<QSize> m_sizes;
+    mutable std::vector<QSize> m_sizes;
     int m_rowHeight;
     int m_depth;
 };

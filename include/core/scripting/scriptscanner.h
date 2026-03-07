@@ -22,6 +22,7 @@
 #include "fycore_export.h"
 
 #include <QString>
+#include <QStringView>
 
 namespace Fooyin {
 class FYCORE_EXPORT ScriptScanner
@@ -75,7 +76,7 @@ public:
     struct Token
     {
         TokenType type{TokError};
-        QString value;
+        QStringView value;
         int position{-1};
     };
 

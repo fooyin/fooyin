@@ -531,7 +531,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
 
     QObject::connect(&m_populator, &PlaylistPopulator::finished, this, [this]() {
         m_playlistLoaded = true;
-        invalidateData();
         emit playlistLoaded();
     });
 
@@ -905,6 +904,20 @@ void PlaylistModel::reset(const PlaylistTrackList& tracks)
 
     m_playlistLoaded = false;
     m_resetting      = true;
+
+    if(tracks.empty()) {
+        beginResetModel();
+        resetRoot();
+        m_nodes.clear();
+        m_trackParents.clear();
+        updateTrackIndexes(false);
+        endResetModel();
+
+        m_resetting      = false;
+        m_playlistLoaded = true;
+        emit playlistLoaded();
+        return;
+    }
 
     QMetaObject::invokeMethod(&m_populator, [this, tracks] {
         m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());

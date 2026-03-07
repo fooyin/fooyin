@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <core/scripting/expression.h>
 #include <core/scripting/scriptvalue.h>
 #include <core/track.h>
 
@@ -45,10 +46,15 @@ public:
 
     void setUseVariousArtists(bool enabled);
 
+    [[nodiscard]] virtual VariableKind resolveVariableKind(const QString& var) const;
+
     [[nodiscard]] virtual bool isVariable(const QString& var, const Track& track) const;
     [[nodiscard]] virtual bool isVariable(const QString& var, const TrackList& tracks) const;
     [[nodiscard]] virtual bool isFunction(const QString& func) const;
 
+    [[nodiscard]] virtual ScriptResult value(VariableKind kind, const QString& var, const Track& track) const;
+    [[nodiscard]] virtual ScriptResult value(VariableKind kind, const QString& var, const TrackList& tracks) const;
+    [[nodiscard]] virtual ScriptResult value(VariableKind kind, const QString& var, const Playlist& playlist) const;
     [[nodiscard]] virtual ScriptResult value(const QString& var, const Track& track) const;
     [[nodiscard]] virtual ScriptResult value(const QString& var, const TrackList& tracks) const;
     [[nodiscard]] virtual ScriptResult value(const QString& var, const Playlist& playlist) const;
@@ -63,13 +69,13 @@ public:
 
 protected:
     template <typename NewCntr, typename Cntr>
-    NewCntr containerCast(const Cntr& from) const
+    static NewCntr containerCast(const Cntr& from)
     {
         return NewCntr(from.cbegin(), from.cend());
     }
 
     [[nodiscard]] bool isListVariable(const QString& var) const;
-    [[nodiscard]] virtual ScriptResult calculateResult(FuncRet funcRet) const;
+    [[nodiscard]] virtual ScriptResult calculateResult(const FuncRet& funcRet) const;
 
 private:
     std::unique_ptr<ScriptRegistryPrivate> p;
