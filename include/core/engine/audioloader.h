@@ -69,13 +69,13 @@ public:
     //! True when `file` extension resolves to a registered archive reader.
     [[nodiscard]] bool isArchive(const QString& file) const;
     //! Create best decoder backend for file path (or `nullptr`).
-    [[nodiscard]] std::unique_ptr<AudioDecoder> decoderForFile(const QString& file) const;
+    [[nodiscard]] std::vector<std::unique_ptr<AudioDecoder>> decodersForFile(const QString& file) const;
     //! Create best decoder backend for a specific track (or `nullptr`).
-    [[nodiscard]] std::unique_ptr<AudioDecoder> decoderForTrack(const Track& track) const;
+    [[nodiscard]] std::vector<std::unique_ptr<AudioDecoder>> decodersForTrack(const Track& track) const;
     //! Create best metadata reader backend for file path (or `nullptr`).
-    [[nodiscard]] std::unique_ptr<AudioReader> readerForFile(const QString& file) const;
+    [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForFile(const QString& file) const;
     //! Create best metadata reader backend for track (or `nullptr`).
-    [[nodiscard]] std::unique_ptr<AudioReader> readerForTrack(const Track& track) const;
+    [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForTrack(const Track& track) const;
     //! Create archive reader backend for archive file (or `nullptr`).
     [[nodiscard]] std::unique_ptr<ArchiveReader> archiveReaderForFile(const QString& file) const;
 

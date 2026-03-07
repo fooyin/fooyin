@@ -175,23 +175,23 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
         return;
     }
 
-    auto decoder = m_audioLoader->decoderForTrack(track);
-    if(!decoder) {
-        return;
-    }
+    std::unique_ptr<AudioDecoder> decoder;
+    std::optional<AudioFormat> format;
+    for(auto& _decoder : m_audioLoader->decodersForTrack(track)) {
+        AudioSource source;
+        source.filepath = track.filepath();
+        QFile file{source.filepath};
+        if(!file.open(QIODevice::ReadOnly)) {
+            qCWarning(EBUR128) << "Failed to open" << source.filepath;
+            return;
+        }
+        source.device = &file;
 
-    AudioSource source;
-    source.filepath = track.filepath();
-    QFile file{source.filepath};
-    if(!file.open(QIODevice::ReadOnly)) {
-        qCWarning(EBUR128) << "Failed to open" << source.filepath;
-        return;
-    }
-    source.device = &file;
-
-    auto format = decoder->init(source, track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
-    if(!format) {
-        return;
+        format = _decoder->init(source, track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
+        if(format) {
+            decoder = std::move(_decoder);
+            break;
+        }
     }
 
     format->setSampleFormat(SampleFormat::F64);

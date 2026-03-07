@@ -342,38 +342,41 @@ TrackList LibraryScannerPrivate::readTracks(const QString& filepath)
         return readArchiveTracks(filepath);
     }
 
-    auto tagReader = m_audioLoader->readerForFile(filepath);
-    if(!tagReader) {
-        return {};
-    }
-
-    QFile file{filepath};
-    if(!file.open(QIODevice::ReadOnly)) {
-        qCInfo(LIB_SCANNER) << "Failed to open file:" << filepath;
-        return {};
-    }
-    const AudioSource source{filepath, &file, nullptr};
-
-    if(!tagReader->init(source)) {
-        qCDebug(LIB_SCANNER) << "Unsupported file:" << filepath;
-        return {};
-    }
-
-    TrackList tracks;
-    const int subsongCount = std::max(tagReader->subsongCount(), 1);
-
-    for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
-        Track subTrack{filepath, subIndex};
-        subTrack.setFileSize(file.size());
-
-        source.device->seek(0);
-        if(tagReader->readTrack(source, subTrack)) {
-            subTrack.generateHash();
-            tracks.push_back(subTrack);
+    bool readersFound = false;
+    for(auto& tagReader : m_audioLoader->readersForFile(filepath)) {
+        readersFound = true;
+        QFile file{filepath};
+        if(!file.open(QIODevice::ReadOnly)) {
+            qCInfo(LIB_SCANNER) << "Failed to open file:" << filepath;
+            return {};
         }
+        const AudioSource source{filepath, &file, nullptr};
+
+        if(!tagReader->init(source)) {
+            continue;
+        }
+
+        TrackList tracks;
+        const int subsongCount = std::max(tagReader->subsongCount(), 1);
+
+        for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
+            Track subTrack{filepath, subIndex};
+            subTrack.setFileSize(file.size());
+
+            source.device->seek(0);
+            if(tagReader->readTrack(source, subTrack)) {
+                subTrack.generateHash();
+                tracks.push_back(subTrack);
+            }
+        }
+
+        return tracks;
     }
 
-    return tracks;
+    if(readersFound)
+        qCDebug(LIB_SCANNER) << "Unsupported file:" << filepath;
+
+    return {};
 }
 
 TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
@@ -398,42 +401,43 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
             return;
         }
 
-        auto fileReader = m_audioLoader->readerForFile(entry);
-        if(!fileReader) {
-            qCDebug(LIB_SCANNER) << "Unsupported file:" << entry;
-            return;
-        }
-
-        if(!device->open(QIODevice::ReadOnly)) {
-            qCInfo(LIB_SCANNER) << "Failed to open file:" << entry;
-            return;
-        }
-
-        AudioSource source;
-        source.filepath      = entry;
-        source.device        = device;
-        source.archiveReader = archiveReader.get();
-
-        if(!fileReader->init(source)) {
-            qCDebug(LIB_SCANNER) << "Unsupported file:" << entry;
-            return;
-        }
-
-        const int subsongCount = std::max(fileReader->subsongCount(), 1);
-        m_totalFiles += subsongCount;
-
-        for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
-            Track subTrack{archivePath + entry, subIndex};
-            subTrack.setFileSize(device->size());
-            subTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
-            source.filepath = subTrack.filepath();
-
-            device->seek(0);
-            if(fileReader->readTrack(source, subTrack)) {
-                subTrack.generateHash();
-                tracks.push_back(subTrack);
-                fileScanned(subTrack.prettyFilepath());
+        bool readersFound = false;
+        for(auto& fileReader : m_audioLoader->readersForFile(entry)) {
+            readersFound = true;
+            if(!device->open(QIODevice::ReadOnly)) {
+                qCInfo(LIB_SCANNER) << "Failed to open file:" << entry;
+                return;
             }
+
+            AudioSource source;
+            source.filepath      = entry;
+            source.device        = device;
+            source.archiveReader = archiveReader.get();
+
+            if(!fileReader->init(source)) {
+                continue;
+            }
+
+            const int subsongCount = std::max(fileReader->subsongCount(), 1);
+            m_totalFiles += subsongCount;
+
+            for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
+                Track subTrack{archivePath + entry, subIndex};
+                subTrack.setFileSize(device->size());
+                subTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+                source.filepath = subTrack.filepath();
+
+                device->seek(0);
+                if(fileReader->readTrack(source, subTrack)) {
+                    subTrack.generateHash();
+                    tracks.push_back(subTrack);
+                    fileScanned(subTrack.prettyFilepath());
+                }
+            }
+        }
+
+        if(!readersFound) {
+            qCDebug(LIB_SCANNER) << "Unsupported file: " << entry;
         }
     };
 
