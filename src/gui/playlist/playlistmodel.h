@@ -212,6 +212,9 @@ private:
     void updateTrackIndexes(bool updateItems = true);
     void deleteNodes(PlaylistItem* node);
 
+    [[nodiscard]] static QModelIndex topLevelContainerIndex(const QModelIndex& index);
+    [[nodiscard]] QModelIndex firstLeafIndex(const QModelIndex& index) const;
+    [[nodiscard]] QModelIndex firstImageColumnTrackIndex(const QModelIndex& index) const;
     std::vector<int> pixmapColumns() const;
     std::set<int> columnsNeedUpdating() const;
     void coverUpdated(const Track& track);

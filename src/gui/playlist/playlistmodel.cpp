@@ -1421,6 +1421,42 @@ void PlaylistModel::mergeTrackParents(const TrackIdNodeMap& parents)
     }
 }
 
+QModelIndex PlaylistModel::topLevelContainerIndex(const QModelIndex& index)
+{
+    QModelIndex container = index.parent();
+    while(container.parent().isValid()) {
+        container = container.parent();
+    }
+    return container;
+}
+
+QModelIndex PlaylistModel::firstLeafIndex(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return {};
+    }
+
+    QModelIndex leaf = index.siblingAtColumn(0);
+    while(hasChildren(leaf)) {
+        leaf = this->index(0, 0, leaf);
+    }
+    return leaf;
+}
+
+QModelIndex PlaylistModel::firstImageColumnTrackIndex(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return {};
+    }
+
+    const QModelIndex topLevelContainer = topLevelContainerIndex(index);
+    if(!topLevelContainer.isValid()) {
+        return firstLeafIndex(index.siblingAtRow(0));
+    }
+
+    return firstLeafIndex(this->index(0, 0, topLevelContainer));
+}
+
 QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, int role) const
 {
     const int column      = index.column();
@@ -1434,9 +1470,13 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         if(std::cmp_greater_equal(column, m_columnSizes.size())) {
             return {};
         }
+
         const int size          = m_columnSizes.at(column);
-        const QModelIndex first = index.siblingAtRow(0);
+        const QModelIndex first = firstImageColumnTrackIndex(index);
         if(!first.isValid()) {
+            return {};
+        }
+        if(index.row() != first.row() || index.parent() != first.parent()) {
             return {};
         }
         if(const auto* firstSibling = itemForIndex(first)) {
