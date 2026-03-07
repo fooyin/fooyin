@@ -43,11 +43,13 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QItemSelectionModel>
 #include <QJsonObject>
 #include <QLabel>
 #include <QMenu>
 #include <QPushButton>
 #include <QScrollBar>
+#include <ranges>
 
 using namespace Qt::StringLiterals;
 
@@ -175,15 +177,15 @@ void QueueViewer::setupActions()
 
 void QueueViewer::setupConnections()
 {
+    QObject::connect(m_model, &QueueViewerModel::queueTracksMoved, this, &QueueViewer::handleQueueTracksMoved);
     QObject::connect(m_model, &QueueViewerModel::tracksDropped, this, &QueueViewer::handleTracksDropped);
     QObject::connect(m_model, &QueueViewerModel::playlistTracksDropped, this,
                      &QueueViewer::handlePlaylistTracksDropped);
-    QObject::connect(m_model, &QueueViewerModel::queueChanged, this, &QueueViewer::handleQueueChanged);
     QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this, &QueueViewer::resetModel);
-    QObject::connect(m_playerController, &PlayerController::tracksQueued, m_model, &QueueViewerModel::insertTracks);
-    QObject::connect(m_playerController, &PlayerController::tracksDequeued, m_model, &QueueViewerModel::removeTracks);
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_model,
-                     &QueueViewerModel::currentTrackChanged);
+    QObject::connect(m_playerController, &PlayerController::trackIndexesDequeued, this, &QueueViewer::resetModel);
+    QObject::connect(m_playerController, &PlayerController::tracksQueued, this, &QueueViewer::resetModel);
+    QObject::connect(m_playerController, &PlayerController::tracksDequeued, this, &QueueViewer::resetModel);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &QueueViewer::resetModel);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, m_model,
                      &QueueViewerModel::playbackStateChanged);
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &QueueViewer::handleRowsChanged);
@@ -201,9 +203,146 @@ void QueueViewer::setupConnections()
 
 void QueueViewer::resetModel() const
 {
-    if(!m_changingQueue) {
-        m_model->reset(m_playerController->playbackQueue().tracks());
+    const auto viewState = captureViewState();
+
+    m_model->reset(m_playerController->playbackQueue().tracks());
+
+    if(m_view->selectionModel()) {
+        restoreViewState(viewState);
     }
+}
+
+QueueViewer::ViewState QueueViewer::captureViewState() const
+{
+    ViewState state;
+    state.scrollValue = m_view->verticalScrollBar()->value();
+    state.current     = viewRowState(m_view->currentIndex());
+    state.top         = viewRowState(m_view->indexAt({1, 1}));
+
+    if(auto* selectionModel = m_view->selectionModel()) {
+        const auto selected = selectionModel->selectedRows();
+        state.selection.reserve(selected.size());
+
+        for(const QModelIndex& index : selected) {
+            if(const auto rowState = viewRowState(index); rowState.isValid()) {
+                state.selection.emplace_back(rowState);
+            }
+        }
+    }
+
+    return state;
+}
+
+void QueueViewer::restoreViewState(const ViewState& state) const
+{
+    auto* selectionModel = m_view->selectionModel();
+    if(!selectionModel) {
+        return;
+    }
+
+    selectionModel->clearSelection();
+    m_view->setCurrentIndex({});
+
+    for(const auto& rowState : state.selection) {
+        if(const QModelIndex index = indexForViewRowState(rowState); index.isValid()) {
+            selectionModel->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        }
+    }
+
+    const QModelIndex currentIndex = indexForViewRowState(state.current);
+    if(currentIndex.isValid()) {
+        selectionModel->setCurrentIndex(currentIndex, QItemSelectionModel::NoUpdate);
+    }
+
+    const QModelIndex topIndex = indexForViewRowState(state.top);
+    if(topIndex.isValid()) {
+        m_view->scrollTo(topIndex, QAbstractItemView::PositionAtTop);
+    }
+    else if(currentIndex.isValid()) {
+        m_view->scrollTo(currentIndex, QAbstractItemView::EnsureVisible);
+    }
+    else {
+        m_view->verticalScrollBar()->setValue(state.scrollValue);
+    }
+
+    m_remove->setEnabled(canRemoveSelected());
+    m_clear->setEnabled(m_playerController->queuedTracksCount() > 0);
+}
+
+QueueViewer::ViewRowState QueueViewer::viewRowState(const QModelIndex& index) const
+{
+    ViewRowState rowState;
+    if(!index.isValid()) {
+        return rowState;
+    }
+
+    rowState.track = index.data(QueueViewerItem::Track).value<PlaylistTrack>();
+    if(!rowState.track.isValid()) {
+        return {};
+    }
+
+    rowState.currentRow = m_model->queueIndex(index) < 0;
+    if(rowState.currentRow) {
+        rowState.occurrence = 1;
+        return rowState;
+    }
+
+    for(int row{0}; row <= index.row(); ++row) {
+        const QModelIndex candidate = m_model->index(row, 0, {});
+
+        if(!candidate.isValid() || m_model->queueIndex(candidate) < 0) {
+            continue;
+        }
+
+        if(candidate.data(QueueViewerItem::Track).value<PlaylistTrack>() == rowState.track) {
+            ++rowState.occurrence;
+        }
+    }
+
+    return rowState;
+}
+
+QModelIndex QueueViewer::indexForViewRowState(const ViewRowState& state) const
+{
+    if(!state.isValid()) {
+        return {};
+    }
+
+    if(state.currentRow) {
+        const QModelIndex currentIndex = m_model->index(0, 0, {});
+
+        if(currentIndex.isValid() && m_model->queueIndex(currentIndex) < 0
+           && currentIndex.data(QueueViewerItem::Track).value<PlaylistTrack>() == state.track) {
+            return currentIndex;
+        }
+    }
+
+    QModelIndex firstMatch;
+    int occurrence{0};
+
+    for(int row{0}; row < m_model->rowCount({}); ++row) {
+        const QModelIndex candidate = m_model->index(row, 0, {});
+
+        if(!candidate.isValid() || m_model->queueIndex(candidate) < 0) {
+            continue;
+        }
+
+        if(candidate.data(QueueViewerItem::Track).value<PlaylistTrack>() != state.track) {
+            continue;
+        }
+
+        if(!firstMatch.isValid()) {
+            firstMatch = candidate;
+        }
+
+        ++occurrence;
+
+        if(occurrence == std::max(state.occurrence, 1)) {
+            return candidate;
+        }
+    }
+
+    return state.currentRow ? firstMatch : QModelIndex{};
 }
 
 bool QueueViewer::canRemoveSelected() const
@@ -217,7 +356,7 @@ bool QueueViewer::canRemoveSelected() const
 
 void QueueViewer::handleRowsChanged() const
 {
-    m_clear->setEnabled(m_model->rowCount({}) > 0);
+    m_clear->setEnabled(m_playerController->queuedTracksCount() > 0);
 }
 
 void QueueViewer::removeSelectedTracks() const
@@ -238,7 +377,48 @@ void QueueViewer::removeSelectedTracks() const
     }
 
     m_playerController->dequeueTracks(indexes);
-    m_model->removeIndexes(indexes);
+}
+
+void QueueViewer::handleQueueTracksMoved(int row, const QList<int>& indexes) const
+{
+    QueueTracks tracks = m_playerController->playbackQueue().tracks();
+    if(tracks.empty() || indexes.empty()) {
+        return;
+    }
+
+    std::vector<int> sortedIndexes;
+    sortedIndexes.reserve(indexes.size());
+
+    for(const int index : indexes) {
+        if(index >= 0 && std::cmp_less(index, tracks.size())) {
+            sortedIndexes.emplace_back(index);
+        }
+    }
+
+    if(sortedIndexes.empty()) {
+        return;
+    }
+
+    std::ranges::sort(sortedIndexes);
+    sortedIndexes.erase(std::ranges::unique(sortedIndexes).begin(), sortedIndexes.end());
+
+    QueueTracks movedTracks;
+    movedTracks.reserve(sortedIndexes.size());
+
+    for(const int index : sortedIndexes) {
+        movedTracks.emplace_back(tracks.at(static_cast<size_t>(index)));
+    }
+
+    int insertRow = std::clamp(row, 0, static_cast<int>(tracks.size()));
+    insertRow -= static_cast<int>(std::ranges::count_if(sortedIndexes, [row](int index) { return index < row; }));
+
+    for(int sortedIndex : std::ranges::reverse_view(sortedIndexes)) {
+        tracks.erase(tracks.begin() + sortedIndex);
+    }
+
+    tracks.insert(tracks.begin() + std::clamp(insertRow, 0, static_cast<int>(tracks.size())), movedTracks.begin(),
+                  movedTracks.end());
+    replaceQueueTracks(std::move(tracks));
 }
 
 void QueueViewer::handleTracksDropped(int row, const QByteArray& mimeData) const
@@ -249,23 +429,13 @@ void QueueViewer::handleTracksDropped(int row, const QByteArray& mimeData) const
     for(const Track& track : tracks) {
         queueTracks.emplace_back(track);
     }
-
-    m_model->insertTracks(queueTracks, row);
+    insertQueueTracks(row, queueTracks);
 }
 
 void QueueViewer::handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const
 {
     const QueueTracks tracks = Gui::queueTracksFromMimeData(m_playlistInteractor->library(), mimeData);
-    m_model->insertTracks(tracks, row);
-}
-
-void QueueViewer::handleQueueChanged()
-{
-    const QueueTracks tracks = m_model->queueTracks();
-
-    m_changingQueue = true;
-    m_playerController->replaceTracks(tracks);
-    m_changingQueue = false;
+    insertQueueTracks(row, tracks);
 }
 
 void QueueViewer::handleQueueDoubleClicked(const QModelIndex& index) const
@@ -275,6 +445,9 @@ void QueueViewer::handleQueueDoubleClicked(const QModelIndex& index) const
     }
 
     const int queueIndex = m_model->queueIndex(index);
+    if(queueIndex < 0) {
+        return;
+    }
 
     std::vector<int> indexes;
     indexes.reserve(queueIndex);
@@ -282,9 +455,26 @@ void QueueViewer::handleQueueDoubleClicked(const QModelIndex& index) const
     std::ranges::copy(std::views::iota(0, queueIndex), std::back_inserter(indexes));
 
     m_playerController->dequeueTracks(indexes);
-    m_model->removeIndexes(indexes);
 
     m_playerController->next();
+}
+
+void QueueViewer::replaceQueueTracks(QueueTracks tracks) const
+{
+    m_playerController->replaceTracks(tracks);
+}
+
+void QueueViewer::insertQueueTracks(int row, const QueueTracks& tracksToInsert) const
+{
+    if(tracksToInsert.empty()) {
+        return;
+    }
+
+    QueueTracks tracks  = m_playerController->playbackQueue().tracks();
+    const int insertRow = std::clamp(row, 0, static_cast<int>(tracks.size()));
+
+    tracks.insert(tracks.begin() + insertRow, tracksToInsert.begin(), tracksToInsert.end());
+    replaceQueueTracks(std::move(tracks));
 }
 
 QueueViewer::ConfigData QueueViewer::defaultConfig() const

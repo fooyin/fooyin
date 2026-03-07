@@ -51,15 +51,9 @@ public:
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
 
-    void insertTracks(const QueueTracks& tracks, int row);
-    void removeTracks(const QueueTracks& tracks);
-    void removeIndexes(const std::vector<int>& indexes);
-
     void reset(const QueueTracks& tracks);
-    QueueTracks queueTracks() const;
 
     void playbackStateChanged();
-    void currentTrackChanged();
     [[nodiscard]] int queueIndex(const QModelIndex& index) const;
 
     void setScripts(const QString& titleScript, const QString& subtitleScript);
@@ -68,13 +62,12 @@ public:
     void setIconSize(const QSize& iconSize);
 
 signals:
-    void queueChanged();
+    void queueTracksMoved(int row, const QList<int>& indexes);
     void tracksDropped(int row, const QByteArray& data);
     void playlistTracksDropped(int row, const QByteArray& data);
 
 private:
     void regenerateTitles();
-    void moveTracks(int row, const QModelIndexList& indexes);
     void updateShowCurrent();
 
     PlayerController* m_playerController;

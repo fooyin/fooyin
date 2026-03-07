@@ -214,132 +214,53 @@ bool QueueViewerModel::dropMimeData(const QMimeData* data, Qt::DropAction action
         if(indexes.empty()) {
             return false;
         }
-        moveTracks(row, indexes);
+
+        QList<int> queueIndexes;
+        queueIndexes.reserve(indexes.size());
+
+        for(const QModelIndex& index : indexes) {
+            if(const int queueRow = queueIndex(index); queueRow >= 0) {
+                queueIndexes.append(queueRow);
+            }
+        }
+
+        if(queueIndexes.isEmpty()) {
+            return false;
+        }
+
+        int queueRow{row};
+        if(queueRow < 0) {
+            queueRow = static_cast<int>(m_trackItems.size());
+        }
+        else if(m_currentTrackItem) {
+            --queueRow;
+        }
+
+        emit queueTracksMoved(std::clamp(queueRow, 0, static_cast<int>(m_trackItems.size())), queueIndexes);
     }
     else if(data->hasFormat(QString::fromLatin1(Constants::Mime::QueueTracks))) {
-        emit playlistTracksDropped(row, data->data(QString::fromLatin1(Constants::Mime::QueueTracks)));
+        int queueRow{row};
+        if(queueRow < 0) {
+            queueRow = static_cast<int>(m_trackItems.size());
+        }
+        else if(m_currentTrackItem) {
+            --queueRow;
+        }
+        emit playlistTracksDropped(std::clamp(queueRow, 0, static_cast<int>(m_trackItems.size())),
+                                   data->data(QString::fromLatin1(Constants::Mime::QueueTracks)));
     }
     else if(data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
-        emit tracksDropped(row, data->data(QString::fromLatin1(Constants::Mime::TrackIds)));
+        int queueRow{row};
+        if(queueRow < 0) {
+            queueRow = static_cast<int>(m_trackItems.size());
+        }
+        else if(m_currentTrackItem) {
+            --queueRow;
+        }
+        emit tracksDropped(std::clamp(queueRow, 0, static_cast<int>(m_trackItems.size())),
+                           data->data(QString::fromLatin1(Constants::Mime::TrackIds)));
     }
-
-    emit queueChanged();
     return true;
-}
-
-void QueueViewerModel::insertTracks(const QueueTracks& tracks, int row)
-{
-    int first = row < 0 ? rowCount({}) : row;
-    if(m_currentTrackItem) {
-        ++first;
-    }
-    const int last = first + static_cast<int>(tracks.size()) - 1;
-
-    beginInsertRows({}, first, last);
-
-    for(const auto& track : tracks) {
-        m_trackItems.insert(m_trackItems.begin() + first, std::make_unique<QueueViewerItem>(track));
-        auto* item = m_trackItems.at(first).get();
-
-        item->generateTitle(&m_scriptParser, m_titleScript, m_subtitleScript);
-        rootItem()->insertChild(first, item);
-        m_trackParents[track.track.albumHash()].emplace_back(item);
-
-        ++first;
-    }
-
-    endInsertRows();
-}
-
-void QueueViewerModel::removeTracks(const QueueTracks& tracks)
-{
-    std::vector<int> indexes;
-
-    for(const auto& track : tracks) {
-        auto itemIt = std::ranges::find_if(m_trackItems, [track](const auto& item) { return item->track() == track; });
-        if(itemIt != m_trackItems.cend()) {
-            if(m_trackParents.contains(track.track.albumHash())) {
-                std::erase_if(m_trackParents.at(track.track.albumHash()),
-                              [&itemIt](const auto& item) { return item == itemIt->get(); });
-            }
-
-            itemIt->get()->resetRow();
-
-            indexes.emplace_back(itemIt->get()->row());
-        }
-    }
-
-    std::ranges::sort(indexes);
-
-    auto startOfSequence = indexes.cbegin();
-    while(startOfSequence != indexes.cend()) {
-        auto endOfSequence
-            = std::adjacent_find(startOfSequence, indexes.cend(), [](int a, int b) { return b != a + 1; });
-        if(endOfSequence != indexes.cend()) {
-            std::advance(endOfSequence, 1);
-        }
-
-        const int firstRow = *startOfSequence;
-        int lastRow        = *std::prev(endOfSequence);
-
-        beginRemoveRows({}, firstRow, lastRow);
-        while(lastRow >= firstRow) {
-            if(rootItem()->removeChild(lastRow) && lastRow >= 0 && std::cmp_less(lastRow, m_trackItems.size())) {
-                m_trackItems.erase(m_trackItems.begin() + lastRow);
-            }
-            --lastRow;
-        }
-        endRemoveRows();
-
-        startOfSequence = endOfSequence;
-
-        rootItem()->resetChildren();
-    }
-
-    if(!m_currentTrackItem) {
-        updateShowCurrent();
-    }
-}
-
-void QueueViewerModel::removeIndexes(const std::vector<int>& indexes)
-{
-    std::vector<int> modelIndexes{indexes};
-
-    if(m_currentTrackItem) {
-        for(int& index : modelIndexes) {
-            ++index;
-        }
-    }
-
-    auto startOfSequence = modelIndexes.cbegin();
-    while(startOfSequence != modelIndexes.cend()) {
-        auto endOfSequence
-            = std::adjacent_find(startOfSequence, modelIndexes.cend(), [](int a, int b) { return b != a + 1; });
-        if(endOfSequence != modelIndexes.cend()) {
-            std::advance(endOfSequence, 1);
-        }
-
-        const int firstRow = *startOfSequence;
-        int lastRow        = *std::prev(endOfSequence);
-
-        beginRemoveRows({}, firstRow, lastRow);
-        while(lastRow >= firstRow) {
-            auto* child      = rootItem()->child(lastRow);
-            const auto track = child->track().track;
-            if(m_trackParents.contains(track.albumHash())) {
-                std::erase_if(m_trackParents.at(track.albumHash()),
-                              [&child](const auto& item) { return item == child; });
-            }
-            rootItem()->removeChild(lastRow);
-            m_trackItems.erase(m_trackItems.begin() + lastRow);
-            --lastRow;
-        }
-        endRemoveRows();
-
-        startOfSequence = endOfSequence;
-
-        rootItem()->resetChildren();
-    }
 }
 
 void QueueViewerModel::reset(const QueueTracks& tracks)
@@ -357,20 +278,14 @@ void QueueViewerModel::reset(const QueueTracks& tracks)
         m_trackParents[track.track.albumHash()].emplace_back(item);
     }
 
-    endResetModel();
-}
-
-QueueTracks QueueViewerModel::queueTracks() const
-{
-    QueueTracks tracks;
-
-    for(const auto& item : m_trackItems) {
-        if(item) {
-            tracks.emplace_back(item->track());
-        }
+    if(m_showCurrent && m_playerController->currentIsQueueTrack()) {
+        m_currentTrackItem = std::make_unique<QueueViewerItem>(m_playerController->currentPlaylistTrack());
+        m_currentTrackItem->generateTitle(&m_scriptParser, m_titleScript, m_subtitleScript);
+        rootItem()->insertChild(0, m_currentTrackItem.get());
+        rootItem()->resetChildren();
     }
 
-    return tracks;
+    endResetModel();
 }
 
 void QueueViewerModel::playbackStateChanged()
@@ -379,19 +294,6 @@ void QueueViewerModel::playbackStateChanged()
         const auto idx = index(0, 0, {});
         emit dataChanged(idx, idx, {Qt::DecorationRole});
     }
-}
-
-void QueueViewerModel::currentTrackChanged()
-{
-    if(m_currentTrackItem) {
-        beginRemoveRows({}, 0, 0);
-        rootItem()->removeChild(0);
-        rootItem()->resetChildren();
-        m_currentTrackItem = nullptr;
-        endRemoveRows();
-    }
-
-    playbackStateChanged();
 }
 
 int QueueViewerModel::queueIndex(const QModelIndex& index) const
@@ -462,54 +364,6 @@ void QueueViewerModel::setIconSize(const QSize& iconSize)
 
     m_iconSize = thumbnailSize;
     invalidateData();
-}
-
-void QueueViewerModel::moveTracks(int row, const QModelIndexList& indexes)
-{
-    const auto indexGroups = Utils::getIndexRanges(indexes);
-
-    if(row < 0) {
-        row = rowCount({});
-    }
-
-    auto* root = rootItem();
-
-    for(const auto& group : indexGroups) {
-        const auto children
-            = std::views::transform(group, [this](const QModelIndex& index) { return itemForIndex(index); });
-
-        int currRow{row};
-        const int firstRow = children.front()->row();
-        const int lastRow  = static_cast<int>(firstRow + children.size()) - 1;
-
-        if(currRow >= firstRow && currRow <= lastRow + 1) {
-            continue;
-        }
-
-        beginMoveRows({}, firstRow, lastRow, {}, row);
-
-        for(auto* childItem : children) {
-            childItem->resetRow();
-            const int oldRow = childItem->row();
-            root->moveChild(oldRow, currRow);
-
-            const int offset = m_currentTrackItem ? -1 : 0;
-
-            if(oldRow < currRow) {
-                Utils::move(m_trackItems, oldRow + offset, currRow + offset - 1);
-            }
-            else {
-                Utils::move(m_trackItems, oldRow + offset, currRow + offset);
-                ++currRow;
-            }
-        }
-
-        root->resetChildren();
-
-        endMoveRows();
-
-        row = currRow;
-    }
 }
 
 void QueueViewerModel::updateShowCurrent()

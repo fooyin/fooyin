@@ -140,6 +140,7 @@ private:
     void startPlayback(const TrackList& tracks, int row);
     void updateControlState() const;
     void goUp();
+    [[nodiscard]] QString tempPlaylistName() const;
 
     static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;

@@ -19,9 +19,12 @@
 
 #pragma once
 
+#include <core/player/playbackqueue.h>
+#include <core/playlist/playlist.h>
 #include <gui/fywidget.h>
 
 class QJsonObject;
+class QModelIndex;
 
 namespace Fooyin {
 class ActionManager;
@@ -71,19 +74,46 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
+    struct ViewRowState
+    {
+        PlaylistTrack track;
+        int occurrence{0};
+        bool currentRow{false};
+
+        [[nodiscard]] bool isValid() const
+        {
+            return track.isValid();
+        }
+    };
+
+    struct ViewState
+    {
+        ViewRowState current;
+        ViewRowState top;
+        std::vector<ViewRowState> selection;
+        int scrollValue{0};
+    };
+
     void setupActions();
     void setupConnections();
 
     void resetModel() const;
 
+    [[nodiscard]] ViewState captureViewState() const;
+    void restoreViewState(const ViewState& state) const;
+    [[nodiscard]] ViewRowState viewRowState(const QModelIndex& index) const;
+    [[nodiscard]] QModelIndex indexForViewRowState(const ViewRowState& state) const;
+
     [[nodiscard]] bool canRemoveSelected() const;
 
     void handleRowsChanged() const;
     void removeSelectedTracks() const;
+    void handleQueueTracksMoved(int row, const QList<int>& indexes) const;
     void handleTracksDropped(int row, const QByteArray& mimeData) const;
     void handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const;
-    void handleQueueChanged();
     void handleQueueDoubleClicked(const QModelIndex& index) const;
+    void replaceQueueTracks(QueueTracks tracks) const;
+    void insertQueueTracks(int row, const QueueTracks& tracks) const;
 
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
@@ -97,7 +127,6 @@ private:
     QueueViewerView* m_view;
     QueueViewerModel* m_model;
     WidgetContext* m_context;
-    bool m_changingQueue{false};
     ConfigData m_config;
 
     QAction* m_remove;

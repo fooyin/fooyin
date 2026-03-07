@@ -157,7 +157,6 @@ void Widgets::registerWidgets()
                                    m_window);
         },
         tr("Playback Queue"));
-    provider->setLimit(u"PlaybackQueue"_s, 1);
 
     provider->registerWidget(
         u"TabStack"_s, [this, provider]() { return new TabStackWidget(provider, m_settings, m_window); },
@@ -244,7 +243,6 @@ void Widgets::registerWidgets()
         tr("Search Bar"));
 
     provider->registerWidget(u"DirectoryBrowser"_s, [this]() { return createDirBrowser(); }, tr("Directory Browser"));
-    provider->setLimit(u"DirectoryBrowser"_s, 1);
 }
 
 void Widgets::registerPages()

@@ -61,7 +61,6 @@
 using namespace Qt::StringLiterals;
 
 // Settings keys
-constexpr auto DirPlaylist                  = "␟DirBrowserPlaylist␟";
 constexpr auto DirBrowserIconsKey           = u"DirectoryBrowser/Icons";
 constexpr auto DirBrowserDoubleClickKey     = u"DirectoryBrowser/DoubleClickBehaviour";
 constexpr auto DirBrowserMiddleClickKey     = u"DirectoryBrowser/MiddleClickBehaviour";
@@ -186,7 +185,8 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     , m_playlist{nullptr}
     , m_doubleClickAction{TrackAction::Play}
     , m_middleClickAction{TrackAction::None}
-    , m_context{new WidgetContext(this, Context{Constants::Context::DirBrowser}, this)}
+    , m_context{new WidgetContext(
+          this, Context{Id{"Fooyin.Context.DirBrowser."}.append(reinterpret_cast<uintptr_t>(this))}, this)}
     , m_goUp{new QAction(Utils::iconFromTheme(Constants::Icons::Up), tr("Go up"), this)}
     , m_goBack{new QAction(Utils::iconFromTheme(Constants::Icons::GoPrevious), tr("Go back"), this)}
     , m_goForward{new QAction(Utils::iconFromTheme(Constants::Icons::GoNext), tr("Go forwards"), this)}
@@ -221,6 +221,7 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     m_dirTree->setShowHorizontalScrollbar(true);
 
     updateIndent(true);
+    m_actionManager->addContextObject(m_context);
 
     const QStringList browserCategory{tr("Directory Browser")};
 
@@ -695,7 +696,7 @@ void DirBrowser::changeMode(DirBrowser::Mode newMode)
 void DirBrowser::startPlayback(const TrackList& tracks, int row)
 {
     if(!m_playlist) {
-        m_playlist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(DirPlaylist));
+        m_playlist = m_playlistHandler->createTempPlaylist(tempPlaylistName());
         if(!m_playlist) {
             return;
         }
@@ -741,6 +742,11 @@ void DirBrowser::goUp()
 
     auto* changeDir = new DirChange(this, m_dirTree, m_model->rootPath(), newPath);
     m_dirHistory.push(changeDir);
+}
+
+QString DirBrowser::tempPlaylistName() const
+{
+    return u"␟DirBrowserPlaylist.%1␟"_s.arg(id().name());
 }
 
 DirBrowser::~DirBrowser() = default;
@@ -942,7 +948,7 @@ void DirBrowser::activePlaylistChanged(Playlist* playlist)
     }
 
     if(!m_playlist) {
-        m_playlist = m_playlistHandler->playlistByName(QString::fromLatin1(DirPlaylist));
+        m_playlist = m_playlistHandler->playlistByName(tempPlaylistName());
     }
 
     if(!playlist || !m_playlist || (playlist && playlist->id() != m_playlist->id())) {
