@@ -1208,10 +1208,29 @@ void PlaylistModel::tracksChanged()
 
 void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 {
+    const QPersistentModelIndex previousPlayingIndex = m_playingIndex;
+    const PlaylistTrack previousTrack                = m_playingTrack;
+
     m_playingIndex = indexAtPlaylistIndex(track.indexInPlaylist, true);
 
     if(std::exchange(m_playingTrack, track) != track) {
-        invalidateData();
+        auto updateTrackRow = [this](const QPersistentModelIndex& index) {
+            if(!index.isValid()) {
+                return;
+            }
+
+            if(const auto bottomRight = rightIndex(index); bottomRight.isValid()) {
+                emit dataChanged(index, bottomRight,
+                                 {PlaylistItem::Role::Column, Qt::DecorationRole, Qt::BackgroundRole});
+            }
+        };
+
+        // Track playback changes only affect the old and new playing rows
+        if(previousTrack.indexInPlaylist != m_playingTrack.indexInPlaylist
+           || previousTrack.playlistId != m_playingTrack.playlistId) {
+            updateTrackRow(previousPlayingIndex);
+        }
+        updateTrackRow(m_playingIndex);
     }
 
     if(m_stopAtIndex.isValid()
