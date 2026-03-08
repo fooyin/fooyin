@@ -130,6 +130,7 @@ signals:
 private:
     QString currentCoverPath() const;
     void notify(const QString& name, const QVariant& value);
+    void notify(const QVariantMap& properties);
     void trackChanged(const PlaylistTrack& playlistTrack);
     void loadMetaData(const PlaylistTrack& playlistTrack);
 

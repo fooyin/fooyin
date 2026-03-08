@@ -75,18 +75,18 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     m_settings         = context.settingsManager;
 
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this, [this]() {
-        notify(u"LoopStatus"_s, loopStatus());
-        notify(u"Shuffle"_s, shuffle());
-        notify(u"CanGoNext"_s, canGoNext());
-        notify(u"CanGoPrevious"_s, canGoPrevious());
+        notify({{u"LoopStatus"_s, loopStatus()},
+                {u"Shuffle"_s, shuffle()},
+                {u"CanGoNext"_s, canGoNext()},
+                {u"CanGoPrevious"_s, canGoPrevious()}});
     });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, [this]() {
-        notify(u"PlaybackStatus"_s, playbackStatus());
-        notify(u"CanPause"_s, canPause());
-        notify(u"CanPlay"_s, canPlay());
-        notify(u"CanGoNext"_s, canGoNext());
-        notify(u"CanGoPrevious"_s, canGoPrevious());
-        notify(u"CanSeek"_s, canSeek());
+        notify({{u"PlaybackStatus"_s, playbackStatus()},
+                {u"CanPause"_s, canPause()},
+                {u"CanPlay"_s, canPlay()},
+                {u"CanGoNext"_s, canGoNext()},
+                {u"CanGoPrevious"_s, canGoPrevious()},
+                {u"CanSeek"_s, canSeek()}});
     });
     QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this, &MprisPlugin::trackChanged);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
@@ -368,11 +368,14 @@ QString MprisPlugin::currentCoverPath() const
 
 void MprisPlugin::notify(const QString& name, const QVariant& value)
 {
+    notify({{name, value}});
+}
+
+void MprisPlugin::notify(const QVariantMap& properties)
+{
     QDBusMessage msg = QDBusMessage::createSignal(QString::fromLatin1(MprisObjectPath), QString::fromLatin1(DbusPath),
                                                   u"PropertiesChanged"_s);
-    QVariantMap map;
-    map.insert(name, value);
-    msg.setArguments({QString::fromLatin1(PlayerEntity), map, QStringList{}});
+    msg.setArguments({QString::fromLatin1(PlayerEntity), properties, QStringList{}});
     QDBusConnection::sessionBus().send(msg);
 }
 
@@ -383,9 +386,7 @@ void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
 
     if(playlistTrack.isValid()) {
         loadMetaData(playlistTrack);
-        notify(u"CanSeek"_s, canSeek());
-        notify(u"CanGoNext"_s, canGoNext());
-        notify(u"CanGoPrevious"_s, canGoPrevious());
+        notify({{u"CanSeek"_s, canSeek()}, {u"CanGoNext"_s, canGoNext()}, {u"CanGoPrevious"_s, canGoPrevious()}});
     }
 }
 
