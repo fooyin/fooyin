@@ -33,8 +33,10 @@
 
 #include <QApplication>
 #include <QDBusObjectPath>
+#include <QDateTime>
 #include <QFile>
 #include <QLoggingCategory>
+#include <QRegularExpression>
 
 Q_LOGGING_CATEGORY(MPRIS, "fy.mpris")
 
@@ -59,15 +61,55 @@ QString formatDateTime(uint64_t time)
     }
 
     const auto dateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(time));
-    return dateTime.toString(Qt::ISODate);
+    return dateTime.toOffsetFromUtc(dateTime.offsetFromUtc()).toString(Qt::ISODate);
+}
+
+QString formatContentCreated(const Fooyin::Track& track)
+{
+    QString date = track.date().trimmed();
+
+    if(!date.isEmpty()) {
+        static const QRegularExpression fullDateRegex{uR"(^(\d{4})-(\d{2})-(\d{2})$)"_s};
+        static const QRegularExpression yearMonthRegex{uR"(^(\d{4})-(\d{2})$)"_s};
+        static const QRegularExpression yearRegex{uR"(^(\d{4})$)"_s};
+
+        if(const QDateTime dateTime = QDateTime::fromString(date, Qt::ISODate); dateTime.isValid()) {
+            return dateTime.toOffsetFromUtc(dateTime.offsetFromUtc()).toString(Qt::ISODate);
+        }
+
+        if(const auto match = fullDateRegex.match(date); match.hasMatch()) {
+            const QDate parsedDate{match.capturedView(1).toInt(), match.capturedView(2).toInt(),
+                                   match.capturedView(3).toInt()};
+            if(parsedDate.isValid()) {
+                return parsedDate.toString(Qt::ISODate);
+            }
+        }
+
+        if(const auto match = yearMonthRegex.match(date); match.hasMatch()) {
+            const int month = match.capturedView(2).toInt();
+            if(month >= 1 && month <= 12) {
+                return date;
+            }
+        }
+
+        if(yearRegex.match(date).hasMatch()) {
+            return date;
+        }
+    }
+
+    if(track.year() > 0) {
+        return QString::number(track.year());
+    }
+
+    return {};
 }
 } // namespace
 
 namespace Fooyin::Mpris {
 MprisPlugin::MprisPlugin()
     : m_registered{false}
-    , m_coverProvider{nullptr}
     , m_coverLoadGeneration{0}
+    , m_coverProvider{nullptr}
 { }
 
 void MprisPlugin::initialise(const CorePluginContext& context)
@@ -409,21 +451,47 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
     const auto& [track, _, index] = playlistTrack;
 
     if(m_currentMetaData.empty()) {
-        m_currentMetaData[u"mpris:trackid"_s]     = formatTrackId(std::max(0, index));
-        m_currentMetaData[u"mpris:length"_s]      = static_cast<quint64>(track.duration() * 1000);
-        m_currentMetaData[u"xesam:url"_s]         = track.filepath();
-        m_currentMetaData[u"xesam:title"_s]       = track.title();
-        m_currentMetaData[u"xesam:trackNumber"_s] = track.trackNumber();
-        m_currentMetaData[u"xesam:album"_s]       = track.album();
-        m_currentMetaData[u"xesam:albumArtist"_s] = track.albumArtist();
-        m_currentMetaData[u"xesam:artist"_s]      = track.artists();
-        m_currentMetaData[u"xesam:genre"_s]       = track.genres();
-        m_currentMetaData[u"xesam:discNumber"_s]  = track.discNumber();
-        m_currentMetaData[u"xesam:comment"_s]     = track.comment();
-        m_currentMetaData[u"xesam:composer"_s]    = track.composer();
-        m_currentMetaData[u"xesam:firstUsed"_s]   = formatDateTime(track.firstPlayed());
-        m_currentMetaData[u"xesam:lastUsed"_s]    = formatDateTime(track.lastPlayed());
-        m_currentMetaData[u"xesam:useCount"_s]    = track.playCount();
+        const auto addIntMetadata = [this](const QString& key, const QString& value) {
+            bool ok{false};
+            const int data = value.toInt(&ok);
+            if(ok) {
+                m_currentMetaData[key] = data;
+            }
+        };
+
+        const auto addStringListMetadata = [this](const QString& key, const QStringList& values) {
+            if(!values.isEmpty()) {
+                m_currentMetaData[key] = values;
+            }
+        };
+
+        m_currentMetaData[u"mpris:trackid"_s]   = formatTrackId(std::max(0, index));
+        m_currentMetaData[u"mpris:length"_s]    = static_cast<quint64>(track.duration() * 1000);
+        m_currentMetaData[u"xesam:url"_s]       = track.filepath();
+        m_currentMetaData[u"xesam:title"_s]     = track.title();
+        m_currentMetaData[u"xesam:album"_s]     = track.album();
+        m_currentMetaData[u"xesam:artist"_s]    = track.artists();
+        m_currentMetaData[u"xesam:genre"_s]     = track.genres();
+        m_currentMetaData[u"xesam:firstUsed"_s] = formatDateTime(track.firstPlayed());
+        m_currentMetaData[u"xesam:lastUsed"_s]  = formatDateTime(track.lastPlayed());
+        m_currentMetaData[u"xesam:useCount"_s]  = track.playCount();
+
+        addIntMetadata(u"xesam:trackNumber"_s, track.trackNumber());
+        addIntMetadata(u"xesam:discNumber"_s, track.discNumber());
+        addStringListMetadata(u"xesam:albumArtist"_s, track.albumArtists());
+        addStringListMetadata(u"xesam:composer"_s, track.composers());
+        addStringListMetadata(u"xesam:comment"_s,
+                              track.comment().isEmpty() ? QStringList{} : QStringList{track.comment()});
+
+        if(const QString contentCreated = formatContentCreated(track); !contentCreated.isEmpty()) {
+            m_currentMetaData[u"xesam:contentCreated"_s] = contentCreated;
+        }
+        if(track.year() > 0) {
+            m_currentMetaData[u"xesam:year"_s] = track.year();
+        }
+        if(track.bitrate() > 0) {
+            m_currentMetaData[u"xesam:audioBitrate"_s] = track.bitrate();
+        }
     }
 
     if(!m_coverProvider) {
