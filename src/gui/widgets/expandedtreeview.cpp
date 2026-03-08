@@ -3352,6 +3352,44 @@ void ExpandedTreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex
     p->m_view->dataChanged(topLeft, bottomRight);
 
     QAbstractItemView::dataChanged(topLeft, bottomRight, roles);
+
+    if(!p->m_extendSpansIntoParents) {
+        return;
+    }
+
+    const int firstColumn = std::min(topLeft.column(), bottomRight.column());
+    const int lastColumn  = std::max(topLeft.column(), bottomRight.column());
+
+    auto updateExtendedSpanParents = [this](const QModelIndex& index) {
+        if(!index.isValid() || !index.parent().isValid()) {
+            return;
+        }
+
+        QModelIndex topLevelContainer = index.parent();
+        while(topLevelContainer.parent().isValid()) {
+            topLevelContainer = topLevelContainer.parent();
+        }
+
+        QModelIndex firstLeaf = topLevelContainer;
+        while(model()->hasChildren(firstLeaf)) {
+            firstLeaf = model()->index(0, 0, firstLeaf);
+        }
+
+        if(index.row() != firstLeaf.row() || index.parent() != firstLeaf.parent()) {
+            return;
+        }
+
+        for(QModelIndex ancestor = index.parent(); ancestor.parent().isValid(); ancestor = ancestor.parent()) {
+            viewport()->update(p->m_view->visualRect(ancestor, RectRule::FullRow, false));
+        }
+    };
+
+    for(int column = firstColumn; column <= lastColumn; ++column) {
+        if(isSpanning(column)) {
+            updateExtendedSpanParents(topLeft);
+            return;
+        }
+    }
 }
 
 void ExpandedTreeView::selectAll()
