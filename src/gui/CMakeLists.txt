@@ -67,6 +67,8 @@ set(SOURCES
     artwork/artworkproperties.h
     artwork/artworkrow.cpp
     artwork/artworkrow.h
+    artwork/artworksaveutils.cpp
+    artwork/artworksaveutils.h
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.cpp

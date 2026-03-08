@@ -53,9 +53,9 @@ Fooyin::ArtworkSaveMethods defaultArtworkSaveMethods()
 {
     Fooyin::ArtworkSaveMethods methods;
 
-    methods[Fooyin::Track::Cover::Front]  = {Fooyin::ArtworkSaveMethod::Embedded, u"%path%"_s, u"cover"_s};
-    methods[Fooyin::Track::Cover::Back]   = {Fooyin::ArtworkSaveMethod::Embedded, u"%path%"_s, u"back"_s};
-    methods[Fooyin::Track::Cover::Artist] = {Fooyin::ArtworkSaveMethod::Embedded, u"%path%"_s, u"artist"_s};
+    methods[Fooyin::Track::Cover::Front]  = {Fooyin::ArtworkSaveMethod::Embedded, u"%path%"_s, u"cover"_s, {}, 90};
+    methods[Fooyin::Track::Cover::Back]   = {Fooyin::ArtworkSaveMethod::Embedded, u"%path%"_s, u"back"_s, {}, 90};
+    methods[Fooyin::Track::Cover::Artist] = {Fooyin::ArtworkSaveMethod::Embedded, u"%path%"_s, u"artist"_s, {}, 90};
 
     return methods;
 }

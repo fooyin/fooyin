@@ -21,6 +21,7 @@
 
 #include "artwork/artworkdialog.h"
 #include "artwork/artworkfinder.h"
+#include "artwork/artworksaveutils.h"
 #include "dialog/autoplaylistdialog.h"
 #include "dialog/saveplaylistsdialog.h"
 #include "dialog/searchdialog.h"
@@ -53,7 +54,6 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistloader.h>
 #include <core/playlist/playlistparser.h>
-#include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
 #include <gui/coverprovider.h>
 #include <gui/editablelayout.h>
@@ -70,7 +70,6 @@
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/elapsedprogressdialog.h>
-#include <gui/widgets/elidedlabel.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -80,7 +79,6 @@
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
-#include <utils/worker.h>
 
 #include <QAction>
 #include <QApplication>
@@ -90,9 +88,7 @@
 #include <QImageReader>
 #include <QLoggingCategory>
 #include <QMessageBox>
-#include <QMimeDatabase>
 #include <QPixmapCache>
-#include <QProgressDialog>
 #include <QPushButton>
 #include <QStyle>
 #include <QStyleFactory>
@@ -1238,19 +1234,16 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
         [this, finishSearch, tracks](const QUrl& /*url*/, const Fooyin::ArtworkResult& result) {
             finishSearch();
 
-            QPixmap cover;
-            cover.loadFromData(result.image);
-            cover.setDevicePixelRatio(Utils::windowDpr());
-
             const auto saveMethods
                 = p->m_settings->value<Settings::Gui::Internal::ArtworkSaveMethods>().value<ArtworkSaveMethods>();
             const auto& frontMethod = saveMethods[Track::Cover::Front];
+            const auto saveResult   = prepareArtworkForSave(result, frontMethod.format, frontMethod.quality);
 
             if(frontMethod.method == ArtworkSaveMethod::Embedded) {
                 TrackCoverData coverData;
                 coverData.tracks = tracks;
                 coverData.coverData.emplace(Track::Cover::Front,
-                                            CoverImage{.mimeType = result.mimeType, .data = result.image});
+                                            CoverImage{.mimeType = saveResult.mimeType, .data = saveResult.image});
                 p->m_library->writeTrackCovers(coverData);
                 QObject::connect(
                     p->m_library, &MusicLibrary::tracksMetadataChanged, this,
@@ -1258,17 +1251,13 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                     Qt::SingleShotConnection);
             }
             else {
-                const QMimeDatabase mimeDb;
-                const QString suffix = mimeDb.mimeTypeForData(result.image).preferredSuffix().toLower();
-
                 ScriptParser trackParser;
                 const QString path = trackParser.evaluate(
-                    u"%1/%2.%3"_s.arg(frontMethod.dir, frontMethod.filename, suffix), tracks.front());
+                    u"%1/%2.%3"_s.arg(frontMethod.dir, frontMethod.filename, saveResult.suffix), tracks.front());
                 const QString cleanPath = QDir::cleanPath(path);
 
                 QFile file{cleanPath};
-                if(file.open(QIODevice::WriteOnly)) {
-                    cover.save(&file, nullptr, -1);
+                if(file.open(QIODevice::WriteOnly) && file.write(saveResult.image) == saveResult.image.size()) {
                     std::ranges::for_each(tracks, CoverProvider::removeFromCache);
                     p->m_widgets->refreshCoverWidgets();
                 }

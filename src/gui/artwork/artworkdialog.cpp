@@ -20,6 +20,7 @@
 #include "artworkdialog.h"
 
 #include "artwork/artworkdelegate.h"
+#include "artwork/artworksaveutils.h"
 #include "artworkfinder.h"
 #include "artworkmodel.h"
 #include "internalguisettings.h"
@@ -30,7 +31,6 @@
 #include <gui/widgets/expandedtreeview.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -40,7 +40,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
-#include <QMimeDatabase>
 #include <QPushButton>
 
 using namespace Qt::StringLiterals;
@@ -154,32 +153,25 @@ void ArtworkDialog::accept()
         return;
     }
 
-    QPixmap cover;
-    cover.loadFromData(result.image);
-    cover.setDevicePixelRatio(Utils::windowDpr());
-
-    const auto& method = m_saveMethods.value(m_type);
+    const auto& method    = m_saveMethods.value(m_type);
+    const auto saveResult = prepareArtworkForSave(result, method.format, method.quality);
 
     if(method.method == ArtworkSaveMethod::Embedded) {
         TrackCoverData coverData;
         coverData.tracks = m_tracks;
-        coverData.coverData.emplace(Track::Cover::Front, CoverImage{.mimeType = result.mimeType, .data = result.image});
+        coverData.coverData.emplace(m_type, CoverImage{.mimeType = saveResult.mimeType, .data = saveResult.image});
         m_library->writeTrackCovers(coverData);
         QObject::connect(
             m_library, &MusicLibrary::tracksMetadataChanged, this,
             [this]() { std::ranges::for_each(m_tracks, &CoverProvider::removeFromCache); }, Qt::SingleShotConnection);
     }
     else {
-        const QMimeDatabase mimeDb;
-        const QString suffix = mimeDb.mimeTypeForData(result.image).preferredSuffix().toLower();
-
         const QString path
-            = m_parser.evaluate(u"%1/%2.%3"_s.arg(method.dir, method.filename, suffix), m_tracks.front());
+            = m_parser.evaluate(u"%1/%2.%3"_s.arg(method.dir, method.filename, saveResult.suffix), m_tracks.front());
         const QString cleanPath = QDir::cleanPath(path);
 
         QFile file{cleanPath};
-        if(file.open(QIODevice::WriteOnly)) {
-            cover.save(&file, nullptr, -1);
+        if(file.open(QIODevice::WriteOnly) && file.write(saveResult.image) == saveResult.image.size()) {
             std::ranges::for_each(m_tracks, CoverProvider::removeFromCache);
         }
     }

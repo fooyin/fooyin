@@ -74,12 +74,16 @@ struct ArtworkSaveOptions
     ArtworkSaveMethod method{ArtworkSaveMethod::Embedded};
     QString dir;
     QString filename;
+    QString format;
+    int quality{90};
 
     friend QDataStream& operator<<(QDataStream& stream, const ArtworkSaveOptions& options)
     {
         stream << options.method;
         stream << options.dir;
         stream << options.filename;
+        stream << options.format;
+        stream << options.quality;
         return stream;
     }
 
@@ -88,6 +92,21 @@ struct ArtworkSaveOptions
         stream >> options.method;
         stream >> options.dir;
         stream >> options.filename;
+
+        stream.startTransaction();
+        stream >> options.format;
+        if(!stream.commitTransaction()) {
+            stream.resetStatus();
+            options.format.clear();
+        }
+
+        stream.startTransaction();
+        stream >> options.quality;
+        if(!stream.commitTransaction()) {
+            stream.resetStatus();
+            options.quality = 90;
+        }
+
         return stream;
     }
 };

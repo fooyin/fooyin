@@ -20,26 +20,23 @@
 #include "artworkdownloadpage.h"
 
 #include "artwork/artworkfinder.h"
+#include "artwork/artworksaveutils.h"
 #include "internalguisettings.h"
 
 #include <gui/guiconstants.h>
-#include <gui/guipaths.h>
 #include <gui/widgets/scriptlineedit.h>
-#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/stringutils.h>
 #include <utils/utils.h>
 
 #include <QButtonGroup>
-#include <QDir>
+#include <QComboBox>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QMainWindow>
-#include <QPlainTextEdit>
-#include <QPushButton>
 #include <QRadioButton>
+#include <QSpinBox>
 #include <QTabWidget>
 
 using namespace Qt::StringLiterals;
@@ -72,12 +69,18 @@ private:
         QRadioButton* directory;
         QLineEdit* path;
         ScriptLineEdit* filename;
+        QComboBox* format;
+        QLabel* qualityLabel;
+        QSpinBox* quality;
 
         explicit CoverControls(QWidget* parent)
             : embedded{new QRadioButton(tr("Embed in file"), parent)}
             , directory{new QRadioButton(tr("Save to directory"), parent)}
             , path{new QLineEdit(parent)}
             , filename{new ScriptLineEdit(parent)}
+            , format{new QComboBox(parent)}
+            , qualityLabel{new QLabel(tr("Quality") + u":", parent)}
+            , quality{new QSpinBox(parent)}
         { }
     };
 
@@ -108,11 +111,28 @@ ArtworkDownloadPageWidget::ArtworkDownloadPageWidget(SettingsManager* settings)
         methodLayout->addWidget(controls.embedded, row++, 0);
         methodLayout->addWidget(controls.directory, row++, 0);
 
+        auto* formatGroup    = new QGroupBox(tr("Format"), widget);
+        auto* formatLayout   = new QGridLayout(formatGroup);
         auto* locationGroup  = new QGroupBox(tr("Save Location"), widget);
         auto* locationLayout = new QGridLayout(locationGroup);
 
         auto* dirLabel      = new QLabel(tr("Directory") + u":", widget);
         auto* filenameLabel = new QLabel(tr("Filename") + u":", widget);
+        auto* filetypeLabel = new QLabel(tr("File type") + u":", widget);
+
+        controls.format->addItem(tr("Automatic"), QString{});
+        for(const QString& format : supportedArtworkSaveFormats()) {
+            controls.format->addItem(artworkSaveFormatLabel(format), format);
+        }
+        controls.quality->setRange(0, 100);
+        controls.quality->setValue(90);
+
+        row = 0;
+        formatLayout->addWidget(filetypeLabel, row, 0);
+        formatLayout->addWidget(controls.format, row++, 1);
+        formatLayout->addWidget(controls.qualityLabel, row, 0);
+        formatLayout->addWidget(controls.quality, row++, 1);
+        formatLayout->setColumnStretch(3, 1);
 
         row = 0;
         locationLayout->addWidget(dirLabel, row, 0);
@@ -124,11 +144,22 @@ ArtworkDownloadPageWidget::ArtworkDownloadPageWidget(SettingsManager* settings)
 
         row = 0;
         typeLayout->addWidget(methodGroup, row++, 0);
+        typeLayout->addWidget(formatGroup, row++, 0);
         typeLayout->addWidget(locationGroup, row++, 0);
 
         auto* browseAction = new QAction(Utils::iconFromTheme(::Fooyin::Constants::Icons::Options), {}, widget);
         QObject::connect(browseAction, &QAction::triggered, widget, [this, type]() { browseDestination(type); });
         controls.path->addAction(browseAction, QLineEdit::TrailingPosition);
+
+        const auto updateFormatControls = [type, this]() {
+            const auto& typeControls   = m_typeControls.at(type);
+            const QString format       = typeControls.format->currentData().toString();
+            const bool supportsQuality = (format == "jpeg"_L1 || format == "webp"_L1);
+            typeControls.qualityLabel->setEnabled(supportsQuality);
+            typeControls.quality->setEnabled(supportsQuality);
+        };
+        QObject::connect(controls.format, &QComboBox::currentIndexChanged, widget, updateFormatControls);
+        updateFormatControls();
     };
 
     addType(Track::Cover::Front, m_frontWidget);
@@ -153,6 +184,14 @@ void ArtworkDownloadPageWidget::load()
         controls.directory->setChecked(coverMethod.method == ArtworkSaveMethod::Directory);
         controls.path->setText(coverMethod.dir);
         controls.filename->setText(coverMethod.filename);
+
+        if(const int index = controls.format->findData(coverMethod.format); index >= 0) {
+            controls.format->setCurrentIndex(index);
+        }
+        else {
+            controls.format->setCurrentIndex(0);
+        }
+        controls.quality->setValue(coverMethod.quality);
     }
 }
 
@@ -166,6 +205,8 @@ void ArtworkDownloadPageWidget::apply()
             = controls.embedded->isChecked() ? ArtworkSaveMethod::Embedded : ArtworkSaveMethod::Directory;
         coverMethod.dir      = controls.path->text();
         coverMethod.filename = controls.filename->text();
+        coverMethod.format   = controls.format->currentData().toString();
+        coverMethod.quality  = controls.quality->value();
     }
 
     m_settings->set<Settings::Gui::Internal::ArtworkSaveMethods>(QVariant::fromValue(saveMethods));
