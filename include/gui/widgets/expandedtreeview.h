@@ -63,6 +63,8 @@ public:
 
     [[nodiscard]] bool isSpanning(int column) const;
     void setSpan(int column, bool span);
+    [[nodiscard]] bool extendSpansIntoParents() const;
+    void setExtendSpansIntoParents(bool enabled);
 
     [[nodiscard]] ViewMode viewMode() const;
     void setViewMode(ViewMode mode);

@@ -1642,6 +1642,8 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
             return header.title();
         case PlaylistItem::Role::Subtitle:
             return header.subtitle();
+        case PlaylistItem::Role::InsetSubheadersToImageColumns:
+            return m_currentPreset.insetSubheadersToImageColumns;
         default:
             break;
     }

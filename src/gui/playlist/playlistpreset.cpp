@@ -19,8 +19,8 @@
 
 #include "playlistpreset.h"
 
-#include <QApplication>
-#include <QPalette>
+constexpr auto PlaylistPresetVersionMarker = -1;
+constexpr auto PlaylistPresetVersion       = 2;
 
 namespace Fooyin {
 QDataStream& operator<<(QDataStream& stream, const HeaderRow& header)
@@ -81,23 +81,38 @@ QDataStream& operator>>(QDataStream& stream, TrackRow& track)
 
 QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset)
 {
+    stream << PlaylistPresetVersionMarker;
+    stream << PlaylistPresetVersion;
     stream << preset.id;
     stream << preset.index;
     stream << preset.name;
     stream << preset.header;
     stream << preset.subHeaders;
     stream << preset.track;
+    stream << preset.insetSubheadersToImageColumns;
     return stream;
 }
 
 QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset)
 {
+    int version{1};
+
     stream >> preset.id;
+    if(preset.id == PlaylistPresetVersionMarker) {
+        stream >> version;
+        stream >> preset.id;
+    }
+
     stream >> preset.index;
     stream >> preset.name;
     stream >> preset.header;
     stream >> preset.subHeaders;
     stream >> preset.track;
+
+    if(version >= 2 && !stream.atEnd()) {
+        stream >> preset.insetSubheadersToImageColumns;
+    }
+
     return stream;
 }
 } // namespace Fooyin

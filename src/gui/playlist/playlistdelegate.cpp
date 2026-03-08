@@ -21,9 +21,11 @@
 
 #include "playlistitem.h"
 
+#include <gui/widgets/expandedtreeview.h>
 #include <utils/utils.h>
 
 #include <QApplication>
+#include <QHeaderView>
 #include <QPainter>
 
 namespace Fooyin {
@@ -62,6 +64,63 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
     }
 
     return result;
+}
+
+QRect subheaderContentRect(const QStyleOptionViewItem& option, const QModelIndex& index, int offset)
+{
+    QRect rect = option.rect.adjusted(offset, 0, -offset, 0);
+
+    if(!index.data(PlaylistItem::Role::InsetSubheadersToImageColumns).toBool()) {
+        return rect;
+    }
+
+    const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
+    if(!view || !view->header()) {
+        return rect;
+    }
+
+    const auto* header = view->header();
+
+    int leftLogical{-1};
+    int leftPos{std::numeric_limits<int>::max()};
+    int leftSize{0};
+
+    int rightLogical{-1};
+    int rightPos{std::numeric_limits<int>::min()};
+
+    for(int logical{0}; logical < header->count(); ++logical) {
+        if(header->isSectionHidden(logical)) {
+            continue;
+        }
+
+        const int pos  = header->sectionViewportPosition(logical);
+        const int size = header->sectionSize(logical);
+
+        if(pos < leftPos) {
+            leftPos     = pos;
+            leftLogical = logical;
+            leftSize    = size;
+        }
+
+        if(pos > rightPos) {
+            rightPos     = pos;
+            rightLogical = logical;
+        }
+    }
+
+    if(leftLogical >= 0 && view->isSpanning(leftLogical)) {
+        rect.setLeft(std::max(rect.left(), leftPos + leftSize + offset));
+    }
+
+    if(rightLogical >= 0 && view->isSpanning(rightLogical)) {
+        rect.setRight(std::min(rect.right(), rightPos - offset));
+    }
+
+    if(rect.right() < rect.left()) {
+        rect.setRight(rect.left());
+    }
+
+    return rect;
 }
 
 void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
@@ -219,7 +278,7 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const
     const auto title    = index.data(PlaylistItem::Role::Title).value<RichText>().blocks;
     const auto subtitle = index.data(PlaylistItem::Role::Subtitle).value<RichText>().blocks;
 
-    const QRect& rect           = opt.rect;
+    const QRect rect            = subheaderContentRect(opt, index, 5);
     const int height            = rect.height();
     const int halfWidth         = rect.width() / 2;
     static constexpr int offset = 5;

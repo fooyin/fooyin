@@ -141,6 +141,7 @@ public:
     int m_uniformHeightRole{-1};
     std::unordered_map<int, int> m_uniformRoleHeights;
     std::set<int> m_spans;
+    bool m_extendSpansIntoParents{false};
 
     mutable QBasicTimer m_delayedLayout;
     QPoint m_pressedPos;

@@ -1512,6 +1512,33 @@ void TreeView::drawAndClipSpans(QPainter* painter, const QStyleOptionViewItem& o
 {
     QStyleOptionViewItem opt{option};
 
+    auto spanTopInset = [this](const QModelIndex& index) {
+        if(!m_view->extendSpansIntoParents() || !index.parent().isValid()) {
+            return 0;
+        }
+
+        QModelIndex topLevelContainer{index.parent()};
+        while(topLevelContainer.parent().isValid()) {
+            topLevelContainer = topLevelContainer.parent();
+        }
+
+        QModelIndex firstLeaf{topLevelContainer};
+        while(model()->hasChildren(firstLeaf)) {
+            firstLeaf = model()->index(0, 0, firstLeaf);
+        }
+
+        if(index.row() != firstLeaf.row() || index.parent() != firstLeaf.parent()) {
+            return 0;
+        }
+
+        int inset{0};
+        for(QModelIndex ancestor = index.parent(); ancestor.parent().isValid(); ancestor = ancestor.parent()) {
+            inset += indexRowSizeHint(ancestor);
+        }
+
+        return inset;
+    };
+
     const QRect rect = viewport()->rect();
     QRegion region{rect};
     const int count = itemCount();
@@ -1578,7 +1605,9 @@ void TreeView::drawAndClipSpans(QPainter* painter, const QStyleOptionViewItem& o
                 continue;
             }
 
-            opt.rect = {position, y, width, indexSizeHint(modelIndex, true)};
+            const int topInset = spanTopInset(index);
+
+            opt.rect = {position, y - topInset, width, indexSizeHint(modelIndex, true) + topInset};
             delegate(modelIndex)->paint(painter, opt, modelIndex);
             region -= opt.rect;
         }
@@ -2977,6 +3006,18 @@ void ExpandedTreeView::setSpan(int column, bool span)
     }
     else {
         p->m_spans.erase(column);
+    }
+}
+
+bool ExpandedTreeView::extendSpansIntoParents() const
+{
+    return p->m_extendSpansIntoParents;
+}
+
+void ExpandedTreeView::setExtendSpansIntoParents(bool enabled)
+{
+    if(std::exchange(p->m_extendSpansIntoParents, enabled) != enabled) {
+        viewport()->update();
     }
 }
 

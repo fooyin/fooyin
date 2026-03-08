@@ -481,6 +481,7 @@ void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)
 void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
 {
     m_currentPreset = preset;
+    m_playlistView->setExtendSpansIntoParents(m_currentPreset.insetSubheadersToImageColumns);
     resetModelThrottled();
 }
 
@@ -1262,6 +1263,8 @@ void PlaylistWidgetPrivate::updateSpans()
         return field == QLatin1String(Constants::FrontCover) || field == QLatin1String(Constants::BackCover)
             || field == QLatin1String(Constants::ArtistPicture);
     };
+
+    m_playlistView->setExtendSpansIntoParents(m_currentPreset.insetSubheadersToImageColumns);
 
     bool hasRating{false};
     for(int i{0}; const auto& column : m_columns) {

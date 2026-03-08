@@ -194,6 +194,7 @@ private:
     QSpinBox* m_headerRowHeight;
 
     ExpandableInputBox* m_subHeaders;
+    QCheckBox* m_alignSubheadersToImageColumns;
 
     ScriptTextEdit* m_trackLeftText;
     ScriptTextEdit* m_trackRightText;
@@ -220,6 +221,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     , m_headerInfo{new ScriptTextEdit(this)}
     , m_overrideHeaderHeight{new QCheckBox(tr("Override height") + u":"_s, this)}
     , m_headerRowHeight{new QSpinBox(this)}
+    , m_alignSubheadersToImageColumns{new QCheckBox(tr("Align subheaders to edge of image columns"), this)}
     , m_trackLeftText{new ScriptTextEdit(this)}
     , m_trackRightText{new ScriptTextEdit(this)}
     , m_overrideTrackHeight{new QCheckBox(this)}
@@ -278,7 +280,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
         return groupBox;
     });
 
-    subheaderLayout->addWidget(m_subHeaders, 0, 0, 1, 3);
+    subheaderLayout->addWidget(m_alignSubheadersToImageColumns, 0, 0, 1, 3);
+    subheaderLayout->addWidget(m_subHeaders, 1, 0, 1, 3);
 
     m_presetTabs->addTab(subheaderWidget, tr("Subheaders"));
 
@@ -416,6 +419,7 @@ void PlaylistPresetsPageWidget::updatePreset()
     preset.header.showCover = m_showCover->isEnabled() && m_showCover->isChecked();
 
     updateGroupTextBlocks(m_subHeaders->blocks(), preset.subHeaders);
+    preset.insetSubheadersToImageColumns = m_alignSubheadersToImageColumns->isChecked();
 
     preset.track.leftText.script  = m_trackLeftText->text();
     preset.track.rightText.script = m_trackRightText->text();
@@ -482,6 +486,8 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_headerRowHeight->setEnabled(m_overrideHeaderHeight->isChecked());
 
     m_subHeaders->setReadOnly(preset.isDefault);
+    m_alignSubheadersToImageColumns->setChecked(preset.insetSubheadersToImageColumns);
+    m_alignSubheadersToImageColumns->setDisabled(preset.isDefault);
 
     for(const auto& subheader : preset.subHeaders) {
         createGroupPresetInputs(subheader, m_subHeaders, this);

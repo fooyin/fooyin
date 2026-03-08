@@ -58,7 +58,8 @@ public:
         Column,
         ImagePadding,
         ImagePaddingTop,
-        DecorationPosition
+        DecorationPosition,
+        InsetSubheadersToImageColumns
     };
 
     enum class State
