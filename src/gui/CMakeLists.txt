@@ -247,6 +247,8 @@ set(SOURCES
     scripting/expressiontreemodel.h
     scripting/scripteditor.cpp
     scripting/scriptformatter.cpp
+    scripting/scriptreferenceentries.cpp
+    scripting/scriptreferenceentries.h
     scripting/scriptformatterregistry.cpp
     scripting/scripthighlighter.cpp
     scripting/scripthighlighter.h

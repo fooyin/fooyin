@@ -17,24 +17,34 @@
  *
  */
 
+#include <gui/scripting/scripteditor.h>
+
 #include "expressiontreemodel.h"
 #include "scripthighlighter.h"
+#include "scriptreferenceentries.h"
 
 #include <core/coresettings.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 #include <core/track.h>
-#include <gui/scripting/scripteditor.h>
 #include <gui/scripting/scriptformatter.h>
-#include <gui/trackselectioncontroller.h>
 #include <utils/utils.h>
 
 #include <QApplication>
 #include <QBasicTimer>
+#include <QCompleter>
 #include <QDir>
+#include <QFocusEvent>
 #include <QGridLayout>
-#include <QPlainTextEdit>
+#include <QHeaderView>
+#include <QLineEdit>
+#include <QRegularExpression>
+#include <QScrollBar>
+#include <QSortFilterProxyModel>
 #include <QSplitter>
+#include <QStandardItemModel>
+#include <QTabWidget>
+#include <QTextBlock>
 #include <QTextEdit>
 #include <QTimerEvent>
 #include <QTreeView>
@@ -53,6 +63,314 @@ constexpr auto TextChangeInterval = 1500;
 constexpr auto DialogState = "Interface/ScriptEditorState";
 
 namespace Fooyin {
+enum ScriptReferenceRole : int
+{
+    InsertTextRole = Qt::UserRole + 1,
+    CursorOffsetRole,
+};
+
+class ScriptReferenceFilterModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+
+public:
+    using QSortFilterProxyModel::QSortFilterProxyModel;
+
+protected:
+    [[nodiscard]] bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override
+    {
+        if(filterRegularExpression().pattern().isEmpty()) {
+            return true;
+        }
+
+        const int columns = sourceModel()->columnCount(sourceParent);
+        for(int column{0}; column < columns; ++column) {
+            const QModelIndex index = sourceModel()->index(sourceRow, column, sourceParent);
+            if(sourceModel()->data(index).toString().contains(filterRegularExpression())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+};
+
+class ScriptCompleter : public QCompleter
+{
+    Q_OBJECT
+
+public:
+    using QCompleter::QCompleter;
+
+protected:
+    [[nodiscard]] QString pathFromIndex(const QModelIndex& index) const override
+    {
+        return index.data(InsertTextRole).toString();
+    }
+};
+
+class ScriptEditorTextEdit : public QTextEdit
+{
+    Q_OBJECT
+
+public:
+    explicit ScriptEditorTextEdit(QWidget* parent = nullptr)
+        : QTextEdit{parent}
+        , m_completer{new ScriptCompleter(this)}
+        , m_variableModel{new QStandardItemModel(this)}
+        , m_functionModel{new QStandardItemModel(this)}
+    {
+        populateCompletionModels();
+
+        m_completer->setWidget(this);
+        m_completer->setCaseSensitivity(Qt::CaseInsensitive);
+        m_completer->setCompletionMode(QCompleter::PopupCompletion);
+        m_completer->setFilterMode(Qt::MatchStartsWith);
+
+        QObject::connect(m_completer, qOverload<const QModelIndex&>(&QCompleter::activated), this,
+                         &ScriptEditorTextEdit::insertCompletion);
+    }
+
+    void insertSnippet(const QString& insertText, int cursorOffset = 0)
+    {
+        QTextCursor cursor{textCursor()};
+        cursor.insertText(insertText);
+        setTextCursor(cursor);
+
+        if(cursorOffset > 0) {
+            cursor = textCursor();
+            cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
+            setTextCursor(cursor);
+        }
+    }
+
+protected:
+    void keyPressEvent(QKeyEvent* event) override
+    {
+        if(m_completer->popup()->isVisible()) {
+            switch(event->key()) {
+                case(Qt::Key_Return):
+                case(Qt::Key_Enter):
+                case(Qt::Key_Escape):
+                case(Qt::Key_Tab):
+                case(Qt::Key_Backtab):
+                    event->ignore();
+                    return;
+                default:
+                    break;
+            }
+        }
+
+        QTextEdit::keyPressEvent(event);
+
+        if(shouldUpdateCompletion(event)) {
+            updateCompletion();
+        }
+        else if(isCompletionDismissKey(event)) {
+            m_completer->popup()->hide();
+        }
+    }
+
+private:
+    struct CompletionContext
+    {
+        bool valid{false};
+        ScriptReferenceKind kind{ScriptReferenceKind::Variable};
+        QString prefix;
+        int startPos{-1};
+        int endPos{-1};
+    };
+
+    [[nodiscard]] static bool shouldUpdateCompletion(const QKeyEvent* event)
+    {
+        if(event->modifiers().testFlag(Qt::ControlModifier) || event->modifiers().testFlag(Qt::AltModifier)
+           || event->modifiers().testFlag(Qt::MetaModifier)) {
+            return false;
+        }
+
+        switch(event->key()) {
+            case(Qt::Key_Backspace):
+            case(Qt::Key_Delete):
+                return true;
+            case(Qt::Key_Left):
+            case(Qt::Key_Right):
+            case(Qt::Key_Up):
+            case(Qt::Key_Down):
+            case(Qt::Key_Home):
+            case(Qt::Key_End):
+            case(Qt::Key_PageUp):
+            case(Qt::Key_PageDown):
+                return false;
+            default:
+                break;
+        }
+
+        const QString text = event->text();
+        if(text.size() != 1) {
+            return false;
+        }
+
+        return !text.front().isNull();
+    }
+
+    [[nodiscard]] static bool isCompletionDismissKey(const QKeyEvent* event)
+    {
+        switch(event->key()) {
+            case(Qt::Key_Left):
+            case(Qt::Key_Right):
+            case(Qt::Key_Up):
+            case(Qt::Key_Down):
+            case(Qt::Key_Home):
+            case(Qt::Key_End):
+            case(Qt::Key_PageUp):
+            case(Qt::Key_PageDown):
+            case(Qt::Key_Escape):
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    void populateCompletionModels()
+    {
+        for(const auto& entry : Fooyin::scriptReferenceEntries()) {
+            auto* item = new QStandardItem(entry.label);
+            item->setData(entry.insertText, InsertTextRole);
+            item->setData(entry.cursorOffset, CursorOffsetRole);
+            item->setToolTip(entry.description);
+
+            if(entry.kind == ScriptReferenceKind::Variable) {
+                m_variableModel->appendRow(item);
+            }
+            else {
+                m_functionModel->appendRow(item);
+            }
+        }
+    }
+
+    void updateCompletion()
+    {
+        const CompletionContext context = completionContext();
+        if(!context.valid) {
+            m_completer->popup()->hide();
+            return;
+        }
+
+        m_completionStart = context.startPos;
+        m_completionEnd   = context.endPos;
+
+        m_completer->setModel(context.kind == ScriptReferenceKind::Variable ? m_variableModel : m_functionModel);
+        m_completer->setCompletionPrefix(context.prefix);
+
+        if(!m_completer->setCurrentRow(0)) {
+            m_completer->popup()->hide();
+            return;
+        }
+
+        QRect rect{cursorRect()};
+        rect.setWidth(m_completer->popup()->sizeHintForColumn(0)
+                      + m_completer->popup()->verticalScrollBar()->sizeHint().width() + 24);
+        m_completer->complete(rect);
+    }
+
+    [[nodiscard]] CompletionContext completionContext() const
+    {
+        const QTextCursor cursor = textCursor();
+        const QTextBlock block   = cursor.block();
+        const QString text       = block.text();
+        const int posInBlock     = cursor.position() - block.position();
+
+        if(posInBlock <= 0 || posInBlock > text.size()) {
+            return {};
+        }
+
+        int start{posInBlock};
+
+        while(start > 0) {
+            const QChar ch = text.at(start - 1);
+
+            if(ch.isLetterOrNumber() || ch == u'_') {
+                --start;
+                continue;
+            }
+
+            if(ch == '%'_L1 || ch == '$'_L1) {
+                --start;
+            }
+
+            break;
+        }
+
+        if(start < 0 || start >= posInBlock) {
+            return {};
+        }
+
+        const QChar opener = text.at(start);
+        if(opener != '%'_L1 && opener != '$'_L1) {
+            return {};
+        }
+
+        // Don't open if at end of variable
+        if(opener == '%'_L1 && start == posInBlock - 1 && start > 0) {
+            const QChar previous = text.at(start - 1);
+            if(previous.isLetterOrNumber() || previous == '_'_L1) {
+                return {};
+            }
+        }
+
+        int end{posInBlock};
+
+        while(end < text.size()) {
+            const QChar ch = text.at(end);
+
+            if(ch.isLetterOrNumber() || ch == '_'_L1) {
+                ++end;
+                continue;
+            }
+
+            break;
+        }
+
+        if(opener == '%'_L1 && end < text.size() && text.at(end) == '%'_L1) {
+            ++end;
+        }
+
+        CompletionContext context;
+        context.valid    = true;
+        context.kind     = opener == '%'_L1 ? ScriptReferenceKind::Variable : ScriptReferenceKind::Function;
+        context.prefix   = text.mid(start, posInBlock - start);
+        context.startPos = block.position() + start;
+        context.endPos   = block.position() + end;
+        return context;
+    }
+
+    void insertCompletion(const QModelIndex& index)
+    {
+        if(!index.isValid() || m_completionStart < 0 || m_completionEnd < m_completionStart) {
+            return;
+        }
+
+        QTextCursor cursor{textCursor()};
+        cursor.setPosition(m_completionStart);
+        cursor.setPosition(m_completionEnd, QTextCursor::KeepAnchor);
+        cursor.insertText(index.data(InsertTextRole).toString());
+        setTextCursor(cursor);
+
+        const int cursorOffset = index.data(CursorOffsetRole).toInt();
+        if(cursorOffset > 0) {
+            cursor = textCursor();
+            cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
+            setTextCursor(cursor);
+        }
+    }
+
+    ScriptCompleter* m_completer;
+    QStandardItemModel* m_variableModel;
+    QStandardItemModel* m_functionModel;
+    int m_completionStart{-1};
+    int m_completionEnd{-1};
+};
+
 class ScriptEditorPrivate
 {
 public:
@@ -60,6 +378,7 @@ public:
 
     void setupConnections();
     void setupPlaceholder();
+    void setupReference();
 
     void updateResults();
     void updateResults(const Expression& expression);
@@ -79,12 +398,17 @@ public:
 
     QSplitter* m_mainSplitter;
     QSplitter* m_documentSplitter;
+    QTabWidget* m_sideTabs;
 
-    QTextEdit* m_editor;
+    ScriptEditorTextEdit* m_editor;
     QTextEdit* m_results;
     ScriptHighlighter m_highlighter;
 
     QTreeView* m_expressionTree;
+    QTreeView* m_referenceTree;
+    QLineEdit* m_referenceSearch;
+    QStandardItemModel* m_referenceModel;
+    ScriptReferenceFilterModel* m_referenceFilter;
     ExpressionTreeModel* m_model;
 
     QBasicTimer m_textChangeTimer;
@@ -100,10 +424,15 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     , m_track{track}
     , m_mainSplitter{new QSplitter(Qt::Horizontal, m_self)}
     , m_documentSplitter{new QSplitter(Qt::Vertical, m_self)}
-    , m_editor{new QTextEdit(m_self)}
+    , m_sideTabs{new QTabWidget(m_self)}
+    , m_editor{new ScriptEditorTextEdit(m_self)}
     , m_results{new QTextEdit(m_self)}
     , m_highlighter{m_editor->document()}
     , m_expressionTree{new QTreeView(m_self)}
+    , m_referenceTree{new QTreeView(m_self)}
+    , m_referenceSearch{new QLineEdit(m_self)}
+    , m_referenceModel{new QStandardItemModel(m_self)}
+    , m_referenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_model{new ExpressionTreeModel(m_self)}
     , m_parser{new ScriptRegistry(libraryManager)}
 {
@@ -111,17 +440,39 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     mainLayout->setContentsMargins({});
     mainLayout->addWidget(m_mainSplitter);
 
+    m_results->setReadOnly(true);
+
     m_expressionTree->setModel(m_model);
     m_expressionTree->setHeaderHidden(true);
     m_expressionTree->setSelectionMode(QAbstractItemView::SingleSelection);
 
     m_documentSplitter->addWidget(m_editor);
     m_documentSplitter->addWidget(m_results);
+
     m_documentSplitter->setStretchFactor(0, 3);
     m_documentSplitter->setStretchFactor(1, 1);
 
+    auto* structureTab    = new QWidget(m_self);
+    auto* structureLayout = new QGridLayout(structureTab);
+
+    structureLayout->setContentsMargins({});
+    structureLayout->addWidget(m_expressionTree);
+
+    setupReference();
+
+    auto* referenceTab    = new QWidget(m_self);
+    auto* referenceLayout = new QGridLayout(referenceTab);
+    referenceLayout->setContentsMargins({});
+
+    referenceLayout->addWidget(m_referenceSearch, 0, 0);
+    referenceLayout->addWidget(m_referenceTree, 1, 0);
+
+    m_sideTabs->addTab(structureTab, ScriptEditor::tr("Structure"));
+    m_sideTabs->addTab(referenceTab, ScriptEditor::tr("Reference"));
+
     m_mainSplitter->addWidget(m_documentSplitter);
-    m_mainSplitter->addWidget(m_expressionTree);
+    m_mainSplitter->addWidget(m_sideTabs);
+
     m_mainSplitter->setStretchFactor(0, 4);
     m_mainSplitter->setStretchFactor(1, 2);
 
@@ -136,6 +487,20 @@ void ScriptEditorPrivate::setupConnections()
     QObject::connect(m_model, &QAbstractItemModel::modelReset, m_expressionTree, &QTreeView::expandAll);
     QObject::connect(m_expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
                      [this]() { selectionChanged(); });
+
+    QObject::connect(m_referenceSearch, &QLineEdit::textChanged, m_self, [this](const QString& text) {
+        m_referenceFilter->setFilterRegularExpression(
+            QRegularExpression{QRegularExpression::escape(text), QRegularExpression::CaseInsensitiveOption});
+    });
+    QObject::connect(m_referenceTree, &QTreeView::doubleClicked, m_self, [this](const QModelIndex& index) {
+        const QModelIndex itemIndex = index.siblingAtColumn(0);
+        if(!itemIndex.isValid()) {
+            return;
+        }
+
+        m_editor->insertSnippet(itemIndex.data(InsertTextRole).toString(), itemIndex.data(CursorOffsetRole).toInt());
+        m_editor->setFocus();
+    });
 }
 
 void ScriptEditorPrivate::setupPlaceholder()
@@ -156,6 +521,47 @@ void ScriptEditorPrivate::setupPlaceholder()
     m_placeholderTrack.setPerformers({u"Performer 1"_s, u"Performer 2"_s});
     m_placeholderTrack.setDuration(180000);
     m_placeholderTrack.setFileSize(34560000);
+}
+
+void ScriptEditorPrivate::setupReference()
+{
+    m_referenceModel->setHorizontalHeaderLabels(
+        {ScriptEditor::tr("Item"), ScriptEditor::tr("Category"), ScriptEditor::tr("Description")});
+
+    for(const auto& entry : scriptReferenceEntries()) {
+        QList<QStandardItem*> row;
+        row.reserve(3);
+
+        auto* item        = new QStandardItem(entry.label);
+        auto* category    = new QStandardItem(entry.category);
+        auto* description = new QStandardItem(entry.description);
+
+        for(auto* column : {item, category, description}) {
+            column->setEditable(false);
+            column->setData(entry.insertText, InsertTextRole);
+            column->setData(entry.cursorOffset, CursorOffsetRole);
+            column->setToolTip(entry.description);
+        }
+
+        row << item << category << description;
+        m_referenceModel->appendRow(row);
+    }
+
+    m_referenceFilter->setSourceModel(m_referenceModel);
+    m_referenceFilter->setFilterCaseSensitivity(Qt::CaseInsensitive);
+
+    m_referenceTree->setModel(m_referenceFilter);
+    m_referenceTree->setRootIsDecorated(false);
+    m_referenceTree->setAlternatingRowColors(true);
+    m_referenceTree->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_referenceTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_referenceTree->setSortingEnabled(true);
+    m_referenceTree->sortByColumn(0, Qt::AscendingOrder);
+    m_referenceTree->header()->setStretchLastSection(true);
+    m_referenceTree->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    m_referenceTree->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+
+    m_referenceSearch->setPlaceholderText(ScriptEditor::tr("Filter"));
 }
 
 void ScriptEditorPrivate::updateResults()
@@ -320,3 +726,4 @@ void ScriptEditor::timerEvent(QTimerEvent* event)
 } // namespace Fooyin
 
 #include "gui/scripting/moc_scripteditor.cpp"
+#include "scripteditor.moc"
