@@ -141,6 +141,7 @@ private:
 
     bool m_registered;
     QString m_currCoverKey;
+    uint64_t m_coverLoadGeneration;
     QVariantMap m_currentMetaData;
     CoverProvider* m_coverProvider;
 };

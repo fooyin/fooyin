@@ -33,6 +33,7 @@
 
 #include <QApplication>
 #include <QDBusObjectPath>
+#include <QFile>
 #include <QLoggingCategory>
 
 Q_LOGGING_CATEGORY(MPRIS, "fy.mpris")
@@ -66,6 +67,7 @@ namespace Fooyin::Mpris {
 MprisPlugin::MprisPlugin()
     : m_registered{false}
     , m_coverProvider{nullptr}
+    , m_coverLoadGeneration{0}
 { }
 
 void MprisPlugin::initialise(const CorePluginContext& context)
@@ -363,7 +365,11 @@ void MprisPlugin::SetPosition(const QDBusObjectPath& /*path*/, int64_t position)
 
 QString MprisPlugin::currentCoverPath() const
 {
-    return Fooyin::Gui::coverPath() + m_currCoverKey + u".jpg"_s;
+    if(m_currCoverKey.isEmpty()) {
+        return {};
+    }
+
+    return Gui::coverPath() + m_currCoverKey + u".jpg"_s;
 }
 
 void MprisPlugin::notify(const QString& name, const QVariant& value)
@@ -381,8 +387,16 @@ void MprisPlugin::notify(const QVariantMap& properties)
 
 void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
 {
-    QFile::remove(currentCoverPath());
+    const QString previousCoverPath = currentCoverPath();
+
+    ++m_coverLoadGeneration;
+
     m_currentMetaData.clear();
+    m_currCoverKey.clear();
+
+    if(!previousCoverPath.isEmpty()) {
+        QFile::remove(previousCoverPath);
+    }
 
     if(playlistTrack.isValid()) {
         loadMetaData(playlistTrack);
@@ -417,17 +431,27 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
     }
 
     const auto loadArtAndReload = [this]() {
-        m_currentMetaData[u"mpris:artUrl"_s] = QUrl::fromLocalFile(currentCoverPath()).toString();
+        if(const QString coverPath = currentCoverPath(); !coverPath.isEmpty()) {
+            m_currentMetaData[u"mpris:artUrl"_s] = QUrl::fromLocalFile(coverPath).toString();
+        }
+        else {
+            m_currentMetaData.remove(u"mpris:artUrl"_s);
+        }
+
         qCDebug(MPRIS) << "Sending MPRIS data:" << m_currentMetaData;
         emit reloadMetadata();
     };
 
     const QString coverKey = Utils::generateHash(u"MPRIS"_s, track.hash());
-    if(m_currCoverKey != coverKey) {
-        QFile::remove(currentCoverPath());
 
+    if(m_currCoverKey != coverKey) {
         m_coverProvider->trackCoverFull(track, Track::Cover::Front)
-            .then([this, coverKey, track, loadArtAndReload](const QPixmap& cover) {
+            .then(this, [this, loadGeneration = m_coverLoadGeneration, coverKey, track,
+                         loadArtAndReload](const QPixmap& cover) {
+                if(loadGeneration != m_coverLoadGeneration) {
+                    return;
+                }
+
                 if(!cover.isNull()) {
                     m_currCoverKey = coverKey;
                     QFile file{currentCoverPath()};
