@@ -19,7 +19,6 @@
 
 #include "playlistpresetspage.h"
 
-#include "internalguisettings.h"
 #include "playlist/playlistpreset.h"
 #include "playlist/presetregistry.h"
 
@@ -405,10 +404,6 @@ void PlaylistPresetsPageWidget::updatePreset()
 
     auto preset = regPreset.value();
 
-    if(preset.isDefault) {
-        return;
-    }
-
     preset.header.title.script    = m_headerTitle->text();
     preset.header.subtitle.script = m_headerSubtitle->text();
     preset.header.sideText.script = m_headerSideText->text();
@@ -460,14 +455,7 @@ void PlaylistPresetsPageWidget::selectionChanged()
 
 void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
 {
-    m_renamePreset->setDisabled(preset.isDefault);
     m_deletePreset->setDisabled(preset.isDefault);
-    m_updatePreset->setDisabled(preset.isDefault);
-
-    m_headerTitle->setReadOnly(preset.isDefault);
-    m_headerSubtitle->setReadOnly(preset.isDefault);
-    m_headerSideText->setReadOnly(preset.isDefault);
-    m_headerInfo->setReadOnly(preset.isDefault);
 
     m_headerTitle->setText(preset.header.title.script);
     m_headerSubtitle->setText(preset.header.subtitle.script);
@@ -475,19 +463,14 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_headerInfo->setText(preset.header.info.script);
 
     m_simpleHeader->setChecked(preset.header.simple);
-    m_simpleHeader->setDisabled(preset.isDefault);
     m_showCover->setChecked(preset.header.showCover);
-    m_showCover->setDisabled(preset.isDefault || preset.header.simple);
+    m_showCover->setDisabled(preset.header.simple);
 
     m_overrideHeaderHeight->setChecked(preset.header.rowHeight > 0);
-    m_overrideHeaderHeight->setEnabled(!preset.isDefault);
     m_headerRowHeight->setValue(preset.header.rowHeight);
-    m_headerRowHeight->setReadOnly(preset.isDefault);
     m_headerRowHeight->setEnabled(m_overrideHeaderHeight->isChecked());
 
-    m_subHeaders->setReadOnly(preset.isDefault);
     m_alignSubheadersToImageColumns->setChecked(preset.insetSubheadersToImageColumns);
-    m_alignSubheadersToImageColumns->setDisabled(preset.isDefault);
 
     for(const auto& subheader : preset.subHeaders) {
         createGroupPresetInputs(subheader, m_subHeaders, this);
@@ -496,16 +479,11 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_headerSubtitle->setDisabled(preset.header.simple);
     m_headerInfo->setDisabled(preset.header.simple);
 
-    m_trackLeftText->setReadOnly(preset.isDefault);
-    m_trackRightText->setReadOnly(preset.isDefault);
-
     m_trackLeftText->setText(preset.track.leftText.script);
     m_trackRightText->setText(preset.track.rightText.script);
 
     m_overrideTrackHeight->setChecked(preset.track.rowHeight > 0);
-    m_overrideTrackHeight->setEnabled(!preset.isDefault);
     m_trackRowHeight->setValue(preset.track.rowHeight);
-    m_trackRowHeight->setReadOnly(preset.isDefault);
     m_trackRowHeight->setEnabled(m_overrideTrackHeight->isChecked());
 }
 

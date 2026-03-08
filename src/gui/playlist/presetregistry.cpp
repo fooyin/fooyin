@@ -23,7 +23,7 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 PresetRegistry::PresetRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{u"PlaylistWidget/Presets"_s, settings, parent}
+    : ItemRegistry{u"PlaylistWidget/Presets"_s, settings, u"PlaylistWidget/PresetOverrides"_s, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         if(const auto preset = itemById(id)) {
