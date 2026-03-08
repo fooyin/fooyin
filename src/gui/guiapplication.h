@@ -55,6 +55,7 @@ public:
     void openFiles(const QList<QUrl>& files);
 
     void searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick);
+    void attachArtwork(const TrackList& tracks, Track::Cover type, const QString& filepath);
     void removeArtwork(const TrackList& tracks, const std::set<Track::Cover>& types);
     void removeAllArtwork(const TrackList& tracks);
 

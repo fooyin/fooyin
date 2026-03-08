@@ -19,6 +19,9 @@
 
 #include "coverwidget.h"
 
+#include "artwork/artworkexporter.h"
+#include "statusevent.h"
+
 #include <core/engine/audioloader.h>
 #include <core/player/playercontroller.h>
 #include <core/track.h>
@@ -30,11 +33,11 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QContextMenuEvent>
+#include <QDir>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QLabel>
 #include <QMenu>
-#include <QStyleOption>
 #include <QStylePainter>
 #include <QTimer>
 #include <QTimerEvent>
@@ -249,11 +252,22 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
         auto* search      = new QAction(tr("Search for artwork…"), menu);
         auto* quickSearch = new QAction(tr("Quicksearch for artwork"), menu);
+        auto* extractFile = new QAction(tr("Auto-extract to file"), menu);
+        auto* extractAs   = new QAction(tr("Extract as…"), menu);
         auto* remove      = new QAction(tr("Remove artwork"), menu);
 
         for(const auto& action : {search, quickSearch, remove}) {
             action->setEnabled(canWriteCover());
         }
+        search->setStatusTip(tr("Search for artwork for this cover type"));
+        quickSearch->setStatusTip(tr("Search for artwork and automatically choose the best match for this cover type"));
+        extractFile->setStatusTip(
+            tr("Extract this embedded artwork to a file in the track directory without prompting"));
+        extractAs->setStatusTip(tr("Choose where to extract this embedded artwork"));
+        remove->setStatusTip(tr("Remove this artwork"));
+
+        extractFile->setEnabled(m_track.isValid() && !m_track.isInArchive());
+        extractAs->setEnabled(m_track.isValid() && !m_track.isInArchive());
 
         if(m_coverType == Track::Cover::Back) {
             // Only support front and artist cover for now
@@ -263,6 +277,10 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
         }
 
         if(m_cover.isNull()) {
+            extractFile->setDisabled(true);
+            extractAs->setDisabled(true);
+        }
+        if(m_cover.isNull()) {
             remove->setDisabled(true);
         }
 
@@ -270,12 +288,24 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
                          [this]() { emit requestArtworkSearch({m_track}, m_coverType, false); });
         QObject::connect(quickSearch, &QAction::triggered, this,
                          [this]() { emit requestArtworkSearch({m_track}, m_coverType, true); });
+        QObject::connect(extractFile, &QAction::triggered, this, [this]() {
+            const auto summary = ArtworkExporter::extractTracks(m_audioLoader.get(), {m_track}, {m_coverType});
+            StatusEvent::post(ArtworkExporter::statusMessage(summary));
+        });
+        QObject::connect(extractAs, &QAction::triggered, this, [this]() {
+            if(const QString path = ArtworkExporter::extractTrackAs(m_audioLoader.get(), m_track, m_coverType, this);
+               !path.isEmpty()) {
+                StatusEvent::post(tr("Extracted artwork to %1").arg(QDir::toNativeSeparators(path)));
+            }
+        });
         QObject::connect(remove, &QAction::triggered, this,
                          [this]() { emit requestArtworkRemoval({m_track}, m_coverType); });
 
         menu->addSeparator();
         menu->addAction(search);
         menu->addAction(quickSearch);
+        menu->addAction(extractFile);
+        menu->addAction(extractAs);
         menu->addAction(remove);
     }
 

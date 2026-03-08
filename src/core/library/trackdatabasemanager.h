@@ -25,6 +25,9 @@
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/worker.h>
 
+#include <memory>
+#include <stop_token>
+
 namespace Fooyin {
 class Database;
 class AudioLoader;
@@ -47,6 +50,9 @@ signals:
     void updatedTracks(const Fooyin::TrackList& tracks);
     void updatedTracksStats(const Fooyin::TrackList& tracks);
     void removedTracks(const Fooyin::TrackList& tracks);
+    void trackWriteCompleted(int operationId, const Fooyin::TrackList& tracks, int failed, bool cancelled);
+    void trackCoverWriteCompleted(int operationId, const Fooyin::TrackList& tracks, int failed, bool cancelled);
+    void unavailableTracksRemoved(int operationId, const Fooyin::TrackList& tracks, int failed, bool cancelled);
 
 public slots:
     void getAllTracks();
@@ -55,6 +61,10 @@ public slots:
     void writeCovers(const Fooyin::TrackCoverData& tracks);
     void removeUnavailbleTracks(const TrackList& tracks);
     void cleanupTracks();
+
+    void updateTracks(const Fooyin::TrackList& tracks, bool write, int operationId, std::stop_token stopToken);
+    void writeCovers(const Fooyin::TrackCoverData& tracks, int operationId, std::stop_token stopToken);
+    void removeUnavailbleTracks(const TrackList& tracks, int operationId, std::stop_token stopToken);
 
 private:
     DbConnectionPoolPtr m_dbPool;

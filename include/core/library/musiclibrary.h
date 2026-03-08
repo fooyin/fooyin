@@ -24,6 +24,7 @@
 #include <core/library/libraryinfo.h>
 #include <core/track.h>
 
+#include <QFuture>
 #include <QObject>
 
 namespace Fooyin {
@@ -69,9 +70,23 @@ struct ScanProgress
     }
 };
 
+enum class WriteState : uint8_t
+{
+    Completed = 0,
+    Cancelled,
+};
+
+struct WriteResult
+{
+    WriteState state{WriteState::Completed};
+    int succeeded{0};
+    int failed{0};
+};
+
 struct WriteRequest
 {
     std::function<void()> cancel;
+    QFuture<WriteResult> finished;
 };
 
 /*!

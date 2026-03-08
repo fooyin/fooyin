@@ -90,6 +90,7 @@ signals:
     void selectionChanged();
     void requestPropertiesDialog();
     void requestArtworkSearch(const Fooyin::TrackList& tracks, bool quick);
+    void requestArtworkAttach(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type, const QString& filepath);
     void requestArtworkRemoval(const Fooyin::TrackList& tracks);
 
 public slots:

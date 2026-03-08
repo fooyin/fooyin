@@ -144,6 +144,11 @@ void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTra
 
 QFuture<void> UnifiedMusicLibraryPrivate::updateTracksMetadata(TrackList tracksToUpdate)
 {
+    if(tracksToUpdate.empty()) {
+        emit m_self->tracksMetadataChanged({});
+        return {};
+    }
+
     attachMetadataStore(tracksToUpdate);
     auto sortTracks
         = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), std::move(tracksToUpdate));

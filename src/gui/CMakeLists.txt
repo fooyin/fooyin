@@ -57,6 +57,8 @@ set(SOURCES
     artwork/artworkdelegate.h
     artwork/artworkdialog.cpp
     artwork/artworkdialog.h
+    artwork/artworkexporter.cpp
+    artwork/artworkexporter.h
     artwork/artworkfinder.cpp
     artwork/artworkfinder.h
     artwork/artworkitem.cpp

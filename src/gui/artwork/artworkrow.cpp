@@ -267,7 +267,8 @@ QByteArray ArtworkRow::image() const
 
 void ArtworkRow::contextMenuEvent(QContextMenuEvent* event)
 {
-    if(m_readOnly) {
+    const bool hasExistingImage = !m_imageData.isEmpty();
+    if(m_readOnly && !hasExistingImage) {
         return;
     }
 
@@ -280,17 +281,29 @@ void ArtworkRow::contextMenuEvent(QContextMenuEvent* event)
     overlay->raise();
     overlay->show();
 
-    const bool hasExistingImage = m_image->isVisible();
-
-    auto* add = new QAction(hasExistingImage ? tr("Replace image") : tr("Add image"), menu);
-    QObject::connect(add, &QAction::triggered, this, &ArtworkRow::replaceImage);
-
-    menu->addAction(add);
+    if(!m_readOnly) {
+        auto* add = new QAction(hasExistingImage ? tr("Replace image") : tr("Add image"), menu);
+        QObject::connect(add, &QAction::triggered, this, &ArtworkRow::replaceImage);
+        menu->addAction(add);
+    }
 
     if(hasExistingImage) {
-        auto* remove = new QAction(tr("Remove"), menu);
-        QObject::connect(remove, &QAction::triggered, this, &ArtworkRow::removeImage);
-        menu->addAction(remove);
+        auto* extractFile = new QAction(tr("Auto-export to file"), menu);
+        auto* extractAs   = new QAction(tr("Export as…"), menu);
+        extractFile->setStatusTip(
+            tr("Export this embedded artwork to a file in the track directory without prompting"));
+        extractAs->setStatusTip(tr("Choose where to export this embedded artwork"));
+        QObject::connect(extractFile, &QAction::triggered, this, &ArtworkRow::requestExtract);
+        QObject::connect(extractAs, &QAction::triggered, this, &ArtworkRow::requestExtractAs);
+        menu->addAction(extractFile);
+        menu->addAction(extractAs);
+
+        if(!m_readOnly) {
+            auto* remove = new QAction(tr("Remove"), menu);
+            remove->setStatusTip(tr("Remove this artwork"));
+            QObject::connect(remove, &QAction::triggered, this, &ArtworkRow::removeImage);
+            menu->addAction(remove);
+        }
     }
 
     menu->popup(event->globalPos());

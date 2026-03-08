@@ -19,8 +19,10 @@
 
 #include <gui/trackselectioncontroller.h>
 
+#include "artwork/artworkexporter.h"
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
+#include "statusevent.h"
 
 #include <core/library/libraryutils.h>
 #include <core/player/playercontroller.h>
@@ -36,8 +38,8 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QFileDialog>
 #include <QFileInfo>
-#include <QMenu>
 #include <QMenuBar>
 
 #include <ranges>
@@ -45,6 +47,16 @@
 using namespace Qt::StringLiterals;
 
 constexpr auto TempSelectionPlaylist = "␟TempSelectionPlaylist␟";
+
+namespace {
+QString promptForArtworkPath(QWidget* parent)
+{
+    static const QStringList imagePatterns = {u"*.png"_s, u"*.jpg"_s, u"*.jpeg"_s, u"*.webp"_s, u"*.bmp"_s, u"*.gif"_s};
+    const QString filter                   = QObject::tr("Images") + u" (%1)"_s.arg(imagePatterns.join(u' '));
+    return QFileDialog::getOpenFileName(parent, QObject::tr("Open Image"), QDir::homePath(), filter, nullptr,
+                                        QFileDialog::DontResolveSymlinks);
+}
+} // namespace
 
 namespace Fooyin {
 struct WidgetSelection
@@ -113,6 +125,10 @@ public:
     QAction* m_openFolder;
     QAction* m_searchArtwork;
     QAction* m_searchArtworkQuick;
+    QAction* m_extractArtwork;
+    QAction* m_attachFrontArtwork;
+    QAction* m_attachBackArtwork;
+    QAction* m_attachArtistArtwork;
     QAction* m_removeArtwork;
     QAction* m_openProperties;
 };
@@ -141,6 +157,10 @@ TrackSelectionControllerPrivate::TrackSelectionControllerPrivate(TrackSelectionC
     , m_openFolder{new QAction(tr("Open containing folder"), m_tracksMenu)}
     , m_searchArtwork{new QAction(tr("Search for artwork…"), m_tracksMenu)}
     , m_searchArtworkQuick{new QAction(tr("Quicksearch for artwork"), m_tracksMenu)}
+    , m_extractArtwork{new QAction(tr("Auto-extract artwork to files"), m_tracksMenu)}
+    , m_attachFrontArtwork{new QAction(tr("Front cover…"), m_tracksMenu)}
+    , m_attachBackArtwork{new QAction(tr("Back cover…"), m_tracksMenu)}
+    , m_attachArtistArtwork{new QAction(tr("Artist picture…"), m_tracksMenu)}
     , m_removeArtwork{new QAction(tr("Remove all artwork"), m_tracksMenu)}
     , m_openProperties{new QAction(tr("Properties"), m_tracksMenu)}
 {
@@ -273,6 +293,60 @@ void TrackSelectionControllerPrivate::setupMenu()
     //     }
     // });
     // artworkMenu->addAction(searchArtworkQuickCmd);
+
+    m_extractArtwork->setStatusTip(
+        tr("Extract embedded artwork for the selected tracks to files in their directories without prompting"));
+    auto* extractArtworkCmd = m_actionManager->registerAction(m_extractArtwork, Constants::Actions::ExportArtwork);
+    extractArtworkCmd->setCategories(tracksCategory);
+    QObject::connect(m_extractArtwork, &QAction::triggered, m_tracksMenu, [this]() {
+        if(hasTracks()) {
+            const auto summary
+                = ArtworkExporter::extractTracks(m_audioLoader, m_self->selectedTracks(),
+                                                 {Track::Cover::Front, Track::Cover::Back, Track::Cover::Artist});
+            StatusEvent::post(ArtworkExporter::statusMessage(summary));
+        }
+    });
+    artworkMenu->addAction(extractArtworkCmd);
+
+    auto* attachPictureMenu = new QMenu(tr("Attach picture"), artworkMenu->menu());
+
+    m_attachFrontArtwork->setStatusTip(tr("Attach an image file as the front cover for the selected tracks"));
+    QObject::connect(m_attachFrontArtwork, &QAction::triggered, m_tracksMenu, [this]() {
+        if(!hasTracks()) {
+            return;
+        }
+        const QString filepath = promptForArtworkPath(m_tracksMenu->menu());
+        if(!filepath.isEmpty()) {
+            emit m_self->requestArtworkAttach(m_self->selectedTracks(), Track::Cover::Front, filepath);
+        }
+    });
+    attachPictureMenu->addAction(m_attachFrontArtwork);
+
+    m_attachBackArtwork->setStatusTip(tr("Attach an image file as the back cover for the selected tracks"));
+    QObject::connect(m_attachBackArtwork, &QAction::triggered, m_tracksMenu, [this]() {
+        if(!hasTracks()) {
+            return;
+        }
+        const QString filepath = promptForArtworkPath(m_tracksMenu->menu());
+        if(!filepath.isEmpty()) {
+            emit m_self->requestArtworkAttach(m_self->selectedTracks(), Track::Cover::Back, filepath);
+        }
+    });
+    attachPictureMenu->addAction(m_attachBackArtwork);
+
+    m_attachArtistArtwork->setStatusTip(tr("Attach an image file as the artist picture for the selected tracks"));
+    QObject::connect(m_attachArtistArtwork, &QAction::triggered, m_tracksMenu, [this]() {
+        if(!hasTracks()) {
+            return;
+        }
+        const QString filepath = promptForArtworkPath(m_tracksMenu->menu());
+        if(!filepath.isEmpty()) {
+            emit m_self->requestArtworkAttach(m_self->selectedTracks(), Track::Cover::Artist, filepath);
+        }
+    });
+    attachPictureMenu->addAction(m_attachArtistArtwork);
+
+    artworkMenu->menu()->addMenu(attachPictureMenu);
 
     m_removeArtwork->setStatusTip(tr("Remove all artwork associated with the selected tracks (embedded, directory)"));
     auto* removeArtworkCmd = m_actionManager->registerAction(m_removeArtwork, Constants::Actions::RemoveArtwork);
@@ -579,6 +653,10 @@ void TrackSelectionControllerPrivate::updateActionState()
     m_openFolder->setEnabled(haveTracks && allTracksInSameFolder());
     m_searchArtwork->setEnabled(haveTracks && canWriteCover());
     m_searchArtworkQuick->setEnabled(haveTracks && canWriteCover());
+    m_extractArtwork->setEnabled(haveTracks);
+    m_attachFrontArtwork->setEnabled(haveTracks && canWrite());
+    m_attachBackArtwork->setEnabled(haveTracks && canWrite());
+    m_attachArtistArtwork->setEnabled(haveTracks && canWrite());
     m_openProperties->setEnabled(haveTracks);
     m_addToQueue->setEnabled(haveTracks);
     m_queueNext->setEnabled(haveTracks);

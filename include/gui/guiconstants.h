@@ -186,6 +186,7 @@ constexpr auto RemoveFromQueue       = "Tracks.RemoveFromQueue";
 constexpr auto OpenFolder            = "Tracks.OpenFolder";
 constexpr auto SearchArtwork         = "Tracks.SearchArtwork";
 constexpr auto SearchArtworkQuick    = "Tracks.SearchArtworkQuick";
+constexpr auto ExportArtwork         = "Tracks.ExportArtwork";
 constexpr auto RemoveArtwork         = "Tracks.RemoveArtwork";
 constexpr auto OpenProperties        = "Tracks.OpenProperties";
 constexpr auto ToggleMenubar         = "View.ToggleMenubar";

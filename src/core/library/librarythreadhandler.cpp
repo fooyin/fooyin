@@ -28,19 +28,20 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QBasicTimer>
+#include <QPromise>
 #include <QThread>
 #include <QTimerEvent>
 #include <QUrl>
 
 #include <deque>
+#include <stop_token>
+#include <unordered_map>
 
 using namespace std::chrono_literals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-constexpr auto WriteInterval  = 1s;
 constexpr auto UpdateInterval = 1s;
 #else
-constexpr auto WriteInterval  = 1000;
 constexpr auto UpdateInterval = 1000;
 #endif
 
@@ -67,6 +68,19 @@ struct LibraryScanRequest
 class LibraryThreadHandlerPrivate
 {
 public:
+    struct WriteOperation
+    {
+        std::stop_source stopSource;
+        std::shared_ptr<QPromise<WriteResult>> promise;
+    };
+
+    struct WriteOperationToken
+    {
+        int id{-1};
+        std::stop_token stopToken;
+        WriteRequest request;
+    };
+
     LibraryThreadHandlerPrivate(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                 std::shared_ptr<PlaylistLoader> playlistLoader,
                                 std::shared_ptr<TrackMetadataStore> metadataStore,
@@ -90,6 +104,9 @@ public:
     void updateProgress(int current, const QString& file, int total);
     void finishScanRequest();
     void cancelScanRequest(int id);
+    WriteOperationToken addWriteOperation();
+    void finishWriteOperation(int operationId, int succeeded, int failed, bool cancelled);
+    void cancelWriteOperations();
 
     LibraryThreadHandler* m_self;
 
@@ -101,14 +118,14 @@ public:
     LibraryScanner m_scanner;
     TrackDatabaseManager m_trackDatabaseManager;
 
-    QBasicTimer m_writeTimer;
-    TrackList m_tracksPendingWrite;
     QBasicTimer m_updateTimer;
     TrackList m_tracksPendingUpdate;
     QBasicTimer m_playcountTimer;
     TrackList m_tracksPendingPlaycountUpdate;
 
     std::deque<LibraryScanRequest> m_scanRequests;
+    int m_nextWriteOperationId{0};
+    std::unordered_map<int, WriteOperation> m_writeOperations;
     int m_currentRequestId{-1};
     bool m_currentRequestFinished{false};
     bool m_tracksAddedToLibrary{false};
@@ -388,6 +405,63 @@ void LibraryThreadHandlerPrivate::cancelScanRequest(int id)
     }
 }
 
+LibraryThreadHandlerPrivate::WriteOperationToken LibraryThreadHandlerPrivate::addWriteOperation()
+{
+    auto promise = std::make_shared<QPromise<WriteResult>>();
+    promise->start();
+
+    std::stop_source stopSource;
+
+    const int id = m_nextWriteOperationId++;
+    const auto [operationIt, inserted]
+        = m_writeOperations.emplace(id, WriteOperation{.stopSource = std::move(stopSource), .promise = promise});
+
+    auto& operation = operationIt->second;
+
+    WriteRequest request;
+    request.cancel = [stopSource = operation.stopSource]() {
+        stopSource.request_stop();
+    };
+    request.finished = promise->future();
+
+    return {.id = id, .stopToken = operation.stopSource.get_token(), .request = std::move(request)};
+}
+
+void LibraryThreadHandlerPrivate::finishWriteOperation(int operationId, int succeeded, int failed, bool cancelled)
+{
+    const auto operationIt = m_writeOperations.find(operationId);
+    if(operationIt == m_writeOperations.cend()) {
+        return;
+    }
+
+    const auto promise = std::move(operationIt->second.promise);
+    m_writeOperations.erase(operationIt);
+
+    if(!promise) {
+        return;
+    }
+
+    promise->addResult(WriteResult{
+        .state     = cancelled ? WriteState::Cancelled : WriteState::Completed,
+        .succeeded = succeeded,
+        .failed    = failed,
+    });
+    promise->finish();
+}
+
+void LibraryThreadHandlerPrivate::cancelWriteOperations()
+{
+    for(auto& [id, operation] : m_writeOperations) {
+        operation.stopSource.request_stop();
+        if(operation.promise) {
+            operation.promise->addResult(WriteResult{.state = WriteState::Cancelled});
+            operation.promise->finish();
+        }
+    }
+
+    m_writeOperations.clear();
+}
+
 LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                            std::shared_ptr<PlaylistLoader> playlistLoader,
                                            std::shared_ptr<TrackMetadataStore> metadataStore,
@@ -405,6 +479,18 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      &LibraryThreadHandler::tracksStatsUpdated);
     QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::removedTracks, this,
                      &LibraryThreadHandler::tracksRemoved);
+    QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::trackWriteCompleted, this,
+                     [this](int operationId, const TrackList& tracks, int failed, bool cancelled) {
+                         p->finishWriteOperation(operationId, static_cast<int>(tracks.size()), failed, cancelled);
+                     });
+    QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::trackCoverWriteCompleted, this,
+                     [this](int operationId, const TrackList& tracks, int failed, bool cancelled) {
+                         p->finishWriteOperation(operationId, static_cast<int>(tracks.size()), failed, cancelled);
+                     });
+    QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::unavailableTracksRemoved, this,
+                     [this](int operationId, const TrackList& tracks, int failed, bool cancelled) {
+                         p->finishWriteOperation(operationId, static_cast<int>(tracks.size()), failed, cancelled);
+                     });
     QObject::connect(&p->m_scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
     QObject::connect(&p->m_scanner, &LibraryScanner::progressChanged, this,
                      [this](int current, const QString& file, int total) { p->updateProgress(current, file, total); });
@@ -425,6 +511,7 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
 
 LibraryThreadHandler::~LibraryThreadHandler()
 {
+    p->cancelWriteOperations();
     p->m_scanner.stopThread();
     p->m_trackDatabaseManager.stopThread();
 
@@ -476,28 +563,26 @@ void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
 
 WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
 {
-    WriteRequest request;
-    request.cancel = [this]() {
-        p->m_trackDatabaseManager.stopThread();
-    };
+    const auto operation = p->addWriteOperation();
 
-    p->m_tracksPendingWrite.insert(p->m_tracksPendingWrite.end(), tracks.cbegin(), tracks.cend());
-    p->m_writeTimer.start(WriteInterval, this);
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
+                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken]() {
+                                  p->m_trackDatabaseManager.updateTracks(tracks, true, operationId, stopToken);
+                              });
 
-    return request;
+    return operation.request;
 }
 
 WriteRequest LibraryThreadHandler::writeTrackCovers(const TrackCoverData& tracks)
 {
-    WriteRequest request;
-    request.cancel = [this]() {
-        p->m_trackDatabaseManager.stopThread();
-    };
+    const auto operation = p->addWriteOperation();
 
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks]() { p->m_trackDatabaseManager.writeCovers(tracks); });
+                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken]() {
+                                  p->m_trackDatabaseManager.writeCovers(tracks, operationId, stopToken);
+                              });
 
-    return request;
+    return operation.request;
 }
 
 void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks)
@@ -514,15 +599,14 @@ void LibraryThreadHandler::saveUpdatedTrackPlaycounts(const TrackList& tracks)
 
 WriteRequest LibraryThreadHandler::removeUnavailbleTracks(const TrackList& tracks)
 {
-    WriteRequest request;
-    request.cancel = [this]() {
-        p->m_trackDatabaseManager.stopThread();
-    };
+    const auto operation = p->addWriteOperation();
 
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks]() { p->m_trackDatabaseManager.removeUnavailbleTracks(tracks); });
+                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken]() {
+                                  p->m_trackDatabaseManager.removeUnavailbleTracks(tracks, operationId, stopToken);
+                              });
 
-    return request;
+    return operation.request;
 }
 
 void LibraryThreadHandler::cleanupTracks()
@@ -547,14 +631,7 @@ void LibraryThreadHandler::libraryRemoved(int id)
 
 void LibraryThreadHandler::timerEvent(QTimerEvent* event)
 {
-    if(event->timerId() == p->m_writeTimer.timerId()) {
-        p->m_writeTimer.stop();
-        QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, tracks = p->m_tracksPendingWrite]() {
-            p->m_trackDatabaseManager.updateTracks(tracks, true);
-        });
-        p->m_tracksPendingWrite.clear();
-    }
-    else if(event->timerId() == p->m_updateTimer.timerId()) {
+    if(event->timerId() == p->m_updateTimer.timerId()) {
         p->m_updateTimer.stop();
         QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, tracks = p->m_tracksPendingUpdate]() {
             p->m_trackDatabaseManager.updateTrackStats(tracks, false);

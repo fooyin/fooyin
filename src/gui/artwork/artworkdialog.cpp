@@ -160,10 +160,9 @@ void ArtworkDialog::accept()
         TrackCoverData coverData;
         coverData.tracks = m_tracks;
         coverData.coverData.emplace(m_type, CoverImage{.mimeType = saveResult.mimeType, .data = saveResult.image});
-        m_library->writeTrackCovers(coverData);
-        QObject::connect(
-            m_library, &MusicLibrary::tracksMetadataChanged, this,
-            [this]() { std::ranges::for_each(m_tracks, &CoverProvider::removeFromCache); }, Qt::SingleShotConnection);
+        m_library->writeTrackCovers(coverData).finished.then(this, [tracks = m_tracks](const WriteResult& /*result*/) {
+            std::ranges::for_each(tracks, &CoverProvider::removeFromCache);
+        });
     }
     else {
         const QString path

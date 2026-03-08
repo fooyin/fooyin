@@ -88,6 +88,7 @@
 #include <QImageReader>
 #include <QLoggingCategory>
 #include <QMessageBox>
+#include <QMimeDatabase>
 #include <QPixmapCache>
 #include <QPushButton>
 #include <QStyle>
@@ -303,6 +304,10 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(
         &m_selectionController, &TrackSelectionController::requestArtworkSearch, m_self,
         [this](const TrackList& tracks, bool quick) { m_self->searchForArtwork(tracks, Track::Cover::Front, quick); });
+    QObject::connect(&m_selectionController, &TrackSelectionController::requestArtworkAttach, m_self,
+                     [this](const TrackList& tracks, Track::Cover type, const QString& filepath) {
+                         m_self->attachArtwork(tracks, type, filepath);
+                     });
     QObject::connect(&m_selectionController, &TrackSelectionController::requestArtworkRemoval, m_self,
                      [this](const TrackList& tracks) { m_self->removeAllArtwork(tracks); });
     QObject::connect(m_fileMenu, &FileMenu::requestNewPlaylist, m_self, [this]() { createNewPlaylist(); });
@@ -1244,11 +1249,9 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                 coverData.tracks = tracks;
                 coverData.coverData.emplace(Track::Cover::Front,
                                             CoverImage{.mimeType = saveResult.mimeType, .data = saveResult.image});
-                p->m_library->writeTrackCovers(coverData);
-                QObject::connect(
-                    p->m_library, &MusicLibrary::tracksMetadataChanged, this,
-                    [tracks]() { std::ranges::for_each(tracks, &CoverProvider::removeFromCache); },
-                    Qt::SingleShotConnection);
+                p->m_library->writeTrackCovers(coverData).finished.then(this, [tracks](const WriteResult& /*result*/) {
+                    std::ranges::for_each(tracks, &CoverProvider::removeFromCache);
+                });
             }
             else {
                 ScriptParser trackParser;
@@ -1278,11 +1281,38 @@ void GuiApplication::removeArtwork(const TrackList& tracks, const std::set<Track
         coverData.coverData.emplace(coverType, CoverImage{});
     }
 
-    QObject::connect(
-        p->m_library, &MusicLibrary::tracksMetadataChanged, this,
-        [tracks]() { std::ranges::for_each(tracks, CoverProvider::removeFromCache); }, Qt::SingleShotConnection);
+    p->m_library->writeTrackCovers(coverData).finished.then(this, [tracks](const WriteResult& /*result*/) {
+        std::ranges::for_each(tracks, CoverProvider::removeFromCache);
+    });
+}
 
-    p->m_library->writeTrackCovers(coverData);
+void GuiApplication::attachArtwork(const TrackList& tracks, Track::Cover type, const QString& filepath)
+{
+    if(tracks.empty() || filepath.isEmpty()) {
+        return;
+    }
+
+    QFile file{filepath};
+    if(!file.open(QIODevice::ReadOnly)) {
+        StatusEvent::post(tr("Failed to open artwork file"));
+        return;
+    }
+
+    const QByteArray image = file.readAll();
+    if(image.isEmpty()) {
+        StatusEvent::post(tr("Artwork file is empty"));
+        return;
+    }
+
+    const QString mimeType = QMimeDatabase().mimeTypeForData(image).name();
+
+    TrackCoverData coverData;
+    coverData.tracks = tracks;
+    coverData.coverData.emplace(type, CoverImage{.mimeType = mimeType, .data = image});
+
+    p->m_library->writeTrackCovers(coverData).finished.then(this, [tracks](const WriteResult& /*result*/) {
+        std::ranges::for_each(tracks, CoverProvider::removeFromCache);
+    });
 }
 
 void GuiApplication::removeAllArtwork(const TrackList& tracks)

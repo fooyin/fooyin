@@ -36,6 +36,7 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QMenu>
+#include <QPointer>
 
 namespace Fooyin {
 LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent)
@@ -119,14 +120,15 @@ void LibraryMenu::removeUnavailbleTracks()
     progress->setWindowTitle(tr("Removing unavailable tracks"));
 
     m_deleteRequest = m_library->removeUnavailbleTracks();
-    QObject::connect(
-        m_library, &MusicLibrary::tracksDeleted, this,
-        [this, progress]() {
-            progress->setValue(1);
-            progress->deleteLater();
-            m_deleteRequest = {};
-        },
-        Qt::SingleShotConnection);
+
+    const QPointer progressGuard{progress};
+    m_deleteRequest.finished.then(this, [this, progressGuard](const WriteResult& /*result*/) {
+        if(progressGuard) {
+            progressGuard->setValue(1);
+            progressGuard->deleteLater();
+        }
+        m_deleteRequest = {};
+    });
 
     QObject::connect(progress, &ElapsedProgressDialog::cancelled, progress, [this, progress]() {
         if(m_deleteRequest.cancel) {

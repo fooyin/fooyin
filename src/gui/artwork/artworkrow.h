@@ -55,6 +55,10 @@ public:
     [[nodiscard]] QString mimeType() const;
     [[nodiscard]] QByteArray image() const;
 
+signals:
+    void requestExtract();
+    void requestExtractAs();
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 

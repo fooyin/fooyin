@@ -19,11 +19,15 @@
 
 #include "artworkproperties.h"
 
+#include "artworkexporter.h"
 #include "artworkrow.h"
+#include "sources/artworksource.h"
+#include "statusevent.h"
 
 #include <core/engine/audioloader.h>
 #include <gui/coverprovider.h>
 
+#include <QDir>
 #include <QFutureWatcher>
 #include <QGridLayout>
 #include <QPainter>
@@ -78,6 +82,31 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
     int row{0};
     for(ArtworkRow* artworkRow : m_rows) {
         artworkLayout->addWidget(artworkRow, row++, 0);
+        QObject::connect(artworkRow, &ArtworkRow::requestExtract, this, [this, artworkRow]() {
+            const ArtworkResult artwork{.mimeType = artworkRow->mimeType(), .image = artworkRow->image()};
+            const auto summary = ArtworkExporter::extractTracks(m_tracks, artworkRow->type(), artwork);
+            if(summary.written == 0 && summary.failed == 0) {
+                StatusEvent::post(tr("No embedded artwork found to export"));
+            }
+            else if(summary.failed == 0) {
+                StatusEvent::post(tr("Exported artwork to %1 files").arg(summary.written));
+            }
+            else if(summary.written == 0) {
+                StatusEvent::post(tr("Failed to export artwork"));
+            }
+            else {
+                StatusEvent::post(
+                    tr("Exported artwork to %1 files (%2 failed)").arg(summary.written).arg(summary.failed));
+            }
+        });
+        QObject::connect(artworkRow, &ArtworkRow::requestExtractAs, this, [this, artworkRow]() {
+            const ArtworkResult artwork{.mimeType = artworkRow->mimeType(), .image = artworkRow->image()};
+            const Track track = m_tracks.empty() ? Track{} : m_tracks.front();
+            if(const QString path = ArtworkExporter::extractArtworkAs(track, artworkRow->type(), artwork, this);
+               !path.isEmpty()) {
+                StatusEvent::post(tr("Exported artwork to %1").arg(QDir::toNativeSeparators(path)));
+            }
+        });
     }
     artworkLayout->setRowStretch(artworkLayout->rowCount(), 1);
 
@@ -87,6 +116,9 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
 ArtworkProperties::~ArtworkProperties()
 {
     m_cancelLoading->store(true);
+    if(m_writeRequest && m_writeRequest->cancel) {
+        m_writeRequest->cancel();
+    }
 }
 
 void ArtworkProperties::loadTrackArtwork()
@@ -204,7 +236,7 @@ void ArtworkProperties::apply()
 
     for(ArtworkRow* row : m_rows) {
         if(row->status() != ArtworkRow::Status::None) {
-            coverData.coverData.emplace(row->type(), CoverImage{row->mimeType(), row->image()});
+            coverData.coverData.emplace(row->type(), CoverImage{.mimeType = row->mimeType(), .data = row->image()});
             row->reset();
         }
     }
@@ -213,22 +245,18 @@ void ArtworkProperties::apply()
         return;
     }
 
-    QObject::connect(
-        m_library, &MusicLibrary::tracksMetadataChanged, this,
-        [this]() {
-            m_writeRequest = {};
-            m_writing      = false;
-            m_artworkWidget->show();
-            update();
-        },
-        Qt::SingleShotConnection);
-
     m_writing = true;
     m_artworkWidget->hide();
     update();
 
     m_writeRequest = m_library->writeTrackCovers(coverData);
-    std::ranges::for_each(m_tracks, CoverProvider::removeFromCache);
+    m_writeRequest->finished.then(this, [this, tracks = m_tracks](const WriteResult& /*result*/) {
+        std::ranges::for_each(tracks, CoverProvider::removeFromCache);
+        m_writeRequest = {};
+        m_writing      = false;
+        m_artworkWidget->show();
+        update();
+    });
 }
 
 void ArtworkProperties::paintEvent(QPaintEvent* event)
