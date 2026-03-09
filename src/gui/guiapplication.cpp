@@ -37,6 +37,7 @@
 #include "menubar/viewmenu.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
+#include "scripting/scriptcommandhandler.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "statusevent.h"
@@ -188,6 +189,7 @@ public:
     HelpMenu* m_helpMenu;
 
     PropertiesDialog* m_propertiesDialog;
+    std::unique_ptr<ScriptCommandHandler> m_scriptCommandHandler;
     WindowController* m_windowController;
     ThemeRegistry* m_themeRegistry;
 
@@ -225,13 +227,17 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_libraryMenu{new LibraryMenu(m_core, m_actionManager, m_self)}
     , m_helpMenu{new HelpMenu(m_actionManager, m_self)}
     , m_propertiesDialog{new PropertiesDialog(m_self)}
+    , m_scriptCommandHandler{std::make_unique<ScriptCommandHandler>(m_actionManager, m_playerController,
+                                                                    m_propertiesDialog)}
     , m_windowController{new WindowController(m_mainWindow.get())}
     , m_themeRegistry{new ThemeRegistry(m_settings, m_self)}
-    , m_guiPluginContext{m_actionManager,        &m_layoutProvider,  &m_selectionController,
-                         m_searchController,     m_propertiesDialog, &m_widgetProvider,
-                         m_editableLayout.get(), m_windowController, m_themeRegistry}
+    , m_guiPluginContext{m_actionManager,    &m_layoutProvider,      &m_selectionController,
+                         m_searchController, m_propertiesDialog,     m_scriptCommandHandler.get(),
+                         &m_widgetProvider,  m_editableLayout.get(), m_windowController,
+                         m_themeRegistry}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
-    , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_self, &m_playlistInteractor, m_self)}
+    , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_self, &m_playlistInteractor, m_scriptCommandHandler.get(),
+                            m_self)}
     , m_scriptParser{new ScriptRegistry(m_playerController)}
     , m_coverProvider{m_core->audioLoader(), m_settings}
 { }
@@ -1343,6 +1349,11 @@ SearchController* GuiApplication::searchController() const
 PropertiesDialog* GuiApplication::propertiesDialog() const
 {
     return p->m_propertiesDialog;
+}
+
+ScriptCommandHandler* GuiApplication::scriptCommandHandler() const
+{
+    return p->m_scriptCommandHandler.get();
 }
 
 EditableLayout* GuiApplication::editableLayout() const

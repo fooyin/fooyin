@@ -28,10 +28,11 @@ struct RichFormatting
 {
     QFont font;
     QColor colour;
+    QString link;
 
     bool operator==(const RichFormatting& other) const
     {
-        return std::tie(font, colour) == std::tie(other.font, other.colour);
+        return std::tie(font, colour, link) == std::tie(other.font, other.colour, other.link);
     };
 };
 

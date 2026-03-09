@@ -247,10 +247,16 @@ set(SOURCES
     replaygain/replaygainview.h
     replaygain/replaygainwidget.cpp
     replaygain/replaygainwidget.h
+    scriptdisplay/scriptdisplay.cpp
+    scriptdisplay/scriptdisplay.h
+    scriptdisplay/scriptdisplayconfigdialog.cpp
+    scriptdisplay/scriptdisplayconfigdialog.h
     scripting/expressiontreemodel.cpp
     scripting/expressiontreemodel.h
     scripting/scripteditor.cpp
     scripting/scriptformatter.cpp
+    scripting/scriptcommandhandler.cpp
+    scripting/scriptcommandhandler.h
     scripting/scriptreferenceentries.cpp
     scripting/scriptreferenceentries.h
     scripting/scriptformatterregistry.cpp

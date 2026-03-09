@@ -31,16 +31,17 @@ class Application;
 class ArtworkFinder;
 class CoverProvider;
 class CoverWidget;
+class DspPresetRegistry;
 class FyWidget;
 class GuiApplication;
 class LibraryTreeController;
 class MainWindow;
 class PlaylistController;
 class PlaylistInteractor;
-class DspPresetRegistry;
 struct ScanProgress;
-class StatusWidget;
+class ScriptCommandHandler;
 class SettingsManager;
+class StatusWidget;
 class ThemeRegistry;
 class WidgetProvider;
 
@@ -50,7 +51,7 @@ class Widgets : public QObject
 
 public:
     Widgets(Application* core, MainWindow* window, GuiApplication* gui, PlaylistInteractor* playlistInteractor,
-            QObject* parent = nullptr);
+            ScriptCommandHandler* scriptCommandHandler, QObject* parent = nullptr);
 
     void registerWidgets();
     void registerPages();
@@ -80,5 +81,6 @@ private:
     LibraryTreeController* m_libraryTreeController;
     DspPresetRegistry* m_dspPresetRegistry;
     std::unique_ptr<DspSettingsRegistry> m_dspSettingsRegistry;
+    ScriptCommandHandler* m_scriptCommandHandler;
 };
 } // namespace Fooyin

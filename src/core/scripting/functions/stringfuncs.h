@@ -64,4 +64,7 @@ QString ext(const QStringList& vec);
 QString filename(const QStringList& vec);
 QString progress(const QStringList& vec);
 QString progress2(const QStringList& vec);
+QString doclink(const QStringList& vec);
+QString cmdlink(const QStringList& vec);
+QString urlencode(const QStringList& vec);
 } // namespace Fooyin::Scripting
