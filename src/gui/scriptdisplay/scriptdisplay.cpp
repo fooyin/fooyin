@@ -279,8 +279,6 @@ void ScriptDisplay::clearSavedDefaults() const
     m_settings->fileRemove(LinkColourKey);
     m_settings->fileRemove(HorizontalAlignmentKey);
     m_settings->fileRemove(VerticalAlignmentKey);
-    m_settings->fileRemove(u"TextWidget/UseFormatter"_s);
-    m_settings->fileRemove(u"TextWidget/Colour"_s);
 }
 
 void ScriptDisplay::saveLayoutData(QJsonObject& layout)
