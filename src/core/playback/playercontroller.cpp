@@ -41,6 +41,18 @@ public:
         , m_playMode{static_cast<Playlist::PlayModes>(m_settings->value<Settings::Core::PlayMode>())}
     { }
 
+    void emitPositionSignals(uint64_t ms)
+    {
+        emit m_self->positionChanged(ms);
+
+        const uint64_t seconds = ms / 1000;
+        if(!m_hasLastPositionSecond || m_lastPositionSecond != seconds) {
+            m_lastPositionSecond    = seconds;
+            m_hasLastPositionSecond = true;
+            emit m_self->positionChangedSeconds(seconds);
+        }
+    }
+
     void changeTrack(const PlaylistTrack& track, const Player::TrackChangeContext& context)
     {
         m_currentTrack         = track;
@@ -102,6 +114,7 @@ public:
     uint64_t m_totalDuration{0};
     uint64_t m_position{0};
     int m_bitrate{0};
+    uint64_t m_lastPositionSecond{0};
 
     uint64_t m_timeListened{0};
     uint64_t m_playedThreshold{0};
@@ -110,6 +123,7 @@ public:
     bool m_counted{false};
     bool m_isQueueTrack{false};
     bool m_stopCurrentSkip{false};
+    bool m_hasLastPositionSecond{false};
     Player::TrackChangeContext m_pendingChangeContext;
     Player::TrackChangeContext m_lastChangeContext;
 
@@ -155,7 +169,7 @@ void PlayerController::reset()
     p->m_position     = 0;
     p->m_bitrate      = 0;
 
-    emit positionChanged(0);
+    p->emitPositionSignals(0);
     emit playbackSnapshotChanged(playbackSnapshot());
 }
 
@@ -331,7 +345,7 @@ void PlayerController::stop()
 {
     if(p->updatePlaystate(Player::PlayState::Stopped)) {
         p->m_position = 0;
-        emit positionChanged(0);
+        p->emitPositionSignals(0);
         emit transportStopRequested();
     }
 }
@@ -348,7 +362,7 @@ void PlayerController::syncPlayStateFromEngine(Player::PlayState state)
         case Player::PlayState::Stopped:
             if(p->updatePlaystate(Player::PlayState::Stopped)) {
                 p->m_position = 0;
-                emit positionChanged(0);
+                p->emitPositionSignals(0);
             }
             break;
     }
@@ -370,7 +384,7 @@ void PlayerController::setCurrentPosition(uint64_t ms)
         }
     }
 
-    emit positionChanged(ms);
+    p->emitPositionSignals(ms);
 }
 
 void PlayerController::setBitrate(int bitrate)

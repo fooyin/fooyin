@@ -144,6 +144,7 @@ signals:
     void transportStopRequested();
 
     void positionChanged(uint64_t ms);
+    void positionChangedSeconds(uint64_t seconds);
     void positionMoved(uint64_t ms);
 
     void currentTrackChanged(const Fooyin::Track& track);
