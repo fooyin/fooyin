@@ -25,6 +25,7 @@
 
 #include <QApplication>
 #include <QPalette>
+#include <QRegularExpression>
 
 #include <stack>
 
@@ -34,6 +35,12 @@ namespace Fooyin {
 class ScriptFormatterPrivate
 {
 public:
+    struct FormatTag
+    {
+        QString name;
+        QString option;
+    };
+
     void advance();
     void consume(ScriptScanner::TokenType type);
     void consume(ScriptScanner::TokenType type, const QString& message);
@@ -44,14 +51,19 @@ public:
 
     void expression();
     void formatBlock();
-    void processFormat(const QString& func, const QString& option);
+    void processFormat(const FormatTag& tag);
     void addBlock();
     void closeBlock();
     void resetFormat();
+    [[nodiscard]] QString readTagContent();
+    [[nodiscard]] FormatTag parseFormatTag(const QString& content) const;
+    [[nodiscard]] QString parseHtmlAttribute(const QString& attrs, const QString& name) const;
+    [[nodiscard]] QString peekClosingTagName();
 
     ScriptScanner m_scanner;
     ScriptFormatterRegistry m_registry;
     QFont m_font;
+    QColor m_colour;
 
     ScriptScanner::Token m_current;
     ScriptScanner::Token m_previous;
@@ -138,36 +150,102 @@ void ScriptFormatterPrivate::expression()
 
 void ScriptFormatterPrivate::formatBlock()
 {
-    QString func;
-    QString option;
-    func.reserve(8);
-    option.reserve(16);
+    const FormatTag tag = parseFormatTag(readTagContent());
+    consume(ScriptScanner::TokRightAngle, u"Expected '>' after expression"_s);
 
-    bool formatOption{false};
-    while(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
-        advance();
-        if(m_previous.type == ScriptScanner::TokEquals) {
-            formatOption = true;
-            advance();
-        }
-
-        if(formatOption) {
-            option.append(m_previous.value);
-        }
-        else {
-            func.append(m_previous.value);
-        }
+    if(tag.name.isEmpty()) {
+        error(u"Format option not found"_s);
+        return;
     }
 
-    processFormat(func, option);
+    processFormat(tag);
     closeBlock();
 }
 
-void ScriptFormatterPrivate::processFormat(const QString& func, const QString& option)
+QString ScriptFormatterPrivate::readTagContent()
+{
+    QString content;
+
+    while(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
+        content.append(m_current.value);
+        advance();
+    }
+
+    return content.trimmed();
+}
+
+ScriptFormatterPrivate::FormatTag ScriptFormatterPrivate::parseFormatTag(const QString& content) const
+{
+    if(content.isEmpty()) {
+        return {};
+    }
+
+    const QString trimmed = content.trimmed();
+    const int firstSpace  = trimmed.indexOf(u' ');
+    const int firstEquals = trimmed.indexOf(u'=');
+
+    if(firstEquals >= 0 && (firstSpace < 0 || firstEquals < firstSpace)) {
+        return {
+            .name   = trimmed.left(firstEquals).trimmed().toLower(),
+            .option = trimmed.mid(firstEquals + 1).trimmed(),
+        };
+    }
+
+    const QString name = (firstSpace < 0 ? trimmed : trimmed.left(firstSpace)).trimmed().toLower();
+    if(name.isEmpty()) {
+        return {};
+    }
+
+    FormatTag tag{.name = name, .option = {}};
+    if(firstSpace >= 0 && name == "a"_L1) {
+        tag.option = parseHtmlAttribute(trimmed.mid(firstSpace + 1), u"href"_s);
+    }
+
+    return tag;
+}
+
+QString ScriptFormatterPrivate::parseHtmlAttribute(const QString& attrs, const QString& name) const
+{
+    const QRegularExpression attrRegex{
+        u"(?:^|\\s)%1\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s\"'>]+))"_s.arg(QRegularExpression::escape(name))};
+    const QRegularExpressionMatch match = attrRegex.match(attrs);
+    if(!match.hasMatch()) {
+        return {};
+    }
+
+    for(int i = 1; i <= 3; ++i) {
+        if(!match.captured(i).isEmpty()) {
+            return match.captured(i);
+        }
+    }
+
+    return {};
+}
+
+QString ScriptFormatterPrivate::peekClosingTagName()
+{
+    if(m_current.type != ScriptScanner::TokLeftAngle || m_scanner.peekNext().type != ScriptScanner::TokSlash) {
+        return {};
+    }
+
+    QString content;
+    int delta = 2;
+    while(true) {
+        const auto token = m_scanner.peekNext(delta++);
+        if(token.type == ScriptScanner::TokRightAngle || token.type == ScriptScanner::TokEos) {
+            break;
+        }
+        content.append(token.value);
+    }
+
+    return content.trimmed().toLower();
+}
+
+void ScriptFormatterPrivate::processFormat(const FormatTag& tag)
 {
     RichFormatting nextFormatting{m_currentBlock.format};
 
-    if(m_registry.format(nextFormatting, func, option)) {
+    if(m_registry.format(nextFormatting, tag.name, tag.option)) {
         addBlock();
         m_currentBlock.format = std::move(nextFormatting);
     }
@@ -175,15 +253,9 @@ void ScriptFormatterPrivate::processFormat(const QString& func, const QString& o
         error(u"Format option not found"_s);
     }
 
-    consume(ScriptScanner::TokRightAngle, u"Expected '>' after expression"_s);
-
     while(m_current.type != ScriptScanner::TokEos) {
-        if(m_current.type == ScriptScanner::TokLeftAngle) {
-            const auto next     = m_scanner.peekNext();
-            const auto closeTag = m_scanner.peekNext(2);
-            if(next.type == ScriptScanner::TokSlash && closeTag.value == func) {
-                break;
-            }
+        if(m_current.type == ScriptScanner::TokLeftAngle && peekClosingTagName() == tag.name) {
+            break;
         }
         expression();
     }
@@ -192,7 +264,7 @@ void ScriptFormatterPrivate::processFormat(const QString& func, const QString& o
     consume(ScriptScanner::TokSlash);
 
     QString closeOption;
-    closeOption.reserve(func.size());
+    closeOption.reserve(tag.name.size());
 
     while(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
         advance();
@@ -242,7 +314,7 @@ void ScriptFormatterPrivate::resetFormat()
 {
     m_currentBlock               = {};
     m_currentBlock.format.font   = m_font;
-    m_currentBlock.format.colour = QApplication::palette().text().color();
+    m_currentBlock.format.colour = m_colour.isValid() ? m_colour : QApplication::palette().text().color();
 }
 
 ScriptFormatter::ScriptFormatter()
@@ -284,5 +356,10 @@ RichText ScriptFormatter::evaluate(const QString& input)
 void ScriptFormatter::setBaseFont(const QFont& font)
 {
     p->m_font = font;
+}
+
+void ScriptFormatter::setBaseColour(const QColor& colour)
+{
+    p->m_colour = colour;
 }
 } // namespace Fooyin

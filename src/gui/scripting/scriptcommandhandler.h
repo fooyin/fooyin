@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,24 @@
 
 #pragma once
 
-#include "fygui_export.h"
-
-#include <gui/scripting/richtext.h>
-
-#include <QColor>
-#include <QFont>
+#include <QString>
 
 namespace Fooyin {
-class ScriptFormatterPrivate;
-class ScriptFormatterRegistry;
+class ActionManager;
+class PlayerController;
+class PropertiesDialog;
 
-class FYGUI_EXPORT ScriptFormatter
+class ScriptCommandHandler
 {
 public:
-    ScriptFormatter();
-    ~ScriptFormatter();
+    ScriptCommandHandler(ActionManager* actionManager, PlayerController* playerController,
+                         PropertiesDialog* propertiesDialog);
 
-    RichText evaluate(const QString& input);
-
-    void setBaseFont(const QFont& font);
-    void setBaseColour(const QColor& colour);
+    bool execute(const QString& commandId) const;
 
 private:
-    std::unique_ptr<ScriptFormatterPrivate> p;
+    ActionManager* m_actionManager;
+    PlayerController* m_playerController;
+    PropertiesDialog* m_propertiesDialog;
 };
 } // namespace Fooyin

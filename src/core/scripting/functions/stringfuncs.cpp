@@ -24,6 +24,7 @@
 
 #include <QDir>
 #include <QRegularExpression>
+#include <QUrl>
 
 using namespace Qt::StringLiterals;
 
@@ -747,5 +748,36 @@ QString progress2(const QStringList& vec)
     }
 
     return progressBar;
+}
+
+QString doclink(const QStringList& vec)
+{
+    if(vec.size() != 2 || vec.at(0).isEmpty() || vec.at(1).isEmpty()) {
+        return {};
+    }
+
+    QString url = vec.at(1);
+    url.replace(u'"', u"%22"_s);
+
+    return u"<a href=\"%1\">%2</a>"_s.arg(url, vec.at(0));
+}
+
+QString cmdlink(const QStringList& vec)
+{
+    if(vec.size() != 2 || vec.at(0).isEmpty() || vec.at(1).isEmpty()) {
+        return {};
+    }
+
+    const QString commandId = QString::fromUtf8(QUrl::toPercentEncoding(vec.at(1)));
+    return u"<a href=\"fooyin://command/%1\">%2</a>"_s.arg(commandId, vec.at(0));
+}
+
+QString urlencode(const QStringList& vec)
+{
+    if(vec.size() != 1) {
+        return {};
+    }
+
+    return QString::fromUtf8(QUrl::toPercentEncoding(vec.front()));
 }
 } // namespace Fooyin::Scripting

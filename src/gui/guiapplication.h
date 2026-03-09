@@ -36,6 +36,7 @@ class LayoutProvider;
 class PlaylistController;
 class PropertiesDialog;
 class SearchController;
+class ScriptCommandHandler;
 class ThemeRegistry;
 class TrackSelectionController;
 class WidgetProvider;
@@ -65,6 +66,7 @@ public:
     [[nodiscard]] TrackSelectionController* trackSelection() const;
     [[nodiscard]] SearchController* searchController() const;
     [[nodiscard]] PropertiesDialog* propertiesDialog() const;
+    [[nodiscard]] ScriptCommandHandler* scriptCommandHandler() const;
     [[nodiscard]] EditableLayout* editableLayout() const;
     [[nodiscard]] WidgetProvider* widgetProvider() const;
     [[nodiscard]] ThemeRegistry* themeRegistry() const;

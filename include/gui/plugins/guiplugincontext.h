@@ -27,6 +27,7 @@ class EditableLayout;
 class LayoutProvider;
 class PropertiesDialog;
 class SearchController;
+class ScriptCommandHandler;
 class ThemeRegistry;
 class TrackSelectionController;
 class WidgetProvider;
@@ -39,14 +40,15 @@ struct FYGUI_EXPORT GuiPluginContext
 {
     GuiPluginContext(ActionManager* actionManager_, LayoutProvider* layoutProvider_,
                      TrackSelectionController* trackSelection_, SearchController* searchController_,
-                     PropertiesDialog* propertiesDialog_, WidgetProvider* widgetProvider_,
-                     EditableLayout* editableLayout_, WindowController* windowController_,
-                     ThemeRegistry* themeRegistry_)
+                     PropertiesDialog* propertiesDialog_, ScriptCommandHandler* scriptCommandHandler_,
+                     WidgetProvider* widgetProvider_, EditableLayout* editableLayout_,
+                     WindowController* windowController_, ThemeRegistry* themeRegistry_)
         : actionManager{actionManager_}
         , layoutProvider{layoutProvider_}
         , trackSelection{trackSelection_}
         , searchController{searchController_}
         , propertiesDialog{propertiesDialog_}
+        , scriptCommandHandler{scriptCommandHandler_}
         , widgetProvider{widgetProvider_}
         , editableLayout{editableLayout_}
         , windowController{windowController_}
@@ -58,6 +60,7 @@ struct FYGUI_EXPORT GuiPluginContext
     TrackSelectionController* trackSelection;
     SearchController* searchController;
     PropertiesDialog* propertiesDialog;
+    ScriptCommandHandler* scriptCommandHandler;
     WidgetProvider* widgetProvider;
     EditableLayout* editableLayout;
     WindowController* windowController;

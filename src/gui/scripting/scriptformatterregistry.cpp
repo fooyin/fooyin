@@ -21,6 +21,9 @@
 
 #include <gui/scripting/scriptformatter.h>
 
+#include <QApplication>
+#include <QPalette>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
@@ -108,6 +111,17 @@ void colourRgb(RichFormatting& formatting, const QString& option)
     }
 }
 
+void linkHref(RichFormatting& formatting, const QString& option)
+{
+    if(option.isEmpty()) {
+        return;
+    }
+
+    formatting.link = option;
+    formatting.font.setUnderline(true);
+    formatting.colour = QApplication::palette().link().color();
+}
+
 class ScriptFormatterRegistryPrivate
 { };
 
@@ -146,6 +160,10 @@ bool ScriptFormatterRegistry::format(RichFormatting& formatting, const QString& 
     if(func == "rgb"_L1) {
         colourRgb(formatting, option);
         return true;
+    }
+    if(func == "a"_L1) {
+        linkHref(formatting, option);
+        return !formatting.link.isEmpty();
     }
 
     return false;

@@ -268,6 +268,9 @@ void ScriptRegistryPrivate::addDefaultFunctions()
     m_funcs[u"filename"_s]       = Scripting::filename;
     m_funcs[u"progress"_s]       = Scripting::progress;
     m_funcs[u"progress2"_s]      = Scripting::progress2;
+    m_funcs[u"doclink"_s]        = Scripting::doclink;
+    m_funcs[u"cmdlink"_s]        = Scripting::cmdlink;
+    m_funcs[u"urlencode"_s]      = Scripting::urlencode;
 
     m_funcs[u"timems"_s] = Scripting::msToString;
 

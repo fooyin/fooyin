@@ -44,6 +44,7 @@
 #include "playlist/playlistwidget.h"
 #include "queueviewer/queueviewer.h"
 #include "replaygain/replaygainwidget.h"
+#include "scriptdisplay/scriptdisplay.h"
 #include "search/searchwidget.h"
 #include "selectioninfo/infowidget.h"
 #include "settings/artwork/artworkdownloadpage.h"
@@ -82,7 +83,6 @@
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/plugins/coreplugincontext.h>
 #include <gui/coverprovider.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
@@ -91,7 +91,7 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, PlaylistInteractor* playlistInteractor,
-                 QObject* parent)
+                 ScriptCommandHandler* scriptCommandHandler, QObject* parent)
     : QObject{parent}
     , m_core{core}
     , m_gui{gui}
@@ -104,6 +104,7 @@ Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, Pla
     , m_libraryTreeController{new LibraryTreeController(m_settings, this)}
     , m_dspPresetRegistry{new DspPresetRegistry(m_settings, this)}
     , m_dspSettingsRegistry{std::make_unique<DspSettingsRegistry>()}
+    , m_scriptCommandHandler{scriptCommandHandler}
 {
     QObject::connect(m_core->library(), &MusicLibrary::scanProgress, this, &Widgets::showScanProgress);
 }
@@ -243,6 +244,14 @@ void Widgets::registerWidgets()
         tr("Search Bar"));
 
     provider->registerWidget(u"DirectoryBrowser"_s, [this]() { return createDirBrowser(); }, tr("Directory Browser"));
+
+    provider->registerWidget(
+        u"ScriptDisplay"_s,
+        [this]() {
+            return new ScriptDisplay(m_core->playerController(), m_core->playlistHandler(), m_scriptCommandHandler,
+                                     m_settings, m_window);
+        },
+        tr("Script Display"));
 }
 
 void Widgets::registerPages()
