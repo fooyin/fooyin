@@ -26,6 +26,8 @@
 
 // clazy:excludeall=returning-void-expression
 
+constexpr auto Flags = Fooyin::AudioReader::Metadata;
+
 namespace Fooyin::Testing {
 class TagWriterTest : public ::testing::Test
 {
@@ -64,7 +66,7 @@ TEST_F(TagWriterTest, AiffWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
     {
@@ -125,7 +127,7 @@ TEST_F(TagWriterTest, FlacWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
     {
@@ -186,7 +188,7 @@ TEST_F(TagWriterTest, M4aWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
     {
@@ -247,7 +249,7 @@ TEST_F(TagWriterTest, Mp3Write)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
     {
@@ -308,7 +310,7 @@ TEST_F(TagWriterTest, OggWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
     {
@@ -369,7 +371,7 @@ TEST_F(TagWriterTest, OpusWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
     {
@@ -430,7 +432,7 @@ TEST_F(TagWriterTest, WavWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
     {
