@@ -732,6 +732,12 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
     const int trackPlayCount        = track.playCount();
     const float trackRating         = track.rating();
 
+    qCDebug(TRK_DB) << "Evaluating track stats update:" << "hash=" << track.hash()
+                    << "incomingPlayCount=" << trackPlayCount << "dbPlayCount=" << playCount
+                    << "incomingFirstPlayed=" << trackFirstPlayed << "dbFirstPlayed=" << firstPlayed
+                    << "incomingLastPlayed=" << trackLastPlayed << "dbLastPlayed=" << lastPlayed
+                    << "incomingRating=" << trackRating << "dbRating=" << rating;
+
     if(trackAdded != added) {
         if(added == 0 || (trackAdded > 0 && trackAdded < added)) {
             added         = trackAdded;
@@ -777,6 +783,9 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
     query.bindValue(u":lastPlayed"_s, QVariant::fromValue(lastPlayed));
     query.bindValue(u":playCount"_s, playCount);
     query.bindValue(u":rating"_s, rating);
+
+    qCDebug(TRK_DB) << "Writing track stats:" << "hash=" << track.hash() << "playCount=" << playCount
+                    << "firstPlayed=" << firstPlayed << "lastPlayed=" << lastPlayed << "rating=" << rating;
 
     return query.exec();
 }

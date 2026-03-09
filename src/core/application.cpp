@@ -254,9 +254,16 @@ void ApplicationPrivate::markTrack(const Track& track) const
 void ApplicationPrivate::tracksWereUpdated(const TrackList& tracks) const
 {
     const Track currentTrack = m_playerController->currentTrack();
-    const auto trackIt       = std::ranges::find_if(
-        tracks, [&currentTrack](const Track& t) { return t.uniqueFilepath() == currentTrack.uniqueFilepath(); });
+    if(!currentTrack.isValid()) {
+        return;
+    }
+
+    const auto trackIt = std::ranges::find_if(
+        tracks, [&currentTrack](const Track& track) { return sameTrackIdentity(track, currentTrack); });
     if(trackIt != tracks.cend()) {
+        qCDebug(APP) << "Refreshing current track from library update:" << "id=" << trackIt->id()
+                     << "path=" << trackIt->uniqueFilepath() << "playCount=" << trackIt->playCount()
+                     << "rating=" << trackIt->rating();
         m_playerController->updateCurrentTrack(*trackIt);
     }
 }
@@ -484,6 +491,8 @@ Application::Application(QObject* parent)
                                                   });
 
     QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this,
+                     [this](const TrackList& tracks) { p->tracksWereUpdated(tracks); });
+    QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, this,
                      [this](const TrackList& tracks) { p->tracksWereUpdated(tracks); });
     QObject::connect(p->m_playerController, &PlayerController::trackPlayed, p->m_library,
                      &UnifiedMusicLibrary::trackWasPlayed);

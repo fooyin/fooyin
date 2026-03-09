@@ -26,7 +26,11 @@
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QLoggingCategory>
+
 namespace Fooyin {
+Q_LOGGING_CATEGORY(PLAYER_CONTROLLER, "fy.playercontroller")
+
 class PlayerControllerPrivate
 {
 public:
@@ -357,6 +361,11 @@ void PlayerController::setCurrentPosition(uint64_t ms)
     if(!p->m_counted && p->m_timeListened >= p->m_playedThreshold) {
         p->m_counted = true;
         if(p->m_currentTrack.isValid()) {
+            qCDebug(PLAYER_CONTROLLER) << "Track reached played threshold:" << "id=" << p->m_currentTrack.track.id()
+                                       << "path=" << p->m_currentTrack.track.uniqueFilepath()
+                                       << "timeListened=" << p->m_timeListened
+                                       << "playedThreshold=" << p->m_playedThreshold
+                                       << "playCount=" << p->m_currentTrack.track.playCount();
             emit trackPlayed(p->m_currentTrack.track);
         }
     }

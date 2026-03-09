@@ -32,11 +32,14 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QDateTime>
+#include <QLoggingCategory>
 
 #include <ranges>
 #include <unordered_set>
 
 using namespace std::chrono_literals;
+
+Q_LOGGING_CATEGORY(LIBRARY, "fy.library")
 
 namespace Fooyin {
 class UnifiedMusicLibraryPrivate
@@ -492,6 +495,9 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
     const auto currTime = QDateTime::currentMSecsSinceEpoch();
     const int playCount = track.playCount() + 1;
 
+    qCDebug(LIBRARY) << "Track played event received:" << "id=" << track.id() << "path=" << track.uniqueFilepath()
+                     << "hash=" << hash << "currentPlayCount=" << track.playCount() << "nextPlayCount=" << playCount;
+
     TrackList tracksToUpdate;
     for(const auto& libraryTrack : p->m_tracks) {
         if(libraryTrack.hash() == hash) {
@@ -499,6 +505,11 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
             sameHashTrack.setFirstPlayed(currTime);
             sameHashTrack.setLastPlayed(currTime);
             sameHashTrack.setPlayCount(playCount);
+
+            qCDebug(LIBRARY) << "Queueing playcount update:" << "id=" << sameHashTrack.id()
+                             << "path=" << sameHashTrack.uniqueFilepath()
+                             << "libraryPlayCount=" << libraryTrack.playCount()
+                             << "queuedPlayCount=" << sameHashTrack.playCount();
 
             tracksToUpdate.emplace_back(sameHashTrack);
         }

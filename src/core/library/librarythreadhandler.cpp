@@ -29,6 +29,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QBasicTimer>
+#include <QLoggingCategory>
 #include <QPromise>
 #include <QThread>
 #include <QTimerEvent>
@@ -41,6 +42,8 @@
 #include <unordered_map>
 
 using namespace std::chrono_literals;
+
+Q_LOGGING_CATEGORY(LIB_THREAD, "fy.librarythreadhandler")
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto StatsUpdateInterval = 100ms;
@@ -436,7 +439,7 @@ LibraryThreadHandlerPrivate::WriteOperationToken LibraryThreadHandlerPrivate::ad
     auto& operation = operationIt->second;
 
     WriteRequest request;
-    request.cancel = [stopSource = operation.stopSource]() {
+    request.cancel = [stopSource = operation.stopSource]() mutable {
         stopSource.request_stop();
     };
     request.finished = promise->future();
@@ -498,6 +501,12 @@ void LibraryThreadHandlerPrivate::queueTrackStatsUpdates(const TrackList& tracks
             pendingUpdate.lastPlayed     = track.lastPlayed();
             pendingUpdate.writePlaycount = true;
         }
+
+        qCDebug(LIB_THREAD) << "Queued track stats update:" << "key=" << key << "id=" << track.id()
+                            << "path=" << track.uniqueFilepath() << "rating=" << track.rating()
+                            << "playCount=" << track.playCount() << "firstPlayed=" << track.firstPlayed()
+                            << "lastPlayed=" << track.lastPlayed() << "writeRating=" << writeRating
+                            << "writePlaycount=" << writePlaycount;
     }
 
     m_statsTimer.start(StatsUpdateInterval, m_self);
@@ -535,6 +544,8 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
         return;
     }
 
+    qCDebug(LIB_THREAD) << "Flushing pending track stats updates:" << m_pendingTrackStats.size();
+
     TrackList ratingTracks;
     TrackList playcountTracks;
     TrackList ratingAndPlaycountTracks;
@@ -545,6 +556,12 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
 
     for(const auto& pendingUpdate : m_pendingTrackStats | std::views::values) {
         const Track track = applyTrackStatsUpdate(pendingUpdate);
+
+        qCDebug(LIB_THREAD) << "Resolved track stats update:" << "id=" << track.id()
+                            << "path=" << track.uniqueFilepath() << "rating=" << track.rating()
+                            << "playCount=" << track.playCount() << "firstPlayed=" << track.firstPlayed()
+                            << "lastPlayed=" << track.lastPlayed() << "writeRating=" << pendingUpdate.writeRating
+                            << "writePlaycount=" << pendingUpdate.writePlaycount;
 
         if(pendingUpdate.writeRating && pendingUpdate.writePlaycount) {
             ratingAndPlaycountTracks.push_back(track);
