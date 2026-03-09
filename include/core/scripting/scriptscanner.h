@@ -28,6 +28,13 @@ namespace Fooyin {
 class FYCORE_EXPORT ScriptScanner
 {
 public:
+    enum class WhitespaceMode : uint8_t
+    {
+        Preserve = 0,
+        IgnoreLayout,
+        IgnoreAll,
+    };
+
     enum TokenType : uint8_t
     {
         TokError       = 0,
@@ -86,7 +93,7 @@ public:
     Token next();
     Token peekNext(int delta = 1);
 
-    void setSkipWhitespace(bool enabled);
+    void setWhitespaceMode(WhitespaceMode mode);
 
 private:
     Token scanNext();
@@ -107,6 +114,6 @@ private:
     std::vector<Token> m_tokens;
     Token* m_lastToken;
     int m_currentTokenIndex;
-    bool m_skipWhitespace;
+    WhitespaceMode m_whitespaceMode;
 };
 } // namespace Fooyin

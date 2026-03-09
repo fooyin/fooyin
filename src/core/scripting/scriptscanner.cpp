@@ -77,9 +77,22 @@ bool isStartOfKeyword(QChar ch)
 bool isWhitespace(QChar ch)
 {
     switch(ch.unicode()) {
-        case(u' '):
-        case(u'\r'):
-        case(u'\t'):
+        case ' ':
+        case '\n':
+        case '\r':
+        case '\t':
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool isLayoutWhitespace(QChar ch)
+{
+    switch(ch.unicode()) {
+        case '\n':
+        case '\r':
+        case '\t':
             return true;
         default:
             return false;
@@ -94,8 +107,11 @@ bool isKeyword(QChar ch)
 
 namespace Fooyin {
 ScriptScanner::ScriptScanner()
-    : m_lastToken{nullptr}
-    , m_skipWhitespace{false}
+    : m_start{nullptr}
+    , m_current{nullptr}
+    , m_lastToken{nullptr}
+    , m_currentTokenIndex{0}
+    , m_whitespaceMode{WhitespaceMode::Preserve}
 { }
 
 void ScriptScanner::setup(const QString& input)
@@ -141,9 +157,9 @@ ScriptScanner::Token ScriptScanner::peekNext(int delta)
     return m_tokens[next];
 }
 
-void ScriptScanner::setSkipWhitespace(bool enabled)
+void ScriptScanner::setWhitespaceMode(WhitespaceMode mode)
 {
-    m_skipWhitespace = enabled;
+    m_whitespaceMode = mode;
 }
 
 ScriptScanner::Token ScriptScanner::scanNext()
@@ -152,11 +168,22 @@ ScriptScanner::Token ScriptScanner::scanNext()
 
     QChar c = advance();
 
-    if(m_skipWhitespace) {
-        while(isWhitespace(c)) {
-            m_start = m_current;
-            c       = advance();
+    const auto shouldSkipWhitespace = [this](QChar ch) {
+        switch(m_whitespaceMode) {
+            case WhitespaceMode::Preserve:
+                return false;
+            case WhitespaceMode::IgnoreLayout:
+                return isLayoutWhitespace(ch);
+            case WhitespaceMode::IgnoreAll:
+                return isWhitespace(ch);
         }
+
+        return false;
+    };
+
+    while(shouldSkipWhitespace(c)) {
+        m_start = m_current;
+        c       = advance();
     }
 
     if(isStartOfKeyword(c)) {

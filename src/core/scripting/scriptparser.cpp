@@ -1502,7 +1502,7 @@ ParsedScript ScriptParserPrivate::parse(const QString& input)
     }
 
     m_isQuery = false;
-    m_scanner.setSkipWhitespace(false);
+    m_scanner.setWhitespaceMode(ScriptScanner::WhitespaceMode::IgnoreLayout);
     m_currentScript = {};
 
     if(m_cache.contains(input)) {
@@ -1536,7 +1536,7 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
     }
 
     m_isQuery = true;
-    m_scanner.setSkipWhitespace(true);
+    m_scanner.setWhitespaceMode(ScriptScanner::WhitespaceMode::IgnoreAll);
     m_currentScript = {};
 
     if(m_cache.contains(input)) {
