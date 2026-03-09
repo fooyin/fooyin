@@ -145,8 +145,9 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
 void StatusWidgetPrivate::setupConnections()
 {
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &StatusWidgetPrivate::stateChanged);
-    QObject::connect(m_playerController, &PlayerController::positionChanged, this,
+    QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
                      &StatusWidgetPrivate::updatePlayingText);
+    QObject::connect(m_playerController, &PlayerController::bitrateChanged, this, [this](int) { updatePlayingText(); });
     QObject::connect(m_selectionController, &TrackSelectionController::selectionChanged, this,
                      &StatusWidgetPrivate::updateSelectionText);
 
