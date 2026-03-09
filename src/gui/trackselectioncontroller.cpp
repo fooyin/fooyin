@@ -281,6 +281,8 @@ void TrackSelectionControllerPrivate::setupMenu()
     });
     artworkMenu->addAction(searchArtworkCmd);
 
+    artworkMenu->addSeparator();
+
     // m_searchArtworkQuick->setStatusTip(tr("Search for artwork for the selected files, automatically choosing the best
     // "
     //                                       "artwork based on the current settings"));
@@ -308,7 +310,7 @@ void TrackSelectionControllerPrivate::setupMenu()
     });
     artworkMenu->addAction(extractArtworkCmd);
 
-    auto* attachPictureMenu = new QMenu(tr("Attach picture"), artworkMenu->menu());
+    auto* attachPictureMenu = new QMenu(tr("Attach image"), artworkMenu->menu());
 
     m_attachFrontArtwork->setStatusTip(tr("Attach an image file as the front cover for the selected tracks"));
     QObject::connect(m_attachFrontArtwork, &QAction::triggered, m_tracksMenu, [this]() {
@@ -347,6 +349,8 @@ void TrackSelectionControllerPrivate::setupMenu()
     attachPictureMenu->addAction(m_attachArtistArtwork);
 
     artworkMenu->menu()->addMenu(attachPictureMenu);
+
+    artworkMenu->addSeparator();
 
     m_removeArtwork->setStatusTip(tr("Remove all artwork associated with the selected tracks (embedded, directory)"));
     auto* removeArtworkCmd = m_actionManager->registerAction(m_removeArtwork, Constants::Actions::RemoveArtwork);

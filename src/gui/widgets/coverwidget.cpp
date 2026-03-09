@@ -304,8 +304,10 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
         menu->addSeparator();
         menu->addAction(search);
         menu->addAction(quickSearch);
+        menu->addSeparator();
         menu->addAction(extractFile);
         menu->addAction(extractAs);
+        menu->addSeparator();
         menu->addAction(remove);
     }
 
