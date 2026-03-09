@@ -182,7 +182,7 @@ void LyricsSavingPageWidget::load()
     m_autosavePeriod->setChecked(saveScheme == SaveScheme::AutosavePeriod);
 
     const auto saveMethod = static_cast<SaveMethod>(
-        m_settings->fileValue(Settings::SaveMethod, static_cast<int>(SaveMethod::Tag)).toInt());
+        m_settings->fileValue(Settings::SaveMethod, static_cast<int>(SaveMethod::Directory)).toInt());
     m_tag->setChecked(saveMethod == SaveMethod::Tag);
     m_directory->setChecked(saveMethod == SaveMethod::Directory);
 
@@ -217,7 +217,7 @@ void LyricsSavingPageWidget::apply()
     }
     m_settings->fileSet(Settings::SaveScheme, static_cast<int>(saveScheme));
 
-    SaveMethod saveMethod{SaveMethod::Tag};
+    SaveMethod saveMethod;
     if(m_tag->isChecked()) {
         saveMethod = SaveMethod::Tag;
     }

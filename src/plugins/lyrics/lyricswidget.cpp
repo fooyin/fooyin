@@ -206,7 +206,7 @@ void LyricsWidget::updateLyrics(const Track& track, bool force)
 
     m_finderConnection = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::loadLyrics);
 
-    if(m_settings->fileValue(Settings::AutoSearch, true).toBool()) {
+    if(m_settings->fileValue(Settings::AutoSearch, false).toBool()) {
         m_lyricsFinder->findLyrics(track);
     }
     else {

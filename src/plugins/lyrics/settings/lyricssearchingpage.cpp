@@ -97,7 +97,7 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
 
 void LyricsSearchingPageWidget::load()
 {
-    m_autoSearch->setChecked(m_settings->fileValue(Settings::AutoSearch, true).toBool());
+    m_autoSearch->setChecked(m_settings->fileValue(Settings::AutoSearch, false).toBool());
     m_skipRemaining->setChecked(m_settings->fileValue(Settings::SkipRemaining, true).toBool());
     m_skipExternal->setChecked(m_settings->fileValue(Settings::SkipExternal, true).toBool());
     m_titleParam->setText(m_settings->fileValue(Settings::TitleField, u"%title%"_s).toString());

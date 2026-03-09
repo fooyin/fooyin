@@ -168,7 +168,8 @@ void LyricsSaver::autoSaveLyrics(const Lyrics& lyrics, const Track& track)
     }
 
     const auto saveToMethod = [this, lyrics, track]() {
-        const auto saveMethod = static_cast<SaveMethod>(m_settings->fileValue(Settings::SaveMethod, 0).toInt());
+        const auto saveMethod = static_cast<SaveMethod>(
+            m_settings->fileValue(Settings::SaveMethod, static_cast<int>(SaveMethod::Directory)).toInt());
         switch(saveMethod) {
             case(SaveMethod::Tag):
                 saveLyricsToTag(lyrics, track);
@@ -207,7 +208,8 @@ void LyricsSaver::saveLyrics(const Lyrics& lyrics, const Track& track)
         return;
     }
 
-    const auto saveMethod = static_cast<SaveMethod>(m_settings->fileValue(Settings::SaveMethod, 0).toInt());
+    const auto saveMethod = static_cast<SaveMethod>(
+        m_settings->fileValue(Settings::SaveMethod, static_cast<int>(SaveMethod::Directory)).toInt());
     switch(saveMethod) {
         case(SaveMethod::Tag):
             saveLyricsToTag(lyrics, track);
