@@ -177,6 +177,15 @@ Fooyin::FunctionKind resolveFunctionKind(const QString& name)
     if(name == "if"_L1) {
         return FunctionKind::If;
     }
+    if(name == "get"_L1) {
+        return FunctionKind::Get;
+    }
+    if(name == "put"_L1) {
+        return FunctionKind::Put;
+    }
+    if(name == "puts"_L1) {
+        return FunctionKind::Puts;
+    }
     if(name == "if2"_L1) {
         return FunctionKind::If2;
     }
@@ -303,6 +312,7 @@ public:
     Qt::SortOrder m_sortOrder{Qt::AscendingOrder};
     int m_limit{0};
     int m_filteredCount{0};
+    std::unordered_map<QString, QString> m_variables;
 };
 
 ScriptParserPrivate::ScriptParserPrivate(ScriptParser* self, ScriptRegistry* registry)
@@ -528,7 +538,7 @@ Expression ScriptParserPrivate::function()
     funcExpr.name = m_previous.value.toString().toLower();
     funcExpr.kind = resolveFunctionKind(funcExpr.name);
 
-    if(!m_registry->isFunction(funcExpr.name)) {
+    if(funcExpr.kind == FunctionKind::Generic && !m_registry->isFunction(funcExpr.name)) {
         error(u"Function not found"_s);
     }
 
@@ -993,6 +1003,42 @@ ScriptResult ScriptParserPrivate::evalFunction(const Expression& exp, const auto
     };
 
     switch(func.kind) {
+        case(FunctionKind::Get): {
+            if(func.args.size() != 1) {
+                return {};
+            }
+
+            const QString variableName = evalExpression(func.args.at(0), tracks).value.trimmed().toLower();
+            if(variableName.isEmpty()) {
+                return {};
+            }
+
+            if(const auto it = m_variables.find(variableName); it != m_variables.cend()) {
+                return {.value = it->second, .cond = !it->second.isEmpty()};
+            }
+
+            return {};
+        }
+        case(FunctionKind::Put):
+        case(FunctionKind::Puts): {
+            if(func.args.size() != 2) {
+                return {};
+            }
+
+            const QString variableName = evalExpression(func.args.at(0), tracks).value.trimmed().toLower();
+            if(variableName.isEmpty()) {
+                return {};
+            }
+
+            const ScriptResult value = evalExpression(func.args.at(1), tracks);
+            m_variables.insert_or_assign(variableName, value.value);
+
+            if(func.kind == FunctionKind::Put) {
+                return {.value = value.value, .cond = !value.value.isEmpty()};
+            }
+
+            return {.value = QString{}, .cond = false};
+        }
         case(FunctionKind::If): {
             const auto size = func.args.size();
             if(size < 2 || size > 3) {
@@ -1825,6 +1871,7 @@ void ScriptParserPrivate::reset()
     m_limit         = 0;
     m_sortScript.clear();
     m_sortOrder = Qt::AscendingOrder;
+    m_variables.clear();
 }
 
 ScriptParser::ScriptParser()
