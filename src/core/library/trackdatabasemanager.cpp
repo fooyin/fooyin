@@ -93,6 +93,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
     AudioReader::WriteOptions options;
 
     if(write) {
+        options |= AudioReader::Metadata;
         if(m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
             options |= AudioReader::Rating;
         }
@@ -140,26 +141,26 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
     setState(Idle);
 }
 
-void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, bool onlyPlaycount)
+void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader::WriteOptions requestedWriteOptions)
 {
     setState(Running);
 
     TrackList tracksToUpdate{tracks};
     TrackList tracksUpdated;
 
-    AudioReader::WriteOptions options;
+    AudioReader::WriteOptions options{AudioReader::None};
+
     if(m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
         options |= AudioReader::Rating;
     }
     if(m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
         options |= AudioReader::Playcount;
     }
-    if(m_settings->value<Settings::Core::PreserveTimestamps>()) {
-        options |= AudioReader::PreserveTimestamps;
-    }
 
-    const bool writeToFile = onlyPlaycount ? (options & AudioReader::Playcount)
-                                           : (options & (AudioReader::Playcount | AudioReader::Rating));
+    AudioReader::WriteOptions writeOptions = requestedWriteOptions & options;
+    if(writeOptions != AudioReader::None && m_settings->value<Settings::Core::PreserveTimestamps>()) {
+        writeOptions |= AudioReader::PreserveTimestamps;
+    }
 
     for(const Track& track : std::as_const(tracksToUpdate)) {
         if(!mayRun()) {
@@ -168,8 +169,8 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, bool onlyPl
 
         Track updatedTrack{track};
         bool success{true};
-        if(!track.isInArchive() && writeToFile) {
-            success = m_audioLoader->writeTrackMetadata(updatedTrack, options);
+        if(!track.isInArchive() && writeOptions != AudioReader::None) {
+            success = m_audioLoader->writeTrackMetadata(updatedTrack, writeOptions);
         }
         if(success && m_trackDatabase.updateTrackStats(updatedTrack)) {
             const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();

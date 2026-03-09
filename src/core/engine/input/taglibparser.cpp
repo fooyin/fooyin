@@ -732,9 +732,10 @@ void replaceOrErase(TagLib::PropertyMap& props, const TagLib::String& key, const
     }
 }
 
-void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Track& track, bool skipExtra = false)
+void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Track& track,
+                            Fooyin::AudioReader::WriteOptions options, bool skipExtra = false)
 {
-    if(!track.isValid()) {
+    if(!track.isValid() || !(options & Fooyin::AudioReader::Metadata)) {
         return;
     }
 
@@ -750,7 +751,7 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
     replaceOrErase(oldProperties, Comment, track.comment());
     replaceOrErase(oldProperties, Date, track.date());
 
-    const auto handleAltProp = [&oldProperties](QString value, auto tag, auto tagAlt) {
+    const auto handleAltProp = [&oldProperties](const QString& value, auto tag, auto tagAlt) {
         if(!value.isEmpty()) {
             if(oldProperties.contains(tagAlt)) {
                 replaceOrErase(oldProperties, tagAlt, value);
@@ -1034,22 +1035,24 @@ QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track::Cover 
 
 void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track, Fooyin::AudioReader::WriteOptions options)
 {
-    id3Tags->removeFrames("TRCK");
+    if(options & Fooyin::AudioReader::Metadata) {
+        id3Tags->removeFrames("TRCK");
 
-    const QString trackNumber = getTrackNumber(track);
-    if(!trackNumber.isEmpty()) {
-        auto trackFrame = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("TRCK", TagLib::String::UTF8);
-        trackFrame->setText(convertString(trackNumber));
-        id3Tags->addFrame(trackFrame.release());
-    }
+        const QString trackNumber = getTrackNumber(track);
+        if(!trackNumber.isEmpty()) {
+            auto trackFrame = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("TRCK", TagLib::String::UTF8);
+            trackFrame->setText(convertString(trackNumber));
+            id3Tags->addFrame(trackFrame.release());
+        }
 
-    id3Tags->removeFrames("TPOS");
+        id3Tags->removeFrames("TPOS");
 
-    const QString discNumber = getDiscNumber(track);
-    if(!discNumber.isEmpty()) {
-        auto discFrame = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("TPOS", TagLib::String::UTF8);
-        discFrame->setText(convertString(discNumber));
-        id3Tags->addFrame(discFrame.release());
+        const QString discNumber = getDiscNumber(track);
+        if(!discNumber.isEmpty()) {
+            auto discFrame = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("TPOS", TagLib::String::UTF8);
+            discFrame->setText(convertString(discNumber));
+            id3Tags->addFrame(discFrame.release());
+        }
     }
 
     if(options & Fooyin::AudioReader::Rating) {
@@ -1220,20 +1223,22 @@ QByteArray readApeCover(const TagLib::APE::Tag* apeTags, Fooyin::Track::Cover co
 
 void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track, Fooyin::AudioReader::WriteOptions options)
 {
-    const QString trackNumber = getTrackNumber(track);
-    if(trackNumber.isEmpty()) {
-        apeTags->removeItem("TRACK");
-    }
-    else {
-        apeTags->addValue("TRACK", convertString(trackNumber), true);
-    }
+    if(options & Fooyin::AudioReader::Metadata) {
+        const QString trackNumber = getTrackNumber(track);
+        if(trackNumber.isEmpty()) {
+            apeTags->removeItem("TRACK");
+        }
+        else {
+            apeTags->addValue("TRACK", convertString(trackNumber), true);
+        }
 
-    const QString discNumber = getDiscNumber(track);
-    if(discNumber.isEmpty()) {
-        apeTags->removeItem("DISC");
-    }
-    else {
-        apeTags->addValue("DISC", convertString(discNumber), true);
+        const QString discNumber = getDiscNumber(track);
+        if(discNumber.isEmpty()) {
+            apeTags->removeItem("DISC");
+        }
+        else {
+            apeTags->addValue("DISC", convertString(discNumber), true);
+        }
     }
 
     if(options & Fooyin::AudioReader::Rating) {
@@ -1519,61 +1524,63 @@ TagLib::String prefixMp4FreeFormName(const QString& name, const TagLib::MP4::Ite
 
 void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, Fooyin::AudioReader::WriteOptions options)
 {
-    const QString trackNumber = track.trackNumber();
-    const QString trackTotal  = track.trackTotal();
+    if(options & Fooyin::AudioReader::Metadata) {
+        const QString trackNumber = track.trackNumber();
+        const QString trackTotal  = track.trackTotal();
 
-    mp4Tags->removeItem(Fooyin::Mp4::Track);
-    mp4Tags->removeItem(Fooyin::Mp4::TrackAlt);
-    mp4Tags->removeItem(Fooyin::Mp4::TrackTotal);
-    mp4Tags->removeItem(Fooyin::Mp4::TrackTotalAlt);
+        mp4Tags->removeItem(Fooyin::Mp4::Track);
+        mp4Tags->removeItem(Fooyin::Mp4::TrackAlt);
+        mp4Tags->removeItem(Fooyin::Mp4::TrackTotal);
+        mp4Tags->removeItem(Fooyin::Mp4::TrackTotalAlt);
 
-    if(!trackNumber.isEmpty() || !trackTotal.isEmpty()) {
-        bool numOk{false};
-        const int num = trackNumber.toInt(&numOk);
-        bool totalOk{false};
-        const int total = trackTotal.toInt(&totalOk);
+        if(!trackNumber.isEmpty() || !trackTotal.isEmpty()) {
+            bool numOk{false};
+            const int num = trackNumber.toInt(&numOk);
+            bool totalOk{false};
+            const int total = trackTotal.toInt(&totalOk);
 
-        if(numOk && totalOk) {
-            mp4Tags->setItem(Fooyin::Mp4::Track, {num, total});
-        }
-        else {
-            if(!trackNumber.isEmpty()) {
-                mp4Tags->setItem(Fooyin::Mp4::TrackAlt, {convertString(trackNumber)});
+            if(numOk && totalOk) {
+                mp4Tags->setItem(Fooyin::Mp4::Track, {num, total});
             }
-            if(!trackTotal.isEmpty()) {
-                mp4Tags->setItem(Fooyin::Mp4::TrackTotalAlt, {convertString(trackTotal)});
+            else {
+                if(!trackNumber.isEmpty()) {
+                    mp4Tags->setItem(Fooyin::Mp4::TrackAlt, {convertString(trackNumber)});
+                }
+                if(!trackTotal.isEmpty()) {
+                    mp4Tags->setItem(Fooyin::Mp4::TrackTotalAlt, {convertString(trackTotal)});
+                }
             }
         }
+
+        const QString discNumber = track.discNumber();
+        const QString discTotal  = track.discTotal();
+
+        mp4Tags->removeItem(Fooyin::Mp4::Disc);
+        mp4Tags->removeItem(Fooyin::Mp4::DiscAlt);
+        mp4Tags->removeItem(Fooyin::Mp4::DiscTotal);
+        mp4Tags->removeItem(Fooyin::Mp4::DiscTotalAlt);
+
+        if(!discNumber.isEmpty() || !discTotal.isEmpty()) {
+            bool numOk{false};
+            const int num = discNumber.toInt(&numOk);
+            bool totalOk{false};
+            const int total = discTotal.toInt(&totalOk);
+
+            if(numOk && totalOk) {
+                mp4Tags->setItem(Fooyin::Mp4::Disc, {num, total});
+            }
+            else {
+                if(!discNumber.isEmpty()) {
+                    mp4Tags->setItem(Fooyin::Mp4::DiscAlt, {convertString(discNumber)});
+                }
+                if(!discTotal.isEmpty()) {
+                    mp4Tags->setItem(Fooyin::Mp4::DiscTotalAlt, {convertString(discTotal)});
+                }
+            }
+        }
+
+        mp4Tags->setItem(Fooyin::Mp4::PerformerAlt, {convertString(track.performer())});
     }
-
-    const QString discNumber = track.discNumber();
-    const QString discTotal  = track.discTotal();
-
-    mp4Tags->removeItem(Fooyin::Mp4::Disc);
-    mp4Tags->removeItem(Fooyin::Mp4::DiscAlt);
-    mp4Tags->removeItem(Fooyin::Mp4::DiscTotal);
-    mp4Tags->removeItem(Fooyin::Mp4::DiscTotalAlt);
-
-    if(!discNumber.isEmpty() || !discTotal.isEmpty()) {
-        bool numOk{false};
-        const int num = discNumber.toInt(&numOk);
-        bool totalOk{false};
-        const int total = discTotal.toInt(&totalOk);
-
-        if(numOk && totalOk) {
-            mp4Tags->setItem(Fooyin::Mp4::Disc, {num, total});
-        }
-        else {
-            if(!discNumber.isEmpty()) {
-                mp4Tags->setItem(Fooyin::Mp4::DiscAlt, {convertString(discNumber)});
-            }
-            if(!discTotal.isEmpty()) {
-                mp4Tags->setItem(Fooyin::Mp4::DiscTotalAlt, {convertString(discTotal)});
-            }
-        }
-    }
-
-    mp4Tags->setItem(Fooyin::Mp4::PerformerAlt, {convertString(track.performer())});
 
     if(options & Fooyin::AudioReader::Rating) {
         mp4Tags->setItem(Fooyin::Mp4::RatingAlt, {convertString(QString::number(track.rating()))});
@@ -1588,52 +1595,54 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, Fooyin:
         }
     }
 
-    mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumGain);
-    mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumPeak);
-    mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackGain);
-    mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackPeak);
+    if(options & Fooyin::AudioReader::Metadata) {
+        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumGain);
+        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumPeak);
+        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackGain);
+        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackPeak);
 
-    if(track.hasTrackGain()) {
-        mp4Tags->setItem(Fooyin::Mp4::ReplayGain::TrackGain, {convertString(QString::number(track.rgTrackGain()))});
-    }
-    if(track.hasTrackPeak()) {
-        mp4Tags->setItem(Fooyin::Mp4::ReplayGain::TrackPeak, {convertString(QString::number(track.rgTrackPeak()))});
-    }
-    if(track.hasAlbumGain()) {
-        mp4Tags->setItem(Fooyin::Mp4::ReplayGain::AlbumGain, {convertString(QString::number(track.rgAlbumGain()))});
-    }
-    if(track.hasAlbumPeak()) {
-        mp4Tags->setItem(Fooyin::Mp4::ReplayGain::AlbumPeak, {convertString(QString::number(track.rgAlbumPeak()))});
-    }
+        if(track.hasTrackGain()) {
+            mp4Tags->setItem(Fooyin::Mp4::ReplayGain::TrackGain, {convertString(QString::number(track.rgTrackGain()))});
+        }
+        if(track.hasTrackPeak()) {
+            mp4Tags->setItem(Fooyin::Mp4::ReplayGain::TrackPeak, {convertString(QString::number(track.rgTrackPeak()))});
+        }
+        if(track.hasAlbumGain()) {
+            mp4Tags->setItem(Fooyin::Mp4::ReplayGain::AlbumGain, {convertString(QString::number(track.rgAlbumGain()))});
+        }
+        if(track.hasAlbumPeak()) {
+            mp4Tags->setItem(Fooyin::Mp4::ReplayGain::AlbumPeak, {convertString(QString::number(track.rgAlbumPeak()))});
+        }
 
-    using namespace Fooyin::Tag;
-    static const std::set<QString> baseMp4Tags
-        = {QString::fromLatin1(Title),         QString::fromLatin1(Artist),      QString::fromLatin1(Album),
-           QString::fromLatin1(AlbumArtist),   QString::fromLatin1(Genre),       QString::fromLatin1(Composer),
-           QString::fromLatin1(Performer),     QString::fromLatin1(Comment),     QString::fromLatin1(Date),
-           QString::fromLatin1(Rating),        QString::fromLatin1(RatingAlt),   QString::fromLatin1(PlayCount),
-           QString::fromLatin1(Track),         QString::fromLatin1(TrackAlt),    QString::fromLatin1(TrackTotal),
-           QString::fromLatin1(TrackTotalAlt), QString::fromLatin1(Disc),        QString::fromLatin1(DiscAlt),
-           QString::fromLatin1(DiscTotal),     QString::fromLatin1(DiscTotalAlt)};
+        using namespace Fooyin::Tag;
+        static const std::set<QString> baseMp4Tags
+            = {QString::fromLatin1(Title),         QString::fromLatin1(Artist),      QString::fromLatin1(Album),
+               QString::fromLatin1(AlbumArtist),   QString::fromLatin1(Genre),       QString::fromLatin1(Composer),
+               QString::fromLatin1(Performer),     QString::fromLatin1(Comment),     QString::fromLatin1(Date),
+               QString::fromLatin1(Rating),        QString::fromLatin1(RatingAlt),   QString::fromLatin1(PlayCount),
+               QString::fromLatin1(Track),         QString::fromLatin1(TrackAlt),    QString::fromLatin1(TrackTotal),
+               QString::fromLatin1(TrackTotalAlt), QString::fromLatin1(Disc),        QString::fromLatin1(DiscAlt),
+               QString::fromLatin1(DiscTotal),     QString::fromLatin1(DiscTotalAlt)};
 
-    const auto customTags = track.extraTags();
-    for(const auto& [tag, values] : Fooyin::Utils::asRange(customTags)) {
-        if(!baseMp4Tags.contains(tag)) {
+        const auto customTags = track.extraTags();
+        for(const auto& [tag, values] : Fooyin::Utils::asRange(customTags)) {
+            if(!baseMp4Tags.contains(tag)) {
+                TagLib::String tagName = findMp4Tag(tag);
+                if(tagName.isEmpty()) {
+                    tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
+                }
+                mp4Tags->setItem(tagName, convertStringList(values));
+            }
+        }
+
+        const auto removedTags = track.removedTags();
+        for(const auto& tag : removedTags) {
             TagLib::String tagName = findMp4Tag(tag);
             if(tagName.isEmpty()) {
                 tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
             }
-            mp4Tags->setItem(tagName, convertStringList(values));
+            mp4Tags->removeItem(tagName);
         }
-    }
-
-    const auto removedTags = track.removedTags();
-    for(const auto& tag : removedTags) {
-        TagLib::String tagName = findMp4Tag(tag);
-        if(tagName.isEmpty()) {
-            tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
-        }
-        mp4Tags->removeItem(tagName);
     }
 }
 
@@ -1801,32 +1810,34 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
 {
     using namespace Fooyin::Tag;
 
-    if(track.trackNumber().isEmpty()) {
-        xiphTags->removeFields(Track);
-    }
-    else {
-        xiphTags->addField(Track, convertString(track.trackNumber()), true);
-    }
+    if(options & Fooyin::AudioReader::Metadata) {
+        if(track.trackNumber().isEmpty()) {
+            xiphTags->removeFields(Track);
+        }
+        else {
+            xiphTags->addField(Track, convertString(track.trackNumber()), true);
+        }
 
-    if(track.trackTotal().isEmpty()) {
-        xiphTags->removeFields(TrackTotal);
-    }
-    else {
-        xiphTags->addField(TrackTotal, convertString(track.trackTotal()), true);
-    }
+        if(track.trackTotal().isEmpty()) {
+            xiphTags->removeFields(TrackTotal);
+        }
+        else {
+            xiphTags->addField(TrackTotal, convertString(track.trackTotal()), true);
+        }
 
-    if(track.discNumber().isEmpty()) {
-        xiphTags->removeFields(Disc);
-    }
-    else {
-        xiphTags->addField(Disc, convertString(track.discNumber()), true);
-    }
+        if(track.discNumber().isEmpty()) {
+            xiphTags->removeFields(Disc);
+        }
+        else {
+            xiphTags->addField(Disc, convertString(track.discNumber()), true);
+        }
 
-    if(track.discTotal().isEmpty()) {
-        xiphTags->removeFields(DiscTotal);
-    }
-    else {
-        xiphTags->addField(DiscTotal, convertString(track.discTotal()), true);
+        if(track.discTotal().isEmpty()) {
+            xiphTags->removeFields(DiscTotal);
+        }
+        else {
+            xiphTags->addField(DiscTotal, convertString(track.discTotal()), true);
+        }
     }
 
     if(options & Fooyin::AudioReader::Rating) {
@@ -2020,8 +2031,10 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover co
 
 void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin::AudioReader::WriteOptions options)
 {
-    asfTags->setAttribute("WM/TrackNumber", convertString(track.trackNumber()));
-    asfTags->setAttribute("WM/PartOfSet", convertString(track.discNumber()));
+    if(options & Fooyin::AudioReader::Metadata) {
+        asfTags->setAttribute("WM/TrackNumber", convertString(track.trackNumber()));
+        asfTags->setAttribute("WM/PartOfSet", convertString(track.discNumber()));
+    }
 
     if(options & Fooyin::AudioReader::Rating) {
         asfTags->addAttribute("FMPS/Rating", convertString(QString::number(track.rating())));
@@ -2704,8 +2717,12 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
     return {};
 }
 
-bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, AudioReader::WriteOptions options)
+bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, WriteOptions options)
 {
+    if(!(options & (Metadata | Rating | Playcount))) {
+        return true;
+    }
+
     IODeviceStream stream{source.device, track.filepath()};
     if(!stream.isOpen() || stream.readOnly()) {
         return false;
@@ -2719,9 +2736,9 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
         mtime = info.lastModified();
     }
 
-    const auto writeProperties = [&track](TagLib::File& file, bool skipExtra = false) {
+    const auto writeProperties = [&track, options](TagLib::File& file, bool skipExtra = false) {
         auto savedProperties = file.properties();
-        writeGenericProperties(savedProperties, track, skipExtra);
+        writeGenericProperties(savedProperties, track, options, skipExtra);
         file.setProperties(savedProperties);
     };
 

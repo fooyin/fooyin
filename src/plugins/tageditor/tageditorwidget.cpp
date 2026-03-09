@@ -178,9 +178,7 @@ void TagEditorWidget::apply()
         return;
     }
 
-    const bool updateStats = m_model->haveOnlyStatChanges()
-                          && !m_settings->value<Settings::Core::SaveRatingToMetadata>()
-                          && !m_settings->value<Settings::Core::SavePlaycountToMetadata>();
+    const bool updateStats = m_model->haveOnlyStatChanges();
 
     auto applyChanges = [this, updateStats]() {
         m_model->applyChanges();

@@ -181,13 +181,15 @@ class FYCORE_EXPORT AudioReader
 public:
     enum WriteFlag : uint8_t
     {
-        Metadata = 0,
+        None = 0,
+        //! Persist general metadata/tag fields.
+        Metadata = 1 << 0,
         //! Persist rating field when supported.
-        Rating = 1 << 0,
+        Rating = 1 << 1,
         //! Persist play count field when supported.
-        Playcount = 1 << 1,
+        Playcount = 1 << 2,
         //! Preserve file timestamps (atime/mtime).
-        PreserveTimestamps = 1 << 2,
+        PreserveTimestamps = 1 << 3,
     };
     Q_DECLARE_FLAGS(WriteOptions, WriteFlag)
     Q_FLAG(WriteOptions)

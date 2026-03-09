@@ -663,12 +663,7 @@ void GuiApplicationPrivate::setupRatingMenu()
             const int stars   = rating * 2;
             if(track.ratingStars() != stars) {
                 track.setRatingStars(stars);
-                if(m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
-                    m_core->library()->writeTrackMetadata({track});
-                }
-                else {
-                    m_core->library()->updateTrackStats(track);
-                }
+                m_core->library()->updateTrackStats(track);
             }
         }
     };

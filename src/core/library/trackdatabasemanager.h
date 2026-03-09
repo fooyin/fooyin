@@ -21,6 +21,7 @@
 
 #include "database/trackdatabase.h"
 
+#include <core/engine/audioinput.h>
 #include <core/trackmetadatastore.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/worker.h>
@@ -57,7 +58,7 @@ signals:
 public slots:
     void getAllTracks();
     void updateTracks(const Fooyin::TrackList& tracks, bool write);
-    void updateTrackStats(const Fooyin::TrackList& track, bool onlyPlaycount);
+    void updateTrackStats(const Fooyin::TrackList& track, AudioReader::WriteOptions writeOptions);
     void writeCovers(const Fooyin::TrackCoverData& tracks);
     void removeUnavailbleTracks(const TrackList& tracks);
     void cleanupTracks();
