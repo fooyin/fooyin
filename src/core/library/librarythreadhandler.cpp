@@ -36,6 +36,7 @@
 
 #include <deque>
 #include <optional>
+#include <ranges>
 #include <stop_token>
 #include <unordered_map>
 
