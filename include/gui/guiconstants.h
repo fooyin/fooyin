@@ -134,6 +134,7 @@ constexpr auto LayoutEditing         = "Layout.LayoutEditing";
 constexpr auto LockSplitters         = "Layout.LockSplitters";
 constexpr auto QuickSetup            = "View.QuickSetup";
 constexpr auto ShowNowPlaying        = "View.ShowNowPlaying";
+constexpr auto FocusSearchBar        = "View.FocusSearchBar";
 constexpr auto QuickSearch           = "Library.QuickSearch";
 constexpr auto SearchLibrary         = "Library.SearchLibrary";
 constexpr auto Refresh               = "Library.Refresh";

@@ -76,6 +76,7 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
 
     m_searchController->registerSetFunction(id(), [this](const QString& search) { m_searchBox->setText(search); });
 
+    setFocusProxy(m_searchBox);
     loadColours();
 
     QObject::connect(m_searchBox, &QLineEdit::textChanged, this, [this]() {

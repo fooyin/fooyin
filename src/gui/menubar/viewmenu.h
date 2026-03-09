@@ -35,6 +35,7 @@ public:
     explicit ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
+    void focusSearchBar();
     void openQuickSetup();
     void openLog();
     void openScriptEditor();

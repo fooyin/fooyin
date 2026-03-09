@@ -61,6 +61,13 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 
     viewMenu->addSeparator();
 
+    auto* focusSearchBar = new QAction(tr("Focus Search &Bar"), this);
+    focusSearchBar->setStatusTip(tr("Focus the first Search Bar found in the current layout"));
+    auto* focusSearchBarCmd = m_actionManager->registerAction(focusSearchBar, Constants::Actions::FocusSearchBar);
+    focusSearchBarCmd->setCategories(viewCategory);
+    viewMenu->addAction(focusSearchBarCmd);
+    QObject::connect(focusSearchBar, &QAction::triggered, this, &ViewMenu::focusSearchBar);
+
     auto* showNowPlaying = new QAction(tr("Show playing &track"), this);
     showNowPlaying->setStatusTip(tr("Show the currently playing track in the playlist"));
     auto* showNowPlayingCmd = m_actionManager->registerAction(showNowPlaying, Constants::Actions::ShowNowPlaying);

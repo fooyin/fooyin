@@ -140,6 +140,7 @@ public:
     void showScriptEditor();
     void showSearchPlaylistDialog();
     void showSearchLibraryDialog();
+    void focusSearchBar() const;
     void showQuickSearch() const;
     void showPropertiesDialog() const;
     void showEngineError(const QString& error) const;
@@ -328,6 +329,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_libraryMenu, &LibraryMenu::requestSearch, m_self, [this]() { showSearchLibraryDialog(); });
     QObject::connect(m_libraryMenu, &LibraryMenu::requestQuickSearch, m_self, [this]() { showQuickSearch(); });
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
+    QObject::connect(m_viewMenu, &ViewMenu::focusSearchBar, m_self, [this]() { focusSearchBar(); });
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
     QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, m_self, [this]() { showScriptEditor(); });
     QObject::connect(m_viewMenu, &ViewMenu::showNowPlaying, m_self, [this]() {
@@ -903,6 +905,17 @@ void GuiApplicationPrivate::showSearchLibraryDialog()
     coverProvider->setParent(search);
 
     search->show();
+}
+
+void GuiApplicationPrivate::focusSearchBar() const
+{
+    const auto searchBars = m_editableLayout->findWidgetsByType<SearchWidget>();
+    for(auto* searchBar : searchBars) {
+        if(searchBar && searchBar->isVisibleTo(m_mainWindow.get())) {
+            searchBar->setFocus(Qt::ShortcutFocusReason);
+            return;
+        }
+    }
 }
 
 void GuiApplicationPrivate::showQuickSearch() const
