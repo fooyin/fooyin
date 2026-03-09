@@ -172,7 +172,10 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
 
 void MprisPlugin::shutdown()
 {
-    QFile::remove(currentCoverPath());
+    const auto coverPath = currentCoverPath();
+    if(QFile::exists(coverPath)) {
+        QFile::remove(coverPath);
+    }
 
     if(!m_registered) {
         return;
@@ -436,7 +439,7 @@ void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
     m_currentMetaData.clear();
     m_currCoverKey.clear();
 
-    if(!previousCoverPath.isEmpty()) {
+    if(QFile::exists(previousCoverPath)) {
         QFile::remove(previousCoverPath);
     }
 
