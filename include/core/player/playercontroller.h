@@ -145,6 +145,7 @@ signals:
 
     void positionChanged(uint64_t ms);
     void positionChangedSeconds(uint64_t seconds);
+    void bitrateChanged(int bitrate);
     void positionMoved(uint64_t ms);
 
     void currentTrackChanged(const Fooyin::Track& track);

@@ -53,6 +53,16 @@ public:
         }
     }
 
+    bool updateBitrate(int bitrate)
+    {
+        if(std::exchange(m_bitrate, bitrate) != bitrate) {
+            emit m_self->bitrateChanged(bitrate);
+            return true;
+        }
+
+        return false;
+    }
+
     void changeTrack(const PlaylistTrack& track, const Player::TrackChangeContext& context)
     {
         m_currentTrack         = track;
@@ -167,7 +177,7 @@ void PlayerController::reset()
 {
     p->m_currentTrack = {};
     p->m_position     = 0;
-    p->m_bitrate      = 0;
+    p->updateBitrate(0);
 
     p->emitPositionSignals(0);
     emit playbackSnapshotChanged(playbackSnapshot());
@@ -389,7 +399,7 @@ void PlayerController::setCurrentPosition(uint64_t ms)
 
 void PlayerController::setBitrate(int bitrate)
 {
-    if(std::exchange(p->m_bitrate, bitrate) != bitrate) {
+    if(p->updateBitrate(bitrate)) {
         emit playbackSnapshotChanged(playbackSnapshot());
     }
 }
@@ -406,6 +416,7 @@ void PlayerController::changeCurrentTrack(const PlaylistTrack& track, const Play
     }
 
     p->changeTrack(track, context);
+    p->updateBitrate(0);
 
     p->m_settings->set<Settings::Core::ActiveTrack>(QVariant::fromValue(p->m_currentTrack.track));
     p->m_settings->set<Settings::Core::ActiveTrackId>(p->m_currentTrack.track.id());
