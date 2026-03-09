@@ -65,6 +65,9 @@ using ExpressionList = std::vector<Expression>;
 enum class FunctionKind : uint8_t
 {
     Generic = 0,
+    Get,
+    Put,
+    Puts,
     If,
     If2,
     IfEqual,
