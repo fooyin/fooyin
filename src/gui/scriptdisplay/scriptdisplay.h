@@ -54,7 +54,7 @@ public:
         QString fgColour;
         QString linkColour;
         int horizontalAlignment{Qt::AlignLeft};
-        int verticalAlignment{Qt::AlignCenter};
+        int verticalAlignment{Qt::AlignVCenter};
     };
 
     ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,

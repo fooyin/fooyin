@@ -236,7 +236,7 @@ $crlf()
         .fgColour = {},
         .linkColour          = {},
         .horizontalAlignment = Qt::AlignLeft,
-        .verticalAlignment   = Qt::AlignCenter,
+        .verticalAlignment   = Qt::AlignVCenter,
     };
 }
 
