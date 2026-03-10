@@ -28,7 +28,6 @@
 #include <optional>
 
 namespace Fooyin {
-class PlaylistScriptRegistry;
 class ScriptParser;
 
 class PlaylistContainerItem

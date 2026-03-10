@@ -19,8 +19,6 @@
 
 #include "fileopsworker.h"
 
-#include "fileopsregistry.h"
-
 #include <core/internalcoresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
@@ -35,12 +33,50 @@ Q_LOGGING_CATEGORY(FILEOPS, "fy.fileops")
 
 using namespace Qt::StringLiterals;
 
+namespace {
+class FileOpsScriptEnvironment : public Fooyin::ScriptEnvironment,
+                                 public Fooyin::ScriptEvaluationEnvironment
+{
+public:
+    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
+    {
+        return this;
+    }
+
+    [[nodiscard]] Fooyin::TrackListContextPolicy trackListContextPolicy() const override
+    {
+        return Fooyin::TrackListContextPolicy::Unresolved;
+    }
+
+    [[nodiscard]] QString trackListPlaceholder() const override
+    {
+        return {};
+    }
+
+    [[nodiscard]] bool escapeRichText() const override
+    {
+        return false;
+    }
+
+    [[nodiscard]] bool replacePathSeparators() const override
+    {
+        return true;
+    }
+};
+
+QString replaceSeparators(const QString& input)
+{
+    static const QRegularExpression regex{uR"([/\\])"_s};
+    QString output{input};
+    return output.replace(regex, "-"_L1);
+}
+} // namespace
+
 namespace Fooyin::FileOps {
 FileOpsWorker::FileOpsWorker(MusicLibrary* library, TrackList tracks, SettingsManager* settings, QObject* parent)
     : Worker{parent}
     , m_library{library}
     , m_settings{settings}
-    , m_scriptParser{new FileOpsRegistry()}
     , m_tracks{std::move(tracks)}
     , m_isMonitoring{settings->value<Settings::Core::Internal::MonitorLibraries>()}
 { }
@@ -157,7 +193,7 @@ void FileOpsWorker::simulateMove()
 
         m_tracksProcessed.emplace(track.filepath());
 
-        const QString destFilepath = QDir::cleanPath(m_scriptParser.evaluate(script, track));
+        const QString destFilepath = QDir::cleanPath(evaluatePath(script, track));
         if(track.filepath() == destFilepath) {
             // Nothing to do
             continue;
@@ -185,7 +221,7 @@ void FileOpsWorker::simulateMove()
 
                 if(m_trackPaths.contains(file)) {
                     const Track fileTrack  = m_trackPaths.equal_range(file).first->second;
-                    const QString filePath = QDir::cleanPath(m_scriptParser.evaluate(script, fileTrack));
+                    const QString filePath = QDir::cleanPath(evaluatePath(script, fileTrack));
                     m_operations.emplace_back(Operation::Move, fileTrack.filenameExt(), fileTrack.filepath(), filePath);
                 }
                 else {
@@ -227,7 +263,7 @@ void FileOpsWorker::simulateCopy()
 
         m_tracksProcessed.emplace(track.filepath());
 
-        const QString destFilepath = QDir::cleanPath(m_scriptParser.evaluate(script, track));
+        const QString destFilepath = QDir::cleanPath(evaluatePath(script, track));
         if(track.filepath() == destFilepath) {
             // Nothing to do
             continue;
@@ -283,8 +319,8 @@ void FileOpsWorker::simulateRename()
 
         m_tracksProcessed.emplace(track.filepath());
 
-        QString destFilename = QDir::cleanPath(m_scriptParser.evaluate(script, track));
-        destFilename         = FileOpsRegistry::replaceSeparators(destFilename);
+        QString destFilename = QDir::cleanPath(evaluatePath(script, track));
+        destFilename         = replaceSeparators(destFilename);
 
         if(track.filenameExt() == destFilename) {
             continue;
@@ -341,6 +377,13 @@ void FileOpsWorker::renameFile(const FileOpsItem& item)
             m_tracksToUpdate.push_back(track);
         }
     }
+}
+
+QString FileOpsWorker::evaluatePath(const ParsedScript& script, const Track& track)
+{
+    static const FileOpsScriptEnvironment environment;
+    const ScriptContext context{.environment = &environment};
+    return m_scriptParser.evaluate(script, track, context);
 }
 
 void FileOpsWorker::copyFile(const FileOpsItem& item)

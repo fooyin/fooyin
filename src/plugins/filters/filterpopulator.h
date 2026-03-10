@@ -21,6 +21,7 @@
 
 #include "filteritem.h"
 
+#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <utils/worker.h>
@@ -57,10 +58,10 @@ private:
     FilterItem* getOrInsertItem(const QStringList& columns);
     std::vector<FilterItem*> getOrInsertItems(const QList<QStringList>& columnSet);
     void addTrackToNode(const Track& track, FilterItem* node);
-    void iterateTrack(const Track& track);
     bool runBatch(const TrackList& tracks);
 
     ScriptParser m_parser;
+    LibraryScriptEnvironment m_scriptEnvironment;
 
     QString m_currentColumns;
     ParsedScript m_script;

@@ -72,6 +72,8 @@ private:
     void simulateCopy();
     void simulateRename();
 
+    [[nodiscard]] QString evaluatePath(const ParsedScript& script, const Track& track);
+
     void renameFile(const FileOpsItem& item);
     static void copyFile(const FileOpsItem& item);
 

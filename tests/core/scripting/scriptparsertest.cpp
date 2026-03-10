@@ -17,12 +17,15 @@
  *
  */
 
+#include <core/constants.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scriptproviders.h>
 #include <core/track.h>
 
 #include <gtest/gtest.h>
 
 #include <QDateTime>
+#include <QDir>
 
 using namespace Qt::StringLiterals;
 
@@ -32,6 +35,276 @@ class ScriptParserTest : public ::testing::Test
 protected:
     ScriptParser m_parser;
 };
+
+static const StaticScriptVariableProvider ProviderVariableProvider{makeScriptVariableDescriptor<[]() -> ScriptResult {
+    return {.value = QString::fromLatin1(Constants::FrontCover), .cond = true};
+}>(VariableKind::FrontCover, u"FRONTCOVER"_s)};
+
+class TestProviderEnvironment : public ScriptEnvironment
+{
+public:
+    void setState(QString variableValue, QString functionPrefix)
+    {
+        m_variableValue  = std::move(variableValue);
+        m_functionPrefix = std::move(functionPrefix);
+    }
+
+    [[nodiscard]] QString variableValue() const
+    {
+        return m_variableValue;
+    }
+
+    [[nodiscard]] QString functionPrefix() const
+    {
+        return m_functionPrefix;
+    }
+
+private:
+    QString m_variableValue;
+    QString m_functionPrefix;
+};
+
+static const StaticScriptVariableProvider ContextVariableProvider{
+    makeScriptVariableDescriptor<[](const ScriptContext& context, const QString&) -> ScriptResult {
+        const auto* environment = dynamic_cast<const TestProviderEnvironment*>(context.environment);
+        if(environment == nullptr || environment->variableValue().isEmpty()) {
+            return {};
+        }
+        return {.value = environment->variableValue(), .cond = true};
+    }>(VariableKind::FrontCover, u"STATEFULVAR"_s)};
+
+static constexpr auto PrefixFunction = [](const ScriptFunctionCallContext& call) -> ScriptResult {
+    if(call.args.empty()) {
+        return {};
+    }
+
+    const QString value = u"fn:%1"_s.arg(call.args.front().value);
+    return {.value = value, .cond = true};
+};
+
+static const StaticScriptFunctionProvider ProviderFunctionProvider{
+    makeScriptFunctionDescriptor<PrefixFunction>(u"prefix"_s)};
+
+static constexpr auto ListIndexVariable = [](const ScriptContext& context, const QString&) -> ScriptResult {
+    const auto* environment = context.environment ? context.environment->playlistEnvironment() : nullptr;
+    if(!environment || environment->currentPlaylistTrackIndex() < 0) {
+        return {};
+    }
+
+    return {.value = QString::number(environment->currentPlaylistTrackIndex() + 1), .cond = true};
+};
+
+static constexpr auto QueueIndexesVariable = [](const ScriptContext& context, const QString&) -> ScriptResult {
+    const auto* environment = context.environment ? context.environment->playlistEnvironment() : nullptr;
+    if(!environment) {
+        return {};
+    }
+
+    QStringList values;
+    for(const int index : environment->currentQueueIndexes()) {
+        values.push_back(QString::number(index + 1));
+    }
+    const QString value = values.join(u", "_s);
+    return {.value = value, .cond = !value.isEmpty()};
+};
+
+static constexpr auto DepthVariable = [](const ScriptContext& context, const QString&) -> ScriptResult {
+    const auto* environment = context.environment ? context.environment->playlistEnvironment() : nullptr;
+    if(!environment) {
+        return {};
+    }
+
+    return {.value = QString::number(environment->trackDepth()), .cond = true};
+};
+
+static const StaticScriptFunctionProvider ContextFunctionProvider{
+    makeScriptFunctionDescriptor<[](const ScriptFunctionCallContext& call) -> ScriptResult {
+        if(call.args.empty()) {
+            return {};
+        }
+
+        const auto* environment
+            = call.context ? dynamic_cast<const TestProviderEnvironment*>(call.context->environment) : nullptr;
+        if(environment == nullptr || environment->functionPrefix().isEmpty()) {
+            return {};
+        }
+
+        const QString value = u"%1%2"_s.arg(environment->functionPrefix(), call.args.front().value);
+        return {.value = value, .cond = true};
+    }>(u"stateful_prefix"_s)};
+
+class TestPlaylistEnvironment : public ScriptEnvironment,
+                                public ScriptPlaylistEnvironment,
+                                public ScriptTrackListEnvironment,
+                                public ScriptPlaybackEnvironment,
+                                public ScriptLibraryEnvironment,
+                                public ScriptEvaluationEnvironment
+{
+public:
+    void setState(int playlistTrackIndex, int playlistTrackCount, int trackDepth, std::vector<int> queueIndexes)
+    {
+        m_playlistTrackIndex = playlistTrackIndex;
+        m_playlistTrackCount = playlistTrackCount;
+        m_trackDepth         = trackDepth;
+        m_queueIndexes       = std::move(queueIndexes);
+    }
+
+    void setTrackList(const TrackList* tracks)
+    {
+        m_tracks = tracks;
+    }
+
+    void setPlaybackState(uint64_t currentPosition, uint64_t currentTrackDuration, int bitrate,
+                          Player::PlayState playState)
+    {
+        m_currentPosition      = currentPosition;
+        m_currentTrackDuration = currentTrackDuration;
+        m_bitrate              = bitrate;
+        m_playState            = playState;
+    }
+
+    void setLibraryState(QString libraryName, QString libraryPath)
+    {
+        m_libraryName = std::move(libraryName);
+        m_libraryPath = std::move(libraryPath);
+    }
+
+    void setEvaluationState(TrackListContextPolicy policy, QString placeholder = {}, bool escapeRichText = false,
+                            bool useVariousArtists = false)
+    {
+        m_trackListContextPolicy = policy;
+        m_trackListPlaceholder   = std::move(placeholder);
+        m_escapeRichText         = escapeRichText;
+        m_useVariousArtists      = useVariousArtists;
+    }
+
+    [[nodiscard]] const ScriptPlaylistEnvironment* playlistEnvironment() const override
+    {
+        return this;
+    }
+
+    [[nodiscard]] const ScriptTrackListEnvironment* trackListEnvironment() const override
+    {
+        return this;
+    }
+
+    [[nodiscard]] const ScriptPlaybackEnvironment* playbackEnvironment() const override
+    {
+        return this;
+    }
+
+    [[nodiscard]] const ScriptLibraryEnvironment* libraryEnvironment() const override
+    {
+        return this;
+    }
+
+    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
+    {
+        return this;
+    }
+
+    [[nodiscard]] int currentPlaylistTrackIndex() const override
+    {
+        return m_playlistTrackIndex;
+    }
+
+    [[nodiscard]] int playlistTrackCount() const override
+    {
+        return m_playlistTrackCount;
+    }
+
+    [[nodiscard]] int trackDepth() const override
+    {
+        return m_trackDepth;
+    }
+
+    [[nodiscard]] std::span<const int> currentQueueIndexes() const override
+    {
+        return m_queueIndexes;
+    }
+
+    [[nodiscard]] const TrackList* trackList() const override
+    {
+        return m_tracks;
+    }
+
+    [[nodiscard]] uint64_t currentPosition() const override
+    {
+        return m_currentPosition;
+    }
+
+    [[nodiscard]] uint64_t currentTrackDuration() const override
+    {
+        return m_currentTrackDuration;
+    }
+
+    [[nodiscard]] int bitrate() const override
+    {
+        return m_bitrate;
+    }
+
+    [[nodiscard]] Player::PlayState playState() const override
+    {
+        return m_playState;
+    }
+
+    [[nodiscard]] QString libraryName(const Track&) const override
+    {
+        return m_libraryName;
+    }
+
+    [[nodiscard]] QString libraryPath(const Track&) const override
+    {
+        return m_libraryPath;
+    }
+
+    [[nodiscard]] QString relativePath(const Track& track) const override
+    {
+        return m_libraryPath.isEmpty() ? QString{} : QDir{m_libraryPath}.relativeFilePath(track.prettyFilepath());
+    }
+
+    [[nodiscard]] TrackListContextPolicy trackListContextPolicy() const override
+    {
+        return m_trackListContextPolicy;
+    }
+
+    [[nodiscard]] QString trackListPlaceholder() const override
+    {
+        return m_trackListPlaceholder;
+    }
+
+    [[nodiscard]] bool escapeRichText() const override
+    {
+        return m_escapeRichText;
+    }
+
+    [[nodiscard]] bool useVariousArtists() const override
+    {
+        return m_useVariousArtists;
+    }
+
+private:
+    int m_playlistTrackIndex{-1};
+    int m_playlistTrackCount{0};
+    int m_trackDepth{0};
+    std::vector<int> m_queueIndexes;
+    const TrackList* m_tracks{nullptr};
+    uint64_t m_currentPosition{0};
+    uint64_t m_currentTrackDuration{0};
+    int m_bitrate{0};
+    Player::PlayState m_playState{Player::PlayState::Stopped};
+    QString m_libraryName;
+    QString m_libraryPath;
+    TrackListContextPolicy m_trackListContextPolicy{TrackListContextPolicy::Unresolved};
+    QString m_trackListPlaceholder;
+    bool m_escapeRichText{false};
+    bool m_useVariousArtists{false};
+};
+
+static const StaticScriptVariableProvider EnvironmentVariableProvider{
+    makeScriptVariableDescriptor<ListIndexVariable>(VariableKind::ListIndex, u"LIST_INDEX"_s),
+    makeScriptVariableDescriptor<QueueIndexesVariable>(VariableKind::QueueIndexes, u"QUEUEINDEXES"_s),
+    makeScriptVariableDescriptor<DepthVariable>(VariableKind::Depth, u"DEPTH"_s)};
 
 TEST_F(ScriptParserTest, BasicLiteral)
 {
@@ -179,6 +452,234 @@ TEST_F(ScriptParserTest, InfoTest)
     EXPECT_EQ(u"2", m_parser.evaluate(QStringLiteral("$info(channels)"), track));
 }
 
+TEST_F(ScriptParserTest, RegistryContextVariables)
+{
+    ScriptParser parser;
+    parser.addProvider(EnvironmentVariableProvider);
+
+    TestPlaylistEnvironment environment;
+    environment.setState(4, 12, 2, {});
+
+    ScriptContext context;
+    context.environment = &environment;
+    const Track track;
+
+    EXPECT_EQ(u"5", parser.evaluate(QStringLiteral("%list_index%"), track, context));
+    EXPECT_EQ(u"2", parser.evaluate(QStringLiteral("%depth%"), track, context));
+}
+
+TEST_F(ScriptParserTest, VariableProvidersInstallIntoRegistry)
+{
+    ScriptParser parser;
+    parser.addProvider(ProviderVariableProvider);
+    const Track track;
+
+    EXPECT_EQ(QString::fromLatin1(Constants::FrontCover), parser.evaluate(QStringLiteral("%frontcover%"), track));
+}
+
+TEST_F(ScriptParserTest, StatefulVariableProvidersInstallIntoRegistry)
+{
+    ScriptParser parser;
+    parser.addProvider(ContextVariableProvider);
+    TestProviderEnvironment environment;
+    environment.setState(u"stateful"_s, {});
+    ScriptContext context;
+    context.environment = &environment;
+    const Track track;
+
+    EXPECT_EQ(u"stateful", parser.evaluate(QStringLiteral("%statefulvar%"), track, context));
+}
+
+TEST_F(ScriptParserTest, FunctionProvidersInstallIntoRegistry)
+{
+    ScriptParser parser;
+    parser.addProvider(ProviderFunctionProvider);
+    const ParsedScript parsed = parser.parse(QStringLiteral("$prefix(test)"));
+
+    EXPECT_EQ(u"fn:test", parser.evaluate(parsed));
+    EXPECT_EQ(u"fn:test", parser.evaluate(parsed));
+}
+
+TEST_F(ScriptParserTest, StatefulFunctionProvidersInstallIntoRegistry)
+{
+    ScriptParser parser;
+    parser.addProvider(ContextFunctionProvider);
+    TestProviderEnvironment environment;
+    environment.setState({}, u"ctx:"_s);
+    ScriptContext context;
+    context.environment       = &environment;
+    const ParsedScript parsed = parser.parse(QStringLiteral("$stateful_prefix(test)"));
+
+    EXPECT_EQ(u"ctx:test", parser.evaluate(parsed, context));
+    EXPECT_EQ(u"ctx:test", parser.evaluate(parsed, context));
+}
+
+TEST_F(ScriptParserTest, ContextEnvironmentVariables)
+{
+    ScriptParser parser;
+    parser.addProvider(EnvironmentVariableProvider);
+
+    TestPlaylistEnvironment environment;
+    environment.setState(4, 12, 2, {0, 2});
+
+    ScriptContext context;
+    context.environment = &environment;
+    const Track track;
+
+    EXPECT_EQ(u"5", parser.evaluate(QStringLiteral("%list_index%"), track, context));
+    EXPECT_EQ(u"2", parser.evaluate(QStringLiteral("%depth%"), track, context));
+    EXPECT_EQ(u"1, 3", parser.evaluate(QStringLiteral("%queueindexes%"), track, context));
+}
+
+TEST_F(ScriptParserTest, ContextEvaluationEnvironmentControlsPolicyAndEscaping)
+{
+    ScriptParser parser;
+
+    TestPlaylistEnvironment environment;
+    environment.setEvaluationState(TrackListContextPolicy::Placeholder, u"|Loading|"_s, true);
+
+    ScriptContext context;
+    context.environment = &environment;
+    Track track;
+    track.setTitle(QStringLiteral("A < B"));
+
+    EXPECT_EQ(u"|Loading|", parser.evaluate(QStringLiteral("%trackcount%"), track, context));
+    EXPECT_EQ(u"A \\< B", parser.evaluate(QStringLiteral("%title%"), track, context));
+}
+
+TEST_F(ScriptParserTest, ContextTrackListEnvironmentProvidesFallbackData)
+{
+    ScriptParser parser;
+
+    TrackList tracks;
+
+    Track track1;
+    track1.setGenres({QStringLiteral("Pop")});
+    track1.setDuration(2000);
+    tracks.push_back(track1);
+
+    Track track2;
+    track2.setGenres({QStringLiteral("Rock")});
+    track2.setDuration(3000);
+    tracks.push_back(track2);
+
+    TestPlaylistEnvironment environment;
+    environment.setTrackList(&tracks);
+    environment.setEvaluationState(TrackListContextPolicy::Fallback);
+
+    ScriptContext context;
+    context.environment = &environment;
+    const Track track;
+
+    EXPECT_EQ(u"2", parser.evaluate(QStringLiteral("%trackcount%"), track, context));
+    EXPECT_EQ(u"00:05", parser.evaluate(QStringLiteral("%playtime%"), track, context));
+}
+
+TEST_F(ScriptParserTest, ContextPlaybackEnvironmentProvidesPlaybackVariables)
+{
+    ScriptParser parser;
+
+    TestPlaylistEnvironment environment;
+    environment.setPlaybackState(45000, 120000, 320, Player::PlayState::Playing);
+
+    ScriptContext context;
+    context.environment = &environment;
+    Track track;
+    track.setBitrate(192);
+
+    EXPECT_EQ(u"00:45", parser.evaluate(QStringLiteral("%playback_time%"), track, context));
+    EXPECT_EQ(u"75", parser.evaluate(QStringLiteral("%playback_time_remaining_s%"), track, context));
+    EXPECT_EQ(u"1", parser.evaluate(QStringLiteral("%isplaying%"), track, context));
+    EXPECT_EQ(u"320", parser.evaluate(QStringLiteral("%bitrate%"), track, context));
+}
+
+TEST_F(ScriptParserTest, ContextLibraryEnvironmentProvidesLibraryVariables)
+{
+    ScriptParser parser;
+
+    TestPlaylistEnvironment environment;
+    environment.setLibraryState(QStringLiteral("Main"), QStringLiteral("/music"));
+
+    ScriptContext context;
+    context.environment = &environment;
+    Track track;
+    track.setFilePath(QStringLiteral("/music/Artist/Album/Track.flac"));
+
+    EXPECT_EQ(u"Main", parser.evaluate(QStringLiteral("%libraryname%"), track, context));
+    EXPECT_EQ(u"/music", parser.evaluate(QStringLiteral("%librarypath%"), track, context));
+    EXPECT_EQ(u"Artist/Album/Track.flac", parser.evaluate(QStringLiteral("%relativepath%"), track, context));
+}
+
+TEST_F(ScriptParserTest, TrackEvaluationDoesNotUseTrackListContextByDefault)
+{
+    ScriptParser parser;
+
+    TrackList tracks;
+
+    Track track1;
+    track1.setDuration(2000);
+    tracks.push_back(track1);
+
+    Track track2;
+    track2.setDuration(3000);
+    tracks.push_back(track2);
+
+    TestPlaylistEnvironment environment;
+    environment.setTrackList(&tracks);
+
+    ScriptContext context;
+    context.environment = &environment;
+
+    EXPECT_EQ(u"%TRACKCOUNT%", parser.evaluate(QStringLiteral("%trackcount%"), track1, context));
+    EXPECT_EQ(u"%PLAYLIST_DURATION%", parser.evaluate(QStringLiteral("%playlist_duration%"), track1, context));
+}
+
+TEST_F(ScriptParserTest, TrackEvaluationCanUseTrackListContextWhenEnabled)
+{
+    ScriptParser parser;
+
+    TrackList tracks;
+
+    Track track1;
+    track1.setDuration(2000);
+    tracks.push_back(track1);
+
+    Track track2;
+    track2.setDuration(3000);
+    tracks.push_back(track2);
+
+    TestPlaylistEnvironment environment;
+    environment.setTrackList(&tracks);
+    environment.setEvaluationState(TrackListContextPolicy::Fallback);
+
+    ScriptContext context;
+    context.environment = &environment;
+
+    EXPECT_EQ(u"2", parser.evaluate(QStringLiteral("%trackcount%"), track1, context));
+    EXPECT_EQ(u"00:05", parser.evaluate(QStringLiteral("%playlist_duration%"), track1, context));
+}
+
+TEST_F(ScriptParserTest, TrackEvaluationCanUseTrackListPlaceholderPolicy)
+{
+    ScriptParser parser;
+
+    TrackList tracks;
+
+    Track track1;
+    track1.setDuration(2000);
+    tracks.push_back(track1);
+
+    TestPlaylistEnvironment environment;
+    environment.setTrackList(&tracks);
+    environment.setEvaluationState(TrackListContextPolicy::Placeholder, u"|Loading|"_s);
+
+    ScriptContext context;
+    context.environment = &environment;
+
+    EXPECT_EQ(u"|Loading|", parser.evaluate(QStringLiteral("%trackcount%"), track1, context));
+    EXPECT_EQ(u"|Loading|", parser.evaluate(QStringLiteral("%playlist_duration%"), track1, context));
+}
+
 TEST_F(ScriptParserTest, QueryTest)
 {
     TrackList tracks;
@@ -274,5 +775,17 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(1, m_parser.filter(query, tracks).size());
     query = QStringLiteral("((playcount>=1 AND bitrate>500) OR title:Celest) AND (duration_ms>180000)");
     EXPECT_EQ(2, m_parser.filter(query, tracks).size());
+}
+
+TEST_F(ScriptParserTest, QueryAndLiteralCachesStaySeparate)
+{
+    TrackList tracks;
+
+    Track track;
+    track.setPlayCount(2);
+    tracks.push_back(track);
+
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount>1"), tracks).size());
+    EXPECT_EQ(u"playcount>1", m_parser.evaluate(QStringLiteral("playcount>1"), track));
 }
 } // namespace Fooyin::Testing

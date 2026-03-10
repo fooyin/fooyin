@@ -21,22 +21,20 @@
 
 #include "fygui_export.h"
 
-#include <core/scripting/scriptregistry.h>
 #include <gui/scripting/richtext.h>
 
 namespace Fooyin {
-struct FormattedTextBlock;
-class ScriptFormatterRegistryPrivate;
-
+/*!
+ * Resolves built-in rich-text formatting tags used by `ScriptFormatter`.
+ */
 class FYGUI_EXPORT ScriptFormatterRegistry
 {
 public:
-    ScriptFormatterRegistry();
-    ~ScriptFormatterRegistry();
-
-    [[nodiscard]] bool format(RichFormatting& formatting, const QString& func, const QString& option = {}) const;
-
-private:
-    std::unique_ptr<ScriptFormatterRegistryPrivate> p;
+    /*!
+     * Applies the formatter command `func` with optional `option` to `formatting`.
+     *
+     * Returns `true` if the formatter command was recognised.
+     */
+    [[nodiscard]] static bool format(RichFormatting& formatting, const QString& func, const QString& option = {});
 };
 } // namespace Fooyin

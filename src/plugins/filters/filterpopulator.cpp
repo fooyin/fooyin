@@ -21,7 +21,6 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
-#include <core/scripting/scriptregistry.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -30,7 +29,7 @@ using namespace Qt::StringLiterals;
 namespace Fooyin::Filters {
 FilterPopulator::FilterPopulator(LibraryManager* libraryManager, QObject* parent)
     : Worker{parent}
-    , m_parser{new ScriptRegistry(libraryManager)}
+    , m_scriptEnvironment{libraryManager}
 { }
 
 void FilterPopulator::run(const QStringList& columns, const TrackList& tracks, bool useVarious)
@@ -39,9 +38,7 @@ void FilterPopulator::run(const QStringList& columns, const TrackList& tracks, b
 
     m_data.clear();
 
-    if(auto* registry = m_parser.registry()) {
-        registry->setUseVariousArtists(useVarious);
-    }
+    m_scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, false, useVarious);
 
     const QString newColumns = columns.join("\036"_L1);
     if(std::exchange(m_currentColumns, newColumns) != newColumns) {
@@ -82,35 +79,34 @@ void FilterPopulator::addTrackToNode(const Track& track, FilterItem* node)
     m_data.trackParents[track.id()].push_back(node->key());
 }
 
-void FilterPopulator::iterateTrack(const Track& track)
-{
-    const QString columns = m_parser.evaluate(m_script, track);
-
-    if(columns.contains(QLatin1String{Constants::UnitSeparator})) {
-        const QStringList values = columns.split(QLatin1String{Constants::UnitSeparator});
-        QList<QStringList> colValues;
-        std::ranges::transform(values, std::back_inserter(colValues),
-                               [](const QString& col) { return col.split(QLatin1String{Constants::RecordSeparator}); });
-        const auto nodes = getOrInsertItems(colValues);
-        for(FilterItem* node : nodes) {
-            addTrackToNode(track, node);
-        }
-    }
-    else {
-        FilterItem* node = getOrInsertItem(columns.split(QLatin1String{Constants::RecordSeparator}));
-        addTrackToNode(track, node);
-    }
-}
-
 bool FilterPopulator::runBatch(const TrackList& tracks)
 {
+    ScriptContext context;
+    context.environment = &m_scriptEnvironment;
+
     for(const Track& track : tracks) {
         if(!mayRun()) {
             return false;
         }
 
         if(track.isInLibrary()) {
-            iterateTrack(track);
+            const QString columns = m_parser.evaluate(m_script, track, context);
+
+            if(columns.contains(QLatin1String{Constants::UnitSeparator})) {
+                const QStringList values = columns.split(QLatin1String{Constants::UnitSeparator});
+                QList<QStringList> colValues;
+                std::ranges::transform(values, std::back_inserter(colValues), [](const QString& col) {
+                    return col.split(QLatin1String{Constants::RecordSeparator});
+                });
+                const auto nodes = getOrInsertItems(colValues);
+                for(FilterItem* node : nodes) {
+                    addTrackToNode(track, node);
+                }
+            }
+            else {
+                FilterItem* node = getOrInsertItem(columns.split(QLatin1String{Constants::RecordSeparator}));
+                addTrackToNode(track, node);
+            }
         }
     }
 

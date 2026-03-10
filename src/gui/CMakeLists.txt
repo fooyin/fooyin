@@ -150,8 +150,6 @@ set(SOURCES
     librarytree/librarytreemodel.h
     librarytree/librarytreepopulator.cpp
     librarytree/librarytreepopulator.h
-    librarytree/librarytreescriptregistry.cpp
-    librarytree/librarytreescriptregistry.h
     librarytree/librarytreeview.cpp
     librarytree/librarytreeview.h
     librarytree/librarytreewidget.cpp
@@ -209,8 +207,6 @@ set(SOURCES
     playlist/playlistpopulator.h
     playlist/playlistpreset.cpp
     playlist/playlistpreset.h
-    playlist/playlistscriptregistry.cpp
-    playlist/playlistscriptregistry.h
     playlist/playlisttabs.cpp
     playlist/playlisttabs.h
     playlist/playlistview.cpp
@@ -257,6 +253,8 @@ set(SOURCES
     scripting/richtextutils.cpp
     scripting/scripteditor.cpp
     scripting/scriptformatter.cpp
+    scripting/scriptvariableproviders.cpp
+    scripting/scriptvariableproviders.h
     scripting/scriptcommandhandler.cpp
     scripting/scriptcommandhandler.h
     scripting/scriptreferenceentries.cpp

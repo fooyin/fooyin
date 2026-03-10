@@ -24,32 +24,46 @@
 #include <QApplication>
 #include <QPalette>
 
+#include <array>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-void bold(RichFormatting& formatting, const QString& /*option*/)
+namespace {
+using FormatterHandler = bool (*)(RichFormatting&, const QString&);
+
+struct FormatterHandlerEntry
+{
+    QLatin1StringView name;
+    FormatterHandler handler;
+};
+
+bool bold(RichFormatting& formatting, const QString& /*option*/)
 {
     formatting.font.setBold(true);
+    return true;
 }
 
-void italic(RichFormatting& formatting, const QString& /*option*/)
+bool italic(RichFormatting& formatting, const QString& /*option*/)
 {
     formatting.font.setItalic(true);
+    return true;
 }
 
-void fontFamily(RichFormatting& formatting, const QString& option)
+bool fontFamily(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
-        return;
+        return false;
     }
 
     formatting.font.setFamily(option);
+    return true;
 }
 
-void fontSize(RichFormatting& formatting, const QString& option)
+bool fontSize(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
-        return;
+        return false;
     }
 
     bool isInt{false};
@@ -57,13 +71,16 @@ void fontSize(RichFormatting& formatting, const QString& option)
 
     if(isInt) {
         formatting.font.setPointSize(size);
+        return true;
     }
+
+    return false;
 }
 
-void fontDelta(RichFormatting& formatting, const QString& option)
+bool fontDelta(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
-        return;
+        return false;
     }
 
     bool isInt{false};
@@ -71,13 +88,16 @@ void fontDelta(RichFormatting& formatting, const QString& option)
 
     if(isInt) {
         formatting.font.setPointSize(formatting.font.pointSize() + delta);
+        return true;
     }
+
+    return false;
 }
 
-void colourAlpha(RichFormatting& formatting, const QString& option)
+bool colourAlpha(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
-        return;
+        return false;
     }
 
     bool isInt{false};
@@ -85,19 +105,22 @@ void colourAlpha(RichFormatting& formatting, const QString& option)
 
     if(isInt) {
         formatting.colour.setAlpha(alpha);
+        return true;
     }
+
+    return false;
 }
 
-void colourRgb(RichFormatting& formatting, const QString& option)
+bool colourRgb(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
-        return;
+        return false;
     }
 
     const QStringList rgb = option.split(","_L1);
 
     if(rgb.size() < 3) {
-        return;
+        return false;
     }
 
     bool isInt{false};
@@ -108,62 +131,42 @@ void colourRgb(RichFormatting& formatting, const QString& option)
 
     if(isInt) {
         formatting.colour.setRgb(red, green, blue, alpha);
+        return true;
     }
+
+    return false;
 }
 
-void linkHref(RichFormatting& formatting, const QString& option)
+bool linkHref(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
-        return;
+        return false;
     }
 
     formatting.link = option;
     formatting.font.setUnderline(true);
     formatting.colour = QApplication::palette().link().color();
+    return true;
 }
 
-class ScriptFormatterRegistryPrivate
-{ };
+constexpr std::array FormatterHandlers{
+    FormatterHandlerEntry{.name = "b"_L1, .handler = &bold},
+    FormatterHandlerEntry{.name = "i"_L1, .handler = &italic},
+    FormatterHandlerEntry{.name = "font"_L1, .handler = &fontFamily},
+    FormatterHandlerEntry{.name = "size"_L1, .handler = &fontSize},
+    FormatterHandlerEntry{.name = "sized"_L1, .handler = &fontDelta},
+    FormatterHandlerEntry{.name = "alpha"_L1, .handler = &colourAlpha},
+    FormatterHandlerEntry{.name = "rgb"_L1, .handler = &colourRgb},
+    FormatterHandlerEntry{.name = "a"_L1, .handler = &linkHref},
+};
+} // namespace
 
-ScriptFormatterRegistry::ScriptFormatterRegistry()
-    : p{std::make_unique<ScriptFormatterRegistryPrivate>()}
-{ }
-
-ScriptFormatterRegistry::~ScriptFormatterRegistry() = default;
-
-bool ScriptFormatterRegistry::format(RichFormatting& formatting, const QString& func, const QString& option) const
+bool ScriptFormatterRegistry::format(RichFormatting& formatting, const QString& func, const QString& option)
 {
-    if(func == "b"_L1) {
-        bold(formatting, option);
-        return true;
-    }
-    if(func == "i"_L1) {
-        italic(formatting, option);
-        return true;
-    }
-    if(func == "font"_L1) {
-        fontFamily(formatting, option);
-        return true;
-    }
-    if(func == "size"_L1) {
-        fontSize(formatting, option);
-        return true;
-    }
-    if(func == "sized"_L1) {
-        fontDelta(formatting, option);
-        return true;
-    }
-    if(func == "alpha"_L1) {
-        colourAlpha(formatting, option);
-        return true;
-    }
-    if(func == "rgb"_L1) {
-        colourRgb(formatting, option);
-        return true;
-    }
-    if(func == "a"_L1) {
-        linkHref(formatting, option);
-        return !formatting.link.isEmpty();
+    for(const auto& entry : FormatterHandlers) {
+        if(func == entry.name) {
+            return entry.handler(formatting, option);
+        }
     }
 
     return false;

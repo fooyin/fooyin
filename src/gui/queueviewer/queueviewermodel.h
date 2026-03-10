@@ -29,6 +29,9 @@
 #include <QIcon>
 
 namespace Fooyin {
+class PlayerController;
+class SettingsManager;
+
 class QueueViewerModel : public TreeModel<QueueViewerItem>
 {
     Q_OBJECT

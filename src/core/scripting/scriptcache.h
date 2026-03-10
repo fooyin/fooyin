@@ -21,6 +21,10 @@
 
 #include <core/scripting/scriptparser.h>
 
+#include "scriptbinder.h"
+
+#include <list>
+
 namespace Fooyin {
 class ScriptCache
 {
@@ -40,6 +44,33 @@ public:
 private:
     std::unordered_map<QString, ParsedScript> m_parsedScripts;
     std::vector<QString> m_order;
+    int m_cacheLimit;
+};
+
+class BoundScriptCache
+{
+public:
+    BoundScriptCache();
+
+    BoundScript* find(uint64_t key);
+    [[nodiscard]] const BoundScript* find(uint64_t key) const;
+    void insert(uint64_t key, BoundScript script);
+
+    [[nodiscard]] int limit() const;
+    void setLimit(int limit);
+    void clear();
+
+private:
+    struct Entry
+    {
+        BoundScript script;
+        std::list<uint64_t>::iterator orderIt;
+    };
+
+    void touch(std::unordered_map<uint64_t, Entry>::iterator it);
+
+    std::unordered_map<uint64_t, Entry> m_scripts;
+    std::list<uint64_t> m_order;
     int m_cacheLimit;
 };
 } // namespace Fooyin

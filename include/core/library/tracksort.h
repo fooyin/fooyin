@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <utils/stringcollator.h>
@@ -102,9 +103,12 @@ public:
 
         const std::scoped_lock lock{m_parserGuard};
 
+        ScriptContext context;
+        context.environment = &m_scriptEnvironment;
+
         for(const auto& item : items) {
             const Track& track = extractor(item);
-            entries.push_back({item, m_parser.evaluate(sort, track)});
+            entries.push_back({item, m_parser.evaluate(sort, track, context)});
         }
 
         return entries;
@@ -120,9 +124,12 @@ public:
 
         const std::scoped_lock lock{m_parserGuard};
 
+        ScriptContext context;
+        context.environment = &m_scriptEnvironment;
+
         for(auto& item : items) {
             const Track& track = extractor(item);
-            entries.push_back({std::move(item), m_parser.evaluate(sort, track)});
+            entries.push_back({std::move(item), m_parser.evaluate(sort, track, context)});
         }
 
         return entries;
@@ -196,6 +203,7 @@ private:
     }
 
     ScriptParser m_parser;
+    LibraryScriptEnvironment m_scriptEnvironment;
     std::mutex m_parserGuard;
 };
 } // namespace Fooyin

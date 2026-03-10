@@ -94,4 +94,70 @@ void ScriptCache::clear()
     m_parsedScripts.clear();
     m_order.clear();
 }
+
+BoundScriptCache::BoundScriptCache()
+    : m_cacheLimit{DefaultLimit}
+{ }
+
+BoundScript* BoundScriptCache::find(uint64_t key)
+{
+    auto it = m_scripts.find(key);
+    if(it != m_scripts.end()) {
+        touch(it);
+        return &it->second.script;
+    }
+    return nullptr;
+}
+
+const BoundScript* BoundScriptCache::find(uint64_t key) const
+{
+    if(const auto it = m_scripts.find(key); it != m_scripts.cend()) {
+        return &it->second.script;
+    }
+    return nullptr;
+}
+
+void BoundScriptCache::insert(uint64_t key, BoundScript script)
+{
+    auto it = m_scripts.find(key);
+    if(it != m_scripts.end()) {
+        it->second.script = std::move(script);
+        touch(it);
+    }
+    else {
+        m_order.push_back(key);
+        const auto orderIt = std::prev(m_order.end());
+        m_scripts.emplace(key, Entry{.script = std::move(script), .orderIt = orderIt});
+    }
+
+    if(std::cmp_greater(m_scripts.size(), m_cacheLimit)) {
+        const uint64_t oldestKey = m_order.front();
+        m_order.pop_front();
+        m_scripts.erase(oldestKey);
+    }
+}
+
+int BoundScriptCache::limit() const
+{
+    return m_cacheLimit;
+}
+
+void BoundScriptCache::setLimit(int limit)
+{
+    m_cacheLimit = limit;
+}
+
+void BoundScriptCache::clear()
+{
+    m_scripts.clear();
+    m_order.clear();
+}
+
+void BoundScriptCache::touch(std::unordered_map<uint64_t, Entry>::iterator it)
+{
+    if(std::next(it->second.orderIt) != m_order.end()) {
+        m_order.splice(m_order.end(), m_order, it->second.orderIt);
+    }
+    it->second.orderIt = std::prev(m_order.end());
+}
 } // namespace Fooyin
