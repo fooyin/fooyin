@@ -22,6 +22,46 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+RichText trimRichText(RichText richText)
+{
+    while(!richText.blocks.empty()) {
+        auto& block = richText.blocks.front();
+
+        int firstNonSpace{0};
+        while(firstNonSpace < block.text.size() && block.text.at(firstNonSpace).isSpace()) {
+            ++firstNonSpace;
+        }
+
+        if(firstNonSpace > 0) {
+            block.text.remove(0, firstNonSpace);
+        }
+
+        if(!block.text.isEmpty()) {
+            break;
+        }
+
+        richText.blocks.erase(richText.blocks.begin());
+    }
+
+    while(!richText.blocks.empty()) {
+        auto& block = richText.blocks.back();
+
+        int lastNonSpace = block.text.size() - 1;
+        while(lastNonSpace >= 0 && block.text.at(lastNonSpace).isSpace()) {
+            --lastNonSpace;
+        }
+
+        block.text.truncate(lastNonSpace + 1);
+        if(!block.text.isEmpty()) {
+            break;
+        }
+
+        richText.blocks.pop_back();
+    }
+
+    return richText;
+}
+
 QString richTextToHtml(const RichText& richText, const QColor& linkColour)
 {
     QString html;

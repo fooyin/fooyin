@@ -23,6 +23,31 @@
 #include <core/library/tracksort.h>
 
 namespace {
+Fooyin::RichText plainTextToRichText(const QString& text)
+{
+    Fooyin::RichText richText;
+    if(text.isEmpty()) {
+        return richText;
+    }
+
+    richText.blocks.push_back({.text = text, .format = {}});
+    return richText;
+}
+
+void removeCoverMarker(Fooyin::RichText& richText, const char* cover)
+{
+    for(auto blockIt = richText.blocks.begin(); blockIt != richText.blocks.end();) {
+        blockIt->text.remove(QLatin1String{cover});
+
+        if(blockIt->text.isEmpty()) {
+            blockIt = richText.blocks.erase(blockIt);
+        }
+        else {
+            ++blockIt;
+        }
+    }
+}
+
 QStyleOptionViewItem::Position getCoverPosition(const QString& text, const char* cover)
 {
     if(text.indexOf(QLatin1String{cover}) == 0) {
@@ -43,22 +68,27 @@ LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent, int lev
     , m_pending{false}
     , m_level{level}
     , m_title{std::move(title)}
+    , m_titleSource{m_title}
+    , m_richTitle{plainTextToRichText(m_title)}
     , m_coverPosition{QStyleOptionViewItem::Left}
 {
     if(m_title.contains(QLatin1String{Constants::FrontCover})) {
         m_coverType     = Track::Cover::Front;
         m_coverPosition = getCoverPosition(m_title, Constants::FrontCover);
         m_title.remove(QLatin1String{Constants::FrontCover});
+        removeCoverMarker(m_richTitle, Constants::FrontCover);
     }
     else if(m_title.contains(QLatin1String{Constants::BackCover})) {
         m_coverType     = Track::Cover::Back;
         m_coverPosition = getCoverPosition(m_title, Constants::BackCover);
         m_title.remove(QLatin1String{Constants::BackCover});
+        removeCoverMarker(m_richTitle, Constants::BackCover);
     }
     else if(m_title.contains(QLatin1String{Constants::ArtistPicture})) {
         m_coverType     = Track::Cover::Artist;
         m_coverPosition = getCoverPosition(m_title, Constants::ArtistPicture);
         m_title.remove(QLatin1String{Constants::ArtistPicture});
+        removeCoverMarker(m_richTitle, Constants::ArtistPicture);
     }
 }
 
@@ -75,6 +105,16 @@ int LibraryTreeItem::level() const
 QString LibraryTreeItem::title() const
 {
     return m_title;
+}
+
+QString LibraryTreeItem::titleSource() const
+{
+    return m_titleSource;
+}
+
+RichText LibraryTreeItem::richTitle() const
+{
+    return m_richTitle;
 }
 
 TrackList LibraryTreeItem::tracks() const
@@ -109,7 +149,29 @@ void LibraryTreeItem::setPending(bool pending)
 
 void LibraryTreeItem::setTitle(const QString& title)
 {
-    m_title = title;
+    m_title       = title;
+    m_titleSource = m_title;
+    m_richTitle   = plainTextToRichText(m_title);
+}
+
+void LibraryTreeItem::setTitleSource(const QString& title)
+{
+    m_titleSource = title;
+}
+
+void LibraryTreeItem::setRichTitle(const RichText& title)
+{
+    m_richTitle = title;
+
+    if(m_coverType == Track::Cover::Front) {
+        removeCoverMarker(m_richTitle, Constants::FrontCover);
+    }
+    else if(m_coverType == Track::Cover::Back) {
+        removeCoverMarker(m_richTitle, Constants::BackCover);
+    }
+    else if(m_coverType == Track::Cover::Artist) {
+        removeCoverMarker(m_richTitle, Constants::ArtistPicture);
+    }
 }
 
 void LibraryTreeItem::setKey(const Md5Hash& key)

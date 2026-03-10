@@ -21,6 +21,9 @@
 
 #include "librarytreeitem.h"
 
+#include <QColor>
+#include <QFont>
+
 #include <utils/crypto.h>
 #include <utils/worker.h>
 
@@ -53,6 +56,9 @@ class LibraryTreePopulator : public Worker
 public:
     explicit LibraryTreePopulator(LibraryManager* libraryManager, QObject* parent = nullptr);
     ~LibraryTreePopulator() override;
+
+    void setFont(const QFont& font);
+    void setColour(const QColor& colour);
 
     void run(const QString& grouping, const TrackList& tracks, bool useVarious);
 

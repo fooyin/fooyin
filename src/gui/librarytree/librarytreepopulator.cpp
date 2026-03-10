@@ -24,6 +24,8 @@
 #include <core/constants.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
+#include <gui/scripting/richtextutils.h>
+#include <gui/scripting/scriptformatter.h>
 
 using namespace Qt::StringLiterals;
 
@@ -37,17 +39,17 @@ public:
     explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self, LibraryManager* libraryManager)
         : m_self{self}
         , m_parser{new LibraryTreeScriptRegistry(libraryManager)}
-        , m_data{}
     { }
 
     LibraryTreeItem* getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent, const QString& title,
-                                     int level);
+                                     const RichText& richTitle, int level);
     void iterateTrack(const Track& track);
     bool runBatch(int size);
 
     LibraryTreePopulator* m_self;
 
     ScriptParser m_parser;
+    ScriptFormatter m_formatter;
 
     QString m_currentGrouping;
     ParsedScript m_script;
@@ -58,11 +60,14 @@ public:
 };
 
 LibraryTreeItem* LibraryTreePopulatorPrivate::getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent,
-                                                              const QString& title, int level)
+                                                              const QString& title, const RichText& richTitle,
+                                                              int level)
 {
     auto [node, inserted] = m_data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
     if(inserted) {
         node->second.setKey(key);
+        node->second.setTitleSource(title);
+        node->second.setRichTitle(richTitle);
     }
     LibraryTreeItem* child = &node->second;
 
@@ -90,10 +95,16 @@ void LibraryTreePopulatorPrivate::iterateTrack(const Track& track)
         const QStringList items = value.split(u"||"_s);
 
         for(int level{0}; const QString& item : items) {
-            const QString title = item.trimmed();
-            const auto key      = Utils::generateMd5Hash(parent->key(), title);
+            const RichText richTitle = trimRichText(m_formatter.evaluate(item));
+            const QString title      = richTitle.joinedText();
+            if(title.isEmpty()) {
+                continue;
+            }
 
-            auto* node = getOrInsertItem(key, parent, title, level);
+            const auto key = Utils::generateMd5Hash(parent->key(), title);
+
+            auto* node = getOrInsertItem(key, parent, title, richTitle, level);
+            node->setTitleSource(item);
 
             node->addTrack(track);
             m_data.trackParents[track.id()].push_back(node->key());
@@ -145,6 +156,16 @@ LibraryTreePopulator::LibraryTreePopulator(LibraryManager* libraryManager, QObje
 { }
 
 LibraryTreePopulator::~LibraryTreePopulator() = default;
+
+void LibraryTreePopulator::setFont(const QFont& font)
+{
+    p->m_formatter.setBaseFont(font);
+}
+
+void LibraryTreePopulator::setColour(const QColor& colour)
+{
+    p->m_formatter.setBaseColour(colour);
+}
 
 void LibraryTreePopulator::run(const QString& grouping, const TrackList& tracks, bool useVarious)
 {

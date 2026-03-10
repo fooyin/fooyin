@@ -20,7 +20,7 @@
 #pragma once
 
 #include <core/track.h>
-
+#include <gui/scripting/richtext.h>
 #include <utils/crypto.h>
 #include <utils/treeitem.h>
 
@@ -36,6 +36,7 @@ public:
     enum Role
     {
         Title = Qt::UserRole,
+        RichTitle,
         Level,
         Key,
         Tracks,
@@ -49,6 +50,8 @@ public:
     [[nodiscard]] bool pending() const;
     [[nodiscard]] int level() const;
     [[nodiscard]] QString title() const;
+    [[nodiscard]] QString titleSource() const;
+    [[nodiscard]] RichText richTitle() const;
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] Md5Hash key() const;
@@ -57,6 +60,8 @@ public:
 
     void setPending(bool pending);
     void setTitle(const QString& title);
+    void setTitleSource(const QString& title);
+    void setRichTitle(const RichText& title);
     void setKey(const Md5Hash& key);
 
     void addTrack(const Track& track);
@@ -70,6 +75,8 @@ private:
     int m_level;
     Md5Hash m_key;
     QString m_title;
+    QString m_titleSource;
+    RichText m_richTitle;
     std::optional<Track::Cover> m_coverType;
     QStyleOptionViewItem::Position m_coverPosition;
     TrackList m_tracks;

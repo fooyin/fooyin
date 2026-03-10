@@ -28,4 +28,5 @@
 
 namespace Fooyin {
 FYGUI_EXPORT QString richTextToHtml(const RichText& richText, const QColor& linkColour = {});
+FYGUI_EXPORT RichText trimRichText(RichText richText);
 } // namespace Fooyin

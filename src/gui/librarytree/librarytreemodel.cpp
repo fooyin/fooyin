@@ -26,6 +26,8 @@
 #include <core/library/tracksort.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
+#include <gui/scripting/richtextutils.h>
+#include <gui/scripting/scriptformatter.h>
 #include <utils/datastream.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -45,6 +47,16 @@
 using namespace Qt::StringLiterals;
 
 namespace {
+QFont libraryTreeFont()
+{
+    return QApplication::font("Fooyin::LibraryTreeView");
+}
+
+QColor libraryTreeTextColour()
+{
+    return QApplication::palette().color(QPalette::Text);
+}
+
 bool cmpItemsReverse(Fooyin::LibraryTreeItem* pItem1, Fooyin::LibraryTreeItem* pItem2)
 {
     Fooyin::LibraryTreeItem* item1{pItem1};
@@ -356,10 +368,21 @@ void LibraryTreeModelPrivate::updatePendingNodes(const PendingTreeData& data)
 void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
 {
     const QString sortScript = m_settings->value<Settings::Core::LibrarySortScript>();
+    QModelIndexList changedIndexes;
 
     for(const auto& [key, item] : data.items) {
         if(m_nodes.contains(key)) {
             auto& node = m_nodes.at(key);
+
+            node.setTitleSource(item.titleSource());
+
+            if(node.richTitle() != item.richTitle()) {
+                node.setRichTitle(item.richTitle());
+                if(!node.pending()) {
+                    changedIndexes.emplace_back(m_self->indexOfItem(&node));
+                }
+            }
+
             node.addTracks(item.tracks());
             node.sortTracks(m_sorter, sortScript);
         }
@@ -371,6 +394,11 @@ void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
 
     const QModelIndex allIndex = m_self->indexOfItem(&m_summaryNode);
     emit m_self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
+
+    for(const QModelIndex& index : changedIndexes) {
+        emit m_self->dataChanged(index, index,
+                                 {Qt::DisplayRole, Qt::ToolTipRole, Qt::SizeHintRole, LibraryTreeItem::RichTitle});
+    }
 
     if(m_resetting) {
         for(const auto& [parentKey, rows] : data.nodes) {
@@ -450,6 +478,30 @@ void LibraryTreeModel::resetPalette()
 {
     p->m_playingColour = QApplication::palette().highlight().color();
     p->m_playingColour.setAlpha(90);
+
+    ScriptFormatter formatter;
+    formatter.setBaseFont(libraryTreeFont());
+    formatter.setBaseColour(libraryTreeTextColour());
+
+    QModelIndexList changedIndexes;
+    changedIndexes.reserve(p->m_nodes.size());
+
+    for(auto& item : p->m_nodes | std::views::values) {
+        const RichText richTitle = trimRichText(formatter.evaluate(item.titleSource()));
+
+        if(item.richTitle() != richTitle) {
+            item.setRichTitle(richTitle);
+
+            if(!item.pending()) {
+                changedIndexes.emplace_back(indexOfItem(&item));
+            }
+        }
+    }
+
+    for(const QModelIndex& index : changedIndexes) {
+        emit dataChanged(index, index,
+                         {Qt::DisplayRole, Qt::ToolTipRole, Qt::SizeHintRole, LibraryTreeItem::RichTitle});
+    }
     invalidateData();
 }
 
@@ -533,6 +585,8 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
         }
         case(LibraryTreeItem::Title):
             return item->title();
+        case(LibraryTreeItem::RichTitle):
+            return item->richTitle();
         case(LibraryTreeItem::Level):
             return item->level();
         case(LibraryTreeItem::Key):
@@ -690,6 +744,8 @@ void LibraryTreeModel::addTracks(const TrackList& tracks)
     p->m_populatorThread.start();
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracksToAdd] {
+        p->m_populator.setFont(libraryTreeFont());
+        p->m_populator.setColour(libraryTreeTextColour());
         p->m_populator.run(p->m_grouping, tracksToAdd,
                            p->m_settings->value<Settings::Core::UseVariousForCompilations>());
     });
@@ -712,6 +768,8 @@ void LibraryTreeModel::updateTracks(const TrackList& tracks)
     p->m_populatorThread.start();
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracksToUpdate] {
+        p->m_populator.setFont(libraryTreeFont());
+        p->m_populator.setColour(libraryTreeTextColour());
         p->m_populator.run(p->m_grouping, tracksToUpdate,
                            p->m_settings->value<Settings::Core::UseVariousForCompilations>());
     });
@@ -765,6 +823,8 @@ void LibraryTreeModel::reset(const TrackList& tracks)
     p->m_resetting = true;
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracks] {
+        p->m_populator.setFont(libraryTreeFont());
+        p->m_populator.setColour(libraryTreeTextColour());
         p->m_populator.run(p->m_grouping, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
     });
 }
