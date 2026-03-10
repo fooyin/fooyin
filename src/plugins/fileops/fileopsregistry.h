@@ -26,6 +26,7 @@ class FileOpsRegistry : public ScriptRegistry
 {
 public:
     using ScriptRegistry::value;
+    [[nodiscard]] ScriptResult value(VariableKind kind, const QString& var, const Track& track) const override;
     [[nodiscard]] ScriptResult value(const QString& var, const Track& track) const override;
 
     static QString replaceSeparators(const QString& input);

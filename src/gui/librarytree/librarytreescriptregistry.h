@@ -29,7 +29,9 @@ public:
     using ScriptRegistry::ScriptRegistry;
     using ScriptRegistry::value;
 
+    [[nodiscard]] VariableKind resolveVariableKind(const QString& var) const override;
     [[nodiscard]] bool isVariable(const QString& var, const Track& track) const override;
+    [[nodiscard]] ScriptResult value(VariableKind kind, const QString& var, const Track& track) const override;
     [[nodiscard]] ScriptResult value(const QString& var, const Track& track) const override;
 };
 } // namespace Fooyin

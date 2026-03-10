@@ -24,12 +24,17 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-ScriptResult FileOpsRegistry::value(const QString& var, const Track& track) const
+ScriptResult FileOpsRegistry::value(VariableKind kind, const QString& var, const Track& track) const
 {
-    ScriptResult result = ScriptRegistry::value(var, track);
+    ScriptResult result = ScriptRegistry::value(kind, var, track);
     result.value        = replaceSeparators(result.value);
 
     return result;
+}
+
+ScriptResult FileOpsRegistry::value(const QString& var, const Track& track) const
+{
+    return value(resolveVariableKind(var), var, track);
 }
 
 QString FileOpsRegistry::replaceSeparators(const QString& input)

@@ -24,31 +24,66 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-bool LibraryTreeScriptRegistry::isVariable(const QString& var, const Track& track) const
+VariableKind LibraryTreeScriptRegistry::resolveVariableKind(const QString& var) const
 {
     if(var == "FRONTCOVER"_L1) {
-        return true;
+        return VariableKind::FrontCover;
     }
     if(var == "BACKCOVER"_L1) {
-        return true;
+        return VariableKind::BackCover;
     }
     if(var == "ARTISTPICTURE"_L1) {
+        return VariableKind::ArtistPicture;
+    }
+
+    return ScriptRegistry::resolveVariableKind(var);
+}
+
+bool LibraryTreeScriptRegistry::isVariable(const QString& var, const Track& track) const
+{
+    if(resolveVariableKind(var) != VariableKind::Generic || isListVariable(var)) {
         return true;
     }
+
     return ScriptRegistry::isVariable(var, track);
+}
+
+ScriptResult LibraryTreeScriptRegistry::value(VariableKind kind, const QString& var, const Track& track) const
+{
+    switch(kind) {
+        case VariableKind::FrontCover:
+            return {.value = QLatin1String{Constants::FrontCover}, .cond = true};
+        case VariableKind::BackCover:
+            return {.value = QLatin1String{Constants::BackCover}, .cond = true};
+        case VariableKind::ArtistPicture:
+            return {.value = QLatin1String{Constants::ArtistPicture}, .cond = true};
+        case VariableKind::Generic:
+        case VariableKind::Track:
+        case VariableKind::Disc:
+        case VariableKind::DiscTotal:
+        case VariableKind::Title:
+        case VariableKind::UniqueArtist:
+        case VariableKind::PlayCount:
+        case VariableKind::Duration:
+        case VariableKind::AlbumArtist:
+        case VariableKind::Album:
+        case VariableKind::Genres:
+        case VariableKind::TrackCount:
+        case VariableKind::Playtime:
+        case VariableKind::PlaylistDuration:
+        case VariableKind::Depth:
+        case VariableKind::ListIndex:
+        case VariableKind::QueueIndex:
+        case VariableKind::QueueIndexes:
+        case VariableKind::PlayingIcon:
+            break;
+    }
+
+    return ScriptRegistry::value(kind, var, track);
 }
 
 ScriptResult LibraryTreeScriptRegistry::value(const QString& var, const Track& track) const
 {
-    if(var == "FRONTCOVER"_L1) {
-        return {.value = QLatin1String{Constants::FrontCover}, .cond = true};
-    }
-    if(var == "BACKCOVER"_L1) {
-        return {.value = QLatin1String{Constants::BackCover}, .cond = true};
-    }
-    if(var == "ARTISTPICTURE"_L1) {
-        return {.value = QLatin1String{Constants::ArtistPicture}, .cond = true};
-    }
-    return ScriptRegistry::value(var, track);
+    return value(resolveVariableKind(var), var, track);
 }
 } // namespace Fooyin
