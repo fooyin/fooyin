@@ -22,7 +22,7 @@
 #include "tageditoritem.h"
 
 #include <core/constants.h>
-#include <core/scripting/scriptregistry.h>
+#include <core/scripting/scripttrackwriter.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/helpers.h>
@@ -56,7 +56,6 @@ public:
     TagEditorModel* m_self;
 
     SettingsManager* m_settings;
-    ScriptRegistry m_scriptRegistry;
 
     TrackList m_tracks;
 
@@ -169,20 +168,20 @@ bool TagEditorModelPrivate::updateTrackMetadata(const TagEditorField& field, con
 
         if(split && std::cmp_less(i, listValue.size())) {
             if(isFloat) {
-                m_scriptRegistry.setValue(tag, listValue.at(i).toFloat(), track);
+                setTrackScriptValue(tag, listValue.at(i).toFloat(), track);
             }
             else {
-                m_scriptRegistry.setValue(tag, listValue.at(i), track);
+                setTrackScriptValue(tag, listValue.at(i), track);
             }
         }
         else if(isList) {
-            m_scriptRegistry.setValue(tag, listValue, track);
+            setTrackScriptValue(tag, listValue, track);
         }
         else if(isFloat) {
-            m_scriptRegistry.setValue(tag, floatValue, track);
+            setTrackScriptValue(tag, floatValue, track);
         }
         else {
-            m_scriptRegistry.setValue(tag, value.toString(), track);
+            setTrackScriptValue(tag, value.toString(), track);
         }
 
         ++i;

@@ -25,7 +25,7 @@ TrackSorter::TrackSorter()
 { }
 
 TrackSorter::TrackSorter(LibraryManager* libraryManager)
-    : m_parser{new ScriptRegistry(libraryManager)}
+    : m_scriptEnvironment{libraryManager}
 { }
 
 TrackSorter::~TrackSorter() = default;

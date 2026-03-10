@@ -19,7 +19,7 @@
 
 #include "playlistcolumnregistry.h"
 
-#include "playlistscriptregistry.h"
+#include "scripting/scriptvariableproviders.h"
 
 #include <core/constants.h>
 

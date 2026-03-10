@@ -19,12 +19,13 @@
 
 #include "statuswidget.h"
 
+#include "scripting/scriptvariableproviders.h"
+
 #include "internalguisettings.h"
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/scripting/scriptparser.h>
-#include <core/scripting/scriptregistry.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -110,13 +111,14 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     , m_playlistController{playlistController}
     , m_selectionController{selectionController}
     , m_settings{settings}
-    , m_scriptParser{new ScriptRegistry(m_playerController)}
     , m_iconLabel{new ClickableLabel(m_self)}
     , m_playingText{new StatusLabel(m_self)}
     , m_statusText{new StatusLabel(m_self)}
     , m_messageText{new StatusLabel(m_self)}
     , m_selectionText{new StatusLabel(m_self)}
 {
+    m_scriptParser.addProvider(playlistVariableProvider());
+
     auto* layout = new QHBoxLayout(m_self);
     layout->setContentsMargins(5, 0, 5, 0);
 
@@ -249,8 +251,10 @@ void StatusWidgetPrivate::updatePlayingText()
     const auto ps = m_playerController->playState();
     if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused) {
         QString playingText;
-        if(auto* playlist = m_playlistHandler->activePlaylist(); playlist && playlist->currentTrack().isValid()) {
-            playingText = m_scriptParser.evaluate(m_playingScript, *playlist);
+        if(const Track currentTrack = m_playerController->currentTrack(); currentTrack.isValid()) {
+            auto contextData = makePlaybackScriptContext(m_playerController, m_playlistHandler->activePlaylist(),
+                                                         TrackListContextPolicy::Fallback);
+            playingText      = m_scriptParser.evaluate(m_playingScript, currentTrack, contextData.context);
         }
         else {
             playingText = m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack());

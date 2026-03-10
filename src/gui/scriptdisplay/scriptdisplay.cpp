@@ -21,11 +21,11 @@
 
 #include "scriptdisplayconfigdialog.h"
 #include "scripting/scriptcommandhandler.h"
+#include "scripting/scriptvariableproviders.h"
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/scripting/scriptparser.h>
-#include <core/scripting/scriptregistry.h>
 #include <core/track.h>
 #include <gui/configdialog.h>
 #include <gui/scripting/richtext.h>
@@ -110,10 +110,11 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     , m_playlistHandler{playlistHandler}
     , m_commandHandler{commandHandler}
     , m_settings{settings}
-    , m_scriptParser{std::make_unique<ScriptParser>(new ScriptRegistry(m_playerController))}
     , m_layout{new QHBoxLayout(this)}
     , m_text{new TextBrowser(this)}
 {
+    m_scriptParser.addProvider(playlistVariableProvider());
+
     setObjectName(ScriptDisplay::name());
 
     m_layout->addWidget(m_text, 1);
@@ -487,17 +488,15 @@ Track ScriptDisplay::currentTrack() const
     return m_playerController->currentTrack();
 }
 
-QString ScriptDisplay::evaluateScript() const
+QString ScriptDisplay::evaluateScript()
 {
     if(const Track track = currentTrack(); track.isValid()) {
-        if(auto* playlist = m_playlistHandler->activePlaylist(); playlist && playlist->currentTrack().isValid()) {
-            return m_scriptParser->evaluate(m_config.script, *playlist);
-        }
-
-        return m_scriptParser->evaluate(m_config.script, track);
+        auto contextData = makePlaybackScriptContext(m_playerController, m_playlistHandler->activePlaylist(),
+                                                     TrackListContextPolicy::Fallback, {}, true);
+        return m_scriptParser.evaluate(m_config.script, track, contextData.context);
     }
 
-    return m_scriptParser->evaluate(m_config.script);
+    return m_scriptParser.evaluate(m_config.script);
 }
 
 void ScriptDisplay::activateLink(const QString& link) const

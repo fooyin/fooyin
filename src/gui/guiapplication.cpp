@@ -38,6 +38,7 @@
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 #include "scripting/scriptcommandhandler.h"
+#include "scripting/scriptvariableproviders.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "statusevent.h"
@@ -239,9 +240,10 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_self, &m_playlistInteractor, m_scriptCommandHandler.get(),
                             m_self)}
-    , m_scriptParser{new ScriptRegistry(m_playerController)}
     , m_coverProvider{m_core->audioLoader(), m_settings}
-{ }
+{
+    m_scriptParser.addProvider(playlistVariableProvider());
+}
 
 void GuiApplicationPrivate::initialise()
 {
@@ -301,6 +303,25 @@ void GuiApplicationPrivate::setupConnections()
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, m_mainWindow.get(),
                      [this]() { updateWindowTitle(); });
+    QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, m_self,
+                     [this]() { updateWindowTitle(); });
+    QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, m_self,
+                     [this]() { updateWindowTitle(); });
+    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, m_self,
+                     [this]() { updateWindowTitle(); });
+    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, m_self,
+                     [this]() { updateWindowTitle(); });
+
+    const auto updateTitleForActivePlaylist = [this](Playlist* playlist) {
+        if(playlist == m_playlistHandler->activePlaylist()) {
+            updateWindowTitle();
+        }
+    };
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, m_self, updateTitleForActivePlaylist);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksChanged, m_self, updateTitleForActivePlaylist);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksUpdated, m_self, updateTitleForActivePlaylist);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksRemoved, m_self, updateTitleForActivePlaylist);
+
     m_settings->subscribe<Settings::Gui::Internal::WindowTitleTrackScript>(m_self, [this]() { updateWindowTitle(); });
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_self,
                      [this]() { updateWindowTitle(); });
@@ -440,8 +461,10 @@ void GuiApplicationPrivate::updateWindowTitle()
         return;
     }
 
+    auto contextData     = makePlaybackScriptContext(m_playerController, m_playlistHandler->activePlaylist(),
+                                                     TrackListContextPolicy::Fallback);
     const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
-    const QString title  = m_scriptParser.evaluate(script, currentTrack);
+    const QString title  = m_scriptParser.evaluate(script, currentTrack, contextData.context);
     m_mainWindow->setTitle(title);
 }
 

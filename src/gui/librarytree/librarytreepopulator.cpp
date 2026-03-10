@@ -19,11 +19,11 @@
 
 #include "librarytreepopulator.h"
 
-#include "librarytreescriptregistry.h"
+#include "scripting/scriptvariableproviders.h"
 
 #include <core/constants.h>
+#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
-#include <core/scripting/scriptregistry.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 
@@ -38,8 +38,11 @@ class LibraryTreePopulatorPrivate
 public:
     explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self, LibraryManager* libraryManager)
         : m_self{self}
-        , m_parser{new LibraryTreeScriptRegistry(libraryManager)}
-    { }
+        , m_scriptEnvironment{libraryManager}
+    {
+        m_scriptContext.environment = &m_scriptEnvironment;
+        m_parser.addProvider(artworkMarkerVariableProvider());
+    }
 
     LibraryTreeItem* getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent, const QString& title,
                                      const RichText& richTitle, int level);
@@ -50,6 +53,8 @@ public:
 
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
+    LibraryScriptEnvironment m_scriptEnvironment;
+    ScriptContext m_scriptContext;
 
     QString m_currentGrouping;
     ParsedScript m_script;
@@ -80,7 +85,7 @@ LibraryTreeItem* LibraryTreePopulatorPrivate::getOrInsertItem(const Md5Hash& key
 
 void LibraryTreePopulatorPrivate::iterateTrack(const Track& track)
 {
-    const QString field = m_parser.evaluate(m_script, track);
+    const QString field = m_parser.evaluate(m_script, track, m_scriptContext);
     if(field.isNull()) {
         return;
     }
@@ -173,9 +178,7 @@ void LibraryTreePopulator::run(const QString& grouping, const TrackList& tracks,
 
     p->m_data.clear();
 
-    if(auto* registry = p->m_parser.registry()) {
-        registry->setUseVariousArtists(useVarious);
-    }
+    p->m_scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, useVarious);
 
     if(std::exchange(p->m_currentGrouping, grouping) != grouping) {
         p->m_script = p->m_parser.parse(p->m_currentGrouping);

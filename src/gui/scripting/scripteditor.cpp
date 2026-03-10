@@ -24,8 +24,8 @@
 #include "scriptreferenceentries.h"
 
 #include <core/coresettings.h>
+#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
-#include <core/scripting/scriptregistry.h>
 #include <core/track.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
@@ -429,6 +429,8 @@ public:
 
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
+    LibraryScriptEnvironment m_libraryEnvironment;
+    ScriptContext m_scriptContext;
 
     ParsedScript m_currentScript;
 };
@@ -455,8 +457,10 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     , m_functionReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_commandReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_model{new ExpressionTreeModel(m_self)}
-    , m_parser{new ScriptRegistry(libraryManager)}
+    , m_libraryEnvironment{libraryManager}
 {
+    m_scriptContext.environment = &m_libraryEnvironment;
+
     auto* mainLayout = new QGridLayout(m_self);
     mainLayout->setContentsMargins({});
     mainLayout->addWidget(m_mainSplitter);
@@ -660,7 +664,7 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
     m_formatter.setBaseColour(m_results->palette().color(QPalette::Text));
 
     const Track track      = m_track.isValid() ? m_track : m_placeholderTrack;
-    const auto result      = m_parser.evaluate(script, track);
+    const auto result      = m_parser.evaluate(script, track, m_scriptContext);
     const auto formatted   = m_formatter.evaluate(result);
     const QString htmlBody = richTextToHtml(formatted);
     const QString html     = u"<html><body style=\"margin:0;\">%1</body></html>"_s.arg(htmlBody);

@@ -59,7 +59,6 @@ ScrobblerService::ScrobblerService(ServiceDetails details, NetworkAccessManager*
     : QObject{parent}
     , m_network{network}
     , m_settings{settings}
-    , m_scriptParser{new ScriptRegistry()}
     , m_details{std::move(details)}
     , m_authSession{nullptr}
     , m_cache{nullptr}

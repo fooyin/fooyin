@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,13 @@
 
 #pragma once
 
-#include <core/scripting/scriptregistry.h>
+#include "fycore_export.h"
+
+#include <core/scripting/scripttypes.h>
 
 namespace Fooyin {
-class FileOpsRegistry : public ScriptRegistry
-{
-public:
-    using ScriptRegistry::value;
-    [[nodiscard]] ScriptResult value(VariableKind kind, const QString& var, const Track& track) const override;
-    [[nodiscard]] ScriptResult value(const QString& var, const Track& track) const override;
-
-    static QString replaceSeparators(const QString& input);
-};
+/*!
+ * Writes a script-visible value back to a mutable built-in field or extra tag.
+ */
+FYCORE_EXPORT void setTrackScriptValue(const QString& var, const ScriptFieldValue& value, Track& track);
 } // namespace Fooyin

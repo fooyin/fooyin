@@ -17,53 +17,29 @@
  *
  */
 
-#include <core/scripting/scriptregistry.h>
+#include "scriptregistry.h"
 
 #include "functions/controlfuncs.h"
 #include "functions/mathfuncs.h"
 #include "functions/stringfuncs.h"
 #include "functions/timefuncs.h"
 #include "functions/tracklistfuncs.h"
-#include "library/librarymanager.h"
+#include "scriptbinder.h"
 
 #include <core/constants.h>
-#include <core/player/playercontroller.h>
+#include <core/playlist/playlist.h>
+#include <core/scripting/scriptproviders.h>
 #include <core/track.h>
 #include <utils/audioutils.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
 #include <QDir>
+#include <QRegularExpression>
 
 using namespace Qt::StringLiterals;
 
 namespace {
-using NativeFunc          = std::function<QString(const QStringList&)>;
-using NativeVoidFunc      = std::function<QString()>;
-using NativeTrackFunc     = std::function<QString(const Fooyin::Track&, const QStringList&)>;
-using NativeTrackVoidFunc = std::function<QString(const Fooyin::Track&)>;
-using NativeBoolFunc      = std::function<Fooyin::ScriptResult(const QStringList&)>;
-using NativeCondFunc      = std::function<Fooyin::ScriptResult(const Fooyin::ScriptValueList&)>;
-using Func                = std::variant<NativeFunc, NativeVoidFunc, NativeTrackFunc, NativeBoolFunc, NativeCondFunc>;
-
-using TrackFunc     = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::Track&)>;
-using TrackSetFunc  = std::function<void(Fooyin::Track&, const Fooyin::ScriptRegistry::FuncRet&)>;
-using TrackListFunc = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::TrackList&)>;
-
-template <typename FuncType>
-auto generateSetFunc(FuncType func)
-{
-    return [func](Fooyin::Track& track, Fooyin::ScriptRegistry::FuncRet arg) {
-        std::visit(
-            [&]<typename Param>(Param&& value) {
-                if constexpr(std::is_invocable_v<FuncType, Fooyin::Track&, Param>) {
-                    (track.*func)(value);
-                }
-            },
-            arg);
-    };
-}
-
 QString trackMeta(const Fooyin::Track& track, const QStringList& args)
 {
     if(args.empty()) {
@@ -113,405 +89,698 @@ QString formatDateTime(const uint64_t ms)
 
     return Fooyin::Utils::msToDateString(static_cast<int64_t>(ms));
 }
+
+QString sampleRateMetadata(const Fooyin::Track& track)
+{
+    return track.sampleRate() > 0 ? QString::number(track.sampleRate()) : QString{};
+}
+
+int bitDepthMetadata(const Fooyin::Track& track)
+{
+    return track.bitDepth() > 0 ? track.bitDepth() : -1;
+}
+
+Fooyin::ScriptContext makeContext(const Fooyin::ScriptContext& base, const Fooyin::Track* track,
+                                  const Fooyin::TrackList* tracks, const Fooyin::Playlist* playlist)
+{
+    Fooyin::ScriptContext context = base;
+    context.track                 = track;
+    context.tracks                = tracks;
+    context.playlist              = playlist;
+    return context;
+}
+
+Fooyin::ScriptResult unavailableTrackListResult(const Fooyin::ScriptContext& context, const QString& var)
+{
+    const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr;
+    const Fooyin::TrackListContextPolicy policy
+        = environment ? environment->trackListContextPolicy() : Fooyin::TrackListContextPolicy::Unresolved;
+    const QString placeholder = environment ? environment->trackListPlaceholder() : QString{};
+
+    if(policy == Fooyin::TrackListContextPolicy::Placeholder && !placeholder.isNull()) {
+        return {.value = placeholder, .cond = true};
+    }
+
+    return {.value = u"%%1%"_s.arg(var), .cond = true};
+}
+
+void applyOutputPolicy(const Fooyin::ScriptContext& context, Fooyin::ScriptResult& result)
+{
+    const auto* environment          = context.environment ? context.environment->evaluationEnvironment() : nullptr;
+    const bool escapeRichText        = environment && environment->escapeRichText();
+    const bool replacePathSeparators = environment && environment->replacePathSeparators();
+
+    if(escapeRichText && !result.value.isEmpty()) {
+        result.value.replace(u'<', u"\\<"_s);
+    }
+
+    if(replacePathSeparators && !result.value.isEmpty()) {
+        static const QRegularExpression regex{uR"([/\\])"_s};
+        result.value.replace(regex, "-"_L1);
+    }
+}
+
+Fooyin::TrackListContextPolicy trackListContextPolicy(const Fooyin::ScriptContext& context)
+{
+    if(const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr) {
+        return environment->trackListContextPolicy();
+    }
+
+    return Fooyin::TrackListContextPolicy::Unresolved;
+}
+
+bool useVariousArtists(const Fooyin::ScriptContext& context)
+{
+    if(const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr) {
+        return environment->useVariousArtists();
+    }
+
+    return false;
+}
+
+const Fooyin::TrackList* contextTrackList(const Fooyin::ScriptContext& context)
+{
+    if(const auto* environment = context.environment ? context.environment->trackListEnvironment() : nullptr) {
+        return environment->trackList();
+    }
+
+    return context.tracks;
+}
+
+const Fooyin::ScriptPlaybackEnvironment* playbackEnvironment(const Fooyin::ScriptContext& context)
+{
+    return context.environment ? context.environment->playbackEnvironment() : nullptr;
+}
+
+const Fooyin::ScriptLibraryEnvironment* libraryEnvironment(const Fooyin::ScriptContext& context)
+{
+    return context.environment ? context.environment->libraryEnvironment() : nullptr;
+}
+
 } // namespace
 
 namespace Fooyin {
-class ScriptRegistryPrivate
+bool isTrackListVariableKind(const VariableKind kind)
 {
-public:
-    explicit ScriptRegistryPrivate(LibraryManager* libraryManager, PlayerController* playerController);
-
-    void addPlaybackVars();
-    void addLibraryVars();
-    void addDefaultFunctions();
-    void addPlaylistVars();
-    void addDefaultMetadata();
-
-    QString getBitrate(const Track& track) const;
-    QString playlistDuration(const TrackList& tracks) const;
-
-    LibraryManager* m_libraryManager{nullptr};
-    PlayerController* m_playerController{nullptr};
-
-    bool m_useVariousArtists{false};
-
-    std::unordered_map<QString, TrackFunc> m_metadata;
-    std::unordered_map<QString, TrackSetFunc> m_setMetadata;
-    std::unordered_map<QString, TrackListFunc> m_listProperties;
-    std::unordered_map<QString, Func> m_funcs;
-    std::unordered_map<QString, NativeVoidFunc> m_playbackVars;
-    std::unordered_map<QString, NativeTrackVoidFunc> m_libraryVars;
-};
-
-ScriptRegistryPrivate::ScriptRegistryPrivate(LibraryManager* libraryManager, PlayerController* playerController)
-    : m_libraryManager{libraryManager}
-    , m_playerController{playerController}
-{
-    addDefaultFunctions();
-    addPlaylistVars();
-    addDefaultMetadata();
-    addPlaybackVars();
-    addLibraryVars();
-
-    m_funcs.emplace(u"info"_s, trackInfo);
-    m_funcs.emplace(u"meta"_s, trackMeta);
-}
-
-void ScriptRegistryPrivate::addPlaybackVars()
-{
-    m_playbackVars[u"PLAYBACK_TIME"_s] = [this]() {
-        return Utils::msToString(m_playerController ? m_playerController->currentPosition() : 0);
-    };
-    m_playbackVars[u"PLAYBACK_TIME_S"_s] = [this]() {
-        return QString::number(m_playerController ? m_playerController->currentPosition() / 1000 : 0);
-    };
-    m_playbackVars[u"PLAYBACK_TIME_REMAINING"_s] = [this]() {
-        return Utils::msToString(m_playerController ? m_playerController->currentTrack().duration()
-                                                          - m_playerController->currentPosition()
-                                                    : 0);
-    };
-    m_playbackVars[u"PLAYBACK_TIME_REMAINING_S"_s] = [this]() {
-        return QString::number(
-            m_playerController
-                ? (m_playerController->currentTrack().duration() - m_playerController->currentPosition()) / 1000
-                : 0);
-    };
-    m_playbackVars[u"ISPLAYING"_s] = [this]() {
-        if(m_playerController && m_playerController->playState() == Player::PlayState::Playing) {
-            return u"1"_s;
-        }
-        return QString{};
-    };
-    m_playbackVars[u"ISPAUSED"_s] = [this]() {
-        if(m_playerController && m_playerController->playState() == Player::PlayState::Paused) {
-            return u"1"_s;
-        }
-        return QString{};
-    };
-}
-
-void ScriptRegistryPrivate::addLibraryVars()
-{
-    if(!m_libraryManager) {
-        return;
+    switch(kind) {
+        case VariableKind::Genres:
+        case VariableKind::TrackCount:
+        case VariableKind::Playtime:
+        case VariableKind::PlaylistDuration:
+        case VariableKind::PlaylistElapsed:
+            return true;
+        default:
+            return false;
     }
 
-    m_libraryVars[u"LIBRARYNAME"_s] = [this](const Track& track) {
-        if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
-            return library->name;
-        }
-        return QString{};
-    };
-    m_libraryVars[u"LIBRARYPATH"_s] = [this](const Track& track) {
-        if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
-            return library->path;
-        }
-        return QString{};
-    };
-    m_libraryVars[u"RELATIVEPATH"_s] = [this](const Track& track) {
-        if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
-            return QDir{library->path}.relativeFilePath(track.prettyFilepath());
-        }
-        return QString{};
-    };
+    return false;
 }
 
-void ScriptRegistryPrivate::addDefaultFunctions()
+std::optional<ScriptRegistry::FuncRet> trackMetadataValue(const VariableKind kind, const Track& track,
+                                                          const ScriptRegistry& registry)
 {
-    m_funcs[u"add"_s]   = Scripting::add;
-    m_funcs[u"sub"_s]   = Scripting::sub;
-    m_funcs[u"mul"_s]   = Scripting::mul;
-    m_funcs[u"div"_s]   = Scripting::div;
-    m_funcs[u"min"_s]   = Scripting::min;
-    m_funcs[u"max"_s]   = Scripting::max;
-    m_funcs[u"mod"_s]   = Scripting::mod;
-    m_funcs[u"rand"_s]  = Scripting::rand;
-    m_funcs[u"round"_s] = Scripting::round;
-
-    m_funcs[u"num"_s]            = Scripting::num;
-    m_funcs[u"replace"_s]        = Scripting::replace;
-    m_funcs[u"ascii"_s]          = Scripting::ascii;
-    m_funcs[u"slice"_s]          = Scripting::slice;
-    m_funcs[u"chop"_s]           = Scripting::chop;
-    m_funcs[u"left"_s]           = Scripting::left;
-    m_funcs[u"right"_s]          = Scripting::right;
-    m_funcs[u"insert"_s]         = Scripting::insert;
-    m_funcs[u"substr"_s]         = Scripting::substr;
-    m_funcs[u"strstr"_s]         = Scripting::strstr;
-    m_funcs[u"stristr"_s]        = Scripting::stristr;
-    m_funcs[u"strstrlast"_s]     = Scripting::strstrLast;
-    m_funcs[u"stristrlast"_s]    = Scripting::stristrLast;
-    m_funcs[u"split"_s]          = Scripting::split;
-    m_funcs[u"len"_s]            = Scripting::len;
-    m_funcs[u"longest"_s]        = Scripting::longest;
-    m_funcs[u"strcmp"_s]         = Scripting::strcmp;
-    m_funcs[u"stricmp"_s]        = Scripting::stricmp;
-    m_funcs[u"longer"_s]         = Scripting::longer;
-    m_funcs[u"sep"_s]            = Scripting::sep;
-    m_funcs[u"crlf"_s]           = Scripting::crlf;
-    m_funcs[u"tab"_s]            = Scripting::tab;
-    m_funcs[u"swapprefix"_s]     = Scripting::swapPrefix;
-    m_funcs[u"stripprefix"_s]    = Scripting::stripPrefix;
-    m_funcs[u"pad"_s]            = Scripting::pad;
-    m_funcs[u"padright"_s]       = Scripting::padRight;
-    m_funcs[u"repeat"_s]         = Scripting::repeat;
-    m_funcs[u"trim"_s]           = Scripting::trim;
-    m_funcs[u"lower"_s]          = Scripting::lower;
-    m_funcs[u"upper"_s]          = Scripting::upper;
-    m_funcs[u"abbr"_s]           = Scripting::abbr;
-    m_funcs[u"caps"_s]           = Scripting::caps;
-    m_funcs[u"directory"_s]      = Scripting::directory;
-    m_funcs[u"directory_path"_s] = Scripting::directoryPath;
-    m_funcs[u"elide_end"_s]      = Scripting::elideEnd;
-    m_funcs[u"elide_mid"_s]      = Scripting::elideMid;
-    m_funcs[u"ext"_s]            = Scripting::ext;
-    m_funcs[u"filename"_s]       = Scripting::filename;
-    m_funcs[u"progress"_s]       = Scripting::progress;
-    m_funcs[u"progress2"_s]      = Scripting::progress2;
-    m_funcs[u"doclink"_s]        = Scripting::doclink;
-    m_funcs[u"cmdlink"_s]        = Scripting::cmdlink;
-    m_funcs[u"urlencode"_s]      = Scripting::urlencode;
-
-    m_funcs[u"timems"_s] = Scripting::msToString;
-
-    m_funcs[u"if"_s]        = Scripting::cif;
-    m_funcs[u"if2"_s]       = Scripting::cif2;
-    m_funcs[u"ifgreater"_s] = Scripting::ifgreater;
-    m_funcs[u"iflonger"_s]  = Scripting::iflonger;
-    m_funcs[u"ifequal"_s]   = Scripting::ifequal;
-}
-
-void ScriptRegistryPrivate::addPlaylistVars()
-{
-    m_listProperties[u"TRACKCOUNT"_s]        = Scripting::trackCount;
-    m_listProperties[u"PLAYTIME"_s]          = Scripting::playtime;
-    m_listProperties[u"PLAYLIST_DURATION"_s] = Scripting::playtime;
-    if(m_playerController) {
-        m_listProperties[u"PLAYLIST_ELAPSED"_s] = [this](const TrackList& tracks) {
-            return playlistDuration(tracks);
-        };
+    switch(kind) {
+        case VariableKind::Track:
+            return track.trackNumber();
+        case VariableKind::TrackTotal:
+            return track.trackTotal();
+        case VariableKind::Disc:
+            return track.discNumber();
+        case VariableKind::DiscTotal:
+            return track.discTotal();
+        case VariableKind::Title:
+            return track.effectiveTitle();
+        case VariableKind::Artist:
+            return track.primaryArtist();
+        case VariableKind::UniqueArtist:
+            return track.uniqueArtist();
+        case VariableKind::PlayCount:
+            return track.playCount();
+        case VariableKind::Duration: {
+            const auto duration = track.duration();
+            return duration == 0 ? ScriptRegistry::FuncRet{QString{}}
+                                 : ScriptRegistry::FuncRet{Utils::msToString(duration)};
+        }
+        case VariableKind::DurationSecs: {
+            const auto duration = track.duration();
+            return duration == 0 ? ScriptRegistry::FuncRet{QString{}}
+                                 : ScriptRegistry::FuncRet{QString::number(duration / 1000)};
+        }
+        case VariableKind::DurationMSecs: {
+            const auto duration = track.duration();
+            return duration == 0 ? ScriptRegistry::FuncRet{QString{}}
+                                 : ScriptRegistry::FuncRet{QString::number(duration)};
+        }
+        case VariableKind::AlbumArtist:
+            return registry.albumArtistMetadata(track);
+        case VariableKind::Album:
+            return track.album();
+        case VariableKind::Genre:
+        case VariableKind::Genres:
+            return track.genre();
+        case VariableKind::Composer:
+            return track.composer();
+        case VariableKind::Performer:
+            return track.performer();
+        case VariableKind::Comment:
+            return track.comment();
+        case VariableKind::Date:
+            return track.date();
+        case VariableKind::Year:
+            return track.year();
+        case VariableKind::FileSize:
+            return track.fileSize();
+        case VariableKind::FileSizeNatural:
+            return Utils::formatFileSize(track.fileSize());
+        case VariableKind::Bitrate:
+            return registry.bitrateMetadata(track);
+        case VariableKind::SampleRate:
+            return sampleRateMetadata(track);
+        case VariableKind::BitDepth:
+            return bitDepthMetadata(track);
+        case VariableKind::FirstPlayed:
+            return formatDateTime(track.firstPlayed());
+        case VariableKind::LastPlayed:
+            return formatDateTime(track.lastPlayed());
+        case VariableKind::Rating:
+            return track.rating();
+        case VariableKind::RatingStars:
+        case VariableKind::RatingEditor:
+            return track.ratingStars();
+        case VariableKind::Codec:
+            return !track.codec().isEmpty() ? track.codec() : track.extension().toUpper();
+        case VariableKind::CodecProfile:
+            return track.codecProfile();
+        case VariableKind::Tool:
+            return track.tool();
+        case VariableKind::TagType:
+            return track.tagType(u" | "_s);
+        case VariableKind::Encoding:
+            return track.encoding();
+        case VariableKind::Channels:
+            return trackChannels(track);
+        case VariableKind::AddedTime:
+            return formatDateTime(track.addedTime());
+        case VariableKind::LastModified:
+            return formatDateTime(track.lastModified());
+        case VariableKind::FilePath:
+            return track.filepath();
+        case VariableKind::FileName:
+            return track.filename();
+        case VariableKind::Extension:
+            return track.extension();
+        case VariableKind::FileNameWithExt:
+            return track.filenameExt();
+        case VariableKind::Directory:
+            return track.directory();
+        case VariableKind::Path:
+            return track.path();
+        case VariableKind::Subsong:
+            return track.subsong();
+        case VariableKind::RGTrackGain:
+            return formatGain(track.rgTrackGain());
+        case VariableKind::RGTrackPeak:
+            return track.rgTrackPeak();
+        case VariableKind::RGTrackPeakDB:
+            return formatPeak(track.rgTrackPeak());
+        case VariableKind::RGAlbumGain:
+            return formatGain(track.rgAlbumGain());
+        case VariableKind::RGAlbumPeak:
+            return track.rgAlbumPeak();
+        case VariableKind::RGAlbumPeakDB:
+            return formatPeak(track.rgAlbumPeak());
+        default:
+            return {};
     }
-    m_listProperties[u"GENRES"_s] = Scripting::genres;
+
+    return {};
 }
 
-void ScriptRegistryPrivate::addDefaultMetadata()
+std::optional<ScriptRegistry::FuncRet> trackListValue(const VariableKind kind, const TrackList& tracks,
+                                                      const ScriptRegistry& registry)
 {
-    using namespace Fooyin::Constants;
+    const auto& cache = registry.cachedTrackListValues(tracks);
 
-    m_metadata[QString::fromLatin1(MetaData::Title)]        = &Track::effectiveTitle;
-    m_metadata[QString::fromLatin1(MetaData::Artist)]       = &Track::primaryArtist;
-    m_metadata[QString::fromLatin1(MetaData::UniqueArtist)] = &Track::uniqueArtists;
-    m_metadata[QString::fromLatin1(MetaData::Album)]        = &Track::album;
-    m_metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = [this](const Track& track) {
-        return track.effectiveAlbumArtist(m_useVariousArtists);
-    };
-    m_metadata[QString::fromLatin1(MetaData::Track)]      = &Track::trackNumber;
-    m_metadata[QString::fromLatin1(MetaData::TrackTotal)] = &Track::trackTotal;
-    m_metadata[QString::fromLatin1(MetaData::Disc)]       = &Track::discNumber;
-    m_metadata[QString::fromLatin1(MetaData::DiscTotal)]  = &Track::discTotal;
-    m_metadata[QString::fromLatin1(MetaData::Genre)]      = &Track::genres;
-    m_metadata[QString::fromLatin1(MetaData::Composer)]   = &Track::composer;
-    m_metadata[QString::fromLatin1(MetaData::Performer)]  = &Track::performer;
-    m_metadata[QString::fromLatin1(MetaData::Duration)]   = [](const Track& track) {
-        const auto duration = track.duration();
-        return duration == 0 ? QString{} : Utils::msToString(duration);
-    };
-    m_metadata[QString::fromLatin1(MetaData::DurationSecs)] = [](const Track& track) {
-        const auto duration = track.duration();
-        return duration == 0 ? QString{} : QString::number(duration / 1000);
-    };
-    m_metadata[QString::fromLatin1(MetaData::DurationMSecs)] = [](const Track& track) {
-        const auto duration = track.duration();
-        return duration == 0 ? QString{} : QString::number(duration);
-    };
-    m_metadata[QString::fromLatin1(MetaData::Comment)]         = &Track::comment;
-    m_metadata[QString::fromLatin1(MetaData::Date)]            = &Track::date;
-    m_metadata[QString::fromLatin1(MetaData::Year)]            = &Track::year;
-    m_metadata[QString::fromLatin1(MetaData::FileSize)]        = &Track::fileSize;
-    m_metadata[QString::fromLatin1(MetaData::FileSizeNatural)] = [](const Track& track) {
-        return Utils::formatFileSize(track.fileSize());
-    };
-    m_metadata[QString::fromLatin1(MetaData::Bitrate)] = [this](const Track& track) {
-        return getBitrate(track);
-    };
-    m_metadata[QString::fromLatin1(MetaData::SampleRate)] = [](const Track& track) {
-        return track.sampleRate() > 0 ? QString::number(track.sampleRate()) : QString{};
-    };
-    m_metadata[QString::fromLatin1(MetaData::BitDepth)] = [](const Track& track) {
-        return track.bitDepth() > 0 ? track.bitDepth() : -1;
-    };
-    m_metadata[QString::fromLatin1(MetaData::FirstPlayed)] = [](const Track& track) {
-        return formatDateTime(track.firstPlayed());
-    };
-    m_metadata[QString::fromLatin1(MetaData::LastPlayed)] = [](const Track& track) {
-        return formatDateTime(track.lastPlayed());
-    };
-    m_metadata[QString::fromLatin1(MetaData::PlayCount)]    = &Track::playCount;
-    m_metadata[QString::fromLatin1(MetaData::Rating)]       = &Track::rating;
-    m_metadata[QString::fromLatin1(MetaData::RatingStars)]  = &Track::ratingStars;
-    m_metadata[QString::fromLatin1(MetaData::RatingEditor)] = &Track::ratingStars;
-    m_metadata[QString::fromLatin1(MetaData::Codec)]        = [](const Track& track) {
-        return !track.codec().isEmpty() ? track.codec() : track.extension().toUpper();
-    };
-    m_metadata[QString::fromLatin1(MetaData::CodecProfile)] = &Track::codecProfile;
-    m_metadata[QString::fromLatin1(MetaData::Tool)]         = &Track::tool;
-    m_metadata[QString::fromLatin1(MetaData::TagType)]      = [](const Track& track) {
-        return track.tagType(u" | "_s);
-    };
-    m_metadata[QString::fromLatin1(MetaData::Encoding)]  = &Track::encoding;
-    m_metadata[QString::fromLatin1(MetaData::Channels)]  = trackChannels;
-    m_metadata[QString::fromLatin1(MetaData::AddedTime)] = [](const Track& track) {
-        return formatDateTime(track.addedTime());
-    };
-    m_metadata[QString::fromLatin1(MetaData::LastModified)] = [](const Track& track) {
-        return formatDateTime(track.lastModified());
-    };
-    m_metadata[QString::fromLatin1(MetaData::FilePath)]        = &Track::filepath;
-    m_metadata[QString::fromLatin1(MetaData::FileName)]        = &Track::filename;
-    m_metadata[QString::fromLatin1(MetaData::Extension)]       = &Track::extension;
-    m_metadata[QString::fromLatin1(MetaData::FileNameWithExt)] = &Track::filenameExt;
-    m_metadata[QString::fromLatin1(MetaData::Directory)]       = &Track::directory;
-    m_metadata[QString::fromLatin1(MetaData::Path)]            = &Track::path;
-    m_metadata[QString::fromLatin1(MetaData::Subsong)]         = &Track::subsong;
-    m_metadata[QString::fromLatin1(MetaData::RGTrackGain)]     = [](const Track& track) {
-        return formatGain(track.rgTrackGain());
-    };
-    m_metadata[QString::fromLatin1(MetaData::RGTrackPeak)]   = &Track::rgTrackPeak;
-    m_metadata[QString::fromLatin1(MetaData::RGTrackPeakDB)] = [](const Track& track) {
-        return formatPeak(track.rgTrackPeak());
-    };
-    m_metadata[QString::fromLatin1(MetaData::RGAlbumGain)] = [](const Track& track) {
-        return formatGain(track.rgAlbumGain());
-    };
-    m_metadata[QString::fromLatin1(MetaData::RGAlbumPeak)]   = &Track::rgAlbumPeak;
-    m_metadata[QString::fromLatin1(MetaData::RGAlbumPeakDB)] = [](const Track& track) {
-        return formatPeak(track.rgAlbumPeak());
-    };
+    switch(kind) {
+        case VariableKind::TrackCount:
+            return cache.trackCount;
+        case VariableKind::Playtime:
+        case VariableKind::PlaylistDuration:
+            return cache.playtime;
+        case VariableKind::PlaylistElapsed:
+            return cache.playlistElapsed;
+        case VariableKind::Genres:
+            return cache.genres;
+        default:
+            return {};
+    }
 
-    m_setMetadata[QString::fromLatin1(MetaData::Title)]        = generateSetFunc(&Track::setTitle);
-    m_setMetadata[QString::fromLatin1(MetaData::Artist)]       = generateSetFunc(&Track::setArtists);
-    m_setMetadata[QString::fromLatin1(MetaData::Album)]        = generateSetFunc(&Track::setAlbum);
-    m_setMetadata[QString::fromLatin1(MetaData::AlbumArtist)]  = generateSetFunc(&Track::setAlbumArtists);
-    m_setMetadata[QString::fromLatin1(MetaData::Track)]        = generateSetFunc(&Track::setTrackNumber);
-    m_setMetadata[QString::fromLatin1(MetaData::TrackTotal)]   = generateSetFunc(&Track::setTrackTotal);
-    m_setMetadata[QString::fromLatin1(MetaData::Disc)]         = generateSetFunc(&Track::setDiscNumber);
-    m_setMetadata[QString::fromLatin1(MetaData::DiscTotal)]    = generateSetFunc(&Track::setDiscTotal);
-    m_setMetadata[QString::fromLatin1(MetaData::Genre)]        = generateSetFunc(&Track::setGenres);
-    m_setMetadata[QString::fromLatin1(MetaData::Composer)]     = generateSetFunc(&Track::setComposers);
-    m_setMetadata[QString::fromLatin1(MetaData::Performer)]    = generateSetFunc(&Track::setPerformers);
-    m_setMetadata[QString::fromLatin1(MetaData::Duration)]     = generateSetFunc(&Track::setDuration);
-    m_setMetadata[QString::fromLatin1(MetaData::Comment)]      = generateSetFunc(&Track::setComment);
-    m_setMetadata[QString::fromLatin1(MetaData::Rating)]       = generateSetFunc(&Track::setRating);
-    m_setMetadata[QString::fromLatin1(MetaData::RatingStars)]  = generateSetFunc(&Track::setRatingStars);
-    m_setMetadata[QString::fromLatin1(MetaData::RatingEditor)] = generateSetFunc(&Track::setRatingStars);
-    m_setMetadata[QString::fromLatin1(MetaData::Date)]         = generateSetFunc(&Track::setDate);
-    m_setMetadata[QString::fromLatin1(MetaData::Year)]         = generateSetFunc(&Track::setYear);
+    return {};
 }
 
-QString ScriptRegistryPrivate::getBitrate(const Track& track) const
+std::optional<QString> playbackVariableValue(const VariableKind kind, const ScriptRegistry& registry)
+{
+    switch(kind) {
+        case VariableKind::PlaybackTime:
+            return registry.playbackTime();
+        case VariableKind::PlaybackTimeSeconds:
+            return registry.playbackTimeSeconds();
+        case VariableKind::PlaybackTimeRemaining:
+            return registry.playbackTimeRemaining();
+        case VariableKind::PlaybackTimeRemainingSeconds:
+            return registry.playbackTimeRemainingSeconds();
+        case VariableKind::IsPlaying:
+            return registry.isPlaying();
+        case VariableKind::IsPaused:
+            return registry.isPaused();
+        default:
+            return {};
+    }
+
+    return {};
+}
+
+std::optional<QString> libraryVariableValue(const VariableKind kind, const Track& track, const ScriptRegistry& registry)
+{
+    switch(kind) {
+        case VariableKind::LibraryName:
+            return registry.libraryNameVariable(track);
+        case VariableKind::LibraryPath:
+            return registry.libraryPathVariable(track);
+        case VariableKind::RelativePath:
+            return registry.relativePathVariable(track);
+        default:
+            return {};
+    }
+
+    return {};
+}
+
+ScriptRegistry::FuncRet ScriptRegistry::albumArtistMetadata(const Track& track) const
+{
+    return track.effectiveAlbumArtist(useVariousArtists(m_context));
+}
+
+ScriptRegistry::FuncRet ScriptRegistry::bitrateMetadata(const Track& track) const
+{
+    return getBitrate(track);
+}
+
+QString ScriptRegistry::playbackTime() const
+{
+    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
+        return Utils::msToString(environment->currentPosition());
+    }
+    return {};
+}
+
+QString ScriptRegistry::playbackTimeSeconds() const
+{
+    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
+        return QString::number(environment->currentPosition() / 1000);
+    }
+    return {};
+}
+
+QString ScriptRegistry::playbackTimeRemaining() const
+{
+    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
+        return Utils::msToString(environment->currentTrackDuration() - environment->currentPosition());
+    }
+    return {};
+}
+
+QString ScriptRegistry::playbackTimeRemainingSeconds() const
+{
+    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
+        return QString::number((environment->currentTrackDuration() - environment->currentPosition()) / 1000);
+    }
+    return {};
+}
+
+QString ScriptRegistry::isPlaying() const
+{
+    if(const auto* environment = playbackEnvironment(m_context);
+       environment != nullptr && environment->playState() == Player::PlayState::Playing) {
+        return u"1"_s;
+    }
+    return {};
+}
+
+QString ScriptRegistry::isPaused() const
+{
+    if(const auto* environment = playbackEnvironment(m_context);
+       environment != nullptr && environment->playState() == Player::PlayState::Paused) {
+        return u"1"_s;
+    }
+    return {};
+}
+
+QString ScriptRegistry::libraryNameVariable(const Track& track) const
+{
+    if(const auto* environment = libraryEnvironment(m_context); environment != nullptr) {
+        return environment->libraryName(track);
+    }
+    return {};
+}
+
+QString ScriptRegistry::libraryPathVariable(const Track& track) const
+{
+    if(const auto* environment = libraryEnvironment(m_context); environment != nullptr) {
+        return environment->libraryPath(track);
+    }
+    return {};
+}
+
+QString ScriptRegistry::relativePathVariable(const Track& track) const
+{
+    if(const auto* environment = libraryEnvironment(m_context); environment != nullptr) {
+        return environment->relativePath(track);
+    }
+    return {};
+}
+
+void ScriptRegistry::addDefaultFunctions()
+{
+    registerFunction(u"add"_s, makeScriptFunctionInvoker<Scripting::add>());
+    registerFunction(u"sub"_s, makeScriptFunctionInvoker<Scripting::sub>());
+    registerFunction(u"mul"_s, makeScriptFunctionInvoker<Scripting::mul>());
+    registerFunction(u"div"_s, makeScriptFunctionInvoker<Scripting::div>());
+    registerFunction(u"min"_s, makeScriptFunctionInvoker<Scripting::min>());
+    registerFunction(u"max"_s, makeScriptFunctionInvoker<Scripting::max>());
+    registerFunction(u"mod"_s, makeScriptFunctionInvoker<Scripting::mod>());
+    registerFunction(u"rand"_s, makeScriptFunctionInvoker<Scripting::rand>());
+    registerFunction(u"round"_s, makeScriptFunctionInvoker<Scripting::round>());
+
+    registerFunction(u"num"_s, makeScriptFunctionInvoker<Scripting::num>());
+    registerFunction(u"replace"_s, makeScriptFunctionInvoker<Scripting::replace>());
+    registerFunction(u"ascii"_s, makeScriptFunctionInvoker<Scripting::ascii>());
+    registerFunction(u"slice"_s, makeScriptFunctionInvoker<Scripting::slice>());
+    registerFunction(u"chop"_s, makeScriptFunctionInvoker<Scripting::chop>());
+    registerFunction(u"left"_s, makeScriptFunctionInvoker<Scripting::left>());
+    registerFunction(u"right"_s, makeScriptFunctionInvoker<Scripting::right>());
+    registerFunction(u"insert"_s, makeScriptFunctionInvoker<Scripting::insert>());
+    registerFunction(u"substr"_s, makeScriptFunctionInvoker<Scripting::substr>());
+    registerFunction(u"strstr"_s, makeScriptFunctionInvoker<Scripting::strstr>());
+    registerFunction(u"stristr"_s, makeScriptFunctionInvoker<Scripting::stristr>());
+    registerFunction(u"strstrlast"_s, makeScriptFunctionInvoker<Scripting::strstrLast>());
+    registerFunction(u"stristrlast"_s, makeScriptFunctionInvoker<Scripting::stristrLast>());
+    registerFunction(u"split"_s, makeScriptFunctionInvoker<Scripting::split>());
+    registerFunction(u"len"_s, makeScriptFunctionInvoker<Scripting::len>());
+    registerFunction(u"longest"_s, makeScriptFunctionInvoker<Scripting::longest>());
+    registerFunction(u"strcmp"_s, makeScriptFunctionInvoker<Scripting::strcmp>());
+    registerFunction(u"stricmp"_s, makeScriptFunctionInvoker<Scripting::stricmp>());
+    registerFunction(u"longer"_s, makeScriptFunctionInvoker<Scripting::longer>());
+    registerFunction(u"sep"_s, makeScriptFunctionInvoker<Scripting::sep>());
+    registerFunction(u"crlf"_s, makeScriptFunctionInvoker<Scripting::crlf>());
+    registerFunction(u"tab"_s, makeScriptFunctionInvoker<Scripting::tab>());
+    registerFunction(u"swapprefix"_s, makeScriptFunctionInvoker<Scripting::swapPrefix>());
+    registerFunction(u"stripprefix"_s, makeScriptFunctionInvoker<Scripting::stripPrefix>());
+    registerFunction(u"pad"_s, makeScriptFunctionInvoker<Scripting::pad>());
+    registerFunction(u"padright"_s, makeScriptFunctionInvoker<Scripting::padRight>());
+    registerFunction(u"repeat"_s, makeScriptFunctionInvoker<Scripting::repeat>());
+    registerFunction(u"trim"_s, makeScriptFunctionInvoker<Scripting::trim>());
+    registerFunction(u"lower"_s, makeScriptFunctionInvoker<Scripting::lower>());
+    registerFunction(u"upper"_s, makeScriptFunctionInvoker<Scripting::upper>());
+    registerFunction(u"abbr"_s, makeScriptFunctionInvoker<Scripting::abbr>());
+    registerFunction(u"caps"_s, makeScriptFunctionInvoker<Scripting::caps>());
+    registerFunction(u"directory"_s, makeScriptFunctionInvoker<Scripting::directory>());
+    registerFunction(u"directory_path"_s, makeScriptFunctionInvoker<Scripting::directoryPath>());
+    registerFunction(u"elide_end"_s, makeScriptFunctionInvoker<Scripting::elideEnd>());
+    registerFunction(u"elide_mid"_s, makeScriptFunctionInvoker<Scripting::elideMid>());
+    registerFunction(u"ext"_s, makeScriptFunctionInvoker<Scripting::ext>());
+    registerFunction(u"filename"_s, makeScriptFunctionInvoker<Scripting::filename>());
+    registerFunction(u"progress"_s, makeScriptFunctionInvoker<Scripting::progress>());
+    registerFunction(u"progress2"_s, makeScriptFunctionInvoker<Scripting::progress2>());
+    registerFunction(u"doclink"_s, makeScriptFunctionInvoker<Scripting::doclink>());
+    registerFunction(u"cmdlink"_s, makeScriptFunctionInvoker<Scripting::cmdlink>());
+    registerFunction(u"urlencode"_s, makeScriptFunctionInvoker<Scripting::urlencode>());
+
+    registerFunction(u"timems"_s, makeScriptFunctionInvoker<Scripting::msToString>());
+
+    registerFunction(u"if"_s, makeScriptFunctionInvoker<Scripting::cif>());
+    registerFunction(u"if2"_s, makeScriptFunctionInvoker<Scripting::cif2>());
+    registerFunction(u"ifgreater"_s, makeScriptFunctionInvoker<Scripting::ifgreater>());
+    registerFunction(u"iflonger"_s, makeScriptFunctionInvoker<Scripting::iflonger>());
+    registerFunction(u"ifequal"_s, makeScriptFunctionInvoker<Scripting::ifequal>());
+}
+
+QString ScriptRegistry::getBitrate(const Track& track) const
 {
     int bitrate = track.bitrate();
-    if(m_playerController && m_playerController->bitrate() > 0) {
-        bitrate = m_playerController->bitrate();
+    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr && environment->bitrate() > 0) {
+        bitrate = environment->bitrate();
     }
     return bitrate > 0 ? QString::number(bitrate) : QString{};
 }
 
-QString ScriptRegistryPrivate::playlistDuration(const TrackList& tracks) const
+QString ScriptRegistry::playlistDuration(const TrackList& tracks) const
 {
-    const auto currentTrack = m_playerController->currentPlaylistTrack();
+    const auto* environment = playbackEnvironment(m_context);
+    if(!environment || tracks.empty()) {
+        return {};
+    }
+
+    const int currentTrackIndex = m_context.environment && m_context.environment->playlistEnvironment()
+                                    ? m_context.environment->playlistEnvironment()->currentPlaylistTrackIndex()
+                                    : -1;
+    if(currentTrackIndex < 0 || std::cmp_greater_equal(currentTrackIndex, tracks.size())) {
+        return {};
+    }
     uint64_t total{0};
 
-    for(auto i{0}; i <= currentTrack.indexInPlaylist; ++i) {
+    for(auto i{0}; i <= currentTrackIndex; ++i) {
         total += tracks[i].duration();
     }
 
-    total -= currentTrack.track.duration();
-    total += m_playerController->currentPosition();
+    total -= environment->currentTrackDuration();
+    total += environment->currentPosition();
 
     return Utils::msToString(total);
 }
 
-ScriptRegistry::ScriptRegistry()
-    : ScriptRegistry{nullptr, nullptr}
-{ }
-
-ScriptRegistry::ScriptRegistry(LibraryManager* libraryManager)
-    : ScriptRegistry{libraryManager, nullptr}
-{ }
-
-ScriptRegistry::ScriptRegistry(PlayerController* playerController)
-    : ScriptRegistry{nullptr, playerController}
-{ }
-
-ScriptRegistry::ScriptRegistry(LibraryManager* libraryManager, PlayerController* playerController)
-    : p{std::make_unique<ScriptRegistryPrivate>(libraryManager, playerController)}
-{ }
-
-void ScriptRegistry::setUseVariousArtists(bool enabled)
+void ScriptRegistry::clearTrackListCache()
 {
-    p->m_useVariousArtists = enabled;
+    m_trackListCache = {};
+}
+
+VariableKind ScriptRegistry::resolveVariableInternal(const QString& var) const
+{
+    if(const auto it = m_customVariableKinds.find(var); it != m_customVariableKinds.cend()) {
+        return it->second;
+    }
+
+    return resolveBuiltInVariableKind(var);
+}
+
+ScriptResult ScriptRegistry::valueInternal(VariableKind kind, const QString& var, const ScriptSubject& subject) const
+{
+    if(subject.track) {
+        return valueForTrack(kind, var, *subject.track, subject.playlist ? subject.playlist : m_context.playlist);
+    }
+
+    if(subject.tracks) {
+        return valueForTrackList(kind, var, *subject.tracks, subject.playlist ? subject.playlist : m_context.playlist);
+    }
+
+    if(subject.playlist) {
+        return valueForPlaylist(kind, var, *subject.playlist);
+    }
+
+    return {};
+}
+
+ScriptResult ScriptRegistry::valueInternal(const QString& var, const ScriptSubject& subject) const
+{
+    if(var.isEmpty()) {
+        return {};
+    }
+
+    return value(resolveBuiltInVariableKind(var), var, subject);
+}
+
+ScriptResult ScriptRegistry::calculateResult(const ScriptRegistry::FuncRet& funcRet) const
+{
+    ScriptResult result;
+
+    if(const auto* intVal = std::get_if<int>(&funcRet)) {
+        result.value = QString::number(*intVal);
+        result.cond  = (*intVal) >= 0;
+    }
+    else if(const auto* uintVal = std::get_if<uint64_t>(&funcRet)) {
+        result.value = QString::number(*uintVal);
+        result.cond  = true;
+    }
+    else if(const auto* floatVal = std::get_if<float>(&funcRet)) {
+        result.value = QString::number(*floatVal);
+        result.cond  = (*floatVal) >= 0;
+    }
+    else if(const auto* strVal = std::get_if<QString>(&funcRet)) {
+        result.value = *strVal;
+        result.cond  = !result.value.isEmpty();
+    }
+    else if(const auto* strListVal = std::get_if<QStringList>(&funcRet)) {
+        result.value = strListVal->empty() ? QString{} : strListVal->join(QLatin1String{Constants::UnitSeparator});
+        result.cond  = !result.value.isEmpty();
+    }
+
+    applyOutputPolicy(m_context, result);
+    return result;
+}
+
+ScriptResult ScriptRegistry::valueForTrack(VariableKind kind, const QString& var, const Track& track,
+                                           const Playlist* playlist) const
+{
+    if(const auto it = m_customVariables.find(kind); it != m_customVariables.cend()) {
+        return it->second(makeContext(m_context, &track, nullptr, playlist), var);
+    }
+
+    if(isTrackListVariableKind(kind)) {
+        if(trackListContextPolicy(m_context) == TrackListContextPolicy::Fallback) {
+            if(const auto* tracks = contextTrackList(m_context); tracks != nullptr) {
+                return value(kind, var, makeScriptSubject(*tracks));
+            }
+            if(playlist) {
+                return value(kind, var, makeScriptSubject(playlist->tracks()));
+            }
+        }
+        return unavailableTrackListResult(m_context, var);
+    }
+
+    if(const auto value = trackMetadataValue(kind, track, *this); value.has_value()) {
+        return calculateResult(*value);
+    }
+    if(const auto value = playbackVariableValue(kind, *this); value.has_value()) {
+        return calculateResult(*value);
+    }
+    if(const auto value = libraryVariableValue(kind, track, *this); value.has_value()) {
+        return calculateResult(*value);
+    }
+
+    return calculateResult(track.extraTag(var));
+}
+
+ScriptResult ScriptRegistry::valueForTrackList(VariableKind kind, const QString& var, const TrackList& tracks,
+                                               const Playlist* playlist) const
+{
+    if(const auto it = m_customVariables.find(kind); it != m_customVariables.cend()) {
+        return it->second(makeContext(m_context, nullptr, &tracks, playlist), var);
+    }
+
+    if(const auto value = trackListValue(kind, tracks, *this); value.has_value()) {
+        return calculateResult(*value);
+    }
+
+    if(tracks.empty()) {
+        return {};
+    }
+
+    return value(kind, var, makeScriptSubject(tracks.front()));
+}
+
+ScriptResult ScriptRegistry::valueForPlaylist(VariableKind kind, const QString& var, const Playlist& playlist) const
+{
+    if(const auto it = m_customVariables.find(kind); it != m_customVariables.cend()) {
+        return it->second(makeContext(m_context, nullptr, nullptr, &playlist), var);
+    }
+
+    if(var.isEmpty()) {
+        return {};
+    }
+
+    if(isTrackListVariableKind(kind)) {
+        switch(kind) {
+            case VariableKind::TrackCount:
+            case VariableKind::Playtime:
+            case VariableKind::PlaylistDuration:
+            case VariableKind::PlaylistElapsed:
+            case VariableKind::Genres:
+                return value(kind, var, makeScriptSubject(playlist.tracks()));
+            default:
+                break;
+        }
+    }
+
+    if(auto track = playlist.track(playlist.currentTrackIndex())) {
+        return value(kind, var, makeScriptSubject(track.value()));
+    }
+
+    return {};
+}
+
+const ScriptRegistry::TrackListAggregateCache& ScriptRegistry::cachedTrackListValues(const TrackList& tracks) const
+{
+    const int trackCount      = static_cast<int>(tracks.size());
+    const auto* environment   = playbackEnvironment(m_context);
+    const int currentPosition = environment ? static_cast<int>(environment->currentPosition()) : -1;
+    const int playlistIndex   = m_context.environment && m_context.environment->playlistEnvironment()
+                                  ? m_context.environment->playlistEnvironment()->currentPlaylistTrackIndex()
+                                  : -1;
+
+    if(m_trackListCache.tracks != &tracks || m_trackListCache.trackCount != trackCount
+       || m_trackListCache.currentPosition != currentPosition || m_trackListCache.playlistIndex != playlistIndex) {
+        m_trackListCache.tracks          = &tracks;
+        m_trackListCache.trackCount      = trackCount;
+        m_trackListCache.currentPosition = currentPosition;
+        m_trackListCache.playlistIndex   = playlistIndex;
+        m_trackListCache.playtime        = Scripting::playtime(tracks);
+        m_trackListCache.genres          = Scripting::genres(tracks);
+        m_trackListCache.playlistElapsed = playlistDuration(tracks);
+    }
+
+    return m_trackListCache;
+}
+
+ScriptRegistry::ScriptRegistry()
+{
+    addDefaultFunctions();
+    registerFunction(u"info"_s, makeScriptFunctionInvoker<trackInfo>());
+    registerFunction(u"meta"_s, makeScriptFunctionInvoker<trackMeta>());
 }
 
 ScriptRegistry::~ScriptRegistry() = default;
 
-VariableKind ScriptRegistry::resolveVariableKind(const QString& var) const
+void ScriptRegistry::addProvider(const ScriptVariableProvider& provider)
 {
-    if(var == "TRACK"_L1) {
-        return VariableKind::Track;
+    for(const auto& variable : provider.variables()) {
+        registerVariable(variable.kind, variable.name, variable.invoker);
     }
-    if(var == "DISC"_L1) {
-        return VariableKind::Disc;
+}
+
+void ScriptRegistry::addProvider(const ScriptFunctionProvider& provider)
+{
+    for(const auto& function : provider.functions()) {
+        registerFunction(function.name, function.invoker);
     }
-    if(var == "DISCTOTAL"_L1) {
-        return VariableKind::DiscTotal;
+}
+
+VariableKind ScriptRegistry::resolveVariable(const QString& var) const
+{
+    return resolveVariableInternal(var);
+}
+
+ScriptFunctionId ScriptRegistry::resolveFunctionId(const QString& func) const
+{
+    const QString key = func.toLower();
+    if(const auto it = m_functionIds.find(key); it != m_functionIds.cend()) {
+        return it->second;
     }
-    if(var == "TITLE"_L1) {
-        return VariableKind::Title;
-    }
-    if(var == "UNIQUEARTIST"_L1) {
-        return VariableKind::UniqueArtist;
-    }
-    if(var == "PLAYCOUNT"_L1) {
-        return VariableKind::PlayCount;
-    }
-    if(var == "DURATION"_L1) {
-        return VariableKind::Duration;
-    }
-    if(var == "ALBUMARTIST"_L1) {
-        return VariableKind::AlbumArtist;
-    }
-    if(var == "ALBUM"_L1) {
-        return VariableKind::Album;
-    }
-    if(var == "GENRES"_L1) {
-        return VariableKind::Genres;
-    }
-    if(var == "TRACKCOUNT"_L1) {
-        return VariableKind::TrackCount;
-    }
-    if(var == "PLAYTIME"_L1) {
-        return VariableKind::Playtime;
-    }
-    if(var == "PLAYLIST_DURATION"_L1) {
-        return VariableKind::PlaylistDuration;
-    }
-    return VariableKind::Generic;
+    return InvalidScriptFunctionId;
 }
 
 bool ScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    if(resolveVariableKind(var) != VariableKind::Generic) {
+    if(resolveBuiltInVariableKind(var) != VariableKind::Generic) {
         return true;
     }
 
-    return p->m_metadata.contains(var) || p->m_playbackVars.contains(var) || p->m_libraryVars.contains(var)
-        || track.hasExtraTag(var);
+    return track.hasExtraTag(var);
 }
 
 bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) const
 {
-    if(isListVariable(var)) {
+    const bool isListVariable = isTrackListVariableKind(resolveBuiltInVariableKind(var));
+    if(isListVariable) {
         return true;
     }
 
@@ -524,309 +793,114 @@ bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) con
 
 bool ScriptRegistry::isFunction(const QString& func) const
 {
-    return p->m_funcs.contains(func);
+    const QString key = func.toLower();
+    return m_functionIds.contains(key);
 }
 
-ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const Track& track) const
+ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const ScriptSubject& subject) const
 {
-    switch(kind) {
-        case VariableKind::Track:
-            return calculateResult(track.trackNumber());
-        case VariableKind::Disc:
-            return calculateResult(track.discNumber());
-        case VariableKind::DiscTotal:
-            return calculateResult(track.discTotal());
-        case VariableKind::Title:
-            return calculateResult(track.effectiveTitle());
-        case VariableKind::UniqueArtist:
-            return calculateResult(track.uniqueArtist());
-        case VariableKind::PlayCount:
-            return calculateResult(track.playCount());
-        case VariableKind::Duration: {
-            const auto duration = track.duration();
-            return calculateResult(duration == 0 ? FuncRet{QString{}} : FuncRet{Utils::msToString(duration)});
-        }
-        case VariableKind::AlbumArtist:
-            return calculateResult(track.effectiveAlbumArtist(p->m_useVariousArtists));
-        case VariableKind::Album:
-            return calculateResult(track.album());
-        case VariableKind::Genres:
-            return calculateResult(track.genre());
-        case VariableKind::TrackCount:
-        case VariableKind::Playtime:
-        case VariableKind::PlaylistDuration:
-            return {.value = u"%%1%"_s.arg(var), .cond = true};
-        case VariableKind::Generic:
-        case VariableKind::Depth:
-        case VariableKind::ListIndex:
-        case VariableKind::QueueIndex:
-        case VariableKind::QueueIndexes:
-        case VariableKind::PlayingIcon:
-        case VariableKind::FrontCover:
-        case VariableKind::BackCover:
-        case VariableKind::ArtistPicture:
-            break;
-    }
-
-    if(const auto it = p->m_metadata.find(var); it != p->m_metadata.cend()) {
-        return calculateResult(it->second(track));
-    }
-    if(const auto it = p->m_playbackVars.find(var); it != p->m_playbackVars.cend()) {
-        return calculateResult(it->second());
-    }
-    if(const auto it = p->m_libraryVars.find(var); it != p->m_libraryVars.cend()) {
-        return calculateResult(it->second(track));
-    }
-    if(p->m_listProperties.contains(var)) {
-        return {.value = u"%%1%"_s.arg(var), .cond = true};
-    }
-
-    return calculateResult(track.extraTag(var));
+    return valueInternal(kind, var, subject);
 }
 
-ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const TrackList& tracks) const
+ScriptResult ScriptRegistry::value(const QString& var, const ScriptSubject& subject) const
 {
-    switch(kind) {
-        case VariableKind::TrackCount:
-            return calculateResult(Scripting::trackCount(tracks));
-        case VariableKind::Playtime:
-        case VariableKind::PlaylistDuration:
-            return calculateResult(Scripting::playtime(tracks));
-        case VariableKind::Genres:
-            return calculateResult(Scripting::genres(tracks));
-        case VariableKind::Generic:
-        case VariableKind::Track:
-        case VariableKind::Disc:
-        case VariableKind::DiscTotal:
-        case VariableKind::Title:
-        case VariableKind::UniqueArtist:
-        case VariableKind::PlayCount:
-        case VariableKind::Duration:
-        case VariableKind::AlbumArtist:
-        case VariableKind::Album:
-        case VariableKind::Depth:
-        case VariableKind::ListIndex:
-        case VariableKind::QueueIndex:
-        case VariableKind::QueueIndexes:
-        case VariableKind::PlayingIcon:
-        case VariableKind::FrontCover:
-        case VariableKind::BackCover:
-        case VariableKind::ArtistPicture:
-            break;
-    }
-
-    if(var.isEmpty()) {
-        return {};
-    }
-
-    if(const auto it = p->m_listProperties.find(var); it != p->m_listProperties.cend()) {
-        return calculateResult(it->second(tracks));
-    }
-
-    if(tracks.empty()) {
-        return {};
-    }
-
-    if(const auto it = p->m_metadata.find(var); it != p->m_metadata.cend()) {
-        return calculateResult(it->second(tracks.front()));
-    }
-    if(const auto it = p->m_playbackVars.find(var); it != p->m_playbackVars.cend()) {
-        return calculateResult(it->second());
-    }
-    if(const auto it = p->m_libraryVars.find(var); it != p->m_libraryVars.cend()) {
-        return calculateResult(it->second(tracks.front()));
-    }
-
-    return calculateResult(tracks.front().extraTag(var));
+    return valueInternal(var, subject);
 }
 
-ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const Playlist& playlist) const
-{
-    if(var.isEmpty()) {
-        return {};
-    }
-
-    switch(kind) {
-        case VariableKind::TrackCount:
-        case VariableKind::Playtime:
-        case VariableKind::PlaylistDuration:
-        case VariableKind::Genres:
-            return value(kind, var, playlist.tracks());
-        case VariableKind::Generic:
-        case VariableKind::Track:
-        case VariableKind::Disc:
-        case VariableKind::DiscTotal:
-        case VariableKind::Title:
-        case VariableKind::UniqueArtist:
-        case VariableKind::PlayCount:
-        case VariableKind::Duration:
-        case VariableKind::AlbumArtist:
-        case VariableKind::Album:
-        case VariableKind::Depth:
-        case VariableKind::ListIndex:
-        case VariableKind::QueueIndex:
-        case VariableKind::QueueIndexes:
-        case VariableKind::PlayingIcon:
-        case VariableKind::FrontCover:
-        case VariableKind::BackCover:
-        case VariableKind::ArtistPicture:
-            break;
-    }
-
-    if(auto track = playlist.track(playlist.currentTrackIndex())) {
-        return value(kind, var, track.value());
-    }
-
-    return {};
-}
-
-ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
-{
-    if(var.isEmpty()) {
-        return {};
-    }
-
-    return value(resolveVariableKind(var), var, track);
-}
-
-ScriptResult ScriptRegistry::value(const QString& var, const TrackList& tracks) const
-{
-    if(var.isEmpty()) {
-        return {};
-    }
-
-    return value(resolveVariableKind(var), var, tracks);
-}
-
-ScriptResult ScriptRegistry::value(const QString& var, const Playlist& playlist) const
-{
-    if(var.isEmpty()) {
-        return {};
-    }
-
-    return value(resolveVariableKind(var), var, playlist);
-}
-
-ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const Track& track) const
+ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args,
+                                      const ScriptSubject& subject) const
 {
     if(func.isEmpty()) {
         return {};
     }
 
-    const auto it = p->m_funcs.find(func);
-    if(it == p->m_funcs.cend()) {
-        return {};
-    }
-
-    const auto& scriptFunc = it->second;
-    if(std::holds_alternative<NativeFunc>(scriptFunc)) {
-        const QString value = std::get<NativeFunc>(scriptFunc)(containerCast<QStringList>(args));
-        return {.value = value, .cond = !value.isEmpty()};
-    }
-    if(std::holds_alternative<NativeVoidFunc>(scriptFunc)) {
-        const QString value = std::get<NativeVoidFunc>(scriptFunc)();
-        return {.value = value, .cond = !value.isEmpty()};
-    }
-    if(std::holds_alternative<NativeTrackFunc>(scriptFunc)) {
-        const QString value = std::get<NativeTrackFunc>(scriptFunc)(track, containerCast<QStringList>(args));
-        return {.value = value, .cond = !value.isEmpty()};
-    }
-    if(std::holds_alternative<NativeBoolFunc>(scriptFunc)) {
-        return std::get<NativeBoolFunc>(scriptFunc)(containerCast<QStringList>(args));
-    }
-    if(std::holds_alternative<NativeCondFunc>(scriptFunc)) {
-        return std::get<NativeCondFunc>(scriptFunc)(args);
-    }
-
-    return {};
+    return function(resolveFunctionId(func), func, args, subject);
 }
 
-ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const TrackList& tracks) const
+ScriptResult ScriptRegistry::function(ScriptFunctionId functionId, const QString& func, const ScriptValueList& args,
+                                      const ScriptSubject& subject) const
 {
-    if(func.isEmpty()) {
+    const auto* invoker = functionInvoker(functionId);
+    if(!invoker && !func.isEmpty()) {
+        functionId = resolveFunctionId(func);
+        invoker    = functionInvoker(functionId);
+    }
+    if(!invoker || !(*invoker)) {
         return {};
     }
 
-    if(tracks.empty()) {
-        return {};
-    }
+    const Track* track       = subject.track;
+    const TrackList* tracks  = subject.tracks ? subject.tracks : m_context.tracks;
+    const Playlist* playlist = subject.playlist ? subject.playlist : m_context.playlist;
 
-    return function(func, args, tracks.front());
-}
-
-ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const Playlist& playlist) const
-{
-    if(func.isEmpty()) {
-        return {};
-    }
-
-    if(playlist.tracks().empty()) {
-        return {};
-    }
-
-    return function(func, args, playlist.currentTrack());
-}
-
-void ScriptRegistry::setValue(const QString& var, const FuncRet& value, Track& track)
-{
-    if(var.isEmpty()) {
-        return;
-    }
-
-    const QString tag = var.toUpper();
-
-    if(p->m_setMetadata.contains(tag)) {
-        p->m_setMetadata.at(tag)(track, value);
-        return;
-    }
-
-    const auto setOrAddTag = [&](const auto& val) {
-        if(track.hasExtraTag(tag)) {
-            track.replaceExtraTag(tag, val);
+    if(track == nullptr && subject.tracks != nullptr) {
+        if(subject.tracks->empty()) {
+            return {};
         }
-        else {
-            track.addExtraTag(tag, val);
+        track  = &subject.tracks->front();
+        tracks = subject.tracks;
+    }
+    else if(track == nullptr && subject.playlist != nullptr) {
+        if(subject.playlist->tracks().empty()) {
+            return {};
         }
+
+        if(const auto playlistTrack = subject.playlist->currentTrack(); playlistTrack.isValid()) {
+            track = &playlistTrack;
+        }
+
+        playlist = subject.playlist;
+    }
+
+    const ScriptFunctionCallContext call{
+        .context = &m_context,
+        .args    = args,
+        .subject = {.track = track, .tracks = tracks, .playlist = playlist},
     };
-
-    if(const auto* strVal = std::get_if<QString>(&value)) {
-        setOrAddTag(*strVal);
-    }
-    else if(const auto* listVal = std::get_if<QStringList>(&value)) {
-        setOrAddTag(*listVal);
-    }
+    return (*invoker)(call);
 }
 
-bool ScriptRegistry::isListVariable(const QString& var) const
+ScriptContext ScriptRegistry::currentContext() const
 {
-    return p->m_listProperties.contains(var);
+    return m_context;
 }
 
-ScriptResult ScriptRegistry::calculateResult(const FuncRet& funcRet) const
+void ScriptRegistry::setContext(const ScriptContext& context)
 {
-    ScriptResult result;
+    m_context = context;
+    clearTrackListCache();
+}
 
-    if(auto* intVal = std::get_if<int>(&funcRet)) {
-        result.value = QString::number(*intVal);
-        result.cond  = (*intVal) >= 0;
-    }
-    else if(auto* uintVal = std::get_if<uint64_t>(&funcRet)) {
-        result.value = QString::number(*uintVal);
-        result.cond  = true;
-    }
-    else if(auto* floatVal = std::get_if<float>(&funcRet)) {
-        result.value = QString::number(*floatVal);
-        result.cond  = (*floatVal) >= 0;
-    }
-    else if(auto* strVal = std::get_if<QString>(&funcRet)) {
-        result.value = *strVal;
-        result.cond  = !result.value.isEmpty();
-    }
-    else if(auto* strListVal = std::get_if<QStringList>(&funcRet)) {
-        result.value = strListVal->empty() ? QString{} : strListVal->join(QLatin1String{Constants::UnitSeparator});
-        result.cond  = !result.value.isEmpty();
+void ScriptRegistry::registerVariable(VariableKind kind, const QString& name, VariableInvoker invoker)
+{
+    const QString upperName = name.toUpper();
+
+    m_customVariableKinds[upperName] = kind;
+    m_customVariables[kind]          = invoker;
+}
+
+ScriptFunctionId ScriptRegistry::registerFunction(const QString& name, FunctionInvoker invoker)
+{
+    const QString key = name.toLower();
+
+    if(const auto it = m_functionIds.find(key); it != m_functionIds.cend()) {
+        m_functions[static_cast<size_t>(it->second - 1)] = {.name = key, .invoker = invoker};
+        return it->second;
     }
 
-    return result;
+    const auto functionId = static_cast<ScriptFunctionId>(m_functions.size() + 1);
+    m_functionIds.emplace(key, functionId);
+    m_functions.push_back({.name = key, .invoker = invoker});
+
+    return functionId;
+}
+
+const ScriptRegistry::FunctionInvoker* ScriptRegistry::functionInvoker(ScriptFunctionId functionId) const
+{
+    if(functionId == InvalidScriptFunctionId || std::cmp_greater(functionId, m_functions.size())) {
+        return nullptr;
+    }
+
+    return &m_functions.at(static_cast<size_t>(functionId - 1)).invoker;
 }
 } // namespace Fooyin

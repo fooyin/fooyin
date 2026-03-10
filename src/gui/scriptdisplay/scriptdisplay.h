@@ -19,11 +19,11 @@
 
 #pragma once
 
+#include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/fywidget.h>
 
 #include <QString>
-#include <memory>
 
 class QContextMenuEvent;
 class QEvent;
@@ -38,7 +38,6 @@ class PlayerController;
 class PlaylistHandler;
 class PropertiesDialog;
 class ScriptCommandHandler;
-class ScriptParser;
 class SettingsManager;
 
 class ScriptDisplay : public FyWidget
@@ -91,7 +90,7 @@ private:
     void updateText();
     void updateViewportAlignment();
     [[nodiscard]] Track currentTrack() const;
-    [[nodiscard]] QString evaluateScript() const;
+    [[nodiscard]] QString evaluateScript();
     void activateLink(const QString& link) const;
 
     PlayerController* m_playerController;
@@ -99,7 +98,8 @@ private:
     ScriptCommandHandler* m_commandHandler;
     SettingsManager* m_settings;
 
-    std::unique_ptr<ScriptParser> m_scriptParser;
+    ScriptParser m_scriptParser;
+
     QHBoxLayout* m_layout;
     QTextBrowser* m_text;
     QString m_lastHtml;
