@@ -72,6 +72,9 @@ public:
     [[nodiscard]] CaptionDisplay captionDisplay() const;
     void setCaptionDisplay(CaptionDisplay display);
 
+    [[nodiscard]] int iconItemColumn() const;
+    void setIconItemColumn(int column);
+
     [[nodiscard]] bool uniformRowHeights() const;
     void setUniformRowHeights(bool enabled);
 

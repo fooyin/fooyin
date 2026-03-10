@@ -100,6 +100,8 @@ public:
     int itemForHomeKey() const;
     int itemForEndKey() const;
     void setHoverIndex(const QPersistentModelIndex& index);
+    [[nodiscard]] int firstVisibleColumn(const QModelIndex& parent) const;
+    [[nodiscard]] QModelIndex iconItemIndex(const QModelIndex& index) const;
 
     bool isIndexDropEnabled(const QModelIndex& index) const;
     QModelIndexList selectedDraggableIndexes(bool fullRow = false) const;
@@ -125,6 +127,7 @@ public:
 
     ViewMode m_viewMode{ViewMode::Tree};
     CaptionDisplay m_captionDisplay{CaptionDisplay::Bottom};
+    int m_iconItemColumn{-1};
     bool m_uniformRowHeights{false};
     bool m_selectBeforeDrag{false};
     bool m_selectIgnoreParents{false};
