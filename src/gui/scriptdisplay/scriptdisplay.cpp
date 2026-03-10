@@ -29,6 +29,7 @@
 #include <core/track.h>
 #include <gui/configdialog.h>
 #include <gui/scripting/richtext.h>
+#include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -43,7 +44,6 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QJsonObject>
-#include <QLabel>
 #include <QMenu>
 #include <QPalette>
 #include <QScrollBar>
@@ -78,58 +78,6 @@ QString normaliseColour(const QString& colour)
 {
     const QColor parsedColour{colour};
     return parsedColour.isValid() ? parsedColour.name(QColor::HexArgb) : QString{};
-}
-
-QString richTextToHtml(const Fooyin::RichText& richText, const QColor& linkColour = {})
-{
-    QString html;
-    html.reserve(richText.joinedText().size() * 2);
-
-    for(const auto& block : richText.blocks) {
-        QStringList styles;
-
-        const bool isLink = !block.format.link.isEmpty();
-
-        if(!block.format.font.family().isEmpty()) {
-            styles.emplace_back(u"font-family:'%1'"_s.arg(block.format.font.family().toHtmlEscaped()));
-        }
-        if(block.format.font.pointSizeF() > 0) {
-            styles.emplace_back(u"font-size:%1pt"_s.arg(block.format.font.pointSizeF()));
-        }
-        if(block.format.font.bold()) {
-            styles.emplace_back(u"font-weight:bold"_s);
-        }
-        if(block.format.font.italic()) {
-            styles.emplace_back(u"font-style:italic"_s);
-        }
-        if(block.format.font.underline()) {
-            styles.emplace_back(u"text-decoration:underline"_s);
-        }
-        if(block.format.font.strikeOut()) {
-            styles.emplace_back(u"text-decoration:line-through"_s);
-        }
-        if(isLink && linkColour.isValid()) {
-            styles.emplace_back(u"color:%1"_s.arg(linkColour.name(QColor::HexArgb)));
-        }
-        else if(block.format.colour.isValid()) {
-            styles.emplace_back(u"color:%1"_s.arg(block.format.colour.name(QColor::HexArgb)));
-        }
-
-        QString text = block.text.toHtmlEscaped();
-        text.replace(u'\n', u"<br/>"_s);
-
-        const QString style = u"white-space:pre-wrap;%1"_s.arg(styles.join(u";"_s));
-
-        if(!isLink) {
-            html += u"<span style=\"%1\">%2</span>"_s.arg(style, text);
-        }
-        else {
-            html += u"<a href=\"%1\"><span style=\"%2\">%3</span></a>"_s.arg(block.format.link.toHtmlEscaped(), style,
-                                                                             text);
-        }
-    }
-
-    return html;
 }
 
 QString alignmentToCss(const int alignment)

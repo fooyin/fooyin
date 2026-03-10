@@ -16,6 +16,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h
     ${CMAKE_SOURCE_DIR}/include/gui/propertiesdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/richtext.h
+    ${CMAKE_SOURCE_DIR}/include/gui/scripting/richtextutils.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scripteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
@@ -253,6 +254,7 @@ set(SOURCES
     scriptdisplay/scriptdisplayconfigdialog.h
     scripting/expressiontreemodel.cpp
     scripting/expressiontreemodel.h
+    scripting/richtextutils.cpp
     scripting/scripteditor.cpp
     scripting/scriptformatter.cpp
     scripting/scriptcommandhandler.cpp
