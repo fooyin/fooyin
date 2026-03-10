@@ -37,6 +37,9 @@ class LibraryManager;
 struct ParsedScript;
 class TrackSorterPrivate;
 
+/*!
+ * Evaluates sort scripts against tracks and returns a stably sorted result.
+ */
 class FYCORE_EXPORT TrackSorter
 {
 public:
@@ -52,48 +55,68 @@ public:
     ~TrackSorter();
 
     /*!
-     * Calculates the sort fields and then sorts @p tracks
-     * @param sort the sort script as a string
-     * @param tracks the tracks to sort
-     * @param order the order in which to sort the tracks
-     * @returns a new sorted TrackList
+     * Sorts an owned track list using a sort script string.
+     * @param sort Sort script to evaluate for each track.
+     * @param tracks Track list to sort. Ownership is transferred into the call.
+     * @param order Sort order for the evaluated sort keys.
+     * @returns A new track list sorted by the evaluated sort keys.
      */
     TrackList calcSortTracks(const QString& sort, TrackList tracks, Qt::SortOrder order = Qt::AscendingOrder);
 
     /*!
-     * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
-     * @param sort the sort script as a string
-     * @param tracks the tracks to sort
-     * @param indexes the indexes to sort
-     * @param order the order in which to sort the tracks
-     * @returns a new sorted TrackList
+     * Sorts only a subset of an owned track list using a sort script string.
+     *
+     * Tracks outside @p indexes retain their original position. Invalid indexes
+     * are ignored.
+     *
+     * @param sort Sort script to evaluate for each selected track.
+     * @param tracks Track list containing the subset to reorder.
+     * @param indexes Indexes within @p tracks to sort.
+     * @param order Sort order for the evaluated sort keys.
+     * @returns A copy of @p tracks with only the selected indexes reordered.
      */
     TrackList calcSortTracks(const QString& sort, TrackList tracks, const std::vector<int>& indexes,
                              Qt::SortOrder order = Qt::AscendingOrder);
 
     /*!
-     * Calculates the sort fields and then sorts @p tracks
-     * @param sortScript the parsed sort script
-     * @param tracks the tracks to sort
-     * @param order the order in which to sort the tracks
-     * @returns a new sorted TrackList
+     * Sorts an owned track list using a pre-parsed sort script.
+     * @param sortScript Parsed script returned by `parseSortScript()`.
+     * @param tracks Track list to sort. Ownership is transferred into the call.
+     * @param order Sort order for the evaluated sort keys.
+     * @returns A new track list sorted by the evaluated sort keys.
      */
     TrackList calcSortTracks(const ParsedScript& sortScript, TrackList tracks,
                              Qt::SortOrder order = Qt::AscendingOrder);
 
     /*!
-     * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
-     * Tracks not under an index in @p indexes retain their position.
-     * @param sortScript the parsed sort script
-     * @param tracks the tracks to sort
-     * @param indexes the indexes to sort
-     * @param order the order in which to sort the tracks
-     * @returns a new sorted TrackList
+     * Sorts only a subset of an owned track list using a pre-parsed sort script.
+     *
+     * Tracks outside @p indexes retain their original position. Invalid indexes
+     * are ignored.
+     *
+     * @param sortScript Parsed script returned by `parseSortScript()`.
+     * @param tracks Track list containing the subset to reorder.
+     * @param indexes Indexes within @p tracks to sort.
+     * @param order Sort order for the evaluated sort keys.
+     * @returns A copy of @p tracks with only the selected indexes reordered.
      */
     TrackList calcSortTracks(const ParsedScript& sortScript, TrackList tracks, const std::vector<int>& indexes,
                              Qt::SortOrder order = Qt::AscendingOrder);
 
+    /*!
+     * Parses a sort script once for reuse across later sort operations.
+     * @param sort Sort script string.
+     * @returns A parsed script suitable for the ParsedScript overloads.
+     */
+    ParsedScript parseSortScript(const QString& sort);
+
     template <typename Container, typename SortScript, typename Extractor>
+    /*!
+     * Evaluates sort keys for a container without reordering it.
+     *
+     * `Extractor` must return the track to evaluate for each item in @p items.
+     * The returned entries preserve the original item and its computed sort key.
+     */
     auto calcSortEntries(const SortScript& sort, const Container& items, Extractor extractor)
         -> std::vector<SortEntry<typename Container::value_type>>
     {
@@ -115,6 +138,11 @@ public:
     }
 
     template <typename Container, typename SortScript, typename Extractor>
+    /*!
+     * Evaluates sort keys for an owned container without reordering it.
+     *
+     * Unlike `calcSortEntries()`, items are moved into the returned entries.
+     */
     auto calcOwnedSortEntries(const SortScript& sort, Container items, Extractor extractor)
         -> std::vector<SortEntry<typename Container::value_type>>
     {
@@ -136,6 +164,13 @@ public:
     }
 
     template <typename Container, typename SortScript, typename Extractor>
+    /*!
+     * Sorts an arbitrary container by evaluating a sort key for each item.
+     *
+     * `Extractor` must return the track to evaluate for each item in @p items.
+     * The input container is copied; the returned container holds the sorted
+     * items.
+     */
     Container calcSortTracks(const SortScript& sort, const Container& items, Extractor extractor,
                              Qt::SortOrder order = Qt::AscendingOrder)
     {
@@ -145,6 +180,12 @@ public:
     }
 
     template <typename Container, typename SortScript, typename Extractor>
+    /*!
+     * Sorts only a subset of an arbitrary container.
+     *
+     * Items outside @p indexes retain their original position. Invalid indexes
+     * are ignored.
+     */
     Container calcSortTracks(const SortScript& sortScript, const Container& items, const std::vector<int>& indexes,
                              Extractor extractor, Qt::SortOrder order = Qt::AscendingOrder)
     {
@@ -171,8 +212,6 @@ public:
     }
 
 private:
-    ParsedScript parseScript(const QString& sort);
-
     template <typename Container>
     static Container stripSortEntries(std::vector<SortEntry<typename Container::value_type>> sortEntries)
     {

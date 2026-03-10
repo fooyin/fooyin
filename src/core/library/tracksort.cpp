@@ -32,13 +32,13 @@ TrackSorter::~TrackSorter() = default;
 
 TrackList TrackSorter::calcSortTracks(const QString& sort, TrackList tracks, Qt::SortOrder order)
 {
-    return calcSortTracks(parseScript(sort), std::move(tracks), order);
+    return calcSortTracks(parseSortScript(sort), std::move(tracks), order);
 }
 
 TrackList TrackSorter::calcSortTracks(const QString& sort, TrackList tracks, const std::vector<int>& indexes,
                                       Qt::SortOrder order)
 {
-    return calcSortTracks(parseScript(sort), std::move(tracks), indexes, order);
+    return calcSortTracks(parseSortScript(sort), std::move(tracks), indexes, order);
 }
 
 TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, TrackList tracks, Qt::SortOrder order)
@@ -74,7 +74,7 @@ TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, TrackList 
     return sortedTracks;
 }
 
-ParsedScript TrackSorter::parseScript(const QString& sort)
+ParsedScript TrackSorter::parseSortScript(const QString& sort)
 {
     const std::scoped_lock lock{m_parserGuard};
     return m_parser.parse(sort);
