@@ -21,11 +21,13 @@
 
 #include "librarytreeitem.h"
 
+#include <utils/crypto.h>
+#include <utils/worker.h>
+
 #include <QColor>
 #include <QFont>
 
-#include <utils/crypto.h>
-#include <utils/worker.h>
+#include <memory>
 
 namespace Fooyin {
 class LibraryManager;
@@ -49,6 +51,8 @@ struct PendingTreeData
     }
 };
 
+using PendingTreeDataPtr = std::shared_ptr<PendingTreeData>;
+
 class LibraryTreePopulator : public Worker
 {
     Q_OBJECT
@@ -63,9 +67,11 @@ public:
     void run(const QString& grouping, const TrackList& tracks, bool useVarious);
 
 signals:
-    void populated(Fooyin::PendingTreeData data);
+    void populated(Fooyin::PendingTreeDataPtr data);
 
 private:
     std::unique_ptr<LibraryTreePopulatorPrivate> p;
 };
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::PendingTreeDataPtr)

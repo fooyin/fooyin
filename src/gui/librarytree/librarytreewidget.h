@@ -23,6 +23,7 @@
 #include "librarytreegroup.h"
 
 #include <core/track.h>
+#include <utils/crypto.h>
 
 #include <QByteArray>
 #include <QModelIndex>
@@ -132,7 +133,7 @@ private:
     void handleTracksAdded(const TrackList& tracks);
     void handleTracksUpdated(const TrackList& tracks);
 
-    void restoreSelection(const QStringList& expandedTitles, const QStringList& selectedTitles);
+    void restoreSelection(const std::vector<Md5Hash>& expandedKeys, const std::vector<Md5Hash>& selectedKeys);
     [[nodiscard]] QByteArray saveState() const;
     void restoreIndexState(const QByteArray& topKey, const std::vector<QByteArray>& keys, int currentIndex = 0);
     void restoreState(const QByteArray& state);

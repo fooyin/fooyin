@@ -49,12 +49,12 @@ public:
 
     [[nodiscard]] bool pending() const;
     [[nodiscard]] int level() const;
-    [[nodiscard]] QString title() const;
-    [[nodiscard]] QString titleSource() const;
-    [[nodiscard]] RichText richTitle() const;
-    [[nodiscard]] TrackList tracks() const;
+    [[nodiscard]] const QString& title() const;
+    [[nodiscard]] const QString& titleSource() const;
+    [[nodiscard]] const RichText& richTitle() const;
+    [[nodiscard]] const TrackList& tracks() const;
     [[nodiscard]] int trackCount() const;
-    [[nodiscard]] Md5Hash key() const;
+    [[nodiscard]] const Md5Hash& key() const;
     [[nodiscard]] std::optional<Track::Cover> coverType() const;
     [[nodiscard]] QStyleOptionViewItem::Position coverPosition() const;
 

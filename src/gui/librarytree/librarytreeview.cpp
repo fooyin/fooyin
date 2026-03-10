@@ -82,7 +82,7 @@ void LibraryTreeView::wheelEvent(QWheelEvent* event)
 
     const int delta     = event->angleDelta().y();
     const int increment = (delta > 0) ? 1 : -1;
-    int newSize         = iconSize().width() + increment * 2;
+    int newSize         = iconSize().width() + (increment * 2);
     newSize             = std::clamp(newSize, 16, 1024);
     setIconSize({newSize, newSize});
 

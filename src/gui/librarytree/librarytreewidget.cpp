@@ -674,9 +674,13 @@ void LibraryTreeWidget::handleTracksUpdated(const TrackList& tracks)
     const QModelIndexList selectedRows = m_libraryTree->selectionModel()->selectedRows();
     const QModelIndexList trackParents = m_model->indexesForTracks(tracks);
 
-    QStringList selectedTitles;
+    std::vector<Md5Hash> selectedKeys;
+    selectedKeys.reserve(selectedRows.size());
     for(const QModelIndex& index : selectedRows) {
-        selectedTitles.emplace_back(index.data(Qt::DisplayRole).toString());
+        const auto key = index.data(LibraryTreeItem::Key).toByteArray();
+        if(!key.isEmpty()) {
+            selectedKeys.emplace_back(key);
+        }
     }
 
     std::stack<QModelIndex> checkExpanded;
@@ -686,7 +690,8 @@ void LibraryTreeWidget::handleTracksUpdated(const TrackList& tracks)
         }
     }
 
-    QStringList expandedTitles;
+    std::vector<Md5Hash> expandedKeys;
+    QSet<Md5Hash> expandedKeySet;
     while(!checkExpanded.empty()) {
         const QModelIndex index = checkExpanded.top();
         checkExpanded.pop();
@@ -695,9 +700,10 @@ void LibraryTreeWidget::handleTracksUpdated(const TrackList& tracks)
         }
 
         if(m_libraryTree->isExpanded(index)) {
-            const QString title = index.data(Qt::DisplayRole).toString();
-            if(!expandedTitles.contains(title)) {
-                expandedTitles.emplace_back(title);
+            const auto key = index.data(LibraryTreeItem::Key).toByteArray();
+            if(!key.isEmpty() && !expandedKeySet.contains(key)) {
+                expandedKeys.emplace_back(key);
+                expandedKeySet.insert(key);
             }
             const int rowCount = m_sortProxy->rowCount(index);
             for(int row{0}; row < rowCount; ++row) {
@@ -708,16 +714,17 @@ void LibraryTreeWidget::handleTracksUpdated(const TrackList& tracks)
 
     QObject::connect(
         m_model, &LibraryTreeModel::modelUpdated, this,
-        [this, expandedTitles, selectedTitles]() { restoreSelection(expandedTitles, selectedTitles); },
+        [this, expandedKeys, selectedKeys]() { restoreSelection(expandedKeys, selectedKeys); },
         Qt::SingleShotConnection);
 
     m_model->updateTracks(tracks);
 }
 
-void LibraryTreeWidget::restoreSelection(const QStringList& expandedTitles, const QStringList& selectedTitles)
+void LibraryTreeWidget::restoreSelection(const std::vector<Md5Hash>& expandedKeys,
+                                         const std::vector<Md5Hash>& selectedKeys)
 {
-    const QModelIndexList expandedIndexes = m_model->findIndexes(expandedTitles);
-    const QModelIndexList selectedIndexes = m_model->findIndexes(selectedTitles);
+    const QModelIndexList expandedIndexes = m_model->indexesForKeys(expandedKeys);
+    const QModelIndexList selectedIndexes = m_model->indexesForKeys(selectedKeys);
 
     for(const QModelIndex& index : expandedIndexes) {
         if(index.isValid()) {

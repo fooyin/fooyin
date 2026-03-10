@@ -102,22 +102,22 @@ int LibraryTreeItem::level() const
     return m_level;
 }
 
-QString LibraryTreeItem::title() const
+const QString& LibraryTreeItem::title() const
 {
     return m_title;
 }
 
-QString LibraryTreeItem::titleSource() const
+const QString& LibraryTreeItem::titleSource() const
 {
     return m_titleSource;
 }
 
-RichText LibraryTreeItem::richTitle() const
+const RichText& LibraryTreeItem::richTitle() const
 {
     return m_richTitle;
 }
 
-TrackList LibraryTreeItem::tracks() const
+const TrackList& LibraryTreeItem::tracks() const
 {
     return m_tracks;
 }
@@ -127,7 +127,7 @@ int LibraryTreeItem::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
-Md5Hash LibraryTreeItem::key() const
+const Md5Hash& LibraryTreeItem::key() const
 {
     return m_key;
 }
@@ -186,6 +186,7 @@ void LibraryTreeItem::addTrack(const Track& track)
 
 void LibraryTreeItem::addTracks(const TrackList& tracks)
 {
+    m_tracks.reserve(m_tracks.size() + tracks.size());
     std::ranges::copy(tracks, std::back_inserter(m_tracks));
 }
 

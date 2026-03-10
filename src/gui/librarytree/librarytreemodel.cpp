@@ -138,7 +138,7 @@ public:
     void removeTracks(const TrackList& tracks);
     void mergeTrackParents(const TrackIdNodeMap& parents);
 
-    void batchFinished(PendingTreeData data);
+    void batchFinished(const PendingTreeDataPtr& data);
 
     void traverseTree(const QModelIndex& index, Fooyin::TrackIds& trackIds);
     QByteArray saveTracks(const QModelIndexList& indexes);
@@ -267,7 +267,7 @@ void LibraryTreeModelPrivate::mergeTrackParents(const TrackIdNodeMap& parents)
     }
 }
 
-void LibraryTreeModelPrivate::batchFinished(PendingTreeData data)
+void LibraryTreeModelPrivate::batchFinished(const PendingTreeDataPtr& data)
 {
     if(m_resetting) {
         m_self->beginResetModel();
@@ -276,9 +276,10 @@ void LibraryTreeModelPrivate::batchFinished(PendingTreeData data)
 
     if(!m_tracksPendingRemoval.empty()) {
         removeTracks(m_tracksPendingRemoval);
+        m_tracksPendingRemoval.clear();
     }
 
-    populateModel(data);
+    populateModel(*data);
 
     if(m_resetting) {
         m_self->endResetModel();
@@ -370,7 +371,7 @@ void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
     const QString sortScript = m_settings->value<Settings::Core::LibrarySortScript>();
     QModelIndexList changedIndexes;
 
-    for(const auto& [key, item] : data.items) {
+    for(auto& [key, item] : data.items) {
         if(m_nodes.contains(key)) {
             auto& node = m_nodes.at(key);
 
@@ -387,7 +388,7 @@ void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
             node.sortTracks(m_sorter, sortScript);
         }
         else {
-            m_nodes[key] = item;
+            m_nodes.emplace(key, std::move(item));
         }
     }
     mergeTrackParents(data.trackParents);
@@ -436,8 +437,10 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
     : TreeModel{parent}
     , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager, audioLoader, settings)}
 {
+    qRegisterMetaType<PendingTreeDataPtr>("Fooyin::PendingTreeDataPtr");
+
     QObject::connect(&p->m_populator, &LibraryTreePopulator::populated, this,
-                     [this](const PendingTreeData& data) { p->batchFinished(data); });
+                     [this](const PendingTreeDataPtr& data) { p->batchFinished(data); });
 
     QObject::connect(&p->m_populator, &Worker::finished, this, [this]() {
         p->updateSummary();
@@ -638,7 +641,7 @@ void LibraryTreeModel::fetchMore(const QModelIndex& parent)
 
     const int row           = parentItem->childCount();
     const int totalRows     = static_cast<int>(rows.size());
-    const int rowCount      = parent.isValid() ? totalRows : std::min(100, totalRows);
+    const int rowCount      = totalRows;
     const auto rowsToInsert = std::ranges::views::take(rows, rowCount);
 
     beginInsertRows(parent, row, row + rowCount - 1);
@@ -649,8 +652,6 @@ void LibraryTreeModel::fetchMore(const QModelIndex& parent)
         p->m_addedNodes.erase(pendingRow);
     }
     endInsertRows();
-
-    rootItem()->resetChildren();
 
     rows.erase(rows.begin(), rows.begin() + rowCount);
 
@@ -705,6 +706,30 @@ QModelIndexList LibraryTreeModel::findIndexes(const QStringList& values) const
     return indexes;
 }
 
+QModelIndexList LibraryTreeModel::indexesForKeys(const std::vector<Md5Hash>& keys) const
+{
+    if(keys.empty()) {
+        return {};
+    }
+
+    QModelIndexList indexes;
+    indexes.reserve(keys.size());
+
+    for(const auto& key : keys) {
+        const auto it = p->m_nodes.find(key);
+        if(it == p->m_nodes.end() || it->second.pending()) {
+            continue;
+        }
+
+        const QModelIndex index = indexOfItem(&it->second);
+        if(index.isValid()) {
+            indexes.append(index);
+        }
+    }
+
+    return indexes;
+}
+
 QModelIndexList LibraryTreeModel::indexesForTracks(const TrackList& tracks) const
 {
     if(tracks.empty()) {
@@ -743,7 +768,7 @@ void LibraryTreeModel::addTracks(const TrackList& tracks)
     p->m_addingTracks = true;
     p->m_populatorThread.start();
 
-    QMetaObject::invokeMethod(&p->m_populator, [this, tracksToAdd] {
+    QMetaObject::invokeMethod(&p->m_populator, [this, tracksToAdd = std::move(tracksToAdd)] {
         p->m_populator.setFont(libraryTreeFont());
         p->m_populator.setColour(libraryTreeTextColour());
         p->m_populator.run(p->m_grouping, tracksToAdd,
@@ -767,7 +792,7 @@ void LibraryTreeModel::updateTracks(const TrackList& tracks)
     p->m_addingTracks         = false;
     p->m_populatorThread.start();
 
-    QMetaObject::invokeMethod(&p->m_populator, [this, tracksToUpdate] {
+    QMetaObject::invokeMethod(&p->m_populator, [this, tracksToUpdate = std::move(tracksToUpdate)] {
         p->m_populator.setFont(libraryTreeFont());
         p->m_populator.setColour(libraryTreeTextColour());
         p->m_populator.run(p->m_grouping, tracksToUpdate,

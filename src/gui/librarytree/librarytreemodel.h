@@ -74,6 +74,7 @@ public:
     [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
     [[nodiscard]] QModelIndexList findIndexes(const QStringList& values) const;
+    [[nodiscard]] QModelIndexList indexesForKeys(const std::vector<Md5Hash>& keys) const;
     [[nodiscard]] QModelIndexList indexesForTracks(const TrackList& tracks) const;
 
     void addTracks(const TrackList& tracks);

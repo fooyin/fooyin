@@ -62,6 +62,7 @@ public:
     LibraryTreeItem m_root;
     PendingTreeData m_data;
     TrackList m_pendingTracks;
+    size_t m_pendingTrackIndex{0};
 };
 
 LibraryTreeItem* LibraryTreePopulatorPrivate::getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent,
@@ -126,13 +127,14 @@ bool LibraryTreePopulatorPrivate::runBatch(int size)
         return true;
     }
 
-    auto tracksBatch = std::ranges::views::take(m_pendingTracks, size);
+    const size_t batchEnd = std::min(m_pendingTrackIndex + static_cast<size_t>(size), m_pendingTracks.size());
 
-    for(const Track& track : tracksBatch) {
+    for(size_t index{m_pendingTrackIndex}; index < batchEnd; ++index) {
         if(!m_self->mayRun()) {
             return false;
         }
 
+        const Track& track = m_pendingTracks.at(index);
         if(track.isInLibrary()) {
             iterateTrack(track);
         }
@@ -142,16 +144,12 @@ bool LibraryTreePopulatorPrivate::runBatch(int size)
         return false;
     }
 
-    emit m_self->populated(m_data);
+    emit m_self->populated(std::make_shared<PendingTreeData>(std::move(m_data)));
 
-    auto tracksToKeep = std::ranges::views::drop(m_pendingTracks, size);
-    TrackList tempTracks;
-    std::ranges::copy(tracksToKeep, std::back_inserter(tempTracks));
-    m_pendingTracks = std::move(tempTracks);
+    m_data              = {};
+    m_pendingTrackIndex = batchEnd;
 
-    m_data.clear();
-
-    const auto remaining = static_cast<int>(m_pendingTracks.size());
+    const auto remaining = static_cast<int>(m_pendingTracks.size() - m_pendingTrackIndex);
     return runBatch(std::min(remaining, BatchSize));
 }
 
@@ -184,8 +182,9 @@ void LibraryTreePopulator::run(const QString& grouping, const TrackList& tracks,
         p->m_script = p->m_parser.parse(p->m_currentGrouping);
     }
 
-    p->m_pendingTracks = tracks;
-    const bool success = p->runBatch(InitialBatchSize);
+    p->m_pendingTracks     = tracks;
+    p->m_pendingTrackIndex = 0;
+    const bool success     = p->runBatch(InitialBatchSize);
 
     setState(Idle);
 
