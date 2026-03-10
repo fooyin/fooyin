@@ -27,17 +27,20 @@
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 #include <core/track.h>
+#include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <utils/utils.h>
 
 #include <QApplication>
 #include <QBasicTimer>
 #include <QCompleter>
+#include <QDesktopServices>
 #include <QDir>
 #include <QFocusEvent>
 #include <QGridLayout>
 #include <QHeaderView>
 #include <QLineEdit>
+#include <QPalette>
 #include <QRegularExpression>
 #include <QScrollBar>
 #include <QSortFilterProxyModel>
@@ -45,9 +48,13 @@
 #include <QStandardItemModel>
 #include <QTabWidget>
 #include <QTextBlock>
+#include <QTextBrowser>
+#include <QTextCursor>
+#include <QTextDocument>
 #include <QTextEdit>
 #include <QTimerEvent>
 #include <QTreeView>
+#include <QUrl>
 
 #include <chrono>
 
@@ -401,14 +408,21 @@ public:
     QTabWidget* m_sideTabs;
 
     ScriptEditorTextEdit* m_editor;
-    QTextEdit* m_results;
+    QTextBrowser* m_results;
     ScriptHighlighter m_highlighter;
 
     QTreeView* m_expressionTree;
-    QTreeView* m_referenceTree;
+    QTabWidget* m_referenceTabs;
     QLineEdit* m_referenceSearch;
-    QStandardItemModel* m_referenceModel;
-    ScriptReferenceFilterModel* m_referenceFilter;
+    QTreeView* m_variableReferenceTree;
+    QTreeView* m_functionReferenceTree;
+    QTreeView* m_commandReferenceTree;
+    QStandardItemModel* m_variableReferenceModel;
+    QStandardItemModel* m_functionReferenceModel;
+    QStandardItemModel* m_commandReferenceModel;
+    ScriptReferenceFilterModel* m_variableReferenceFilter;
+    ScriptReferenceFilterModel* m_functionReferenceFilter;
+    ScriptReferenceFilterModel* m_commandReferenceFilter;
     ExpressionTreeModel* m_model;
 
     QBasicTimer m_textChangeTimer;
@@ -426,13 +440,20 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     , m_documentSplitter{new QSplitter(Qt::Vertical, m_self)}
     , m_sideTabs{new QTabWidget(m_self)}
     , m_editor{new ScriptEditorTextEdit(m_self)}
-    , m_results{new QTextEdit(m_self)}
+    , m_results{new QTextBrowser(m_self)}
     , m_highlighter{m_editor->document()}
     , m_expressionTree{new QTreeView(m_self)}
-    , m_referenceTree{new QTreeView(m_self)}
+    , m_referenceTabs{new QTabWidget(m_self)}
     , m_referenceSearch{new QLineEdit(m_self)}
-    , m_referenceModel{new QStandardItemModel(m_self)}
-    , m_referenceFilter{new ScriptReferenceFilterModel(m_self)}
+    , m_variableReferenceTree{new QTreeView(m_self)}
+    , m_functionReferenceTree{new QTreeView(m_self)}
+    , m_commandReferenceTree{new QTreeView(m_self)}
+    , m_variableReferenceModel{new QStandardItemModel(m_self)}
+    , m_functionReferenceModel{new QStandardItemModel(m_self)}
+    , m_commandReferenceModel{new QStandardItemModel(m_self)}
+    , m_variableReferenceFilter{new ScriptReferenceFilterModel(m_self)}
+    , m_functionReferenceFilter{new ScriptReferenceFilterModel(m_self)}
+    , m_commandReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_model{new ExpressionTreeModel(m_self)}
     , m_parser{new ScriptRegistry(libraryManager)}
 {
@@ -441,6 +462,10 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     mainLayout->addWidget(m_mainSplitter);
 
     m_results->setReadOnly(true);
+    m_results->setOpenLinks(false);
+    m_results->setOpenExternalLinks(false);
+    m_results->setUndoRedoEnabled(false);
+    m_results->document()->setDocumentMargin(0);
 
     m_expressionTree->setModel(m_model);
     m_expressionTree->setHeaderHidden(true);
@@ -465,7 +490,7 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     referenceLayout->setContentsMargins({});
 
     referenceLayout->addWidget(m_referenceSearch, 0, 0);
-    referenceLayout->addWidget(m_referenceTree, 1, 0);
+    referenceLayout->addWidget(m_referenceTabs, 1, 0);
 
     m_sideTabs->addTab(structureTab, ScriptEditor::tr("Structure"));
     m_sideTabs->addTab(referenceTab, ScriptEditor::tr("Reference"));
@@ -489,17 +514,41 @@ void ScriptEditorPrivate::setupConnections()
                      [this]() { selectionChanged(); });
 
     QObject::connect(m_referenceSearch, &QLineEdit::textChanged, m_self, [this](const QString& text) {
-        m_referenceFilter->setFilterRegularExpression(
-            QRegularExpression{QRegularExpression::escape(text), QRegularExpression::CaseInsensitiveOption});
+        const QRegularExpression expression{QRegularExpression::escape(text),
+                                            QRegularExpression::CaseInsensitiveOption};
+        m_variableReferenceFilter->setFilterRegularExpression(expression);
+        m_functionReferenceFilter->setFilterRegularExpression(expression);
+        m_commandReferenceFilter->setFilterRegularExpression(expression);
     });
-    QObject::connect(m_referenceTree, &QTreeView::doubleClicked, m_self, [this](const QModelIndex& index) {
-        const QModelIndex itemIndex = index.siblingAtColumn(0);
-        if(!itemIndex.isValid()) {
+    const auto connectReferenceTree = [this](QTreeView* tree) {
+        QObject::connect(tree, &QTreeView::doubleClicked, m_self, [this](const QModelIndex& index) {
+            const QModelIndex itemIndex = index.siblingAtColumn(0);
+            if(!itemIndex.isValid()) {
+                return;
+            }
+
+            m_editor->insertSnippet(itemIndex.data(InsertTextRole).toString(),
+                                    itemIndex.data(CursorOffsetRole).toInt());
+            m_editor->setFocus();
+        });
+    };
+    for(auto* tree : {m_variableReferenceTree, m_functionReferenceTree, m_commandReferenceTree}) {
+        connectReferenceTree(tree);
+    }
+    QObject::connect(m_referenceTabs, &QTabWidget::currentChanged, m_self, [this](int index) {
+        if(index < 0) {
             return;
         }
 
-        m_editor->insertSnippet(itemIndex.data(InsertTextRole).toString(), itemIndex.data(CursorOffsetRole).toInt());
-        m_editor->setFocus();
+        if(auto* tree = qobject_cast<QTreeView*>(m_referenceTabs->widget(index))) {
+            tree->setFocus();
+        }
+    });
+    QObject::connect(m_results, &QTextBrowser::anchorClicked, m_self, [](const QUrl& url) {
+        const QUrl resolvedUrl = QUrl::fromUserInput(url.toString());
+        if(resolvedUrl.isValid()) {
+            QDesktopServices::openUrl(resolvedUrl);
+        }
     });
 }
 
@@ -525,10 +574,14 @@ void ScriptEditorPrivate::setupPlaceholder()
 
 void ScriptEditorPrivate::setupReference()
 {
-    m_referenceModel->setHorizontalHeaderLabels(
-        {ScriptEditor::tr("Item"), ScriptEditor::tr("Category"), ScriptEditor::tr("Description")});
+    const auto headers
+        = QStringList{ScriptEditor::tr("Item"), ScriptEditor::tr("Category"), ScriptEditor::tr("Description")};
 
-    for(const auto& entry : scriptReferenceEntries()) {
+    for(auto* model : {m_variableReferenceModel, m_functionReferenceModel, m_commandReferenceModel}) {
+        model->setHorizontalHeaderLabels(headers);
+    }
+
+    const auto appendRow = [](QStandardItemModel* model, const ScriptReferenceEntry& entry) {
         QList<QStandardItem*> row;
         row.reserve(3);
 
@@ -544,22 +597,47 @@ void ScriptEditorPrivate::setupReference()
         }
 
         row << item << category << description;
-        m_referenceModel->appendRow(row);
+        model->appendRow(row);
+    };
+
+    for(const auto& entry : scriptReferenceEntries()) {
+        switch(entry.kind) {
+            case ScriptReferenceKind::Variable:
+                appendRow(m_variableReferenceModel, entry);
+                break;
+            case ScriptReferenceKind::Function:
+                appendRow(m_functionReferenceModel, entry);
+                break;
+            case ScriptReferenceKind::CommandAlias:
+                appendRow(m_commandReferenceModel, entry);
+                break;
+        }
     }
 
-    m_referenceFilter->setSourceModel(m_referenceModel);
-    m_referenceFilter->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    const auto configureReferenceTree
+        = [](QTreeView* tree, ScriptReferenceFilterModel* filter, QStandardItemModel* model) {
+              filter->setSourceModel(model);
+              filter->setFilterCaseSensitivity(Qt::CaseInsensitive);
 
-    m_referenceTree->setModel(m_referenceFilter);
-    m_referenceTree->setRootIsDecorated(false);
-    m_referenceTree->setAlternatingRowColors(true);
-    m_referenceTree->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_referenceTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_referenceTree->setSortingEnabled(true);
-    m_referenceTree->sortByColumn(0, Qt::AscendingOrder);
-    m_referenceTree->header()->setStretchLastSection(true);
-    m_referenceTree->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    m_referenceTree->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+              tree->setModel(filter);
+              tree->setRootIsDecorated(false);
+              tree->setAlternatingRowColors(true);
+              tree->setSelectionBehavior(QAbstractItemView::SelectRows);
+              tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+              tree->setSortingEnabled(true);
+              tree->sortByColumn(0, Qt::AscendingOrder);
+              tree->header()->setStretchLastSection(true);
+              tree->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+              tree->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+          };
+
+    configureReferenceTree(m_variableReferenceTree, m_variableReferenceFilter, m_variableReferenceModel);
+    configureReferenceTree(m_functionReferenceTree, m_functionReferenceFilter, m_functionReferenceModel);
+    configureReferenceTree(m_commandReferenceTree, m_commandReferenceFilter, m_commandReferenceModel);
+
+    m_referenceTabs->addTab(m_variableReferenceTree, ScriptEditor::tr("Variables"));
+    m_referenceTabs->addTab(m_functionReferenceTree, ScriptEditor::tr("Functions"));
+    m_referenceTabs->addTab(m_commandReferenceTree, ScriptEditor::tr("Commands"));
 
     m_referenceSearch->setPlaceholderText(ScriptEditor::tr("Filter"));
 }
@@ -578,10 +656,16 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
     ParsedScript script;
     script.expressions = {expression};
 
-    const Track track    = m_track.isValid() ? m_track : m_placeholderTrack;
-    const auto result    = m_parser.evaluate(script, track);
-    const auto formatted = m_formatter.evaluate(result);
-    m_results->setText(formatted.joinedText());
+    m_formatter.setBaseFont(m_results->font());
+    m_formatter.setBaseColour(m_results->palette().color(QPalette::Text));
+
+    const Track track      = m_track.isValid() ? m_track : m_placeholderTrack;
+    const auto result      = m_parser.evaluate(script, track);
+    const auto formatted   = m_formatter.evaluate(result);
+    const QString htmlBody = richTextToHtml(formatted);
+    const QString html     = u"<html><body style=\"margin:0;\">%1</body></html>"_s.arg(htmlBody);
+
+    m_results->setHtml(html);
 }
 
 void ScriptEditorPrivate::selectionChanged()
@@ -610,7 +694,7 @@ void ScriptEditorPrivate::showErrors() const
 {
     const auto errors = m_currentScript.errors;
     for(const ScriptError& error : errors) {
-        m_results->append(error.message);
+        m_results->append(error.message.toHtmlEscaped());
     }
 }
 

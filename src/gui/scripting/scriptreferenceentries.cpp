@@ -20,6 +20,7 @@
 #include "scriptreferenceentries.h"
 
 #include <core/constants.h>
+#include <gui/scripting/scriptcommandhandler.h>
 #include <gui/scripting/scripteditor.h>
 
 using namespace Qt::StringLiterals;
@@ -63,6 +64,18 @@ Fooyin::ScriptReferenceEntry functionEntry(const char* name, QString signature, 
             .description  = std::move(description),
             .cursorOffset = 1};
 }
+
+Fooyin::ScriptReferenceEntry commandAliasEntry(const Fooyin::ScriptCommandAlias& alias)
+{
+    return {
+        .kind         = Fooyin::ScriptReferenceKind::CommandAlias,
+        .label        = alias.alias.toString(),
+        .insertText   = alias.alias.toString(),
+        .category     = tr(alias.category),
+        .description  = tr(alias.description),
+        .cursorOffset = 0,
+    };
+}
 } // namespace
 
 namespace Fooyin {
@@ -70,7 +83,7 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
 {
     using namespace Fooyin::Constants;
 
-    static const std::vector<ScriptReferenceEntry> Entries = {
+    static const std::vector Entries = {
         variableEntry(MetaData::Title, tr("Metadata"), tr("Track title")),
         variableEntry(MetaData::Artist, tr("Metadata"), tr("Primary artist")),
         variableEntry(MetaData::UniqueArtist, tr("Metadata"), tr("Unique artists combined into one value")),
@@ -202,6 +215,27 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
         functionEntry("info", u"$info(field)"_s, tr("Looks up technical track information")),
     };
 
-    return Entries;
+    static const auto CommandEntries = [] {
+        const auto& aliases = ScriptCommandHandler::scriptCommandAliases();
+
+        std::vector<ScriptReferenceEntry> entries;
+        entries.reserve(aliases.size());
+
+        for(const auto& alias : aliases) {
+            entries.emplace_back(commandAliasEntry(alias));
+        }
+
+        return entries;
+    }();
+
+    static const auto AllEntries = [] {
+        std::vector<ScriptReferenceEntry> entries;
+        entries.reserve(Entries.size() + CommandEntries.size());
+        entries.insert(entries.end(), Entries.cbegin(), Entries.cend());
+        entries.insert(entries.end(), CommandEntries.cbegin(), CommandEntries.cend());
+        return entries;
+    }();
+
+    return AllEntries;
 }
 } // namespace Fooyin

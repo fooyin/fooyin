@@ -20,17 +20,39 @@
 #pragma once
 
 #include <QString>
+#include <QStringView>
+
+#include <vector>
 
 namespace Fooyin {
 class ActionManager;
 class PlayerController;
 class PropertiesDialog;
 
+enum class ScriptCommandAliasType : uint8_t
+{
+    Action = 0,
+    PlayingProperties,
+    PlayingFolder,
+};
+
+struct ScriptCommandAlias
+{
+    QStringView alias;
+    const char* actionId{nullptr};
+    ScriptCommandAliasType type{ScriptCommandAliasType::Action};
+    const char* category{nullptr};
+    const char* description{nullptr};
+};
+using ScriptCommandAliasList = std::vector<ScriptCommandAlias>;
+
 class ScriptCommandHandler
 {
 public:
     ScriptCommandHandler(ActionManager* actionManager, PlayerController* playerController,
                          PropertiesDialog* propertiesDialog);
+
+    static const ScriptCommandAliasList& scriptCommandAliases();
 
     bool execute(const QString& commandId) const;
 

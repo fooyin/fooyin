@@ -55,4 +55,13 @@ TEST_F(ScriptFormatterTest, Rgb)
     ASSERT_EQ(1, result.size());
     EXPECT_EQ(255, result.blocks.front().format.colour.red());
 }
+
+TEST_F(ScriptFormatterTest, Link)
+{
+    const auto result = m_formattter.evaluate(QStringLiteral("<a href=\"https://example.com\">Example</a>"));
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(QStringLiteral("Example"), result.blocks.front().text);
+    EXPECT_EQ(QStringLiteral("https://example.com"), result.blocks.front().format.link);
+    EXPECT_TRUE(result.blocks.front().format.font.underline());
+}
 } // namespace Fooyin::Testing
