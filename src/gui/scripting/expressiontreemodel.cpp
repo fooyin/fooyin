@@ -19,11 +19,14 @@
 
 #include "expressiontreemodel.h"
 
-#include "gui/guiconstants.h"
-#include "utils/crypto.h"
-#include "utils/utils.h"
+#include <gui/guiconstants.h>
+#include <gui/scripting/richtext.h>
+#include <gui/scripting/scriptformatterregistry.h>
+#include <utils/crypto.h>
+#include <utils/utils.h>
 
 #include <QIcon>
+#include <QRegularExpression>
 #include <utility>
 
 using namespace Qt::StringLiterals;
@@ -33,10 +36,11 @@ ExpressionTreeItem::ExpressionTreeItem()
     : ExpressionTreeItem{{}, {}, {}}
 { }
 
-ExpressionTreeItem::ExpressionTreeItem(QString key, QString name, Expression expression)
+ExpressionTreeItem::ExpressionTreeItem(QString key, QString name, Expression expression, const bool isFormatting)
     : m_key{std::move(key)}
     , m_name{std::move(name)}
     , m_expression{std::move(expression)}
+    , m_isFormatting{isFormatting}
 { }
 
 QString ExpressionTreeItem::key() const
@@ -59,12 +63,18 @@ Expression ExpressionTreeItem::expression() const
     return m_expression;
 }
 
+bool ExpressionTreeItem::isFormatting() const
+{
+    return m_isFormatting;
+}
+
 ExpressionTreeModel::ExpressionTreeModel(QObject* parent)
     : TreeModel{parent}
     , m_iconExpression{Utils::iconFromTheme(Constants::Icons::ScriptExpression)}
     , m_iconLiteral{Utils::iconFromTheme(Constants::Icons::ScriptLiteral)}
     , m_iconVariable{Utils::iconFromTheme(Constants::Icons::ScriptVariable)}
     , m_iconFunction{Utils::iconFromTheme(Constants::Icons::ScriptFunction)}
+    , m_iconFormatting{Utils::iconFromTheme(Constants::Icons::ScriptFormatting)}
 { }
 
 void ExpressionTreeModel::populate(const ExpressionList& expressions)
@@ -81,9 +91,8 @@ void ExpressionTreeModel::populate(const ExpressionList& expressions)
         parent = insertNode(generateKey(parent->key(), u" … "_s), u" … "_s, fullExpression, parent);
     }
 
-    for(const auto& expression : expressions) {
-        iterateExpression(expression, parent);
-    }
+    int index{0};
+    iterateExpressions(expressions, parent, index);
     endResetModel();
 }
 
@@ -101,6 +110,10 @@ QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::DisplayRole) {
         return item->name();
+    }
+
+    if(item->isFormatting()) {
+        return m_iconFormatting;
     }
 
     switch(item->type()) {
@@ -125,12 +138,13 @@ QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
 }
 
 ExpressionTreeItem* ExpressionTreeModel::insertNode(const QString& key, const QString& name,
-                                                    const Expression& expression, ExpressionTreeItem* parent)
+                                                    const Expression& expression, ExpressionTreeItem* parent,
+                                                    const bool isFormatting)
 {
     if(!m_nodes.contains(key)) {
         auto* item = m_nodes.contains(key)
                        ? &m_nodes.at(key)
-                       : &m_nodes.emplace(key, ExpressionTreeItem{key, name, expression}).first->second;
+                       : &m_nodes.emplace(key, ExpressionTreeItem{key, name, expression, isFormatting}).first->second;
         parent->appendChild(item);
     }
     return &m_nodes.at(key);
@@ -139,6 +153,268 @@ ExpressionTreeItem* ExpressionTreeModel::insertNode(const QString& key, const QS
 QString ExpressionTreeModel::generateKey(const QString& parentKey, const QString& name) const
 {
     return Utils::generateHash(parentKey, name, QString::number(m_nodes.size()));
+}
+
+QString ExpressionTreeModel::parseHtmlAttribute(const QString& attrs, const QString& name)
+{
+    static const QRegularExpression attrRegex{uR"(?:^|\s)%1\s*=\s*(?:"([^"]*)\"|'([^']*)'|([^\s"'>]+))"_s.arg(name)};
+    const QRegularExpressionMatch match = attrRegex.match(attrs);
+
+    if(!match.hasMatch()) {
+        return {};
+    }
+
+    for(int i{1}; i <= 3; ++i) {
+        if(!match.captured(i).isEmpty()) {
+            return match.captured(i);
+        }
+    }
+
+    return {};
+}
+
+ExpressionTreeModel::ParsedFormatTag ExpressionTreeModel::parseFormatTag(QString content)
+{
+    content = content.trimmed();
+
+    if(content.isEmpty()) {
+        return {};
+    }
+
+    ParsedFormatTag tag;
+
+    if(content.startsWith('/'_L1)) {
+        tag.closing = true;
+        content     = content.mid(1).trimmed();
+    }
+
+    if(content.isEmpty()) {
+        return {};
+    }
+
+    const auto firstSpace  = content.indexOf(' '_L1);
+    const auto firstEquals = content.indexOf('='_L1);
+
+    if(firstEquals >= 0 && (firstSpace < 0 || firstEquals < firstSpace)) {
+        tag.name   = content.left(firstEquals).trimmed().toLower();
+        tag.option = content.mid(firstEquals + 1).trimmed();
+        return tag;
+    }
+
+    tag.name = (firstSpace < 0 ? content : content.left(firstSpace)).trimmed().toLower();
+
+    if(firstSpace >= 0 && tag.name == "a"_L1 && !tag.closing) {
+        tag.option = parseHtmlAttribute(content.mid(firstSpace + 1), u"href"_s);
+    }
+
+    return tag;
+}
+
+bool ExpressionTreeModel::isKnownFormatTag(const ParsedFormatTag& tag)
+{
+    if(tag.name.isEmpty()) {
+        return false;
+    }
+
+    RichFormatting formatting;
+    const ScriptFormatterRegistry registry;
+
+    if(tag.closing) {
+        const QString option = tag.name == "a"_L1 ? u"https://example.com"_s : QString{};
+        return registry.format(formatting, tag.name, option);
+    }
+
+    return registry.format(formatting, tag.name, tag.option);
+}
+
+std::optional<QString> ExpressionTreeModel::literalExpressionText(const Expression& expression)
+{
+    if(!std::holds_alternative<QString>(expression.value)) {
+        return {};
+    }
+
+    const auto& value = std::get<QString>(expression.value);
+
+    switch(expression.type) {
+        case Expr::Literal:
+            return value;
+        case Expr::QuotedLiteral:
+            return u"\"%1\""_s.arg(value);
+        default:
+            break;
+    }
+
+    return {};
+}
+
+QString ExpressionTreeModel::expressionsText(const ExpressionList& expressions, int startIndex, int endIndex) const
+{
+    if(endIndex < 0 || std::cmp_greater(endIndex, expressions.size())) {
+        endIndex = static_cast<int>(expressions.size());
+    }
+
+    QString text;
+
+    for(int i{startIndex}; i < endIndex; ++i) {
+        text += expressionText(expressions.at(i));
+    }
+
+    return text;
+}
+
+QString ExpressionTreeModel::expressionText(const Expression& expression) const
+{
+    if(const auto literalText = literalExpressionText(expression)) {
+        return *literalText;
+    }
+
+    if(const auto* value = std::get_if<QString>(&expression.value)) {
+        switch(expression.type) {
+            case Expr::Variable:
+                return u"%1%2%1"_s.arg(u'%', *value);
+            case Expr::VariableList:
+                return u"%<%1>"_s.arg(*value);
+            default:
+                return *value;
+        }
+    }
+
+    if(const auto* funcValue = std::get_if<FuncValue>(&expression.value)) {
+        QStringList args;
+        for(const auto& arg : funcValue->args) {
+            args.emplace_back(expressionText(arg));
+        }
+
+        return u"$%1(%2)"_s.arg(funcValue->name, args.join(u","_s));
+    }
+
+    if(const auto* listValue = std::get_if<ExpressionList>(&expression.value)) {
+        QString listText = expressionsText(*listValue);
+
+        switch(expression.type) {
+            case Expr::Conditional:
+                return u"[%1]"_s.arg(listText);
+            case Expr::FunctionArg:
+                return listText;
+            case Expr::Group:
+                return u"(%1)"_s.arg(listText);
+            default:
+                return listText;
+        }
+    }
+
+    return {};
+}
+
+std::optional<ExpressionTreeModel::FormatTagMatch>
+ExpressionTreeModel::matchFormatTag(const ExpressionList& expressions, const int startIndex) const
+{
+    if(startIndex < 0 || std::cmp_greater_equal(startIndex, expressions.size())) {
+        return {};
+    }
+
+    const auto open = literalExpressionText(expressions.at(startIndex));
+    if(!open || *open != "<"_L1) {
+        return {};
+    }
+
+    QString content;
+    int endIndex{startIndex + 1};
+
+    while(std::cmp_less(endIndex, expressions.size())) {
+        const auto part = literalExpressionText(expressions.at(endIndex));
+        if(!part) {
+            return {};
+        }
+
+        if(*part == ">"_L1) {
+            break;
+        }
+
+        content += *part;
+        ++endIndex;
+    }
+
+    if(std::cmp_greater_equal(endIndex, expressions.size())) {
+        return {};
+    }
+
+    const ParsedFormatTag parsedTag = parseFormatTag(content);
+    if(!isKnownFormatTag(parsedTag)) {
+        return {};
+    }
+
+    return FormatTagMatch{
+        .name        = parsedTag.name,
+        .displayText = expressionsText(expressions, startIndex, endIndex + 1),
+        .nextIndex   = endIndex + 1,
+        .closing     = parsedTag.closing,
+    };
+}
+
+int ExpressionTreeModel::findClosingFormatTag(const ExpressionList& expressions, int index, int endIndex,
+                                              const QString& tagName) const
+{
+    while(index < endIndex) {
+        if(const auto tag = matchFormatTag(expressions, index)) {
+            if(tag->closing) {
+                if(tag->name == tagName) {
+                    return tag->nextIndex;
+                }
+            }
+            else {
+                if(const int nestedEnd = findClosingFormatTag(expressions, tag->nextIndex, endIndex, tag->name);
+                   nestedEnd > tag->nextIndex) {
+                    index = nestedEnd;
+                    continue;
+                }
+            }
+        }
+
+        ++index;
+    }
+
+    return -1;
+}
+
+void ExpressionTreeModel::iterateExpressions(const ExpressionList& expressions, ExpressionTreeItem* parent, int& index,
+                                             const QString& closingFormatTag, int endIndex)
+{
+    if(endIndex < 0 || std::cmp_greater(endIndex, expressions.size())) {
+        endIndex = static_cast<int>(expressions.size());
+    }
+
+    while(index < endIndex) {
+        if(const auto tag = matchFormatTag(expressions, index)) {
+            if(tag->closing) {
+                if(!closingFormatTag.isEmpty() && tag->name == closingFormatTag) {
+                    index = tag->nextIndex;
+                    return;
+                }
+            }
+            else {
+                const int closingIndex = findClosingFormatTag(expressions, tag->nextIndex, endIndex, tag->name);
+                const int groupEnd     = closingIndex > tag->nextIndex ? closingIndex : endIndex;
+
+                if(groupEnd >= tag->nextIndex) {
+                    const QString fullTagText = expressionsText(expressions, index, groupEnd);
+                    const Expression formatExpression{Expr::Literal, fullTagText};
+                    auto* node = insertNode(generateKey(parent->key(), tag->displayText), tag->displayText,
+                                            formatExpression, parent, true);
+
+                    int childIndex = tag->nextIndex;
+                    iterateExpressions(expressions, node, childIndex,
+                                       closingIndex > tag->nextIndex ? tag->name : QString{}, groupEnd);
+
+                    index = groupEnd;
+                    continue;
+                }
+            }
+        }
+
+        iterateExpression(expressions.at(index), parent);
+        ++index;
+    }
 }
 
 void ExpressionTreeModel::iterateExpression(const Expression& expression, ExpressionTreeItem* parent)
@@ -165,9 +441,8 @@ void ExpressionTreeModel::iterateExpression(const Expression& expression, Expres
             parent = insertNode(generateKey(parent->key(), name), name, expression, parent);
         }
 
-        for(const auto& listExpr : *listVal) {
-            iterateExpression(listExpr, parent);
-        }
+        int index{0};
+        iterateExpressions(*listVal, parent, index);
     }
 }
 } // namespace Fooyin

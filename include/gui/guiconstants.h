@@ -55,6 +55,7 @@ constexpr auto ScriptExpression = "script-expression";
 constexpr auto ScriptVariable   = "script-variable";
 constexpr auto ScriptFunction   = "script-function";
 constexpr auto ScriptLiteral    = "script-literal";
+constexpr auto ScriptFormatting = "format-text-bold";
 
 constexpr auto Quit          = "application-exit";
 constexpr auto Settings      = "preferences-system";
