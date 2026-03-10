@@ -271,7 +271,7 @@ QString ExpressionTreeModel::expressionText(const Expression& expression) const
     if(const auto* value = std::get_if<QString>(&expression.value)) {
         switch(expression.type) {
             case Expr::Variable:
-                return u"%1%2%1"_s.arg(u'%', *value);
+                return u"%1%2%1"_s.arg(u"%"_s, *value);
             case Expr::VariableList:
                 return u"%<%1>"_s.arg(*value);
             default:
