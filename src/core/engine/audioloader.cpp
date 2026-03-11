@@ -78,10 +78,16 @@ void refreshArchiveWrapperExtensions(std::vector<T>& loaders, const QStringList&
 }
 
 template <typename T>
+void renumberLoaderEntries(std::vector<T>& entries)
+{
+    std::ranges::for_each(entries, [i = 0](auto& loader) mutable { loader.index = i++; });
+}
+
+template <typename T>
 void sortLoaderEntries(std::vector<T>& entries)
 {
     std::ranges::sort(entries, {}, &T::index);
-    std::ranges::for_each(entries, [i = 0](auto& loader) mutable { loader.index = i++; });
+    renumberLoaderEntries(entries);
 }
 
 template <typename EntryT, typename CreatorT>
@@ -760,8 +766,8 @@ void AudioLoader::changeDecoderIndex(const QString& name, int index)
     if(decoder != p->m_decoders.end()) {
         const auto from = static_cast<int>(std::distance(p->m_decoders.begin(), decoder));
         Utils::move(p->m_decoders, from, index);
+        renumberLoaderEntries(p->m_decoders);
     }
-    sortLoaderEntries(p->m_decoders);
 }
 
 void AudioLoader::setReaderEnabled(const QString& name, bool enabled)
@@ -780,8 +786,8 @@ void AudioLoader::changeReaderIndex(const QString& name, int index)
     if(reader != p->m_readers.end()) {
         const auto from = static_cast<int>(std::distance(p->m_readers.begin(), reader));
         Utils::move(p->m_readers, from, index);
+        renumberLoaderEntries(p->m_readers);
     }
-    sortLoaderEntries(p->m_readers);
 }
 
 void AudioLoader::reloadDecoderExtensions(const QString& name)
