@@ -1671,6 +1671,7 @@ public:
     void updateScrollBars() override;
 
 private:
+    void prepareItemLayout();
     void drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     [[nodiscard]] QModelIndex iconItemIndex(const QModelIndex& index) const;
@@ -1683,6 +1684,7 @@ private:
     [[nodiscard]] int spacing() const;
     [[nodiscard]] QSize iconSize() const;
     [[nodiscard]] bool haveSideCaptions() const;
+    [[nodiscard]] bool haveBottomCaptions() const;
 
     QRect m_layoutBounds;
     int m_segmentSize{0};
@@ -1766,8 +1768,8 @@ void IconView::invalidate()
     m_uniformRowWidth  = 0;
     m_uniformRowHeight = 0;
     m_segmentSize      = 0;
-    m_itemSpacing      = MinItemSpacing;
-    m_rowSpacing       = haveSideCaptions() ? 0 : IconRowSpacing;
+    m_itemSpacing      = haveBottomCaptions() ? std::max(m_p->m_iconHorizontalGap, 0) : MinItemSpacing;
+    m_rowSpacing       = haveSideCaptions() ? 0 : (haveBottomCaptions() ? m_p->m_iconVerticalGap : IconRowSpacing);
 }
 
 void IconView::doItemLayout()
@@ -1779,7 +1781,7 @@ void IconView::doItemLayout()
         return;
     }
 
-    m_layoutBounds = {{}, m_view->maximumViewportSize()};
+    prepareItemLayout();
 
     const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
 
@@ -1788,8 +1790,11 @@ void IconView::doItemLayout()
 
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
+    int rowStartPosition{segStartPosition};
 
-    if(!haveSideCaptions()) {
+    const bool fixedBottomCaptionSpacing = haveBottomCaptions() && m_p->m_iconHorizontalGap >= 0;
+
+    if(!haveSideCaptions() && !fixedBottomCaptionSpacing) {
         segStartPosition += m_itemSpacing;
         segEndPosition -= m_itemSpacing;
     }
@@ -1797,7 +1802,8 @@ void IconView::doItemLayout()
     // Determine the number of items per row
     const int count = itemCount();
     for(int i{1}; i <= count; ++i) {
-        const int requiredWidth = (i * itemWidth(0)) + (i - 1) * m_itemSpacing;
+        const int spacingCount  = fixedBottomCaptionSpacing ? std::max(0, i - 1) : i - 1;
+        const int requiredWidth = (i * itemWidth(0)) + (spacingCount * m_itemSpacing);
         if(requiredWidth > (segEndPosition - segStartPosition)) {
             m_segmentSize = (i == 1) ? 1 : i - 1;
             break;
@@ -1813,14 +1819,16 @@ void IconView::doItemLayout()
 
     const int totalWidthAvailable = segEndPosition - segStartPosition;
     const int totalItemWidth      = m_segmentSize * itemWidth(0);
-    const int totalPadding        = totalWidthAvailable - totalItemWidth;
     const int itmWidth            = haveSideCaptions() ? totalWidthAvailable / m_segmentSize : itemWidth(0);
     const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
 
-    m_itemSpacing = std::max(0, totalPadding / (m_segmentSize + 1));
+    if(!fixedBottomCaptionSpacing) {
+        const int totalPadding = totalWidthAvailable - totalItemWidth;
+        m_itemSpacing          = std::max(0, totalPadding / (m_segmentSize + 1));
 
-    if(maxPadding > 0 && m_itemSpacing > maxPadding) {
-        m_itemSpacing = MinItemSpacing;
+        if(maxPadding > 0 && m_itemSpacing > maxPadding) {
+            m_itemSpacing = MinItemSpacing;
+        }
     }
 
     QRect rect{{}, topLeft};
@@ -1834,11 +1842,25 @@ void IconView::doItemLayout()
             deltaSegPosition = 0;
         }
 
+        if(segColumn == 0) {
+            rowStartPosition = segStartPosition;
+
+            if(fixedBottomCaptionSpacing) {
+                const int itemsOnRow     = std::min(m_segmentSize, count - i);
+                const int rowWidth       = (itemsOnRow * itmWidth) + (std::max(0, itemsOnRow - 1) * m_itemSpacing);
+                const int remainingWidth = totalWidthAvailable - rowWidth;
+                rowStartPosition += std::max(0, remainingWidth / 2);
+            }
+        }
+
         if(haveSideCaptions()) {
-            item.x = segStartPosition + segColumn * itmWidth;
+            item.x = segStartPosition + (segColumn * itmWidth);
+        }
+        else if(fixedBottomCaptionSpacing) {
+            item.x = rowStartPosition + (segColumn * (itmWidth + m_itemSpacing));
         }
         else {
-            item.x = segStartPosition + m_itemSpacing + segColumn * (itmWidth + m_itemSpacing);
+            item.x = segStartPosition + m_itemSpacing + (segColumn * (itmWidth + m_itemSpacing));
         }
 
         item.y     = segPosition;
@@ -2032,6 +2054,18 @@ QSize IconView::iconSize() const
 bool IconView::haveSideCaptions() const
 {
     return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right;
+}
+
+bool IconView::haveBottomCaptions() const
+{
+    return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom;
+}
+
+void IconView::prepareItemLayout()
+{
+    // Layout in content coordinates using the actual visible viewport. Scrollbars are already
+    // excluded from the viewport geometry, which avoids style-specific drift after resize.
+    m_layoutBounds = QRect{{}, viewport()->size()};
 }
 
 void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -3020,7 +3054,12 @@ ExpandedTreeView::CaptionDisplay ExpandedTreeView::captionDisplay() const
 
 void ExpandedTreeView::setCaptionDisplay(CaptionDisplay display)
 {
-    p->m_captionDisplay = display;
+    if(std::exchange(p->m_captionDisplay, display) == display) {
+        return;
+    }
+
+    p->doDelayedItemsLayout();
+    viewport()->update();
 }
 
 int ExpandedTreeView::iconItemColumn() const
@@ -3094,6 +3133,40 @@ bool ExpandedTreeView::selectBeforeDrag() const
 void ExpandedTreeView::setSelectBeforeDrag(bool enabled)
 {
     p->m_selectBeforeDrag = enabled;
+}
+
+int ExpandedTreeView::iconHorizontalGap() const
+{
+    return p->m_iconHorizontalGap;
+}
+
+void ExpandedTreeView::setIconHorizontalGap(int gap)
+{
+    gap = std::max(gap, -1);
+
+    if(std::exchange(p->m_iconHorizontalGap, gap) == gap) {
+        return;
+    }
+
+    p->doDelayedItemsLayout();
+    viewport()->update();
+}
+
+int ExpandedTreeView::iconVerticalGap() const
+{
+    return p->m_iconVerticalGap;
+}
+
+void ExpandedTreeView::setIconVerticalGap(int gap)
+{
+    gap = std::max(gap, 0);
+
+    if(std::exchange(p->m_iconVerticalGap, gap) == gap) {
+        return;
+    }
+
+    p->doDelayedItemsLayout();
+    viewport()->update();
 }
 
 void ExpandedTreeView::changeIconSize(const QSize& size)

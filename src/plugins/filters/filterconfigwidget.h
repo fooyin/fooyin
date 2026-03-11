@@ -60,6 +60,8 @@ private:
     QSpinBox* m_rowHeight;
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
+    QSpinBox* m_iconHorizontalGap;
+    QSpinBox* m_iconVerticalGap;
     QPushButton* m_manageColumns;
 };
 } // namespace Fooyin::Filters

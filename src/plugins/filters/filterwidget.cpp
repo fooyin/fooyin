@@ -51,15 +51,17 @@
 using namespace Qt::StringLiterals;
 
 namespace {
-constexpr auto FilterDoubleClickKey     = u"Filters/DoubleClickBehaviour";
-constexpr auto FilterMiddleClickKey     = u"Filters/MiddleClickBehaviour";
-constexpr auto FilterPlaylistEnabledKey = u"Filters/SelectionPlaylistEnabled";
-constexpr auto FilterAutoSwitchKey      = u"Filters/AutoSwitchSelectionPlaylist";
-constexpr auto FilterAutoPlaylistKey    = u"Filters/SelectionPlaylistName";
-constexpr auto FilterRowHeightKey       = u"Filters/RowHeight";
-constexpr auto FilterSendPlaybackKey    = u"Filters/StartPlaybackOnSend";
-constexpr auto FilterKeepAliveKey       = u"Filters/KeepAlive";
-constexpr auto FilterIconSizeKey        = u"Filters/IconSize";
+constexpr auto FilterDoubleClickKey       = u"Filters/DoubleClickBehaviour";
+constexpr auto FilterMiddleClickKey       = u"Filters/MiddleClickBehaviour";
+constexpr auto FilterPlaylistEnabledKey   = u"Filters/SelectionPlaylistEnabled";
+constexpr auto FilterAutoSwitchKey        = u"Filters/AutoSwitchSelectionPlaylist";
+constexpr auto FilterAutoPlaylistKey      = u"Filters/SelectionPlaylistName";
+constexpr auto FilterRowHeightKey         = u"Filters/RowHeight";
+constexpr auto FilterSendPlaybackKey      = u"Filters/StartPlaybackOnSend";
+constexpr auto FilterKeepAliveKey         = u"Filters/KeepAlive";
+constexpr auto FilterIconSizeKey          = u"Filters/IconSize";
+constexpr auto FilterIconHorizontalGapKey = u"Filters/IconHorizontalGap";
+constexpr auto FilterIconVerticalGapKey   = u"Filters/IconVerticalGap";
 
 Fooyin::TrackList fetchAllTracks(QAbstractItemView* view)
 {
@@ -457,6 +459,8 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.playlistName      = m_settings->fileValue(FilterAutoPlaylistKey, config.playlistName).toString();
     config.rowHeight         = m_settings->fileValue(FilterRowHeightKey, config.rowHeight).toInt();
     config.iconSize          = m_settings->fileValue(FilterIconSizeKey, config.iconSize).toSize();
+    config.iconHorizontalGap = m_settings->fileValue(FilterIconHorizontalGapKey, config.iconHorizontalGap).toInt();
+    config.iconVerticalGap   = m_settings->fileValue(FilterIconVerticalGapKey, config.iconVerticalGap).toInt();
 
     return config;
 }
@@ -473,6 +477,8 @@ FilterWidget::ConfigData FilterWidget::factoryConfig() const
         .playlistName      = FilterController::defaultPlaylistName(),
         .rowHeight         = 0,
         .iconSize          = QSize{100, 100},
+        .iconHorizontalGap = -1,
+        .iconVerticalGap   = 10,
     };
 }
 
@@ -492,6 +498,8 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterAutoPlaylistKey, config.playlistName);
     m_settings->fileSet(FilterRowHeightKey, config.rowHeight);
     m_settings->fileSet(FilterIconSizeKey, config.iconSize);
+    m_settings->fileSet(FilterIconHorizontalGapKey, config.iconHorizontalGap);
+    m_settings->fileSet(FilterIconVerticalGapKey, config.iconVerticalGap);
 }
 
 void FilterWidget::clearSavedDefaults() const
@@ -505,13 +513,17 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterAutoPlaylistKey);
     m_settings->fileRemove(FilterRowHeightKey);
     m_settings->fileRemove(FilterIconSizeKey);
+    m_settings->fileRemove(FilterIconHorizontalGapKey);
+    m_settings->fileRemove(FilterIconVerticalGapKey);
 }
 
 void FilterWidget::applyConfig(const ConfigData& config)
 {
     auto validated{config};
 
-    validated.rowHeight = std::max(validated.rowHeight, 0);
+    validated.rowHeight         = std::max(validated.rowHeight, 0);
+    validated.iconHorizontalGap = std::max(validated.iconHorizontalGap, -1);
+    validated.iconVerticalGap   = std::max(validated.iconVerticalGap, 0);
 
     if(!validated.iconSize.isValid()) {
         validated.iconSize = factoryConfig().iconSize;
@@ -523,6 +535,8 @@ void FilterWidget::applyConfig(const ConfigData& config)
 
     m_model->setRowHeight(m_config.rowHeight);
     m_model->setIconSize(m_config.iconSize);
+    m_view->setIconHorizontalGap(m_config.iconHorizontalGap);
+    m_view->setIconVerticalGap(m_config.iconVerticalGap);
     m_view->changeIconSize(m_config.iconSize);
     QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
 
@@ -562,8 +576,16 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
         config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
     }
+    if(layout.contains("IconHorizontalGap"_L1)) {
+        config.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt();
+    }
+    if(layout.contains("IconVerticalGap"_L1)) {
+        config.iconVerticalGap = layout.value("IconVerticalGap"_L1).toInt();
+    }
 
-    config.rowHeight = std::max(config.rowHeight, 0);
+    config.rowHeight         = std::max(config.rowHeight, 0);
+    config.iconHorizontalGap = std::max(config.iconHorizontalGap, -1);
+    config.iconVerticalGap   = std::max(config.iconVerticalGap, 0);
 
     if(!config.iconSize.isValid()) {
         config.iconSize = factoryConfig().iconSize;
@@ -584,6 +606,8 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["RowHeight"_L1]         = config.rowHeight;
     layout["IconWidth"_L1]         = config.iconSize.width();
     layout["IconHeight"_L1]        = config.iconSize.height();
+    layout["IconHorizontalGap"_L1] = config.iconHorizontalGap;
+    layout["IconVerticalGap"_L1]   = config.iconVerticalGap;
 }
 
 void FilterWidget::openConfigDialog()

@@ -51,6 +51,8 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, ActionManager
     , m_rowHeight{new QSpinBox(this)}
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
+    , m_iconHorizontalGap{new QSpinBox(this)}
+    , m_iconVerticalGap{new QSpinBox(this)}
     , m_manageColumns{new QPushButton(tr("Manage columns..."), this)}
 {
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
@@ -91,6 +93,11 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, ActionManager
     m_iconHeight->setMaximum(2048);
     m_iconWidth->setSingleStep(20);
     m_iconHeight->setSingleStep(20);
+    m_iconHorizontalGap->setRange(-1, 256);
+    m_iconHorizontalGap->setSpecialValueText(tr("Auto"));
+    m_iconHorizontalGap->setSuffix(u"px"_s);
+    m_iconVerticalGap->setRange(0, 256);
+    m_iconVerticalGap->setSuffix(u"px"_s);
 
     auto* iconSizeHint = new QLabel(
         u"🛈 "_s + tr("Size can also be changed using %1 in the widget.").arg(u"<b>Ctrl+Scroll</b>"_s), this);
@@ -100,8 +107,12 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, ActionManager
     artworkLayout->addWidget(m_iconWidth, row++, 1);
     artworkLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
     artworkLayout->addWidget(m_iconHeight, row++, 1);
-    artworkLayout->addWidget(iconSizeHint, row, 0, 1, 3);
-    artworkLayout->setColumnStretch(3, 1);
+    artworkLayout->addWidget(iconSizeHint, row++, 0, 1, 4);
+    artworkLayout->addWidget(new QLabel(tr("Horizontal gap") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_iconHorizontalGap, row, 1);
+    artworkLayout->addWidget(new QLabel(tr("Vertical gap") + u":"_s, this), row, 2);
+    artworkLayout->addWidget(m_iconVerticalGap, row++, 3);
+    artworkLayout->setColumnStretch(4, 1);
 
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
@@ -166,6 +177,8 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
         .playlistName      = m_playlistName->text(),
         .rowHeight         = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
         .iconSize          = {m_iconWidth->value(), m_iconHeight->value()},
+        .iconHorizontalGap = m_iconHorizontalGap->value(),
+        .iconVerticalGap   = m_iconVerticalGap->value(),
     };
 }
 
@@ -189,6 +202,8 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_rowHeight->setEnabled(m_overrideRowHeight->isChecked());
     m_iconWidth->setValue(config.iconSize.width());
     m_iconHeight->setValue(config.iconSize.height());
+    m_iconHorizontalGap->setValue(config.iconHorizontalGap);
+    m_iconVerticalGap->setValue(config.iconVerticalGap);
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
     m_keepAlive->setEnabled(m_playlistEnabled->isChecked());

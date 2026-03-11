@@ -91,6 +91,11 @@ public:
     [[nodiscard]] bool selectBeforeDrag() const;
     void setSelectBeforeDrag(bool enabled);
 
+    [[nodiscard]] int iconHorizontalGap() const;
+    void setIconHorizontalGap(int gap);
+    [[nodiscard]] int iconVerticalGap() const;
+    void setIconVerticalGap(int gap);
+
     void changeIconSize(const QSize& size);
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
@@ -110,7 +115,7 @@ public:
     void selectAll() override;
 
 signals:
-    void viewModeChanged(ExpandedTreeView::ViewMode mode);
+    void viewModeChanged(Fooyin::ExpandedTreeView::ViewMode mode);
     void middleClicked(const QModelIndex& index);
 
 protected:

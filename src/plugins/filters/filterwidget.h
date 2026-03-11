@@ -99,6 +99,8 @@ public:
         QString playlistName;
         int rowHeight{0};
         QSize iconSize{100, 100};
+        int iconHorizontalGap{-1};
+        int iconVerticalGap{10};
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
