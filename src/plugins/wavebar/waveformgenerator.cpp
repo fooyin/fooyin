@@ -106,7 +106,6 @@ WaveformGenerator::WaveformGenerator(std::shared_ptr<AudioLoader> audioLoader, D
                                      QObject* parent)
     : Worker{parent}
     , m_audioLoader{std::move(audioLoader)}
-    , m_decoder{nullptr}
     , m_dbPool{std::move(dbPool)}
 {
     m_requiredFormat.setSampleFormat(SampleFormat::F32);
@@ -194,12 +193,12 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     int processedCount{0};
     uint64_t processedBytes{0};
 
-    m_decoder->start();
-    m_decoder->seek(track.offset());
+    m_loadedDecoder.decoder->start();
+    m_loadedDecoder.decoder->seek(track.offset());
 
     while(true) {
         if(!mayRun()) {
-            m_decoder->stop();
+            m_loadedDecoder.decoder->stop();
             return;
         }
 
@@ -216,7 +215,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         const size_t bytesToRead = static_cast<size_t>(
             std::min<uint64_t>(bytesToReadU64, static_cast<uint64_t>(std::numeric_limits<size_t>::max())));
 
-        auto buffer = m_decoder->readBuffer(bytesToRead);
+        auto buffer = m_loadedDecoder.decoder->readBuffer(bytesToRead);
         if(!buffer.isValid()) {
             m_data.complete = true;
             break;
@@ -244,7 +243,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         }
     }
 
-    m_decoder->stop();
+    m_loadedDecoder.decoder->stop();
 
     if(!m_waveDb.storeInCache(trackKey, convertCache<int16_t>(m_data))) {
         qCWarning(WAVEBAR) << "Unable to store waveform for track:" << m_track.filepath();
@@ -259,9 +258,10 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
 
 QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
 {
-    if(m_decoder) {
-        m_decoder->stop();
+    if(m_loadedDecoder.decoder) {
+        m_loadedDecoder.decoder->stop();
     }
+
     m_data = {};
 
     if(!track.isValid()) {
@@ -272,32 +272,17 @@ QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
         return {};
     }
 
-    std::optional<AudioFormat> format;
-    for(auto& decoder : m_audioLoader->decodersForTrack(track)) {
-        AudioSource source;
-        source.filepath = track.filepath();
-        if(!track.isInArchive()) {
-            m_file = std::make_unique<QFile>(track.filepath());
-            if(!m_file->open(QIODevice::ReadOnly)) {
-                qCWarning(WAVEBAR) << "Failed to open" << track.filepath();
-                return {};
-            }
-            source.device = m_file.get();
-        }
+    m_loadedDecoder
+        = m_audioLoader->loadDecoderForTrack(track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
 
-        format = decoder->init(source, track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
-        if(format) {
-            m_decoder = std::move(decoder);
-            break;
-        }
-    }
-
-    if(!format) {
+    if(!m_loadedDecoder.decoder) {
+        qCWarning(WAVEBAR) << "No decoder available for" << track.filepath();
         return {};
     }
 
-    m_track  = track;
-    m_format = format.value();
+    m_format = m_loadedDecoder.format.value();
+
+    m_track = track;
     m_requiredFormat.setChannelCount(m_format.channelCount());
     m_requiredFormat.setSampleRate(m_format.sampleRate());
 

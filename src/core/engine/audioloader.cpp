@@ -103,6 +103,53 @@ CreatorT selectTrackIoCreator(const std::vector<EntryT>& loaders, const QString&
 
     return ret;
 }
+
+bool openFileSource(Fooyin::LoadedSource& input, const QString& filepath)
+{
+    if(!input.device) {
+        auto file = std::make_unique<QFile>(filepath);
+        if(!file->open(QIODevice::ReadOnly)) {
+            qCWarning(AUD_LDR) << "Failed to open" << filepath;
+            return false;
+        }
+        input.device = std::move(file);
+    }
+    else if(!input.device->seek(0)) {
+        qCWarning(AUD_LDR) << "Failed to rewind" << filepath;
+        return false;
+    }
+
+    input.source.filepath = filepath;
+    input.rebind();
+    return true;
+}
+
+bool openArchiveSource(Fooyin::LoadedSource& input, const Fooyin::AudioLoader& loader, const QString& archivePath,
+                       const QString& entryPath)
+{
+    if(!input.archiveReader) {
+        input.archiveReader = loader.archiveReaderForFile(archivePath);
+        if(!input.archiveReader) {
+            qCWarning(AUD_LDR) << "No archive reader available for" << archivePath;
+            return false;
+        }
+        if(!input.archiveReader->init(archivePath)) {
+            qCWarning(AUD_LDR) << "Failed to initialise archive reader for" << archivePath;
+            input.archiveReader.reset();
+            return false;
+        }
+    }
+
+    input.device = input.archiveReader->entry(entryPath);
+    if(!input.device) {
+        qCWarning(AUD_LDR) << "Failed to open archive entry" << entryPath << "from" << archivePath;
+        return false;
+    }
+
+    input.source.filepath = entryPath;
+    input.rebind();
+    return true;
+}
 } // namespace
 
 namespace Fooyin {
@@ -231,11 +278,13 @@ QStringList AudioLoader::supportedArchiveExtensions() const
 bool AudioLoader::canWriteMetadata(const Track& track) const
 {
     for(auto& reader : readersForTrack(track)) {
+        bool initSuccess{true};
         if(track.isInArchive()) {
-            reader->init({.filepath = track.filepath(), .device = nullptr, .archiveReader = nullptr});
+            initSuccess = reader->init({.filepath = track.filepath(), .device = nullptr, .archiveReader = nullptr});
         }
-        if(reader->canWriteMetaData())
+        if(initSuccess && reader->canWriteMetaData()) {
             return true;
+        }
     }
     return false;
 }
@@ -247,6 +296,124 @@ bool AudioLoader::isArchive(const QString& file) const
     const std::shared_lock lock{p->m_mutex};
     return std::ranges::any_of(p->m_archiveReaders,
                                [&ext](const auto& loader) { return loader.extensions.contains(ext); });
+}
+
+LoadedDecoder AudioLoader::loadDecoderForTrack(const Track& track, AudioDecoder::DecoderOptions options,
+                                               AudioDecoder::PlaybackHints hints) const
+{
+    auto decoders = decodersForTrack(track);
+    if(decoders.empty()) {
+        return {};
+    }
+
+    LoadedDecoder ret;
+
+    for(auto& decoder : decoders) {
+        if(!track.isInArchive()) {
+            if(!openFileSource(ret.input, track.filepath())) {
+                return {};
+            }
+        }
+        else {
+            ret.input.source.filepath = track.filepath();
+            ret.input.rebind();
+        }
+
+        decoder->setPlaybackHints(hints);
+        ret.format = decoder->init(ret.input.source, track, options);
+        if(ret.format) {
+            ret.decoder = std::move(decoder);
+            return ret;
+        }
+    }
+
+    return {};
+}
+
+LoadedReader AudioLoader::loadReaderForTrack(const Track& track) const
+{
+    auto readers = readersForTrack(track);
+    if(readers.empty()) {
+        return {};
+    }
+
+    LoadedReader ret;
+
+    for(auto& reader : readers) {
+        if(!track.isInArchive()) {
+            if(!openFileSource(ret.input, track.filepath())) {
+                return {};
+            }
+        }
+        else {
+            ret.input.source.filepath = track.filepath();
+            ret.input.rebind();
+        }
+
+        if(reader->init(ret.input.source)) {
+            ret.reader = std::move(reader);
+            return ret;
+        }
+    }
+
+    return {};
+}
+
+LoadedDecoder AudioLoader::loadDecoderForArchiveTrack(const Track& track, AudioDecoder::DecoderOptions options,
+                                                      AudioDecoder::PlaybackHints hints) const
+{
+    auto decoders = decodersForFile(track.pathInArchive());
+    if(decoders.empty()) {
+        return {};
+    }
+
+    LoadedDecoder ret;
+    if(!openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
+        return {};
+    }
+
+    for(auto& decoder : decoders) {
+        if(ret.input.device && !ret.input.device->seek(0)
+           && !openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
+            return {};
+        }
+
+        decoder->setPlaybackHints(hints);
+        ret.format = decoder->init(ret.input.source, track, options);
+        if(ret.format) {
+            ret.decoder = std::move(decoder);
+            return ret;
+        }
+    }
+
+    return {};
+}
+
+LoadedReader AudioLoader::loadReaderForArchiveTrack(const Track& track) const
+{
+    auto readers = readersForFile(track.pathInArchive());
+    if(readers.empty()) {
+        return {};
+    }
+
+    LoadedReader ret;
+    if(!openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
+        return {};
+    }
+
+    for(auto& reader : readers) {
+        if(ret.input.device && !ret.input.device->seek(0)
+           && !openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
+            return {};
+        }
+
+        if(reader->init(ret.input.source)) {
+            ret.reader = std::move(reader);
+            return ret;
+        }
+    }
+
+    return {};
 }
 
 std::vector<std::unique_ptr<AudioDecoder>> AudioLoader::decodersForFile(const QString& file) const
@@ -262,7 +429,9 @@ std::vector<std::unique_ptr<AudioDecoder>> AudioLoader::decodersForFile(const QS
     }
 
     std::vector<std::unique_ptr<AudioDecoder>> ret;
-    for(DecoderCreator& creator : creators) {
+    ret.reserve(creators.size());
+
+    for(const DecoderCreator& creator : creators) {
         ret.push_back(creator());
     }
 
@@ -287,7 +456,9 @@ std::vector<std::unique_ptr<AudioReader>> AudioLoader::readersForFile(const QStr
     }
 
     std::vector<std::unique_ptr<AudioReader>> ret;
-    for(ReaderCreator& creator : creators) {
+    ret.reserve(creators.size());
+
+    for(const ReaderCreator& creator : creators) {
         ret.push_back(creator());
     }
 
@@ -408,8 +579,9 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
         }
         source.device = &file;
 
-        if(reader->writeTrack(source, track, options))
+        if(reader->writeTrack(source, track, options)) {
             return true;
+        }
     }
 
     return false;
@@ -436,8 +608,9 @@ bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverDa
         }
         source.device = &file;
 
-        if(reader->writeCover(source, track, coverData, options))
+        if(reader->writeCover(source, track, coverData, options)) {
             return true;
+        }
     }
 
     return false;

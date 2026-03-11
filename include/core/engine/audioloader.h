@@ -28,6 +28,40 @@ namespace Fooyin {
 class AudioLoaderPrivate;
 class Track;
 
+struct LoadedSource
+{
+    //! Non-owning view passed into decoder/reader backends.
+    AudioSource source;
+    //! Owns the opened input device for `source.device`.
+    std::unique_ptr<QIODevice> device;
+    //! Owns the archive reader when `device` comes from an archive entry.
+    std::unique_ptr<ArchiveReader> archiveReader;
+
+    void rebind()
+    {
+        source.device        = device.get();
+        source.archiveReader = archiveReader.get();
+    }
+};
+
+struct LoadedDecoder
+{
+    //! Opened input source backing `decoder`.
+    LoadedSource input;
+    //! Format resolved during decoder initialisation, if any.
+    std::optional<AudioFormat> format;
+    //! Initialised decoder selected for the input source.
+    std::unique_ptr<AudioDecoder> decoder;
+};
+
+struct LoadedReader
+{
+    //! Opened input source backing `reader`.
+    LoadedSource input;
+    //! Initialised metadata reader selected for the input source.
+    std::unique_ptr<AudioReader> reader;
+};
+
 /*!
  * Registry and selection layer for decoder/reader/archive backends.
  *
@@ -63,20 +97,56 @@ public:
     [[nodiscard]] QStringList supportedTrackExtensions() const;
     //! Extensions that are archive containers.
     [[nodiscard]] QStringList supportedArchiveExtensions() const;
-    //! True when `track` has a reader backend that supports metadata writes.
+    //! True when `track` has a usable reader backend that supports metadata writes.
     [[nodiscard]] bool canWriteMetadata(const Track& track) const;
 
     //! True when `file` extension resolves to a registered archive reader.
     [[nodiscard]] bool isArchive(const QString& file) const;
-    //! Create best decoder backend for file path (or `nullptr`).
+    /*!
+     * Open and initialise the highest-priority usable decoder for `track`.
+     *
+     * The returned bundle owns the selected decoder and any opened file or
+     * archive state required to keep decoding alive. Returns an empty result
+     * when no decoder can be initialised.
+     */
+    [[nodiscard]] LoadedDecoder loadDecoderForTrack(const Track& track,
+                                                    AudioDecoder::DecoderOptions options = AudioDecoder::None,
+                                                    AudioDecoder::PlaybackHints hints    = AudioDecoder::NoHints) const;
+    /*!
+     * Open and initialise the highest-priority usable metadata reader for `track`.
+     *
+     * The returned bundle owns the selected reader and any opened file or
+     * archive state required to keep reading alive. Returns an empty result
+     * when no reader can be initialised.
+     */
+    [[nodiscard]] LoadedReader loadReaderForTrack(const Track& track) const;
+    /*!
+     * Open and initialise the highest-priority usable decoder for an archive member.
+     *
+     * Candidate decoders are resolved from `track.pathInArchive()`, and the
+     * returned bundle keeps the owning archive reader and entry device alive.
+     * Returns an empty result when no decoder can be initialised.
+     */
+    [[nodiscard]] LoadedDecoder loadDecoderForArchiveTrack(const Track& track, AudioDecoder::DecoderOptions options,
+                                                           AudioDecoder::PlaybackHints hints
+                                                           = AudioDecoder::NoHints) const;
+    /*!
+     * Open and initialise the highest-priority usable metadata reader for an archive member.
+     *
+     * Candidate readers are resolved from `track.pathInArchive()`, and the
+     * returned bundle keeps the owning archive reader and entry device alive.
+     * Returns an empty result when no reader can be initialised.
+     */
+    [[nodiscard]] LoadedReader loadReaderForArchiveTrack(const Track& track) const;
+    //! Create decoder candidates for `file`, ordered by configured priority.
     [[nodiscard]] std::vector<std::unique_ptr<AudioDecoder>> decodersForFile(const QString& file) const;
-    //! Create best decoder backend for a specific track (or `nullptr`).
+    //! Create decoder candidates for `track`, ordered by configured priority.
     [[nodiscard]] std::vector<std::unique_ptr<AudioDecoder>> decodersForTrack(const Track& track) const;
-    //! Create best metadata reader backend for file path (or `nullptr`).
+    //! Create metadata reader candidates for `file`, ordered by configured priority.
     [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForFile(const QString& file) const;
-    //! Create best metadata reader backend for track (or `nullptr`).
+    //! Create metadata reader candidates for `track`, ordered by configured priority.
     [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForTrack(const Track& track) const;
-    //! Create archive reader backend for archive file (or `nullptr`).
+    //! Create the highest-priority archive reader backend for `file`, if any.
     [[nodiscard]] std::unique_ptr<ArchiveReader> archiveReaderForFile(const QString& file) const;
 
     //! Read and apply metadata tags to `track`.

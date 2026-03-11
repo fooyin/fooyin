@@ -1614,8 +1614,7 @@ bool AudioEngine::initDecoder(const Track& track, bool allowPreparedStream)
         auto& prepared               = *m_preparedNext;
         const bool hasPreparedStream = prepared.preparedStream != nullptr;
 
-        if(!m_decoder.adoptPreparedDecoder(std::move(prepared.decoder), std::move(prepared.file), prepared.source,
-                                           track, prepared.format)) {
+        if(!m_decoder.adoptPreparedDecoder(std::move(prepared.loadedDecoder), track)) {
             qCWarning(ENGINE) << "Failed to adopt prepared decoder";
             clearPreparedNextTrack();
             return false;
@@ -1634,25 +1633,18 @@ bool AudioEngine::initDecoder(const Track& track, bool allowPreparedStream)
         return true;
     }
 
-    bool decodersFound = false;
-    for(auto& decoder : m_audioLoader->decodersForTrack(track)) {
-        decodersFound = true;
-
-        if(!m_decoder.init(std::move(decoder), track)) {
-            continue;
-        }
-
-        return true;
+    auto decoder = m_audioLoader->loadDecoderForTrack(track, AudioDecoder::UpdateTracks, m_decoderPlaybackHints);
+    if(!decoder.decoder) {
+        qCWarning(ENGINE) << "No decoder available for track:" << track.filepath();
+        return false;
     }
 
-    if(!decodersFound) {
-        qCWarning(ENGINE) << "No decoder available for track";
-    }
-    else {
-        qCWarning(ENGINE) << "Failed to initialse decoder";
+    if(!m_decoder.init(std::move(decoder), track)) {
+        qCWarning(ENGINE) << "Failed to initialse decoder context";
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 bool AudioEngine::setupNewTrackStream(const Track& track, bool applyPendingSeek)

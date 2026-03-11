@@ -25,9 +25,8 @@
 
 #include <core/engine/audioformat.h>
 #include <core/engine/audioinput.h>
+#include <core/engine/audioloader.h>
 #include <core/track.h>
-
-#include <QFile>
 
 #include <memory>
 #include <optional>
@@ -72,10 +71,9 @@ public:
     void setPlaybackHints(AudioDecoder::PlaybackHints hints);
 
     //! Initialise decoder/source for @p track (does not attach a stream).
-    bool init(std::unique_ptr<AudioDecoder> decoder, const Track& track);
+    bool init(LoadedDecoder decoder, const Track& track);
 
-    bool adoptPreparedDecoder(std::unique_ptr<AudioDecoder> decoder, std::unique_ptr<QFile> file, AudioSource source,
-                              const Track& track, const AudioFormat& format);
+    bool adoptPreparedDecoder(LoadedDecoder decoder, const Track& track);
 
     //! Create a stream compatible with current decoder format.
     AudioStreamPtr createStream(size_t bufferSamples, Engine::FadeCurve fadeCurve = Engine::FadeCurve::Linear);
@@ -124,17 +122,14 @@ public:
     //! Get current bitrate
     [[nodiscard]] int bitrate() const;
 
-    [[nodiscard]] std::unique_ptr<AudioDecoder> takeDecoder();
-    [[nodiscard]] std::unique_ptr<QFile> takeFile();
-    [[nodiscard]] AudioSource takeSource();
+    [[nodiscard]] LoadedDecoder takeLoadedDecoder();
 
     //! Release decoder/file/stream and clear all tracked state.
     void reset();
 
 private:
     std::unique_ptr<AudioDecoder> m_decoder;
-    std::unique_ptr<QFile> m_file;
-    AudioSource m_source;
+    LoadedSource m_input;
 
     AudioStreamPtr m_activeStream;
 

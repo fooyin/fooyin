@@ -166,28 +166,18 @@ void DecoderContext::setPlaybackHints(AudioDecoder::PlaybackHints hints)
     }
 }
 
-bool DecoderContext::init(std::unique_ptr<AudioDecoder> decoder, const Track& track)
+bool DecoderContext::init(LoadedDecoder decoder, const Track& track)
 {
-    m_decoder = std::move(decoder);
-    m_track   = track;
-
-    m_decoder->setPlaybackHints(m_playbackHints);
-
-    if(!track.isInArchive()) {
-        m_file = std::make_unique<QFile>(track.filepath());
-        if(!m_file->open(QIODevice::ReadOnly)) {
-            return false;
-        }
-        m_source.device   = m_file.get();
-        m_source.filepath = track.filepath();
-    }
-
-    auto format = m_decoder->init(m_source, track, AudioDecoder::UpdateTracks);
-    if(!format) {
+    if(!decoder.decoder || !decoder.format) {
         return false;
     }
 
-    m_format = format.value();
+    m_track   = track;
+    m_decoder = std::move(decoder.decoder);
+    m_input   = std::move(decoder.input);
+    m_input.rebind();
+
+    m_format = *decoder.format;
 
     // Default to decoder-reported EOF for end detection.
     m_startPos = track.offset();
@@ -197,24 +187,19 @@ bool DecoderContext::init(std::unique_ptr<AudioDecoder> decoder, const Track& tr
     return true;
 }
 
-bool DecoderContext::adoptPreparedDecoder(std::unique_ptr<AudioDecoder> decoder, std::unique_ptr<QFile> file,
-                                          AudioSource source, const Track& track, const AudioFormat& format)
+bool DecoderContext::adoptPreparedDecoder(LoadedDecoder decoder, const Track& track)
 {
-    if(!decoder) {
+    if(!decoder.decoder || !decoder.format) {
         return false;
     }
 
-    m_decoder = std::move(decoder);
+    m_decoder = std::move(decoder.decoder);
     m_decoder->setPlaybackHints(m_playbackHints);
-    m_file   = std::move(file);
-    m_source = std::move(source);
-
-    if(m_file) {
-        m_source.device = m_file.get();
-    }
+    m_input = std::move(decoder.input);
+    m_input.rebind();
 
     m_track    = track;
-    m_format   = format;
+    m_format   = *decoder.format;
     m_startPos = track.offset();
     setEndPolicy(EndPolicy::DecoderEofOnly);
     m_currentPos = m_startPos;
@@ -519,23 +504,16 @@ int DecoderContext::bitrate() const
     return m_decoder ? m_decoder->bitrate() : 0;
 }
 
-std::unique_ptr<AudioDecoder> DecoderContext::takeDecoder()
+LoadedDecoder DecoderContext::takeLoadedDecoder()
 {
-    return std::exchange(m_decoder, nullptr);
-}
-
-std::unique_ptr<QFile> DecoderContext::takeFile()
-{
-    return std::exchange(m_file, nullptr);
-}
-
-AudioSource DecoderContext::takeSource()
-{
-    if(m_file) {
-        m_source.device = m_file.get();
+    LoadedDecoder loaded;
+    loaded.decoder = std::exchange(m_decoder, nullptr);
+    if(loaded.decoder) {
+        loaded.format = m_format;
     }
-
-    return std::exchange(m_source, {});
+    loaded.input = std::exchange(m_input, {});
+    loaded.input.rebind();
+    return loaded;
 }
 
 void DecoderContext::reset()
@@ -543,9 +521,8 @@ void DecoderContext::reset()
     stop();
 
     m_decoder.reset();
-    m_file = nullptr;
+    m_input = {};
     m_activeStream.reset();
-    m_source     = {};
     m_track      = {};
     m_format     = {};
     m_currentPos = 0;
