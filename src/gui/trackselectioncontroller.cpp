@@ -236,7 +236,7 @@ void TrackSelectionControllerPrivate::setupMenu()
             updateActionState();
         }
     });
-    m_tracksQueueMenu->addAction(addQueueCmd);
+    m_tracksQueueMenu->addAction(queueNextCmd);
 
     m_removeFromQueue->setStatusTip(tr("Remove the selected tracks from the playback queue"));
     auto* removeQueueCmd = m_actionManager->registerAction(m_removeFromQueue, Constants::Actions::RemoveFromQueue);
@@ -798,8 +798,10 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
             p->startPlayback(options);
             break;
         case(TrackAction::AddToQueue):
-        case(TrackAction::QueueNext):
             p->addToQueue();
+            break;
+        case(TrackAction::QueueNext):
+            p->queueNext();
             break;
         case(TrackAction::SendToQueue):
             p->sendToQueue(options);
