@@ -27,11 +27,15 @@
 #include <QApplication>
 #include <QPainter>
 
-#include <limits>
-
-constexpr auto IconCaptionMargin = 20;
+constexpr auto IconCaptionMargin     = 20;
+constexpr auto RightCaptionTextWidth = 180;
 
 namespace {
+QFont resolvedBlockFont(const QStyleOptionViewItem& option, const Fooyin::RichFormatting& formatting)
+{
+    return formatting.font == QFont{} ? option.font : formatting.font.resolve(option.font);
+}
+
 struct PreparedTextBlock
 {
     QString text;
@@ -76,10 +80,7 @@ PreparedTextLine prepareTextBlocks(const QStyleOptionViewItem& option, int maxWi
             continue;
         }
 
-        QFont font = block.format.font;
-        if(font == QFont{}) {
-            font = option.font;
-        }
+        const QFont font = resolvedBlockFont(option, block.format);
 
         QColor colour = block.format.colour;
         if(!colour.isValid()) {
@@ -215,14 +216,20 @@ QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
 
     opt.decorationSize = option.decorationSize;
 
-    const auto* view    = qobject_cast<const ExpandedTreeView*>(opt.widget);
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-    QSize size          = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon
-                            ? iconItemSize(opt, index)
-                            : style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, richTextSize(opt, index), opt.widget);
+    const auto* view     = qobject_cast<const ExpandedTreeView*>(opt.widget);
+    const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
+    const QSize textSize = richTextSize(opt, index);
+    QSize size           = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon
+                             ? iconItemSize(opt, index)
+                             : style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, textSize, opt.widget);
+
+    if(!view || view->viewMode() != ExpandedTreeView::ViewMode::Icon) {
+        const int verticalPadding = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget));
+        size.setHeight(std::max(size.height(), textSize.height() + (2 * verticalPadding)));
+    }
 
     const QSize sizeHint = index.data(Qt::SizeHintRole).toSize();
-    if((!view || view->viewMode() != ExpandedTreeView::ViewMode::Icon) && sizeHint.height() > 0) {
+    if(sizeHint.height() > 0) {
         size.setHeight(sizeHint.height());
     }
 
@@ -278,10 +285,14 @@ int FilterDelegate::iconTextWidth(const QStyleOptionViewItem& option)
     }
 
     switch(view->captionDisplay()) {
-        case ExpandedTreeView::CaptionDisplay::Right:
-            return std::max(0, iconTextRect(option).width());
-        case ExpandedTreeView::CaptionDisplay::Bottom:
-            return std::max(0, option.decorationSize.width() + IconCaptionMargin);
+        case ExpandedTreeView::CaptionDisplay::Right: {
+            const int width = iconTextRect(option).width();
+            return width > 0 ? width : RightCaptionTextWidth;
+        }
+        case ExpandedTreeView::CaptionDisplay::Bottom: {
+            const int width = iconTextRect(option).width();
+            return width > 0 ? width : -1;
+        }
         case ExpandedTreeView::CaptionDisplay::None:
             break;
     }
@@ -328,6 +339,21 @@ QSize FilterDelegate::richLineSize(const QStyleOptionViewItem& option, int maxWi
     return {line.totalWidth, line.maxHeight};
 }
 
+QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& richText)
+{
+    QSize size{0, 0};
+
+    for(const auto& block : richText.blocks) {
+        const QFont font = resolvedBlockFont(option, block.format);
+        const QFontMetrics metrics{font};
+
+        size.rwidth() += metrics.horizontalAdvance(block.text);
+        size.setHeight(std::max(size.height(), metrics.height()));
+    }
+
+    return size;
+}
+
 RichText FilterDelegate::fallbackRichText(const QStyleOptionViewItem& option, const QModelIndex& index)
 {
     const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
@@ -358,18 +384,21 @@ QSize FilterDelegate::richTextSize(const QStyleOptionViewItem& option, const QMo
 {
     const auto richLines = iconRichLines(index, option);
     if(!richLines.empty()) {
-        QSize size;
+        QSize size{0, 0};
+        const auto* view    = qobject_cast<const ExpandedTreeView*>(option.widget);
         const int textWidth = iconTextWidth(option);
+        const bool constrainWidth
+            = view && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right && textWidth > 0;
 
         for(const auto& line : richLines) {
             const QSize lineSize
-                = richLineSize(option, textWidth > 0 ? textWidth : std::numeric_limits<int>::max(), line.text);
+                = constrainWidth ? richLineSize(option, textWidth, line.text) : richTextNaturalSize(option, line.text);
 
             size.setWidth(std::max(size.width(), lineSize.width()));
             size.setHeight(size.height() + lineSize.height());
         }
 
-        if(textWidth > 0) {
+        if(constrainWidth) {
             size.setWidth(textWidth);
         }
 
@@ -382,16 +411,13 @@ QSize FilterDelegate::richTextSize(const QStyleOptionViewItem& option, const QMo
         return metrics.size(Qt::TextSingleLine, option.text);
     }
 
-    QSize size;
+    QSize size{0, 0};
 
     for(const auto& block : richText.blocks) {
-        QFont font = block.format.font;
-        if(font == QFont{}) {
-            font = option.font;
-        }
-
+        const QFont font = resolvedBlockFont(option, block.format);
         const QFontMetrics metrics{font};
         const QRect bound = metrics.boundingRect(block.text);
+
         size.setWidth(size.width() + bound.width());
         size.setHeight(std::max(size.height(), bound.height()));
     }
@@ -409,18 +435,23 @@ QSize FilterDelegate::iconItemSize(const QStyleOptionViewItem& option, const QMo
     const QStyle* style  = option.widget ? option.widget->style() : QApplication::style();
     const QSize textSize = richTextSize(option, index);
 
-    const int horizontalMargin{12};
+    static constexpr int horizontalMargin{12};
     const int verticalMargin = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget));
 
     switch(view->captionDisplay()) {
-        case ExpandedTreeView::CaptionDisplay::Bottom:
+        case ExpandedTreeView::CaptionDisplay::Bottom: {
             return {std::max(option.decorationSize.width(), textSize.width() + horizontalMargin),
                     option.decorationSize.height() + (IconCaptionMargin / 2) + textSize.height() + verticalMargin};
-        case ExpandedTreeView::CaptionDisplay::Right:
-            return {option.rect.width() > 0
-                        ? option.rect.width()
-                        : option.decorationSize.width() + IconCaptionMargin + textSize.width() + horizontalMargin,
-                    std::max(option.decorationSize.height(), textSize.height() + verticalMargin)};
+        }
+        case ExpandedTreeView::CaptionDisplay::Right: {
+            const QSize styleSize = style->sizeFromContents(QStyle::CT_ItemViewItem, &option, textSize, option.widget);
+            const int itemWidth   = option.rect.width() > 0 ? option.rect.width()
+                                                            : option.decorationSize.width() + IconCaptionMargin
+                                                                + textSize.width() + horizontalMargin;
+            const int itemHeight  = std::max(
+                {styleSize.height(), option.decorationSize.height(), textSize.height() + (2 * verticalMargin)});
+            return {itemWidth, itemHeight};
+        }
         case ExpandedTreeView::CaptionDisplay::None:
             return option.decorationSize;
     }

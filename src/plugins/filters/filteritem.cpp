@@ -26,8 +26,6 @@
 
 #include <utility>
 
-using namespace Qt::StringLiterals;
-
 namespace Fooyin::Filters {
 namespace {
 RichText plainTextToRichText(const QString& text)

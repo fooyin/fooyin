@@ -66,6 +66,11 @@ FilterPopulator::FilterPopulator(LibraryManager* libraryManager, QObject* parent
     , m_scriptEnvironment{libraryManager}
 { }
 
+void FilterPopulator::setFont(const QFont& font)
+{
+    m_formatter.setBaseFont(font);
+}
+
 void FilterPopulator::run(const QStringList& columns, const TrackList& tracks, bool useVarious)
 {
     setState(Running);

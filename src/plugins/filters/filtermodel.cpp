@@ -43,6 +43,11 @@
 #include <utility>
 
 namespace {
+QFont filterFont()
+{
+    return QApplication::font("Fooyin::Filters::FilterView");
+}
+
 QByteArray saveTracks(const QModelIndexList& indexes)
 {
     QByteArray result;
@@ -375,6 +380,7 @@ void FilterModelPrivate::runPopulator(const TrackList& tracks)
     m_populatorThread.start();
 
     QMetaObject::invokeMethod(&m_populator, [this, fields = columnFields(), tracks] {
+        m_populator.setFont(filterFont());
         m_populator.run(fields, tracks, m_settings->value<Settings::Core::UseVariousForCompilations>());
     });
 }

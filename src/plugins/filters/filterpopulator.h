@@ -53,6 +53,7 @@ class FilterPopulator : public Worker
 public:
     explicit FilterPopulator(LibraryManager* libraryManager, QObject* parent = nullptr);
 
+    void setFont(const QFont& font);
     void run(const QStringList& columns, const TrackList& tracks, bool useVarious);
 
 signals:
