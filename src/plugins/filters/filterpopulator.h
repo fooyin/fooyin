@@ -24,7 +24,10 @@
 #include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
+#include <gui/scripting/scriptformatter.h>
 #include <utils/worker.h>
+
+#include <memory>
 
 namespace Fooyin::Filters {
 using ItemKeyMap     = std::map<Md5Hash, FilterItem>;
@@ -41,6 +44,7 @@ struct PendingTreeData
         trackParents.clear();
     }
 };
+using PendingTreeDataPtr = std::shared_ptr<PendingTreeData>;
 
 class FilterPopulator : public Worker
 {
@@ -52,15 +56,16 @@ public:
     void run(const QStringList& columns, const TrackList& tracks, bool useVarious);
 
 signals:
-    void populated(Fooyin::Filters::PendingTreeData data);
+    void populated(Fooyin::Filters::PendingTreeDataPtr data);
 
 private:
-    FilterItem* getOrInsertItem(const QStringList& columns);
+    FilterItem* getOrInsertItem(const QStringList& columns, const std::vector<RichText>& richColumns);
     std::vector<FilterItem*> getOrInsertItems(const QList<QStringList>& columnSet);
     void addTrackToNode(const Track& track, FilterItem* node);
     bool runBatch(const TrackList& tracks);
 
     ScriptParser m_parser;
+    ScriptFormatter m_formatter;
     LibraryScriptEnvironment m_scriptEnvironment;
 
     QString m_currentColumns;
@@ -70,3 +75,5 @@ private:
     PendingTreeData m_data;
 };
 } // namespace Fooyin::Filters
+
+Q_DECLARE_METATYPE(Fooyin::Filters::PendingTreeDataPtr)

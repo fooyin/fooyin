@@ -40,14 +40,13 @@
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
-#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QMenu>
 
 #include <algorithm>
-#include <set>
+#include <unordered_set>
 
 using namespace Qt::StringLiterals;
 
@@ -64,11 +63,12 @@ constexpr auto FilterIconSizeKey        = u"Filters/IconSize";
 
 Fooyin::TrackList fetchAllTracks(QAbstractItemView* view)
 {
-    std::set<int> ids;
+    std::unordered_set<int> ids;
     Fooyin::TrackList tracks;
 
     const QModelIndex parent;
     const int rowCount = view->model()->rowCount(parent);
+    ids.reserve(rowCount);
 
     for(int row{0}; row < rowCount; ++row) {
         const QModelIndex index = view->model()->index(row, 0, parent);
@@ -99,15 +99,15 @@ public:
 };
 
 FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
-                           LibraryManager* libraryManager, CoverProvider* coverProvider, SettingsManager* settings,
-                           QWidget* parent)
+                           LibraryManager* libraryManager, MusicLibrary* library, CoverProvider* coverProvider,
+                           SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_columnRegistry{columnRegistry}
     , m_settings{settings}
     , m_view{new FilterView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
-    , m_model{new FilterModel(libraryManager, coverProvider, m_settings, this)}
+    , m_model{new FilterModel(libraryManager, library, coverProvider, m_settings, this)}
     , m_sortProxy{new FilterSortModel(this)}
     , m_resetThrottler{new SignalThrottler(this)}
     , m_index{-1}
@@ -139,7 +139,7 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     m_view->setDragDropMode(QAbstractItemView::DragOnly);
     m_view->setDefaultDropAction(Qt::CopyAction);
     m_view->setDropIndicatorShown(true);
-    m_view->setUniformRowHeights(true);
+    m_view->setUniformRowHeights(false);
     m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     m_view->setSelectBeforeDrag(true);
 
@@ -269,6 +269,26 @@ void FilterWidget::setFilteredTracks(const TrackList& tracks)
 void FilterWidget::clearFilteredTracks()
 {
     m_filteredTracks.clear();
+}
+
+void FilterWidget::showSearchResults(const TrackList& tracks)
+{
+    m_searching = true;
+
+    QObject::connect(
+        m_model, &FilterModel::modelUpdated, this, [this]() { m_searching = false; }, Qt::SingleShotConnection);
+
+    m_model->reset(m_columns, tracks);
+}
+
+void FilterWidget::clearSearchResults()
+{
+    m_searching = true;
+
+    QObject::connect(
+        m_model, &FilterModel::modelUpdated, this, [this]() { m_searching = false; }, Qt::SingleShotConnection);
+
+    m_model->reset(m_columns, m_tracks);
 }
 
 void FilterWidget::reset(const TrackList& tracks)
@@ -721,9 +741,9 @@ void FilterWidget::addFilterHeaderMenu(QMenu* menu, const QPoint& pos)
 
     menu->addMenu(columnsMenu);
     menu->addSeparator();
-    m_header->addHeaderContextMenu(menu, mapToGlobal(pos));
+    m_header->addHeaderContextMenu(menu, m_header->mapToGlobal(pos));
     menu->addSeparator();
-    m_header->addHeaderAlignmentMenu(menu, mapToGlobal(pos));
+    m_header->addHeaderAlignmentMenu(menu, m_header->mapToGlobal(pos));
 
     addDisplayMenu(menu);
 
@@ -754,27 +774,21 @@ void FilterWidget::keyPressEvent(QKeyEvent* event)
 
 void FilterWidget::setupConnections()
 {
+    const auto syncIconColumnOrder = [this]() {
+        if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
+            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
+        }
+    };
+
     QObject::connect(m_resetThrottler, &SignalThrottler::triggered, this,
                      [this]() { m_model->reset(m_columns, m_tracks); });
 
     QObject::connect(m_columnRegistry, &FilterColumnRegistry::columnChanged, this, &FilterWidget::columnChanged);
     QObject::connect(m_columnRegistry, &FilterColumnRegistry::itemRemoved, this, &FilterWidget::columnRemoved);
 
-    QObject::connect(m_header, &QHeaderView::sectionCountChanged, this, [this]() {
-        if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
-            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
-        }
-    });
-    QObject::connect(m_header, &AutoHeaderView::sectionVisiblityChanged, this, [this]() {
-        if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
-            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
-        }
-    });
-    QObject::connect(m_header, &QHeaderView::sectionMoved, this, [this]() {
-        if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
-            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
-        }
-    });
+    QObject::connect(m_header, &QHeaderView::sectionCountChanged, this, syncIconColumnOrder);
+    QObject::connect(m_header, &AutoHeaderView::sectionVisiblityChanged, this, syncIconColumnOrder);
+    QObject::connect(m_header, &QHeaderView::sectionMoved, this, syncIconColumnOrder);
     QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_sortProxy, &QSortFilterProxyModel::sort);
     QObject::connect(m_header, &ExpandedTreeView::customContextMenuRequested, this, &FilterWidget::filterHeaderMenu);
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
@@ -845,13 +859,7 @@ void FilterWidget::updateViewMode(ExpandedTreeView::ViewMode mode)
 
 void FilterWidget::updateCaptions(ExpandedTreeView::CaptionDisplay captions)
 {
-    if(captions == ExpandedTreeView::CaptionDisplay::None) {
-        m_model->setShowLabels(false);
-    }
-    else {
-        m_model->setShowLabels(true);
-    }
-
+    m_model->setShowLabels(captions != ExpandedTreeView::CaptionDisplay::None);
     m_view->setCaptionDisplay(captions);
 }
 
@@ -992,7 +1000,7 @@ void FilterWidget::filterHeaderMenu(const QPoint& pos)
 
     addFilterHeaderMenu(menu, pos);
 
-    menu->popup(mapToGlobal(pos));
+    menu->popup(m_header->mapToGlobal(pos));
 }
 
 [[nodiscard]] bool FilterWidget::hasColumn(int id) const

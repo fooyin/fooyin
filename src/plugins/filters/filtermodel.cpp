@@ -24,13 +24,13 @@
 #include "filterpopulator.h"
 
 #include <core/coresettings.h>
+#include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/widgets/autoheaderview.h>
 #include <utils/datastream.h>
-#include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
@@ -52,9 +52,8 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     trackIds.reserve(indexes.size());
 
     for(const QModelIndex& index : indexes) {
-        const auto tracks = index.data(Fooyin::Filters::FilterItem::Tracks).value<Fooyin::TrackList>();
-        std::ranges::transform(std::as_const(tracks), std::back_inserter(trackIds),
-                               [](const Fooyin::Track& track) { return track.id(); });
+        const auto ids = index.data(Fooyin::Filters::FilterItem::TrackIdsRole).value<Fooyin::TrackIds>();
+        std::ranges::copy(ids, std::back_inserter(trackIds));
     }
 
     Fooyin::operator<<(stream, trackIds);
@@ -66,6 +65,25 @@ Fooyin::Filters::FilterItem* filterItem(const QModelIndex& index)
 {
     return static_cast<Fooyin::Filters::FilterItem*>(index.internalPointer());
 }
+
+Fooyin::RichText summaryRichText(const QString& text, const std::vector<Fooyin::RichTextBlock>& blocks)
+{
+    Fooyin::RichText richText;
+    if(text.isEmpty()) {
+        return richText;
+    }
+
+    Fooyin::RichTextBlock block;
+    block.text = text;
+
+    if(!blocks.empty()) {
+        block.format = blocks.front().format;
+    }
+    richText.blocks.push_back(std::move(block));
+
+    return richText;
+}
+
 } // namespace
 
 namespace Fooyin::Filters {
@@ -101,15 +119,14 @@ bool FilterSortModel::lessThan(const QModelIndex& left, const QModelIndex& right
 class FilterModelPrivate
 {
 public:
-    explicit FilterModelPrivate(FilterModel* self, LibraryManager* libraryManager, CoverProvider* coverProvider,
-                                SettingsManager* settings);
+    explicit FilterModelPrivate(FilterModel* self, LibraryManager* libraryManager, MusicLibrary* library,
+                                CoverProvider* coverProvider, SettingsManager* settings);
 
     void beginReset();
 
     void addSummary();
     void removeSummary();
     void updateSummary();
-    int uniqueValues(int column) const;
 
     void batchFinished(PendingTreeData data);
     void populateModel(PendingTreeData& data);
@@ -117,8 +134,15 @@ public:
     void coverUpdated(const Track& track);
     void dataUpdated(const QList<int>& roles = {}) const;
 
+    [[nodiscard]] QStringList columnFields() const;
+    void runPopulator(const TrackList& tracks);
+
+    [[nodiscard]] TrackList tracksForIds(const TrackIds& ids) const;
+    [[nodiscard]] Track trackForId(int id) const;
+
     FilterModel* m_self;
     SettingsManager* m_settings;
+    MusicLibrary* m_library;
     TrackSorter m_sorter;
 
     bool m_resetting{false};
@@ -146,10 +170,11 @@ public:
     TrackList m_tracksPendingRemoval;
 };
 
-FilterModelPrivate::FilterModelPrivate(FilterModel* self, LibraryManager* libraryManager, CoverProvider* coverProvider,
-                                       SettingsManager* settings)
+FilterModelPrivate::FilterModelPrivate(FilterModel* self, LibraryManager* libraryManager, MusicLibrary* library,
+                                       CoverProvider* coverProvider, SettingsManager* settings)
     : m_self{self}
     , m_settings{settings}
+    , m_library{library}
     , m_sorter{libraryManager}
     , m_populator{libraryManager}
     , m_coverProvider{coverProvider}
@@ -195,30 +220,44 @@ void FilterModelPrivate::updateSummary()
     }
 
     const int columnCount = m_self->columnCount({});
+    const auto children   = m_self->rootItem()->children();
 
     QStringList nodeColumns;
-    for(int column{0}; column < columnCount; ++column) {
-        nodeColumns.emplace_back(QString{FilterModel::tr("All (%1 %2s)")}
-                                     .arg(uniqueValues(column))
-                                     .arg(m_columns.at(column).name.toLower()));
-    }
+    std::vector<RichText> richColumns;
+    richColumns.reserve(columnCount);
 
-    m_summaryNode.setColumns(nodeColumns);
-}
-
-int FilterModelPrivate::uniqueValues(int column) const
-{
-    std::set<QString> columnUniques;
-
-    const auto children = m_self->rootItem()->children();
+    std::vector<std::set<QString>> uniqueColumns(columnCount);
+    std::vector<const std::vector<RichTextBlock>*> richTemplates(columnCount, nullptr);
 
     for(FilterItem* item : children) {
-        if(!item->isSummary()) {
-            columnUniques.emplace(item->column(column));
+        if(!item || item->isSummary()) {
+            continue;
+        }
+
+        for(int column{0}; column < columnCount; ++column) {
+            uniqueColumns.at(column).emplace(item->column(column));
+            if(!richTemplates.at(column) && !item->richColumn(column).empty()) {
+                richTemplates.at(column) = &item->richColumn(column).blocks;
+            }
         }
     }
 
-    return static_cast<int>(columnUniques.size());
+    for(int column{0}; column < columnCount; ++column) {
+        const QString summaryText = QString{FilterModel::tr("All (%1 %2s)")}
+                                        .arg(static_cast<int>(uniqueColumns.at(column).size()))
+                                        .arg(m_columns.at(column).name.toLower());
+        nodeColumns.emplace_back(summaryText);
+
+        if(richTemplates.at(column)) {
+            richColumns.push_back(summaryRichText(summaryText, *richTemplates.at(column)));
+        }
+        else {
+            richColumns.push_back(summaryRichText(summaryText, {}));
+        }
+    }
+
+    m_summaryNode.setColumns(nodeColumns);
+    m_summaryNode.setRichColumns(richColumns);
 }
 
 void FilterModelPrivate::batchFinished(PendingTreeData data)
@@ -249,18 +288,22 @@ void FilterModelPrivate::batchFinished(PendingTreeData data)
 
 void FilterModelPrivate::populateModel(PendingTreeData& data)
 {
-    const QString sortScript = m_settings->value<Settings::Core::LibrarySortScript>();
+    const QString sortScript    = m_settings->value<Settings::Core::LibrarySortScript>();
+    const auto parsedSortScript = sortScript.isEmpty() ? ParsedScript{} : m_sorter.parseSortScript(sortScript);
 
     std::vector<FilterItem> newItems;
+    newItems.reserve(data.items.size());
 
-    for(const auto& [key, item] : data.items) {
+    for(auto& [key, item] : data.items) {
         if(m_nodes.contains(key)) {
             auto& node = m_nodes.at(key);
-            node.addTracks(item.tracks());
-            node.sortTracks(m_sorter, sortScript);
+            node.addTracks(item.trackIds());
+            if(!sortScript.isEmpty()) {
+                node.sortTracks(m_library, m_sorter, parsedSortScript);
+            }
         }
         else {
-            newItems.push_back(item);
+            newItems.push_back(std::move(item));
         }
     }
 
@@ -273,8 +316,8 @@ void FilterModelPrivate::populateModel(PendingTreeData& data)
             m_self->beginInsertRows({}, row, last);
         }
 
-        for(const auto& item : newItems) {
-            FilterItem* child = &m_nodes.emplace(item.key(), item).first->second;
+        for(auto& item : newItems) {
+            FilterItem* child = &m_nodes.emplace(item.key(), std::move(item)).first->second;
             parent->appendChild(child);
         }
 
@@ -308,18 +351,56 @@ void FilterModelPrivate::coverUpdated(const Track& track)
 
 void FilterModelPrivate::dataUpdated(const QList<int>& roles) const
 {
+    const int rowCount    = m_self->rowCount({});
+    const int columnCount = m_self->columnCount({});
+    if(rowCount <= 0 || columnCount <= 0) {
+        return;
+    }
+
     const QModelIndex topLeft     = m_self->index(0, 0, {});
-    const QModelIndex bottomRight = m_self->index(m_self->rowCount({}) - 1, m_self->columnCount({}) - 1, {});
+    const QModelIndex bottomRight = m_self->index(rowCount - 1, columnCount - 1, {});
     emit m_self->dataChanged(topLeft, bottomRight, roles);
 }
 
-FilterModel::FilterModel(LibraryManager* libraryManager, CoverProvider* coverProvider, SettingsManager* settings,
-                         QObject* parent)
-    : TreeModel{parent}
-    , p{std::make_unique<FilterModelPrivate>(this, libraryManager, coverProvider, settings)}
+QStringList FilterModelPrivate::columnFields() const
 {
-    QObject::connect(&p->m_populator, &FilterPopulator::populated, this,
-                     [this](const PendingTreeData& data) { p->batchFinished(data); });
+    QStringList fields;
+    fields.reserve(m_columns.size());
+    std::ranges::transform(m_columns, std::back_inserter(fields), [](const auto& column) { return column.field; });
+    return fields;
+}
+
+void FilterModelPrivate::runPopulator(const TrackList& tracks)
+{
+    m_populatorThread.start();
+
+    QMetaObject::invokeMethod(&m_populator, [this, fields = columnFields(), tracks] {
+        m_populator.run(fields, tracks, m_settings->value<Settings::Core::UseVariousForCompilations>());
+    });
+}
+
+TrackList FilterModelPrivate::tracksForIds(const TrackIds& ids) const
+{
+    return m_library ? m_library->tracksForIds(ids) : TrackList{};
+}
+
+Track FilterModelPrivate::trackForId(int id) const
+{
+    return m_library ? m_library->trackForId(id) : Track{};
+}
+
+FilterModel::FilterModel(LibraryManager* libraryManager, MusicLibrary* library, CoverProvider* coverProvider,
+                         SettingsManager* settings, QObject* parent)
+    : TreeModel{parent}
+    , p{std::make_unique<FilterModelPrivate>(this, libraryManager, library, coverProvider, settings)}
+{
+    qRegisterMetaType<PendingTreeDataPtr>("Fooyin::Filters::PendingTreeDataPtr");
+
+    QObject::connect(&p->m_populator, &FilterPopulator::populated, this, [this](const PendingTreeDataPtr& data) {
+        if(data) {
+            p->batchFinished(*data);
+        }
+    });
 
     QObject::connect(&p->m_populator, &Worker::finished, this, [this]() {
         p->m_populator.stopThread();
@@ -383,12 +464,17 @@ void FilterModel::setShowSummary(bool show)
 
 void FilterModel::setShowDecoration(bool show)
 {
-    p->m_showDecoration = show;
+    if(std::exchange(p->m_showDecoration, show) != show) {
+        p->dataUpdated({Qt::DecorationRole, Qt::SizeHintRole});
+    }
 }
 
 void FilterModel::setShowLabels(bool show)
 {
-    p->m_showLabels = show;
+    if(std::exchange(p->m_showLabels, show) != show) {
+        p->dataUpdated(
+            {Qt::DisplayRole, Qt::ToolTipRole, Qt::SizeHintRole, FilterItem::IconLabel, FilterItem::IconCaptionLines});
+    }
 }
 
 void FilterModel::setCoverType(Track::Cover type)
@@ -400,7 +486,12 @@ void FilterModel::setCoverType(Track::Cover type)
 
 void FilterModel::setColumnOrder(const std::vector<int>& order)
 {
-    p->m_columnOrder = order;
+    if(std::exchange(p->m_columnOrder, order) == order) {
+        return;
+    }
+
+    p->dataUpdated(
+        {Qt::DisplayRole, Qt::ToolTipRole, Qt::SizeHintRole, FilterItem::IconLabel, FilterItem::IconCaptionLines});
 }
 
 Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
@@ -447,7 +538,7 @@ bool FilterModel::setHeaderData(int section, Qt::Orientation /*orientation*/, co
 
     changeColumnAlignment(section, value.value<Qt::Alignment>());
 
-    p->dataUpdated({Qt::TextAlignmentRole});
+    p->dataUpdated({Qt::TextAlignmentRole, FilterItem::IconCaptionLines});
 
     return true;
 }
@@ -462,34 +553,45 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
     const int col    = index.column();
 
     switch(role) {
-        case(Qt::DisplayRole):
-        case(Qt::ToolTipRole): {
+        case Qt::DisplayRole:
+        case Qt::ToolTipRole: {
             if(p->m_showLabels) {
-                if(!p->m_columnOrder.empty()) {
-                    return Utils::sortByIndexes(item->columns(), p->m_columnOrder).join(QChar::LineSeparator);
-                }
                 return item->column(col);
             }
             break;
         }
-        case(FilterItem::Tracks):
-            return QVariant::fromValue(item->tracks());
-        case(FilterItem::Key):
+        case FilterItem::Tracks:
+            return QVariant::fromValue(p->tracksForIds(item->trackIds()));
+        case FilterItem::TrackIdsRole:
+            return QVariant::fromValue(item->trackIds());
+        case FilterItem::Key:
             return QVariant::fromValue(item->key());
-        case(FilterItem::IsSummary):
+        case FilterItem::IsSummary:
             return item->isSummary();
-        case(Qt::DecorationRole):
+        case FilterItem::IconLabel:
+            if(p->m_showLabels) {
+                return item->iconLabel(p->m_columnOrder);
+            }
+            break;
+        case FilterItem::IconCaptionLines:
+            if(p->m_showLabels) {
+                return QVariant::fromValue(item->iconCaptionLines(p->m_columnOrder, p->m_columnAlignments));
+            }
+            break;
+        case FilterItem::RichColumn:
+            return item->richColumn(col);
+        case Qt::DecorationRole:
             if(p->m_showDecoration) {
-                if(item->trackCount() > 0) {
-                    return p->m_coverProvider->trackCoverThumbnail(item->tracks().front(), p->m_decorationSize,
+                if(const int trackId = item->firstTrackId(); trackId >= 0) {
+                    return p->m_coverProvider->trackCoverThumbnail(p->trackForId(trackId), p->m_decorationSize,
                                                                    p->m_coverType);
                 }
                 return p->m_coverProvider->trackCoverThumbnail({}, p->m_decorationSize, p->m_coverType);
             }
             break;
-        case(Qt::SizeHintRole):
+        case Qt::SizeHintRole:
             return QSize{0, p->m_rowHeight};
-        case(Qt::TextAlignmentRole):
+        case Qt::TextAlignmentRole:
             return QVariant::fromValue(Qt::AlignVCenter | columnAlignment(col));
         default:
             break;
@@ -581,14 +683,7 @@ void FilterModel::addTracks(const TrackList& tracks)
         return;
     }
 
-    p->m_populatorThread.start();
-
-    QStringList columns;
-    std::ranges::transform(p->m_columns, std::back_inserter(columns), [](const auto& column) { return column.field; });
-
-    QMetaObject::invokeMethod(&p->m_populator, [this, columns, tracksToAdd] {
-        p->m_populator.run(columns, tracksToAdd, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
-    });
+    p->runPopulator(tracksToAdd);
 }
 
 void FilterModel::updateTracks(const TrackList& tracks)
@@ -605,14 +700,7 @@ void FilterModel::updateTracks(const TrackList& tracks)
 
     p->m_tracksPendingRemoval = tracksToUpdate;
 
-    p->m_populatorThread.start();
-
-    QStringList columns;
-    std::ranges::transform(p->m_columns, std::back_inserter(columns), [](const auto& column) { return column.field; });
-
-    QMetaObject::invokeMethod(&p->m_populator, [this, columns, tracksToUpdate] {
-        p->m_populator.run(columns, tracksToUpdate, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
-    });
+    p->runPopulator(tracksToUpdate);
 
     addTracks(tracks);
 }
@@ -623,13 +711,10 @@ void FilterModel::refreshTracks(const TrackList& tracks)
         if(!p->m_trackParents.contains(track.id())) {
             continue;
         }
+    }
 
-        const auto parents = p->m_trackParents.at(track.id());
-        for(const auto& parent : parents) {
-            if(p->m_nodes.contains(parent)) {
-                p->m_nodes.at(parent).replaceTrack(track);
-            }
-        }
+    if(!tracks.empty()) {
+        p->dataUpdated({FilterItem::Tracks, Qt::DecorationRole});
     }
 }
 
@@ -650,18 +735,29 @@ void FilterModel::removeTracks(const TrackList& tracks)
         }
     }
 
+    std::vector<std::pair<int, Md5Hash>> rowsToRemove;
+    rowsToRemove.reserve(items.size());
+
     auto* parent = rootItem();
 
     for(FilterItem* item : items) {
         if(item->trackCount() == 0) {
-            const QModelIndex parentIndex;
-            const int row = item->row();
-            beginRemoveRows(parentIndex, row, row);
-            parent->removeChild(row);
-            parent->resetChildren();
-            endRemoveRows();
-            p->m_nodes.erase(item->key());
+            rowsToRemove.emplace_back(item->row(), item->key());
         }
+    }
+
+    std::ranges::sort(rowsToRemove, std::greater{}, &std::pair<int, Md5Hash>::first);
+
+    for(const auto& [row, key] : rowsToRemove) {
+        beginRemoveRows({}, row, row);
+        parent->removeChild(row);
+        endRemoveRows();
+
+        p->m_nodes.erase(key);
+    }
+
+    if(!rowsToRemove.empty()) {
+        parent->resetChildren();
     }
 
     p->updateSummary();
@@ -706,12 +802,6 @@ void FilterModel::reset(const FilterColumnList& columns, const TrackList& tracks
     }
 
     p->m_resetting = true;
-
-    QStringList fields;
-    std::ranges::transform(p->m_columns, std::back_inserter(fields), [](const auto& column) { return column.field; });
-
-    QMetaObject::invokeMethod(&p->m_populator, [this, fields, tracks] {
-        p->m_populator.run(fields, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
-    });
+    p->runPopulator(tracks);
 }
 } // namespace Fooyin::Filters

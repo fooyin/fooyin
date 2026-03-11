@@ -19,23 +19,65 @@
 
 #include "filteritem.h"
 
+#include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
 #include <core/track.h>
+#include <utils/utils.h>
+
+#include <utility>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Filters {
+namespace {
+RichText plainTextToRichText(const QString& text)
+{
+    RichText richText;
+    if(text.isEmpty()) {
+        return richText;
+    }
+
+    RichTextBlock block;
+    block.text = text;
+    richText.blocks.push_back(std::move(block));
+    return richText;
+}
+
+std::vector<RichText> plainColumnsToRichText(const QStringList& columns)
+{
+    std::vector<RichText> richColumns;
+    richColumns.reserve(columns.size());
+
+    for(const QString& column : columns) {
+        richColumns.push_back(plainTextToRichText(column));
+    }
+
+    return richColumns;
+}
+
+QStringList orderedColumns(const QStringList& columns, const std::vector<int>& columnOrder)
+{
+    QStringList ordered;
+
+    if(!columnOrder.empty()) {
+        ordered = Utils::sortByIndexes(columns, columnOrder);
+    }
+    else {
+        ordered = columns;
+    }
+
+    ordered.removeIf([](const QString& column) { return column.isEmpty(); });
+    return ordered;
+}
+} // namespace
+
 FilterItem::FilterItem(Md5Hash key, QStringList columns, FilterItem* parent)
     : TreeItem{parent}
     , m_key{std::move(key)}
     , m_columns{std::move(columns)}
     , m_isSummary{false}
 {
-    for(QString& str : m_columns) {
-        if(str.isEmpty()) {
-            str = u"?"_s;
-        }
-    }
+    m_richColumns = plainColumnsToRichText(m_columns);
 }
 
 Md5Hash FilterItem::key() const
@@ -43,7 +85,7 @@ Md5Hash FilterItem::key() const
     return m_key;
 }
 
-QStringList FilterItem::columns() const
+const QStringList& FilterItem::columns() const
 {
     return m_columns;
 }
@@ -56,24 +98,129 @@ QString FilterItem::column(int column) const
     return m_columns.at(column);
 }
 
-TrackList FilterItem::tracks() const
+const RichText& FilterItem::richColumn(int column) const
 {
-    return m_tracks;
+    static constexpr RichText EmptyText;
+
+    if(column < 0 || std::cmp_greater_equal(column, m_richColumns.size())) {
+        return EmptyText;
+    }
+
+    return m_richColumns.at(column);
+}
+
+QString FilterItem::iconLabel(const std::vector<int>& columnOrder) const
+{
+    if(!m_iconLabelCacheValid || m_cachedIconLabelOrder != columnOrder) {
+        m_cachedIconLabel      = orderedColumns(m_columns, columnOrder).join(QChar::LineSeparator);
+        m_cachedIconLabelOrder = columnOrder;
+        m_iconLabelCacheValid  = true;
+    }
+
+    return m_cachedIconLabel;
+}
+
+IconCaptionLineList FilterItem::iconCaptionLines(const std::vector<int>& columnOrder,
+                                                 const std::vector<Qt::Alignment>& columnAlignments) const
+{
+    updateIconCaptionColumns(columnOrder);
+
+    IconCaptionLineList lines;
+    lines.reserve(m_cachedIconCaptionColumns.size());
+
+    for(const int index : m_cachedIconCaptionColumns) {
+        IconCaptionLine line;
+        line.text = m_richColumns.at(index);
+
+        if(index >= 0 && std::cmp_less(index, columnAlignments.size())) {
+            line.alignment = columnAlignments.at(index);
+        }
+
+        lines.push_back(std::move(line));
+    }
+
+    return lines;
+}
+
+const TrackIds& FilterItem::trackIds() const
+{
+    return m_trackIds;
 }
 
 int FilterItem::trackCount() const
 {
-    return static_cast<int>(m_tracks.size());
+    return static_cast<int>(m_trackIds.size());
+}
+
+int FilterItem::firstTrackId() const
+{
+    return m_trackIds.empty() ? -1 : m_trackIds.front();
+}
+
+void FilterItem::invalidateIconCaches()
+{
+    m_iconLabelCacheValid          = false;
+    m_iconCaptionColumnsCacheValid = false;
+}
+
+void FilterItem::updateIconCaptionColumns(const std::vector<int>& columnOrder) const
+{
+    if(m_iconCaptionColumnsCacheValid && m_cachedIconCaptionOrder == columnOrder) {
+        return;
+    }
+
+    m_cachedIconCaptionOrder = columnOrder;
+    m_cachedIconCaptionColumns.clear();
+
+    auto appendIfNotEmpty = [this](int index) {
+        if(index < 0 || std::cmp_greater_equal(index, m_richColumns.size())) {
+            return;
+        }
+
+        if(m_richColumns.at(index).joinedText().isEmpty()) {
+            return;
+        }
+
+        m_cachedIconCaptionColumns.push_back(index);
+    };
+
+    if(!columnOrder.empty()) {
+        for(const int index : columnOrder) {
+            appendIfNotEmpty(index);
+        }
+    }
+    else {
+        const auto richCount = static_cast<int>(m_richColumns.size());
+        for(int i{0}; i < richCount; ++i) {
+            appendIfNotEmpty(i);
+        }
+    }
+
+    m_iconCaptionColumnsCacheValid = true;
 }
 
 void FilterItem::setColumns(const QStringList& columns)
 {
-    m_columns = columns;
+    m_columns     = columns;
+    m_richColumns = plainColumnsToRichText(m_columns);
+    invalidateIconCaches();
+}
+
+void FilterItem::setRichColumns(const std::vector<RichText>& columns)
+{
+    m_richColumns = columns;
+    invalidateIconCaches();
 }
 
 void FilterItem::removeColumn(int column)
 {
     m_columns.remove(column);
+
+    if(column >= 0 && std::cmp_less(column, m_richColumns.size())) {
+        m_richColumns.erase(m_richColumns.begin() + column);
+    }
+
+    invalidateIconCaches();
 }
 
 bool FilterItem::isSummary() const
@@ -88,36 +235,30 @@ void FilterItem::setIsSummary(bool isSummary)
 
 void FilterItem::addTrack(const Track& track)
 {
-    m_tracks.emplace_back(track);
+    m_trackIds.emplace_back(track.id());
 }
 
-void FilterItem::addTracks(const TrackList& tracks)
+void FilterItem::addTracks(const TrackIds& trackIds)
 {
-    std::ranges::copy(tracks, std::back_inserter(m_tracks));
+    m_trackIds.reserve(m_trackIds.size() + trackIds.size());
+    std::ranges::copy(trackIds, std::back_inserter(m_trackIds));
 }
 
 void FilterItem::removeTrack(const Track& track)
 {
-    if(m_tracks.empty()) {
+    if(m_trackIds.empty()) {
         return;
     }
-    std::erase_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); });
+    std::erase(m_trackIds, track.id());
 }
 
-void FilterItem::replaceTrack(const Track& track)
+void FilterItem::sortTracks(MusicLibrary* library, TrackSorter& sorter, const ParsedScript& script)
 {
-    if(m_tracks.empty()) {
-        return;
-    }
-    std::ranges::replace_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); }, track);
-}
-
-void FilterItem::sortTracks(TrackSorter& sorter, const QString& script)
-{
-    if(m_tracks.empty() || script.isEmpty()) {
+    if(m_trackIds.empty() || !library) {
         return;
     }
 
-    m_tracks = sorter.calcSortTracks(script, m_tracks);
+    const TrackList sortedTracks = sorter.calcSortTracks(script, library->tracksForIds(m_trackIds));
+    m_trackIds                   = Track::trackIdsForTracks(sortedTracks);
 }
 } // namespace Fooyin::Filters

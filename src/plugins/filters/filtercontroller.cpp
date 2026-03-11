@@ -38,6 +38,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QPointer>
 
 #include <ranges>
 
@@ -108,6 +109,7 @@ public:
     FilterManager* m_manager;
     FilterColumnRegistry* m_columnRegistry;
     TrackSorter m_sorter;
+    mutable std::unordered_map<Id, int, Id::IdHash> m_searchGeneration;
 
     Id m_defaultId{"Default"};
     FilterGroups m_groups;
@@ -500,16 +502,30 @@ void FilterControllerPrivate::searchChanged(FilterWidget* filter, const QString&
         return;
     }
 
+    ++m_searchGeneration[filter->id()];
+
     if(search.length() < 1) {
-        filter->reset(m_library->tracks());
+        filter->clearSearchResults();
         return;
     }
 
-    const TrackList tracksToFilter = m_library->tracks();
+    const TrackList tracksToFilter = filter->tracks();
+    const int generation           = m_searchGeneration.at(filter->id());
+
+    QPointer filterPtr{filter};
     Utils::asyncExec([search, tracksToFilter]() {
         ScriptParser parser;
         return parser.filter(search, tracksToFilter);
-    }).then(m_self, [filter](const TrackList& filteredTracks) { filter->reset(filteredTracks); });
+    }).then(m_self, [this, filterPtr, filterId = filter->id(), generation](const TrackList& filteredTracks) {
+        if(!filterPtr) {
+            return;
+        }
+        if(!m_searchGeneration.contains(filterId) || m_searchGeneration.at(filterId) != generation) {
+            return;
+        }
+
+        filterPtr->showSearchResults(filteredTracks);
+    });
 }
 
 FilterController::FilterController(ActionManager* actionManager, const CorePluginContext& core,
@@ -544,8 +560,8 @@ QString FilterController::defaultPlaylistName()
 
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_libraryManager, &p->m_coverProvider,
-                                    p->m_settings);
+    auto* widget = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_libraryManager, p->m_library,
+                                    &p->m_coverProvider, p->m_settings);
 
     auto& group = p->m_groups[p->m_defaultId];
     group.id    = p->m_defaultId;

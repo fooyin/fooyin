@@ -21,12 +21,46 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
+#include <gui/scripting/richtextutils.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Filters {
+namespace {
+struct ColumnData
+{
+    QStringList plainColumns;
+    std::vector<RichText> richColumns;
+};
+
+ColumnData buildColumnData(const QStringList& columns, ScriptFormatter& formatter)
+{
+    ColumnData data;
+    data.plainColumns.reserve(columns.size());
+    data.richColumns.reserve(columns.size());
+
+    for(const QString& column : columns) {
+        RichText richColumn = trimRichText(formatter.evaluate(column));
+        QString plainColumn = richColumn.joinedText();
+
+        if(plainColumn.isEmpty() && !column.isEmpty()) {
+            RichText placeholder = trimRichText(formatter.evaluate(column + u"?"_s));
+            if(!placeholder.empty()) {
+                richColumn  = std::move(placeholder);
+                plainColumn = richColumn.joinedText();
+            }
+        }
+
+        data.richColumns.push_back(richColumn);
+        data.plainColumns.push_back(plainColumn);
+    }
+
+    return data;
+}
+} // namespace
+
 FilterPopulator::FilterPopulator(LibraryManager* libraryManager, QObject* parent)
     : Worker{parent}
     , m_scriptEnvironment{libraryManager}
@@ -54,11 +88,12 @@ void FilterPopulator::run(const QStringList& columns, const TrackList& tracks, b
     }
 }
 
-FilterItem* FilterPopulator::getOrInsertItem(const QStringList& columns)
+FilterItem* FilterPopulator::getOrInsertItem(const QStringList& columns, const std::vector<RichText>& richColumns)
 {
     const auto key = Utils::generateMd5Hash(columns.join(QString{}));
     if(!m_data.items.contains(key)) {
-        m_data.items.emplace(key, FilterItem{key, columns, &m_root});
+        auto [it, _] = m_data.items.emplace(key, FilterItem{key, columns, &m_root});
+        it->second.setRichColumns(richColumns);
     }
     return &m_data.items.at(key);
 }
@@ -66,8 +101,10 @@ FilterItem* FilterPopulator::getOrInsertItem(const QStringList& columns)
 std::vector<FilterItem*> FilterPopulator::getOrInsertItems(const QList<QStringList>& columnSet)
 {
     std::vector<FilterItem*> items;
+    items.reserve(columnSet.size());
     for(const QStringList& columns : columnSet) {
-        auto* filterItem = getOrInsertItem(columns);
+        const auto columnData = buildColumnData(columns, m_formatter);
+        auto* filterItem      = getOrInsertItem(columnData.plainColumns, columnData.richColumns);
         items.emplace_back(filterItem);
     }
     return items;
@@ -94,17 +131,21 @@ bool FilterPopulator::runBatch(const TrackList& tracks)
 
             if(columns.contains(QLatin1String{Constants::UnitSeparator})) {
                 const QStringList values = columns.split(QLatin1String{Constants::UnitSeparator});
+
                 QList<QStringList> colValues;
                 std::ranges::transform(values, std::back_inserter(colValues), [](const QString& col) {
                     return col.split(QLatin1String{Constants::RecordSeparator});
                 });
+
                 const auto nodes = getOrInsertItems(colValues);
                 for(FilterItem* node : nodes) {
                     addTrackToNode(track, node);
                 }
             }
             else {
-                FilterItem* node = getOrInsertItem(columns.split(QLatin1String{Constants::RecordSeparator}));
+                const auto columnData
+                    = buildColumnData(columns.split(QLatin1String{Constants::RecordSeparator}), m_formatter);
+                FilterItem* node = getOrInsertItem(columnData.plainColumns, columnData.richColumns);
                 addTrackToNode(track, node);
             }
         }
@@ -114,8 +155,8 @@ bool FilterPopulator::runBatch(const TrackList& tracks)
         return false;
     }
 
-    emit populated(m_data);
-    m_data.clear();
+    emit populated(std::make_shared<PendingTreeData>(std::move(m_data)));
+    m_data = {};
 
     return true;
 }

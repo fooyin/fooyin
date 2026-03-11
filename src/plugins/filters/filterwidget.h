@@ -30,6 +30,7 @@ class AutoHeaderView;
 class ActionManager;
 class CoverProvider;
 class LibraryManager;
+class MusicLibrary;
 class SettingsManager;
 class SignalThrottler;
 class WidgetContext;
@@ -46,8 +47,8 @@ class FilterWidget : public FyWidget
 
 public:
     explicit FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
-                          LibraryManager* libraryManager, CoverProvider* coverProvider, SettingsManager* settings,
-                          QWidget* parent = nullptr);
+                          LibraryManager* libraryManager, MusicLibrary* library, CoverProvider* coverProvider,
+                          SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     [[nodiscard]] Id group() const;
@@ -73,6 +74,8 @@ public:
     void refetchFilteredTracks();
     void setFilteredTracks(const TrackList& tracks);
     void clearFilteredTracks();
+    void showSearchResults(const TrackList& tracks);
+    void clearSearchResults();
 
     void reset(const TrackList& tracks);
     void softReset(const TrackList& tracks);
