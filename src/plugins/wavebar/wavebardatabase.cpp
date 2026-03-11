@@ -45,9 +45,9 @@ QDataStream& operator>>(QDataStream& stream, std::vector<WaveformData<int16_t>::
         --size;
 
         WaveformData<int16_t>::ChannelData channel;
-        Fooyin::operator>>(stream, channel.max);
-        Fooyin::operator>>(stream, channel.min);
-        Fooyin::operator>>(stream, channel.rms);
+        stream >> channel.max;
+        stream >> channel.min;
+        stream >> channel.rms;
 
         if(stream.status() != QDataStream::Ok) {
             data.clear();
@@ -64,9 +64,9 @@ QDataStream& operator<<(QDataStream& stream, const std::vector<WaveformData<int1
     stream << static_cast<quint32>(data.size());
 
     for(const auto& channel : data) {
-        Fooyin::operator<<(stream, channel.max);
-        Fooyin::operator<<(stream, channel.min);
-        Fooyin::operator<<(stream, channel.rms);
+        stream << channel.max;
+        stream << channel.min;
+        stream << channel.rms;
     }
 
     return stream;

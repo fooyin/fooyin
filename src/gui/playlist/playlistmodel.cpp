@@ -338,7 +338,7 @@ QByteArray saveTracks(const QModelIndexList& indexes)
         return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::PlaylistTrack>().track.id();
     });
 
-    Fooyin::operator<<(stream, trackIds);
+    stream << trackIds;
 
     return result;
 }

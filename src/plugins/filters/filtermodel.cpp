@@ -56,7 +56,7 @@ QByteArray saveTracks(const QModelIndexList& indexes)
         std::ranges::copy(ids, std::back_inserter(trackIds));
     }
 
-    Fooyin::operator<<(stream, trackIds);
+    stream << trackIds;
 
     return result;
 }

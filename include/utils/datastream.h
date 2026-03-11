@@ -26,7 +26,6 @@
 #include <set>
 #include <vector>
 
-namespace Fooyin {
 FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const std::vector<int>& vec);
 FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<int>& vec);
 
@@ -42,7 +41,7 @@ FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<uint64_t
 FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const std::vector<QByteArray>& vec);
 FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<QByteArray>& vec);
 
-namespace DataStream {
+namespace Fooyin::DataStream {
 template <class C>
 using value_t = std::ranges::range_value_t<C>;
 
@@ -107,5 +106,4 @@ QDataStream& readContainer(QDataStream& s, Container& c)
 
     return s;
 }
-} // namespace DataStream
-} // namespace Fooyin
+} // namespace Fooyin::DataStream
