@@ -1671,7 +1671,6 @@ public:
     void updateScrollBars() override;
 
 private:
-    void prepareItemLayout();
     void drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     [[nodiscard]] QModelIndex iconItemIndex(const QModelIndex& index) const;
@@ -1780,7 +1779,7 @@ void IconView::doItemLayout()
         return;
     }
 
-    prepareItemLayout();
+    m_layoutBounds = {{}, viewport()->rect().size()};
 
     const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
 
@@ -2033,32 +2032,6 @@ QSize IconView::iconSize() const
 bool IconView::haveSideCaptions() const
 {
     return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right;
-}
-
-void IconView::prepareItemLayout()
-{
-    m_layoutBounds = {{}, m_view->maximumViewportSize()};
-
-    const QStyle* style = m_view->style();
-
-    int frameAroundContents{0};
-    if(style->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents)) {
-        QStyleOption option;
-        option.initFrom(m_view);
-        frameAroundContents = m_view->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, m_view) * 2;
-    }
-
-    const int verticalMargin
-        = (verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded) && (verticalScrollBar()->isVisible())
-               && !style->pixelMetric(QStyle::PM_ScrollView_ScrollBarOverlap, nullptr, verticalScrollBar())
-            ? style->pixelMetric(QStyle::PM_ScrollBarExtent, nullptr, verticalScrollBar()) + frameAroundContents
-            : 0;
-    const int horizontalMargin
-        = horizontalScrollBarPolicy() == Qt::ScrollBarAsNeeded
-            ? style->pixelMetric(QStyle::PM_ScrollBarExtent, nullptr, horizontalScrollBar()) + frameAroundContents
-            : 0;
-
-    m_layoutBounds.adjust(0, 0, -verticalMargin, -horizontalMargin);
 }
 
 void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
