@@ -87,19 +87,68 @@ void sortLoaderEntries(std::vector<T>& entries)
 template <typename EntryT, typename CreatorT>
 CreatorT selectTrackIoCreator(const std::vector<EntryT>& loaders, const QString& ext, bool isInArchive)
 {
+    CreatorT ret;
     for(const auto& loader : loaders) {
         if(!loader.enabled) {
             continue;
         }
         if(isInArchive && loader.isArchiveWrapper) {
-            return loader.creator;
+            ret.push_back(loader.creator);
+            break;
         }
         if(!isInArchive && !loader.isArchiveWrapper && loader.extensions.contains(ext)) {
-            return loader.creator;
+            ret.push_back(loader.creator);
         }
     }
 
-    return {};
+    return ret;
+}
+
+bool openFileSource(Fooyin::LoadedSource& input, const QString& filepath)
+{
+    if(!input.device) {
+        auto file = std::make_unique<QFile>(filepath);
+        if(!file->open(QIODevice::ReadOnly)) {
+            qCWarning(AUD_LDR) << "Failed to open" << filepath;
+            return false;
+        }
+        input.device = std::move(file);
+    }
+    else if(!input.device->seek(0)) {
+        qCWarning(AUD_LDR) << "Failed to rewind" << filepath;
+        return false;
+    }
+
+    input.source.filepath = filepath;
+    input.rebind();
+    return true;
+}
+
+bool openArchiveSource(Fooyin::LoadedSource& input, const Fooyin::AudioLoader& loader, const QString& archivePath,
+                       const QString& entryPath)
+{
+    if(!input.archiveReader) {
+        input.archiveReader = loader.archiveReaderForFile(archivePath);
+        if(!input.archiveReader) {
+            qCWarning(AUD_LDR) << "No archive reader available for" << archivePath;
+            return false;
+        }
+        if(!input.archiveReader->init(archivePath)) {
+            qCWarning(AUD_LDR) << "Failed to initialise archive reader for" << archivePath;
+            input.archiveReader.reset();
+            return false;
+        }
+    }
+
+    input.device = input.archiveReader->entry(entryPath);
+    if(!input.device) {
+        qCWarning(AUD_LDR) << "Failed to open archive entry" << entryPath << "from" << archivePath;
+        return false;
+    }
+
+    input.source.filepath = entryPath;
+    input.rebind();
+    return true;
 }
 } // namespace
 
@@ -228,11 +277,14 @@ QStringList AudioLoader::supportedArchiveExtensions() const
 
 bool AudioLoader::canWriteMetadata(const Track& track) const
 {
-    if(auto reader = readerForTrack(track)) {
+    for(auto& reader : readersForTrack(track)) {
+        bool initSuccess{true};
         if(track.isInArchive()) {
-            reader->init({.filepath = track.filepath(), .device = nullptr, .archiveReader = nullptr});
+            initSuccess = reader->init({.filepath = track.filepath(), .device = nullptr, .archiveReader = nullptr});
         }
-        return reader->canWriteMetaData();
+        if(initSuccess && reader->canWriteMetaData()) {
+            return true;
+        }
     }
     return false;
 }
@@ -246,50 +298,176 @@ bool AudioLoader::isArchive(const QString& file) const
                                [&ext](const auto& loader) { return loader.extensions.contains(ext); });
 }
 
-std::unique_ptr<AudioDecoder> AudioLoader::decoderForFile(const QString& file) const
+LoadedDecoder AudioLoader::loadDecoderForTrack(const Track& track, AudioDecoder::DecoderOptions options,
+                                               AudioDecoder::PlaybackHints hints) const
+{
+    auto decoders = decodersForTrack(track);
+    if(decoders.empty()) {
+        return {};
+    }
+
+    LoadedDecoder ret;
+
+    for(auto& decoder : decoders) {
+        if(!track.isInArchive()) {
+            if(!openFileSource(ret.input, track.filepath())) {
+                return {};
+            }
+        }
+        else {
+            ret.input.source.filepath = track.filepath();
+            ret.input.rebind();
+        }
+
+        decoder->setPlaybackHints(hints);
+        ret.format = decoder->init(ret.input.source, track, options);
+        if(ret.format) {
+            ret.decoder = std::move(decoder);
+            return ret;
+        }
+    }
+
+    return {};
+}
+
+LoadedReader AudioLoader::loadReaderForTrack(const Track& track) const
+{
+    auto readers = readersForTrack(track);
+    if(readers.empty()) {
+        return {};
+    }
+
+    LoadedReader ret;
+
+    for(auto& reader : readers) {
+        if(!track.isInArchive()) {
+            if(!openFileSource(ret.input, track.filepath())) {
+                return {};
+            }
+        }
+        else {
+            ret.input.source.filepath = track.filepath();
+            ret.input.rebind();
+        }
+
+        if(reader->init(ret.input.source)) {
+            ret.reader = std::move(reader);
+            return ret;
+        }
+    }
+
+    return {};
+}
+
+LoadedDecoder AudioLoader::loadDecoderForArchiveTrack(const Track& track, AudioDecoder::DecoderOptions options,
+                                                      AudioDecoder::PlaybackHints hints) const
+{
+    auto decoders = decodersForFile(track.pathInArchive());
+    if(decoders.empty()) {
+        return {};
+    }
+
+    LoadedDecoder ret;
+    if(!openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
+        return {};
+    }
+
+    for(auto& decoder : decoders) {
+        if(ret.input.device && !ret.input.device->seek(0)
+           && !openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
+            return {};
+        }
+
+        decoder->setPlaybackHints(hints);
+        ret.format = decoder->init(ret.input.source, track, options);
+        if(ret.format) {
+            ret.decoder = std::move(decoder);
+            return ret;
+        }
+    }
+
+    return {};
+}
+
+LoadedReader AudioLoader::loadReaderForArchiveTrack(const Track& track) const
+{
+    auto readers = readersForFile(track.pathInArchive());
+    if(readers.empty()) {
+        return {};
+    }
+
+    LoadedReader ret;
+    if(!openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
+        return {};
+    }
+
+    for(auto& reader : readers) {
+        if(ret.input.device && !ret.input.device->seek(0)
+           && !openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
+            return {};
+        }
+
+        if(reader->init(ret.input.source)) {
+            ret.reader = std::move(reader);
+            return ret;
+        }
+    }
+
+    return {};
+}
+
+std::vector<std::unique_ptr<AudioDecoder>> AudioLoader::decodersForFile(const QString& file) const
 {
     const QString ext      = QFileInfo{file}.suffix().toLower();
     const bool isInArchive = Track::isArchivePath(file);
 
-    DecoderCreator creator;
+    std::vector<DecoderCreator> creators;
     {
         const std::shared_lock lock{p->m_mutex};
-        creator = selectTrackIoCreator<LoaderEntry<DecoderCreator>, DecoderCreator>(p->m_decoders, ext, isInArchive);
+        creators = selectTrackIoCreator<LoaderEntry<DecoderCreator>, std::vector<DecoderCreator>>(p->m_decoders, ext,
+                                                                                                  isInArchive);
     }
 
-    if(creator) {
-        return creator();
+    std::vector<std::unique_ptr<AudioDecoder>> ret;
+    ret.reserve(creators.size());
+
+    for(const DecoderCreator& creator : creators) {
+        ret.push_back(creator());
     }
 
-    return nullptr;
+    return ret;
 }
 
-std::unique_ptr<AudioDecoder> AudioLoader::decoderForTrack(const Track& track) const
+std::vector<std::unique_ptr<AudioDecoder>> AudioLoader::decodersForTrack(const Track& track) const
 {
-    return decoderForFile(track.filepath());
+    return decodersForFile(track.filepath());
 }
 
-std::unique_ptr<AudioReader> AudioLoader::readerForFile(const QString& file) const
+std::vector<std::unique_ptr<AudioReader>> AudioLoader::readersForFile(const QString& file) const
 {
     const QString ext      = QFileInfo{file}.suffix().toLower();
     const bool isInArchive = Track::isArchivePath(file);
 
-    ReaderCreator creator;
+    std::vector<ReaderCreator> creators;
     {
         const std::shared_lock lock{p->m_mutex};
-        creator = selectTrackIoCreator<LoaderEntry<ReaderCreator>, ReaderCreator>(p->m_readers, ext, isInArchive);
+        creators = selectTrackIoCreator<LoaderEntry<ReaderCreator>, std::vector<ReaderCreator>>(p->m_readers, ext,
+                                                                                                isInArchive);
     }
 
-    if(creator) {
-        return creator();
+    std::vector<std::unique_ptr<AudioReader>> ret;
+    ret.reserve(creators.size());
+
+    for(const ReaderCreator& creator : creators) {
+        ret.push_back(creator());
     }
 
-    return nullptr;
+    return ret;
 }
 
-std::unique_ptr<AudioReader> AudioLoader::readerForTrack(const Track& track) const
+std::vector<std::unique_ptr<AudioReader>> AudioLoader::readersForTrack(const Track& track) const
 {
-    return readerForFile(track.filepath());
+    return readersForFile(track.filepath());
 }
 
 std::unique_ptr<ArchiveReader> AudioLoader::archiveReaderForFile(const QString& file) const
@@ -323,25 +501,28 @@ std::unique_ptr<ArchiveReader> AudioLoader::archiveReaderForFile(const QString& 
 
 bool AudioLoader::readTrackMetadata(Track& track) const
 {
-    auto reader = readerForTrack(track);
-    if(!reader) {
+    bool readersFound = false;
+    for(auto& reader : readersForTrack(track)) {
+        readersFound = true;
+        AudioSource source;
+        source.filepath = track.filepath();
+        QFile file{track.filepath()};
+        if(!track.isInArchive()) {
+            if(!file.open(QIODevice::ReadOnly)) {
+                qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
+                return false;
+            }
+            source.device = &file;
+        }
+
+        if(reader->init(source)) {
+            return reader->readTrack(source, track);
+        }
+    }
+
+    if(!readersFound) {
         qCInfo(AUD_LDR) << "Tag reader not available for file:" << track.filepath();
         return {};
-    }
-
-    AudioSource source;
-    source.filepath = track.filepath();
-    QFile file{track.filepath()};
-    if(!track.isInArchive()) {
-        if(!file.open(QIODevice::ReadOnly)) {
-            qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
-            return false;
-        }
-        source.device = &file;
-    }
-
-    if(reader->init(source)) {
-        return reader->readTrack(source, track);
     }
 
     return false;
@@ -349,27 +530,24 @@ bool AudioLoader::readTrackMetadata(Track& track) const
 
 QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) const
 {
-    auto reader = readerForTrack(track);
-    if(!reader) {
-        return {};
-    }
-
-    if(!track.isInArchive() && !reader->canReadCover()) {
-        return {};
-    }
-
-    AudioSource source;
-    source.filepath = track.filepath();
-    QFile file{track.filepath()};
-    if(!track.isInArchive()) {
-        if(!file.open(QIODevice::ReadOnly)) {
-            return {};
+    for(auto& reader : readersForTrack(track)) {
+        if(!track.isInArchive() && !reader->canReadCover()) {
+            continue;
         }
-        source.device = &file;
-    }
 
-    if(reader->init(source) && reader->canReadCover()) {
-        return reader->readCover(source, track, cover);
+        AudioSource source;
+        source.filepath = track.filepath();
+        QFile file{track.filepath()};
+        if(!track.isInArchive()) {
+            if(!file.open(QIODevice::ReadOnly)) {
+                return {};
+            }
+            source.device = &file;
+        }
+
+        if(reader->init(source) && reader->canReadCover()) {
+            return reader->readCover(source, track, cover);
+        }
     }
 
     return {};
@@ -381,27 +559,32 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
         return false;
     }
 
-    auto reader = readerForTrack(track);
-    if(!reader || !reader->canWriteMetaData()) {
-        return false;
+    for(auto& reader : readersForTrack(track)) {
+        if(!reader->canWriteMetaData()) {
+            continue;
+        }
+
+        AudioSource source;
+        source.filepath = track.filepath();
+        QFile file{track.filepath()};
+
+        if(!file.exists()) {
+            qCWarning(AUD_LDR) << "File not found:" << source.filepath;
+            return false;
+        }
+
+        if(!file.open(QIODeviceBase::ReadWrite)) {
+            qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
+            return false;
+        }
+        source.device = &file;
+
+        if(reader->writeTrack(source, track, options)) {
+            return true;
+        }
     }
 
-    AudioSource source;
-    source.filepath = track.filepath();
-    QFile file{track.filepath()};
-
-    if(!file.exists()) {
-        qCWarning(AUD_LDR) << "File not found:" << source.filepath;
-        return false;
-    }
-
-    if(!file.open(QIODeviceBase::ReadWrite)) {
-        qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
-        return false;
-    }
-    source.device = &file;
-
-    return reader->writeTrack(source, track, options);
+    return false;
 }
 
 bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverData,
@@ -411,21 +594,26 @@ bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverDa
         return false;
     }
 
-    auto reader = readerForTrack(track);
-    if(!reader || !reader->canWriteCover()) {
-        return false;
+    for(auto& reader : readersForTrack(track)) {
+        if(!reader->canWriteCover()) {
+            continue;
+        }
+
+        AudioSource source;
+        source.filepath = track.filepath();
+        QFile file{track.filepath()};
+        if(!file.open(QIODeviceBase::ReadWrite)) {
+            qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
+            return false;
+        }
+        source.device = &file;
+
+        if(reader->writeCover(source, track, coverData, options)) {
+            return true;
+        }
     }
 
-    AudioSource source;
-    source.filepath = track.filepath();
-    QFile file{track.filepath()};
-    if(!file.open(QIODeviceBase::ReadWrite)) {
-        qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
-        return false;
-    }
-    source.device = &file;
-
-    return reader->writeCover(source, track, coverData, options);
+    return false;
 }
 
 void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator, int priority, bool isArchiveWrapper)

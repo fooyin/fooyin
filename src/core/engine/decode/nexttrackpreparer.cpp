@@ -24,7 +24,11 @@
 
 #include <core/engine/audioloader.h>
 
+#include <QLoggingCategory>
+
 #include <limits>
+
+Q_DECLARE_LOGGING_CATEGORY(ENGINE)
 
 constexpr uint64_t PreparedStreamPrefillMs = 300;
 constexpr uint64_t MaxPreparedStreamMs     = 30000;
@@ -74,8 +78,13 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
     DecoderContext decoderContext;
     decoderContext.setPlaybackHints(context.playbackHints);
 
-    auto decoder = context.audioLoader->decoderForTrack(track);
-    if(!decoder) {
+    if(canceled()) {
+        return {};
+    }
+
+    auto decoder = context.audioLoader->loadDecoderForTrack(track, AudioDecoder::UpdateTracks, context.playbackHints);
+    if(!decoder.decoder) {
+        qCDebug(ENGINE) << "Unable to prepare next track, no decoder available for" << track.filepath();
         return {};
     }
 
@@ -84,10 +93,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
     }
 
     if(!decoderContext.init(std::move(decoder), track)) {
-        return {};
-    }
-
-    if(canceled()) {
+        qCDebug(ENGINE) << "Unable to prepare next track, failed to initialise decoder for" << track.filepath();
         return {};
     }
 
@@ -133,9 +139,7 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
         }
     }
 
-    state.decoder = decoderContext.takeDecoder();
-    state.file    = decoderContext.takeFile();
-    state.source  = decoderContext.takeSource();
+    state.loadedDecoder = decoderContext.takeLoadedDecoder();
 
     return state;
 }

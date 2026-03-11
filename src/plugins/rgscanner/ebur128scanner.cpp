@@ -175,29 +175,20 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
         return;
     }
 
-    auto decoder = m_audioLoader->decoderForTrack(track);
-    if(!decoder) {
+    const auto loadedDecoder
+        = m_audioLoader->loadDecoderForTrack(track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
+    if(!loadedDecoder.decoder) {
+        qCWarning(EBUR128) << "No decoder available for" << track.filepath();
         return;
     }
 
-    AudioSource source;
-    source.filepath = track.filepath();
-    QFile file{source.filepath};
-    if(!file.open(QIODevice::ReadOnly)) {
-        qCWarning(EBUR128) << "Failed to open" << source.filepath;
-        return;
-    }
-    source.device = &file;
+    AudioDecoder* decoder = loadedDecoder.decoder.get();
+    AudioFormat format    = loadedDecoder.format.value();
 
-    auto format = decoder->init(source, track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
-    if(!format) {
-        return;
-    }
-
-    format->setSampleFormat(SampleFormat::F64);
+    format.setSampleFormat(SampleFormat::F64);
     decoder->start();
 
-    EburStatePtr state{ebur128_init(format->channelCount(), format->sampleRate(),
+    EburStatePtr state{ebur128_init(format.channelCount(), format.sampleRate(),
                                     EBUR128_MODE_I | (truePeak ? EBUR128_MODE_TRUE_PEAK : EBUR128_MODE_SAMPLE_PEAK))};
 
     AudioBuffer buffer;
@@ -206,7 +197,7 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
             return;
         }
 
-        buffer = Audio::convert(buffer, *format);
+        buffer = Audio::convert(buffer, format);
         if(ebur128_add_frames_double(state.get(), reinterpret_cast<double*>(buffer.data()), buffer.frameCount())
            != EBUR128_SUCCESS) {
             break;
@@ -224,7 +215,7 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
     }
 
     double trackPeak{Constants::InvalidPeak};
-    const auto channels = static_cast<unsigned int>(format->channelCount());
+    const auto channels = static_cast<unsigned int>(format.channelCount());
 
     if(truePeak) {
         for(unsigned i{0}; i < channels; ++i) {

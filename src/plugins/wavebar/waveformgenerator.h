@@ -22,12 +22,12 @@
 #include "wavebardatabase.h"
 
 #include <core/engine/audioinput.h>
+#include <core/engine/audioloader.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
 #include <utils/worker.h>
 
-#include <QFile>
 #include <QLoggingCategory>
 
 Q_DECLARE_LOGGING_CATEGORY(WAVEBAR)
@@ -57,8 +57,7 @@ private:
     void processBuffer(const AudioBuffer& buffer);
 
     std::shared_ptr<AudioLoader> m_audioLoader;
-    std::unique_ptr<QIODevice> m_file;
-    std::unique_ptr<AudioDecoder> m_decoder;
+    LoadedDecoder m_loadedDecoder;
     DbConnectionPoolPtr m_dbPool;
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
     WaveBarDatabase m_waveDb;

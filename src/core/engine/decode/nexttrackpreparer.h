@@ -25,6 +25,7 @@
 
 #include <core/engine/audioformat.h>
 #include <core/engine/audioinput.h>
+#include <core/engine/audioloader.h>
 #include <core/engine/enginedefs.h>
 #include <core/track.h>
 
@@ -34,24 +35,20 @@
 #include <optional>
 #include <thread>
 
-class QFile;
-
 namespace Fooyin {
 class AudioLoader;
 
 struct FYCORE_EXPORT NextTrackPreparationState
 {
     Track track;
-    std::unique_ptr<AudioDecoder> decoder;
-    std::unique_ptr<QFile> file;
-    AudioSource source;
+    LoadedDecoder loadedDecoder;
     AudioFormat format;
     AudioStreamPtr preparedStream;
     uint64_t preparedDecodePositionMs{0};
 
     [[nodiscard]] bool isValid() const
     {
-        return track.isValid() && decoder != nullptr && format.isValid();
+        return track.isValid() && loadedDecoder.decoder != nullptr && format.isValid();
     }
 };
 

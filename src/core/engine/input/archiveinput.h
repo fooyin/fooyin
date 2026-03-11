@@ -47,9 +47,7 @@ public:
 
 private:
     std::shared_ptr<AudioLoader> m_audioLoader;
-    std::unique_ptr<QIODevice> m_device;
-    std::unique_ptr<AudioDecoder> m_decoder;
-    std::unique_ptr<ArchiveReader> m_archiveReader;
+    LoadedDecoder m_loadedDecoder;
 };
 
 class GeneralArchiveReader : public AudioReader
@@ -71,8 +69,6 @@ public:
 
 private:
     std::shared_ptr<AudioLoader> m_audioLoader;
-    std::unique_ptr<QIODevice> m_device;
-    std::unique_ptr<ArchiveReader> m_archiveReader;
-    std::unique_ptr<AudioReader> m_reader;
+    LoadedReader m_loadedReader;
 };
 } // namespace Fooyin

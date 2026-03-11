@@ -79,7 +79,6 @@ public:
 
 private:
     QString m_file;
-    std::unique_ptr<LibArchiveIODevice> m_device;
     QString m_type;
 };
 } // namespace Fooyin::LibArchive
