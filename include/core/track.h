@@ -23,6 +23,7 @@
 
 #include <QByteArray>
 #include <QMap>
+#include <QMetaType>
 #include <QSharedDataPointer>
 #include <QString>
 
@@ -294,3 +295,6 @@ struct TrackCoverData
     TrackCovers coverData;
 };
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::TrackList)
+Q_DECLARE_METATYPE(Fooyin::TrackIds)
