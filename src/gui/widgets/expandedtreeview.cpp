@@ -1779,7 +1779,7 @@ void IconView::doItemLayout()
         return;
     }
 
-    m_layoutBounds = {{}, viewport()->rect().size()};
+    m_layoutBounds = {{}, m_view->maximumViewportSize()};
 
     const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
 

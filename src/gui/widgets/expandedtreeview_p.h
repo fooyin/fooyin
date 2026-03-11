@@ -47,7 +47,7 @@ struct ExpandedTreeViewItem
 
     constexpr bool operator==(const ExpandedTreeViewItem& other) const
     {
-        return (index != other.index);
+        return (index == other.index);
     }
 
     constexpr bool operator!=(const ExpandedTreeViewItem& other) const
