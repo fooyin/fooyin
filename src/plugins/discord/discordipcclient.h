@@ -24,7 +24,6 @@
 #include "discordpresencedata.h"
 
 #include <core/player/playerdefs.h>
-#include <core/track.h>
 
 #include <QLocalSocket>
 

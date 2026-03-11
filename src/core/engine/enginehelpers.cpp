@@ -19,6 +19,8 @@
 
 #include "enginehelpers.h"
 
+#include <core/track.h>
+
 namespace Fooyin {
 bool sameTrackIdentity(const Track& lhs, const Track& rhs)
 {

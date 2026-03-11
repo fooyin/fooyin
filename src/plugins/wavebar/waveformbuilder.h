@@ -24,8 +24,6 @@
 #include "waveformgenerator.h"
 #include "waveformrescaler.h"
 
-#include <core/track.h>
-
 #include <QObject>
 #include <QThread>
 
@@ -33,6 +31,7 @@ namespace Fooyin {
 class AudioBuffer;
 class AudioLoader;
 class SettingsManager;
+class Track;
 
 namespace WaveBar {
 class WaveformBuilder : public QObject

@@ -21,6 +21,7 @@
 
 #include "settings/scrobblersettings.h"
 
+#include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QFile>

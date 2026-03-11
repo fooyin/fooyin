@@ -35,7 +35,7 @@
 #include <core/library/tracksort.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/plugins/coreplugincontext.h>
+#include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>

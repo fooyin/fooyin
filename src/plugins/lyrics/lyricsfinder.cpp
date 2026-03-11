@@ -30,6 +30,7 @@
 #include "sources/qqlyrics.h"
 #include "sources/taglyrics.h"
 
+#include <core/track.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stringutils.h>

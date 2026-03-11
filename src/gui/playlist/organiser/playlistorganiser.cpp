@@ -27,6 +27,7 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/track.h>
 #include <gui/guiconstants.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>

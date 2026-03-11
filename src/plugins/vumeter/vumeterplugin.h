@@ -21,7 +21,6 @@
 
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
-#include <core/track.h>
 #include <gui/plugins/guiplugin.h>
 
 namespace Fooyin::VuMeter {

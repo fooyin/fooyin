@@ -23,9 +23,10 @@
 
 #include <core/network/networkaccessmanager.h>
 #include <core/scripting/scriptparser.h>
-#include <core/track.h>
 
 namespace Fooyin {
+class Track;
+
 namespace Lyrics {
 struct Lyrics;
 

@@ -20,7 +20,6 @@
 #pragma once
 
 #include <core/player/playerdefs.h>
-#include <core/track.h>
 #include <gui/widgetcontainer.h>
 
 #include <QBasicTimer>

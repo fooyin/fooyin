@@ -22,11 +22,12 @@
 #include "fycore_export.h"
 
 #include <core/engine/audioformat.h>
-#include <core/track.h>
 
 #include <cstddef>
 
 namespace Fooyin {
+class Track;
+
 /*!
  * Per-stream track-processing interface applied inside AudioMixer.
  *

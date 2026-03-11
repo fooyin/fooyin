@@ -22,11 +22,12 @@
 #include "fycore_export.h"
 
 #include "core/engine/audioformat.h"
-#include <core/track.h>
 
 #include <limits>
 
 namespace Fooyin {
+class Track;
+
 //! True when two track handles refer to the same logical track request.
 //! Uses DB id when available, otherwise falls back to segment identity.
 FYCORE_EXPORT bool sameTrackIdentity(const Track& lhs, const Track& rhs);

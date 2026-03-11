@@ -22,7 +22,6 @@
 
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
-#include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/plugins/guiplugin.h>
 

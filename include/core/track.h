@@ -21,6 +21,8 @@
 
 #include "fycore_export.h"
 
+#include <utils/datastream.h>
+
 #include <QByteArray>
 #include <QMap>
 #include <QMetaType>

@@ -22,7 +22,6 @@
 #include "playlistmodel.h"
 
 #include <core/playlist/playlist.h>
-#include <core/track.h>
 
 #include <QUndoCommand>
 

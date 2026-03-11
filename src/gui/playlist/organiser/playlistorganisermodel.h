@@ -21,7 +21,6 @@
 
 #include "playlistorganiseritem.h"
 
-#include <core/track.h>
 #include <utils/id.h>
 #include <utils/treemodel.h>
 

@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <core/track.h>
 #include <gui/fywidget.h>
 
 class QTreeView;
