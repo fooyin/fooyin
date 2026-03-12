@@ -67,6 +67,7 @@ enum class FunctionKind : uint8_t
     Puts,
     If,
     If2,
+    If3,
     IfEqual,
     IfGreater,
     IfLonger,

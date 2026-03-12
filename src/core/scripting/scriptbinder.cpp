@@ -292,6 +292,9 @@ FunctionKind resolveBuiltInFunctionKind(const QString& name)
     if(name == "if2"_L1) {
         return Kind::If2;
     }
+    if(name == "if3"_L1) {
+        return Kind::If3;
+    }
     if(name == "ifequal"_L1) {
         return Kind::IfEqual;
     }

@@ -347,6 +347,10 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"a  ", m_parser.evaluate(QStringLiteral("[$pad(a,3)]")));
     EXPECT_EQ(u"  a", m_parser.evaluate(QStringLiteral("[$padright(a,3)]")));
     EXPECT_EQ(u"x", m_parser.evaluate(QStringLiteral("[$if2(,x)]")));
+    EXPECT_EQ(u"fallback", m_parser.evaluate(QStringLiteral("$if3(,,fallback)")));
+    EXPECT_EQ(u"second", m_parser.evaluate(QStringLiteral("$if3(,second,third,fallback)")));
+    EXPECT_EQ(u"winnerwinner",
+              m_parser.evaluate(QStringLiteral("$if3(,$put(choice,winner),$put(choice,wrong),fallback)$get(choice)")));
     EXPECT_EQ(u"          X", m_parser.evaluate(QStringLiteral("$padright(,$mul($sub(3,1),5))X")));
     EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$if($stricmp(cmp,cMp),true,false)")));
     EXPECT_EQ(u"false", m_parser.evaluate(QStringLiteral("$if($strcmp(cmp,cMp),true,false)")));

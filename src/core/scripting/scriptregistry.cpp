@@ -520,6 +520,7 @@ void ScriptRegistry::addDefaultFunctions()
 
     registerFunction(u"if"_s, makeScriptFunctionInvoker<Scripting::cif>());
     registerFunction(u"if2"_s, makeScriptFunctionInvoker<Scripting::cif2>());
+    registerFunction(u"if3"_s, makeScriptFunctionInvoker<Scripting::cif3>());
     registerFunction(u"ifgreater"_s, makeScriptFunctionInvoker<Scripting::ifgreater>());
     registerFunction(u"iflonger"_s, makeScriptFunctionInvoker<Scripting::iflonger>());
     registerFunction(u"ifequal"_s, makeScriptFunctionInvoker<Scripting::ifequal>());

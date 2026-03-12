@@ -24,6 +24,7 @@
 namespace Fooyin::Scripting {
 ScriptResult cif(const ScriptValueList& vec);
 ScriptResult cif2(const ScriptValueList& vec);
+ScriptResult cif3(const ScriptValueList& vec);
 ScriptResult ifequal(const ScriptValueList& vec);
 ScriptResult ifgreater(const ScriptValueList& vec);
 ScriptResult iflonger(const ScriptValueList& vec);

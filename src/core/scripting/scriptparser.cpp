@@ -1015,6 +1015,21 @@ ScriptResult ScriptParserPrivate::evalFunction(const BoundExpression& exp, const
             }
             return {};
         }
+        case(FunctionKind::If3): {
+            const auto size = func.args.size();
+            if(size < 2) {
+                return {};
+            }
+
+            for(size_t i{0}; i + 1 < size; ++i) {
+                const ScriptResult current = evalExpression(func.args.at(i), tracks);
+                if(current.cond) {
+                    return current;
+                }
+            }
+
+            return evalExpression(func.args.back(), tracks);
+        }
         case(FunctionKind::IfEqual): {
             if(func.args.size() != 4) {
                 return {};

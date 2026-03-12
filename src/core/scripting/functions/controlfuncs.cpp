@@ -50,6 +50,22 @@ ScriptResult cif2(const ScriptValueList& vec)
     return {};
 }
 
+ScriptResult cif3(const ScriptValueList& vec)
+{
+    const auto size = vec.size();
+    if(size < 2) {
+        return {};
+    }
+
+    for(size_t i{0}; i + 1 < size; ++i) {
+        if(vec.at(i).cond) {
+            return vec.at(i);
+        }
+    }
+
+    return vec.back();
+}
+
 ScriptResult ifequal(const ScriptValueList& vec)
 {
     const auto size = vec.size();

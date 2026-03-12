@@ -207,6 +207,8 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
         functionEntry("puts", u"$puts(name,value)"_s, tr("Stores a script variable and returns nothing")),
         functionEntry("if", u"$if(condition,then[,else])"_s, tr("Returns then when condition is true")),
         functionEntry("if2", u"$if2(value,fallback)"_s, tr("Returns the first non-empty value")),
+        functionEntry("if3", u"$if3(a1,a2,...,aN,else)"_s,
+                      tr("Returns the first true value from a list, or else when none match")),
         functionEntry("ifgreater", u"$ifgreater(a,b,then,else)"_s, tr("Compares numeric values")),
         functionEntry("iflonger", u"$iflonger(text,length,then,else)"_s,
                       tr("Checks whether text is longer than a limit")),
