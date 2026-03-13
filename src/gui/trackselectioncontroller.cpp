@@ -87,6 +87,10 @@ public:
     void addToQueue() const;
     void queueNext() const;
     void sendToQueue(PlaylistAction::ActionOptions options) const;
+    [[nodiscard]] QueueTracks queueTracksForSelection(const TrackSelection& selection) const;
+
+    const TrackSelection* currentSelection() const;
+    TrackSelection* currentSelection();
 
     void updateActionState();
 
@@ -97,9 +101,6 @@ public:
     SettingsManager* m_settings;
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
-
-    const TrackSelection* currentSelection() const;
-    TrackSelection* currentSelection();
 
     std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
     std::unordered_map<WidgetContext*, TrackSelection> m_contextSelection;
@@ -215,8 +216,8 @@ void TrackSelectionControllerPrivate::setupMenu()
     addQueueCmd->setCategories(tracksCategory);
     QObject::connect(m_addToQueue, &QAction::triggered, m_tracksQueueMenu, [this]() {
         if(hasTracks()) {
-            const auto selection = m_self->selectedTracks();
-            m_playlistController->playerController()->queueTracks(selection);
+            const auto selection = m_self->selectedSelection();
+            m_playlistController->playerController()->queueTracks(queueTracksForSelection(selection));
             updateActionState();
         }
     });
@@ -227,8 +228,8 @@ void TrackSelectionControllerPrivate::setupMenu()
     queueNextCmd->setCategories(tracksCategory);
     QObject::connect(m_queueNext, &QAction::triggered, m_tracksQueueMenu, [this]() {
         if(hasTracks()) {
-            const auto selection = m_self->selectedTracks();
-            m_playlistController->playerController()->queueTracksNext(selection);
+            const auto selection = m_self->selectedSelection();
+            m_playlistController->playerController()->queueTracksNext(queueTracksForSelection(selection));
             updateActionState();
         }
     });
@@ -239,8 +240,8 @@ void TrackSelectionControllerPrivate::setupMenu()
     removeQueueCmd->setCategories(tracksCategory);
     QObject::connect(m_removeFromQueue, &QAction::triggered, m_tracksQueueMenu, [this]() {
         if(hasTracks()) {
-            const auto selection = m_self->selectedTracks();
-            m_playlistController->playerController()->dequeueTracks(selection);
+            const auto selection = m_self->selectedSelection();
+            m_playlistController->playerController()->dequeueTracks(queueTracksForSelection(selection));
             updateActionState();
         }
     });
@@ -385,24 +386,6 @@ bool TrackSelectionControllerPrivate::hasContextTracks() const
     }
 
     return m_contextSelection.contains(m_activeContext) && !m_contextSelection.at(m_activeContext).tracks.empty();
-}
-
-const TrackSelection* TrackSelectionControllerPrivate::currentSelection() const
-{
-    if(!m_tracks.tracks.empty()) {
-        return &m_tracks;
-    }
-
-    if(hasContextTracks()) {
-        return &m_contextSelection.at(m_activeContext);
-    }
-
-    return nullptr;
-}
-
-TrackSelection* TrackSelectionControllerPrivate::currentSelection()
-{
-    return const_cast<TrackSelection*>(std::as_const(*this).currentSelection());
 }
 
 WidgetContext* TrackSelectionControllerPrivate::contextObject(QWidget* widget) const
@@ -602,7 +585,7 @@ void TrackSelectionControllerPrivate::addToQueue() const
     }
 
     const auto& selection = m_contextSelection.at(m_activeContext);
-    m_playlistController->playerController()->queueTracks(selection.tracks);
+    m_playlistController->playerController()->queueTracks(queueTracksForSelection(selection));
     emit m_self->actionExecuted(TrackAction::AddToQueue);
 }
 
@@ -613,7 +596,7 @@ void TrackSelectionControllerPrivate::queueNext() const
     }
 
     const auto& selection = m_contextSelection.at(m_activeContext);
-    m_playlistController->playerController()->queueTracksNext(selection.tracks);
+    m_playlistController->playerController()->queueTracksNext(queueTracksForSelection(selection));
     emit m_self->actionExecuted(TrackAction::QueueNext);
 }
 
@@ -624,9 +607,54 @@ void TrackSelectionControllerPrivate::sendToQueue(PlaylistAction::ActionOptions 
     }
 
     const auto& selection = m_contextSelection.at(m_activeContext);
-    m_playlistController->playerController()->replaceTracks(selection.tracks);
+    m_playlistController->playerController()->replaceTracks(queueTracksForSelection(selection));
     handleActions(options);
     emit m_self->actionExecuted(TrackAction::SendToQueue);
+}
+
+QueueTracks TrackSelectionControllerPrivate::queueTracksForSelection(const TrackSelection& selection) const
+{
+    if(selection.tracks.empty()) {
+        return {};
+    }
+
+    QueueTracks queueTracks;
+    queueTracks.reserve(selection.tracks.size());
+
+    const bool playlistBacked = selection.playlistBacked && selection.playlistId
+                             && selection.playlistIndexes.size() == selection.tracks.size();
+    if(playlistBacked) {
+        for(size_t i{0}; i < selection.tracks.size(); ++i) {
+            queueTracks.push_back(PlaylistTrack{.track           = selection.tracks.at(i),
+                                                .playlistId      = *selection.playlistId,
+                                                .indexInPlaylist = selection.playlistIndexes.at(i)});
+        }
+        return queueTracks;
+    }
+
+    for(const Track& track : selection.tracks) {
+        queueTracks.emplace_back(track);
+    }
+
+    return queueTracks;
+}
+
+const TrackSelection* TrackSelectionControllerPrivate::currentSelection() const
+{
+    if(!m_tracks.tracks.empty()) {
+        return &m_tracks;
+    }
+
+    if(hasContextTracks()) {
+        return &m_contextSelection.at(m_activeContext);
+    }
+
+    return nullptr;
+}
+
+TrackSelection* TrackSelectionControllerPrivate::currentSelection()
+{
+    return const_cast<TrackSelection*>(std::as_const(*this).currentSelection());
 }
 
 void TrackSelectionControllerPrivate::updateActionState()
