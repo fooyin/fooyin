@@ -629,22 +629,20 @@ void DirBrowser::updateFilters()
 
 void DirBrowser::setControlsEnabled(bool enabled)
 {
-    if(enabled) {
-        if(!m_upDir && !m_backDir && !m_forwardDir) {
-            m_upDir      = new ToolButton(this);
-            m_backDir    = new ToolButton(this);
-            m_forwardDir = new ToolButton(this);
+    if(enabled && !m_upDir && !m_backDir && !m_forwardDir) {
+        m_upDir      = new ToolButton(this);
+        m_backDir    = new ToolButton(this);
+        m_forwardDir = new ToolButton(this);
 
-            m_upDir->setDefaultAction(m_goUp);
-            m_backDir->setDefaultAction(m_goBack);
-            m_forwardDir->setDefaultAction(m_goForward);
+        m_upDir->setDefaultAction(m_goUp);
+        m_backDir->setDefaultAction(m_goBack);
+        m_forwardDir->setDefaultAction(m_goForward);
 
-            m_controlLayout->insertWidget(0, m_upDir);
-            m_controlLayout->insertWidget(0, m_forwardDir);
-            m_controlLayout->insertWidget(0, m_backDir);
-        }
+        m_controlLayout->insertWidget(0, m_upDir);
+        m_controlLayout->insertWidget(0, m_forwardDir);
+        m_controlLayout->insertWidget(0, m_backDir);
     }
-    else {
+    else if(!enabled) {
         if(m_backDir) {
             m_backDir->deleteLater();
         }
@@ -659,15 +657,13 @@ void DirBrowser::setControlsEnabled(bool enabled)
 
 void DirBrowser::setLocationEnabled(bool enabled)
 {
-    if(enabled) {
-        if(!m_dirEdit) {
-            m_dirEdit = new QLineEdit(this);
-            QObject::connect(m_dirEdit, &QLineEdit::textEdited, this, [this](const QString& dir) { changeRoot(dir); });
-            m_controlLayout->addWidget(m_dirEdit, 1);
-            m_dirEdit->setText(m_model->rootPath());
-        }
+    if(enabled && !m_dirEdit) {
+        m_dirEdit = new QLineEdit(this);
+        QObject::connect(m_dirEdit, &QLineEdit::textEdited, this, [this](const QString& dir) { changeRoot(dir); });
+        m_controlLayout->addWidget(m_dirEdit, 1);
+        m_dirEdit->setText(m_model->rootPath());
     }
-    else {
+    else if(!enabled) {
         if(m_dirEdit) {
             m_dirEdit->deleteLater();
         }
