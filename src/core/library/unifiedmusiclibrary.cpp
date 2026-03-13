@@ -122,13 +122,38 @@ QFuture<void> UnifiedMusicLibraryPrivate::addTracks(TrackList newTracks)
     auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), std::move(newTracks));
 
     return sortTracks.then(m_self, [this](TrackList sortedTracks) {
-        std::ranges::copy(sortedTracks, std::back_inserter(m_tracks));
+        const auto findExistingTrack = [this](const Track& track) {
+            return std::ranges::find_if(m_tracks, [&track](const Track& existingTrack) {
+                if(track.id() >= 0 && existingTrack.id() >= 0) {
+                    return existingTrack.id() == track.id();
+                }
+
+                return existingTrack.uniqueFilepath() == track.uniqueFilepath()
+                    && existingTrack.subsong() == track.subsong();
+            });
+        };
+
+        TrackList addedTracks;
+        addedTracks.reserve(sortedTracks.size());
+
+        for(const Track& track : sortedTracks) {
+            if(auto it = findExistingTrack(track); it != m_tracks.end()) {
+                *it = track;
+                it->clearWasModified();
+            }
+            else {
+                addedTracks.push_back(track);
+                m_tracks.push_back(track);
+            }
+        }
 
         recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), m_tracks)
-            .then(m_self, [this, sortedTracks = std::move(sortedTracks)](TrackList sortedLibraryTracks) mutable {
+            .then(m_self, [this, addedTracks = std::move(addedTracks)](TrackList sortedLibraryTracks) mutable {
                 m_tracks = std::move(sortedLibraryTracks);
 
-                emit m_self->tracksAdded(sortedTracks);
+                if(!addedTracks.empty()) {
+                    emit m_self->tracksAdded(addedTracks);
+                }
             });
     });
 }
