@@ -1694,6 +1694,17 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
     if(filteredTracks.empty()) {
         for(const auto& track : tracks) {
             const bool matches = std::ranges::all_of(bound.expressions, [&](const auto& expr) {
+                if(expr.type == Expr::Literal || expr.type == Expr::QuotedLiteral) {
+                    // Assume simple search query
+                    const auto& search = std::get<QString>(expr.value);
+                    if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+                        return matchSearch(track.track, search, expr.type == Expr::QuotedLiteral);
+                    }
+                    else {
+                        return matchSearch(track, search, expr.type == Expr::QuotedLiteral);
+                    }
+                }
+
                 if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
                     return evalExpression(expr, track.track).cond;
                 }
