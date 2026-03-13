@@ -1676,8 +1676,8 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
         const auto& firstExpr = bound.expressions.front();
         if(firstExpr.type == Expr::Literal || firstExpr.type == Expr::QuotedLiteral) {
             // Simple search query - just match all terms in metadata/filepath
-            const auto& search     = std::get<QString>(firstExpr.value);
-            TrackListType filtered = Utils::filter(tracks, [&search, &firstExpr](const auto& track) {
+            const auto& search = std::get<QString>(firstExpr.value);
+            filteredTracks     = Utils::filter(tracks, [&search, &firstExpr](const auto& track) {
                 if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
                     return matchSearch(track.track, search, firstExpr.type == Expr::QuotedLiteral);
                 }
@@ -1685,31 +1685,26 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
                     return matchSearch(track, search, firstExpr.type == Expr::QuotedLiteral);
                 }
             });
-            return filtered;
         }
-        if(!isQueryExpression(firstExpr.type)) {
+        else if(!isQueryExpression(firstExpr.type)) {
             return {};
         }
     }
 
-    int count{0};
-    for(const auto& track : tracks) {
-        if(m_limit > 0 && count >= m_limit) {
-            break;
-        }
+    if(filteredTracks.empty()) {
+        for(const auto& track : tracks) {
+            const bool matches = std::ranges::all_of(bound.expressions, [&](const auto& expr) {
+                if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+                    return evalExpression(expr, track.track).cond;
+                }
+                else {
+                    return evalExpression(expr, track).cond;
+                }
+            });
 
-        const bool matches = std::ranges::all_of(bound.expressions, [&](const auto& expr) {
-            if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
-                return evalExpression(expr, track.track).cond;
+            if(matches) {
+                filteredTracks.emplace_back(track);
             }
-            else {
-                return evalExpression(expr, track).cond;
-            }
-        });
-
-        if(matches) {
-            filteredTracks.emplace_back(track);
-            ++count;
         }
     }
 
@@ -1728,6 +1723,10 @@ TrackListType ScriptParserPrivate::evaluateQuery(const ParsedScript& input, cons
         else {
             filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, m_sortOrder);
         }
+    }
+
+    if(m_limit > 0 && std::cmp_greater(filteredTracks.size(), m_limit)) {
+        filteredTracks.resize(static_cast<size_t>(m_limit));
     }
 
     return filteredTracks;
