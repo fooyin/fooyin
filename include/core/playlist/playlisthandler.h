@@ -23,6 +23,7 @@
 
 #include <core/engine/audioloader.h>
 #include <core/playlist/playlist.h>
+#include <core/playlist/playlistchangeset.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionpool.h>
 
@@ -77,9 +78,11 @@ public:
      * will be changed. */
     Playlist* createNewTempPlaylist(const QString& name, const TrackList& tracks);
     /** Returns the autoplaylist called @p name if it exists, otherwise creates it. */
-    Playlist* createAutoPlaylist(const QString& name, const QString& query);
+    Playlist* createAutoPlaylist(const QString& name, const QString& query, const QString& sortQuery = {},
+                                 bool forceSorted = true);
     /** Creates and returns the autoplaylist called @p name. If it already exists, the name will be changed. */
-    Playlist* createNewAutoPlaylist(const QString& name, const QString& query);
+    Playlist* createNewAutoPlaylist(const QString& name, const QString& query, const QString& sortQuery = {},
+                                    bool forceSorted = true);
 
     /** Adds @p tracks to the end of the playlist with @p id if found. */
     void appendToPlaylist(const UId& id, const TrackList& tracks);
@@ -125,12 +128,14 @@ signals:
     void playlistAdded(Fooyin::Playlist* playlist);
     void playlistRemoved(Fooyin::Playlist* playlist);
     void playlistRenamed(Fooyin::Playlist* playlist);
+    void playlistUpdated(Fooyin::Playlist* playlist);
     void activePlaylistChanged(Fooyin::Playlist* playlist);
     void activePlaylistDeleted();
     void restoreCurrentTrackRequested(const Fooyin::PlaylistTrack& track);
     void playlistReferencesRemapRequested(const Fooyin::UId& fromPlaylistId, const Fooyin::UId& toPlaylistId);
 
     void tracksAdded(Fooyin::Playlist* playlist, const Fooyin::TrackList& tracks, int index);
+    void tracksPatched(Fooyin::Playlist* playlist, const Fooyin::PlaylistChangeset& changeSet);
     void tracksChanged(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
     void tracksUpdated(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
     void tracksRemoved(Fooyin::Playlist* playlist, const std::vector<int>& indexes);

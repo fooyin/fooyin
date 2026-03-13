@@ -83,6 +83,7 @@ public:
         bool hasSelection{false};
         bool showStopAfter{false};
         bool showEditablePlaylistActions{false};
+        bool showSortMenu{false};
         bool showClipboard{false};
         bool usePlaylistQueueCommands{false};
         bool disableSortMenu{false};

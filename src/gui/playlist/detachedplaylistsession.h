@@ -32,6 +32,7 @@ public:
     [[nodiscard]] PlaylistTrackList modelTracks(Playlist* currentPlaylist) const override;
     [[nodiscard]] bool canResetWithoutPlaylist() const override;
 
+    void handleTracksChanged(PlaylistWidgetSessionHost& host, const std::vector<int>& indexes, bool allNew) override;
     void handleSearchChanged(PlaylistWidgetSessionHost& host, const QString& search) override;
     void finalise(PlaylistWidgetSessionHost& host) override;
 };

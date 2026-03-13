@@ -53,8 +53,7 @@ struct FYCORE_EXPORT PlaylistTrack
 
     static const Track& extractor(const PlaylistTrack& item);
 
-    bool operator==(const PlaylistTrack& other) const;
-    bool operator!=(const PlaylistTrack& other) const;
+    bool operator==(const PlaylistTrack& other) const = default;
     bool operator<(const PlaylistTrack& other) const;
 
     operator QVariant() const
@@ -125,6 +124,12 @@ public:
     [[nodiscard]] bool isAutoPlaylist() const;
     /** Returns the query used to generate this autoplaylist, else an empty string. */
     [[nodiscard]] QString query() const;
+    /** Returns the optional sort pattern used to order this autoplaylist. */
+    [[nodiscard]] QString sortQuery() const;
+    /** Returns @c true if this autoplaylist should be fully resorted on regeneration. */
+    [[nodiscard]] bool forceSorted() const;
+    /** Returns the tracks this autoplaylist would contain after regeneration with @p tracks. */
+    [[nodiscard]] TrackList autoPlaylistTracks(const TrackList& tracks) const;
 
     /** Regenerates this autoplaylist using the tracks @p tracks. */
     bool regenerateTracks(const TrackList& tracks);
@@ -163,11 +168,13 @@ private:
     static std::unique_ptr<Playlist> create(const QString& name, SettingsManager* settings);
     static std::unique_ptr<Playlist> create(int dbId, const QString& name, int index, SettingsManager* settings);
     static std::unique_ptr<Playlist> createAuto(int dbId, const QString& name, int index, const QString& query,
-                                                SettingsManager* settings);
+                                                const QString& sortQuery, bool forceSorted, SettingsManager* settings);
 
     void setName(const QString& name);
     void setIndex(int index);
     void setQuery(const QString& query);
+    void setSortQuery(const QString& query);
+    void setForceSorted(bool forceSorted);
 
     void setModified(bool modified);
     void setTracksModified(bool modified);

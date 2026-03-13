@@ -25,6 +25,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/player/playercontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playerdefs.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlist.h
+    ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistchangeset.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlisthandler.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistparser.h
     ${CMAKE_SOURCE_DIR}/include/core/plugins/coreplugin.h
@@ -209,6 +210,7 @@ set(SOURCES
     playlist/parsers/m3uparser.cpp
     playlist/parsers/m3uparser.h
     playlist/playlist.cpp
+    playlist/playlistchangeset.cpp
     playlist/playlisthandler.cpp
     playlist/playlistloader.cpp
     playlist/playlistloader.h

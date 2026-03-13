@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <ranges>
+#include <utility>
 
 namespace Fooyin {
 namespace {
@@ -55,6 +56,16 @@ PlaylistWidgetSessionHost& widgetSessionHost(PlaylistWidget* widget)
 EditablePlaylistSessionHost& editableHost(PlaylistWidget* widget)
 {
     return widget->editableSessionHost();
+}
+
+bool canEditPlaylistTracks(const Playlist* playlist)
+{
+    return playlist && !playlist->isAutoPlaylist();
+}
+
+bool canReorderPlaylist(const Playlist* playlist)
+{
+    return playlist && (!playlist->isAutoPlaylist() || !playlist->forceSorted());
 }
 } // namespace
 
@@ -68,6 +79,7 @@ EditablePlaylistSession::EditablePlaylistSession()
     , m_pendingFocus{false}
     , m_dropIndex{-1}
     , m_currentIndex{-1}
+    , m_sortRequestToken{0}
     , m_undoAction{nullptr}
     , m_redoAction{nullptr}
     , m_cropAction{nullptr}
@@ -77,10 +89,29 @@ EditablePlaylistSession::EditablePlaylistSession()
     , m_pasteAction{nullptr}
     , m_clearAction{nullptr}
     , m_removeTrackAction{nullptr}
+    , m_removeDuplicatesAction{nullptr}
+    , m_removeDeadTracksAction{nullptr}
     , m_addToQueueAction{nullptr}
     , m_queueNextAction{nullptr}
     , m_removeFromQueueAction{nullptr}
 { }
+
+uint64_t EditablePlaylistSession::beginSortRequest()
+{
+    return ++m_sortRequestToken;
+}
+
+void EditablePlaylistSession::finishSortRequest(uint64_t token, bool sortingColumn)
+{
+    if(token != m_sortRequestToken) {
+        return;
+    }
+
+    if(sortingColumn) {
+        setSortingColumn(false);
+    }
+    setSorting(false);
+}
 
 PlaylistWidget::ModeCapabilities EditablePlaylistSession::capabilities() const
 {
@@ -191,6 +222,12 @@ void EditablePlaylistSession::ensureActions(QWidget* parent)
         m_removeTrackAction
             = new QAction(Utils::iconFromTheme(Constants::Icons::Remove), PlaylistWidget::tr("&Remove"), parent);
     }
+    if(!m_removeDuplicatesAction) {
+        m_removeDuplicatesAction = new QAction(PlaylistWidget::tr("Remove duplicates"), parent);
+    }
+    if(!m_removeDeadTracksAction) {
+        m_removeDeadTracksAction = new QAction(PlaylistWidget::tr("Remove dead tracks"), parent);
+    }
     if(!m_addToQueueAction) {
         m_addToQueueAction = new QAction(Utils::iconFromTheme(Constants::Icons::Add),
                                          PlaylistWidget::tr("Add to playback &queue"), parent);
@@ -253,6 +290,10 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
                      [widget, this](const TrackList& tracks, int index) {
                          playlistTracksAdded(widgetSessionHost(widget), tracks, index);
                      });
+    QObject::connect(widget->playlistController(), &PlaylistController::currentPlaylistTracksPatched, widget,
+                     [widget, this](const PlaylistChangeset& changeSet) {
+                         applyPlaylistChangeSet(widgetSessionHost(widget), changeSet);
+                     });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::selectTracks, widget,
                      [widget, this](const std::vector<int>& ids) { selectTrackIds(widget, ids); });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::filterTracks, widget,
@@ -303,10 +344,8 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     editMenu->addAction(undoCmd);
     QObject::connect(m_undoAction, &QAction::triggered, widget,
                      [widget]() { editableHost(widget).playlistController()->undoPlaylistChanges(); });
-    QObject::connect(host.playlistController(), &PlaylistController::playlistHistoryChanged, widget, [this, widget]() {
-        m_undoAction->setEnabled(editableHost(widget).playlistController()->canUndo());
-    });
-    m_undoAction->setEnabled(host.playlistController()->canUndo());
+    QObject::connect(host.playlistController(), &PlaylistController::playlistHistoryChanged, widget,
+                     [this, widget]() { refreshActionState(widget); });
 
     m_redoAction->setStatusTip(PlaylistWidget::tr("Redo the previous playlist change"));
     auto* redoCmd = host.actionManager()->registerAction(m_redoAction, Constants::Actions::Redo,
@@ -316,10 +355,8 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     editMenu->addAction(redoCmd);
     QObject::connect(m_redoAction, &QAction::triggered, widget,
                      [widget]() { editableHost(widget).playlistController()->redoPlaylistChanges(); });
-    QObject::connect(host.playlistController(), &PlaylistController::playlistHistoryChanged, widget, [this, widget]() {
-        m_redoAction->setEnabled(editableHost(widget).playlistController()->canRedo());
-    });
-    m_redoAction->setEnabled(host.playlistController()->canRedo());
+    QObject::connect(host.playlistController(), &PlaylistController::playlistHistoryChanged, widget,
+                     [this, widget]() { refreshActionState(widget); });
 
     editMenu->addSeparator();
 
@@ -331,7 +368,6 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     editMenu->addAction(cutCommand);
     QObject::connect(m_cutAction, &QAction::triggered, widget,
                      [widget, this]() { cutTracks(widgetSessionHost(widget)); });
-    m_cutAction->setEnabled(host.playlistView()->selectionModel()->hasSelection());
 
     m_copyAction->setStatusTip(PlaylistWidget::tr("Copy the selected tracks"));
     auto* copyCommand = host.actionManager()->registerAction(m_copyAction, Constants::Actions::Copy,
@@ -349,12 +385,10 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     pasteCommand->setCategories(editCategory);
     pasteCommand->setDefaultShortcut(QKeySequence::Paste);
     editMenu->addAction(m_pasteAction);
-    QObject::connect(host.playlistController(), &PlaylistController::clipboardChanged, widget, [this, widget]() {
-        m_pasteAction->setEnabled(!editableHost(widget).playlistController()->clipboardEmpty());
-    });
+    QObject::connect(host.playlistController(), &PlaylistController::clipboardChanged, widget,
+                     [this, widget]() { refreshActionState(widget); });
     QObject::connect(m_pasteAction, &QAction::triggered, widget,
                      [widget, this]() { pasteTracks(widgetSessionHost(widget)); });
-    m_pasteAction->setEnabled(!host.playlistController()->clipboardEmpty());
 
     editMenu->addSeparator();
 
@@ -366,7 +400,6 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     editMenu->addAction(clearCmd);
     QObject::connect(m_clearAction, &QAction::triggered, widget,
                      [widget, this]() { clearTracks(widgetSessionHost(widget)); });
-    m_clearAction->setEnabled(host.playlistModel()->rowCount({}) > 0);
 
     m_removeTrackAction->setStatusTip(PlaylistWidget::tr("Remove the selected tracks from the current playlist"));
     m_removeTrackAction->setEnabled(false);
@@ -402,20 +435,19 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
 
     editMenu->addSeparator();
 
-    auto* removeDuplicatesAction = new QAction(PlaylistWidget::tr("Remove duplicates"), widget);
-    removeDuplicatesAction->setStatusTip(PlaylistWidget::tr("Remove duplicate tracks from the playlist"));
-    editMenu->addAction(removeDuplicatesAction);
-    QObject::connect(removeDuplicatesAction, &QAction::triggered, widget,
+    m_removeDuplicatesAction->setStatusTip(PlaylistWidget::tr("Remove duplicate tracks from the playlist"));
+    editMenu->addAction(m_removeDuplicatesAction);
+    QObject::connect(m_removeDuplicatesAction, &QAction::triggered, widget,
                      [widget, this]() { removeDuplicates(widgetSessionHost(widget)); });
 
-    auto* removeDeadTracksAction = new QAction(PlaylistWidget::tr("Remove dead tracks"), widget);
-    removeDeadTracksAction->setStatusTip(PlaylistWidget::tr("Remove dead (non-existant) tracks from the playlist"));
-    editMenu->addAction(removeDeadTracksAction);
-    QObject::connect(removeDeadTracksAction, &QAction::triggered, widget,
+    m_removeDeadTracksAction->setStatusTip(PlaylistWidget::tr("Remove dead (non-existant) tracks from the playlist"));
+    editMenu->addAction(m_removeDeadTracksAction);
+    QObject::connect(m_removeDeadTracksAction, &QAction::triggered, widget,
                      [widget, this]() { removeDeadTracks(widgetSessionHost(widget)); });
 
     editMenu->addSeparator();
 
+    refreshActionState(widget);
     updateSelectionState(sessionHost, {}, {}, {});
 }
 
@@ -469,6 +501,90 @@ void EditablePlaylistSession::destroy(PlaylistWidgetSessionHost& sessionHost)
     host.playlistController()->clearHistory();
 }
 
+void EditablePlaylistSession::refreshActionState(PlaylistWidget* widget)
+{
+    auto& host                  = editableHost(widget);
+    auto* currentPlaylist       = host.playlistController()->currentPlaylist();
+    const bool canEditTracks    = canEditPlaylistTracks(currentPlaylist);
+    const bool canReorderTracks = canReorderPlaylist(currentPlaylist);
+    const bool hasSelection
+        = host.playlistView()->selectionModel() && host.playlistView()->selectionModel()->hasSelection();
+
+    m_undoAction->setEnabled(canReorderTracks && host.playlistController()->canUndo());
+    m_redoAction->setEnabled(canReorderTracks && host.playlistController()->canRedo());
+    m_cropAction->setEnabled(canEditTracks && hasSelection);
+    m_cutAction->setEnabled(canEditTracks && hasSelection);
+    m_copyAction->setEnabled(hasSelection);
+    m_pasteAction->setEnabled(canEditTracks && !host.playlistController()->clipboardEmpty());
+    m_clearAction->setEnabled(canEditTracks && host.playlistModel()->rowCount({}) > 0);
+    m_removeTrackAction->setEnabled(canEditTracks && hasSelection);
+    m_removeDuplicatesAction->setEnabled(canEditTracks);
+    m_removeDeadTracksAction->setEnabled(canEditTracks);
+}
+
+void EditablePlaylistSession::applyPlaylistChangeSet(PlaylistWidgetSessionHost& sessionHost,
+                                                     const PlaylistChangeset& changeSet)
+{
+    auto& host            = editableHost(sessionHost.sessionWidget());
+    auto* currentPlaylist = host.playlistController()->currentPlaylist();
+    if(!currentPlaylist) {
+        return;
+    }
+
+    if(changeSet.requiresReset || hasSearch()) {
+        handleTracksChanged(sessionHost, {}, false);
+        return;
+    }
+
+    QModelIndexList trackIndexesToRemove;
+    for(const int index : changeSet.removedIndexes) {
+        const QModelIndex trackIndex = host.playlistModel()->indexAtPlaylistIndex(index, false);
+        if(trackIndex.isValid()) {
+            trackIndexesToRemove.push_back(trackIndex);
+        }
+    }
+    if(!trackIndexesToRemove.empty()) {
+        host.playlistModel()->removeTracks(trackIndexesToRemove);
+    }
+
+    const auto applyMovesAndUpdates
+        = [model = host.playlistModel(), moves = changeSet.moves, updatedIndexes = changeSet.updatedIndexes,
+           currentPlaylist, this, widget                                         = sessionHost.sessionWidget()] {
+              for(const auto& move : moves) {
+                  if(!move.isValid()) {
+                      continue;
+                  }
+
+                  MoveOperation operation;
+                  operation.emplace_back(move.targetIndex, TrackIndexRangeList{{move.sourceIndex, move.sourceIndex}});
+                  model->moveTracks(operation);
+              }
+
+              if(!updatedIndexes.empty()) {
+                  model->updateTracks(updatedIndexes);
+              }
+
+              model->updateHeader(currentPlaylist);
+              refreshActionState(widget);
+          };
+
+    TrackGroups insertions;
+    for(const auto& insertion : changeSet.insertions) {
+        if(insertion.isValid()) {
+            insertions[insertion.index] = PlaylistTrack::fromTracks(insertion.tracks, currentPlaylist->id());
+        }
+    }
+
+    if(!insertions.empty()) {
+        QObject::connect(host.playlistModel(), &PlaylistModel::playlistTracksChanged, host.playlistModel(),
+                         applyMovesAndUpdates, Qt::SingleShotConnection);
+        host.playlistModel()->insertTracks(insertions);
+    }
+    else {
+        applyMovesAndUpdates();
+    }
+}
+
 void EditablePlaylistSession::handleAboutToBeReset(PlaylistWidgetSessionHost& sessionHost)
 {
     auto& host = editableHost(sessionHost.sessionWidget());
@@ -497,7 +613,7 @@ void EditablePlaylistSession::resetTree(PlaylistWidgetSessionHost& sessionHost)
 
     host.resetSort(false);
     restorePlaylistViewState(host, host.playlistController()->currentPlaylist());
-    m_clearAction->setEnabled(!host.playlistController()->currentIsAuto() && host.playlistModel()->rowCount({}) > 0);
+    refreshActionState(sessionHost.sessionWidget());
 
     if(m_pendingFocus) {
         m_pendingFocus = false;
@@ -580,32 +696,41 @@ void EditablePlaylistSession::handleTracksChanged(PlaylistWidgetSessionHost& ses
 
 void EditablePlaylistSession::applyReadOnlyState(PlaylistWidgetSessionHost& sessionHost, bool readOnly)
 {
-    auto& host = editableHost(sessionHost.sessionWidget());
-    host.playlistView()->setDragDropMode(!readOnly ? QAbstractItemView::DragDrop : QAbstractItemView::NoDragDrop);
-    host.playlistView()->viewport()->setAcceptDrops(!readOnly);
-    host.playlistView()->setDragEnabled(!readOnly);
-    host.playlistView()->setDefaultDropAction(!readOnly ? Qt::MoveAction : Qt::IgnoreAction);
+    auto& host            = editableHost(sessionHost.sessionWidget());
+    auto* currentPlaylist = host.playlistController()->currentPlaylist();
+    const bool canReorder = canReorderPlaylist(currentPlaylist) && !readOnly;
 
-    m_undoAction->setEnabled(!readOnly);
-    m_redoAction->setEnabled(!readOnly);
-    m_removeTrackAction->setEnabled(!readOnly);
-    m_removeFromQueueAction->setEnabled(!readOnly);
-    m_clearAction->setEnabled(!readOnly);
-    m_cutAction->setEnabled(!readOnly);
-    m_pasteAction->setEnabled(!readOnly);
+    if(canEditPlaylistTracks(currentPlaylist)) {
+        host.playlistView()->setDragDropMode(QAbstractItemView::DragDrop);
+    }
+    else if(canReorder) {
+        host.playlistView()->setDragDropMode(QAbstractItemView::InternalMove);
+    }
+    else {
+        host.playlistView()->setDragDropMode(QAbstractItemView::NoDragDrop);
+    }
+
+    host.playlistView()->viewport()->setAcceptDrops(canReorder);
+    host.playlistView()->setDragEnabled(canReorder);
+    host.playlistView()->setDefaultDropAction(canReorder ? Qt::MoveAction : Qt::IgnoreAction);
+
+    refreshActionState(sessionHost.sessionWidget());
 }
 
 void EditablePlaylistSession::updateContextMenuState(PlaylistWidgetSessionHost& sessionHost,
                                                      const QModelIndexList& selected,
                                                      PlaylistWidget::ContextMenuState& state)
 {
-    const auto& host          = editableHost(sessionHost.sessionWidget());
-    const bool isAutoPlaylist = host.playlistController()->currentIsAuto();
+    const auto& host   = editableHost(sessionHost.sessionWidget());
+    auto* playlist     = host.playlistController()->currentPlaylist();
+    const bool canEdit = canEditPlaylistTracks(playlist);
+    const bool canSort = canReorderPlaylist(playlist);
 
     state.showStopAfter = host.playlistController()->currentIsActive() && host.playlistView()->currentIndex().isValid()
                        && host.playlistView()->currentIndex().data(PlaylistItem::Type).toInt() == PlaylistItem::Track;
-    state.showEditablePlaylistActions = !isAutoPlaylist;
-    state.showClipboard               = !isAutoPlaylist;
+    state.showEditablePlaylistActions = canEdit;
+    state.showSortMenu                = canSort;
+    state.showClipboard               = canEdit;
     state.usePlaylistQueueCommands    = true;
     state.disableSortMenu             = selected.size() == 1;
 }
@@ -625,16 +750,9 @@ void EditablePlaylistSession::updateSelectionState(PlaylistWidgetSessionHost& se
     }
 
     const bool hasSelection = !trackIndexes.empty();
-    if(!host.playlistController()->currentIsAuto()) {
-        m_cutAction->setEnabled(true);
-        m_pasteAction->setEnabled(true);
-        m_removeTrackAction->setEnabled(true);
-    }
-
-    m_copyAction->setEnabled(true);
-    m_removeTrackAction->setEnabled(hasSelection);
     m_addToQueueAction->setEnabled(hasSelection);
     m_queueNextAction->setEnabled(hasSelection);
+    refreshActionState(sessionHost.sessionWidget());
 }
 
 void EditablePlaylistSession::queueSelectedTracks(PlaylistWidgetSessionHost& sessionHost, bool next, bool send)
@@ -691,7 +809,7 @@ void EditablePlaylistSession::dequeueSelectedTracks(PlaylistWidgetSessionHost& s
 void EditablePlaylistSession::removeDuplicates(PlaylistWidgetSessionHost& sessionHost)
 {
     auto& host = editableHost(sessionHost.sessionWidget());
-    if(auto* playlist = host.playlistController()->currentPlaylist()) {
+    if(auto* playlist = host.playlistController()->currentPlaylist(); canEditPlaylistTracks(playlist)) {
         tracksRemoved(sessionHost, host.playlistController()->playlistHandler()->duplicateTrackIndexes(playlist->id()));
     }
 }
@@ -699,7 +817,7 @@ void EditablePlaylistSession::removeDuplicates(PlaylistWidgetSessionHost& sessio
 void EditablePlaylistSession::removeDeadTracks(PlaylistWidgetSessionHost& sessionHost)
 {
     auto& host = editableHost(sessionHost.sessionWidget());
-    if(auto* playlist = host.playlistController()->currentPlaylist()) {
+    if(auto* playlist = host.playlistController()->currentPlaylist(); canEditPlaylistTracks(playlist)) {
         tracksRemoved(sessionHost, host.playlistController()->playlistHandler()->deadTrackIndexes(playlist->id()));
     }
 }
@@ -740,7 +858,7 @@ void EditablePlaylistSession::tracksInserted(PlaylistWidgetSessionHost& sessionH
     auto* command = new InsertTracks(host.playerController(), host.playlistModel(),
                                      host.playlistController()->currentPlaylistId(), tracks);
     host.playlistController()->addToHistory(command);
-    m_clearAction->setEnabled(host.playlistModel()->rowCount({}) > 0);
+    refreshActionState(sessionHost.sessionWidget());
     if(host.playlistController()->currentPlaylist()) {
         host.playlistModel()->updateHeader(host.playlistController()->currentPlaylist());
     }
@@ -779,7 +897,7 @@ void EditablePlaylistSession::tracksRemoved(PlaylistWidgetSessionHost& sessionHo
         host.playlistController()->addToHistory(delCmd);
     }
 
-    m_clearAction->setEnabled(host.playlistModel()->rowCount({}) > 0);
+    refreshActionState(sessionHost.sessionWidget());
     host.playlistModel()->updateHeader(host.playlistController()->currentPlaylist());
 }
 
@@ -928,16 +1046,26 @@ void EditablePlaylistSession::sortTracks(PlaylistWidgetSessionHost& sessionHost,
 {
     auto* widget = sessionHost.sessionWidget();
     auto& host   = editableHost(widget);
-    if(!host.playlistController()->currentPlaylist()) {
+    if(!canReorderPlaylist(host.playlistController()->currentPlaylist())) {
         return;
     }
 
     auto* currentPlaylist    = host.playlistController()->currentPlaylist();
     const auto currentTracks = currentPlaylist->playlistTracks();
+    const auto playlistId    = currentPlaylist->id();
+    const auto sortToken     = beginSortRequest();
 
-    auto handleSortedTracks = [hostPtr = &host, currentPlaylist](const PlaylistTrackList& sortedTracks) {
-        auto* sortCmd = new ResetTracks(hostPtr->playerController(), hostPtr->playlistModel(), currentPlaylist->id(),
-                                        currentPlaylist->playlistTracks(), sortedTracks);
+    auto handleSortedTracks = [hostPtr = &host, this, playlistId, currentTracks, trackCount = currentTracks.size(),
+                               sortToken](const PlaylistTrackList& sortedTracks) {
+        auto* activePlaylist = hostPtr->playlistController()->currentPlaylist();
+        if(sortToken != m_sortRequestToken || !activePlaylist || activePlaylist->id() != playlistId
+           || std::cmp_not_equal(activePlaylist->trackCount(), trackCount)) {
+            finishSortRequest(sortToken, false);
+            return;
+        }
+
+        auto* sortCmd = new ResetTracks(hostPtr->playerController(), hostPtr->playlistModel(), playlistId,
+                                        currentTracks, sortedTracks);
         hostPtr->playlistController()->addToHistory(sortCmd);
     };
 
@@ -973,7 +1101,7 @@ void EditablePlaylistSession::sortColumn(PlaylistWidgetSessionHost& sessionHost,
 {
     auto* widget = sessionHost.sessionWidget();
     auto& host   = editableHost(widget);
-    if(!host.playlistController()->currentPlaylist() || column < 0
+    if(!canReorderPlaylist(host.playlistController()->currentPlaylist()) || column < 0
        || std::cmp_greater_equal(column, host.layoutState().columns.size())) {
         return;
     }
@@ -983,17 +1111,28 @@ void EditablePlaylistSession::sortColumn(PlaylistWidgetSessionHost& sessionHost,
 
     auto* currentPlaylist    = host.playlistController()->currentPlaylist();
     const auto currentTracks = currentPlaylist->playlistTracks();
+    const auto playlistId    = currentPlaylist->id();
     const QString sortField  = host.layoutState().columns.at(column).field;
+    const auto sortToken     = beginSortRequest();
 
     Utils::asyncExec([libraryManager = host.libraryManager(), sortField, currentTracks, order]() {
         TrackSorter sorter{libraryManager};
         auto tracks = sorter.calcSortTracks(sortField, currentTracks, PlaylistTrack::extractor, order);
         return PlaylistTrack::updateIndexes(tracks);
-    }).then(widget, [hostPtr = &host, currentPlaylist, currentTracks](const PlaylistTrackList& sortedTracks) {
-        auto* sortCmd = new ResetTracks(hostPtr->playerController(), hostPtr->playlistModel(), currentPlaylist->id(),
-                                        currentTracks, sortedTracks);
-        hostPtr->playlistController()->addToHistory(sortCmd);
-    });
+    })
+        .then(widget, [hostPtr = &host, this, playlistId, currentTracks, trackCount = currentTracks.size(),
+                       sortToken](const PlaylistTrackList& sortedTracks) {
+            auto* activePlaylist = hostPtr->playlistController()->currentPlaylist();
+            if(sortToken != m_sortRequestToken || !activePlaylist || activePlaylist->id() != playlistId
+               || std::cmp_not_equal(activePlaylist->trackCount(), trackCount)) {
+                finishSortRequest(sortToken, true);
+                return;
+            }
+
+            auto* sortCmd = new ResetTracks(hostPtr->playerController(), hostPtr->playlistModel(), playlistId,
+                                            currentTracks, sortedTracks);
+            hostPtr->playlistController()->addToHistory(sortCmd);
+        });
 }
 
 QAction* EditablePlaylistSession::cropAction() const

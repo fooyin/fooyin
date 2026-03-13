@@ -21,6 +21,8 @@
 
 #include "playlistwidgetsession.h"
 
+#include <core/playlist/playlistchangeset.h>
+
 class QWidget;
 
 namespace Fooyin {
@@ -89,6 +91,11 @@ public:
     [[nodiscard]] QAction* removeFromQueueAction() const override;
 
 private:
+    [[nodiscard]] uint64_t beginSortRequest();
+    void finishSortRequest(uint64_t token, bool sortingColumn);
+
+    void applyPlaylistChangeSet(PlaylistWidgetSessionHost& host, const PlaylistChangeset& changeSet);
+    void refreshActionState(PlaylistWidget* widget);
     void handleTrackIndexesChanged(PlaylistWidget* widget, int playingIndex);
     void stopAfterTrack(PlaylistWidget* widget) const;
     void handlePlayingTrackChanged(PlaylistWidget* widget, const PlaylistTrack& track) const;
@@ -100,6 +107,7 @@ private:
     bool m_pendingFocus;
     int m_dropIndex;
     int m_currentIndex;
+    uint64_t m_sortRequestToken;
 
     QAction* m_undoAction;
     QAction* m_redoAction;
@@ -110,6 +118,8 @@ private:
     QAction* m_pasteAction;
     QAction* m_clearAction;
     QAction* m_removeTrackAction;
+    QAction* m_removeDuplicatesAction;
+    QAction* m_removeDeadTracksAction;
     QAction* m_addToQueueAction;
     QAction* m_queueNextAction;
     QAction* m_removeFromQueueAction;

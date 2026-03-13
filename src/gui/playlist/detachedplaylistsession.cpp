@@ -65,6 +65,16 @@ bool DetachedSearchSession::canResetWithoutPlaylist() const
     return true;
 }
 
+void DetachedSearchSession::handleTracksChanged(PlaylistWidgetSessionHost& host, const std::vector<int>& /*indexes*/,
+                                                bool /*allNew*/)
+{
+    if(search().isEmpty() && filteredTracks().empty()) {
+        return;
+    }
+
+    searchEvent(host, search());
+}
+
 void DetachedSearchSession::handleSearchChanged(PlaylistWidgetSessionHost& host, const QString& /*search*/)
 {
     host.resetSort(true);

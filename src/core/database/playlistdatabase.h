@@ -31,6 +31,8 @@ struct PlaylistInfo
     int index{-1};
     bool isAutoPlaylist{false};
     QString query;
+    QString sortQuery;
+    bool forceSorted{true};
 };
 
 class PlaylistDatabase : public DbModule
@@ -39,7 +41,8 @@ public:
     std::vector<PlaylistInfo> getAllPlaylists();
     TrackList getPlaylistTracks(const Playlist& playlist, const std::unordered_map<int, Track>& tracks);
 
-    int insertPlaylist(const QString& name, int index, bool isAutoPlaylist, const QString& autoQuery);
+    int insertPlaylist(const QString& name, int index, bool isAutoPlaylist, const QString& autoQuery,
+                       const QString& autoSortQuery = {}, bool forceSorted = true);
 
     bool savePlaylist(Playlist& playlist);
     bool saveModifiedPlaylists(const PlaylistList& playlists);

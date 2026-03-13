@@ -474,8 +474,12 @@ void PlaylistWidget::populateTrackContextMenu(QMenu* menu, const QModelIndexList
             if(auto* cropAction = m_session->cropAction()) {
                 menu->addAction(cropAction);
             }
+        }
 
-            addSortMenu(menu, state.disableSortMenu);
+        if(state.showEditablePlaylistActions || state.showSortMenu) {
+            if(state.showSortMenu) {
+                addSortMenu(menu, state.disableSortMenu);
+            }
             menu->addSeparator();
         }
     }
@@ -532,23 +536,19 @@ void PlaylistWidget::setupConnections()
     // clang-format off
     QObject::connect(m_header, &QHeaderView::sectionCountChanged, m_playlistView, &PlaylistView::setupRatingDelegate);
     QObject::connect(m_header, &QHeaderView::sectionResized, this, [this](int column, int /*oldSize*/, int newSize) { m_model->setPixmapColumnSize(column, newSize); });
-    QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, this,
-                     [this](int column, Qt::SortOrder order) { m_session->sortColumn(sessionHost(), column, order); });
-    QObject::connect(m_header, &QHeaderView::customContextMenuRequested, this,
-                     [this](const QPoint& pos) { showHeaderMenu(pos); });
-    QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     [this]() { m_session->selectionChanged(sessionHost()); });
-    QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library, [this](const TrackList& tracks) { m_library->updateTrackStats(tracks); });
+    QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, this, [this](int column, Qt::SortOrder order) { m_session->sortColumn(sessionHost(), column, order); });
+    QObject::connect(m_header, &QHeaderView::customContextMenuRequested, this, &PlaylistWidget::showHeaderMenu);
+    QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() { m_session->selectionChanged(sessionHost()); });
+    QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library, qOverload<const TrackList&>(&MusicLibrary::updateTrackStats));
     QObject::connect(m_playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidget::doubleClicked);
-    QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, this,
-                     [this]() { m_session->handleAboutToBeReset(sessionHost()); });
+    QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, this, [this]() { m_session->handleAboutToBeReset(sessionHost()); });
     QObject::connect(m_model, &PlaylistModel::playlistLoaded, m_playlistView->viewport(), qOverload<>(&QWidget::update));
-    QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksPlayed, m_model,[this](const std::vector<int>& indexes){m_model->refreshTracks(indexes);});
+    QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksUpdated, m_model,
+                     [this](const std::vector<int>& indexes) { m_model->refreshTracks(indexes); });
+    QObject::connect(m_playlistController, &PlaylistController::currentPlaylistUpdated, this, &PlaylistWidget::resetModelThrottled);
 
-    QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this,
-                     [this](int id) { handleColumnRemoved(id); });
-    QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this,
-                     [this](const PlaylistColumn& column) { handleColumnChanged(column); });
+    QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this, &PlaylistWidget::handleColumnRemoved);
+    QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this, &PlaylistWidget::handleColumnChanged);
 
     QObject::connect(m_resetThrottler, &SignalThrottler::triggered, this, &PlaylistWidget::resetModel);
     // clang-format on
@@ -593,10 +593,11 @@ void PlaylistWidget::resetModel()
 
     Playlist* currentPlaylist = m_playlistController->currentPlaylist();
 
-    const bool isAutoPlaylist = m_playlistController->currentIsAuto();
-    const bool readOnly       = (m_session->hasSearch() || isAutoPlaylist);
+    const bool forceSortedAutoPlaylist
+        = currentPlaylist && currentPlaylist->isAutoPlaylist() && currentPlaylist->forceSorted();
+    const bool readOnly = m_session->hasSearch() || forceSortedAutoPlaylist;
 
-    setReadOnly(readOnly, !isAutoPlaylist);
+    setReadOnly(readOnly, currentPlaylist && (!currentPlaylist->isAutoPlaylist() || !currentPlaylist->forceSorted()));
 
     if(m_session->canResetWithoutPlaylist() || currentPlaylist) {
         m_model->reset(layoutState().currentPreset,

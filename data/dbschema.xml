@@ -345,4 +345,13 @@
             ALTER TABLE Playlists ADD COLUMN Query TEXT;
         </sql>
     </revision>
+    <revision version="15">
+        <description>
+            Add autoplaylist sort and force-sorted fields.
+        </description>
+        <sql>
+            ALTER TABLE Playlists ADD COLUMN SortQuery TEXT;
+            ALTER TABLE Playlists ADD COLUMN ForceSorted INTEGER DEFAULT 1;
+        </sql>
+    </revision>
 </schema>
