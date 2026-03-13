@@ -27,8 +27,8 @@ using namespace Qt::StringLiterals;
 namespace Fooyin {
 std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
 {
-    const QString query
-        = u"SELECT PlaylistID, Name, PlaylistIndex, IsAutoPlaylist, Query FROM Playlists ORDER BY PlaylistIndex;"_s;
+    const QString query = u"SELECT PlaylistID, Name, PlaylistIndex, IsAutoPlaylist, Query, SortQuery, ForceSorted "
+                          "FROM Playlists ORDER BY PlaylistIndex;"_s;
 
     DbQuery q{db(), query};
 
@@ -46,6 +46,8 @@ std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
         playlist.index          = q.value(2).toInt();
         playlist.isAutoPlaylist = q.value(3).toBool();
         playlist.query          = q.value(4).toString();
+        playlist.sortQuery      = q.value(5).toString();
+        playlist.forceSorted    = q.value(6).toBool();
 
         playlists.emplace_back(playlist);
     }
@@ -58,20 +60,24 @@ TrackList PlaylistDatabase::getPlaylistTracks(const Playlist& playlist, const st
     return populatePlaylistTracks(playlist, tracks);
 }
 
-int PlaylistDatabase::insertPlaylist(const QString& name, int index, bool isAutoPlaylist, const QString& autoQuery)
+int PlaylistDatabase::insertPlaylist(const QString& name, int index, bool isAutoPlaylist, const QString& autoQuery,
+                                     const QString& autoSortQuery, bool forceSorted)
 {
     if(name.isEmpty() || index < 0) {
         return -1;
     }
 
-    const QString statement = u"INSERT INTO Playlists (Name, PlaylistIndex, IsAutoPlaylist, Query) "
-                              "VALUES (:name, :index, :isAutoPlaylist, :query);"_s;
+    const QString statement = u"INSERT INTO Playlists (Name, PlaylistIndex, IsAutoPlaylist, Query, SortQuery, "
+                              "ForceSorted) VALUES (:name, :index, :isAutoPlaylist, :query, :sortQuery, "
+                              ":forceSorted);"_s;
 
     DbQuery query{db(), statement};
     query.bindValue(u":name"_s, name);
     query.bindValue(u":index"_s, index);
     query.bindValue(u":isAutoPlaylist"_s, isAutoPlaylist);
     query.bindValue(u":query"_s, autoQuery);
+    query.bindValue(u":sortQuery"_s, autoSortQuery);
+    query.bindValue(u":forceSorted"_s, forceSorted);
 
     if(!query.exec()) {
         return -1;
@@ -86,7 +92,8 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
 
     if(playlist.modified()) {
         const auto statement = u"UPDATE Playlists SET Name = :name, PlaylistIndex = :index, IsAutoPlaylist = "
-                               ":isAutoPlaylist, Query = :query WHERE PlaylistID = :id;"_s;
+                               ":isAutoPlaylist, Query = :query, SortQuery = :sortQuery, "
+                               "ForceSorted = :forceSorted WHERE PlaylistID = :id;"_s;
 
         DbQuery query{db(), statement};
 
@@ -94,12 +101,14 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
         query.bindValue(u":index"_s, playlist.index());
         query.bindValue(u":isAutoPlaylist"_s, playlist.isAutoPlaylist());
         query.bindValue(u":query"_s, playlist.query());
+        query.bindValue(u":sortQuery"_s, playlist.sortQuery());
+        query.bindValue(u":forceSorted"_s, playlist.forceSorted());
         query.bindValue(u":id"_s, playlist.dbId());
 
         updated = query.exec();
     }
 
-    if(!playlist.isAutoPlaylist() && playlist.tracksModified()) {
+    if(playlist.tracksModified()) {
         updated = insertPlaylistTracks(playlist.dbId(), playlist.tracks());
     }
 

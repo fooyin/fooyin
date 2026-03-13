@@ -393,12 +393,14 @@ void PlaylistOrganiser::createPlaylist(const QModelIndex& index, bool autoPlayli
         auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
         autoDialog->setAttribute(Qt::WA_DeleteOnClose);
         QObject::connect(autoDialog, &QDialog::finished, this, [this]() { m_creatingPlaylist = false; });
-        QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, this,
-                         [this, addToModel](const QString& name, const QString& query) {
-                             if(auto* playlist = m_playlistInteractor->handler()->createNewAutoPlaylist(name, query)) {
-                                 addToModel(playlist);
-                             }
-                         });
+        QObject::connect(
+            autoDialog, &AutoPlaylistDialog::playlistEdited, this,
+            [this, addToModel](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
+                if(auto* playlist
+                   = m_playlistInteractor->handler()->createNewAutoPlaylist(name, query, sortQuery, forceSorted)) {
+                    addToModel(playlist);
+                }
+            });
         autoDialog->show();
         return;
     }

@@ -46,6 +46,18 @@ constexpr auto ActiveId    = "Playlist/ActiveId";
 constexpr auto ActiveIndex = "Playlist/ActiveTrackIndex";
 
 namespace Fooyin {
+namespace {
+TrackKeySet playlistTrackKeySet(const TrackList& tracks)
+{
+    TrackKeySet result;
+    result.reserve(tracks.size());
+    for(const auto& track : tracks) {
+        result.emplace(track.uniqueFilepath());
+    }
+    return result;
+}
+} // namespace
+
 class PlaylistHandlerPrivate
 {
 public:
@@ -54,7 +66,7 @@ public:
 
     void reloadPlaylists();
     void populatePlaylists();
-    void regenerateAutoPlaylists();
+    void regenerateAutoPlaylists(const TrackList& updatedTracks = {});
     bool noConcretePlaylists();
 
     void handleTracksChanged(const TrackList& tracks);
@@ -78,7 +90,7 @@ public:
 
     void restoreActivePlaylist();
     Playlist* addNewPlaylist(const QString& name, bool isTemporary = false);
-    Playlist* addNewAutoPlaylist(const QString& name, const QString& query);
+    Playlist* addNewAutoPlaylist(const QString& name, const QString& query, const QString& sortQuery, bool forceSorted);
 
     PlaylistHandler* m_self;
 
@@ -113,7 +125,8 @@ void PlaylistHandlerPrivate::reloadPlaylists()
 
     for(const auto& info : infos) {
         if(info.isAutoPlaylist) {
-            m_playlists.emplace_back(Playlist::createAuto(info.dbId, info.name, info.index, info.query, m_settings));
+            m_playlists.emplace_back(Playlist::createAuto(info.dbId, info.name, info.index, info.query, info.sortQuery,
+                                                          info.forceSorted, m_settings));
         }
         else {
             m_playlists.emplace_back(Playlist::create(info.dbId, info.name, info.index, m_settings));
@@ -132,6 +145,11 @@ void PlaylistHandlerPrivate::populatePlaylists()
 
     for(const auto& playlist : m_playlists) {
         if(playlist->isAutoPlaylist()) {
+            if(!playlist->forceSorted()) {
+                const TrackList playlistTracks = m_playlistConnector.getPlaylistTracks(*playlist, idTracks);
+                playlist->replaceTracks(playlistTracks);
+                playlist->setTracksModified(false);
+            }
             playlist->regenerateTracks(tracks);
         }
         else {
@@ -145,11 +163,30 @@ void PlaylistHandlerPrivate::populatePlaylists()
     emit m_self->playlistsPopulated();
 }
 
-void PlaylistHandlerPrivate::regenerateAutoPlaylists()
+void PlaylistHandlerPrivate::regenerateAutoPlaylists(const TrackList& updatedTracks)
 {
-    const TrackList tracks = m_library->tracks();
+    const TrackList tracks            = m_library->tracks();
+    const TrackKeySet updatedTrackIds = playlistTrackKeySet(updatedTracks);
+
     for(auto& playlist : m_playlists) {
-        if(playlist->regenerateTracks(tracks)) {
+        if(!playlist->isAutoPlaylist()) {
+            continue;
+        }
+
+        const TrackList oldTracks = playlist->tracks();
+        const TrackList newTracks = playlist->autoPlaylistTracks(tracks);
+
+        const auto changeSet = buildPlaylistChangeset(oldTracks, newTracks, updatedTrackIds);
+        if(changeSet && changeSet->isEmpty()) {
+            continue;
+        }
+
+        playlist->replaceTracks(newTracks);
+
+        if(changeSet) {
+            emit m_self->tracksPatched(playlist.get(), changeSet.value());
+        }
+        else {
             emit m_self->tracksChanged(playlist.get(), {});
         }
     }
@@ -181,6 +218,10 @@ void PlaylistHandlerPrivate::handleTracksChanged(const TrackList& tracks)
 void PlaylistHandlerPrivate::handleTracksUpdated(const TrackList& tracks)
 {
     for(auto& playlist : m_playlists) {
+        if(playlist->isAutoPlaylist()) {
+            continue;
+        }
+
         TrackList playlistTracks  = playlist->tracks();
         const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Update);
 
@@ -215,7 +256,7 @@ void PlaylistHandlerPrivate::prepareUpcomingTrack()
 void PlaylistHandlerPrivate::resetShuffleOrder()
 {
     for(auto& playlist : m_playlists) {
-        playlist->reset();
+        (*playlist).reset();
     }
 }
 
@@ -313,7 +354,7 @@ bool PlaylistHandlerPrivate::validName(const QString& name) const
 
 bool PlaylistHandlerPrivate::validIndex(int index) const
 {
-    return (index >= 0 && index < static_cast<int>(m_playlists.size()));
+    return (index >= 0 && std::cmp_less(index, m_playlists.size()));
 }
 
 void PlaylistHandlerPrivate::restoreActivePlaylist()
@@ -372,7 +413,8 @@ Playlist* PlaylistHandlerPrivate::addNewPlaylist(const QString& name, bool isTem
     return nullptr;
 }
 
-Playlist* PlaylistHandlerPrivate::addNewAutoPlaylist(const QString& name, const QString& query)
+Playlist* PlaylistHandlerPrivate::addNewAutoPlaylist(const QString& name, const QString& query,
+                                                     const QString& sortQuery, bool forceSorted)
 {
     auto existingIndex = indexFromName(name);
 
@@ -383,11 +425,13 @@ Playlist* PlaylistHandlerPrivate::addNewAutoPlaylist(const QString& name, const 
     const QString playlistName = !name.isEmpty() ? name : findUniqueName(u"Auto Playlist"_s);
 
     const int index = nextValidIndex();
-    const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index, true, query);
+    const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index, true, query, sortQuery, forceSorted);
 
     if(dbId >= 0) {
-        auto* playlist
-            = m_playlists.emplace_back(Playlist::createAuto(dbId, playlistName, index, query, m_settings)).get();
+        auto* playlist = m_playlists
+                             .emplace_back(Playlist::createAuto(dbId, playlistName, index, query, sortQuery,
+                                                                forceSorted, m_settings))
+                             .get();
         return playlist;
     }
 
@@ -410,11 +454,11 @@ PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<Aud
     QObject::connect(p->m_library, &MusicLibrary::tracksDeleted, this, [this]() { p->regenerateAutoPlaylists(); });
     QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this, [this](const TrackList& tracks) {
         p->handleTracksChanged(tracks);
-        p->regenerateAutoPlaylists();
+        p->regenerateAutoPlaylists(tracks);
     });
     QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, this, [this](const TrackList& tracks) {
         p->handleTracksUpdated(tracks);
-        p->regenerateAutoPlaylists();
+        p->regenerateAutoPlaylists(tracks);
     });
 
     p->m_settings->subscribe<Settings::Core::ShuffleAlbumsGroupScript>(this, [this]() { p->resetShuffleOrder(); });
@@ -606,16 +650,25 @@ Playlist* PlaylistHandler::createNewTempPlaylist(const QString& name, const Trac
     return playlist;
 }
 
-Playlist* PlaylistHandler::createAutoPlaylist(const QString& name, const QString& query)
+Playlist* PlaylistHandler::createAutoPlaylist(const QString& name, const QString& query, const QString& sortQuery,
+                                              bool forceSorted)
 {
     const bool isNew = p->indexFromName(name) < 0;
-    auto* playlist   = p->addNewAutoPlaylist(name, query);
+    auto* playlist   = p->addNewAutoPlaylist(name, query, sortQuery, forceSorted);
 
     if(playlist) {
-        if(isNew || playlist->query() != query) {
+        const bool queryChanged       = playlist->query() != query;
+        const bool sortQueryChanged   = playlist->sortQuery() != sortQuery;
+        const bool forceSortedChanged = playlist->forceSorted() != forceSorted;
+        if(isNew || queryChanged || sortQueryChanged || forceSortedChanged) {
             playlist->setQuery(query);
+            playlist->setSortQuery(sortQuery);
+            playlist->setForceSorted(forceSorted);
             if(playlist->regenerateTracks(p->m_library->tracks())) {
                 emit tracksChanged(playlist, {});
+            }
+            else if(!isNew) {
+                emit playlistUpdated(playlist);
             }
         }
         if(isNew) {
@@ -626,10 +679,11 @@ Playlist* PlaylistHandler::createAutoPlaylist(const QString& name, const QString
     return playlist;
 }
 
-Playlist* PlaylistHandler::createNewAutoPlaylist(const QString& name, const QString& query)
+Playlist* PlaylistHandler::createNewAutoPlaylist(const QString& name, const QString& query, const QString& sortQuery,
+                                                 bool forceSorted)
 {
     const QString newName = p->findUniqueName(name);
-    auto* playlist        = p->addNewAutoPlaylist(newName, query);
+    auto* playlist        = p->addNewAutoPlaylist(newName, query, sortQuery, forceSorted);
 
     if(playlist) {
         playlist->regenerateTracks(p->m_library->tracks());

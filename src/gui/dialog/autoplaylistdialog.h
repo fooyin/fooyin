@@ -34,13 +34,17 @@ struct AutoPlaylistQuery
 {
     QString name;
     QString query;
+    QString sortQuery;
+    bool forceSorted{false};
 
     friend QDataStream& operator<<(QDataStream& stream, const AutoPlaylistQuery& preset)
     {
-        static constexpr int version{1};
+        static constexpr int version{2};
         stream << version;
         stream << preset.name;
         stream << preset.query;
+        stream << preset.sortQuery;
+        stream << preset.forceSorted;
 
         return stream;
     }
@@ -49,8 +53,14 @@ struct AutoPlaylistQuery
     {
         int version{0};
         stream >> version;
+
         stream >> preset.name;
         stream >> preset.query;
+
+        if(version >= 2) {
+            stream >> preset.sortQuery;
+            stream >> preset.forceSorted;
+        }
 
         return stream;
     }
@@ -68,7 +78,7 @@ public:
     void accept() override;
 
 signals:
-    void playlistEdited(const QString& name, const QString& query);
+    void playlistEdited(const QString& name, const QString& query, const QString& sortQuery, bool forceSorted);
 
 private:
     void updateButtonState() const;
@@ -92,6 +102,8 @@ private:
 
     QComboBox* m_queryBox;
     ScriptTextEdit* m_queryEdit;
+    QLineEdit* m_sortQueryEdit;
+    QCheckBox* m_forceSorted;
     QPushButton* m_loadButton;
     QPushButton* m_saveButton;
     QPushButton* m_deleteButton;

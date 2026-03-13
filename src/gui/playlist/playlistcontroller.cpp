@@ -51,6 +51,10 @@ PlaylistController::PlaylistController(Application* app, TrackSelectionControlle
 
     QObject::connect(m_handler, &PlaylistHandler::playlistsPopulated, this, &PlaylistController::restoreLastPlaylist);
     QObject::connect(m_handler, &PlaylistHandler::playlistAdded, this, &PlaylistController::handlePlaylistAdded);
+    QObject::connect(m_handler, &PlaylistHandler::playlistUpdated, this,
+                     &PlaylistController::handlePlaylistMetadataUpdated);
+    QObject::connect(m_handler, &PlaylistHandler::tracksPatched, this,
+                     &PlaylistController::handlePlaylistTracksPatched);
     QObject::connect(m_handler, &PlaylistHandler::tracksChanged, this, &PlaylistController::handlePlaylistUpdated);
     QObject::connect(m_handler, &PlaylistHandler::tracksUpdated, this, &PlaylistController::handleTracksUpdated);
     QObject::connect(m_handler, &PlaylistHandler::tracksAdded, this, &PlaylistController::handlePlaylistTracksAdded);
@@ -305,11 +309,40 @@ void PlaylistController::handlePlaylistAdded(Playlist* playlist)
     }
 }
 
+void PlaylistController::handlePlaylistMetadataUpdated(Playlist* playlist)
+{
+    if(m_workspace->isCurrentPlaylist(playlist)) {
+        emit currentPlaylistUpdated(playlist);
+    }
+}
+
 void PlaylistController::handlePlaylistTracksAdded(Playlist* playlist, const TrackList& tracks, int index)
 {
     if(m_workspace->isCurrentPlaylist(playlist)) {
         emit currentPlaylistTracksAdded(tracks, index);
     }
+}
+
+void PlaylistController::handlePlaylistTracksPatched(Playlist* playlist, const PlaylistChangeset& changeSet)
+{
+    if(m_changingTracks || !m_workspace->isCurrentPlaylist(playlist)) {
+        return;
+    }
+
+    const bool affectsQueueIndexes
+        = !changeSet.removedIndexes.empty() || !changeSet.insertions.empty() || !changeSet.moves.empty();
+    if(affectsQueueIndexes) {
+        auto queueTracks = m_playerController->playbackQueue().tracks();
+        for(auto& track : queueTracks) {
+            if(track.playlistId == playlist->id()) {
+                track.playlistId      = {};
+                track.indexInPlaylist = -1;
+            }
+        }
+        m_playerController->replaceTracks(queueTracks);
+    }
+
+    emit currentPlaylistTracksPatched(changeSet);
 }
 
 void PlaylistController::handleTracksQueued(const QueueTracks& tracks)
@@ -450,7 +483,7 @@ void PlaylistController::handleTracksUpdated(Playlist* playlist, const std::vect
     }
 
     if(m_workspace->isCurrentPlaylist(playlist)) {
-        emit currentPlaylistTracksPlayed(indexes);
+        emit currentPlaylistTracksUpdated(indexes);
     }
 }
 

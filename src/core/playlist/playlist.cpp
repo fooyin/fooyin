@@ -29,6 +29,8 @@
 #include <random>
 #include <ranges>
 #include <set>
+#include <unordered_map>
+#include <unordered_set>
 
 using namespace Qt::StringLiterals;
 
@@ -85,17 +87,6 @@ const Track& PlaylistTrack::extractor(const PlaylistTrack& item)
     return item.track;
 }
 
-bool PlaylistTrack::operator==(const PlaylistTrack& other) const
-{
-    return std::tie(track, playlistId, indexInPlaylist)
-        == std::tie(other.track, other.playlistId, other.indexInPlaylist);
-}
-
-bool PlaylistTrack::operator!=(const PlaylistTrack& other) const
-{
-    return !(*this == other);
-}
-
 bool PlaylistTrack::operator<(const PlaylistTrack& other) const
 {
     return std::tie(track, playlistId, indexInPlaylist)
@@ -112,6 +103,9 @@ class PlaylistPrivate
 {
 public:
     PlaylistPrivate(int dbId, QString name, int index, SettingsManager* settings);
+
+    [[nodiscard]] TrackList filteredAutoTracks(const TrackList& tracks);
+    [[nodiscard]] TrackList updatedAutoTracks(const TrackList& tracks);
 
     void createShuffleOrder();
     void createAlbumShuffleOrder();
@@ -154,6 +148,8 @@ public:
 
     bool m_isAutoPlaylist{false};
     QString m_query;
+    QString m_sortQuery;
+    bool m_forceSorted{false};
 };
 
 PlaylistPrivate::PlaylistPrivate(int dbId, QString name, int index, SettingsManager* settings)
@@ -163,6 +159,56 @@ PlaylistPrivate::PlaylistPrivate(int dbId, QString name, int index, SettingsMana
     , m_index{index}
     , m_settings{settings}
 { }
+
+TrackList PlaylistPrivate::filteredAutoTracks(const TrackList& tracks)
+{
+    QString query{m_query};
+    if(!m_sortQuery.isEmpty()) {
+        if(!query.isEmpty()) {
+            query.append(u' ');
+        }
+        query.append(m_sortQuery);
+    }
+
+    m_parser.clearCache();
+    return m_parser.filter(query, tracks);
+}
+
+TrackList PlaylistPrivate::updatedAutoTracks(const TrackList& tracks)
+{
+    TrackList filteredTracks = filteredAutoTracks(tracks);
+
+    if(m_forceSorted) {
+        return filteredTracks;
+    }
+
+    std::unordered_map<QString, int> filteredIndexes;
+    filteredIndexes.reserve(filteredTracks.size());
+
+    for(int i{0}; i < static_cast<int>(filteredTracks.size()); ++i) {
+        filteredIndexes.emplace(filteredTracks[i].uniqueFilepath(), i);
+    }
+
+    std::vector<char> used(filteredTracks.size(), false);
+
+    TrackList updatedTracks;
+    updatedTracks.reserve(filteredTracks.size());
+
+    for(const auto& track : m_tracks) {
+        if(const auto it = filteredIndexes.find(track.uniqueFilepath()); it != filteredIndexes.end()) {
+            updatedTracks.emplace_back(filteredTracks[it->second]);
+            used[it->second] = true;
+        }
+    }
+
+    for(size_t i{0}; i < filteredTracks.size(); ++i) {
+        if(!used[i]) {
+            updatedTracks.emplace_back(filteredTracks[i]);
+        }
+    }
+
+    return updatedTracks;
+}
 
 void PlaylistPrivate::createShuffleOrder()
 {
@@ -579,15 +625,32 @@ QString Playlist::query() const
     return p->m_query;
 }
 
+QString Playlist::sortQuery() const
+{
+    return p->m_sortQuery;
+}
+
+bool Playlist::forceSorted() const
+{
+    return p->m_forceSorted;
+}
+
+TrackList Playlist::autoPlaylistTracks(const TrackList& tracks) const
+{
+    if(!isAutoPlaylist()) {
+        return p->m_tracks;
+    }
+
+    return p->updatedAutoTracks(tracks);
+}
+
 bool Playlist::regenerateTracks(const TrackList& tracks)
 {
     if(!isAutoPlaylist()) {
         return false;
     }
 
-    // In case current date in previous query is cached
-    p->m_parser.clearCache();
-    const TrackList filteredTracks = p->m_parser.filter(p->m_query, tracks);
+    const TrackList filteredTracks = autoPlaylistTracks(tracks);
 
     if(filteredTracks != p->m_tracks) {
         replaceTracks(filteredTracks);
@@ -667,11 +730,13 @@ std::unique_ptr<Playlist> Playlist::create(int dbId, const QString& name, int in
 }
 
 std::unique_ptr<Playlist> Playlist::createAuto(int dbId, const QString& name, int index, const QString& query,
-                                               SettingsManager* settings)
+                                               const QString& sortQuery, bool forceSorted, SettingsManager* settings)
 {
     auto playlist                 = std::make_unique<Playlist>(PrivateKey{}, dbId, name, index, settings);
     playlist->p->m_isAutoPlaylist = true;
     playlist->setQuery(query);
+    playlist->setSortQuery(sortQuery);
+    playlist->setForceSorted(forceSorted);
     return playlist;
 }
 
@@ -692,6 +757,20 @@ void Playlist::setIndex(int index)
 void Playlist::setQuery(const QString& query)
 {
     if(std::exchange(p->m_query, query) != query) {
+        p->m_modified = true;
+    }
+}
+
+void Playlist::setSortQuery(const QString& query)
+{
+    if(std::exchange(p->m_sortQuery, query) != query) {
+        p->m_modified = true;
+    }
+}
+
+void Playlist::setForceSorted(bool forceSorted)
+{
+    if(std::exchange(p->m_forceSorted, forceSorted) != forceSorted) {
         p->m_modified = true;
     }
 }

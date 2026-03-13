@@ -607,7 +607,9 @@ void PlaylistPopulator::run(Playlist* playlist, const PlaylistPreset& preset, co
     const int preloadCount = p->m_preloadCount > 0 ? p->m_preloadCount : static_cast<int>(tracks.size());
     p->runBatch(preloadCount, 0);
 
-    emit finished();
+    if(mayRun()) {
+        emit finished();
+    }
 
     setState(Idle);
 }

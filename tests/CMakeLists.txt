@@ -38,6 +38,7 @@ fooyin_add_test(test_playlistnavigator core/playback/playlistnavigatortest.cpp)
 
 fooyin_add_test(test_cueparser core/playlist/cueparsertest.cpp data/playlists.qrc)
 fooyin_add_test(test_m3uparser core/playlist/m3uparsertest.cpp data/playlists.qrc)
+fooyin_add_test(test_playlistchangeset core/playlist/playlistchangesettest.cpp)
 
 fooyin_add_test(test_scriptformatter core/scripting/scriptformattertest.cpp)
 fooyin_add_test(test_scriptparser core/scripting/scriptparsertest.cpp)

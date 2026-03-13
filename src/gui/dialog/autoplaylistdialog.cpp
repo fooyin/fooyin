@@ -49,6 +49,8 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
     , m_queryChanged{false}
     , m_queryBox{new QComboBox(this)}
     , m_queryEdit{new ScriptTextEdit(this)}
+    , m_sortQueryEdit{new QLineEdit(this)}
+    , m_forceSorted{new QCheckBox(tr("Force-sorted"), this)}
     , m_loadButton{new QPushButton(tr("&Load"), this)}
     , m_saveButton{new QPushButton(tr("&Save"), this)}
     , m_deleteButton{new QPushButton(tr("&Delete"), this)}
@@ -79,6 +81,12 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
     QObject::connect(m_resetButton, &QAbstractButton::clicked, this, &AutoPlaylistDialog::resetQueries);
     QObject::connect(m_queryBox, &QComboBox::editTextChanged, this, &AutoPlaylistDialog::updateButtonState);
     QObject::connect(m_queryEdit, &QPlainTextEdit::textChanged, this, &AutoPlaylistDialog::updateButtonState);
+    QObject::connect(m_sortQueryEdit, &QLineEdit::textChanged, this, &AutoPlaylistDialog::updateButtonState);
+    QObject::connect(m_forceSorted, &QCheckBox::toggled, this, &AutoPlaylistDialog::updateButtonState);
+    m_forceSorted->setToolTip(
+        tr("When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates. \n"
+           "When disabled, existing track order is preserved and only newly added matching tracks are sorted and then "
+           "appended."));
 
     auto* layout = new QGridLayout(this);
 
@@ -88,6 +96,9 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
     layout->addWidget(m_queryBox, row++, 1);
     layout->addWidget(new QLabel(tr("Query") + ":"_L1, this), row, 0, Qt::AlignTop);
     layout->addWidget(m_queryEdit, row++, 1);
+    layout->addWidget(new QLabel(tr("Sort") + ":"_L1, this), row, 0);
+    layout->addWidget(m_sortQueryEdit, row++, 1);
+    layout->addWidget(m_forceSorted, row++, 1, Qt::AlignLeft);
     layout->addWidget(buttonBox, row++, 0, 1, 3);
     layout->setColumnStretch(1, 1);
 
@@ -97,6 +108,8 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
     if(m_playlist && m_playlist->isAutoPlaylist()) {
         m_queryBox->setEditText(m_playlist->name());
         m_queryEdit->setText(m_playlist->query());
+        m_sortQueryEdit->setText(m_playlist->sortQuery());
+        m_forceSorted->setChecked(m_playlist->forceSorted());
     }
 
     updateButtonState();
@@ -114,13 +127,14 @@ void AutoPlaylistDialog::accept()
     const QString name = m_queryBox->currentText();
 
     if(m_playlistHandler && m_playlist) {
-        m_playlistHandler->createAutoPlaylist(m_playlist->name(), m_queryEdit->text());
+        m_playlistHandler->createAutoPlaylist(m_playlist->name(), m_queryEdit->text(), m_sortQueryEdit->text(),
+                                              m_forceSorted->isChecked());
         if(name != m_playlist->name()) {
             m_playlistHandler->renamePlaylist(m_playlist->id(), name);
         }
     }
 
-    emit playlistEdited(name, m_queryEdit->text());
+    emit playlistEdited(name, m_queryEdit->text(), m_sortQueryEdit->text(), m_forceSorted->isChecked());
     QDialog::accept();
 }
 
@@ -139,8 +153,10 @@ void AutoPlaylistDialog::updateButtonState() const
 AutoPlaylistQuery AutoPlaylistDialog::currentQuery() const
 {
     AutoPlaylistQuery query;
-    query.name  = m_queryBox->currentText();
-    query.query = m_queryEdit->text();
+    query.name        = m_queryBox->currentText();
+    query.query       = m_queryEdit->text();
+    query.sortQuery   = m_sortQueryEdit->text();
+    query.forceSorted = m_forceSorted->isChecked();
     return query;
 }
 
@@ -186,6 +202,8 @@ void AutoPlaylistDialog::loadQuery()
     if(query != m_queries.cend()) {
         m_queryBox->setEditText(query->name);
         m_queryEdit->setText(query->query);
+        m_sortQueryEdit->setText(query->sortQuery);
+        m_forceSorted->setChecked(query->forceSorted);
     }
 }
 
@@ -212,6 +230,8 @@ void AutoPlaylistDialog::resetQueries()
     m_queryChanged = false;
     populateQueries();
     m_queryBox->setEditText({});
+    m_sortQueryEdit->clear();
+    m_forceSorted->setChecked(true);
 }
 
 void AutoPlaylistDialog::saveQueries() const
@@ -276,10 +296,10 @@ void AutoPlaylistDialog::populateQueries()
 
 void AutoPlaylistDialog::loadDefaultQueries()
 {
-    m_queries = {{tr("Most Played"), u"playcount>0 LIMIT 25 SORT- playcount"_s},
-                 {tr("Recently Added"), u"addedtime DURING LAST 2 WEEKS SORT- addedtime"_s},
-                 {tr("Last Played 2 Weeks"), u"lastplayed DURING LAST 2 WEEKS SORT- lastplayed"_s},
-                 {tr("Has Lyrics"), u"lyrics PRESENT"_s}};
+    m_queries = {{tr("Most Played"), u"playcount>0 LIMIT 25"_s, u"SORT- playcount"_s},
+                 {tr("Recently Added"), u"addedtime DURING LAST 2 WEEKS"_s, u"SORT- addedtime"_s},
+                 {tr("Last Played 2 Weeks"), u"lastplayed DURING LAST 2 WEEKS"_s, u"SORT- lastplayed"_s},
+                 {tr("Has Lyrics"), u"lyrics PRESENT"_s, {}}};
 }
 } // namespace Fooyin
 

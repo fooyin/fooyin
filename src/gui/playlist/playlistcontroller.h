@@ -23,6 +23,7 @@
 
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
+#include <core/playlist/playlistchangeset.h>
 
 #include <QObject>
 
@@ -105,8 +106,10 @@ public:
 signals:
     void playlistsLoaded();
     void currentPlaylistChanged(Fooyin::Playlist* prevPlaylist, Fooyin::Playlist* playlist);
+    void currentPlaylistUpdated(Fooyin::Playlist* playlist);
+    void currentPlaylistTracksPatched(const Fooyin::PlaylistChangeset& changeSet);
     void currentPlaylistTracksChanged(const std::vector<int>& indexes, bool allNew);
-    void currentPlaylistTracksPlayed(const std::vector<int>& indexes);
+    void currentPlaylistTracksUpdated(const std::vector<int>& indexes);
     void currentPlaylistTracksAdded(const Fooyin::TrackList& tracks, int index);
     void currentPlaylistTracksRemoved(const std::vector<int>& indexes);
     void currentPlaylistQueueChanged(const std::vector<int>& tracks);
@@ -123,7 +126,9 @@ private:
     void restoreLastPlaylist();
 
     void handlePlaylistAdded(Playlist* playlist);
+    void handlePlaylistMetadataUpdated(Playlist* playlist);
     void handlePlaylistTracksAdded(Playlist* playlist, const TrackList& tracks, int index);
+    void handlePlaylistTracksPatched(Playlist* playlist, const PlaylistChangeset& changeSet);
 
     void handleTracksQueued(const QueueTracks& tracks);
     void handleTracksDequeued(const QueueTracks& tracks);
