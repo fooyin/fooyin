@@ -26,7 +26,8 @@
 
 #include <QObject>
 
-class QMenu;
+#include <memory>
+
 class QUndoCommand;
 
 namespace Fooyin {
@@ -34,11 +35,13 @@ class Application;
 class PlayerController;
 class Playlist;
 class PlaylistColumnRegistry;
-class PlaylistControllerPrivate;
 class PlaylistHandler;
+class PlaylistUiController;
+class PlaylistWorkspace;
 struct PlaylistTrack;
 class PresetRegistry;
 enum class TrackAction;
+class SettingsManager;
 class TrackSelectionController;
 
 struct PlaylistViewState
@@ -60,6 +63,7 @@ public:
     [[nodiscard]] TrackSelectionController* selectionController() const;
     [[nodiscard]] PresetRegistry* presetRegistry() const;
     [[nodiscard]] PlaylistColumnRegistry* columnRegistry() const;
+    [[nodiscard]] PlaylistUiController* uiController() const;
 
     [[nodiscard]] bool playlistsHaveLoaded() const;
     [[nodiscard]] PlaylistList playlists() const;
@@ -69,12 +73,7 @@ public:
     void aboutToChangeTracks();
     void changedTracks();
 
-    void addPlaylistMenu(QMenu* menu);
-
     void startPlayback() const;
-    void showNowPlaying();
-    void selectTrackIds(const TrackIds& ids);
-    void focusPlaylist();
 
     [[nodiscard]] bool currentIsActive() const;
     [[nodiscard]] bool currentIsAuto() const;
@@ -84,7 +83,6 @@ public:
     void changeCurrentPlaylist(Playlist* playlist);
     void changeCurrentPlaylist(const UId& id);
     void changePlaylistIndex(const UId& playlistId, int index);
-    void filterCurrentPlaylist(const PlaylistTrackList& tracks);
     void clearCurrentPlaylist();
 
     [[nodiscard]] QString currentSearch(Playlist* playlist) const;
@@ -113,19 +111,38 @@ signals:
     void currentPlaylistTracksRemoved(const std::vector<int>& indexes);
     void currentPlaylistQueueChanged(const std::vector<int>& tracks);
 
-    void playStateChanged(Player::PlayState state);
+    void playStateChanged(Fooyin::Player::PlayState state);
     void clipboardChanged();
     void playlistHistoryChanged();
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
-    void showCurrentTrack();
-    void selectTracks(const Fooyin::TrackIds& ids);
-    void filterTracks(const Fooyin::PlaylistTrackList& tracks);
-    void requestPlaylistFocus();
 
 public slots:
-    void handleTrackSelectionAction(TrackAction action);
+    void handleTrackSelectionAction(Fooyin::TrackAction action);
 
 private:
-    std::unique_ptr<PlaylistControllerPrivate> p;
+    void restoreLastPlaylist();
+
+    void handlePlaylistAdded(Playlist* playlist);
+    void handlePlaylistTracksAdded(Playlist* playlist, const TrackList& tracks, int index);
+
+    void handleTracksQueued(const QueueTracks& tracks);
+    void handleTracksDequeued(const QueueTracks& tracks);
+    void handleTracksDequeued(const PlaylistIndexes& indexes);
+    void handleQueueChanged(const QueueTracks& removed, const QueueTracks& added);
+
+    void handlePlaylistUpdated(Playlist* playlist, const std::vector<int>& indexes);
+    void handleTracksUpdated(Playlist* playlist, const std::vector<int>& indexes);
+    void handlePlaylistRemoved(Playlist* playlist);
+
+    PlaylistHandler* m_handler;
+    PlayerController* m_playerController;
+    TrackSelectionController* m_selectionController;
+    SettingsManager* m_settings;
+    PresetRegistry* m_presetRegistry;
+    PlaylistColumnRegistry* m_columnRegistry;
+    PlaylistUiController* m_uiController;
+
+    bool m_changingTracks{false};
+    std::unique_ptr<PlaylistWorkspace> m_workspace;
 };
 } // namespace Fooyin

@@ -30,6 +30,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/playlist/playlistcontroller.h>
+#include <gui/playlist/playlistuicontroller.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/clickablelabel.h>
 #include <gui/widgets/elidedlabel.h>
@@ -397,7 +398,7 @@ void StatusWidget::mouseDoubleClickEvent(QMouseEvent* event)
 {
     if(event->button() == Qt::LeftButton) {
         if(auto* activePlaylist = p->m_playlistController->playlistHandler()->activePlaylist()) {
-            p->m_playlistController->showNowPlaying();
+            p->m_playlistController->uiController()->showNowPlaying();
             p->m_playlistController->changeCurrentPlaylist(activePlaylist);
         }
     }

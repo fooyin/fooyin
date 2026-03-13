@@ -37,6 +37,7 @@
 #include "menubar/viewmenu.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
+#include "playlist/playlistuicontroller.h"
 #include "scripting/scriptcommandhandler.h"
 #include "scripting/scriptvariableproviders.h"
 #include "search/searchcontroller.h"
@@ -355,7 +356,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, m_self, [this]() { showScriptEditor(); });
     QObject::connect(m_viewMenu, &ViewMenu::showNowPlaying, m_self, [this]() {
         if(auto* activePlaylist = m_playlistHandler->activePlaylist()) {
-            m_playlistController->showNowPlaying();
+            m_playlistController->uiController()->showNowPlaying();
             m_playlistController->changeCurrentPlaylist(activePlaylist);
         }
     });
@@ -912,7 +913,7 @@ void GuiApplicationPrivate::showSearchPlaylistDialog()
 {
     auto* coverProvider = new CoverProvider(m_core->audioLoader(), m_settings, m_self);
     auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core,
-                                           PlaylistWidget::Mode::DetachedPlaylist);
+                                           SearchDialog::Target::Playlist);
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
 
@@ -923,7 +924,7 @@ void GuiApplicationPrivate::showSearchLibraryDialog()
 {
     auto* coverProvider = new CoverProvider(m_core->audioLoader(), m_settings, m_self);
     auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core,
-                                           PlaylistWidget::Mode::DetachedLibrary);
+                                           SearchDialog::Target::Library);
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
 

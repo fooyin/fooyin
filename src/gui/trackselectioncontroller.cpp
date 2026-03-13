@@ -59,13 +59,6 @@ QString promptForArtworkPath(QWidget* parent)
 } // namespace
 
 namespace Fooyin {
-struct WidgetSelection
-{
-    TrackList tracks;
-    int firstIndex{0};
-    bool playbackOnSend{false};
-};
-
 class TrackSelectionControllerPrivate : public QObject
 {
     Q_OBJECT
@@ -105,10 +98,13 @@ public:
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
 
+    const TrackSelection* currentSelection() const;
+    TrackSelection* currentSelection();
+
     std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
-    std::unordered_map<WidgetContext*, WidgetSelection> m_contextSelection;
+    std::unordered_map<WidgetContext*, TrackSelection> m_contextSelection;
     WidgetContext* m_activeContext{nullptr};
-    TrackList m_tracks;
+    TrackSelection m_tracks;
     Playlist* m_tempPlaylist{nullptr};
 
     ActionContainer* m_tracksMenu{nullptr};
@@ -375,7 +371,7 @@ void TrackSelectionControllerPrivate::setupMenu()
 
 bool TrackSelectionControllerPrivate::hasTracks() const
 {
-    if(!m_tracks.empty()) {
+    if(!m_tracks.tracks.empty()) {
         return true;
     }
 
@@ -389,6 +385,24 @@ bool TrackSelectionControllerPrivate::hasContextTracks() const
     }
 
     return m_contextSelection.contains(m_activeContext) && !m_contextSelection.at(m_activeContext).tracks.empty();
+}
+
+const TrackSelection* TrackSelectionControllerPrivate::currentSelection() const
+{
+    if(!m_tracks.tracks.empty()) {
+        return &m_tracks;
+    }
+
+    if(hasContextTracks()) {
+        return &m_contextSelection.at(m_activeContext);
+    }
+
+    return nullptr;
+}
+
+TrackSelection* TrackSelectionControllerPrivate::currentSelection()
+{
+    return const_cast<TrackSelection*>(std::as_const(*this).currentSelection());
 }
 
 WidgetContext* TrackSelectionControllerPrivate::contextObject(QWidget* widget) const
@@ -561,14 +575,20 @@ void TrackSelectionControllerPrivate::startPlayback(PlaylistAction::ActionOption
 
         const auto& selection = m_contextSelection.at(m_activeContext);
         m_playlistHandler->replacePlaylistTracks(m_tempPlaylist->id(), selection.tracks);
-        m_tempPlaylist->changeCurrentIndex(selection.firstIndex >= 0 ? selection.firstIndex : 0);
+        m_tempPlaylist->changeCurrentIndex(selection.primaryPlaylistIndex.value_or(0));
         m_playlistController->playerController()->startPlayback(m_tempPlaylist);
     }
     else {
-        if(auto* playlist = m_playlistController->currentPlaylist()) {
-            const auto& selection = m_contextSelection.at(m_activeContext);
-            if(selection.firstIndex >= 0) {
-                playlist->changeCurrentIndex(selection.firstIndex);
+        const auto& selection = m_contextSelection.at(m_activeContext);
+
+        Playlist* playlist = m_playlistController->currentPlaylist();
+        if(selection.playlistId) {
+            playlist = m_playlistHandler->playlistById(*selection.playlistId);
+        }
+
+        if(playlist) {
+            if(selection.primaryPlaylistIndex) {
+                playlist->changeCurrentIndex(*selection.primaryPlaylistIndex);
             }
             m_playlistController->playerController()->startPlayback(playlist);
         }
@@ -685,15 +705,20 @@ bool TrackSelectionController::hasTracks() const
     return p->hasTracks();
 }
 
-Track TrackSelectionController::selectedTrack() const
+TrackSelection TrackSelectionController::selectedSelection() const
 {
-    if(!p->m_tracks.empty()) {
-        return p->m_tracks.front();
+    if(const auto* selection = p->currentSelection()) {
+        return *selection;
     }
 
-    const auto selected = selectedTracks();
-    if(!selected.empty()) {
-        return selected.front();
+    return {};
+}
+
+Track TrackSelectionController::selectedTrack() const
+{
+    const auto selection = selectedSelection();
+    if(!selection.tracks.empty()) {
+        return selection.tracks.front();
     }
 
     return {};
@@ -701,65 +726,56 @@ Track TrackSelectionController::selectedTrack() const
 
 TrackList TrackSelectionController::selectedTracks() const
 {
-    if(!p->m_tracks.empty()) {
-        return p->m_tracks;
-    }
-
-    if(!p->m_activeContext || !p->m_contextSelection.contains(p->m_activeContext)) {
-        return {};
-    }
-
-    return p->m_contextSelection.at(p->m_activeContext).tracks;
+    return selectedSelection().tracks;
 }
 
 int TrackSelectionController::selectedTrackCount() const
 {
-    if(!p->m_tracks.empty()) {
-        return static_cast<int>(p->m_tracks.size());
-    }
-
-    if(!p->m_activeContext || !p->m_contextSelection.contains(p->m_activeContext)) {
-        return 0;
-    }
-
-    return static_cast<int>(p->m_contextSelection.at(p->m_activeContext).tracks.size());
+    return static_cast<int>(selectedSelection().tracks.size());
 }
 
-void TrackSelectionController::changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks)
+void TrackSelectionController::changeSelectedTracks(WidgetContext* context, const TrackSelection& selection)
 {
-    if(p->addContextObject(context)) {
-        auto& selection      = p->m_contextSelection[context];
-        selection.firstIndex = index;
-
-        if(!tracks.empty()) {
-            p->m_activeContext = context;
-        }
-
-        if(std::exchange(selection.tracks, tracks) == tracks) {
-            return;
-        }
-
-        p->updateActionState();
-        emit selectionChanged();
+    if(!p->addContextObject(context)) {
+        return;
     }
-}
 
-void TrackSelectionController::changeSelectedTracks(WidgetContext* context, const TrackList& tracks)
-{
-    changeSelectedTracks(context, 0, tracks);
-}
+    auto updatedSelection           = selection;
+    auto& existing                  = p->m_contextSelection[context];
+    updatedSelection.playbackOnSend = existing.playbackOnSend;
 
-void TrackSelectionController::changeSelectedTracks(const TrackList& tracks)
-{
-    p->m_tracks = tracks;
+    if(!updatedSelection.tracks.empty()) {
+        p->m_activeContext = context;
+    }
+
+    if(std::exchange(existing, updatedSelection) == updatedSelection) {
+        return;
+    }
+
     p->updateActionState();
+    emit selectionChanged();
+}
+
+void TrackSelectionController::changeSelectedTracks(const TrackSelection& selection)
+{
+    if(std::exchange(p->m_tracks, selection) == selection) {
+        return;
+    }
+
+    p->updateActionState();
+    emit selectionChanged();
 }
 
 void TrackSelectionController::changePlaybackOnSend(WidgetContext* context, bool enabled)
 {
     if(p->addContextObject(context)) {
-        auto& selection          = p->m_contextSelection[context];
+        auto& selection = p->m_contextSelection[context];
+        if(selection.playbackOnSend == enabled) {
+            return;
+        }
+
         selection.playbackOnSend = enabled;
+        p->updateActionState();
     }
 }
 

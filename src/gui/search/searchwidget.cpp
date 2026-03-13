@@ -21,6 +21,7 @@
 
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
+#include "playlist/playlistuicontroller.h"
 #include "playlist/playlistwidget.h"
 #include "searchcontroller.h"
 
@@ -374,7 +375,7 @@ bool SearchWidget::handleFilteredTracks(SearchMode mode, const PlaylistTrackList
         m_searchBox->clear();
     }
     if(!m_autoSearch && m_settings->value<Settings::Gui::SearchSuccessFocus>()) {
-        m_playlistController->focusPlaylist();
+        m_playlistController->uiController()->focusPlaylist();
     }
 
     return true;

@@ -20,7 +20,6 @@
 #include "playlistcommands.h"
 
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistwidget_p.h"
 #include "playlistmodel.h"
 
 #include <core/player/playercontroller.h>

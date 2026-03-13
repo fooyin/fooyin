@@ -437,7 +437,9 @@ void LibraryTreeWidget::selectionChanged(const QItemSelection& selected, const Q
 
     std::set<Track> trackIndexes;
     const TrackList tracks = getSelectedTracks(m_libraryTree, m_library);
-    m_trackSelection->changeSelectedTracks(m_widgetContext, tracks);
+    TrackSelection selectionState;
+    selectionState.tracks = tracks;
+    m_trackSelection->changeSelectedTracks(m_widgetContext, selectionState);
 
     for(const Track& track : tracks) {
         trackIndexes.emplace(track);

@@ -366,14 +366,25 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         menu->addSeparator();
 
         if(playlist->trackCount() > 0) {
-            m_selectionController->changeSelectedTracks(playlist->tracks());
+            TrackSelection selection;
+            selection.tracks         = playlist->tracks();
+            selection.playlistId     = playlist->id();
+            selection.playlistBacked = true;
+
+            const auto playlistTracks = playlist->playlistTracks();
+            selection.playlistIndexes.reserve(playlistTracks.size());
+            for(const PlaylistTrack& track : playlistTracks) {
+                selection.playlistIndexes.emplace_back(track.indexInPlaylist);
+            }
+
+            m_selectionController->changeSelectedTracks(selection);
 
             auto* selectionMenu = new QMenu(tr("%1 contents").arg(playlist->name()), menu);
             m_selectionController->addTrackContextMenu(selectionMenu);
             menu->addMenu(selectionMenu);
 
             QObject::connect(menu, &QObject::destroyed, this,
-                             [this]() { m_selectionController->changeSelectedTracks({}); });
+                             [this]() { m_selectionController->changeSelectedTracks(TrackSelection{}); });
         }
     }
 

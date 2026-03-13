@@ -216,8 +216,8 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"Playlist"_s,
         [this]() {
-            return new PlaylistWidget(m_gui->actionManager(), m_playlistInteractor, m_coverProvider, m_core,
-                                      PlaylistWidget::Mode::Playlist, m_window);
+            return PlaylistWidget::createMainPlaylist(m_gui->actionManager(), m_playlistInteractor, m_coverProvider,
+                                                      m_core, m_window);
         },
         tr("Playlist"));
     provider->setLimit(u"Playlist"_s, 1);

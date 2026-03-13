@@ -193,6 +193,12 @@ set(SOURCES
     playlist/playlistcommands.h
     playlist/playlistcontroller.cpp
     playlist/playlistcontroller.h
+    playlist/playlistuicontroller.cpp
+    playlist/playlistuicontroller.h
+    playlist/playlistworkspace.cpp
+    playlist/playlistworkspace.h
+    playlist/playlistworkspacestate.cpp
+    playlist/playlistworkspacestate.h
     playlist/playlistdelegate.cpp
     playlist/playlistdelegate.h
     playlist/playlistinteractor.cpp
@@ -211,9 +217,16 @@ set(SOURCES
     playlist/playlisttabs.h
     playlist/playlistview.cpp
     playlist/playlistview.h
+    playlist/detachedplaylistsession.cpp
+    playlist/detachedplaylistsession.h
+    playlist/editableplaylistsession.cpp
+    playlist/editableplaylistsession.h
+    playlist/editableplaylistsessionhost.h
+    playlist/playlistwidgetsessionhost.h
+    playlist/playlistwidgetsession.cpp
+    playlist/playlistwidgetsession.h
     playlist/playlistwidget.cpp
     playlist/playlistwidget.h
-    playlist/playlistwidget_p.h
     playlist/presetregistry.cpp
     playlist/presetregistry.h
     queueviewer/queueviewer.cpp

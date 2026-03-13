@@ -21,6 +21,7 @@
 
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
+#include "playlist/playlistuicontroller.h"
 #include "playlist/playlistview.h"
 #include "playlist/playlistwidget.h"
 
@@ -51,13 +52,16 @@ constexpr auto LibraryState  = "Searching/LibraryState";
 
 namespace Fooyin {
 SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                           CoverProvider* coverProvider, Application* core, PlaylistWidget::Mode mode, QWidget* parent)
+                           CoverProvider* coverProvider, Application* core, Target target, QWidget* parent)
     : QDialog{parent}
-    , m_mode{mode}
+    , m_target{target}
     , m_playlistInteractor{playlistInteractor}
     , m_settings{core->settingsManager()}
     , m_searchBar{new QLineEdit(this)}
-    , m_view{new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, m_mode, this)}
+    , m_view{m_target == Target::Library ? PlaylistWidget::createDetachedLibrarySearch(
+                                               actionManager, playlistInteractor, coverProvider, core, this)
+                                         : PlaylistWidget::createDetachedPlaylistSearch(
+                                               actionManager, playlistInteractor, coverProvider, core, this)}
     , m_autoSelect{m_settings->fileValue(AutoSelect, false).toBool()}
 {
     auto* layout = new QVBoxLayout(this);
@@ -74,7 +78,7 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
                      &SearchDialog::selectInPlaylist);
     QObject::connect(m_view->model(), &PlaylistModel::modelReset, this, [this]() {
         updateTitle();
-        if(m_autoSelect && m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
+        if(m_autoSelect && m_target == Target::Playlist) {
             m_view->view()->selectAll();
         }
     });
@@ -119,7 +123,7 @@ void SearchDialog::search()
 
 void SearchDialog::updateTitle()
 {
-    QString title = (m_mode == PlaylistWidget::Mode::DetachedLibrary) ? tr("Search Library") : tr("Search Playlist");
+    QString title = (m_target == Target::Library) ? tr("Search Library") : tr("Search Playlist");
 
     if(m_searchBar->text().isEmpty()) {
         m_view->view()->setEmptyText(tr("Start typing to search"));
@@ -137,7 +141,7 @@ void SearchDialog::showOptionsMenu()
     auto* menu = new QMenu(tr("Options"), this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
+    if(m_target == Target::Playlist) {
         auto* autoSelect = new QAction(tr("Auto-select on search"), menu);
         QObject::connect(autoSelect, &QAction::triggered, this, [this](const bool checked) {
             m_autoSelect = checked;
@@ -164,7 +168,7 @@ void SearchDialog::showOptionsMenu()
 
 void SearchDialog::selectInPlaylist()
 {
-    if(m_mode != PlaylistWidget::Mode::DetachedPlaylist) {
+    if(m_target != Target::Playlist) {
         return;
     }
 
@@ -175,7 +179,7 @@ void SearchDialog::selectInPlaylist()
         trackIds.emplace_back(index.data(PlaylistItem::Role::TrackId).toInt());
     }
 
-    m_playlistInteractor->playlistController()->selectTrackIds(trackIds);
+    m_playlistInteractor->playlistController()->uiController()->selectTrackIds(trackIds);
 }
 
 void SearchDialog::saveState()
@@ -186,10 +190,10 @@ void SearchDialog::saveState()
 
     const QByteArray state = QJsonDocument{layout}.toJson(QJsonDocument::Compact).toBase64();
 
-    if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
+    if(m_target == Target::Playlist) {
         m_settings->fileSet(PlaylistState, state);
     }
-    else if(m_mode == PlaylistWidget::Mode::DetachedLibrary) {
+    else if(m_target == Target::Library) {
         m_settings->fileSet(LibraryState, state);
     }
 }
@@ -198,10 +202,10 @@ void SearchDialog::loadState()
 {
     QByteArray state;
 
-    if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
+    if(m_target == Target::Playlist) {
         state = m_settings->fileValue(PlaylistState).toByteArray();
     }
-    else if(m_mode == PlaylistWidget::Mode::DetachedLibrary) {
+    else if(m_target == Target::Library) {
         state = m_settings->fileValue(LibraryState).toByteArray();
     }
 

@@ -22,8 +22,12 @@
 #include "fygui_export.h"
 
 #include <core/track.h>
+#include <utils/id.h>
 
 #include <QObject>
+
+#include <optional>
+#include <vector>
 
 class QMenu;
 
@@ -34,6 +38,18 @@ class SettingsManager;
 class PlaylistController;
 class TrackSelectionControllerPrivate;
 class WidgetContext;
+
+struct FYGUI_EXPORT TrackSelection
+{
+    TrackList tracks;
+    std::optional<UId> playlistId;
+    std::vector<int> playlistIndexes;
+    std::optional<int> primaryPlaylistIndex;
+    bool playbackOnSend{false};
+    bool playlistBacked{false};
+
+    bool operator==(const TrackSelection& other) const = default;
+};
 
 enum class TrackAction
 {
@@ -71,12 +87,12 @@ public:
 
     [[nodiscard]] bool hasTracks() const;
 
+    [[nodiscard]] TrackSelection selectedSelection() const;
     [[nodiscard]] Track selectedTrack() const;
     [[nodiscard]] TrackList selectedTracks() const;
     [[nodiscard]] int selectedTrackCount() const;
-    void changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks);
-    void changeSelectedTracks(WidgetContext* context, const TrackList& tracks);
-    void changeSelectedTracks(const TrackList& tracks);
+    void changeSelectedTracks(WidgetContext* context, const TrackSelection& selection);
+    void changeSelectedTracks(const TrackSelection& selection);
     void changePlaybackOnSend(WidgetContext* context, bool enabled);
 
     void addTrackContextMenu(QMenu* menu) const;

@@ -39,8 +39,14 @@ class SearchDialog : public QDialog
     Q_OBJECT
 
 public:
+    enum class Target : uint8_t
+    {
+        Playlist,
+        Library
+    };
+
     SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                 Application* core, PlaylistWidget::Mode mode, QWidget* parent = nullptr);
+                 Application* core, Target target, QWidget* parent = nullptr);
 
     void done(int value) override;
 
@@ -58,7 +64,7 @@ private:
     void saveState();
     void loadState();
 
-    PlaylistWidget::Mode m_mode;
+    Target m_target;
     PlaylistInteractor* m_playlistInteractor;
     SettingsManager* m_settings;
 

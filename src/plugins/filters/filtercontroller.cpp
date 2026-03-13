@@ -361,7 +361,9 @@ void FilterControllerPrivate::updateAllPlaylistActions()
 
 void FilterControllerPrivate::selectionChanged(FilterWidget* filter)
 {
-    m_trackSelection->changeSelectedTracks(filter->widgetContext(), filter->filteredTracks());
+    TrackSelection selection;
+    selection.tracks = filter->filteredTracks();
+    m_trackSelection->changeSelectedTracks(filter->widgetContext(), selection);
 
     if(filter->playlistEnabled()) {
         PlaylistAction::ActionOptions options{PlaylistAction::None};
