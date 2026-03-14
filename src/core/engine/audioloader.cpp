@@ -146,13 +146,16 @@ bool openArchiveSource(Fooyin::LoadedSource& input, const Fooyin::AudioLoader& l
         }
     }
 
-    input.device = input.archiveReader->entry(entryPath);
-    if(!input.device) {
+    Fooyin::ArchiveEntryData entryData = input.archiveReader->entry(entryPath);
+    if(!entryData.device) {
         qCWarning(AUD_LDR) << "Failed to open archive entry" << entryPath << "from" << archivePath;
         return false;
     }
 
-    input.source.filepath = entryPath;
+    input.device              = std::move(entryData.device);
+    input.source.filepath     = entryData.path;
+    input.source.modifiedTime = entryData.modifiedTime;
+    input.source.size         = entryData.size;
     input.rebind();
     return true;
 }
