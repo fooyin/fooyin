@@ -62,6 +62,21 @@ bool setupForReading(archive* archive, const QString& filename)
 
     return true;
 }
+
+uint64_t entryModifiedTimeMs(archive_entry* entry)
+{
+    if(!entry || archive_entry_mtime_is_set(entry) == 0) {
+        return 0;
+    }
+
+    const auto seconds = archive_entry_mtime(entry);
+    if(seconds < 0) {
+        return 0;
+    }
+
+    return static_cast<uint64_t>(seconds) * 1000ULL;
+}
+
 } // namespace
 
 namespace Fooyin::LibArchive {
@@ -218,7 +233,7 @@ bool LibArchiveReader::readTracks(ReadEntryCallback readEntry)
             const QString entryPath = QDir::fromNativeSeparators(QFile::decodeName(archive_entry_pathname(entry)));
             auto entryDev           = std::make_unique<LibArchiveIODevice>(std::move(archive), entry, nullptr);
 
-            readEntry(entryPath, entryDev.get());
+            readEntry(entryPath, entryDev.get(), entryModifiedTimeMs(entry));
             archive.reset(entryDev->releaseArchive());
         }
     }

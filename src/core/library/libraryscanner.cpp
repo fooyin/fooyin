@@ -389,10 +389,10 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
     const QString type        = archiveReader->type();
     const QString archivePath = QLatin1String{ArchivePath}.arg(type).arg(filepath.size()).arg(filepath);
     const QFileInfo archiveInfo{filepath};
-    const QDateTime modifiedTime = archiveInfo.lastModified();
+    const QDateTime archiveMTime = archiveInfo.lastModified();
 
     // TODO: Add additional helper in AudioLoader to iterate readers over already open device
-    auto readEntry = [&](const QString& entry, QIODevice* device) {
+    auto readEntry = [&](const QString& entry, QIODevice* device, uint64_t entryModifiedTime) {
         if(!m_self->mayRun()) {
             return;
         }
@@ -428,7 +428,12 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
                     }
                 }
 
-                subTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+                const uint64_t mTime
+                    = entryModifiedTime > 0
+                        ? entryModifiedTime
+                        : (archiveMTime.isValid() ? static_cast<uint64_t>(archiveMTime.toMSecsSinceEpoch()) : 0);
+                subTrack.setModifiedTime(mTime);
+
                 source.filepath = subTrack.filepath();
 
                 if(fileReader->readTrack(source, subTrack)) {
