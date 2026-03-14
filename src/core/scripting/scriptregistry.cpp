@@ -388,6 +388,9 @@ ScriptRegistry::FuncRet ScriptRegistry::bitrateMetadata(const Track& track) cons
 
 QString ScriptRegistry::playbackTime() const
 {
+    if(!playbackValueAvailableForTrack()) {
+        return {};
+    }
     if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
         return Utils::msToString(environment->currentPosition());
     }
@@ -396,6 +399,9 @@ QString ScriptRegistry::playbackTime() const
 
 QString ScriptRegistry::playbackTimeSeconds() const
 {
+    if(!playbackValueAvailableForTrack()) {
+        return {};
+    }
     if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
         return QString::number(environment->currentPosition() / 1000);
     }
@@ -404,6 +410,9 @@ QString ScriptRegistry::playbackTimeSeconds() const
 
 QString ScriptRegistry::playbackTimeRemaining() const
 {
+    if(!playbackValueAvailableForTrack()) {
+        return {};
+    }
     if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
         return Utils::msToString(environment->currentTrackDuration() - environment->currentPosition());
     }
@@ -412,6 +421,9 @@ QString ScriptRegistry::playbackTimeRemaining() const
 
 QString ScriptRegistry::playbackTimeRemainingSeconds() const
 {
+    if(!playbackValueAvailableForTrack()) {
+        return {};
+    }
     if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
         return QString::number((environment->currentTrackDuration() - environment->currentPosition()) / 1000);
     }
@@ -420,6 +432,9 @@ QString ScriptRegistry::playbackTimeRemainingSeconds() const
 
 QString ScriptRegistry::isPlaying() const
 {
+    if(!playbackValueAvailableForTrack()) {
+        return {};
+    }
     if(const auto* environment = playbackEnvironment(m_context);
        environment != nullptr && environment->playState() == Player::PlayState::Playing) {
         return u"1"_s;
@@ -429,6 +444,9 @@ QString ScriptRegistry::isPlaying() const
 
 QString ScriptRegistry::isPaused() const
 {
+    if(!playbackValueAvailableForTrack()) {
+        return {};
+    }
     if(const auto* environment = playbackEnvironment(m_context);
        environment != nullptr && environment->playState() == Player::PlayState::Paused) {
         return u"1"_s;
@@ -529,10 +547,33 @@ void ScriptRegistry::addDefaultFunctions()
 QString ScriptRegistry::getBitrate(const Track& track) const
 {
     int bitrate = track.bitrate();
-    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr && environment->bitrate() > 0) {
+    if(const auto* environment = playbackEnvironment(m_context);
+       environment != nullptr && environment->bitrate() > 0 && playbackValueAvailableForTrack()) {
         bitrate = environment->bitrate();
     }
     return bitrate > 0 ? QString::number(bitrate) : QString{};
+}
+
+bool ScriptRegistry::playbackValueAvailableForTrack() const
+{
+    const auto* playback = playbackEnvironment(m_context);
+    if(playback && playback->playState() == Player::PlayState::Stopped) {
+        return false;
+    }
+
+    const auto* playlistEnvironment = m_context.environment ? m_context.environment->playlistEnvironment() : nullptr;
+    if(!playlistEnvironment) {
+        return true;
+    }
+
+    const int currentTrackIndex        = playlistEnvironment->currentPlaylistTrackIndex();
+    const int currentPlayingTrackIndex = playlistEnvironment->currentPlayingTrackIndex();
+
+    if(currentTrackIndex < 0) {
+        return true;
+    }
+
+    return currentPlayingTrackIndex >= 0 && currentTrackIndex == currentPlayingTrackIndex;
 }
 
 QString ScriptRegistry::playlistDuration(const TrackList& tracks) const

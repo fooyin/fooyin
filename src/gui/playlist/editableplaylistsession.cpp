@@ -286,6 +286,12 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
                      [widget, this](const PlaylistTrack& track) { handlePlayingTrackChanged(widget, track); });
     QObject::connect(widget->playlistController(), &PlaylistController::playStateChanged, widget->playlistModel(),
                      &PlaylistModel::playStateChanged);
+    QObject::connect(widget->playerController(), &PlayerController::positionChangedSeconds, widget->playlistModel(),
+                     [widget](uint64_t) { widget->playlistModel()->refreshPlayingTrackPositionData(); });
+    QObject::connect(widget->playerController(), &PlayerController::positionMoved, widget->playlistModel(),
+                     [widget](uint64_t) { widget->playlistModel()->refreshPlayingTrackPositionData(); });
+    QObject::connect(widget->playerController(), &PlayerController::bitrateChanged, widget->playlistModel(),
+                     [widget](int) { widget->playlistModel()->refreshPlayingTrackBitrateData(); });
     QObject::connect(widget->playlistController(), &PlaylistController::currentPlaylistTracksAdded, widget,
                      [widget, this](const TrackList& tracks, int index) {
                          playlistTracksAdded(widgetSessionHost(widget), tracks, index);

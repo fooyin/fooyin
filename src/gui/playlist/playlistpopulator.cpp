@@ -216,8 +216,17 @@ RichText PlaylistPopulatorPrivate::evaluateGroupScript(const ParsedScript& parse
 
 const ScriptContext& PlaylistPopulatorPrivate::makeContext(int index, int depth)
 {
+    int currentPlayingTrackIndex{-1};
+
+    if(m_playerController && m_playlist) {
+        const auto playingTrack = m_playerController->currentPlaylistTrack();
+        if(playingTrack.playlistId == m_playlist->id()) {
+            currentPlayingTrackIndex = playingTrack.indexInPlaylist;
+        }
+    }
+
     m_scriptEnvironment.setPlaylistData(m_playlist, &m_playlistQueue);
-    m_scriptEnvironment.setTrackState(index, depth);
+    m_scriptEnvironment.setTrackState(index, currentPlayingTrackIndex, depth);
     m_scriptEnvironment.setPlaybackState(m_playerController ? m_playerController->currentPosition() : 0,
                                          m_playerController ? m_playerController->currentTrack().duration() : 0,
                                          m_playerController ? m_playerController->bitrate() : 0,

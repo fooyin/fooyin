@@ -125,6 +125,7 @@ public:
 
     [[nodiscard]] FuncRet albumArtistMetadata(const Track& track) const;
     [[nodiscard]] FuncRet bitrateMetadata(const Track& track) const;
+    [[nodiscard]] bool playbackValueAvailableForTrack() const;
     [[nodiscard]] QString playbackTime() const;
     [[nodiscard]] QString playbackTimeSeconds() const;
     [[nodiscard]] QString playbackTimeRemaining() const;

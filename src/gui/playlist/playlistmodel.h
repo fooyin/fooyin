@@ -81,6 +81,16 @@ class PlaylistModel : public TreeModel<PlaylistItem>
     Q_OBJECT
 
 public:
+    enum PlaybackDependency : uint8_t
+    {
+        None          = 0,
+        Position      = 1 << 0,
+        Bitrate       = 1 << 1,
+        PlaybackState = 1 << 2,
+    };
+    Q_DECLARE_FLAGS(PlaybackDependencies, PlaybackDependency)
+    Q_FLAG(PlaybackDependencies)
+
     PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider, SettingsManager* settings,
                   QObject* parent = nullptr);
     ~PlaylistModel() override;
@@ -154,6 +164,8 @@ signals:
 public slots:
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
     void playStateChanged(Fooyin::Player::PlayState state);
+    void refreshPlayingTrackPositionData();
+    void refreshPlayingTrackBitrateData();
 
 private:
     QModelIndex rightIndex(const QModelIndex& index) const;
@@ -217,6 +229,9 @@ private:
     [[nodiscard]] QModelIndex firstImageColumnTrackIndex(const QModelIndex& index) const;
     std::vector<int> pixmapColumns() const;
     std::set<int> columnsNeedUpdating() const;
+    void updateLivePlaybackDependencies();
+    void refreshTracksForDependency(const std::vector<int>& indexes, PlaybackDependency dependency);
+    void refreshTracksForDependencies(const std::vector<int>& indexes, PlaybackDependencies dependencies);
     void coverUpdated(const Track& track);
     bool trackIsPlaying(const Track& track, int index) const;
 
@@ -269,6 +284,13 @@ private:
     int m_pixmapPaddingTop;
     int m_starRatingSize;
 
+    std::set<int> m_positionColumns;
+    std::set<int> m_bitrateColumns;
+    std::set<int> m_playbackStateColumns;
+    bool m_singleColumnHasPositionDependency;
+    bool m_singleColumnHasBitrateDependency;
+    bool m_singleColumnHasPlaybackStateDependency;
+
     Playlist* m_currentPlaylist;
     Player::PlayState m_currentPlayState;
     PlaylistTrack m_playingTrack;
@@ -277,3 +299,5 @@ private:
     QModelIndexList m_indexesPendingRemoval;
 };
 } // namespace Fooyin
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::PlaylistModel::PlaybackDependencies)

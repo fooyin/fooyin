@@ -50,7 +50,11 @@ class FYCORE_EXPORT ScriptPlaylistEnvironment
 public:
     virtual ~ScriptPlaylistEnvironment() = default;
 
-    [[nodiscard]] virtual int currentPlaylistTrackIndex() const            = 0;
+    [[nodiscard]] virtual int currentPlaylistTrackIndex() const = 0;
+    [[nodiscard]] virtual int currentPlayingTrackIndex() const
+    {
+        return -1;
+    }
     [[nodiscard]] virtual int playlistTrackCount() const                   = 0;
     [[nodiscard]] virtual int trackDepth() const                           = 0;
     [[nodiscard]] virtual std::span<const int> currentQueueIndexes() const = 0;

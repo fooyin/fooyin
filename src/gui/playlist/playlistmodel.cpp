@@ -30,6 +30,7 @@
 #include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/playlist/playlist.h>
+#include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
@@ -45,9 +46,11 @@
 #include <QIODevice>
 #include <QMimeData>
 
+#include <algorithm>
 #include <queue>
 #include <span>
 #include <stack>
+#include <type_traits>
 #include <utility>
 
 using namespace Qt::StringLiterals;
@@ -474,6 +477,73 @@ QStyleOptionViewItem::Position getIconPosition(const QString& text)
 
     return QStyleOptionViewItem::Right;
 }
+
+Fooyin::PlaylistModel::PlaybackDependency dependencyForVariable(const QString& variable)
+{
+    using namespace Fooyin::Constants;
+    using Dependency = Fooyin::PlaylistModel::PlaybackDependency;
+
+    if(variable.compare(u"PLAYBACK_TIME"_s, Qt::CaseInsensitive) == 0
+       || variable.compare(u"PLAYBACK_TIME_S"_s, Qt::CaseInsensitive) == 0
+       || variable.compare(u"PLAYBACK_TIME_REMAINING"_s, Qt::CaseInsensitive) == 0
+       || variable.compare(u"PLAYBACK_TIME_REMAINING_S"_s, Qt::CaseInsensitive) == 0) {
+        return Dependency::Position;
+    }
+    if(variable.compare(QLatin1String{MetaData::Bitrate}, Qt::CaseInsensitive) == 0) {
+        return Dependency::Bitrate;
+    }
+    if(variable.compare(u"ISPLAYING"_s, Qt::CaseInsensitive) == 0
+       || variable.compare(u"ISPAUSED"_s, Qt::CaseInsensitive) == 0
+       || variable.compare(u"PLAYINGICON"_s, Qt::CaseInsensitive) == 0) {
+        return Dependency::PlaybackState;
+    }
+
+    return Dependency::None;
+}
+
+Fooyin::PlaylistModel::PlaybackDependencies dependenciesForExpression(const Fooyin::Expression& expression)
+{
+    using namespace Fooyin;
+    using Dependencies = PlaylistModel::PlaybackDependencies;
+
+    Dependencies dependencies{PlaylistModel::None};
+
+    if((expression.type == Expr::Variable || expression.type == Expr::VariableList
+        || expression.type == Expr::VariableRaw)
+       && std::holds_alternative<QString>(expression.value)) {
+        dependencies |= dependencyForVariable(std::get<QString>(expression.value));
+    }
+
+    if(const auto* function = std::get_if<FuncValue>(&expression.value)) {
+        for(const auto& arg : function->args) {
+            dependencies |= dependenciesForExpression(arg);
+        }
+    }
+    else if(const auto* children = std::get_if<ExpressionList>(&expression.value)) {
+        for(const auto& child : *children) {
+            dependencies |= dependenciesForExpression(child);
+        }
+    }
+
+    return dependencies;
+}
+
+Fooyin::PlaylistModel::PlaybackDependencies dependenciesForScript(const Fooyin::ParsedScript& script)
+{
+    using Dependencies = Fooyin::PlaylistModel::PlaybackDependencies;
+
+    Dependencies dependencies{Fooyin::PlaylistModel::None};
+    for(const auto& expression : script.expressions) {
+        dependencies |= dependenciesForExpression(expression);
+    }
+
+    return dependencies;
+}
+
+void mergeColumnSets(std::set<int>& target, const std::set<int>& source)
+{
+    target.insert(source.cbegin(), source.cend());
+}
 } // namespace
 
 namespace Fooyin {
@@ -492,6 +562,9 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
     , m_pixmapPaddingTop{settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>()}
     , m_starRatingSize{settings->value<Settings::Gui::StarRatingSize>()}
+    , m_singleColumnHasPositionDependency{false}
+    , m_singleColumnHasBitrateDependency{false}
+    , m_singleColumnHasPlaybackStateDependency{false}
     , m_currentPlaylist{nullptr}
     , m_currentPlayState{Player::PlayState::Stopped}
 {
@@ -932,6 +1005,7 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
 
     m_columns       = columns;
     m_pixmapColumns = pixmapColumns();
+    updateLivePlaybackDependencies();
 
     m_currentPlaylist = playlist;
     updateHeader(playlist);
@@ -1163,6 +1237,7 @@ bool PlaylistModel::removeColumn(int column)
         m_columnSizes.erase(m_columnSizes.cbegin() + column);
     }
     resetColumnAlignment(column);
+    updateLivePlaybackDependencies();
 
     for(auto& [_, node] : m_nodes) {
         node.removeColumn(column);
@@ -1243,6 +1318,19 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
         updateTrackRow(m_playingIndex);
     }
 
+    std::vector<int> indexesToRefresh;
+    indexesToRefresh.reserve(2);
+
+    if(m_currentPlaylist && previousTrack.playlistId == m_currentPlaylist->id() && previousTrack.indexInPlaylist >= 0) {
+        indexesToRefresh.push_back(previousTrack.indexInPlaylist);
+    }
+    if(m_currentPlaylist && m_playingTrack.playlistId == m_currentPlaylist->id()
+       && m_playingTrack.indexInPlaylist >= 0) {
+        indexesToRefresh.push_back(m_playingTrack.indexInPlaylist);
+    }
+
+    refreshTracksForDependencies(indexesToRefresh, Position | Bitrate | PlaybackState);
+
     if(m_stopAtIndex.isValid()
        && m_playingIndex == m_stopAtIndex.sibling(m_stopAtIndex.row(), m_playingIndex.column())) {
         m_settings->set<Settings::Core::StopAfterCurrent>(true);
@@ -1262,6 +1350,24 @@ void PlaylistModel::playStateChanged(Player::PlayState state)
                 emit dataChanged(m_playingIndex, bottomRight, {Qt::DecorationRole, Qt::BackgroundRole});
             }
         }
+    }
+
+    if(m_currentPlaylist && m_playingTrack.playlistId == m_currentPlaylist->id()) {
+        refreshTracksForDependency({m_playingTrack.indexInPlaylist}, PlaybackDependency::PlaybackState);
+    }
+}
+
+void PlaylistModel::refreshPlayingTrackPositionData()
+{
+    if(m_currentPlaylist && m_playingTrack.playlistId == m_currentPlaylist->id()) {
+        refreshTracksForDependency({m_playingTrack.indexInPlaylist}, PlaybackDependency::Position);
+    }
+}
+
+void PlaylistModel::refreshPlayingTrackBitrateData()
+{
+    if(m_currentPlaylist && m_playingTrack.playlistId == m_currentPlaylist->id()) {
+        refreshTracksForDependency({m_playingTrack.indexInPlaylist}, PlaybackDependency::Bitrate);
     }
 }
 
@@ -1392,8 +1498,15 @@ void PlaylistModel::updateTracks(const ItemList& tracks, const std::set<int>& co
             node->setState(PlaylistItem::State::None);
 
             const QModelIndex trackIndex = indexOfItem(node);
-            const auto [first, last]     = std::ranges::minmax_element(columnsUpdated);
-            emit dataChanged(trackIndex.siblingAtColumn(*first), trackIndex.siblingAtColumn(*last), {});
+            if(columnsUpdated.empty()) {
+                if(const auto bottomRight = rightIndex(trackIndex); bottomRight.isValid()) {
+                    emit dataChanged(trackIndex, bottomRight, {});
+                }
+            }
+            else {
+                const auto [first, last] = std::ranges::minmax_element(columnsUpdated);
+                emit dataChanged(trackIndex.siblingAtColumn(*first), trackIndex.siblingAtColumn(*last), {});
+            }
         }
     }
 }
@@ -2373,6 +2486,100 @@ std::set<int> PlaylistModel::columnsNeedUpdating() const
     }
 
     return columns;
+}
+
+void PlaylistModel::updateLivePlaybackDependencies()
+{
+    m_positionColumns.clear();
+    m_bitrateColumns.clear();
+    m_playbackStateColumns.clear();
+    m_singleColumnHasPositionDependency      = false;
+    m_singleColumnHasBitrateDependency       = false;
+    m_singleColumnHasPlaybackStateDependency = false;
+
+    ScriptParser parser;
+
+    if(!m_columns.empty()) {
+        for(int i{0}; const auto& column : m_columns) {
+            const auto dependencies = dependenciesForScript(parser.parse(column.field));
+
+            if(dependencies.testFlag(PlaybackDependency::Position)) {
+                m_positionColumns.emplace(i);
+            }
+            if(dependencies.testFlag(PlaybackDependency::Bitrate)) {
+                m_bitrateColumns.emplace(i);
+            }
+            if(dependencies.testFlag(PlaybackDependency::PlaybackState)) {
+                m_playbackStateColumns.emplace(i);
+            }
+            ++i;
+        }
+
+        return;
+    }
+
+    const auto leftDependencies  = dependenciesForScript(parser.parse(m_currentPreset.track.leftText.script));
+    const auto rightDependencies = dependenciesForScript(parser.parse(m_currentPreset.track.rightText.script));
+    const auto dependencies      = leftDependencies | rightDependencies;
+
+    m_singleColumnHasPositionDependency      = dependencies.testFlag(Position);
+    m_singleColumnHasBitrateDependency       = dependencies.testFlag(Bitrate);
+    m_singleColumnHasPlaybackStateDependency = dependencies.testFlag(PlaybackState);
+}
+
+void PlaylistModel::refreshTracksForDependency(const std::vector<int>& indexes, PlaybackDependency dependency)
+{
+    refreshTracksForDependencies(indexes, dependency);
+}
+
+void PlaylistModel::refreshTracksForDependencies(const std::vector<int>& indexes, PlaybackDependencies dependencies)
+{
+    if(!m_currentPlaylist || indexes.empty()) {
+        return;
+    }
+
+    std::vector<int> indexesToRefresh;
+    indexesToRefresh.reserve(indexes.size());
+
+    for(const int index : indexes) {
+        if(index >= 0) {
+            indexesToRefresh.push_back(index);
+        }
+    }
+
+    if(indexesToRefresh.empty()) {
+        return;
+    }
+
+    std::ranges::sort(indexesToRefresh);
+    indexesToRefresh.erase(std::ranges::unique(indexesToRefresh).begin(), indexesToRefresh.end());
+
+    if(m_columns.empty()) {
+        const bool shouldRefresh = (dependencies.testFlag(Position) && m_singleColumnHasPositionDependency)
+                                || (dependencies.testFlag(Bitrate) && m_singleColumnHasBitrateDependency)
+                                || (dependencies.testFlag(PlaybackState) && m_singleColumnHasPlaybackStateDependency);
+
+        if(shouldRefresh) {
+            refreshTracks(indexesToRefresh, {});
+        }
+        return;
+    }
+
+    std::set<int> columnsToRefresh;
+
+    if(dependencies.testFlag(Position)) {
+        mergeColumnSets(columnsToRefresh, m_positionColumns);
+    }
+    if(dependencies.testFlag(Bitrate)) {
+        mergeColumnSets(columnsToRefresh, m_bitrateColumns);
+    }
+    if(dependencies.testFlag(PlaybackState)) {
+        mergeColumnSets(columnsToRefresh, m_playbackStateColumns);
+    }
+
+    if(!columnsToRefresh.empty()) {
+        refreshTracks(indexesToRefresh, columnsToRefresh);
+    }
 }
 
 void PlaylistModel::coverUpdated(const Track& track)
