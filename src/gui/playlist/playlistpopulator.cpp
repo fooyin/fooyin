@@ -545,10 +545,12 @@ void PlaylistPopulatorPrivate::runBatch(int size, int index)
 
 void PlaylistPopulatorPrivate::runTracksGroup(const std::map<int, PlaylistTrackList>& tracks)
 {
+    int nextIndex = m_playlist ? m_playlist->trackCount() : 0;
+
     for(const auto& [index, trackGroup] : tracks) {
         std::vector<UId> trackKeys;
 
-        int trackIndex{index};
+        int trackIndex = index >= 0 ? index : nextIndex;
 
         for(const PlaylistTrack& track : trackGroup) {
             if(!m_self->mayRun()) {
@@ -558,6 +560,8 @@ void PlaylistPopulatorPrivate::runTracksGroup(const std::map<int, PlaylistTrackL
                 trackKeys.push_back(trackItem->key());
             }
         }
+
+        nextIndex = trackIndex;
         m_data.indexNodes.emplace(index, trackKeys);
     }
 
