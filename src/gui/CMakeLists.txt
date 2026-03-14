@@ -385,6 +385,8 @@ set(SOURCES
     widgets/colourbutton.cpp
     widgets/coverwidget.cpp
     widgets/coverwidget.h
+    widgets/coverwidgetconfigwidget.cpp
+    widgets/coverwidgetconfigwidget.h
     widgets/customisableinput.cpp
     widgets/doubleslidereditor.cpp
     widgets/dummy.cpp
