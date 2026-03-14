@@ -42,6 +42,7 @@ public:
     [[nodiscard]] TrackList tracks() const;
     void reset(const TrackList& tracks, const std::vector<TagEditorField>& fields);
     void setRatingRow(int row);
+    void updateTracks(const TrackList& tracks);
 
     void autoNumberTracks();
     void updateValues(const std::map<QString, QString>& fieldValues, bool match);

@@ -37,6 +37,7 @@ public:
     [[nodiscard]] QString layoutName() const override;
 
     void apply() override;
+    void updateTracks(const TrackList& tracks) override;
 
 private:
     MusicLibrary* m_library;

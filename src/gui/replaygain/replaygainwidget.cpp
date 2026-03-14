@@ -71,8 +71,14 @@ void ReplayGainWidget::apply()
 {
     const TrackList changedTracks = m_model->applyChanges();
     if(!changedTracks.empty()) {
+        emit tracksChanged(changedTracks);
         m_library->writeTrackMetadata(changedTracks);
     }
+}
+
+void ReplayGainWidget::updateTracks(const TrackList& tracks)
+{
+    m_model->updateTracks(tracks);
 }
 } // namespace Fooyin
 

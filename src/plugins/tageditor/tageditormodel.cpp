@@ -22,6 +22,7 @@
 #include "tageditoritem.h"
 
 #include <core/constants.h>
+#include <core/library/libraryutils.h>
 #include <core/scripting/scripttrackwriter.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
@@ -223,6 +224,11 @@ void TagEditorModel::reset(const TrackList& tracks, const std::vector<TagEditorF
 void TagEditorModel::setRatingRow(int row)
 {
     p->m_ratingRow = row;
+}
+
+void TagEditorModel::updateTracks(const TrackList& tracks)
+{
+    Utils::updateCommonTracks(p->m_tracks, tracks, Utils::CommonOperation::Update);
 }
 
 void TagEditorModel::autoNumberTracks()

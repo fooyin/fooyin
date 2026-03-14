@@ -22,10 +22,10 @@
 #include "application.h"
 #include "database/playlistdatabase.h"
 #include "internalcoresettings.h"
-#include "library/libraryutils.h"
 #include "playback/playlistnavigator.h"
 
 #include <core/coresettings.h>
+#include <core/library/libraryutils.h>
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlist.h>
 #include <utils/crypto.h>

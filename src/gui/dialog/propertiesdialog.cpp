@@ -20,6 +20,7 @@
 #include "qdialog.h"
 
 #include <core/coresettings.h>
+#include <core/library/libraryutils.h>
 #include <gui/propertiesdialog.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -53,6 +54,8 @@ void PropertiesTabWidget::apply() { }
 void PropertiesTabWidget::finish() { }
 
 void PropertiesTabWidget::addTools(QMenu* /*menu*/) { }
+
+void PropertiesTabWidget::updateTracks(const TrackList& /*tracks*/) { }
 
 PropertiesTab::PropertiesTab(QString title, WidgetBuilder widgetBuilder, int index)
     : m_index{index}
@@ -162,6 +165,7 @@ private:
     void reject() override;
 
     void apply();
+    void updateTracks(const TrackList& tracks);
 
     void currentTabChanged(int index);
 
@@ -216,6 +220,7 @@ PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialo
     for(const auto& tab : m_tabs) {
         if(auto* tabPage = tab.widget(m_tracks)) {
             tabWidget->insertTab(tab.index(), tabPage, tab.title());
+            QObject::connect(tabPage, &PropertiesTabWidget::tracksChanged, this, &PropertiesDialogWidget::updateTracks);
         }
     }
 
@@ -251,6 +256,25 @@ void PropertiesDialogWidget::apply()
     auto visitedTabs = std::views::filter(m_tabs, [&](const PropertiesTab& tab) { return tab.hasVisited(); });
     for(PropertiesTab& tab : visitedTabs) {
         tab.apply();
+    }
+}
+
+void PropertiesDialogWidget::updateTracks(const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    Utils::updateCommonTracks(m_tracks, tracks, Utils::CommonOperation::Update);
+
+    auto* sourceWidget = qobject_cast<PropertiesTabWidget*>(sender());
+    for(auto& tab : m_tabs) {
+        auto* widget = tab.widget(m_tracks);
+        if(!widget || widget == sourceWidget) {
+            continue;
+        }
+
+        widget->updateTracks(m_tracks);
     }
 }
 

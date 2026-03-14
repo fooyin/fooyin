@@ -17,7 +17,7 @@
  *
  */
 
-#include "libraryutils.h"
+#include <core/library/libraryutils.h>
 
 namespace Fooyin::Utils {
 std::vector<int> updateCommonTracks(TrackList& tracks, const TrackList& updatedTracks, CommonOperation operation)

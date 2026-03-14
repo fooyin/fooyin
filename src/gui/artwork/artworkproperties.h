@@ -52,6 +52,7 @@ public:
 
     void load() override;
     void apply() override;
+    void updateTracks(const TrackList& tracks) override;
 
 protected:
     void paintEvent(QPaintEvent* event) override;

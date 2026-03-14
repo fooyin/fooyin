@@ -45,6 +45,10 @@ public:
     virtual void apply();
     virtual void finish();
     virtual void addTools(QMenu* menu);
+    virtual void updateTracks(const TrackList& tracks);
+
+signals:
+    void tracksChanged(const Fooyin::TrackList& tracks);
 };
 
 using WidgetBuilder = std::function<PropertiesTabWidget*(const TrackList& tracks)>;

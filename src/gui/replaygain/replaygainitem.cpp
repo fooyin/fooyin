@@ -132,6 +132,11 @@ ReplayGainItem::SummaryFunc ReplayGainItem::summaryFunc() const
     return m_func;
 }
 
+void ReplayGainItem::setTrack(const Track& track)
+{
+    m_track = track;
+}
+
 bool ReplayGainItem::setTrackGain(float value)
 {
     return setGainOrPeak(m_trackGain, value, m_track.rgTrackGain(), Constants::InvalidGain);

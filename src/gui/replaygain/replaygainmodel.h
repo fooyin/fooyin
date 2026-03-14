@@ -45,6 +45,7 @@ public:
     ~ReplayGainModel() override;
 
     void resetModel(const TrackList& tracks);
+    void updateTracks(const TrackList& tracks);
     TrackList applyChanges();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

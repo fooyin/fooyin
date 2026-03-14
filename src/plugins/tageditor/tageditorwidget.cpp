@@ -182,6 +182,7 @@ void TagEditorWidget::apply()
 
     auto applyChanges = [this, updateStats]() {
         m_model->applyChanges();
+        emit tracksChanged(m_model->tracks());
         if(updateStats) {
             emit trackStatsChanged(m_model->tracks());
         }
@@ -214,6 +215,11 @@ void TagEditorWidget::apply()
         }
         applyChanges();
     }
+}
+
+void TagEditorWidget::updateTracks(const TrackList& tracks)
+{
+    m_model->updateTracks(tracks);
 }
 
 void TagEditorWidget::saveState() const

@@ -20,6 +20,7 @@
 #include "replaygainmodel.h"
 
 #include <core/constants.h>
+#include <core/library/libraryutils.h>
 
 using namespace Qt::StringLiterals;
 
@@ -58,11 +59,25 @@ void ReplayGainModel::resetModel(const TrackList& tracks)
     QMetaObject::invokeMethod(&m_populator, [this, tracks] { m_populator.run(tracks); });
 }
 
+void ReplayGainModel::updateTracks(const TrackList& tracks)
+{
+    Utils::updateCommonTracks(m_tracks, tracks, Utils::CommonOperation::Update);
+
+    for(auto& item : m_nodes | std::views::values) {
+        const auto trackIt = std::ranges::find_if(tracks, [&item](const Track& track) {
+            return item.track().isInDatabase() && item.track().id() == track.id();
+        });
+        if(trackIt != tracks.cend()) {
+            item.setTrack(*trackIt);
+        }
+    }
+}
+
 TrackList ReplayGainModel::applyChanges()
 {
     TrackList tracks;
 
-    for(auto& [_, item] : m_nodes) {
+    for(auto& item : m_nodes | std::views::values) {
         if(item.applyChanges()) {
             tracks.emplace_back(item.track());
         }

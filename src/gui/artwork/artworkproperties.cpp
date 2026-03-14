@@ -259,6 +259,11 @@ void ArtworkProperties::apply()
     });
 }
 
+void ArtworkProperties::updateTracks(const TrackList& tracks)
+{
+    m_tracks = tracks;
+}
+
 void ArtworkProperties::paintEvent(QPaintEvent* event)
 {
     QPainter painter{this};

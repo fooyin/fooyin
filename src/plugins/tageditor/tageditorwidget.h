@@ -59,6 +59,7 @@ public:
     [[nodiscard]] bool hasTools() const override;
     void addTools(QMenu* menu) override;
     void apply() override;
+    void updateTracks(const TrackList& tracks) override;
 
 signals:
     void trackMetadataChanged(const Fooyin::TrackList& tracks);

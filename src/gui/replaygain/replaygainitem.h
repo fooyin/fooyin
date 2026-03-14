@@ -69,6 +69,7 @@ public:
     [[nodiscard]] bool multipleValues() const;
     [[nodiscard]] SummaryFunc summaryFunc() const;
 
+    void setTrack(const Track& track);
     bool setTrackGain(float value);
     bool setTrackPeak(float value);
     bool setAlbumGain(float value);

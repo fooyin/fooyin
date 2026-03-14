@@ -18,6 +18,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/levelframe.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/outputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/libraryutils.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/library/tracksort.h
     ${CMAKE_SOURCE_DIR}/include/core/network/networkaccessmanager.h
@@ -188,7 +189,6 @@ set(SOURCES
     library/librarythreadhandler.cpp
     library/librarythreadhandler.h
     library/libraryutils.cpp
-    library/libraryutils.h
     library/librarywatcher.cpp
     library/librarywatcher.h
     library/sortingregistry.cpp
