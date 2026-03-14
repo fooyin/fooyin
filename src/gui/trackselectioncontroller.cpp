@@ -146,8 +146,8 @@ TrackSelectionControllerPrivate::TrackSelectionControllerPrivate(TrackSelectionC
     , m_tracksPlaylistMenu{m_actionManager->createMenu(Constants::Menus::Context::TracksPlaylist)}
     , m_addCurrent{new QAction(tr("Add to current playlist"), m_tracksPlaylistMenu)}
     , m_addActive{new QAction(tr("Add to active playlist"), m_tracksPlaylistMenu)}
-    , m_sendCurrent{new QAction(tr("Send to current playlist"), m_tracksPlaylistMenu)}
-    , m_sendNew{new QAction(tr("Send to new playlist"), m_tracksPlaylistMenu)}
+    , m_sendCurrent{new QAction(tr("Replace current playlist"), m_tracksPlaylistMenu)}
+    , m_sendNew{new QAction(tr("Create new playlist"), m_tracksPlaylistMenu)}
     , m_addToQueue{new QAction(tr("Add to playback queue"), m_tracksMenu)}
     , m_queueNext{new QAction(tr("Queue to play next"), m_tracksMenu)}
     , m_removeFromQueue{new QAction(tr("Remove from playback queue"), m_tracksMenu)}

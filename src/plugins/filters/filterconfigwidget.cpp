@@ -42,7 +42,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, ActionManager
     , m_columnRegistry{columnRegistry}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
-    , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}
+    , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
     , m_keepAlive{new QCheckBox(tr("Keep alive"), this)}
@@ -55,6 +55,9 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, ActionManager
     , m_iconVerticalGap{new QSpinBox(this)}
     , m_manageColumns{new QPushButton(tr("Manage columns..."), this)}
 {
+    m_playbackOnSend->setToolTip(
+        tr("For \"Replace current playlist\" and \"Create new playlist\", start playback immediately."));
+
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
@@ -136,20 +139,20 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, ActionManager
     addTrackAction(m_doubleClick, tr("None"), TrackAction::None);
     addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
     addTrackAction(m_doubleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
-    addTrackAction(m_doubleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist);
-    addTrackAction(m_doubleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist);
+    addTrackAction(m_doubleClick, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
+    addTrackAction(m_doubleClick, tr("Create new playlist"), TrackAction::SendNewPlaylist);
     addTrackAction(m_doubleClick, tr("Add to playback queue"), TrackAction::AddToQueue);
     addTrackAction(m_doubleClick, tr("Add to front of playback queue"), TrackAction::QueueNext);
-    addTrackAction(m_doubleClick, tr("Send to playback queue"), TrackAction::SendToQueue);
+    addTrackAction(m_doubleClick, tr("Replace playback queue"), TrackAction::SendToQueue);
 
     addTrackAction(m_middleClick, tr("None"), TrackAction::None);
     addTrackAction(m_middleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
     addTrackAction(m_middleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
-    addTrackAction(m_middleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist);
-    addTrackAction(m_middleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist);
+    addTrackAction(m_middleClick, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
+    addTrackAction(m_middleClick, tr("Create new playlist"), TrackAction::SendNewPlaylist);
     addTrackAction(m_middleClick, tr("Add to playback queue"), TrackAction::AddToQueue);
     addTrackAction(m_middleClick, tr("Add to front of playback queue"), TrackAction::QueueNext);
-    addTrackAction(m_middleClick, tr("Send to playback queue"), TrackAction::SendToQueue);
+    addTrackAction(m_middleClick, tr("Replace playback queue"), TrackAction::SendToQueue);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
     QObject::connect(m_playlistEnabled, &QCheckBox::toggled, this, [this](bool checked) {

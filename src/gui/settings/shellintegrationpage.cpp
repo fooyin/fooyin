@@ -60,7 +60,7 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
     , m_restrictTypes{new QLineEdit(this)}
     , m_excludeTypes{new QLineEdit(this)}
     , m_externalSortScript{new ScriptLineEdit(this)}
-    , m_alwaysSend{new QCheckBox(tr("Always send to playlist"), this)}
+    , m_alwaysSend{new QCheckBox(tr("Always replace playlist"), this)}
     , m_externalPlaylist{new QLineEdit(this)}
 {
     auto* fileTypesGroup  = new QGroupBox(tr("File Types"), this);
@@ -77,7 +77,8 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
     auto* playlistGroup       = new QGroupBox(tr("Playlist"), this);
     auto* playlistGroupLayout = new QGridLayout(playlistGroup);
 
-    m_externalPlaylist->setToolTip(tr("When opening files, always send to playlist, replacing all existing tracks"));
+    m_externalPlaylist->setToolTip(
+        tr("When opening files, always replace the playlist contents with the incoming tracks"));
 
     row = 0;
     playlistGroupLayout->addWidget(m_alwaysSend, row++, 0, 1, 2);

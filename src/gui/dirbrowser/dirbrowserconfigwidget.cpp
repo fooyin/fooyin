@@ -45,8 +45,11 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     , m_showHidden{new QCheckBox(tr("Show hidden"), this)}
     , m_doubleClick{new QComboBox(this)}
     , m_middleClick{new QComboBox(this)}
-    , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}
+    , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
 {
+    m_playbackOnSend->setToolTip(
+        tr("For \"Replace current playlist\" and \"Create new playlist\", start playback immediately."));
+
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
@@ -91,20 +94,20 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     addTrackAction(m_doubleClick, tr("Expand/Collapse/Play"), TrackAction::Play);
     addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
     addTrackAction(m_doubleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
-    addTrackAction(m_doubleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist);
-    addTrackAction(m_doubleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist);
+    addTrackAction(m_doubleClick, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
+    addTrackAction(m_doubleClick, tr("Create new playlist"), TrackAction::SendNewPlaylist);
     addTrackAction(m_doubleClick, tr("Add to playback queue"), TrackAction::AddToQueue);
     addTrackAction(m_doubleClick, tr("Add to front of playback queue"), TrackAction::QueueNext);
-    addTrackAction(m_doubleClick, tr("Send to playback queue"), TrackAction::SendToQueue);
+    addTrackAction(m_doubleClick, tr("Replace playback queue"), TrackAction::SendToQueue);
 
     addTrackAction(m_middleClick, tr("None"), TrackAction::None);
     addTrackAction(m_middleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
     addTrackAction(m_middleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
-    addTrackAction(m_middleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist);
-    addTrackAction(m_middleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist);
+    addTrackAction(m_middleClick, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
+    addTrackAction(m_middleClick, tr("Create new playlist"), TrackAction::SendNewPlaylist);
     addTrackAction(m_middleClick, tr("Add to playback queue"), TrackAction::AddToQueue);
     addTrackAction(m_middleClick, tr("Add to front of playback queue"), TrackAction::QueueNext);
-    addTrackAction(m_middleClick, tr("Send to playback queue"), TrackAction::SendToQueue);
+    addTrackAction(m_middleClick, tr("Replace playback queue"), TrackAction::SendToQueue);
 
     QObject::connect(m_treeMode, &QRadioButton::toggled, this,
                      [this](bool checked) { m_indentList->setEnabled(!checked); });

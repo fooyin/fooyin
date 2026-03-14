@@ -193,11 +193,11 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     , m_playAction{new QAction(tr("&Play"), this)}
     , m_addCurrent{new QAction(tr("Add to &current playlist"), this)}
     , m_addActive{new QAction(tr("Add to &active playlist"), this)}
-    , m_sendCurrent{new QAction(tr("&Send to current playlist"), this)}
-    , m_sendNew{new QAction(tr("Send to &new playlist"), this)}
+    , m_sendCurrent{new QAction(tr("&Replace current playlist"), this)}
+    , m_sendNew{new QAction(tr("Create &new playlist"), this)}
     , m_addQueue{new QAction(tr("Add to playback &queue"), this)}
     , m_queueNext{new QAction(tr("Queue to play next"), this)}
-    , m_sendQueue{new QAction(tr("Send to playback q&ueue"), this)}
+    , m_sendQueue{new QAction(tr("Replace playback q&ueue"), this)}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
