@@ -58,9 +58,6 @@
 #include <QTreeView>
 #include <QUndoCommand>
 
-// TEMP
-#include <iostream>
-
 using namespace Qt::StringLiterals;
 
 // Settings keys
@@ -629,7 +626,18 @@ void DirBrowser::updateFilters()
 
 void DirBrowser::setControlsEnabled(bool enabled)
 {
-    if(enabled && !m_upDir && !m_backDir && !m_forwardDir) {
+    if(!enabled) {
+        if(m_backDir) {
+            m_backDir->deleteLater();
+        }
+        if(m_forwardDir) {
+            m_forwardDir->deleteLater();
+        }
+        if(m_upDir) {
+            m_upDir->deleteLater();
+        }
+    }
+    else if(!m_upDir && !m_backDir && !m_forwardDir) {
         m_upDir      = new ToolButton(this);
         m_backDir    = new ToolButton(this);
         m_forwardDir = new ToolButton(this);
@@ -642,31 +650,20 @@ void DirBrowser::setControlsEnabled(bool enabled)
         m_controlLayout->insertWidget(0, m_forwardDir);
         m_controlLayout->insertWidget(0, m_backDir);
     }
-    else if(!enabled) {
-        if(m_backDir) {
-            m_backDir->deleteLater();
-        }
-        if(m_forwardDir) {
-            m_forwardDir->deleteLater();
-        }
-        if(m_upDir) {
-            m_upDir->deleteLater();
-        }
-    }
 }
 
 void DirBrowser::setLocationEnabled(bool enabled)
 {
-    if(enabled && !m_dirEdit) {
+    if(!enabled) {
+        if(m_dirEdit) {
+            m_dirEdit->deleteLater();
+        }
+    }
+    else if(!m_dirEdit) {
         m_dirEdit = new QLineEdit(this);
         QObject::connect(m_dirEdit, &QLineEdit::textEdited, this, [this](const QString& dir) { changeRoot(dir); });
         m_controlLayout->addWidget(m_dirEdit, 1);
         m_dirEdit->setText(m_model->rootPath());
-    }
-    else if(!enabled) {
-        if(m_dirEdit) {
-            m_dirEdit->deleteLater();
-        }
     }
 }
 
