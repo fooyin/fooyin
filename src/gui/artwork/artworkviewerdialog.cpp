@@ -58,16 +58,14 @@ public:
     void zoomOut();
 
 signals:
-    void fitToWindowChanged(bool enabled);
+    void manualZoomPerformed();
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
 
 private:
-    [[nodiscard]] double fitScaleFactor() const;
-    void updateFitToWindowState();
-    void applyManualScale(qreal factor);
+    void applyManualScale(double factor);
     void applyFitToWindow();
 
     QGraphicsScene m_scene;
@@ -107,10 +105,7 @@ void ArtworkView::setFitToWindowEnabled(const bool enabled)
 
     if(m_fitToWindowEnabled) {
         applyFitToWindow();
-        return;
     }
-
-    updateFitToWindowState();
 }
 
 void ArtworkView::fitToWindow()
@@ -125,11 +120,15 @@ void ArtworkView::fitToWindow()
 
 void ArtworkView::actualSize()
 {
-    m_fitToWindowEnabled = false;
+    const double oldScale     = transform().m11();
+    const bool wasFitToWindow = m_fitToWindowEnabled;
+    m_fitToWindowEnabled      = false;
 
     resetTransform();
 
-    updateFitToWindowState();
+    if(wasFitToWindow || !qFuzzyCompare(oldScale, transform().m11())) {
+        emit manualZoomPerformed();
+    }
 }
 
 void ArtworkView::zoomIn()
@@ -166,12 +165,17 @@ void ArtworkView::wheelEvent(QWheelEvent* event)
     event->accept();
 }
 
-void ArtworkView::applyManualScale(const qreal factor)
+void ArtworkView::applyManualScale(double factor)
 {
-    m_fitToWindowEnabled = false;
+    const double oldScale     = transform().m11();
+    const bool wasFitToWindow = m_fitToWindowEnabled;
+    m_fitToWindowEnabled      = false;
+
     scale(factor, factor);
 
-    updateFitToWindowState();
+    if(wasFitToWindow || !qFuzzyCompare(oldScale, transform().m11())) {
+        emit manualZoomPerformed();
+    }
 }
 
 void ArtworkView::applyFitToWindow()
@@ -192,45 +196,6 @@ void ArtworkView::applyFitToWindow()
 
     setHorizontalScrollBarPolicy(oldHorizontalPolicy);
     setVerticalScrollBarPolicy(oldVerticalPolicy);
-
-    updateFitToWindowState();
-}
-
-double ArtworkView::fitScaleFactor() const
-{
-    if(m_item->pixmap().isNull()) {
-        return 1.0;
-    }
-
-    const QSize itemSize = m_item->boundingRect().size().toSize();
-    QSize viewportSize   = viewport()->size();
-
-    if(horizontalScrollBar()->isVisible()) {
-        viewportSize.rheight() += horizontalScrollBar()->sizeHint().height();
-    }
-    if(verticalScrollBar()->isVisible()) {
-        viewportSize.rwidth() += verticalScrollBar()->sizeHint().width();
-    }
-
-    if(!itemSize.isValid() || !viewportSize.isValid() || itemSize.width() == 0 || itemSize.height() == 0) {
-        return 1.0;
-    }
-
-    const auto widthScale  = static_cast<double>(viewportSize.width()) / static_cast<double>(itemSize.width());
-    const auto heightScale = static_cast<double>(viewportSize.height()) / static_cast<double>(itemSize.height());
-
-    return std::min(widthScale, heightScale);
-}
-
-void ArtworkView::updateFitToWindowState()
-{
-    const double currentScale = transform().m11();
-    const double fitScale     = fitScaleFactor();
-    const double tolerance    = 0.001 * std::max({1.0, std::abs(currentScale), std::abs(fitScale)});
-
-    m_fitToWindowEnabled = std::abs(currentScale - fitScale) <= tolerance;
-
-    emit fitToWindowChanged(m_fitToWindowEnabled);
 }
 
 ArtworkViewerDialog::ArtworkViewerDialog(const Track& track, const QPixmap& cover, QWidget* parent)
@@ -256,9 +221,11 @@ ArtworkViewerDialog::ArtworkViewerDialog(const Track& track, const QPixmap& cove
     QObject::connect(m_zoomInAction, &QAction::triggered, m_view, &ArtworkView::zoomIn);
     QObject::connect(m_zoomOutAction, &QAction::triggered, m_view, &ArtworkView::zoomOut);
 
-    QObject::connect(m_view, &ArtworkView::fitToWindowChanged, this, [this](bool enabled) {
-        const QSignalBlocker blocker{m_fitToWindowAction};
-        m_fitToWindowAction->setChecked(enabled);
+    QObject::connect(m_view, &ArtworkView::manualZoomPerformed, this, [this] {
+        if(m_fitToWindowAction->isChecked()) {
+            const QSignalBlocker blocker{m_fitToWindowAction};
+            m_fitToWindowAction->setChecked(false);
+        }
     });
 
     setCover(cover);
