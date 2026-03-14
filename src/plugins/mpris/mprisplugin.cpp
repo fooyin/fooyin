@@ -162,12 +162,12 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
         return;
     }
 
+    m_registered = true;
+
     if(!QDBusConnection::sessionBus().registerObject(QString::fromLatin1(MprisObjectPath), this)) {
         qCWarning(MPRIS) << "Cannot register object to the dbus";
         return;
     }
-
-    m_registered = true;
 }
 
 void MprisPlugin::shutdown()
@@ -257,7 +257,7 @@ bool MprisPlugin::canPlay() const
 
 bool MprisPlugin::canSeek() const
 {
-    // TODO: Use engine state to detemrine if track is seekable
+    // TODO: Use engine state to determine if track is seekable
     return m_playerController->currentTrack().isValid();
 }
 
