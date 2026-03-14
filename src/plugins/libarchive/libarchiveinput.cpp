@@ -185,12 +185,12 @@ bool LibArchiveReader::init(const QString& file)
     return true;
 }
 
-std::unique_ptr<QIODevice> LibArchiveReader::entry(const QString& file)
+ArchiveEntryData LibArchiveReader::entry(const QString& file)
 {
     ArchivePtr archive{archive_read_new()};
 
     if(!setupForReading(archive.get(), m_file)) {
-        return nullptr;
+        return {};
     }
 
     archive_entry* entry{nullptr};
@@ -198,19 +198,23 @@ std::unique_ptr<QIODevice> LibArchiveReader::entry(const QString& file)
     while(archive_read_next_header(archive.get(), &entry) == ARCHIVE_OK) {
         if(archive_read_has_encrypted_entries(archive.get()) == 1) {
             qCInfo(LIBARCH) << "Unable to read encrypted file" << m_file;
-            return nullptr;
+            return {};
         }
 
         if(archive_entry_filetype(entry) == AE_IFREG) {
             const QString entryPath = QDir::fromNativeSeparators(QFile::decodeName(archive_entry_pathname(entry)));
             if(entryPath == file) {
-                return std::make_unique<LibArchiveIODevice>(std::move(archive), entry, nullptr);
+                const la_int64_t entrySize = archive_entry_size(entry);
+                return {.path         = entryPath,
+                        .device       = std::make_unique<LibArchiveIODevice>(std::move(archive), entry, nullptr),
+                        .modifiedTime = entryModifiedTimeMs(entry),
+                        .size         = entrySize > 0 ? static_cast<uint64_t>(entrySize) : 0};
             }
         }
     }
 
     qCDebug(LIBARCH) << "Unable to find" << file << "in" << m_file;
-    return nullptr;
+    return {};
 }
 
 bool LibArchiveReader::readTracks(ReadEntryCallback readEntry)
@@ -230,11 +234,15 @@ bool LibArchiveReader::readTracks(ReadEntryCallback readEntry)
         }
 
         if(archive_entry_filetype(entry) == AE_IFREG) {
-            const QString entryPath = QDir::fromNativeSeparators(QFile::decodeName(archive_entry_pathname(entry)));
-            auto entryDev           = std::make_unique<LibArchiveIODevice>(std::move(archive), entry, nullptr);
-
-            readEntry(entryPath, entryDev.get(), entryModifiedTimeMs(entry));
-            archive.reset(entryDev->releaseArchive());
+            const la_int64_t entrySize = archive_entry_size(entry);
+            ArchiveEntryData entryData{
+                .path         = QDir::fromNativeSeparators(QFile::decodeName(archive_entry_pathname(entry))),
+                .device       = std::make_unique<LibArchiveIODevice>(std::move(archive), entry, nullptr),
+                .modifiedTime = entryModifiedTimeMs(entry),
+                .size         = entrySize > 0 ? static_cast<uint64_t>(entrySize) : 0};
+            auto* archiveDevice = static_cast<LibArchiveIODevice*>(entryData.device.get());
+            readEntry(std::move(entryData));
+            archive.reset(archiveDevice->releaseArchive());
         }
     }
 

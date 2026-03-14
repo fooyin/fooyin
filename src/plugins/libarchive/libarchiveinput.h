@@ -73,7 +73,7 @@ public:
     [[nodiscard]] QString type() const override;
 
     bool init(const QString& file) override;
-    std::unique_ptr<QIODevice> entry(const QString& file) override;
+    ArchiveEntryData entry(const QString& file) override;
     bool readTracks(ReadEntryCallback readEntry) override;
     QByteArray readCover(const Track& track, Track::Cover cover) override;
 

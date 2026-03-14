@@ -33,6 +33,14 @@ namespace Fooyin {
 class AudioDecoderPrivate;
 class ArchiveReader;
 
+struct ArchiveEntryData
+{
+    QString path;
+    std::unique_ptr<QIODevice> device;
+    uint64_t modifiedTime{0};
+    uint64_t size{0};
+};
+
 /*!
  * Input source descriptor passed to readers/decoders.
  *
@@ -48,6 +56,10 @@ struct AudioSource
     QIODevice* device{nullptr};
     //! Optional archive helper when source originates from an archive container.
     ArchiveReader* archiveReader{nullptr};
+    //! Optional source modified time in milliseconds since epoch.
+    uint64_t modifiedTime{0};
+    //! Optional known source size in bytes.
+    uint64_t size{0};
 };
 
 /*!
@@ -256,7 +268,7 @@ using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 class FYCORE_EXPORT ArchiveReader
 {
 public:
-    using ReadEntryCallback = std::function<void(const QString&, QIODevice*)>;
+    using ReadEntryCallback = std::function<void(ArchiveEntryData&&)>;
 
     virtual ~ArchiveReader() = default;
 
@@ -282,7 +294,7 @@ public:
      * If the file can't be found, this should return nullptr.
      * @note Called only after `init()` returns true.
      */
-    virtual std::unique_ptr<QIODevice> entry(const QString& file) = 0;
+    virtual ArchiveEntryData entry(const QString& file) = 0;
     /*!
      * Reads all files in the archive.
      * The callback @p readEntry should be used to read each file in the archive.

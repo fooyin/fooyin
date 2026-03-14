@@ -122,11 +122,11 @@ void loadM3uIfAvailable(Music_Emu* emu, const Fooyin::AudioSource& source, const
         const QFileInfo fileInfo{track.pathInArchive()};
         const QString m3uPath = fileInfo.dir().relativeFilePath(fileInfo.completeBaseName() + u".m3u"_s);
         auto m3uEntry         = source.archiveReader->entry(m3uPath);
-        if(!m3uEntry) {
+        if(!m3uEntry.device) {
             return;
         }
 
-        const auto m3uData = m3uEntry->readAll();
+        const auto m3uData = m3uEntry.device->readAll();
         if(m3uData.isEmpty()) {
             return;
         }

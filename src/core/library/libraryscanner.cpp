@@ -392,19 +392,24 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
     const QDateTime archiveMTime = archiveInfo.lastModified();
 
     // TODO: Add additional helper in AudioLoader to iterate readers over already open device
-    auto readEntry = [&](const QString& entry, QIODevice* device, uint64_t entryModifiedTime) {
+    auto readEntry = [&](ArchiveEntryData&& entryData) {
         if(!m_self->mayRun()) {
             return;
         }
+
+        const QString& entry = entryData.path;
+        QIODevice* device    = entryData.device.get();
 
         bool readersFound = false;
         for(auto& fileReader : m_audioLoader->readersForFile(entry)) {
             readersFound = true;
 
             AudioSource source;
-            source.filepath      = entry;
+            source.filepath      = entryData.path;
             source.device        = device;
             source.archiveReader = archiveReader.get();
+            source.modifiedTime  = entryData.modifiedTime;
+            source.size          = entryData.size;
 
             if(source.device && !source.device->seek(0)) {
                 continue;
@@ -420,17 +425,21 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath)
             for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
                 Track subTrack{archivePath + entry, subIndex};
 
-                if(source.device) {
+                if(source.size > 0) {
+                    subTrack.setFileSize(source.size);
+                }
+                else if(source.device) {
                     subTrack.setFileSize(source.device->size());
-                    if(!source.device->seek(0)) {
-                        qCDebug(LIB_SCANNER) << "Failed to rewind archive entry:" << entry;
-                        break;
-                    }
+                }
+
+                if(source.device && !source.device->seek(0)) {
+                    qCDebug(LIB_SCANNER) << "Failed to rewind archive entry:" << entry;
+                    break;
                 }
 
                 const uint64_t mTime
-                    = entryModifiedTime > 0
-                        ? entryModifiedTime
+                    = entryData.modifiedTime > 0
+                        ? entryData.modifiedTime
                         : (archiveMTime.isValid() ? static_cast<uint64_t>(archiveMTime.toMSecsSinceEpoch()) : 0);
                 subTrack.setModifiedTime(mTime);
 

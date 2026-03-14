@@ -154,13 +154,30 @@ bool GeneralArchiveReader::readTrack(const AudioSource& source, Track& track)
     if(!trackSource.device) {
         trackSource.device = m_loadedReader.input.device.get();
     }
-    if(track.fileSize() == 0 && m_loadedReader.input.device) {
-        track.setFileSize(m_loadedReader.input.device->size());
+    if(trackSource.size == 0) {
+        trackSource.size = m_loadedReader.input.source.size;
+    }
+    if(trackSource.modifiedTime == 0) {
+        trackSource.modifiedTime = m_loadedReader.input.source.modifiedTime;
+    }
+    if(track.fileSize() == 0) {
+        if(trackSource.size > 0) {
+            track.setFileSize(trackSource.size);
+        }
+        else if(trackSource.device) {
+            track.setFileSize(trackSource.device->size());
+        }
     }
     if(track.modifiedTime() == 0) {
-        const QDateTime modifiedTime = QFileInfo{track.archivePath()}.lastModified();
-        track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+        if(trackSource.modifiedTime > 0) {
+            track.setModifiedTime(trackSource.modifiedTime);
+        }
+        else {
+            const QDateTime modifiedTime = QFileInfo{track.archivePath()}.lastModified();
+            track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+        }
     }
+
     trackSource.archiveReader = m_loadedReader.input.archiveReader.get();
     return m_loadedReader.reader && m_loadedReader.reader->readTrack(trackSource, track);
 }
