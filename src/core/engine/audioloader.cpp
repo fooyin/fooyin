@@ -522,7 +522,11 @@ bool AudioLoader::readTrackMetadata(Track& track) const
         }
 
         if(reader->init(source)) {
-            return reader->readTrack(source, track);
+            if(reader->readTrack(source, track)) {
+                track.setMetadataWasRead(true);
+                return true;
+            }
+            return false;
         }
     }
 

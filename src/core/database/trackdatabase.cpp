@@ -185,6 +185,7 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q, const std::shared_ptr<Fooyin
     track.setPlayCount(q.value(41).toInt());
     track.setRating(q.value(42).toFloat());
 
+    track.setMetadataWasRead(true);
     track.generateHash();
 
     return track;

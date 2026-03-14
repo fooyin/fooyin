@@ -206,6 +206,7 @@ public:
     void setLibraryId(int id);
     void setMetadataStore(std::shared_ptr<TrackMetadataStore> store);
     void setIsEnabled(bool enabled);
+    void setMetadataWasRead(bool wasRead);
     void setId(int id);
     void setHash(const QString& hash);
     void setFilePath(const QString& path);

@@ -245,6 +245,7 @@ public:
     float rgTrackPeak{Constants::InvalidPeak};
     float rgAlbumPeak{Constants::InvalidPeak};
 
+    bool metadataWasRead{false};
     bool metadataWasModified{false};
 
     // Archive related
@@ -464,8 +465,7 @@ bool Track::isInDatabase() const
 
 bool Track::metadataWasRead() const
 {
-    // Assume read if basic properties are valid
-    return p->filesize > 0 && p->modifiedTime > 0;
+    return p->metadataWasRead;
 }
 
 bool Track::metadataWasModified() const
@@ -1202,6 +1202,11 @@ void Track::setLibraryId(int id)
 void Track::setIsEnabled(bool enabled)
 {
     p->enabled = enabled;
+}
+
+void Track::setMetadataWasRead(bool wasRead)
+{
+    p->metadataWasRead = wasRead;
 }
 
 void Track::setId(int id)
