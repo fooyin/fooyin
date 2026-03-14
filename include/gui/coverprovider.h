@@ -87,6 +87,9 @@ public:
 
     /** Returns a valid pixmap if @p track has a cover of the specific @p type. */
     [[nodiscard]] QFuture<QPixmap> trackCoverFull(const Track& track, Track::Cover type = Track::Cover::Front) const;
+    /** Returns the original-size cover pixmap for @p track without applying the standard 1024px cap. */
+    [[nodiscard]] QFuture<QPixmap> trackCoverOriginal(const Track& track,
+                                                      Track::Cover type = Track::Cover::Front) const;
 
     /*!
      * This will return the thumbnail picture of @p type for the @p track if it exists in the cache.

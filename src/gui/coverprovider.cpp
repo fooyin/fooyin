@@ -179,6 +179,28 @@ QImage readImage(const QString& path, int requestedSize, const QString& hintType
     return image;
 }
 
+QImage readImageOriginal(const QString& path, const QString& hintType)
+{
+    const QMimeDatabase mimeDb;
+    const auto mimeType   = mimeDb.mimeTypeForFile(path, QMimeDatabase::MatchContent);
+    const auto formatHint = mimeType.preferredSuffix().toLocal8Bit().toLower();
+
+    QImageReader reader{path, formatHint};
+
+    if(!reader.canRead()) {
+        qCDebug(COV_PROV) << "Failed to use format hint" << formatHint << "when trying to load" << hintType << "cover";
+
+        reader.setFormat({});
+        reader.setFileName(path);
+        if(!reader.canRead()) {
+            qCDebug(COV_PROV) << "Failed to load" << hintType << "cover";
+            return {};
+        }
+    }
+
+    return reader.read();
+}
+
 QImage readImage(QByteArray data)
 {
     QBuffer buffer{&data};
@@ -208,6 +230,29 @@ QImage readImage(QByteArray data)
     return reader.read();
 }
 
+QImage readImageOriginal(QByteArray data)
+{
+    QBuffer buffer{&data};
+    const QMimeDatabase mimeDb;
+    const auto mimeType   = mimeDb.mimeTypeForData(&buffer);
+    const auto formatHint = mimeType.preferredSuffix().toLocal8Bit().toLower();
+
+    QImageReader reader{&buffer, formatHint};
+
+    if(!reader.canRead()) {
+        qCDebug(COV_PROV) << "Failed to use format hint" << formatHint << "when trying to load embedded cover";
+
+        reader.setFormat({});
+        reader.setDevice(&buffer);
+        if(!reader.canRead()) {
+            qCDebug(COV_PROV) << "Failed to load embedded cover";
+            return {};
+        }
+    }
+
+    return reader.read();
+}
+
 struct CoverLoader
 {
     QString key;
@@ -217,6 +262,7 @@ struct CoverLoader
     Fooyin::CoverPaths paths;
     bool isThumb{false};
     CoverProvider::ThumbnailSize size{CoverProvider::None};
+    bool originalSize{false};
     QImage cover;
 };
 
@@ -243,7 +289,8 @@ QImage loadImageFromDirectory(CoverLoader& loader)
         return {};
     }
 
-    return readImage(dirPath, loader.size, u"directory"_s);
+    return loader.originalSize ? readImageOriginal(dirPath, u"directory"_s)
+                               : readImage(dirPath, loader.size, u"directory"_s);
 }
 
 bool hasEmbeddedCover(const CoverLoader& loader)
@@ -259,7 +306,7 @@ QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath
         return {};
     }
 
-    QImage cover = readImage(coverData);
+    QImage cover = loader.originalSize ? readImageOriginal(coverData) : readImage(coverData);
 
     if(loader.isThumb && !cover.isNull() && !QFileInfo::exists(cachePath)) {
         if(!saveThumbnail(cover, loader.key)) {
@@ -312,9 +359,11 @@ public:
     [[nodiscard]] QPixmap loadNoCover() const;
     void processCoverResult(const CoverLoader& loader);
     static QPixmap processLoadResult(const CoverLoader& loader);
+    static QPixmap processOriginalLoadResult(const CoverLoader& loader);
     void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail,
-                    CoverProvider::ThumbnailSize size = CoverProvider::None);
+                    ThumbnailSize size = None);
     [[nodiscard]] QFuture<QPixmap> loadCover(const Track& track, Track::Cover type) const;
+    [[nodiscard]] QFuture<QPixmap> loadOriginalCover(const Track& track, Track::Cover type) const;
     QPixmap loadCachedCover(const QString& key, int size = 0);
     [[nodiscard]] QFuture<bool> hasCover(const QString& key, const Track& track, Track::Cover type) const;
 
@@ -355,9 +404,9 @@ QPixmap CoverProvider::CoverProviderPrivate::loadNoCover() const
     }
 
     const QIcon icon = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
-    static const QSize coverSize{MaxSize, MaxSize};
+    static constexpr QSize CoverSize{MaxSize, MaxSize};
 
-    auto* cover    = new QPixmap(icon.pixmap(coverSize, Utils::windowDpr()));
+    auto* cover    = new QPixmap(icon.pixmap(CoverSize, Utils::windowDpr()));
     const int cost = cover->width() * cover->height() * cover->depth() / 8;
 
     if(m_coverCache.insert(m_noCoverKey, cover, cost)) {
@@ -372,7 +421,7 @@ void CoverProvider::CoverProviderPrivate::processCoverResult(const CoverLoader& 
     m_pendingCovers.erase(loader.key);
 
     if(loader.cover.isNull()) {
-        CoverProvider::m_noCoverKeys.emplace(loader.key);
+        m_noCoverKeys.emplace(loader.key);
         return;
     }
 
@@ -401,8 +450,17 @@ QPixmap CoverProvider::CoverProviderPrivate::processLoadResult(const CoverLoader
     return cover;
 }
 
+QPixmap CoverProvider::CoverProviderPrivate::processOriginalLoadResult(const CoverLoader& loader)
+{
+    if(loader.cover.isNull()) {
+        return {};
+    }
+
+    return QPixmap::fromImage(loader.cover);
+}
+
 void CoverProvider::CoverProviderPrivate::fetchCover(const QString& key, const Track& track, Track::Cover type,
-                                                     bool thumbnail, CoverProvider::ThumbnailSize size)
+                                                     bool thumbnail, ThumbnailSize size)
 {
     CoverLoader loader;
     loader.key         = key;
@@ -433,6 +491,22 @@ QFuture<QPixmap> CoverProvider::CoverProviderPrivate::loadCover(const Track& tra
         return result;
     });
     return loaderResult.then(m_self, [track](const CoverLoader& result) { return processLoadResult(result); });
+}
+
+QFuture<QPixmap> CoverProvider::CoverProviderPrivate::loadOriginalCover(const Track& track, Track::Cover type) const
+{
+    CoverLoader loader;
+    loader.track        = track;
+    loader.type         = type;
+    loader.audioLoader  = m_audioLoader;
+    loader.paths        = m_paths;
+    loader.originalSize = true;
+
+    auto loaderResult = Utils::asyncExec([loader]() -> CoverLoader {
+        auto result = loadCoverImage(loader);
+        return result;
+    });
+    return loaderResult.then(m_self, [](const CoverLoader& result) { return processOriginalLoadResult(result); });
 }
 
 QPixmap CoverProvider::CoverProviderPrivate::loadCachedCover(const QString& key, int size)
@@ -519,6 +593,15 @@ QFuture<QPixmap> CoverProvider::trackCoverFull(const Track& track, Track::Cover 
     return p->loadCover(track, type);
 }
 
+QFuture<QPixmap> CoverProvider::trackCoverOriginal(const Track& track, Track::Cover type) const
+{
+    if(!track.isValid()) {
+        return Utils::asyncExec([] { return QPixmap{}; });
+    }
+
+    return p->loadOriginalCover(track, type);
+}
+
 QPixmap CoverProvider::trackCoverThumbnail(const Track& track, ThumbnailSize size, Track::Cover type) const
 {
     if(!track.isValid()) {
@@ -580,7 +663,7 @@ CoverProvider::ThumbnailSize CoverProvider::findThumbnailSize(const QSize& size)
 
 void CoverProvider::clearCache()
 {
-    QDir cache{Fooyin::Gui::coverPath()};
+    QDir cache{Gui::coverPath()};
     cache.removeRecursively();
 
     m_coverCache.clear();
