@@ -20,6 +20,7 @@
 #include "coverwidget.h"
 
 #include "artwork/artworkexporter.h"
+#include "artwork/artworkviewerdialog.h"
 #include "statusevent.h"
 
 #include <core/engine/audioloader.h>
@@ -36,8 +37,8 @@
 #include <QDir>
 #include <QHBoxLayout>
 #include <QJsonObject>
-#include <QLabel>
 #include <QMenu>
+#include <QMouseEvent>
 #include <QStylePainter>
 #include <QTimer>
 #include <QTimerEvent>
@@ -238,6 +239,7 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(artistCover);
 
     if(m_track.isValid()) {
+        auto* viewFullSize  = new QAction(tr("View full size"), menu);
         const auto canWrite = [this]() {
             return !m_track.hasCue() && !m_track.isInArchive() && m_audioLoader->canWriteMetadata(m_track);
         };
@@ -281,9 +283,11 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
             extractAs->setDisabled(true);
         }
         if(m_cover.isNull()) {
+            viewFullSize->setDisabled(true);
             remove->setDisabled(true);
         }
 
+        QObject::connect(viewFullSize, &QAction::triggered, this, &CoverWidget::showArtworkViewer);
         QObject::connect(search, &QAction::triggered, this,
                          [this]() { emit requestArtworkSearch({m_track}, m_coverType, false); });
         QObject::connect(quickSearch, &QAction::triggered, this,
@@ -302,6 +306,8 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
                          [this]() { emit requestArtworkRemoval({m_track}, m_coverType); });
 
         menu->addSeparator();
+        menu->addAction(viewFullSize);
+        menu->addSeparator();
         menu->addAction(search);
         menu->addAction(quickSearch);
         menu->addSeparator();
@@ -312,6 +318,17 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     }
 
     menu->popup(event->globalPos());
+}
+
+void CoverWidget::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::LeftButton) {
+        showArtworkViewer();
+        event->accept();
+        return;
+    }
+
+    FyWidget::mouseDoubleClickEvent(event);
 }
 
 void CoverWidget::timerEvent(QTimerEvent* event)
@@ -326,7 +343,23 @@ void CoverWidget::timerEvent(QTimerEvent* event)
 void CoverWidget::paintEvent(QPaintEvent* /*event*/)
 {
     QStylePainter painter{this};
-    painter.drawItemPixmap(contentsRect(), static_cast<int>(Qt::AlignVCenter | m_coverAlignment), m_scaledCover);
+    painter.drawItemPixmap(contentsRect(), Qt::AlignVCenter | m_coverAlignment, m_scaledCover);
+}
+
+void CoverWidget::showArtworkViewer()
+{
+    if(!m_track.isValid() || m_cover.isNull()) {
+        return;
+    }
+
+    auto* dialog = new ArtworkViewerDialog(m_track, m_cover, this);
+    dialog->show();
+
+    m_coverProvider->trackCoverOriginal(m_track, m_coverType).then(dialog, [dialog](const QPixmap& cover) {
+        if(!cover.isNull()) {
+            dialog->setCover(cover);
+        }
+    });
 }
 
 void CoverWidget::checkTrackArtwork(const Track& track)

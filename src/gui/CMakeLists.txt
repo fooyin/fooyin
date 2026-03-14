@@ -72,6 +72,8 @@ set(SOURCES
     artwork/artworkrow.h
     artwork/artworksaveutils.cpp
     artwork/artworksaveutils.h
+    artwork/artworkviewerdialog.cpp
+    artwork/artworkviewerdialog.h
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.cpp

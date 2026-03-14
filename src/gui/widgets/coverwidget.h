@@ -59,10 +59,12 @@ signals:
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void mouseDoubleClickEvent(QMouseEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    void showArtworkViewer();
     void checkTrackArtwork(const Track& track);
 
     PlayerController* m_playerController;
