@@ -19,7 +19,7 @@ public:
 
     void setPlaylistData(const Playlist* playlist, const PlaylistTrackIndexes* playlistQueue,
                          const TrackList* tracks = nullptr);
-    void setTrackState(int playlistTrackIndex, int currentPlayingTrackIndex, int trackDepth);
+    void setTrackState(int playlistTrackIndex, int currentPlayingTrackIndex, int currentPlayingTrackId, int trackDepth);
     void setPlaybackState(uint64_t currentPosition, uint64_t currentTrackDuration, int bitrate,
                           Player::PlayState playState);
     void setEvaluationPolicy(TrackListContextPolicy policy, QString placeholder, bool escapeRichText,
@@ -32,6 +32,7 @@ public:
 
     [[nodiscard]] int currentPlaylistTrackIndex() const override;
     [[nodiscard]] int currentPlayingTrackIndex() const override;
+    [[nodiscard]] int currentPlayingTrackId() const override;
     [[nodiscard]] int playlistTrackCount() const override;
     [[nodiscard]] int trackDepth() const override;
     [[nodiscard]] std::span<const int> currentQueueIndexes() const override;
@@ -51,6 +52,7 @@ private:
     const TrackList* m_tracks;
     int m_playlistTrackIndex;
     int m_currentPlayingTrackIndex;
+    int m_currentPlayingTrackId;
     int m_trackDepth;
     uint64_t m_currentPosition;
     uint64_t m_currentTrackDuration;

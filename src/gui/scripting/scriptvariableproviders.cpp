@@ -125,6 +125,7 @@ PlaylistScriptEnvironment::PlaylistScriptEnvironment()
     , m_tracks{nullptr}
     , m_playlistTrackIndex{-1}
     , m_currentPlayingTrackIndex{-1}
+    , m_currentPlayingTrackId{-1}
     , m_trackDepth{0}
     , m_currentPosition{0}
     , m_currentTrackDuration{0}
@@ -143,10 +144,12 @@ void PlaylistScriptEnvironment::setPlaylistData(const Playlist* playlist, const 
     m_tracks        = tracks;
 }
 
-void PlaylistScriptEnvironment::setTrackState(int playlistTrackIndex, int currentPlayingTrackIndex, int trackDepth)
+void PlaylistScriptEnvironment::setTrackState(int playlistTrackIndex, int currentPlayingTrackIndex,
+                                              int currentPlayingTrackId, int trackDepth)
 {
     m_playlistTrackIndex       = playlistTrackIndex;
     m_currentPlayingTrackIndex = currentPlayingTrackIndex;
+    m_currentPlayingTrackId    = currentPlayingTrackId;
     m_trackDepth               = trackDepth;
 }
 
@@ -196,6 +199,11 @@ int PlaylistScriptEnvironment::currentPlaylistTrackIndex() const
 int PlaylistScriptEnvironment::currentPlayingTrackIndex() const
 {
     return m_currentPlayingTrackIndex;
+}
+
+int PlaylistScriptEnvironment::currentPlayingTrackId() const
+{
+    return m_currentPlayingTrackId;
 }
 
 int PlaylistScriptEnvironment::playlistTrackCount() const
@@ -343,7 +351,8 @@ PlaybackScriptContextData makePlaybackScriptContext(PlayerController* playerCont
     }
 
     data.environment.setPlaylistData(playlist, &data.playlistQueue, data.tracks.empty() ? nullptr : &data.tracks);
-    data.environment.setTrackState(playlistTrackIndex, playlistTrackIndex, 0);
+    data.environment.setTrackState(playlistTrackIndex, playlistTrackIndex,
+                                   playerController ? playerController->currentTrackId() : -1, 0);
     data.environment.setPlaybackState(currentPosition, currentTrackDuration, bitrate, playState);
     data.environment.setEvaluationPolicy(policy, std::move(placeholder), escapeRichText, useVariousArtists);
 

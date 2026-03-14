@@ -192,8 +192,6 @@ bool isTrackListVariableKind(const VariableKind kind)
         default:
             return false;
     }
-
-    return false;
 }
 
 std::optional<ScriptRegistry::FuncRet> trackMetadataValue(const VariableKind kind, const Track& track,
@@ -312,8 +310,6 @@ std::optional<ScriptRegistry::FuncRet> trackMetadataValue(const VariableKind kin
         default:
             return {};
     }
-
-    return {};
 }
 
 std::optional<ScriptRegistry::FuncRet> trackListValue(const VariableKind kind, const TrackList& tracks,
@@ -334,30 +330,34 @@ std::optional<ScriptRegistry::FuncRet> trackListValue(const VariableKind kind, c
         default:
             return {};
     }
-
-    return {};
 }
 
-std::optional<QString> playbackVariableValue(const VariableKind kind, const ScriptRegistry& registry)
+std::optional<QString> playbackVariableValue(const VariableKind kind, const ScriptRegistry& registry,
+                                             const Track& track)
 {
     switch(kind) {
         case VariableKind::PlaybackTime:
-            return registry.playbackTime();
+            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.playbackTime()}
+                                                                  : std::optional<QString>{};
         case VariableKind::PlaybackTimeSeconds:
-            return registry.playbackTimeSeconds();
+            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.playbackTimeSeconds()}
+                                                                  : std::optional<QString>{};
         case VariableKind::PlaybackTimeRemaining:
-            return registry.playbackTimeRemaining();
+            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.playbackTimeRemaining()}
+                                                                  : std::optional<QString>{};
         case VariableKind::PlaybackTimeRemainingSeconds:
-            return registry.playbackTimeRemainingSeconds();
+            return registry.playbackValueAvailableForTrack(track)
+                     ? std::optional{registry.playbackTimeRemainingSeconds()}
+                     : std::optional<QString>{};
         case VariableKind::IsPlaying:
-            return registry.isPlaying();
+            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isPlaying()}
+                                                                  : std::optional<QString>{};
         case VariableKind::IsPaused:
-            return registry.isPaused();
+            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isPaused()}
+                                                                  : std::optional<QString>{};
         default:
             return {};
     }
-
-    return {};
 }
 
 std::optional<QString> libraryVariableValue(const VariableKind kind, const Track& track, const ScriptRegistry& registry)
@@ -372,8 +372,6 @@ std::optional<QString> libraryVariableValue(const VariableKind kind, const Track
         default:
             return {};
     }
-
-    return {};
 }
 
 ScriptRegistry::FuncRet ScriptRegistry::albumArtistMetadata(const Track& track) const
@@ -548,13 +546,13 @@ QString ScriptRegistry::getBitrate(const Track& track) const
 {
     int bitrate = track.bitrate();
     if(const auto* environment = playbackEnvironment(m_context);
-       environment != nullptr && environment->bitrate() > 0 && playbackValueAvailableForTrack()) {
+       environment != nullptr && environment->bitrate() > 0 && playbackValueAvailableForTrack(track)) {
         bitrate = environment->bitrate();
     }
     return bitrate > 0 ? QString::number(bitrate) : QString{};
 }
 
-bool ScriptRegistry::playbackValueAvailableForTrack() const
+bool ScriptRegistry::playbackValueAvailableForTrack(const Track& track) const
 {
     const auto* playback = playbackEnvironment(m_context);
     if(playback && playback->playState() == Player::PlayState::Stopped) {
@@ -568,12 +566,16 @@ bool ScriptRegistry::playbackValueAvailableForTrack() const
 
     const int currentTrackIndex        = playlistEnvironment->currentPlaylistTrackIndex();
     const int currentPlayingTrackIndex = playlistEnvironment->currentPlayingTrackIndex();
+    const int currentPlayingTrackId    = playlistEnvironment->currentPlayingTrackId();
 
     if(currentTrackIndex < 0) {
-        return true;
+        return !track.isValid() || currentPlayingTrackId < 0 || track.id() == currentPlayingTrackId;
     }
 
-    return currentPlayingTrackIndex >= 0 && currentTrackIndex == currentPlayingTrackIndex;
+    const bool indexMatches = currentPlayingTrackIndex >= 0 && currentTrackIndex == currentPlayingTrackIndex;
+    const bool trackMatches = !track.isValid() || currentPlayingTrackId < 0 || track.id() == currentPlayingTrackId;
+
+    return indexMatches && trackMatches;
 }
 
 QString ScriptRegistry::playlistDuration(const TrackList& tracks) const
@@ -692,7 +694,7 @@ ScriptResult ScriptRegistry::valueForTrack(VariableKind kind, const QString& var
     if(const auto value = trackMetadataValue(kind, track, *this); value.has_value()) {
         return calculateResult(*value);
     }
-    if(const auto value = playbackVariableValue(kind, *this); value.has_value()) {
+    if(const auto value = playbackVariableValue(kind, *this, track); value.has_value()) {
         return calculateResult(*value);
     }
     if(const auto value = libraryVariableValue(kind, track, *this); value.has_value()) {
