@@ -100,7 +100,8 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::reloadCover);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::checkTrackArtwork);
-    QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this, &CoverWidget::reloadCover);
+    QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this,
+                     &CoverWidget::handleSelectionChanged);
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &CoverWidget::reloadCover,
                      Qt::QueuedConnection);
 
@@ -237,6 +238,24 @@ QPixmap CoverWidget::scaledCover(const QPixmap& cover) const
     return scaled;
 }
 
+Track CoverWidget::displayTrack() const
+{
+    if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasTracks()) {
+        return m_trackSelection->selectedTrack();
+    }
+
+    return m_playerController->currentTrack();
+}
+
+bool CoverWidget::sameDisplayTrack(const Track& lhs, const Track& rhs)
+{
+    if(!lhs.isValid() || !rhs.isValid()) {
+        return lhs.isValid() == rhs.isValid();
+    }
+
+    return lhs.filepath() == rhs.filepath() && lhs.subsong() == rhs.subsong() && lhs.offset() == rhs.offset();
+}
+
 void CoverWidget::rescaleCover()
 {
     m_scaledCover = scaledCover(m_cover);
@@ -298,14 +317,7 @@ void CoverWidget::setCoverPixmap(const QPixmap& cover)
 void CoverWidget::reloadCover()
 {
     const int requestId = ++m_coverRequestId;
-    m_track             = {};
-
-    if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasTracks()) {
-        m_track = m_trackSelection->selectedTrack();
-    }
-    else {
-        m_track = m_playerController->currentTrack();
-    }
+    m_track             = displayTrack();
 
     if(!m_track.isValid()) {
         setCoverPixmap({});
@@ -323,6 +335,19 @@ void CoverWidget::reloadCover()
 
         setCoverPixmap(cover);
     });
+}
+
+void CoverWidget::handleSelectionChanged()
+{
+    if(m_displayOption != SelectionDisplay::PreferSelection) {
+        return;
+    }
+
+    if(sameDisplayTrack(displayTrack(), m_track)) {
+        return;
+    }
+
+    reloadCover();
 }
 
 QString CoverWidget::name() const

@@ -90,9 +90,13 @@ private:
     [[nodiscard]] QPixmap effectiveCover(const QPixmap& cover) const;
     [[nodiscard]] QPixmap scaledCover(const QPixmap& cover) const;
 
+    [[nodiscard]] Track displayTrack() const;
+    [[nodiscard]] static bool sameDisplayTrack(const Track& lhs, const Track& rhs);
+
     void setFadeCoverChanges(bool enabled);
     void stopCoverFade();
     void setCoverPixmap(const QPixmap& cover);
+    void handleSelectionChanged();
 
     void showArtworkViewer();
     void checkTrackArtwork(const Track& track);
