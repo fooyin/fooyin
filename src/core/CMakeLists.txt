@@ -54,6 +54,8 @@ set(SOURCES
     database/generaldatabase.h
     database/librarydatabase.cpp
     database/librarydatabase.h
+    database/playbackqueuedatabase.cpp
+    database/playbackqueuedatabase.h
     database/playlistdatabase.cpp
     database/playlistdatabase.h
     database/settingsdatabase.cpp
@@ -202,6 +204,8 @@ set(SOURCES
     playback/playbackcoordinator.cpp
     playback/playbackcoordinator.h
     playback/playbackqueue.cpp
+    playback/playbackqueuestore.cpp
+    playback/playbackqueuestore.h
     playback/playercontroller.cpp
     playback/playlistnavigator.cpp
     playback/playlistnavigator.h

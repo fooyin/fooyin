@@ -34,6 +34,7 @@
 #include "library/sortingregistry.h"
 #include "library/unifiedmusiclibrary.h"
 #include "playback/playbackcoordinator.h"
+#include "playback/playbackqueuestore.h"
 #include "playlist/parsers/cueparser.h"
 #include "playlist/parsers/m3uparser.h"
 #include "playlist/playlistloader.h"
@@ -130,6 +131,7 @@ public:
     UnifiedMusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
     PlayerController* m_playerController;
+    PlaybackQueueStore m_playbackQueueStore;
     EngineHandler m_engine;
     PlaybackCoordinator* m_playbackCoordinator;
     SortingRegistry* m_sortingRegistry;
@@ -156,6 +158,7 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
                                         m_settings, m_self)}
     , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_library, m_settings, m_self)}
     , m_playerController{new PlayerController(m_settings, m_playlistHandler, m_self)}
+    , m_playbackQueueStore{m_database->connectionPool(), m_library, m_playlistHandler}
     , m_engine{m_audioLoader, m_playerController, m_settings, &m_dspRegistry}
     , m_playbackCoordinator{new PlaybackCoordinator(&m_engine, m_playerController, m_playlistHandler, m_settings,
                                                     m_self)}
@@ -480,6 +483,9 @@ Application::Application(QObject* parent)
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksChanged, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksUpdated, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksRemoved, this, startPlaylistTimer);
+    QObject::connect(
+        p->m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
+        [this]() { p->m_playerController->replaceTracks(p->m_playbackQueueStore.load()); }, Qt::SingleShotConnection);
     p->m_trackLoadedConnection = QObject::connect(&p->m_engine, &EngineHandler::trackStatusContextChanged, this,
                                                   [this](const Engine::TrackStatusContext& context) {
                                                       if(context.status == Engine::TrackStatus::Loaded) {
@@ -489,6 +495,14 @@ Application::Application(QObject* parent)
                                                           }
                                                       }
                                                   });
+    QObject::connect(p->m_playerController, &PlayerController::tracksQueued, this,
+                     [this]() { p->m_playbackQueueStore.save(p->m_playerController->playbackQueue()); });
+    QObject::connect(p->m_playerController, &PlayerController::tracksDequeued, this,
+                     [this]() { p->m_playbackQueueStore.save(p->m_playerController->playbackQueue()); });
+    QObject::connect(p->m_playerController, &PlayerController::trackIndexesDequeued, this,
+                     [this]() { p->m_playbackQueueStore.save(p->m_playerController->playbackQueue()); });
+    QObject::connect(p->m_playerController, &PlayerController::trackQueueChanged, this,
+                     [this]() { p->m_playbackQueueStore.save(p->m_playerController->playbackQueue()); });
 
     QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this,
                      [this](const TrackList& tracks) { p->tracksWereUpdated(tracks); });
@@ -547,6 +561,13 @@ void Application::shutdown()
 
     if(p->m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
         p->exportAllPlaylists();
+    }
+
+    if(p->m_settings->value<Settings::Core::ClearPlaybackQueueOnExit>()) {
+        p->m_playbackQueueStore.save(PlaybackQueue{});
+    }
+    else {
+        p->m_playbackQueueStore.save(p->m_playerController->playbackQueue());
     }
 
     p->m_playlistHandler->savePlaylists();

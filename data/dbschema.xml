@@ -354,4 +354,20 @@
             ALTER TABLE Playlists ADD COLUMN ForceSorted INTEGER DEFAULT 1;
         </sql>
     </revision>
+    <revision version="16">
+        <description>
+            Add playback queue persistence.
+        </description>
+        <sql>
+            CREATE TABLE IF NOT EXISTS PlaybackQueue (
+                QueueIndex INTEGER PRIMARY KEY,
+                TrackID INTEGER NOT NULL REFERENCES Tracks(TrackID) ON DELETE CASCADE,
+                PlaylistID INTEGER REFERENCES Playlists(PlaylistID) ON DELETE SET NULL,
+                PlaylistTrackIndex INTEGER DEFAULT -1
+            );
+
+            CREATE INDEX IF NOT EXISTS PlaybackQueueTrackIndex ON PlaybackQueue(TrackID);
+            CREATE INDEX IF NOT EXISTS PlaybackQueuePlaylistIndex ON PlaybackQueue(PlaylistID, PlaylistTrackIndex);
+        </sql>
+    </revision>
 </schema>
