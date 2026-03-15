@@ -213,13 +213,11 @@ QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions)
 QStringList getAllSubdirectories(const QDir& dir)
 {
     QStringList directories;
+    QDirIterator it{dir.absolutePath(), QDir::Dirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories};
 
-    const QFileInfoList subdirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-
-    for(const auto& subdir : subdirs) {
-        directories.push_back(subdir.absoluteFilePath());
-        const QStringList subdirectories = getAllSubdirectories(subdir.absoluteFilePath());
-        directories.append(subdirectories);
+    while(it.hasNext()) {
+        const QString subdir = it.next();
+        directories.push_back(subdir);
     }
 
     return directories;
