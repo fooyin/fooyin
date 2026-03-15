@@ -162,12 +162,12 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
         return;
     }
 
+    m_registered = true;
+
     if(!QDBusConnection::sessionBus().registerObject(QString::fromLatin1(MprisObjectPath), this)) {
         qCWarning(MPRIS) << "Cannot register object to the dbus";
         return;
     }
-
-    m_registered = true;
 }
 
 void MprisPlugin::shutdown()
@@ -257,7 +257,7 @@ bool MprisPlugin::canPlay() const
 
 bool MprisPlugin::canSeek() const
 {
-    // TODO: Use engine state to detemrine if track is seekable
+    // TODO: Use engine state to determine if track is seekable
     return m_playerController->currentTrack().isValid();
 }
 
@@ -470,7 +470,7 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
 
         m_currentMetaData[u"mpris:trackid"_s]   = formatTrackId(std::max(0, index));
         m_currentMetaData[u"mpris:length"_s]    = static_cast<quint64>(track.duration() * 1000);
-        m_currentMetaData[u"xesam:url"_s]       = track.filepath();
+        m_currentMetaData[u"xesam:url"_s]       = QUrl::fromLocalFile(track.filepath()).toString();
         m_currentMetaData[u"xesam:title"_s]     = track.title();
         m_currentMetaData[u"xesam:album"_s]     = track.album();
         m_currentMetaData[u"xesam:artist"_s]    = track.artists();
