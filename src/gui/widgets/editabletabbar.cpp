@@ -106,6 +106,11 @@ bool EditableTabBar::event(QEvent* event)
 
 void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
 {
+    if(event->button() > Qt::MiddleButton) {
+        event->ignore();
+        return;
+    }
+
     const QPoint pos = event->position().toPoint();
 
     if(event->button() & Qt::MiddleButton) {
@@ -121,6 +126,11 @@ void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
 
 void EditableTabBar::mousePressEvent(QMouseEvent* event)
 {
+    if(event->button() > Qt::MiddleButton) {
+        event->ignore();
+        return;
+    }
+
     const QPoint pos = event->position().toPoint();
 
     if(event->button() & Qt::MiddleButton) {

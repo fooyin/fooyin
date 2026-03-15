@@ -138,17 +138,20 @@ void TrackSlider::mousePressEvent(QMouseEvent* event)
     }
 
     Qt::MouseButton button = event->button();
-    if(button == Qt::LeftButton) {
-        const int absolute = style()->styleHint(QStyle::SH_Slider_AbsoluteSetButtons);
-        if(Qt::LeftButton & absolute) {
-            button = Qt::LeftButton;
-        }
-        else if(Qt::MiddleButton & absolute) {
-            button = Qt::MiddleButton;
-        }
-        else if(Qt::RightButton & absolute) {
-            button = Qt::RightButton;
-        }
+    if(button != Qt::LeftButton) {
+        event->ignore();
+        return;
+    }
+
+    const int absolute = style()->styleHint(QStyle::SH_Slider_AbsoluteSetButtons);
+    if(Qt::LeftButton & absolute) {
+        button = Qt::LeftButton;
+    }
+    else if(Qt::MiddleButton & absolute) {
+        button = Qt::MiddleButton;
+    }
+    else if(Qt::RightButton & absolute) {
+        button = Qt::RightButton;
     }
 
     QMouseEvent modifiedEvent{event->type(), event->position(), event->globalPosition(), button,

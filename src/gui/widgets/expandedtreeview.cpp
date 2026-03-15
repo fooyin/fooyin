@@ -3583,6 +3583,11 @@ void ExpandedTreeView::dragLeaveEvent(QDragLeaveEvent* /*event*/)
 
 void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
 {
+    if(event->button() > Qt::MiddleButton) {
+        event->ignore();
+        return;
+    }
+
     const QPoint pos        = event->position().toPoint();
     const QModelIndex index = indexAt(pos);
 
@@ -3620,7 +3625,8 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
 
 void ExpandedTreeView::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    if(event->button() == Qt::MiddleButton) {
+    if(event->button() != Qt::LeftButton) {
+        event->ignore();
         return;
     }
     QAbstractItemView::mouseDoubleClickEvent(event);
