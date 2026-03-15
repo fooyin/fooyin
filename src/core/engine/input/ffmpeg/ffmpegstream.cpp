@@ -25,7 +25,9 @@ extern "C"
 }
 
 namespace Fooyin {
-Stream::Stream() = default;
+Stream::Stream()
+    : Stream{nullptr}
+{ }
 
 Stream::Stream(AVStream* stream)
     : m_stream{stream}
