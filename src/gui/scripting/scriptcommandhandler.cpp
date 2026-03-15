@@ -33,30 +33,47 @@
 using namespace Qt::StringLiterals;
 
 namespace {
-struct ResolvedCommand
+std::optional<Fooyin::ResolvedScriptCommand> resolveCommandId(const QString& commandId)
 {
-    QString id;
-    Fooyin::ScriptCommandAliasType type{Fooyin::ScriptCommandAliasType::Action};
-};
+    const QString trimmed = commandId.trimmed();
+    if(trimmed.isEmpty()) {
+        return {};
+    }
 
-ResolvedCommand resolveCommandId(const QString& commandId)
-{
-    const QString trimmed    = commandId.trimmed();
     const QString normalized = trimmed.toLower();
-
     for(const auto& alias : Fooyin::ScriptCommandHandler::scriptCommandAliases()) {
         if(normalized == alias.alias) {
             if(alias.type == Fooyin::ScriptCommandAliasType::PlayingProperties) {
-                return {.id = u"playingproperties"_s, .type = alias.type};
+                return Fooyin::ResolvedScriptCommand{
+                    .id          = u"playingproperties"_s,
+                    .category    = QString::fromLatin1(alias.category),
+                    .description = QString::fromLatin1(alias.description),
+                    .type        = alias.type,
+                };
             }
             if(alias.type == Fooyin::ScriptCommandAliasType::PlayingFolder) {
-                return {.id = u"playingfolder"_s, .type = alias.type};
+                return Fooyin::ResolvedScriptCommand{
+                    .id          = u"playingfolder"_s,
+                    .category    = QString::fromLatin1(alias.category),
+                    .description = QString::fromLatin1(alias.description),
+                    .type        = alias.type,
+                };
             }
-            return {.id = QString::fromLatin1(alias.actionId), .type = alias.type};
+            return Fooyin::ResolvedScriptCommand{
+                .id          = QString::fromLatin1(alias.actionId),
+                .category    = QString::fromLatin1(alias.category),
+                .description = QString::fromLatin1(alias.description),
+                .type        = alias.type,
+            };
         }
     }
 
-    return {.id = trimmed};
+    return Fooyin::ResolvedScriptCommand{
+        .id          = trimmed,
+        .category    = {},
+        .description = {},
+        .type        = Fooyin::ScriptCommandAliasType::Action,
+    };
 }
 } // namespace
 
@@ -288,15 +305,42 @@ const ScriptCommandAliasList& ScriptCommandHandler::scriptCommandAliases()
     return Aliases;
 }
 
-bool ScriptCommandHandler::execute(const QString& commandId) const
+std::optional<ResolvedScriptCommand> ScriptCommandHandler::resolveCommand(const QString& commandId)
 {
-    if(commandId.isEmpty()) {
+    return resolveCommandId(commandId);
+}
+
+bool ScriptCommandHandler::canExecute(const QString& commandId) const
+{
+    const auto resolved = resolveCommandId(commandId);
+    if(!resolved) {
         return false;
     }
 
-    const ResolvedCommand resolved = resolveCommandId(commandId);
+    if(resolved->type == ScriptCommandAliasType::PlayingProperties
+       || resolved->type == ScriptCommandAliasType::PlayingFolder) {
+        return m_playerController && m_playerController->currentTrack().isValid();
+    }
 
-    if(resolved.type == ScriptCommandAliasType::PlayingProperties) {
+    if(!m_actionManager) {
+        return false;
+    }
+
+    if(auto* command = m_actionManager->command(Id{resolved->id})) {
+        return command->action() && command->action()->isEnabled();
+    }
+
+    return false;
+}
+
+bool ScriptCommandHandler::execute(const QString& commandId) const
+{
+    const auto resolved = resolveCommandId(commandId);
+    if(!resolved) {
+        return false;
+    }
+
+    if(resolved->type == ScriptCommandAliasType::PlayingProperties) {
         if(!m_propertiesDialog || !m_playerController) {
             return false;
         }
@@ -312,7 +356,7 @@ bool ScriptCommandHandler::execute(const QString& commandId) const
         return true;
     }
 
-    if(resolved.type == ScriptCommandAliasType::PlayingFolder) {
+    if(resolved->type == ScriptCommandAliasType::PlayingFolder) {
         if(!m_playerController) {
             return false;
         }
@@ -335,7 +379,7 @@ bool ScriptCommandHandler::execute(const QString& commandId) const
         return false;
     }
 
-    if(auto* command = m_actionManager->command(Id{resolved.id})) {
+    if(auto* command = m_actionManager->command(Id{resolved->id})) {
         if(command->action() && command->action()->isEnabled()) {
             command->action()->trigger();
             return true;

@@ -86,6 +86,10 @@ set(SOURCES
     artwork/sources/musicbrainzartwork.h
     controls/playercontrol.cpp
     controls/playercontrol.h
+    controls/commandbutton.cpp
+    controls/commandbutton.h
+    controls/commandbuttonconfigdialog.cpp
+    controls/commandbuttonconfigdialog.h
     controls/playlistcontrol.cpp
     controls/playlistcontrol.h
     controls/seekbar.cpp

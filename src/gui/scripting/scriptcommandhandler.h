@@ -21,6 +21,7 @@
 
 #include <QString>
 #include <QStringView>
+#include <optional>
 
 #include <vector>
 
@@ -46,6 +47,14 @@ struct ScriptCommandAlias
 };
 using ScriptCommandAliasList = std::vector<ScriptCommandAlias>;
 
+struct ResolvedScriptCommand
+{
+    QString id;
+    QString category;
+    QString description;
+    ScriptCommandAliasType type{ScriptCommandAliasType::Action};
+};
+
 class ScriptCommandHandler
 {
 public:
@@ -53,7 +62,9 @@ public:
                          PropertiesDialog* propertiesDialog);
 
     static const ScriptCommandAliasList& scriptCommandAliases();
+    [[nodiscard]] static std::optional<ResolvedScriptCommand> resolveCommand(const QString& commandId);
 
+    [[nodiscard]] bool canExecute(const QString& commandId) const;
     bool execute(const QString& commandId) const;
 
 private:

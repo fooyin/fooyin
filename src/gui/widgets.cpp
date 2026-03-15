@@ -22,6 +22,7 @@
 #include "artwork/artworkdialog.h"
 #include "artwork/artworkfinder.h"
 #include "artwork/artworkproperties.h"
+#include "controls/commandbutton.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
 #include "controls/seekbar.h"
@@ -171,6 +172,15 @@ void Widgets::registerWidgets()
                                          m_window);
         },
         tr("Library Tree"));
+
+    provider->registerWidget(
+        u"CommandButton"_s,
+        [this]() {
+            return new CommandButton(m_gui->actionManager(), m_core->playerController(), m_scriptCommandHandler,
+                                     m_settings, m_window);
+        },
+        tr("Command Button"));
+    provider->setSubMenus(u"CommandButton"_s, {tr("Controls")});
 
     provider->registerWidget(
         u"PlayerControls"_s,
