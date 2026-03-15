@@ -38,18 +38,26 @@ struct Colours
         WordSynced,
         LineUnsynced
     };
-
-    QMap<Type, QColor> lyricsColours{{Type::Background, QApplication::palette().base().color()},
-                                     {Type::LineUnplayed, QApplication::palette().text().color().darker(150)},
-                                     {Type::LinePlayed, QApplication::palette().text().color().darker(150)},
-                                     {Type::LineSynced, QApplication::palette().text().color()},
-                                     {Type::WordLineSynced, QApplication::palette().text().color()},
-                                     {Type::WordSynced, QApplication::palette().highlight().color()},
-                                     {Type::LineUnsynced, QApplication::palette().text().color()}};
+    
+    QMap<Type, QColor> lyricsColours;
+    
+    [[nodiscard]] static QColor defaultColour(Type type)
+    {
+        switch(type) {
+            case Type::Background:     return QApplication::palette().base().color();
+            case Type::LineUnplayed:   return QApplication::palette().placeholderText().color();
+            case Type::LinePlayed:     return QApplication::palette().placeholderText().color();
+            case Type::LineSynced:     return QApplication::palette().text().color();
+            case Type::WordLineSynced: return QApplication::palette().text().color();
+            case Type::WordSynced:     return QApplication::palette().highlight().color();
+            case Type::LineUnsynced:   return QApplication::palette().text().color();
+            default:                   return {};
+        }
+    }
 
     [[nodiscard]] QColor colour(Type type) const
     {
-        return lyricsColours.value(type);
+        return lyricsColours.value(type, defaultColour(type));
     }
 
     void setColour(Type type, const QColor& colour)
