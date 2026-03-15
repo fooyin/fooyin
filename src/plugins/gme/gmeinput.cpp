@@ -104,7 +104,7 @@ uint64_t getDuration(const gme_info_t* info, bool repeatTrack, Fooyin::AudioDeco
 QStringList supportedExtensions()
 {
     static const QStringList extensions
-        = {u"ay"_s, u"gbs"_s, u"hes"_s, u"kss"_s, u"nsf"_s, u"nsfe"_s, u"sap"_s, u"spc"_s};
+        = {u"ay"_s, u"gbs"_s, u"hes"_s, u"kss"_s, u"nsf"_s, u"nsfe"_s, u"sap"_s, u"spc"_s, u"vgm"_s, u"vgz"_s};
     return extensions;
 }
 
