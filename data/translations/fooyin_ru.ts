@@ -848,12 +848,12 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="86"/>
         <source>Show symlinks</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать символьные ссылки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
         <source>Show hidden</source>
-        <translation type="unfinished">Скрывать</translation>
+        <translation>Показать скрытое</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="90"/>
@@ -883,7 +883,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="113"/>
         <source>Browser Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтры браузера</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="119"/>
@@ -1005,12 +1005,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="839"/>
         <source>Playback</source>
-        <translation type="unfinished">Воспроизведение</translation>
+        <translation>Воспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="839"/>
         <source>DSP Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Менеджер DSP</translation>
     </message>
 </context>
 <context>
@@ -1018,113 +1018,113 @@
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="203"/>
         <source>Load</source>
-        <translation type="unfinished">Загрузить</translation>
+        <translation>Загрузить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="204"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="205"/>
         <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="234"/>
         <source>Per-Track DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP для каждой дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="235"/>
         <source>Master DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Мастер DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="237"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed. During crossfades, each track is processed independently.</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP для каждой дорожки применяются к каждому потоку отдельно перед микшированием. Во время плавных переходов каждая дорожка обрабатывается независимо.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="239"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal. Effects here process the final combined output.</source>
-        <translation type="unfinished"></translation>
+        <translation>Мастер-модули DSP применяются после сведения всех активных дорожек в один сигнал. Эффекты здесь обрабатывают итоговый объединённый выходной сигнал.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="242"/>
         <source>Available DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступные модули DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="261"/>
         <source>DSP chain presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Предустановки цепочек DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="485"/>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="491"/>
         <source>DSP Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="485"/>
         <source>This DSP has no configurable settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот модуль DSP не имеет настраиваемых параметров.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="491"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось открыть параметры для модуля DSP «%1».</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="614"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>Настроить…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="622"/>
         <source>Move Up</source>
-        <translation type="unfinished">Переместить вверх</translation>
+        <translation>Переместить вверх</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="628"/>
         <source>Move Down</source>
-        <translation type="unfinished">Переместить вниз</translation>
+        <translation>Переместить вниз</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="637"/>
         <source>Disable</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="637"/>
         <source>Enable</source>
-        <translation type="unfinished">Включить</translation>
+        <translation>Включить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="645"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="663"/>
         <source>Add to Per-Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в поканальные</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="664"/>
         <source>Add to Master</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в мастер</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="785"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Шаблон уже существует</translation>
+        <translation>Предустановка уже существует</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="786"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Предустановка «%1» уже существует. Перезаписать?</translation>
     </message>
 </context>
 <context>
@@ -1285,7 +1285,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="481"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
 </context>
 <context>
@@ -1415,7 +1415,7 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="146"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="186"/>
@@ -1674,7 +1674,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="178"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
@@ -1757,7 +1757,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
@@ -3971,12 +3971,12 @@
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="121"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="122"/>
         <source>Remove All</source>
-        <translation>Удалить все</translation>
+        <translation>Убрать все</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="85"/>
@@ -4746,7 +4746,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="185"/>
         <source>Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Кривая</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="243"/>
@@ -4766,32 +4766,32 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="96"/>
         <source>Pause</source>
-        <translation type="unfinished">Пауза</translation>
+        <translation>Пауза</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="97"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="104"/>
         <source>Crossfading</source>
-        <translation type="unfinished"></translation>
+        <translation>Перекрёстное затухание</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="105"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="106"/>
         <source>Manual track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Ручная смена дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="107"/>
         <source>Auto track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматическая смена дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="119"/>
@@ -4801,37 +4801,37 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="128"/>
         <source>Automatic</source>
-        <translation type="unfinished">Автоматически</translation>
+        <translation>Автоматически</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="129"/>
         <source>16-bit</source>
-        <translation type="unfinished"></translation>
+        <translation>16-битный</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="130"/>
         <source>16-bit (dithered)</source>
-        <translation type="unfinished"></translation>
+        <translation>16-битный (с дизерингом)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="132"/>
         <source>24-bit</source>
-        <translation type="unfinished"></translation>
+        <translation>24-битный</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="133"/>
         <source>32-bit</source>
-        <translation type="unfinished"></translation>
+        <translation>32-битный</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="134"/>
         <source>32-bit float</source>
-        <translation type="unfinished"></translation>
+        <translation>32-битный с плавающей точкой</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="135"/>
         <source>Override the output sample format. Devices may choose a compatible format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Переопределить формат сэмплов на выходе. Устройства могут выбрать совместимый формат.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="138"/>
@@ -4841,37 +4841,37 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="140"/>
         <source>Bit depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрядность</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="171"/>
         <source>Linear</source>
-        <translation type="unfinished">Линейный</translation>
+        <translation>Линейная</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="172"/>
         <source>Ease Out (Sine)</source>
-        <translation type="unfinished"></translation>
+        <translation>Затухание (синусоидальное)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="173"/>
         <source>Ease In (Cosine)</source>
-        <translation type="unfinished"></translation>
+        <translation>Нарастание (косинусоидальное)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="174"/>
         <source>Ease Out (Exponential)</source>
-        <translation type="unfinished"></translation>
+        <translation>Затухание (экспоненциальное)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="175"/>
         <source>Ease In (Exponential)</source>
-        <translation type="unfinished"></translation>
+        <translation>Нарастание (экспоненциальное)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="176"/>
         <source>Smooth S-Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Плавная S-образная кривая</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="183"/>
@@ -5123,7 +5123,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="91"/>
         <source>Stop playback after queue finishes</source>
-        <translation type="unfinished"></translation>
+        <translation>Останавливать воспроизведение после завершения очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="93"/>
@@ -5748,7 +5748,7 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="126"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="128"/>
@@ -6077,7 +6077,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="188"/>
         <source>&amp;Remove</source>
-        <translation>&amp;Удалить</translation>
+        <translation>&amp;Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="189"/>
@@ -6413,7 +6413,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="58"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="60"/>
@@ -6863,57 +6863,57 @@
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="49"/>
         <source>Very High (28-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Очень высокое (28 бит)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="50"/>
         <source>High (20-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Высокое (20 бит)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="51"/>
         <source>Medium (18-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Среднее (18 бит)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="52"/>
         <source>Low (16-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Низкое (16 бит)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="53"/>
         <source>Quick (15-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрое (15 бит)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="69"/>
         <source>Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>Гц</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="81"/>
         <source>Exclude these sample rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Исключить эти частоты дискретизации</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="83"/>
         <source>Resample only these sample rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Передискретизировать только эти частоты</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="85"/>
         <source>e.g. 44100, 48000, 96000</source>
-        <translation type="unfinished"></translation>
+        <translation>например: 44100, 48000, 96000</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="87"/>
         <source>Rate filtering:</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтрация частот:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="88"/>
         <source>Filtered rates:</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтруемые частоты:</translation>
     </message>
 </context>
 <context>
@@ -8527,12 +8527,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="116"/>
         <source>Remove waveform data</source>
-        <translation>Удалить данные</translation>
+        <translation>Удалить данные волноформы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="117"/>
         <source>Remove any existing waveform data for the selected tracks</source>
-        <translation>Удалить все существующие данные формы сигнала для выбранных дорожек</translation>
+        <translation>Удалить все существующие данные волноформы для выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="158"/>
@@ -8981,7 +8981,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Pause playback</source>
-        <translation>Пауза</translation>
+        <translation>Приостановить воспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
@@ -9069,67 +9069,67 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="44"/>
         <source>Prefer SoXR engine (if available)</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпочитать движок SoXR (если доступен)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="45"/>
         <source>SoXR precision</source>
-        <translation type="unfinished"></translation>
+        <translation>Точность SoXR</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="72"/>
         <source>Target sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Целевая частота дискретизации</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="39"/>
         <source>Do not skip initial silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Не пропускать начальную тишину</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="40"/>
         <source>Skip silence in the middle of a track</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропускать тишину в середине дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="46"/>
         <source>Minimum silence duration to activate removal:</source>
-        <translation type="unfinished"></translation>
+        <translation>Минимальная длительность тишины для активации удаления:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="55"/>
         <source>Short</source>
-        <translation type="unfinished"></translation>
+        <translation>Короткая</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="57"/>
         <source>Long</source>
-        <translation type="unfinished"></translation>
+        <translation>Длинная</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="67"/>
         <source>Silence detection threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Порог обнаружения тишины:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="76"/>
         <source>Quiet</source>
-        <translation type="unfinished"></translation>
+        <translation>Тихий</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="78"/>
         <source>Loud</source>
-        <translation type="unfinished"></translation>
+        <translation>Громкий</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="149"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> мс</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="150"/>
         <source> dB</source>
-        <translation type="unfinished"></translation>
+        <translation> дБ</translation>
     </message>
 </context>
 <context>

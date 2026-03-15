@@ -848,12 +848,12 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="86"/>
         <source>Show symlinks</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示系統連結</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
         <source>Show hidden</source>
-        <translation type="unfinished">顯示隱藏</translation>
+        <translation>顯示隱藏</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="90"/>
@@ -883,7 +883,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="113"/>
         <source>Browser Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>瀏覽篩選</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="119"/>
@@ -1005,12 +1005,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="839"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="839"/>
         <source>DSP Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP 管理器</translation>
     </message>
 </context>
 <context>
@@ -1018,113 +1018,113 @@
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="203"/>
         <source>Load</source>
-        <translation type="unfinished">載入</translation>
+        <translation>載入</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="204"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="205"/>
         <source>Delete</source>
-        <translation type="unfinished">刪除</translation>
+        <translation>刪除</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="234"/>
         <source>Per-Track DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>依各曲目 DSPs</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="235"/>
         <source>Master DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>主控 DSPs</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="237"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed. During crossfades, each track is processed independently.</source>
-        <translation type="unfinished"></translation>
+        <translation>在軌道混合之前，各依曲目 DSPs 分別應用於每個串流。在交叉淡出淡入期間，每個曲目音軌都是獨立處理的。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="239"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal. Effects here process the final combined output.</source>
-        <translation type="unfinished"></translation>
+        <translation>在全部作用音軌混合成一個訊號後，套用主控 DSPs。音效處理最終的組合輸出。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="242"/>
         <source>Available DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>可用的 DSPs</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="261"/>
         <source>DSP chain presets</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP 鏈預設集</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="485"/>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="491"/>
         <source>DSP Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP 設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="485"/>
         <source>This DSP has no configurable settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>該 DSP 沒有可供調配的設定。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="491"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>無法進行開啟設定用於 DSP &quot;%1&quot;。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="614"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>調配設定…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="622"/>
         <source>Move Up</source>
-        <translation type="unfinished">上移</translation>
+        <translation>上移</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="628"/>
         <source>Move Down</source>
-        <translation type="unfinished">下移</translation>
+        <translation>下移</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="637"/>
         <source>Disable</source>
-        <translation type="unfinished"></translation>
+        <translation>停用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="637"/>
         <source>Enable</source>
-        <translation type="unfinished">啟用</translation>
+        <translation>啟用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="645"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="663"/>
         <source>Add to Per-Track</source>
-        <translation type="unfinished"></translation>
+        <translation>添增至各依音軌</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="664"/>
         <source>Add to Master</source>
-        <translation type="unfinished"></translation>
+        <translation>添增至主控</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="785"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">預設已經存在</translation>
+        <translation>預設集已經存在</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="786"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>預設集 &quot;%1&quot; 已經存在。覆蓋？</translation>
     </message>
 </context>
 <context>
@@ -3107,17 +3107,17 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="218"/>
         <source>Avg. Bitrate</source>
-        <translation>平均位元率 Bitrate</translation>
+        <translation>平均位元速率 Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="218"/>
         <source>Bitrate</source>
-        <translation>位元率 Bitrate</translation>
+        <translation>位元速率 Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="222"/>
         <source>Sample Rate</source>
-        <translation>取樣率</translation>
+        <translation>取樣頻率</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="224"/>
@@ -4746,7 +4746,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="185"/>
         <source>Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>曲線</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="243"/>
@@ -4766,32 +4766,32 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="96"/>
         <source>Pause</source>
-        <translation type="unfinished">暫停</translation>
+        <translation>暫停</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="97"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="104"/>
         <source>Crossfading</source>
-        <translation type="unfinished"></translation>
+        <translation>交叉淡出淡入</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="105"/>
         <source>Seek</source>
-        <translation type="unfinished">尋找</translation>
+        <translation>尋找</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="106"/>
         <source>Manual track change</source>
-        <translation type="unfinished"></translation>
+        <translation>手動曲目變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="107"/>
         <source>Auto track change</source>
-        <translation type="unfinished"></translation>
+        <translation>自動曲目變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="119"/>
@@ -4801,37 +4801,37 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="128"/>
         <source>Automatic</source>
-        <translation type="unfinished">自動</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="129"/>
         <source>16-bit</source>
-        <translation type="unfinished"></translation>
+        <translation>16-bit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="130"/>
         <source>16-bit (dithered)</source>
-        <translation type="unfinished"></translation>
+        <translation>16-bit (抖動處理)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="132"/>
         <source>24-bit</source>
-        <translation type="unfinished"></translation>
+        <translation>24-bit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="133"/>
         <source>32-bit</source>
-        <translation type="unfinished"></translation>
+        <translation>32-bit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="134"/>
         <source>32-bit float</source>
-        <translation type="unfinished"></translation>
+        <translation>32-bit 浮動</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="135"/>
         <source>Override the output sample format. Devices may choose a compatible format.</source>
-        <translation type="unfinished"></translation>
+        <translation>覆蓋輸出樣本格式。設備可以選擇相容的格式。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="138"/>
@@ -4841,37 +4841,37 @@
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="140"/>
         <source>Bit depth</source>
-        <translation type="unfinished"></translation>
+        <translation>位元深度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="171"/>
         <source>Linear</source>
-        <translation type="unfinished">線性</translation>
+        <translation>線性</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="172"/>
         <source>Ease Out (Sine)</source>
-        <translation type="unfinished"></translation>
+        <translation>緩出 (正弦)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="173"/>
         <source>Ease In (Cosine)</source>
-        <translation type="unfinished"></translation>
+        <translation>緩入 (餘弦)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="174"/>
         <source>Ease Out (Exponential)</source>
-        <translation type="unfinished"></translation>
+        <translation>緩出 (指數)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="175"/>
         <source>Ease In (Exponential)</source>
-        <translation type="unfinished"></translation>
+        <translation>緩入 (指數)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="176"/>
         <source>Smooth S-Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>平滑的 S-曲線</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="183"/>
@@ -5123,7 +5123,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="91"/>
         <source>Stop playback after queue finishes</source>
-        <translation type="unfinished"></translation>
+        <translation>佇列終結後停止播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="93"/>
@@ -5408,12 +5408,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="53"/>
         <source>Bitrate</source>
-        <translation>位元率 Bitrate</translation>
+        <translation>位元速率 Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="54"/>
         <source>Sample Rate</source>
-        <translation>取樣率</translation>
+        <translation>取樣頻率</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="55"/>
@@ -6863,57 +6863,57 @@
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="49"/>
         <source>Very High (28-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>非常高 (28-bit)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="50"/>
         <source>High (20-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>高 (20-bit)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="51"/>
         <source>Medium (18-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>中 (18-bit)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="52"/>
         <source>Low (16-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>低 (16-bit)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="53"/>
         <source>Quick (15-bit)</source>
-        <translation type="unfinished"></translation>
+        <translation>快 (15-bit)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="69"/>
         <source>Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>Hz</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="81"/>
         <source>Exclude these sample rates</source>
-        <translation type="unfinished"></translation>
+        <translation>排除這些取樣頻率</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="83"/>
         <source>Resample only these sample rates</source>
-        <translation type="unfinished"></translation>
+        <translation>僅對這些取樣頻率進行重新取樣</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="85"/>
         <source>e.g. 44100, 48000, 96000</source>
-        <translation type="unfinished"></translation>
+        <translation>例如 44100, 48000, 96000</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="87"/>
         <source>Rate filtering:</source>
-        <translation type="unfinished"></translation>
+        <translation>頻率篩選：</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="88"/>
         <source>Filtered rates:</source>
-        <translation type="unfinished"></translation>
+        <translation>已經篩選的頻率：</translation>
     </message>
 </context>
 <context>
@@ -8674,9 +8674,9 @@
 for waveform data. Higher values will result 
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
-        <translation>用於波形資料的樣本數量 (每聲道)。
-
-較高的值會產生更準確細緻的波形，
+        <translation>用於波形資料的樣本數量 (每聲道)。 
+ 
+較高的值會產生更準確細緻的波形， 
 但是代價是佔用更多磁碟快取空間。</translation>
     </message>
     <message>
@@ -9067,67 +9067,67 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="44"/>
         <source>Prefer SoXR engine (if available)</source>
-        <translation type="unfinished"></translation>
+        <translation>偏好 SoXR 引擎 (若有可用)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="45"/>
         <source>SoXR precision</source>
-        <translation type="unfinished"></translation>
+        <translation>SoXR 精確度</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="72"/>
         <source>Target sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>目標取樣率</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="39"/>
         <source>Do not skip initial silence</source>
-        <translation type="unfinished"></translation>
+        <translation>不要略過最初的無聲靜音</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="40"/>
         <source>Skip silence in the middle of a track</source>
-        <translation type="unfinished"></translation>
+        <translation>略過曲目中間的無聲靜音</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="46"/>
         <source>Minimum silence duration to activate removal:</source>
-        <translation type="unfinished"></translation>
+        <translation>最短的無聲靜音持續時間進行作用移除：</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="55"/>
         <source>Short</source>
-        <translation type="unfinished"></translation>
+        <translation>短</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="57"/>
         <source>Long</source>
-        <translation type="unfinished"></translation>
+        <translation>長</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="67"/>
         <source>Silence detection threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>無聲靜音檢測閾值：</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="76"/>
         <source>Quiet</source>
-        <translation type="unfinished"></translation>
+        <translation>靜聲</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="78"/>
         <source>Loud</source>
-        <translation type="unfinished"></translation>
+        <translation>大聲</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="149"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="150"/>
         <source> dB</source>
-        <translation type="unfinished"></translation>
+        <translation> dB</translation>
     </message>
 </context>
 <context>
