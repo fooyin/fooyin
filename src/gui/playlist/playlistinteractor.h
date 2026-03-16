@@ -19,15 +19,18 @@
 
 #pragma once
 
+#include <core/library/musiclibrary.h>
 #include <core/track.h>
 
 #include <QList>
 #include <QObject>
 #include <QUrl>
 
+#include <functional>
+
 namespace Fooyin {
-class MusicLibrary;
 class PlayerController;
+class Playlist;
 class PlaylistController;
 class PlaylistHandler;
 class PlaylistWidget;
@@ -46,18 +49,48 @@ public:
     [[nodiscard]] MusicLibrary* library() const;
     [[nodiscard]] PlayerController* playerController() const;
 
-    void filesToPlaylist(const QList<QUrl>& urls, const UId& id) const;
-    void filesToCurrentPlaylist(const QList<QUrl>& urls) const;
-    void filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play = false) const;
-    void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play = false) const;
-    void filesToNewPlaylistReplace(const QString& playlistName, const QList<QUrl>& urls, bool play = false) const;
-    void filesToActivePlaylist(const QList<QUrl>& urls) const;
-    void filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func) const;
-    void loadPlaylist(const QList<QPair<QString, QUrl>>& playlistData, bool play = false) const;
+    void filesToPlaylist(const QList<QUrl>& urls, const UId& id);
+    void filesToCurrentPlaylist(const QList<QUrl>& urls);
+    void filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play = false);
+    void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play = false);
+    void filesToNewPlaylistReplace(const QString& playlistName, const QList<QUrl>& urls, bool play = false);
+    void filesToActivePlaylist(const QList<QUrl>& urls);
+    void loadPlaylist(const QList<QPair<QString, QUrl>>& playlistData, bool play = false);
+
+    template <typename Func>
+    void filesToTracks(const QList<QUrl>& urls, Func&& func)
+    {
+        if(urls.empty()) {
+            return;
+        }
+
+        scanFiles(urls, std::forward<Func>(func));
+    }
 
     void trackMimeToPlaylist(const QByteArray& data, const UId& id);
 
 private:
+    [[nodiscard]] ScanRequest startFileScan(const QList<QUrl>& urls) const;
+    [[nodiscard]] ScanRequest startPlaylistLoad(const QList<QUrl>& urls) const;
+    void beginTrackScan(const QString& labelText, const ScanRequest& request,
+                        std::function<void(const TrackList&)> func);
+    void activatePlaylist(Playlist* playlist, bool play = false) const;
+    void activatePlaylist(Playlist* playlist, int indexToPlay, bool play = false) const;
+    void appendToPlaylist(Playlist* playlist, const TrackList& tracks) const;
+    [[nodiscard]] Playlist* appendOrCreateNamedPlaylist(const QString& playlistName, const TrackList& tracks) const;
+
+    template <typename Func>
+    void scanFiles(const QList<QUrl>& urls, Func&& func)
+    {
+        beginTrackScan(tr("Reading tracks…"), startFileScan(urls), std::forward<Func>(func));
+    }
+
+    template <typename Func>
+    void loadPlaylistTracks(const QList<QUrl>& urls, Func&& func)
+    {
+        beginTrackScan(tr("Loading playlist…"), startPlaylistLoad(urls), std::forward<Func>(func));
+    }
+
     PlaylistHandler* m_handler;
     PlaylistController* m_controller;
     MusicLibrary* m_library;

@@ -25,6 +25,7 @@
 
 namespace Fooyin {
 struct LibraryInfo;
+class LibraryManager;
 class SettingsManager;
 class UnifiedMusicLibraryPrivate;
 
@@ -51,6 +52,7 @@ public:
 
     ScanRequest refresh(const LibraryInfo& library) override;
     ScanRequest rescan(const LibraryInfo& library) override;
+    void cancelScan(int id) override;
 
     ScanRequest scanTracks(const TrackList& tracks) override;
     ScanRequest scanModifiedTracks(const TrackList& tracks) override;

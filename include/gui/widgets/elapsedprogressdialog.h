@@ -42,6 +42,7 @@ public:
 
     [[nodiscard]] int value() const;
     void setValue(int value);
+    void setBusy(bool busy);
 
     void setText(const QString& text);
     void setMinimumDuration(std::chrono::milliseconds duration);
@@ -57,13 +58,17 @@ signals:
     void cancelled();
 
 private:
+    void ensureStarted();
     void updateStatus();
 
     QTextEdit* m_text;
     QProgressBar* m_progressBar;
+    int m_progressMinimum;
+    int m_progressMaximum;
     bool m_isStarting;
     bool m_isFinished;
     bool m_wasCancelled;
+    bool m_isBusy;
 
     std::chrono::milliseconds m_minDuration;
     QTimer* m_updateTimer;

@@ -32,6 +32,7 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QStringList supportedExtensions() const override;
     [[nodiscard]] bool saveIsSupported() const override;
+    [[nodiscard]] size_t countEntries(QIODevice* device, const QString& filepath, const QDir& dir) const override;
 
     TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,
                            const ReadPlaylistEntry& readEntry, bool skipNotFound) override;

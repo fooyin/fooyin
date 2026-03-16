@@ -23,6 +23,9 @@
 
 #include <QObject>
 
+#include <atomic>
+#include <stop_token>
+
 namespace Fooyin {
 class FYUTILS_EXPORT Worker : public QObject
 {
@@ -48,12 +51,19 @@ public:
 
     [[nodiscard]] bool mayRun() const;
     [[nodiscard]] bool closing() const;
+    [[nodiscard]] std::stop_token stopToken() const;
+    [[nodiscard]] bool stopRequested() const;
 
 signals:
     void finished();
 
+protected:
+    void resetStopSource();
+    void requestStop();
+
 private:
     std::atomic<State> m_state;
     std::atomic<bool> m_closing;
+    std::stop_source m_stopSource;
 };
 } // namespace Fooyin

@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/library/libraryinfo.h>
+#include <core/library/musiclibrary.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionpool.h>
 
@@ -53,18 +54,22 @@ public:
     void getAllTracks();
 
     void setupWatchers(const LibraryInfoMap& libraries, bool enabled);
+    [[nodiscard]] bool hasPendingLibraryScan(int libraryId) const;
 
     ScanRequest refreshLibrary(const LibraryInfo& library);
     ScanRequest scanLibrary(const LibraryInfo& library);
+    void cancelScan(int id);
     ScanRequest scanTracks(const TrackList& tracks, bool onlyModified);
     ScanRequest scanFiles(const QList<QUrl>& files);
     ScanRequest loadPlaylist(const QList<QUrl>& files);
+    void acknowledgeTracksScanned(int id);
 
     void saveUpdatedTracks(const TrackList& tracks);
     WriteRequest writeUpdatedTracks(const TrackList& tracks);
     WriteRequest writeTrackCovers(const TrackCoverData& tracks);
     void saveUpdatedTrackStats(const TrackList& tracks);
     void saveUpdatedTrackPlaycounts(const TrackList& tracks);
+    void checkTrackAvailability(const TrackList& tracks);
 
     WriteRequest removeUnavailbleTracks(const TrackList& tracks);
     void cleanupTracks();
@@ -74,9 +79,11 @@ signals:
     void progressChanged(const Fooyin::ScanProgress& progress);
     void scannedTracks(int id, const Fooyin::TrackList& tracks);
     void playlistLoaded(int id, const Fooyin::TrackList& tracks);
+    void scanFinished(int id, Fooyin::ScanRequest::Type type, bool cancelled);
     void statusChanged(const Fooyin::LibraryInfo& library);
     void scanUpdate(const Fooyin::ScanResult& result);
     void tracksUpdated(const Fooyin::TrackList& tracks);
+    void tracksAvailabilityUpdated(const Fooyin::TrackList& tracks);
     void tracksStatsUpdated(const Fooyin::TrackList& tracks);
     void tracksRemoved(const Fooyin::TrackList& tracks);
 

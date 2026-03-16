@@ -331,11 +331,14 @@ TrackList TrackDatabase::tracksByHash(const QString& hash) const
 
 int TrackDatabase::idForTrack(Track& track) const
 {
-    const QString statement = u"SELECT TrackID FROM Tracks WHERE FilePath = :path;"_s;
+    const QString statement
+        = u"SELECT TrackID FROM Tracks WHERE FilePath = :path AND Offset = :offset AND Subsong = :subsong;"_s;
 
     DbQuery query{db(), statement};
 
     query.bindValue(u":path"_s, track.filepath());
+    query.bindValue(u":offset"_s, static_cast<quint64>(track.offset()));
+    query.bindValue(u":subsong"_s, track.subsong());
 
     if(!query.exec()) {
         return -1;

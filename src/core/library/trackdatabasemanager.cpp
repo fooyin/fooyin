@@ -65,13 +65,37 @@ void TrackDatabaseManager::getAllTracks()
 {
     setState(Running);
 
-    TrackList tracks = m_trackDatabase.getAllTracks();
+    const TrackList tracks = m_trackDatabase.getAllTracks();
+    emit gotTracks(tracks);
 
-    if(m_settings->fileValue(Settings::Core::Internal::MarkUnavailableStartup, false).toBool()) {
-        std::ranges::for_each(tracks, [](auto& track) { track.setIsEnabled(track.exists()); });
+    setState(Idle);
+}
+
+void TrackDatabaseManager::checkTrackAvailability(const TrackList& tracks)
+{
+    setState(Running);
+
+    TrackList updatedTracks;
+    updatedTracks.reserve(tracks.size());
+
+    for(const Track& track : tracks) {
+        if(!mayRun()) {
+            break;
+        }
+
+        const bool enabled = track.exists();
+        if(track.isEnabled() == enabled) {
+            continue;
+        }
+
+        Track updatedTrack{track};
+        updatedTrack.setIsEnabled(enabled);
+        updatedTracks.push_back(updatedTrack);
     }
 
-    emit gotTracks(tracks);
+    if(!updatedTracks.empty()) {
+        emit availabilityChecked(updatedTracks);
+    }
 
     setState(Idle);
 }

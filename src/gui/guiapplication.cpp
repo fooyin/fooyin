@@ -153,11 +153,11 @@ public:
     void createNewPlaylist() const;
     void createNewAutoPlaylist();
 
-    void addFiles() const;
-    void addFolders() const;
-    void openFiles(const QList<QUrl>& urls) const;
+    void addFiles();
+    void addFolders();
+    void openFiles(const QList<QUrl>& urls);
 
-    void loadPlaylist() const;
+    void loadPlaylist();
     void savePlaylist() const;
     void saveAllPlaylist() const;
 
@@ -628,9 +628,18 @@ void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModif
                              scanDialog->close();
                          }
 
-                         scanDialog->setValue(progress.percentage());
+                         const bool isIndeterminate = progress.total <= 0;
+                         scanDialog->setBusy(isIndeterminate);
+
+                         if(!isIndeterminate) {
+                             scanDialog->setValue(progress.percentage());
+                         }
                          if(!progress.file.isEmpty()) {
                              scanDialog->setText(GuiApplication::tr("Current file") + ":\n"_L1 + progress.file);
+                         }
+
+                         if(progress.phase == ScanProgress::Phase::Finished) {
+                             scanDialog->close();
                          }
                      });
 }
@@ -1048,7 +1057,7 @@ void GuiApplicationPrivate::createNewAutoPlaylist()
     autoDialog->show();
 }
 
-void GuiApplicationPrivate::addFiles() const
+void GuiApplicationPrivate::addFiles()
 {
     const QString audioExtensions
         = Utils::extensionsToWildcards(m_core->audioLoader()->supportedFileExtensions()).join(" "_L1);
@@ -1078,7 +1087,7 @@ void GuiApplicationPrivate::addFiles() const
     m_playlistInteractor.filesToCurrentPlaylist(files);
 }
 
-void GuiApplicationPrivate::addFolders() const
+void GuiApplicationPrivate::addFolders()
 {
     const auto dirs = QFileDialog::getExistingDirectoryUrl(m_mainWindow.get(), GuiApplication::tr("Add Folders"),
                                                            QDir::homePath(), QFileDialog::DontResolveSymlinks);
@@ -1090,7 +1099,7 @@ void GuiApplicationPrivate::addFolders() const
     m_playlistInteractor.filesToCurrentPlaylist({dirs});
 }
 
-void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls) const
+void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls)
 {
     const QString playlistName = m_settings->value<Settings::Core::OpenFilesPlaylist>();
     if(m_settings->value<Settings::Core::OpenFilesSendTo>()) {
@@ -1101,7 +1110,7 @@ void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls) const
     }
 }
 
-void GuiApplicationPrivate::loadPlaylist() const
+void GuiApplicationPrivate::loadPlaylist()
 {
     const QString allExtensions
         = Utils::extensionsToWildcards(m_core->playlistLoader()->supportedExtensions()).join(" "_L1);

@@ -104,6 +104,26 @@ bool M3uParser::saveIsSupported() const
     return true;
 }
 
+size_t M3uParser::countEntries(QIODevice* device, const QString& /*filepath*/, const QDir& /*dir*/) const
+{
+    QByteArray m3u = toUtf8(device);
+    QBuffer buffer{&m3u};
+    if(!buffer.open(QIODevice::ReadOnly)) {
+        return 0;
+    }
+
+    size_t entries{0};
+
+    while(!buffer.atEnd()) {
+        const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
+        if(!line.isEmpty() && !line.startsWith(u'#')) {
+            ++entries;
+        }
+    }
+
+    return entries;
+}
+
 TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/, const QDir& dir,
                                   const ReadPlaylistEntry& readEntry, bool skipNotFound)
 {
@@ -134,16 +154,11 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
             }
         }
         else if(!line.isEmpty()) {
-            QString path;
-            const bool isArchive = Track::isArchivePath(path);
+            QString path{line};
+            const bool isArchive = Track::isArchivePath(line);
 
-            if(dir.exists()) {
-                if(QDir::isAbsolutePath(line) || isArchive) {
-                    path = line;
-                }
-                else {
-                    path = QDir::cleanPath(dir.absoluteFilePath(line));
-                }
+            if(dir.exists() && !QDir::isAbsolutePath(line) && !isArchive) {
+                path = QDir::cleanPath(dir.absoluteFilePath(line));
             }
 
             const int subsong = endingSubsong(&path);

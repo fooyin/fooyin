@@ -49,6 +49,7 @@ public:
 signals:
     void gotTracks(const Fooyin::TrackList& tracks);
     void updatedTracks(const Fooyin::TrackList& tracks);
+    void availabilityChecked(const Fooyin::TrackList& tracks);
     void updatedTracksStats(const Fooyin::TrackList& tracks);
     void removedTracks(const Fooyin::TrackList& tracks);
     void trackWriteCompleted(int operationId, const Fooyin::TrackList& tracks, int failed, bool cancelled);
@@ -57,6 +58,7 @@ signals:
 
 public slots:
     void getAllTracks();
+    void checkTrackAvailability(const Fooyin::TrackList& tracks);
     void updateTracks(const Fooyin::TrackList& tracks, bool write);
     void updateTrackStats(const Fooyin::TrackList& track, AudioReader::WriteOptions writeOptions);
     void writeCovers(const Fooyin::TrackCoverData& tracks);

@@ -41,6 +41,7 @@
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
+#include <QToolButton>
 
 using namespace Qt::StringLiterals;
 
@@ -67,11 +68,13 @@ public:
     void setupConnections();
 
     void clearMessage();
+    void updateActionVisibility() const;
     void updateMessageVisibility() const;
 
     void showMessage(const QString& message, int timeout = 0);
     void showStatusMessage(const QString& message) const;
     void showPlayingMessage(const QString& message) const;
+    void showScanMessage(const QString& message, std::function<void()> cancel);
     void showLayoutEditing() const;
 
     void updateScripts();
@@ -91,6 +94,8 @@ public:
     ScriptParser m_scriptParser;
 
     ClickableLabel* m_iconLabel;
+    QToolButton* m_scanCancelButton;
+    StatusLabel* m_scanText;
     StatusLabel* m_playingText;
     StatusLabel* m_statusText;
     StatusLabel* m_messageText;
@@ -98,6 +103,8 @@ public:
 
     QString m_playingScript;
     QString m_selectionScript;
+    std::function<void()> m_cancelScan;
+    bool m_scanActive{false};
 
     QBasicTimer m_clearTimer;
 };
@@ -113,6 +120,8 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     , m_selectionController{selectionController}
     , m_settings{settings}
     , m_iconLabel{new ClickableLabel(m_self)}
+    , m_scanCancelButton{new QToolButton(m_self)}
+    , m_scanText{new StatusLabel(m_self)}
     , m_playingText{new StatusLabel(m_self)}
     , m_statusText{new StatusLabel(m_self)}
     , m_messageText{new StatusLabel(m_self)}
@@ -126,19 +135,24 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     m_iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
     m_iconLabel->setScaledContents(true);
     m_iconLabel->setMaximumSize(22, 22);
-
+    m_scanCancelButton->setAutoRaise(true);
+    m_scanCancelButton->setIcon(Utils::iconFromTheme(Constants::Icons::Close));
+    m_scanCancelButton->setToolTip(tr("Cancel scan"));
     layout->addWidget(m_iconLabel, 0, Qt::AlignLeft);
+    layout->addWidget(m_scanCancelButton, 0, Qt::AlignLeft);
+    layout->addWidget(m_scanText, 1);
     layout->addWidget(m_messageText, 1);
     layout->addWidget(m_statusText, 1);
     layout->addWidget(m_playingText, 1);
     layout->addWidget(m_selectionText, 0, Qt::AlignRight);
 
+    m_scanText->hide();
     m_statusText->hide();
     m_playingText->hide();
     m_messageText->hide();
-
-    m_iconLabel->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
     m_selectionText->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
+
+    updateActionVisibility();
 
     setupConnections();
     updateScripts();
@@ -153,11 +167,17 @@ void StatusWidgetPrivate::setupConnections()
     QObject::connect(m_playerController, &PlayerController::bitrateChanged, this, [this](int) { updatePlayingText(); });
     QObject::connect(m_selectionController, &TrackSelectionController::selectionChanged, this,
                      &StatusWidgetPrivate::updateSelectionText);
+    QObject::connect(m_scanCancelButton, &QToolButton::clicked, this, [this]() {
+        if(m_cancelScan) {
+            m_cancelScan();
+        }
+    });
 
-    m_settings->subscribe<Settings::Gui::IconTheme>(
-        this, [this]() { m_iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize)); });
-    m_settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(
-        this, [this](bool show) { m_iconLabel->setHidden(!show); });
+    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
+        m_iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
+        m_scanCancelButton->setIcon(Utils::iconFromTheme(Constants::Icons::Close));
+    });
+    m_settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(this, [this](bool) { updateActionVisibility(); });
     m_settings->subscribe<Settings::Gui::Internal::StatusShowSelection>(
         this, [this](bool show) { m_selectionText->setHidden(!show); });
     m_settings->subscribe<Settings::Gui::Internal::StatusPlayingScript>(this, [this](const QString& script) {
@@ -178,33 +198,55 @@ void StatusWidgetPrivate::clearMessage()
     updateMessageVisibility();
 }
 
+void StatusWidgetPrivate::updateActionVisibility() const
+{
+    const bool showCancel = m_scanActive && m_cancelScan;
+    const bool showIcon   = !showCancel && m_settings->value<Settings::Gui::Internal::StatusShowIcon>();
+
+    m_scanCancelButton->setVisible(showCancel);
+    m_iconLabel->setVisible(showIcon);
+}
+
 void StatusWidgetPrivate::updateMessageVisibility() const
 {
     // Show first non-empty message with the highest priority
 
     // Status tip
     if(!m_statusText->text().isEmpty()) {
+        m_scanText->hide();
         m_statusText->show();
+        m_messageText->hide();
+        m_playingText->hide();
+    }
+    // Scan progress
+    else if(m_scanActive && !m_scanText->text().isEmpty()) {
+        m_scanText->show();
+        m_statusText->hide();
         m_messageText->hide();
         m_playingText->hide();
     }
     // Message (temp or perm)
     else if(!m_messageText->text().isEmpty()) {
+        m_scanText->hide();
         m_messageText->show();
         m_statusText->hide();
         m_playingText->hide();
     }
     // Playing text
     else if(!m_playingText->text().isEmpty()) {
+        m_scanText->hide();
         m_playingText->show();
         m_messageText->hide();
         m_statusText->hide();
     }
     else {
+        m_scanText->hide();
         m_playingText->hide();
         m_messageText->hide();
         m_statusText->hide();
     }
+
+    updateActionVisibility();
 }
 
 void StatusWidgetPrivate::showMessage(const QString& message, int timeout)
@@ -233,6 +275,14 @@ void StatusWidgetPrivate::showStatusMessage(const QString& message) const
 void StatusWidgetPrivate::showPlayingMessage(const QString& message) const
 {
     m_playingText->setText(message);
+    updateMessageVisibility();
+}
+
+void StatusWidgetPrivate::showScanMessage(const QString& message, std::function<void()> cancel)
+{
+    m_scanActive = !message.isEmpty();
+    m_scanText->setText(message);
+    m_cancelScan = std::move(cancel);
     updateMessageVisibility();
 }
 
@@ -339,10 +389,16 @@ void StatusWidget::showStatusTip(const QString& message)
     p->showStatusMessage(message);
 }
 
+void StatusWidget::setScanProgress(const QString& message, std::function<void()> cancel)
+{
+    p->showScanMessage(message, std::move(cancel));
+}
+
 QSize StatusWidget::sizeHint() const
 {
     QSize hint;
 
+    hint = hint.expandedTo(p->m_scanText->sizeHint());
     hint = hint.expandedTo(p->m_playingText->sizeHint());
     hint = hint.expandedTo(p->m_statusText->sizeHint());
     hint = hint.expandedTo(p->m_messageText->sizeHint());
@@ -355,6 +411,7 @@ QSize StatusWidget::minimumSizeHint() const
 {
     QSize hint{0, 22};
 
+    hint = hint.expandedTo(p->m_scanText->minimumSizeHint());
     hint = hint.expandedTo(p->m_playingText->minimumSizeHint());
     hint = hint.expandedTo(p->m_statusText->minimumSizeHint());
     hint = hint.expandedTo(p->m_messageText->minimumSizeHint());

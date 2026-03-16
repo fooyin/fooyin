@@ -22,6 +22,8 @@
 #include <QMainWindow>
 #include <QPointer>
 
+#include <functional>
+
 namespace Fooyin {
 class ActionManager;
 class MainMenuBar;
@@ -64,6 +66,7 @@ public:
     void resetTitle();
 
     void installStatusWidget(StatusWidget* statusWidget);
+    void setScanProgress(const QString& message, std::function<void()> cancel = {});
 
     [[nodiscard]] QSize sizeHint() const override;
 

@@ -29,20 +29,24 @@ Worker::Worker(QObject* parent)
 void Worker::initialiseThread()
 {
     m_closing.store(false, std::memory_order_release);
+    resetStopSource();
 }
 
 void Worker::stopThread()
 {
+    requestStop();
     setState(Idle);
 }
 
 void Worker::pauseThread()
 {
+    requestStop();
     setState(Paused);
 }
 
 void Worker::closeThread()
 {
+    requestStop();
     m_closing.store(true, std::memory_order_release);
 }
 
@@ -53,17 +57,41 @@ Worker::State Worker::state() const
 
 void Worker::setState(State state)
 {
+    if(state == Running) {
+        resetStopSource();
+    }
+
     m_state.store(state, std::memory_order_release);
 }
 
 bool Worker::mayRun() const
 {
-    return state() == Running && !closing();
+    return state() == Running && !closing() && !stopRequested();
 }
 
 bool Worker::closing() const
 {
     return m_closing.load(std::memory_order_acquire);
+}
+
+std::stop_token Worker::stopToken() const
+{
+    return m_stopSource.get_token();
+}
+
+bool Worker::stopRequested() const
+{
+    return stopToken().stop_requested();
+}
+
+void Worker::resetStopSource()
+{
+    m_stopSource = std::stop_source{};
+}
+
+void Worker::requestStop()
+{
+    m_stopSource.request_stop();
 }
 } // namespace Fooyin
 

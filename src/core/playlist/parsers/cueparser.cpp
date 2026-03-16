@@ -252,6 +252,26 @@ bool CueParser::saveIsSupported() const
     return false;
 }
 
+size_t CueParser::countEntries(QIODevice* device, const QString& /*filepath*/, const QDir& /*dir*/) const
+{
+    QByteArray cue = toUtf8(device);
+    QBuffer buffer{&cue};
+    if(!buffer.open(QIODevice::ReadOnly)) {
+        return 0;
+    }
+
+    size_t entries{0};
+
+    while(!buffer.atEnd()) {
+        const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
+        if(line.startsWith("TRACK "_L1, Qt::CaseInsensitive)) {
+            ++entries;
+        }
+    }
+
+    return entries;
+}
+
 TrackList CueParser::readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,
                                   const ReadPlaylistEntry& readEntry, bool skipNotFound)
 {
@@ -262,10 +282,10 @@ TrackList CueParser::readPlaylist(QIODevice* device, const QString& filepath, co
     return readCueTracks(device, filepath, dir, readEntry, skipNotFound);
 }
 
-Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& filepath, const QDir& dir,
-                                           const ReadPlaylistEntry& readEntry, bool skipNotFound)
+TrackList CueParser::readCueTracks(QIODevice* device, const QString& filepath, const QDir& dir,
+                                   const ReadPlaylistEntry& readEntry, bool skipNotFound)
 {
-    Fooyin::TrackList tracks;
+    TrackList tracks;
 
     CueSheet sheet;
     sheet.cuePath      = filepath;
@@ -278,7 +298,7 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
         sheet.lastModified = static_cast<uint64_t>(lastModified.toMSecsSinceEpoch());
     }
 
-    Fooyin::Track track;
+    Track track;
     QString trackPath;
 
     QByteArray m3u = toUtf8(device);
@@ -302,17 +322,17 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
     return tracks;
 }
 
-Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QString& filepath,
-                                                   const ReadPlaylistEntry& readEntry)
+TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QString& filepath,
+                                           const ReadPlaylistEntry& readEntry)
 {
-    Fooyin::TrackList tracks;
+    TrackList tracks;
 
     CueSheet sheet;
     sheet.cuePath      = u"Embedded"_s;
     sheet.skipNotFound = false;
     sheet.skipFile     = true;
 
-    Fooyin::Track track;
+    Track track;
     QString trackPath{filepath};
 
     QByteArray m3u = toUtf8(device);

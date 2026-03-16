@@ -50,6 +50,7 @@ public:
     [[nodiscard]] virtual QString name() const                    = 0;
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
     [[nodiscard]] virtual bool saveIsSupported() const            = 0;
+    [[nodiscard]] virtual size_t countEntries(QIODevice* device, const QString& filepath, const QDir& dir) const;
 
     virtual TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,
                                    const ReadPlaylistEntry& readEntry, bool skipNotFound) = 0;

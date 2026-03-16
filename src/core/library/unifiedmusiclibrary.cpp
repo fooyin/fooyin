@@ -247,8 +247,10 @@ void UnifiedMusicLibraryPrivate::scannedTracks(int id, TrackList tracks)
 
     addTracks(std::move(tracks)).then([this, id, scannedTracks = std::move(scannedTracks)]() mutable {
         recalSortTracks(m_settings->value<Settings::Core::ExternalSortScript>(), std::move(scannedTracks))
-            .then(m_self,
-                  [this, id](TrackList sortedScannedTracks) { emit m_self->tracksScanned(id, sortedScannedTracks); });
+            .then(m_self, [this, id](TrackList sortedScannedTracks) {
+                emit m_self->tracksScanned(id, sortedScannedTracks);
+                m_threadHandler.acknowledgeTracksScanned(id);
+            });
     });
 }
 
@@ -258,6 +260,7 @@ void UnifiedMusicLibraryPrivate::playlistLoaded(int id, TrackList tracks)
 
     addTracks(std::move(tracks)).then(m_self, [this, id, playlistTracks = std::move(playlistTracks)]() mutable {
         emit m_self->tracksScanned(id, playlistTracks);
+        m_threadHandler.acknowledgeTracksScanned(id);
     });
 }
 
@@ -319,10 +322,34 @@ void UnifiedMusicLibraryPrivate::attachMetadataStore(TrackList& tracks) const
 
 void UnifiedMusicLibraryPrivate::handleTracksLoaded()
 {
+    const bool autoRefresh = m_settings->value<Settings::Core::AutoRefresh>();
+
+    if(autoRefresh) {
+        m_self->refreshAll();
+    }
+
     m_threadHandler.setupWatchers(m_libraryManager->allLibraries(),
                                   m_settings->value<Settings::Core::Internal::MonitorLibraries>());
-    if(m_settings->value<Settings::Core::AutoRefresh>()) {
-        m_self->refreshAll();
+
+    if(m_settings->fileValue(Settings::Core::Internal::MarkUnavailableStartup, false).toBool() && !m_tracks.empty()) {
+        if(autoRefresh) {
+            // The library scan will take care of any library-backed tracks
+            TrackList unmanagedTracks;
+            unmanagedTracks.reserve(m_tracks.size());
+
+            for(const auto& track : m_tracks) {
+                if(!track.isInLibrary()) {
+                    unmanagedTracks.push_back(track);
+                }
+            }
+
+            if(!unmanagedTracks.empty()) {
+                m_threadHandler.checkTrackAvailability(unmanagedTracks);
+            }
+        }
+        else {
+            m_threadHandler.checkTrackAvailability(m_tracks);
+        }
     }
 }
 
@@ -344,6 +371,8 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
 
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::progressChanged, this,
                      &UnifiedMusicLibrary::scanProgress);
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::scanFinished, this,
+                     &UnifiedMusicLibrary::scanFinished);
 
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::statusChanged, this,
                      [this](const LibraryInfo& library) { p->libraryStatusChanged(library); });
@@ -355,6 +384,8 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
                      [this](int id, TrackList tracks) { p->playlistLoaded(id, std::move(tracks)); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksUpdated, this,
                      [this](const TrackList& tracks) { p->updateTracksMetadata(tracks); });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksAvailabilityUpdated, this,
+                     [this](const TrackList& tracks) { p->updateTracks(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksStatsUpdated, this,
                      [this](const TrackList& tracks) { p->updateTracks(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksRemoved, this,
@@ -362,8 +393,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::gotTracks, this,
                      [this](TrackList tracks) { p->loadTracks(std::move(tracks)); });
 
-    QObject::connect(
-        this, &MusicLibrary::tracksLoaded, this, [this]() { p->handleTracksLoaded(); }, Qt::QueuedConnection);
+    QObject::connect(this, &MusicLibrary::tracksLoaded, this, [this]() { p->handleTracksLoaded(); });
 }
 
 UnifiedMusicLibrary::~UnifiedMusicLibrary() = default;
@@ -403,7 +433,9 @@ void UnifiedMusicLibrary::refreshAll()
 {
     const LibraryInfoMap& libraries = p->m_libraryManager->allLibraries();
     for(const auto& library : libraries | std::views::values) {
-        refresh(library);
+        if(!p->m_threadHandler.hasPendingLibraryScan(library.id)) {
+            refresh(library);
+        }
     }
 }
 
@@ -423,6 +455,11 @@ ScanRequest UnifiedMusicLibrary::refresh(const LibraryInfo& library)
 ScanRequest UnifiedMusicLibrary::rescan(const LibraryInfo& library)
 {
     return p->m_threadHandler.scanLibrary(library);
+}
+
+void UnifiedMusicLibrary::cancelScan(int id)
+{
+    p->m_threadHandler.cancelScan(id);
 }
 
 ScanRequest UnifiedMusicLibrary::scanTracks(const TrackList& tracks)

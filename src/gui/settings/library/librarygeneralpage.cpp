@@ -29,6 +29,7 @@
 #include <gui/guiconstants.h>
 #include <gui/widgets/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -57,6 +58,7 @@ protected:
 signals:
     void refreshLibrary(const Fooyin::LibraryInfo& info);
     void rescanLibrary(const Fooyin::LibraryInfo& info);
+    void cancelLibraryScan(int id);
 };
 
 void LibraryTableView::setupContextActions(QMenu* menu, const QPoint& pos)
@@ -66,19 +68,28 @@ void LibraryTableView::setupContextActions(QMenu* menu, const QPoint& pos)
         return;
     }
 
-    const auto library   = index.data(Qt::UserRole).value<LibraryInfo>();
-    const bool isPending = library.status == LibraryInfo::Status::Pending;
+    const auto library    = index.data(LibraryModel::Info).value<LibraryInfo>();
+    const int scanId      = index.data(LibraryModel::ScanRequestId).toInt();
+    const bool isPending  = library.status == LibraryInfo::Status::Pending;
+    const bool isScanning = library.status == LibraryInfo::Status::Scanning && scanId >= 0;
 
-    auto* refresh = new QAction(tr("&Scan for changes"), this);
-    refresh->setEnabled(!isPending);
+    auto* refresh = new QAction(tr("&Scan for changes"), menu);
+    refresh->setEnabled(!isPending && !isScanning);
     QObject::connect(refresh, &QAction::triggered, this, [this, library]() { emit refreshLibrary(library); });
 
-    auto* rescan = new QAction(tr("&Reload tracks"), this);
-    rescan->setEnabled(!isPending);
+    auto* rescan = new QAction(tr("&Reload tracks"), menu);
+    rescan->setEnabled(!isPending && !isScanning);
     QObject::connect(rescan, &QAction::triggered, this, [this, library]() { emit rescanLibrary(library); });
 
     menu->addAction(refresh);
     menu->addAction(rescan);
+
+    if(isScanning) {
+        auto* cancel = new QAction(Utils::iconFromTheme(Constants::Icons::Close), tr("&Cancel scan"), menu);
+        QObject::connect(cancel, &QAction::triggered, this, [this, scanId]() { emit cancelLibraryScan(scanId); });
+        menu->addSeparator();
+        menu->addAction(cancel);
+    }
 }
 
 class LibraryGeneralPageWidget : public SettingsPageWidget
@@ -172,6 +183,8 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     QObject::connect(m_model, &LibraryModel::requestAddLibrary, this, &LibraryGeneralPageWidget::addLibrary);
     QObject::connect(m_libraryView, &LibraryTableView::refreshLibrary, m_library, &MusicLibrary::refresh);
     QObject::connect(m_libraryView, &LibraryTableView::rescanLibrary, m_library, &MusicLibrary::rescan);
+    QObject::connect(m_libraryView, &LibraryTableView::cancelLibraryScan, m_library, &MusicLibrary::cancelScan);
+    QObject::connect(m_library, &MusicLibrary::scanProgress, m_model, &LibraryModel::setScanProgress);
 }
 
 void LibraryGeneralPageWidget::load()
