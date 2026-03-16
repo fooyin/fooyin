@@ -171,8 +171,8 @@ PositionCoordinator::Output PositionCoordinator::evaluate(const Input& input)
     if(m_lastSourcePositionValid) {
         const bool backwardDrift = relativePosMs < m_lastSourcePositionMs
                                 && (m_lastSourcePositionMs - relativePosMs) > MaxBackwardDriftToleranceMs;
-        const bool forwardJump = relativePosMs > m_lastSourcePositionMs
-                              && (relativePosMs - m_lastSourcePositionMs) > MaxContinuousPositionJumpMs;
+        const bool forwardJump   = relativePosMs > m_lastSourcePositionMs
+                                && (relativePosMs - m_lastSourcePositionMs) > MaxContinuousPositionJumpMs;
 
         if(backwardDrift || forwardJump) {
             output.discontinuity = true;

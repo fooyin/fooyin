@@ -201,7 +201,7 @@ void TrackSelectionControllerPrivate::setupMenu()
         if(hasContextTracks()) {
             const auto& selection = m_contextSelection.at(m_activeContext);
             const auto options    = PlaylistAction::Switch
-                               | (selection.playbackOnSend ? PlaylistAction::StartPlayback : PlaylistAction::Switch);
+                                  | (selection.playbackOnSend ? PlaylistAction::StartPlayback : PlaylistAction::Switch);
             sendToNewPlaylist(static_cast<PlaylistAction::ActionOptions>(options), {});
         }
     });

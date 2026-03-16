@@ -59,15 +59,12 @@ public:
     [[nodiscard]] virtual PlaylistTrackList modelTracks(Playlist* currentPlaylist) const             = 0;
     [[nodiscard]] virtual TrackSelection selection(Playlist* currentPlaylist, const TrackList& tracks,
                                                    const std::set<int>& trackIndexes,
-                                                   const PlaylistTrack& firstTrack) const
-        = 0;
+                                                   const PlaylistTrack& firstTrack) const            = 0;
     [[nodiscard]] virtual bool canDequeue(const PlayerController* playerController, Playlist* currentPlaylist,
                                           const std::set<int>& trackIndexes,
-                                          const std::set<Track>& selectedTracks) const
-        = 0;
+                                          const std::set<Track>& selectedTracks) const               = 0;
     [[nodiscard]] virtual PlaylistTrackList searchSourceTracks(const PlaylistController* playlistController,
-                                                               const MusicLibrary* library) const
-        = 0;
+                                                               const MusicLibrary* library) const    = 0;
     [[nodiscard]] virtual PlaylistAction::ActionOptions playbackOptions() const
     {
         return {};

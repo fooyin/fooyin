@@ -121,7 +121,7 @@ int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnap
         }
 
         const auto scaledMs = std::llround((static_cast<long double>(safeFrames) * 1000.0L)
-                                                / static_cast<long double>(outputSampleRate));
+                                           / static_cast<long double>(outputSampleRate));
         return static_cast<int>(std::clamp<long double>(scaledMs, 0.0L, std::numeric_limits<int>::max()));
     };
 
@@ -2128,8 +2128,8 @@ void AudioEngine::executeFullReinitLoad(const Track& track, bool manualChange, b
     const AudioFormat currentOutput = m_pipeline.outputFormat();
     const bool inputFormatChanged   = oldInputFormat.isValid() && !Audio::inputFormatsMatch(oldInputFormat, m_format);
     const bool outputFormatChanged  = currentOutput.isValid() && desiredOutput.isValid()
-                                  && !Audio::outputFormatsMatch(currentOutput, desiredOutput);
-    const bool hasOutput = m_pipeline.hasOutput();
+                                   && !Audio::outputFormatsMatch(currentOutput, desiredOutput);
+    const bool hasOutput            = m_pipeline.hasOutput();
 
     if(!hasOutput || outputFormatChanged) {
         if(outputFormatChanged && hasOutput) {
@@ -2324,7 +2324,7 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Track& track, uint64_t ge
     const bool hasEarlyAutoTailFade = m_autoCrossfadeTailFadeActive && m_autoCrossfadeTailFadeGeneration == generation
                                    && m_autoCrossfadeTailFadeStreamId == activeStreamId
                                    && activeStreamId != InvalidStreamId;
-    const bool skipFadeOutStart = hasEarlyAutoTailFade && overlapDurationMs <= 0;
+    const bool skipFadeOutStart     = hasEarlyAutoTailFade && overlapDurationMs <= 0;
 
     const uint64_t overlapWindowMs = static_cast<uint64_t>(std::max(0, overlapDurationMs));
     const uint64_t requiredBufferedMs

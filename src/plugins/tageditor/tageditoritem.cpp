@@ -242,8 +242,8 @@ bool TagEditorItem::setValue(const QString& newValue)
     }
 
     const QString currentValue = value();
-    const bool sameValue       = isMultiValueEdit ? (currentValue == newValue)
-                                                  : (normaliseSingleValue(currentValue) == normaliseSingleValue(newValue));
+    const bool sameValue = isMultiValueEdit ? (currentValue == newValue)
+                                            : (normaliseSingleValue(currentValue) == normaliseSingleValue(newValue));
 
     if(sameValue) {
         if(status() == None

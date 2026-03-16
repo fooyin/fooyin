@@ -166,10 +166,10 @@ ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool isPl
 
     const auto sampleFmtName = std::string{av_get_sample_fmt_name(Fooyin::Utils::sampleFormat(sampleFmt, isPlanar))};
     const auto args          = QString{u"time_base=%1/%2:sample_rate=%2:sample_fmt=%3:channel_layout=0x%4"_s}
-                          .arg(1)
-                          .arg(sampleRate)
-                          .arg(QString::fromStdString(sampleFmtName))
-                          .arg(AV_CH_LAYOUT_STEREO, 0, 16);
+                                   .arg(1)
+                                   .arg(sampleRate)
+                                   .arg(QString::fromStdString(sampleFmtName))
+                                   .arg(AV_CH_LAYOUT_STEREO, 0, 16);
 
     // Allocate and configure filter
     AVFilterContext* filterCtx{nullptr};

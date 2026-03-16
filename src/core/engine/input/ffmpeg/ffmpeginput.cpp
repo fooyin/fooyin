@@ -510,7 +510,7 @@ void FFmpegInputPrivate::checkIsVbr(const Track& track)
 {
     const auto codec = m_codec.context()->codec_id;
     m_isVbr          = track.codecProfile().contains("VBR"_L1) || track.codecProfile().contains("ABR"_L1)
-           || codec == AV_CODEC_ID_OPUS || codec == AV_CODEC_ID_VORBIS;
+                    || codec == AV_CODEC_ID_OPUS || codec == AV_CODEC_ID_VORBIS;
 }
 
 bool FFmpegInputPrivate::createCodec(AVStream* avStream)

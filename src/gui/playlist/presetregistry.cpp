@@ -40,8 +40,8 @@ void PresetRegistry::loadDefaults()
 
     preset.name = tr("Track Table");
 
-    preset.track.leftText.script = u" $padright(,$mul($sub(%depth%,1),5))[\\[%queueindexes%\\]  ]"
-                                   "[$num(%track%,2).  ]%title%[<alpha=180>  ▪  %uniqueartist%]"_s;
+    preset.track.leftText.script  = u" $padright(,$mul($sub(%depth%,1),5))[\\[%queueindexes%\\]  ]"
+                                    "[$num(%track%,2).  ]%title%[<alpha=180>  ▪  %uniqueartist%]"_s;
     preset.track.rightText.script = u"$ifgreater(%playcount%,0,%playcount% |)      %duration% "_s;
 
     addDefaultItem(preset);

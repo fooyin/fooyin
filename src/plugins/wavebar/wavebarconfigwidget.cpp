@@ -229,18 +229,18 @@ WaveBarWidget::ConfigData WaveBarConfigDialog::config() const
     }
 
     WaveBarWidget::ConfigData config{
-        .showLabels    = m_showLabels->isChecked(),
-        .elapsedTotal  = m_elapsedTotal->isChecked(),
-        .showCursor    = m_showCursor->isChecked(),
-        .cursorWidth   = m_cursorWidth->value(),
-        .mode          = static_cast<int>(mode),
-        .downmix       = m_downmixStereo->isChecked() ? static_cast<int>(DownmixOption::Stereo)
-                                                      : (m_downmixMono->isChecked() ? static_cast<int>(DownmixOption::Mono)
-                                                                                    : static_cast<int>(DownmixOption::Off)),
-        .barWidth      = m_barWidth->value(),
-        .barGap        = m_barGap->value(),
-        .maxScale      = m_maxScale->value(),
-        .centreGap     = m_centreGap->value(),
+        .showLabels   = m_showLabels->isChecked(),
+        .elapsedTotal = m_elapsedTotal->isChecked(),
+        .showCursor   = m_showCursor->isChecked(),
+        .cursorWidth  = m_cursorWidth->value(),
+        .mode         = static_cast<int>(mode),
+        .downmix   = m_downmixStereo->isChecked() ? static_cast<int>(DownmixOption::Stereo)
+                                                  : (m_downmixMono->isChecked() ? static_cast<int>(DownmixOption::Mono)
+                                                                                : static_cast<int>(DownmixOption::Off)),
+        .barWidth  = m_barWidth->value(),
+        .barGap    = m_barGap->value(),
+        .maxScale  = m_maxScale->value(),
+        .centreGap = m_centreGap->value(),
         .channelScale  = m_channelScale->value(),
         .colourOptions = QVariant{},
     };

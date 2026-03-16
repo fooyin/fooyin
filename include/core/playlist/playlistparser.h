@@ -52,8 +52,7 @@ public:
     [[nodiscard]] virtual bool saveIsSupported() const            = 0;
 
     virtual TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir,
-                                   const ReadPlaylistEntry& readEntry, bool skipNotFound)
-        = 0;
+                                   const ReadPlaylistEntry& readEntry, bool skipNotFound) = 0;
     virtual void savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
                               PathType type, bool writeMetdata);
 

@@ -447,7 +447,7 @@ QSize FilterDelegate::iconItemSize(const QStyleOptionViewItem& option, const QMo
             const QSize styleSize = style->sizeFromContents(QStyle::CT_ItemViewItem, &option, textSize, option.widget);
             const int itemWidth   = option.rect.width() > 0 ? option.rect.width()
                                                             : option.decorationSize.width() + IconCaptionMargin
-                                                                + textSize.width() + horizontalMargin;
+                                                                  + textSize.width() + horizontalMargin;
             const int itemHeight  = std::max(
                 {styleSize.height(), option.decorationSize.height(), textSize.height() + (2 * verticalMargin)});
             return {itemWidth, itemHeight};

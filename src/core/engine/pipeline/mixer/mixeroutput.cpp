@@ -71,9 +71,9 @@ void MixerOutput::commitMixed(const CommitPlan& plan, const CycleState& state, s
         m_queue.appendOrReplace(mixedBuffer, m_timelineScratch, state.trackedPrimaryStreamId);
     }
 
-    const bool canPadWithSilence = !state.startedPendingStream && plan.pendingStreamToStartId == InvalidStreamId
-                                && state.hasActiveStream && state.producedFrames > 0 && !state.dspBuffering
-                                && plan.outChannels > 0 && plan.outRate > 0;
+    const bool canPadWithSilence         = !state.startedPendingStream && plan.pendingStreamToStartId == InvalidStreamId
+                                        && state.hasActiveStream && state.producedFrames > 0 && !state.dspBuffering
+                                        && plan.outChannels > 0 && plan.outRate > 0;
     const bool needsPadToRequestedFrames = m_queue.queuedFrames() < plan.requestedFrames;
 
     if(canPadWithSilence && needsPadToRequestedFrames) {
