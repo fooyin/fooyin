@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,36 +19,32 @@
 
 #pragma once
 
-#include <core/database/generaldatabase.h>
-#include <core/library/musiclibrary.h>
+#include "libraryscantypes.h"
 
-#include <QObject>
+#include <functional>
 
 namespace Fooyin {
-class Application;
-class ActionManager;
-class MusicLibrary;
+class TrackDatabase;
 
-class LibraryMenu : public QObject
+class LibraryScanWriter
 {
-    Q_OBJECT
-
 public:
-    LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent = nullptr);
+    using FlushHandler = std::function<void(const ScanResult&)>;
 
-signals:
-    void requestSearch();
-    void requestQuickSearch();
+    LibraryScanWriter(TrackDatabase* trackDatabase, FlushHandler flushHandler);
+
+    void reset();
+    void storeTrack(Track track);
+    void updateTrack(Track track);
+
+    [[nodiscard]] bool empty() const;
+    [[nodiscard]] bool shouldFlush() const;
+    void flush();
 
 private:
-    void removeUnavailbleTracks();
-    void optimiseDatabase();
-    void cleanupDatabase();
-
-    DbConnectionPoolPtr m_database;
-    MusicLibrary* m_library;
-
-    WriteRequest m_deleteRequest;
-    int m_activeLibraryScanId;
+    TrackDatabase* m_trackDatabase;
+    FlushHandler m_flushHandler;
+    TrackList m_tracksToStore;
+    TrackList m_tracksToUpdate;
 };
 } // namespace Fooyin

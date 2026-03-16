@@ -66,7 +66,7 @@ public:
 
 private:
     FyWidget* createDirBrowser();
-    static void showScanProgress(const ScanProgress& progress);
+    void showScanProgress(const ScanProgress& progress);
 
     Application* m_core;
     GuiApplication* m_gui;

@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,36 +19,32 @@
 
 #pragma once
 
-#include <core/database/generaldatabase.h>
-#include <core/library/musiclibrary.h>
+#include "librarywatcher.h"
+
+#include <core/library/libraryinfo.h>
 
 #include <QObject>
 
-namespace Fooyin {
-class Application;
-class ActionManager;
-class MusicLibrary;
+#include <unordered_map>
 
-class LibraryMenu : public QObject
+namespace Fooyin {
+class LibraryMonitor : public QObject
 {
     Q_OBJECT
 
 public:
-    LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent = nullptr);
+    explicit LibraryMonitor(QObject* parent = nullptr);
 
 signals:
-    void requestSearch();
-    void requestQuickSearch();
+    void statusChanged(const Fooyin::LibraryInfo& library);
+    void directoriesChanged(const Fooyin::LibraryInfo& library, const QStringList& dirs);
+
+public slots:
+    void setupWatchers(const Fooyin::LibraryInfoMap& libraries, bool enabled);
 
 private:
-    void removeUnavailbleTracks();
-    void optimiseDatabase();
-    void cleanupDatabase();
+    void addWatcher(const LibraryInfo& library);
 
-    DbConnectionPoolPtr m_database;
-    MusicLibrary* m_library;
-
-    WriteRequest m_deleteRequest;
-    int m_activeLibraryScanId;
+    std::unordered_map<int, LibraryWatcher> m_watchers;
 };
 } // namespace Fooyin

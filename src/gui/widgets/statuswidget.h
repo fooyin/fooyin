@@ -21,6 +21,8 @@
 
 #include <gui/fywidget.h>
 
+#include <functional>
+
 namespace Fooyin {
 class SettingsManager;
 class PlayerController;
@@ -49,6 +51,7 @@ public:
     void showTempMessage(const QString& message);
     void showTempMessage(const QString& message, int timeout);
     void showStatusTip(const QString& message);
+    void setScanProgress(const QString& message, std::function<void()> cancel = {});
 
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;

@@ -31,6 +31,11 @@ PlaylistParser::PlaylistParser(std::shared_ptr<AudioLoader> audioLoader)
     : m_audioLoader{std::move(audioLoader)}
 { }
 
+size_t PlaylistParser::countEntries(QIODevice* /*device*/, const QString& /*filepath*/, const QDir& /*dir*/) const
+{
+    return 0;
+}
+
 void Fooyin::PlaylistParser::savePlaylist(QIODevice* /*device*/, const QString& /*extension*/,
                                           const TrackList& /*tracks*/, const QDir& /*dir*/, PathType /*type*/,
                                           bool /*writeMetdata*/)

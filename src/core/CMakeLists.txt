@@ -185,11 +185,26 @@ set(SOURCES
     internalcoresettings.h
     library/librarymanager.cpp
     library/librarymanager.h
+    library/libraryfileenumerator.cpp
+    library/libraryfileenumerator.h
+    library/librarymonitor.cpp
+    library/librarymonitor.h
     library/libraryscanner.cpp
     library/libraryscanner.h
+    library/libraryscansession.cpp
+    library/libraryscansession.h
+    library/libraryscanstate.cpp
+    library/libraryscanstate.h
+    library/libraryscantypes.h
+    library/libraryscanutils.cpp
+    library/libraryscanutils.h
+    library/libraryscanwriter.cpp
+    library/libraryscanwriter.h
     library/librarysort.h
     library/librarythreadhandler.cpp
     library/librarythreadhandler.h
+    library/librarytrackresolver.cpp
+    library/librarytrackresolver.h
     library/libraryutils.cpp
     library/librarywatcher.cpp
     library/librarywatcher.h

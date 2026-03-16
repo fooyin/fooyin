@@ -19,18 +19,22 @@
 
 #pragma once
 
-#include <core/library/libraryinfo.h>
+#include "database/trackdatabase.h"
+#include "libraryscantypes.h"
+
+#include <core/library/musiclibrary.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionpool.h>
 #include <utils/worker.h>
 
+#include <memory>
+#include <unordered_map>
+
 namespace Fooyin {
 class AudioLoader;
-class LibraryManager;
-class LibraryScannerPrivate;
+class DbConnectionHandler;
+class LibraryScanSession;
 class PlaylistLoader;
-class SettingsManager;
-class TagLoader;
 
 struct ScanResult
 {
@@ -38,38 +42,58 @@ struct ScanResult
     TrackList updatedTracks;
 };
 
-class LibraryScanner : public Worker
+class LibraryScanner : public Worker,
+                       public LibraryScanHost
 {
     Q_OBJECT
 
 public:
     explicit LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
-                            std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
-                            QObject* parent = nullptr);
+                            std::shared_ptr<AudioLoader> audioLoader, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
     void initialiseThread() override;
     void stopThread() override;
+    [[nodiscard]] bool stopRequested() const override;
+
+    void reportProgress(int current, const QString& file, int total, int phase, int discovered) override;
+    void reportScanUpdate(const ScanResult& result) override;
 
 signals:
-    void progressChanged(int current, const QString& file, int total);
+    void progressChanged(const Fooyin::ScanProgress& progress);
     void statusChanged(const Fooyin::LibraryInfo& library);
     void scanUpdate(const Fooyin::ScanResult& result);
     void scannedTracks(const Fooyin::TrackList& tracks);
     void playlistLoaded(const Fooyin::TrackList& tracks);
-    void directoriesChanged(const Fooyin::LibraryInfo& library, const QStringList& dirs);
 
 public slots:
-    void setMonitorLibraries(bool enabled);
-    void setupWatchers(const Fooyin::LibraryInfoMap& libraries, bool enabled);
-    void scanLibrary(const Fooyin::LibraryInfo& library, const Fooyin::TrackList& tracks, bool onlyModified);
+    void scanLibrary(const Fooyin::LibraryInfo& library, const Fooyin::TrackList& tracks, bool onlyModified,
+                     const Fooyin::LibraryScanConfig& config);
     void scanLibraryDirectoies(const Fooyin::LibraryInfo& library, const QStringList& dirs,
-                               const Fooyin::TrackList& tracks);
-    void scanTracks(const Fooyin::TrackList& libraryTracks, const Fooyin::TrackList& tracks, bool onlyModified);
-    void scanFiles(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);
-    void scanPlaylist(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);
+                               const Fooyin::TrackList& tracks, const Fooyin::LibraryScanConfig& config);
+    void scanTracks(const Fooyin::TrackList& tracks, bool onlyModified);
+    void scanFiles(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls,
+                   const Fooyin::LibraryScanConfig& config);
+    void scanPlaylist(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls,
+                      const Fooyin::LibraryScanConfig& config);
 
 private:
-    std::unique_ptr<LibraryScannerPrivate> p;
+    [[nodiscard]] ScanProgress makeProgress(int current, const QString& file, int total, ScanProgress::Phase phase,
+                                            int discovered) const;
+    void changeLibraryStatus(LibraryInfo::Status status);
+    void startSession(const LibraryScanConfig& config, const LibraryInfo& library = {});
+    void finishSession();
+    void clearSession();
+
+    DbConnectionPoolPtr m_dbPool;
+    std::shared_ptr<PlaylistLoader> m_playlistLoader;
+    std::shared_ptr<AudioLoader> m_audioLoader;
+
+    std::unique_ptr<DbConnectionHandler> m_dbHandler;
+
+    bool m_progressOnlyModified;
+    LibraryInfo m_currentLibrary;
+    TrackDatabase m_trackDatabase;
+    std::unique_ptr<LibraryScanSession> m_session;
 };
 } // namespace Fooyin

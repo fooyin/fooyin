@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,36 +19,19 @@
 
 #pragma once
 
-#include <core/database/generaldatabase.h>
-#include <core/library/musiclibrary.h>
+#include <core/track.h>
 
-#include <QObject>
+#include <QFileInfo>
+
+#include <optional>
 
 namespace Fooyin {
-class Application;
-class ActionManager;
-class MusicLibrary;
-
-class LibraryMenu : public QObject
-{
-    Q_OBJECT
-
-public:
-    LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent = nullptr);
-
-signals:
-    void requestSearch();
-    void requestQuickSearch();
-
-private:
-    void removeUnavailbleTracks();
-    void optimiseDatabase();
-    void cleanupDatabase();
-
-    DbConnectionPoolPtr m_database;
-    MusicLibrary* m_library;
-
-    WriteRequest m_deleteRequest;
-    int m_activeLibraryScanId;
-};
+QString normalisePath(const QString& path);
+QStringList normalisePaths(const QStringList& paths);
+QStringList normaliseExtensions(const QStringList& extensions);
+QString trackIdentity(const Track& track);
+QString physicalTrackPath(const Track& track);
+bool trackIsInRoots(const Track& track, const QStringList& roots);
+std::optional<QFileInfo> findMatchingCue(const QFileInfo& file);
+void readFileProperties(Track& track);
 } // namespace Fooyin

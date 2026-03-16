@@ -25,6 +25,7 @@
 
 namespace Fooyin {
 class LibraryManager;
+struct ScanProgress;
 
 class LibraryItem : public TreeStatusItem<LibraryItem>
 {
@@ -44,11 +45,20 @@ class LibraryModel : public ExtendableTableModel
     Q_OBJECT
 
 public:
+    enum LibraryRole
+    {
+        Info = Qt::UserRole,
+        ScanRequestId,
+    };
+
     explicit LibraryModel(LibraryManager* libraryManager, QObject* parent = nullptr);
 
     void populate();
     void markForAddition(const LibraryInfo& info);
     void processQueue();
+
+    void setScanProgress(const ScanProgress& progress);
+    [[nodiscard]] int scanRequestId(const LibraryInfo& library) const;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -67,10 +77,15 @@ signals:
     void requestAddLibrary();
 
 private:
+    void updateLibraryRow(const QString& path, const QList<int>& roles = {});
+
     LibraryManager* m_libraryManager;
 
     LibraryItem m_root;
     std::unordered_map<QString, LibraryItem> m_nodes;
     std::vector<LibraryInfo> m_librariesToAdd;
+
+    std::unordered_map<int, QString> m_scanStatusText;
+    std::unordered_map<int, int> m_scanRequestIds;
 };
 } // namespace Fooyin

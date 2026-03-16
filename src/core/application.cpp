@@ -83,6 +83,7 @@ void registerTypes()
     qRegisterMetaType<Fooyin::Track>("Track");
     qRegisterMetaType<Fooyin::TrackList>("TrackList");
     qRegisterMetaType<Fooyin::TrackIds>("TrackIds");
+    qRegisterMetaType<Fooyin::ScanProgress>("ScanProgress");
     qRegisterMetaType<Fooyin::AudioBuffer>("AudioBuffer");
     qRegisterMetaType<Fooyin::OutputCreator>("OutputCreator");
     qRegisterMetaType<Fooyin::LibraryInfo>("LibraryInfo");

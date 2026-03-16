@@ -175,6 +175,13 @@ void MainWindow::installStatusWidget(StatusWidget* statusWidget)
     m_statusWidget = statusWidget;
 }
 
+void MainWindow::setScanProgress(const QString& message, std::function<void()> cancel)
+{
+    if(m_statusWidget) {
+        m_statusWidget->setScanProgress(message, std::move(cancel));
+    }
+}
+
 QSize MainWindow::sizeHint() const
 {
     return Utils::proportionateSize(this, 0.6, 0.6);

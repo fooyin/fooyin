@@ -38,9 +38,12 @@ ElapsedProgressDialog::ElapsedProgressDialog(const QString& labelText, const QSt
     : QDialog{parent}
     , m_text{new QTextEdit(this)}
     , m_progressBar{new QProgressBar(this)}
+    , m_progressMinimum{minimum}
+    , m_progressMaximum{maximum}
     , m_isStarting{false}
     , m_isFinished{false}
     , m_wasCancelled{false}
+    , m_isBusy{false}
     , m_minDuration{0}
     , m_updateTimer{new QTimer(this)}
     , m_elapsedLabel{new QLabel(this)}
@@ -79,24 +82,47 @@ int ElapsedProgressDialog::value() const
     return m_progressBar->value();
 }
 
+void ElapsedProgressDialog::ensureStarted()
+{
+    if(std::exchange(m_isStarting, true)) {
+        return;
+    }
+
+    QTimer::singleShot(m_minDuration, this, [this]() {
+        if(!m_isFinished && !m_wasCancelled) {
+            m_updateTimer->start();
+            updateStatus();
+            show();
+        }
+    });
+}
+
 void ElapsedProgressDialog::setValue(int value)
 {
+    if(m_isBusy) {
+        setBusy(false);
+    }
+
     m_progressBar->setValue(value);
 
-    if(!m_isStarting) {
-        m_isStarting = true;
-        QTimer::singleShot(m_minDuration, this, [this]() {
-            if(!m_isFinished && !m_wasCancelled) {
-                m_updateTimer->start();
-                updateStatus();
-                show();
-            }
-        });
+    ensureStarted();
+}
+
+void ElapsedProgressDialog::setBusy(bool busy)
+{
+    if(std::exchange(m_isBusy, busy) == busy) {
+        return;
     }
-    else if(value == m_progressBar->maximum()) {
-        m_isFinished = true;
-        m_updateTimer->stop();
-        hide();
+
+    if(m_isBusy) {
+        ensureStarted();
+        m_progressBar->setRange(0, 0);
+    }
+    else {
+        m_progressBar->setRange(m_progressMinimum, m_progressMaximum);
+        if(m_progressBar->value() <= 0) {
+            m_progressBar->setValue(m_progressMinimum);
+        }
     }
 }
 
@@ -145,7 +171,7 @@ void ElapsedProgressDialog::updateStatus()
 
     const QString remainingText = tr("Estimated") + ": "_L1;
 
-    if(current <= min) {
+    if(m_isBusy || max <= min || current <= min) {
         m_remainingLabel->setText(remainingText + tr("Calculating…"));
         return;
     }

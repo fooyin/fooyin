@@ -374,26 +374,67 @@ FyWidget* Widgets::createDirBrowser()
 void Widgets::showScanProgress(const ScanProgress& progress)
 {
     if(progress.id < 0) {
+        m_window->setScanProgress({});
         return;
     }
 
+    const bool checkingForChanges = progress.type == ScanRequest::Library && progress.onlyModified
+                                 && progress.phase == ScanProgress::Phase::ReadingMetadata;
+
     QString scanText;
     switch(progress.type) {
-        case(ScanRequest::Files):
+        case ScanRequest::Files:
             scanText = tr("Scanning files");
             break;
-        case(ScanRequest::Tracks):
+        case ScanRequest::Tracks:
             scanText = tr("Scanning tracks");
             break;
-        case(ScanRequest::Library):
-            scanText = tr("Scanning %1").arg(progress.info.name);
+        case ScanRequest::Library:
+            scanText = checkingForChanges ? tr("Checking %1 for changes").arg(progress.info.name)
+                                          : tr("Scanning %1").arg(progress.info.name);
             break;
-        case(ScanRequest::Playlist):
+        case ScanRequest::Playlist:
             scanText = tr("Loading playlist");
             break;
     }
 
-    scanText = u"%1: %2%"_s.arg(scanText).arg(progress.percentage());
-    StatusEvent::post(scanText);
+    QString phaseText;
+    switch(progress.phase) {
+        case ScanProgress::Phase::Enumerating:
+            phaseText = tr("discovering files");
+            break;
+        case ScanProgress::Phase::ReadingMetadata:
+            phaseText = checkingForChanges ? tr("checking for changes") : tr("reading metadata");
+            break;
+        case ScanProgress::Phase::WritingDatabase:
+            phaseText = tr("saving changes");
+            break;
+        case ScanProgress::Phase::Finalising:
+            phaseText = tr("finalising");
+            break;
+        case ScanProgress::Phase::Finished:
+            phaseText = tr("completed");
+            break;
+    }
+
+    if(checkingForChanges) {
+        if(progress.discovered > 0) {
+            scanText = u"%1 (%2)"_s.arg(scanText).arg(progress.discovered);
+        }
+    }
+    else if(progress.discovered > 0) {
+        scanText = u"%1: %2 (%3)"_s.arg(scanText).arg(phaseText).arg(progress.discovered);
+    }
+    else {
+        scanText = u"%1: %2"_s.arg(scanText).arg(phaseText);
+    }
+
+    if(progress.phase == ScanProgress::Phase::Finished) {
+        m_window->setScanProgress({});
+        return;
+    }
+
+    m_window->setScanProgress(scanText,
+                              [library = m_core->library(), scanId = progress.id]() { library->cancelScan(scanId); });
 }
 } // namespace Fooyin

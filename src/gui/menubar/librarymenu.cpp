@@ -43,6 +43,7 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     : QObject{parent}
     , m_database{core->databasePool()}
     , m_library{core->library()}
+    , m_activeLibraryScanId{-1}
 {
     auto* libraryMenu = actionManager->actionContainer(Constants::Menus::Library);
 
@@ -100,8 +101,34 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
         core->settingsManager()->settingsDialog()->openAtPage(Constants::Page::LibraryGeneral);
     });
 
+    auto* cancelScan = new QAction(Utils::iconFromTheme(Constants::Icons::Close), tr("Cancel current scan"), this);
+    cancelScan->setVisible(false);
+    cancelScan->setStatusTip(tr("Cancel the current library scan"));
+
+    QObject::connect(m_library, &MusicLibrary::scanProgress, this, [this, cancelScan](const ScanProgress& progress) {
+        const bool activeLibraryScan = progress.type == ScanRequest::Library && progress.id >= 0
+                                    && progress.phase != ScanProgress::Phase::Finished;
+
+        if(activeLibraryScan) {
+            m_activeLibraryScanId = progress.id;
+            cancelScan->setText(tr("Cancel scan for %1").arg(progress.info.name));
+            cancelScan->setStatusTip(tr("Cancel the current scan for %1").arg(progress.info.name));
+            cancelScan->setVisible(true);
+        }
+        else {
+            m_activeLibraryScanId = -1;
+            cancelScan->setVisible(false);
+        }
+    });
+    QObject::connect(cancelScan, &QAction::triggered, this, [this]() {
+        if(m_activeLibraryScanId >= 0) {
+            m_library->cancelScan(m_activeLibraryScanId);
+        }
+    });
+
     libraryMenu->addAction(refreshLibraryCmd);
     libraryMenu->addAction(rescanLibraryCmd);
+    libraryMenu->addAction(cancelScan);
     libraryMenu->addSeparator();
     libraryMenu->addMenu(dbMenu);
     libraryMenu->addAction(searchCmd);
