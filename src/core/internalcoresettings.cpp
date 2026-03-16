@@ -94,7 +94,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PlaybackQueueStopWhenFinished>(false, u"Playback/PlaybackQueueStopWhenFinished"_s);
     m_settings->createSetting<ClearPlaybackQueueOnExit>(false, u"Playback/ClearPlaybackQueueOnExit"_s);
 
-    m_settings->createSetting<Internal::MonitorLibraries>(true, u"Library/MonitorLibraries"_s);
+    m_settings->createSetting<Internal::MonitorLibraries>(false, u"Library/MonitorLibraries"_s);
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
     m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, u"Plugins/Disabled"_s);
     m_settings->createSetting<Internal::EngineFading>(false, u"Engine/Fading"_s);
