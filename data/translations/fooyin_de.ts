@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="63"/>
         <source>Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Funktionen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="87"/>
@@ -66,257 +66,257 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="87"/>
         <source>Track title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelname</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="88"/>
         <source>Primary artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Hauptkünstler</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="89"/>
         <source>Unique artists combined into one value</source>
-        <translation type="unfinished"></translation>
+        <translation>Eindeutige Künstler zu einem Wert kombiniert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="90"/>
         <source>Album title</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumname</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="91"/>
         <source>Album artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumkünstler</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="92"/>
         <source>Track number</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelnummer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="93"/>
         <source>Total tracks on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamtzahl der Titel in der Veröffentlichung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="94"/>
         <source>Disc number</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-Nummer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="95"/>
         <source>Total discs on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamtzahl der CDs in der Veröffentlichung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="96"/>
         <source>Genres</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Genres</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="97"/>
         <source>Composers</source>
-        <translation type="unfinished"></translation>
+        <translation>Komponisten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="98"/>
         <source>Performers</source>
-        <translation type="unfinished"></translation>
+        <translation>Auftretende</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="99"/>
         <source>Track duration formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Titeldauer formatiert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="100"/>
         <source>Track duration in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Titeldauer in Sekunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="101"/>
         <source>Track duration in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Titeldauer in Millisekunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="102"/>
         <source>Comment tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar-Tag</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="103"/>
         <source>Release date</source>
-        <translation type="unfinished"></translation>
+        <translation>Veröffentlichungsdatum</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="104"/>
         <source>Release year</source>
-        <translation type="unfinished"></translation>
+        <translation>Veröffentlichungsjahr</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="105"/>
         <source>File size in bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateigröße in Bytes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
         <source>Human readable file size</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatierte Dateigröße</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="107"/>
         <source>Track bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate des Titels</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
         <source>Sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Abtastrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="109"/>
         <source>Bit depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bittiefe</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="110"/>
         <source>First played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitpunkt des ersten Abspielens</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="111"/>
         <source>Last played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitpunkt des letzten Abspielens</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="112"/>
         <source>Play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielzähler</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="113"/>
         <source>Numeric rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewertung (numerisch)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="114"/>
         <source>Rating shown as stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewertung (als Sterne)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="115"/>
         <source>Rating editor representation</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewertung (Editor-Darstellung)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="116"/>
         <source>Codec name</source>
-        <translation type="unfinished"></translation>
+        <translation>Name des Codec</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="117"/>
         <source>Codec profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil des Codec</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="118"/>
         <source>Encoding tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoder</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="119"/>
         <source>Tag type list</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste der Tag-Typen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="120"/>
         <source>Encoding description</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschreibung des Encodings</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="121"/>
         <source>Channel layout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kanäle</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="122"/>
         <source>Library added timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinzufüge-Zeitpunkt</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="123"/>
         <source>Last modified timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitpunkt letzte Änderung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="124"/>
         <source>Full file path</source>
-        <translation type="unfinished"></translation>
+        <translation>Voller Dateipfad</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="125"/>
         <source>Path relative to the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateipfad relativ zur Bibliothekswurzel</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="126"/>
         <source>Filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateiname ohne Erweiterung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="127"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateinamenserweiterung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="128"/>
         <source>Filename including extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateiname einschließlich Erweiterung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Containing directory name</source>
-        <translation type="unfinished"></translation>
+        <translation>Enthaltendes Verzeichnis</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="130"/>
         <source>Containing directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfad des enthaltenden Verzeichnisses</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="131"/>
         <source>Subsong index</source>
-        <translation type="unfinished"></translation>
+        <translation>Index des Titelteils</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="132"/>
         <source>ReplayGain track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Titelanpassung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="133"/>
         <source>ReplayGain track peak</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Titelmaximum</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="134"/>
         <source>ReplayGain track peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Titelmaximum in dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="135"/>
         <source>ReplayGain album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Albumanpassung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="136"/>
         <source>ReplayGain album peak</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Albummaximum</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="137"/>
         <source>ReplayGain album peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Albummaximum in dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="138"/>
@@ -324,22 +324,22 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="140"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="142"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="138"/>
         <source>Number of tracks in the list</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzahl Titel in der Liste</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="139"/>
         <source>Combined duration of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamtspieldauer der Titelliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="140"/>
         <source>Alias for total playlist duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Alias für die Gesamtspieldauer der Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
@@ -355,42 +355,42 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
         <source>Elapsed time within the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Verstrichene Zeit in der aktiven Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="142"/>
         <source>Unique genres across the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Eindeutige Genres in der Titelliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
         <source>Current playback position formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Wiedergabeposition formatiert als Zeit</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="144"/>
         <source>Current playback position in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Wiedergabeposition in Sekunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Remaining playback time formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbleibende Wiedergabedauer formatiert als Zeit</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="146"/>
         <source>Remaining playback time in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbleibende Wiedergabedauer in Sekunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
         <source>Returns 1 while playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert 1 zurück während Wiedergabe aktiv ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="148"/>
         <source>Returns 1 while playback is paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert 1 zurück während Wiedergabe pausiert ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="149"/>
@@ -401,332 +401,332 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="149"/>
         <source>Current library name</source>
-        <translation type="unfinished"></translation>
+        <translation>Name der aktuellen Bibliothek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="150"/>
         <source>Current library path</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfad der aktuellen Bibliothek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="151"/>
         <source>Adds numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Addiert numerische Argumente</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="152"/>
         <source>Subtracts later values from the first</source>
-        <translation type="unfinished"></translation>
+        <translation>Subtrahiert folgende Werte vom ersten Wert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="153"/>
         <source>Multiplies numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Multipliziert numerische Argumente</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="154"/>
         <source>Divides the first value by the second</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividiert den ersten Wert durch den zweiten Wert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <source>Returns the smallest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert den kleinsten numerischen Wert zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="156"/>
         <source>Returns the largest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert den größten numerischen Wert zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Returns the remainder of a division</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert den Rest einer Division zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="158"/>
         <source>Returns a random number in range</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert eine zufällige Zahl aus einem Bereich zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Rounds a numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Rundet einen numerischen Wert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="160"/>
         <source>Formats a number with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatiert eine Zahl mit führenden Nullen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
         <source>Replaces text fragments</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersetzt Teile von Texten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="162"/>
         <source>Converts text to ASCII</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertiert einen Text nach ASCII</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="163"/>
         <source>Returns a slice of text</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert einen Teil eines Textes zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="164"/>
         <source>Removes characters from the end</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernt Zeichen am Ende</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="165"/>
         <source>Returns characters from the left</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert Zeichen von links zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="166"/>
         <source>Returns characters from the right</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert Zeichen von rechts zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Inserts text at a position</source>
-        <translation type="unfinished"></translation>
+        <translation>Fügt Text an bestimmter Stelle ein</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="168"/>
         <source>Returns a substring</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert einen Teil bestimmter Länge eines Textes zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Finds a substring position</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet die Position eines Teiltextes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="170"/>
         <source>Finds a substring position ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet die Position eines Teiltextes (ohne Groß-/Kleinschreibung)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
         <source>Finds the last substring position</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet das letzte Auftreten eines Teiltextes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="173"/>
         <source>Finds the last substring position ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet das letzte Auftreten eines Teiltextes (ohne Groß-/Kleinschreibung)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="174"/>
         <source>Returns one split segment</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert ein Segment eines gesplitteten Textes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="175"/>
         <source>Returns the text length</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert die Länge eines Textes zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="176"/>
         <source>Returns the longest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert die längste Zeichenkette zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="177"/>
         <source>Compares two strings</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergleicht zwei Zeichenketten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="178"/>
         <source>Compares two strings ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergleicht zwei Zeichenketten (ohne Groß-/Kleinschreibung)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="179"/>
         <source>Tests whether one string is longer</source>
-        <translation type="unfinished"></translation>
+        <translation>Prüft ob eine Zeichenkette länger ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="180"/>
         <source>Returns the unit separator character</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert das Trennzeichen für Einheiten zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="181"/>
         <source>Returns a newline</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert einen Zeilenumbruch zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="182"/>
         <source>Returns a tab character</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert ein Tabulatorzeichen zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="183"/>
         <source>Moves leading articles to the end</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiebt führende Artikel an das Ende</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="184"/>
         <source>Removes leading articles</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernt führende Artikel</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="185"/>
         <source>Pads text on the left</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllt Text von links auf</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="186"/>
         <source>Pads text on the right</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllt Text von rechts auf</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="187"/>
         <source>Repeats text</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederholt Text</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="188"/>
         <source>Trims surrounding whitespace</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernt umgebende Leerzeichen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="189"/>
         <source>Converts text to lowercase</source>
-        <translation type="unfinished"></translation>
+        <translation>Wandelt Text in Kleinbuchstaben</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="190"/>
         <source>Converts text to uppercase</source>
-        <translation type="unfinished"></translation>
+        <translation>Wandelt Text in Großbuchstaben</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="191"/>
         <source>Builds an abbreviation</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt eine Abkürzung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="192"/>
         <source>Capitalises words</source>
-        <translation type="unfinished"></translation>
+        <translation>Wandelt Wortanfänge in Großbuchstaben</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="193"/>
         <source>Returns a directory name from a path</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert den Verzeichnisnamen von einem Pfad</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="194"/>
         <source>Returns a parent directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert den Pfad des übergeordneten Verzeichnisses</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="195"/>
         <source>Elides text at the end</source>
-        <translation type="unfinished"></translation>
+        <translation>Verkürzt einen Text am Ende</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="196"/>
         <source>Elides text in the middle</source>
-        <translation type="unfinished"></translation>
+        <translation>Verkürzt einen Text in der Mitte</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="197"/>
         <source>Returns a file extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert eine Dateinamenserweiterung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="198"/>
         <source>Returns a filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert einen Dateinamen ohne Erweiterung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="199"/>
         <source>Builds a text progress bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt einen textbasierten Fortschrittsanzeiger</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="200"/>
         <source>Builds an alternate text progress bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt einen alternativen textbasierten Fortschrittsanzeiger</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="201"/>
         <source>Builds a clickable document or web link</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt einen klickbaren Dokumenten- oder Internet-Link</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="202"/>
         <source>Builds a clickable link to a fooyin command</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt einen klickbaren Link zu einem fooyin-Befehl</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="203"/>
         <source>Percent-encodes text for use in URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodiert einen Text für die Verwendung in URLs</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="204"/>
         <source>Formats milliseconds as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatiert Millisekunden als Zeit</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
         <source>Returns the value stored in a script variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert den in einer Skript-Variable abgelegten Wert zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="206"/>
         <source>Stores a script variable and returns the value</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichert eine Skript-Variable und liefert den Wert zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
         <source>Stores a script variable and returns nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichert eine Skript-Variable und liefert nichts zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="208"/>
         <source>Returns then when condition is true</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert ersten Wert zurück, wenn die Bedingung wahr ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Returns the first non-empty value</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert den ersten nicht-leeren Wert zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
         <source>Returns the first true value from a list, or else when none match</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert ersten wahren Wert von einer Liste zurück, sonst den letzten Wert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="212"/>
         <source>Compares numeric values</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergleicht numerische Werte</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="214"/>
         <source>Checks whether text is longer than a limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Prüft ob die Textlänge ein Limit überschreitet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Checks whether two values are equal</source>
-        <translation type="unfinished"></translation>
+        <translation>Prüft zwei Werte auf Gleichheit</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="216"/>
         <source>Looks up a raw tag field by name</source>
-        <translation type="unfinished"></translation>
+        <translation>Sucht ein rohes Tag-Feld nach Namen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
         <source>Looks up technical track information</source>
-        <translation type="unfinished"></translation>
+        <translation>Liefert technische Titelinformation zurück</translation>
     </message>
 </context>
 <context>
@@ -866,7 +866,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="82"/>
         <source>Quality</source>
-        <translation type="unfinished"></translation>
+        <translation>Qualität</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="98"/>
@@ -911,7 +911,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="121"/>
         <source>File type</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateityp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="123"/>
@@ -1000,27 +1000,27 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="89"/>
         <source>No embedded artwork found to export</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein eingebettetes Artwork für Export gefunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="92"/>
         <source>Exported artwork to %1 files</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork in %1 Dateien exportiert</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="95"/>
         <source>Failed to export artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Export des Artwork fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="99"/>
         <source>Exported artwork to %1 files (%2 failed)</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork in %1 Dateien exportiert (%2 fehlgeschlagen)</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="107"/>
         <source>Exported artwork to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork nach %1 exportiert</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="224"/>
@@ -1091,27 +1091,27 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="291"/>
         <source>Auto-export to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-Export in Datei</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="292"/>
         <source>Export as…</source>
-        <translation type="unfinished"></translation>
+        <translation>Export als…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="294"/>
         <source>Export this embedded artwork to a file in the track directory without prompting</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiere dieses eingebundene Artwork als Datei im Albumverzeichnis ohne Nachfrage</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="295"/>
         <source>Choose where to export this embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiere dieses eingebundene Artwork mit Nachfrage</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="303"/>
         <source>Remove this artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferne dieses Artwork</translation>
     </message>
 </context>
 <context>
@@ -1231,27 +1231,27 @@
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="204"/>
         <source>Fit to window</source>
-        <translation type="unfinished"></translation>
+        <translation>An das Fenster anpassen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="205"/>
         <source>Actual size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tatsächliche Größe</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="206"/>
         <source>Zoom in</source>
-        <translation type="unfinished"></translation>
+        <translation>Hineinzoomen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="207"/>
         <source>Zoom out</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinauszoomen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="210"/>
         <source>Artwork: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="210"/>
@@ -1302,7 +1302,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
         <source>Force-sorted</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwangs-sortiert</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="54"/>
@@ -1338,7 +1338,8 @@
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates. 
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn aktiviert, wird die Auto-Playlist beim Neuaufbau gemäß den Sortiereinstellungen komplett neu geordnet. 
+Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinzugefügte passende Titel werden sortiert und dann angefügt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="95"/>
@@ -1399,33 +1400,33 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="76"/>
         <source>Open properties for the currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Eigenschaften des aktuell gespielten Titels</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="78"/>
         <source>Open the folder of the currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne das Verzeichnis des aktuell gespielten Titels</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="136"/>
         <source>Command Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Befehlsschaltfläche</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="409"/>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="420"/>
         <source>Right-click to configure this button.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsklicken zum konfigurieren.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="435"/>
         <source>Command is currently unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Befehl ist aktuell nicht verfügbar.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="439"/>
         <source>Custom icon missing; using fallback icon.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenes Icon fehlt; benutze Vorgabe-Icon.</translation>
     </message>
 </context>
 <context>
@@ -1433,57 +1434,57 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="78"/>
         <source>Configure %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfiguriere %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="92"/>
         <source>Icon only</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur Icon</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="93"/>
         <source>Text only</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur Text</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="94"/>
         <source>Text beside icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Text neben Icon</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="95"/>
         <source>Text under icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Text unter Icon</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="109"/>
         <source>Click to choose an icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Klicken zur Auswahl eines Icons</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="114"/>
         <source>Browse for icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Icon auswählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
         <source>Clear custom icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenes Icon entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="119"/>
         <source>Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Schaltfläche</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="122"/>
         <source>Select a command, or enter a raw `$cmdlink` id or alias.</source>
-        <translation type="unfinished"></translation>
+        <translation>Befehl auswählen, oder eine rohe `$cmdlink` ID oder Alias eingeben.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="126"/>
         <source>Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Befehl</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="128"/>
@@ -1503,32 +1504,32 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="137"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschau</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="140"/>
         <source>Click the image to choose a custom icon. If none is set, the button uses the command&apos;s default icon.</source>
-        <translation type="unfinished"></translation>
+        <translation>Klick auf das Bild zur Auswahl eines eigenen Icons. Ist keines gesetzt, zeigt die Schaltfläche das Vorgabeicon des Befehls.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="160"/>
         <source>Enter a command id or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine Befehls-ID oder Alias eingeben</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="162"/>
         <source>Use command label</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verwende Befehlsmarkierung</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="163"/>
         <source>No custom icon selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein eigenes Icon ausgewählt</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="179"/>
         <source>Select Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Icon auswählen</translation>
     </message>
 </context>
 <context>
@@ -1536,27 +1537,27 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="42"/>
         <source>Restore defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf Voreinstellungen zurücksetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="44"/>
         <source>Save as default</source>
-        <translation type="unfinished"></translation>
+        <translation>Als Voreinstellung speichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="48"/>
         <source>Restore saved defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Voreinstellungen wiederherstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="49"/>
         <source>Restore factory defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkseinstellungen wiederherstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="50"/>
         <source>Clear saved defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Voreinstellungen löschen</translation>
     </message>
 </context>
 <context>
@@ -1604,7 +1605,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="492"/>
         <source>View full size</source>
-        <translation type="unfinished"></translation>
+        <translation>Vollbild anzeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="505"/>
@@ -1619,12 +1620,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="507"/>
         <source>Auto-extract to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch in Datei extrahieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="508"/>
         <source>Extract as…</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahieren als…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="509"/>
@@ -1634,12 +1635,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="514"/>
         <source>Search for artwork for this cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach Artwork für diesen Covertyp suchen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="515"/>
         <source>Search for artwork and automatically choose the best match for this cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach Artwork suchen und automatisch den besten Treffer für diesen Covertyp auswählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="517"/>
