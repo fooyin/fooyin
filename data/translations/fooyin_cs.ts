@@ -141,7 +141,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="102"/>
         <source>Comment tag</source>
-        <translation>Komentář</translation>
+        <translation>Poznámka</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="103"/>
@@ -291,7 +291,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="132"/>
         <source>ReplayGain track gain</source>
-        <translation>ReplayGain skladby</translation>
+        <translation>ReplayGain zisk skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="133"/>
@@ -306,7 +306,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="135"/>
         <source>ReplayGain album gain</source>
-        <translation>ReplayGain alba</translation>
+        <translation>ReplayGain zisk alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="136"/>
@@ -803,7 +803,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="66"/>
         <source>Artwork Finder</source>
-        <translation>Hledání přebalů</translation>
+        <translation>Hledání přebalů alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="68"/>
@@ -830,7 +830,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="213"/>
         <source>No artwork found</source>
-        <translation>Přebaly nenalezeny</translation>
+        <translation>Přebaly alb nenalezeny</translation>
     </message>
 </context>
 <context>
@@ -1000,42 +1000,42 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="89"/>
         <source>No embedded artwork found to export</source>
-        <translation>Žádné vložené přebaly pro export</translation>
+        <translation>Žádné vložené přebaly alb pro export</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="92"/>
         <source>Exported artwork to %1 files</source>
-        <translation>Přebaly exportovány. Soubory: %1</translation>
+        <translation>Přebaly alb exportovány. Soubory: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="95"/>
         <source>Failed to export artwork</source>
-        <translation>Přebaly se nepodařilo exportovat</translation>
+        <translation>Přebaly alb se nepodařilo exportovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="99"/>
         <source>Exported artwork to %1 files (%2 failed)</source>
-        <translation>Přebaly exportovány. Soubory: %1 (Selhalo: %2)</translation>
+        <translation>Přebaly alb exportovány. Soubory: %1 (Selhalo: %2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="107"/>
         <source>Exported artwork to %1</source>
-        <translation>Přebaly exportovány do %1</translation>
+        <translation>Přebaly alb exportovány do %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="224"/>
         <source>Artwork Properties</source>
-        <translation>Vlastnosti přebalu</translation>
+        <translation>Vlastnosti přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="278"/>
         <source>Loading artwork…</source>
-        <translation>Načítání přebalu…</translation>
+        <translation>Načítání přebalu alba…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="282"/>
         <source>Saving artwork to files…</source>
-        <translation>Ukládání přebalů…</translation>
+        <translation>Ukládání přebalů alb…</translation>
     </message>
 </context>
 <context>
@@ -1056,7 +1056,7 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="116"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="203"/>
         <source>No artwork present</source>
-        <translation>Žádný přebal</translation>
+        <translation>Žádný přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="90"/>
@@ -1076,7 +1076,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="192"/>
         <source>%1 of %2 files have artwork</source>
-        <translation>Soubory s přebaly alb: %1 z(e) %2</translation>
+        <translation>Soubory s přebaly alb: %1 / %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="285"/>
@@ -1101,17 +1101,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="294"/>
         <source>Export this embedded artwork to a file in the track directory without prompting</source>
-        <translation>Exportovat vložený přebal do složky souboru skladby</translation>
+        <translation>Exportovat vložený přebal alba do složky souboru skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="295"/>
         <source>Choose where to export this embedded artwork</source>
-        <translation>Zvolit cíl pro export tohoto vloženého přebalu</translation>
+        <translation>Zvolit cíl pro export tohoto vloženého přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="303"/>
         <source>Remove this artwork</source>
-        <translation>Odstranit tento přebal</translation>
+        <translation>Odstranit tento přebal alba</translation>
     </message>
 </context>
 <context>
@@ -1137,7 +1137,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation>Automaticky vyhledat chybějící přebaly po spuštění přehrávání</translation>
+        <translation>Automaticky vyhledat chybějící přebaly alb po spuštění přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
@@ -1223,7 +1223,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="95"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation>Přebaly budou hledány ve výše stanovaném pořadí.</translation>
+        <translation>Přebaly alb budou hledány ve výše stanoveném pořadí.</translation>
     </message>
 </context>
 <context>
@@ -1565,7 +1565,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="355"/>
         <source>Artwork Panel</source>
-        <translation>Panel Přebal alba</translation>
+        <translation>Panel přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="421"/>
@@ -1610,7 +1610,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="505"/>
         <source>Search for artwork…</source>
-        <translation>Vyhledat přebaly…</translation>
+        <translation>Vyhledat přebaly alb…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="506"/>
@@ -1620,7 +1620,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="507"/>
         <source>Auto-extract to file</source>
-        <translation>Automaticky exportovat</translation>
+        <translation>Automaticky exportovat do souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="508"/>
@@ -1630,7 +1630,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="509"/>
         <source>Remove artwork</source>
-        <translation>Odebrat přebaly alb</translation>
+        <translation>Odstranit přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="514"/>
@@ -1660,7 +1660,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="553"/>
         <source>Extracted artwork to %1</source>
-        <translation>Obrázek exportován do %1</translation>
+        <translation>Přebal alba exportován do %1</translation>
     </message>
 </context>
 <context>
@@ -2053,13 +2053,13 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="99"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="108"/>
         <source>Add to playback queue</source>
-        <translation>Přidat do fronty</translation>
+        <translation>Přidat do fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="100"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="109"/>
         <source>Add to front of playback queue</source>
-        <translation>Přidat na začátek fronty</translation>
+        <translation>Přidat na začátek fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="101"/>
@@ -3242,7 +3242,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="90"/>
         <source>Artwork Mode</source>
-        <translation>Režim přebalů</translation>
+        <translation>Režim přebalů alb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="100"/>
@@ -3313,13 +3313,13 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="144"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="153"/>
         <source>Add to playback queue</source>
-        <translation>Přidat do fronty</translation>
+        <translation>Přidat do fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="145"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="154"/>
         <source>Add to front of playback queue</source>
-        <translation>Přidat na začátek fronty</translation>
+        <translation>Přidat na začátek fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="146"/>
@@ -3420,7 +3420,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="906"/>
         <source>Artwork (no labels)</source>
-        <translation>Přebaly alb (bez popisku)</translation>
+        <translation>Přebaly alb (bez popisků)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="949"/>
@@ -4316,7 +4316,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="230"/>
         <source>Star size</source>
-        <translation>Velikost hvězd</translation>
+        <translation>Velikost hvězd:</translation>
     </message>
 </context>
 <context>
@@ -4565,7 +4565,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="243"/>
         <source>Track Gain</source>
-        <translation>Zesílení skladby</translation>
+        <translation>Zisk skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="248"/>
@@ -4575,7 +4575,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="253"/>
         <source>Album Gain</source>
-        <translation>Zesílení alba</translation>
+        <translation>Zisk alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="258"/>
@@ -4794,7 +4794,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="133"/>
         <source>Save playcount to file metadata</source>
-        <translation>Uloži počet přehrání do metadat souborů</translation>
+        <translation>Uložit počet přehrání do metadat souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="144"/>
@@ -5184,13 +5184,13 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="157"/>
         <source>Add to playback queue</source>
-        <translation>Přidat do fronty</translation>
+        <translation>Přidat do fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="149"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="158"/>
         <source>Add to front of playback queue</source>
-        <translation>Přidat na začátek fronty</translation>
+        <translation>Přidat na začátek fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="150"/>
@@ -5295,7 +5295,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="201"/>
         <source>&amp;Add to playback queue</source>
-        <translation>Přidat do &amp;fronty</translation>
+        <translation>Přidat do &amp;fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="202"/>
@@ -6135,7 +6135,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="43"/>
         <source>Gain</source>
-        <translation>Zesílení</translation>
+        <translation>Zisk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="44"/>
@@ -6683,7 +6683,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="62"/>
         <source>Playlist Switcher</source>
-        <translation>Přepínač playlistu</translation>
+        <translation>Přepínač playlistů</translation>
     </message>
 </context>
 <context>
@@ -7045,12 +7045,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="248"/>
         <source>Add to playback queue</source>
-        <translation>Přidat do fronty</translation>
+        <translation>Přidat do fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="249"/>
         <source>Add to front of playback queue</source>
-        <translation>Přidat na začátek fronty</translation>
+        <translation>Přidat na začátek fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="250"/>
@@ -7796,7 +7796,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="79"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Vyčistit</translation>
+        <translation>&amp;Vymazat</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="131"/>
@@ -7959,12 +7959,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="48"/>
         <source>Track Gain</source>
-        <translation>Zesílení skladby</translation>
+        <translation>Zisk skladby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="50"/>
         <source>Album Gain</source>
-        <translation>Zesílení alba</translation>
+        <translation>Zisk alba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="52"/>
@@ -8079,7 +8079,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="124"/>
         <source>Remove ReplayGain information from files</source>
-        <translation>Odtstranit ReplayGain ze souborů</translation>
+        <translation>Odstranit ReplayGain ze souborů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="126"/>
@@ -8094,7 +8094,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="129"/>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation>Vypočítat hodnoty ReplayGain pro vybrané soubory, pro každé album podle tagů samostatně</translation>
+        <translation>Vypočítat hodnoty ReplayGain pro vybrané soubory, rozdělit podle tagů na alba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="130"/>
@@ -8127,7 +8127,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="126"/>
         <source>Track Gain</source>
-        <translation>Zesílení skladby</translation>
+        <translation>Zisk skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="128"/>
@@ -8137,7 +8137,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="130"/>
         <source>Album Gain</source>
-        <translation>Zesílení alba</translation>
+        <translation>Zisk alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="132"/>
@@ -8173,12 +8173,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="68"/>
         <source>Apply gain</source>
-        <translation>Použít zesílení</translation>
+        <translation>Použít zisk</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="69"/>
         <source>Apply gain and prevent clipping according to peak</source>
-        <translation>Použít zesílení a zabránit zkreslení podle hodnoty špičky</translation>
+        <translation>Použít zisk a zabránit zkreslení podle hodnoty špičky</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="70"/>
@@ -8188,17 +8188,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="71"/>
         <source>Use track-based gain</source>
-        <translation>Použít zesílení skladby</translation>
+        <translation>Použít zisk skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="72"/>
         <source>Use album-based gain</source>
-        <translation>Použít zesílení alba</translation>
+        <translation>Použít zisk alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="73"/>
         <source>Use gain based on playback order</source>
-        <translation>Použít zesílení podle pořadí přehrávání</translation>
+        <translation>Použít zisk podle pořadí přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="77"/>
@@ -8243,12 +8243,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="123"/>
         <source>Amount of gain to apply in combination with ReplayGain</source>
-        <translation>Zesílení které aplikovat spolu s ReplayGain</translation>
+        <translation>Zisk který aplikovat spolu s ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="126"/>
         <source>Amount of gain to apply for tracks without ReplayGain info</source>
-        <translation>Zesílení které aplikovat pro skladby bez ReplayGain</translation>
+        <translation>Zisk který aplikovat pro skladby bez ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -8267,7 +8267,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="123"/>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="134"/>
         <source>Track Gain</source>
-        <translation>Zesílení skladby</translation>
+        <translation>Zisk skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="125"/>
@@ -8278,7 +8278,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="127"/>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="145"/>
         <source>Album Gain</source>
-        <translation>Zesílení alba</translation>
+        <translation>Zisk alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="129"/>
@@ -8288,12 +8288,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="167"/>
         <source>Lowest Gain (Loudest track)</source>
-        <translation>Nejnižší zesílení (nejhlasitější)</translation>
+        <translation>Nejnižší zisk (nejhlasitější)</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="179"/>
         <source>Highest Gain (Quietest track)</source>
-        <translation>Nejvyšší zesílení (nejtišší)</translation>
+        <translation>Nejvyšší zisk (nejtišší)</translation>
     </message>
 </context>
 <context>
@@ -8750,7 +8750,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="63"/>
         <source>Controls</source>
-        <translation>Tlačítka</translation>
+        <translation>Ovládací prvky</translation>
     </message>
 </context>
 <context>
@@ -9812,7 +9812,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="151"/>
         <source>Add to playback queue</source>
-        <translation>Přidat do fronty</translation>
+        <translation>Přidat do fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="152"/>
@@ -9832,7 +9832,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="155"/>
         <source>Search for artwork…</source>
-        <translation>Vyhledat přebaly…</translation>
+        <translation>Vyhledat přebaly alb…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="156"/>
@@ -9842,7 +9842,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="157"/>
         <source>Auto-extract artwork to files</source>
-        <translation>Automaticky extrahovat obrázky do souborů</translation>
+        <translation>Automaticky extrahovat přebaly alb do souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="158"/>
@@ -9862,7 +9862,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="161"/>
         <source>Remove all artwork</source>
-        <translation>Odebrat všechny přebaly</translation>
+        <translation>Odebrat všechny přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="162"/>
@@ -9917,12 +9917,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="271"/>
         <source>Search for artwork for the selected tracks</source>
-        <translation>Vyhledat přebal pro vybrané skladby</translation>
+        <translation>Vyhledat přebaly alb pro vybrané skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="297"/>
         <source>Extract embedded artwork for the selected tracks to files in their directories without prompting</source>
-        <translation>Extrahovat vložené obrázky z vybraných skladeb do souborů v jejich složkách</translation>
+        <translation>Extrahovat vložené přebaly alb z vybraných skladeb do souborů v jejich složkách</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="310"/>
@@ -9947,7 +9947,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="352"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
-        <translation>Odstranit všechny přebaly asociované s vybranými skladbami (vložené, ve složce)</translation>
+        <translation>Odstranit všechny přebaly alb asociované s vybranými skladbami (vložené, ve složce)</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="364"/>
@@ -10000,7 +10000,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="64"/>
         <source>Focus Search &amp;Bar</source>
-        <translation>Aktivovat panel hledání</translation>
+        <translation>&amp;Aktivovat panel hledání</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="65"/>
@@ -10010,7 +10010,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="71"/>
         <source>Show playing &amp;track</source>
-        <translation>Zobrazi&amp;t přehrávanou skladbu</translation>
+        <translation>&amp;Zobrazit přehrávanou skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="72"/>
@@ -10535,7 +10535,7 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="134"/>
         <source>Playlist Switcher</source>
-        <translation>Přepínač playlistu</translation>
+        <translation>Přepínač playlistů</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="147"/>
@@ -10605,7 +10605,7 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="224"/>
         <source>Artwork Panel</source>
-        <translation>Panel Přebal alba</translation>
+        <translation>Panel přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="232"/>
@@ -10907,27 +10907,27 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="84"/>
         <source>Extract Artwork</source>
-        <translation>Extrahovat obrázky</translation>
+        <translation>Extrahovat přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="236"/>
         <source>No embedded artwork found to extract</source>
-        <translation>Není co extrahovat, nenalezeny žádné vložené obrázky</translation>
+        <translation>Není co extrahovat, nenalezeny žádné vložené přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="239"/>
         <source>Extracted artwork to %1 files</source>
-        <translation>Obrázky extrahovány do %1 souborů</translation>
+        <translation>Přebaly alb extrahovány. Soubory: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="242"/>
         <source>Failed to extract artwork</source>
-        <translation>Obrázky se nepodařilo extrahovat</translation>
+        <translation>Přebaly alb se nepodařilo extrahovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="244"/>
         <source>Extracted artwork to %1 files (%2 failed)</source>
-        <translation>Obrázky extrahovány do souborů. Úspěšné: %1, Selhalo %2</translation>
+        <translation>Přebaly alb extrahovány do souborů. Úspěšné: %1, Selhaly: %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="55"/>
