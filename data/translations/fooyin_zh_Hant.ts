@@ -256,67 +256,67 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="125"/>
         <source>Path relative to the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>相對於曲庫根目錄的路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="126"/>
         <source>Filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案名稱 不含副檔名</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="127"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案副檔名</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="128"/>
         <source>Filename including extension</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案名稱 包含副檔名</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Containing directory name</source>
-        <translation type="unfinished"></translation>
+        <translation>包含目錄名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="130"/>
         <source>Containing directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>包含目錄路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="131"/>
         <source>Subsong index</source>
-        <translation type="unfinished"></translation>
+        <translation>副歌索引</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="132"/>
         <source>ReplayGain track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>播放增益 曲目增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="133"/>
         <source>ReplayGain track peak</source>
-        <translation type="unfinished"></translation>
+        <translation>播放增益 曲目峰值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="134"/>
         <source>ReplayGain track peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>播放增益 曲目峰值 dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="135"/>
         <source>ReplayGain album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>播放增益 專輯增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="136"/>
         <source>ReplayGain album peak</source>
-        <translation type="unfinished"></translation>
+        <translation>播放增益 專輯峰值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="137"/>
         <source>ReplayGain album peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>播放增益 專輯峰值 dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="138"/>
@@ -324,22 +324,22 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="140"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="142"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放清單</translation>
+        <translation>播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="138"/>
         <source>Number of tracks in the list</source>
-        <translation type="unfinished"></translation>
+        <translation>清單中的曲目數量</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="139"/>
         <source>Combined duration of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目清單的合計時長</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="140"/>
         <source>Alias for total playlist duration</source>
-        <translation type="unfinished"></translation>
+        <translation>播放清單總計持續時間的別名</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
@@ -350,12 +350,12 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="148"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
         <source>Elapsed time within the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>已經播放時間 於作用中的播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="142"/>
