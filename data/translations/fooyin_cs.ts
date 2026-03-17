@@ -126,7 +126,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="99"/>
         <source>Track duration formatted as time</source>
-        <translation>Délka skladby formátovaná jako čas</translation>
+        <translation>Délka skladby ( [hh:]mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="100"/>
@@ -146,7 +146,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="103"/>
         <source>Release date</source>
-        <translation>Datum vydání</translation>
+        <translation>Datum vydání (RRRR-MM-DD)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="104"/>
@@ -181,12 +181,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="110"/>
         <source>First played timestamp</source>
-        <translation>Poprvé přehráno</translation>
+        <translation>Poprvé přehráno ( RRRR-MM-DD hh:mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="111"/>
         <source>Last played timestamp</source>
-        <translation>Naposledy přehráno</translation>
+        <translation>Naposledy přehráno ( RRRR-MM-DD hh:mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="112"/>
@@ -241,12 +241,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="122"/>
         <source>Library added timestamp</source>
-        <translation>Přidáno do knihovny ve formátu časové značky RRRR-MM-DD hh:mm:ss</translation>
+        <translation>Přidáno do knihovny ( RRRR-MM-DD hh:mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="123"/>
         <source>Last modified timestamp</source>
-        <translation>Naposledy změněno</translation>
+        <translation>Naposledy změněno ( RRRR-MM-DD hh:mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="124"/>
@@ -355,7 +355,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
         <source>Elapsed time within the active playlist</source>
-        <translation>Uplynulý čas v přehrávaném playlistu</translation>
+        <translation>Uplynulý čas v přehrávaném playlistu ( [hh:]mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="142"/>
@@ -365,7 +365,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
         <source>Current playback position formatted as time</source>
-        <translation>Aktuální pozice přehrávání jako čas</translation>
+        <translation>Aktuální pozice přehrávání ( [hh:]mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="144"/>
@@ -375,7 +375,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Remaining playback time formatted as time</source>
-        <translation>Zbývající doba přehrávání jako čas</translation>
+        <translation>Zbývající doba přehrávání ( [hh:]mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="146"/>
@@ -671,7 +671,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="204"/>
         <source>Formats milliseconds as time</source>
-        <translation>Převede milisekundy na formát času</translation>
+        <translation>Převede milisekundy na čas ( [hh:]mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
@@ -8692,7 +8692,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="80"/>
         <source>Time to wait before submitting scrobbles</source>
-        <translation>Čas po který čekat než se odešle scrobblování</translation>
+        <translation>Čas po který čekat než bude odesláno scrobblování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="86"/>
