@@ -2167,12 +2167,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="237"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed. During crossfades, each track is processed independently.</source>
-        <translation>DSP stop jsou použity před mixováním stop pro každý stream samostatně. Během prolínání je každá stopa zpracována samostatně.</translation>
+        <translation>DSP skladeb jsou použity před mixováním skladeb pro každý stream samostatně. Během prolínání je každá skladba zpracována samostatně.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="239"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal. Effects here process the final combined output.</source>
-        <translation>DSP hlavní jsou použity po smixování stop do jednoho signálu. Efekty zpracovávají finální kombinovaný výstup.</translation>
+        <translation>DSP hlavní jsou použity po smixování skladeb do jednoho signálu. Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="242"/>
@@ -2233,7 +2233,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="663"/>
         <source>Add to Per-Track</source>
-        <translation>Přidat pro stopy</translation>
+        <translation>Přidat pro skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="664"/>
@@ -10201,7 +10201,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="44"/>
         <source>Show elapsed total</source>
-        <translation>Zobrazit uplynulý čas</translation>
+        <translation>Zobrazit zbývající čas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="45"/>
