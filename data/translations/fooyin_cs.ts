@@ -86,7 +86,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="91"/>
         <source>Album artist</source>
-        <translation>Umělec alba</translation>
+        <translation>Interpret alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="92"/>
@@ -196,17 +196,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="113"/>
         <source>Numeric rating</source>
-        <translation>Číselné hodnocení</translation>
+        <translation>Hodnocení (0.0 – 1.0)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="114"/>
         <source>Rating shown as stars</source>
-        <translation>Hodnocení hvězdami</translation>
+        <translation>Hodnocení (1 – 10; 2 == 1 hvězda)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="115"/>
         <source>Rating editor representation</source>
-        <translation>Reprezentace editoru hodnocení</translation>
+        <translation>Hodnocení (☆☆☆☆☆ – ★★★★★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="116"/>
@@ -241,7 +241,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="122"/>
         <source>Library added timestamp</source>
-        <translation>Přidáno do knihovny</translation>
+        <translation>Přidáno do knihovny ve formátu časové značky RRRR-MM-DD hh:mm:ss</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="123"/>
@@ -3144,7 +3144,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Album Artist</source>
-        <translation>Umělec alba</translation>
+        <translation>Interpret alba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="41"/>
@@ -4445,7 +4445,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="154"/>
         <source>Album Artist</source>
-        <translation>Umělec alba</translation>
+        <translation>Interpret alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="157"/>
@@ -6751,7 +6751,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
         <source>Album Artist</source>
-        <translation>Umělec alba</translation>
+        <translation>Interpret alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
@@ -8682,7 +8682,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="76"/>
         <source>Album Artist</source>
-        <translation>Umělec alba</translation>
+        <translation>Interpret alba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
@@ -9636,7 +9636,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
         <source>Album Artist</source>
-        <translation>Umělec alba</translation>
+        <translation>Interpret alba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
@@ -9842,7 +9842,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="157"/>
         <source>Auto-extract artwork to files</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky extrahovat obrázky do souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="158"/>
@@ -9922,7 +9922,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="297"/>
         <source>Extract embedded artwork for the selected tracks to files in their directories without prompting</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahovat vložené obrázky z vybraných skladeb do souborů v jejich složkách</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="310"/>
@@ -10000,12 +10000,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="64"/>
         <source>Focus Search &amp;Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivovat panel hledání</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="65"/>
         <source>Focus the first Search Bar found in the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivovat první nalezený panel hledání v aktuálním vzhledu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="71"/>
@@ -10636,7 +10636,7 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="264"/>
         <source>Script Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazení skriptu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="303"/>
@@ -10897,37 +10897,37 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="81"/>
         <source>Image Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubory obrázků</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="81"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Všechny soubory ( * )</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="84"/>
         <source>Extract Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahovat obrázky</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="236"/>
         <source>No embedded artwork found to extract</source>
-        <translation type="unfinished"></translation>
+        <translation>Není co extrahovat, nenalezeny žádné vložené obrázky</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="239"/>
         <source>Extracted artwork to %1 files</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázky extrahovány do %1 souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="242"/>
         <source>Failed to extract artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázky se nepodařilo extrahovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="244"/>
         <source>Extracted artwork to %1 files (%2 failed)</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázky extrahovány do souborů. Úspěšné: %1, Selhalo %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="55"/>
@@ -10942,22 +10942,22 @@ na disku.</translation>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="84"/>
         <source>Tempo multiplier</source>
-        <translation type="unfinished"></translation>
+        <translation>Násobitel tempa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="86"/>
         <source>Pitch shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Posun tónu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="88"/>
         <source>Rate multiplier</source>
-        <translation type="unfinished"></translation>
+        <translation>Násobitel rychlosti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="91"/>
         <source>SoundTouch</source>
-        <translation type="unfinished"></translation>
+        <translation>SoundTouch</translation>
     </message>
 </context>
 <context>
