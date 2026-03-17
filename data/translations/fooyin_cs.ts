@@ -1635,32 +1635,32 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="514"/>
         <source>Search for artwork for this cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat obrázek pro tento typ přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="515"/>
         <source>Search for artwork and automatically choose the best match for this cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat a automaticky vybrat nejvhodnější obrázek pro tento typ přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="517"/>
         <source>Extract this embedded artwork to a file in the track directory without prompting</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahovat vložený přebal alba do souboru ve složce skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="518"/>
         <source>Choose where to extract this embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat cíl pro extrakci vloženého přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="519"/>
         <source>Remove this artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit tento přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="553"/>
         <source>Extracted artwork to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázek exportován do %1</translation>
     </message>
 </context>
 <context>
@@ -1668,7 +1668,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="35"/>
         <source>Configure %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="38"/>
@@ -1678,12 +1678,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="39"/>
         <source>Fade cover changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Při změně přebalu použít prolínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="40"/>
         <source>Fade length</source>
-        <translation>Délka zeslabení</translation>
+        <translation>Délka prolínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
@@ -1893,17 +1893,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="196"/>
         <source>&amp;Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Nah&amp;radit vybraný playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="197"/>
         <source>Create &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit &amp;nový playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
         <source>Replace playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit front&amp;u</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="254"/>
@@ -1927,7 +1927,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="36"/>
         <source>Configure %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="37"/>
@@ -1977,12 +1977,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="48"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihned spustit přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="51"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;Nahradit vybraný playlist&quot; a &quot;Vytvořit nový playlist&quot; ihned spustí přehrávání.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
@@ -2018,7 +2018,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="93"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nic</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="94"/>
@@ -2041,13 +2041,13 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="97"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit vybraný playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit nový playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="99"/>
@@ -2065,7 +2065,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="101"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="110"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit frontu přehrávání</translation>
     </message>
 </context>
 <context>
@@ -2453,7 +2453,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="101"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Načíst</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="102"/>
@@ -2468,57 +2468,57 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="104"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="105"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="111"/>
         <source>Equaliser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení ekvalizéru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="134"/>
         <source>Preamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Předzesílení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="176"/>
         <source>+20 dB</source>
-        <translation type="unfinished"></translation>
+        <translation>+20 dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="178"/>
         <source>+0 dB</source>
-        <translation type="unfinished"></translation>
+        <translation>+0 dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="180"/>
         <source>-20 dB</source>
-        <translation type="unfinished"></translation>
+        <translation>-20 dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="194"/>
         <source>Zero all</source>
-        <translation type="unfinished"></translation>
+        <translation>Vynulovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="195"/>
         <source>Auto level</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyrovnat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="196"/>
         <source>Band:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pásmo:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="197"/>
         <source>Presets:</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolby:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="209"/>
@@ -2534,7 +2534,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="407"/>
         <source>Unable to load the selected preset.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se načíst vybranou předvolbu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="429"/>
@@ -2552,45 +2552,45 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="496"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="508"/>
         <source>Import Equaliser Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Importovat předvolbu ekvalizéru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="467"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="531"/>
         <source>Equaliser Preset (*.feq)</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolba ekvalizéru (*.feq)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="475"/>
         <source>Unable to open &quot;%1&quot; for reading.</source>
-        <translation type="unfinished"></translation>
+        <translation>„%1“ nelze otevřít pro čtení.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="497"/>
         <source>Invalid value on line %1. The first %2 non-empty lines must be integers.</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatná hodnota. Řádek: %1. První %2 neprázdné řádky musí být celá čísla.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="509"/>
         <source>Preset file has %1 band values. %2 values are required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný počet hodnot pásma. V souboru: %1. Vyžadováno: %2.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="530"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="542"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="554"/>
         <source>Export Equaliser Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportovat předvolbu ekvalizéru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
         <source>Unable to open &quot;%1&quot; for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>„%1“ nelze otevřít pro zápis.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="555"/>
         <source>An error occurred while writing &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Chyba při zápisu do „%1“.</translation>
     </message>
 </context>
 <context>
@@ -2736,7 +2736,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="90"/>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="224"/>
         <source>Boundary</source>
-        <translation type="unfinished"></translation>
+        <translation>Hranice</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="96"/>
@@ -2746,7 +2746,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="97"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetáčení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="98"/>
@@ -2761,7 +2761,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="104"/>
         <source>Auto switch policy</source>
-        <translation type="unfinished"></translation>
+        <translation>Zásady automatického přepínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="140"/>
@@ -2796,7 +2796,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="174"/>
         <source>Pause, stop, and boundary fades without overlap. Boundary fades are used instead of auto track-change crossfades.</source>
-        <translation type="unfinished"></translation>
+        <translation>Změna hlasitosti bez přesahu při pozastavení, zastavení a na hranici. Změna hlasitosti na hranici je použita místo prolínání pro automatické změny skladby.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="185"/>
@@ -2818,17 +2818,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="222"/>
         <source>Overlap start</source>
-        <translation type="unfinished"></translation>
+        <translation>Začátek prolnutí</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="226"/>
         <source>Controls when the UI switches tracks during automatic crossfade transitions</source>
-        <translation type="unfinished"></translation>
+        <translation>Kdy má být v uživatelském rozhraní zobrazena změna skladby během automatického prolínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="229"/>
         <source>Overlapping fades for seek and track changes. Auto track change uses overlap; use Boundary above for non-overlapping fades.</source>
-        <translation type="unfinished"></translation>
+        <translation>Prolínání během přetáčení a změny skladby. Automatická změna skladby používá prolínání; pozvolné zesilování bez prolínání použijte výše uvedené nastavení pro Hranice.</translation>
     </message>
 </context>
 <context>
@@ -3113,17 +3113,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/filters/filtercolumneditordialog.cpp" line="128"/>
         <source>Manage Filter Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Správce sloupců filtru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumneditordialog.cpp" line="132"/>
         <source>Column presets are shared across all widgets.</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolby sloupců jsou sdíleny všemi widgety.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumneditordialog.cpp" line="140"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Obnovit výchozí</translation>
     </message>
 </context>
 <context>
@@ -3167,12 +3167,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="40"/>
         <source>Configure %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="45"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihned spustit přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="46"/>
@@ -3197,12 +3197,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="56"/>
         <source>Manage columns...</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat sloupce…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="59"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;Nahradit vybraný playlist&quot; a &quot;Vytvořit nový playlist&quot; ihned spustí přehrávání.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="61"/>
@@ -3247,7 +3247,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="100"/>
         <source>Auto</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatická</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="106"/>
@@ -3267,12 +3267,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="114"/>
         <source>Horizontal gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Vodorovná mezera</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="116"/>
         <source>Vertical gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Svislá mezera</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="120"/>
@@ -3283,7 +3283,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="148"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="140"/>
@@ -3301,13 +3301,13 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="151"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit vybraný playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="143"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="152"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit nový playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="144"/>
@@ -3325,7 +3325,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="146"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="155"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit frontu přehrávání</translation>
     </message>
 </context>
 <context>
@@ -3486,7 +3486,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="233"/>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="779"/>
         <source>Configure...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit…</translation>
     </message>
 </context>
 <context>
@@ -3533,7 +3533,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/fywidget.cpp" line="146"/>
         <source>Configure...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit…</translation>
     </message>
 </context>
 <context>
@@ -3902,12 +3902,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1336"/>
         <source>Failed to open artwork file</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se otevřít soubor přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1342"/>
         <source>Artwork file is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor přebalu alba je prázdný</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="994"/>
@@ -5023,12 +5023,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="40"/>
         <source>Configure %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="45"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihned spustit přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="46"/>
@@ -5078,12 +5078,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="59"/>
         <source>Manage groupings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat seskupení…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="62"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;Nahradit vybraný playlist&quot; a &quot;Vytvořit nový playlist&quot; ihned spustí přehrávání.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="64"/>
@@ -5149,7 +5149,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="142"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="152"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nic</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="143"/>
@@ -5172,13 +5172,13 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="155"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit vybraný playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="147"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit nový playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
@@ -5196,7 +5196,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="150"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="159"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit frontu přehrávání</translation>
     </message>
 </context>
 <context>
@@ -5212,17 +5212,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="131"/>
         <source>Manage Library Tree Groupings</source>
-        <translation type="unfinished"></translation>
+        <translation>Správa seskupení pro strom knihovny</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="135"/>
         <source>Grouping presets are shared across all widgets.</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolby seskupení jsou sdíleny všemi widgety.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="143"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Obnovit výchozí</translation>
     </message>
 </context>
 <context>
@@ -5320,7 +5320,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="363"/>
         <source>Manage groupings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat seskupení…</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="408"/>
@@ -5348,7 +5348,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="86"/>
         <source>Co&amp;py Log</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kopírovat protokol</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="88"/>
@@ -5409,12 +5409,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="161"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="183"/>
         <source>Synced</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronizovaný</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="50"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatický</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="51"/>
@@ -5548,22 +5548,22 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Vlevo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="151"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Vpravo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="153"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahoře</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="155"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dole</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="159"/>
@@ -6053,7 +6053,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="43"/>
         <source>Configure %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení: %1</translation>
     </message>
 </context>
 <context>
@@ -6247,7 +6247,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="88"/>
         <source>Buffer</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyrovnávací paměť</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="92"/>
@@ -6257,12 +6257,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="113"/>
         <source>Decode starts/resumes when buffered audio drops below this watermark</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekódování bude spuštěno/obnoveno pokud data ve vyrovnávací paměti poklesnou pod tento limit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="114"/>
         <source>Decode pauses when buffered audio reaches this watermark</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekódování bude pozastaveno poté co data ve vyrovnávací paměti dosáhnou tohoto limitu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="118"/>
@@ -6307,22 +6307,22 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="134"/>
         <source>Low watermark</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolní limit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="137"/>
         <source>High watermark</source>
-        <translation type="unfinished"></translation>
+        <translation>Horní limit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="168"/>
         <source>Resume decoding below %1 ms</source>
-        <translation type="unfinished"></translation>
+        <translation>Obnovit dekódování pod %1 ms</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="169"/>
         <source>Pause decoding at %1 ms</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozastavit dekódování při %1 ms</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="128"/>
@@ -6572,7 +6572,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="93"/>
         <source>Clear queue on exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Při ukončení smazat frontu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="95"/>
@@ -6607,7 +6607,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="112"/>
         <source>Do not restore the playback queue on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Neobnovovat frontu při příštím spuštění</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="114"/>
@@ -6622,7 +6622,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="148"/>
         <source>Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Fronta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="157"/>
@@ -7055,7 +7055,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="250"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit frontu přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="349"/>
@@ -7257,7 +7257,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="270"/>
         <source>Header</source>
-        <translation>Hlavička</translation>
+        <translation>Záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="221"/>
@@ -7267,7 +7267,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="223"/>
         <source>Align subheaders to edge of image columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarovnat podzáhlaví k okraji sloupce obrázků</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
@@ -7277,7 +7277,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="229"/>
         <source>Simple header</source>
-        <translation>Jednoduchá hlavička</translation>
+        <translation>Jednoduché záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="262"/>
@@ -7288,7 +7288,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="275"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="285"/>
         <source>Subheaders</source>
-        <translation>Podhlavičky</translation>
+        <translation>Podzáhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="297"/>
@@ -7412,7 +7412,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="577"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="580"/>
@@ -7452,7 +7452,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="939"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Další…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="321"/>
@@ -7834,7 +7834,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="34"/>
         <source>Configure %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="37"/>
@@ -8381,53 +8381,53 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="154"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="182"/>
         <source>Script Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazení skriptu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="182"/>
         <source>Right-click to configure this panel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení panelu otevřete pravým tlačítkem.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="298"/>
         <source>Align</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarovnat</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="300"/>
         <source>Horizontal</source>
-        <translation>Horizontální</translation>
+        <translation>Horizontálně</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="302"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Doleva</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="303"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="311"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Na střed</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="304"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Doprava</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="308"/>
         <source>Vertical</source>
-        <translation>Vertikální</translation>
+        <translation>Vertikálně</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="310"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahoru</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="312"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolů</translation>
     </message>
 </context>
 <context>
@@ -8450,7 +8450,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="72"/>
         <source>Links</source>
-        <translation type="unfinished"></translation>
+        <translation>Odkazy</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="80"/>
@@ -8465,28 +8465,28 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="83"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Doleva</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="84"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="88"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Na střed</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="85"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Doprava</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="87"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahoru</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="89"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolů</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="91"/>
@@ -8506,7 +8506,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="100"/>
         <source>Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Písmo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="107"/>
@@ -8519,17 +8519,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="499"/>
         <source>Structure</source>
-        <translation type="unfinished"></translation>
+        <translation>Struktura</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="500"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation>Reference</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="582"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Položka</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="582"/>
@@ -8544,17 +8544,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="642"/>
         <source>Variables</source>
-        <translation type="unfinished"></translation>
+        <translation>Proměnné</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="643"/>
         <source>Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Funkce</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="644"/>
         <source>Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Příkazy</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="646"/>
@@ -9213,7 +9213,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="63"/>
         <source>Always replace playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Vždy nahradit playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="66"/>
@@ -9238,7 +9238,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="81"/>
         <source>When opening files, always replace the playlist contents with the incoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Při otevírání souboru vždy nahradit obsah playlistu otevíranými skladbami</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="85"/>
@@ -9337,7 +9337,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="54"/>
         <source>Allow imaging on upsampling</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit imaging při převzorkování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="73"/>
@@ -9352,37 +9352,37 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="77"/>
         <source>Very High (168 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Velmi vysoká (168 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="78"/>
         <source>High (120 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vysoká (120 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="79"/>
         <source>Medium (108 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Střední (108 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="80"/>
         <source>Low (96 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nízká (96 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="81"/>
         <source>Quick (90 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Rychlá (90 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="82"/>
         <source>Quality</source>
-        <translation type="unfinished"></translation>
+        <translation>Kvalita</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="95"/>
         <source>Bandwidth</source>
-        <translation type="unfinished"></translation>
+        <translation>Šířka pásma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="99"/>
@@ -9392,17 +9392,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="100"/>
         <source>Intermediate</source>
-        <translation type="unfinished"></translation>
+        <translation>Střední</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="101"/>
         <source>Minimum</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimální</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="102"/>
         <source>Phase response</source>
-        <translation type="unfinished"></translation>
+        <translation>Fázová odezva</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="104"/>
@@ -9417,7 +9417,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="108"/>
         <source>Rate filtering</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrování frekvencí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="110"/>
@@ -9427,12 +9427,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="111"/>
         <source>Filtered rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrované frekvence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="178"/>
         <source> %</source>
-        <translation type="unfinished"></translation>
+        <translation> %</translation>
     </message>
 </context>
 <context>
@@ -9802,12 +9802,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="149"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit vybraný playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="150"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit nový playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="151"/>
@@ -9847,17 +9847,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="158"/>
         <source>Front cover…</source>
-        <translation type="unfinished"></translation>
+        <translation>Přední přebal…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="159"/>
         <source>Back cover…</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadní přebal…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="160"/>
         <source>Artist picture…</source>
-        <translation type="unfinished"></translation>
+        <translation>Umělec…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="161"/>
@@ -9927,22 +9927,22 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="310"/>
         <source>Attach image</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit obrázek</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="312"/>
         <source>Attach an image file as the front cover for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit do vybraných skladeb obrázek jako přední přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="324"/>
         <source>Attach an image file as the back cover for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit do vybraných skladeb obrázek jako zadní přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="336"/>
         <source>Attach an image file as the artist picture for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit do vybraných skladeb obrázek jako obrázek umělce</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="352"/>
@@ -10046,7 +10046,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="39"/>
         <source>Configure %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="48"/>
@@ -10071,7 +10071,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="65"/>
         <source>%1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 FPS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="69"/>
@@ -10086,7 +10086,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="73"/>
         <source>Refresh rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Obnovovací frekvence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="77"/>
@@ -10131,7 +10131,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="112"/>
         <source>Legend colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva popisků</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="114"/>
@@ -10191,7 +10191,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="42"/>
         <source>Configure %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="43"/>
@@ -10580,7 +10580,7 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="182"/>
         <source>Command Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Příkazové tlačítko</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="196"/>
