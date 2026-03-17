@@ -360,17 +360,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="142"/>
         <source>Unique genres across the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>獨特曲風 跨越曲目清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
         <source>Current playback position formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>目前播放位置格式為時間</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="144"/>
         <source>Current playback position in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>目前播放位置以秒計算</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
