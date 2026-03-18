@@ -370,48 +370,48 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="144"/>
         <source>Current playback position in seconds</source>
-        <translation>目前播放位置以秒計算</translation>
+        <translation>目前播放位置 秒數</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Remaining playback time formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>剩餘播放時間格式為時間</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="146"/>
         <source>Remaining playback time in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>剩餘播放時間 秒數</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
         <source>Returns 1 while playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>當播放作用時 返回 1</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="148"/>
         <source>Returns 1 while playback is paused</source>
-        <translation type="unfinished"></translation>
+        <translation>當播放暫停時 返回 1</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="149"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="150"/>
         <source>Library</source>
-        <translation type="unfinished">媒體庫</translation>
+        <translation>音樂歌曲庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="149"/>
         <source>Current library name</source>
-        <translation type="unfinished"></translation>
+        <translation>目前音樂庫名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="150"/>
         <source>Current library path</source>
-        <translation type="unfinished"></translation>
+        <translation>目前音樂庫路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="151"/>
         <source>Adds numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>添增數字參數</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="152"/>
