@@ -367,22 +367,22 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="144"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Playback Queue</source>
-        <translation type="unfinished">Fronta přehrávání</translation>
+        <translation>Fronta přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
         <source>First playback queue index for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>První index fronty přehrávání pro zadanou položku</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="144"/>
         <source>Playback queue indexes for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Indexy fronty přehrávání pro zadanou položku</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="146"/>
         <source>Total amount of tracks in the playback queue for queued items</source>
-        <translation type="unfinished"></translation>
+        <translation>Celkový počet skladeb ve frontě přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
@@ -756,7 +756,7 @@
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="81"/>
         <source>About fooyin</source>
-        <translation type="unfinished"></translation>
+        <translation>O aplikaci fooyin</translation>
     </message>
 </context>
 <context>
@@ -802,7 +802,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="35"/>
         <source>ALSA Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení ALSA</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
@@ -1027,19 +1027,19 @@
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="92"/>
         <source>Exported artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Přebal alba exportován do %Ln souboru</numerusform>
+            <numerusform>Přebaly alb exportovány do %Ln souborů</numerusform>
+            <numerusform>Přebaly alb exportovány do %Ln souborů</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="98"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Přebaly alb exportovány do %Ln souboru; u některých se export nezdařil</numerusform>
+            <numerusform>Přebaly alb exportovány do %Ln souborů; u některých se export nezdařil</numerusform>
+            <numerusform>Přebaly alb exportovány do %Ln souborů; u některých se export nezdařil</numerusform>
         </translation>
     </message>
     <message>
@@ -1106,19 +1106,19 @@
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="193"/>
         <source>Artwork found in %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Přebal alba nalezen v %Ln souboru</numerusform>
+            <numerusform>Přebaly alb nalezeny ve %Ln souborech</numerusform>
+            <numerusform>Přebaly alb nalezeny v %Ln souborech</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="194"/>
         <source>%Ln file(s) selected</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Vybrán %Ln soubor</numerusform>
+            <numerusform>Vybrány %Ln soubory</numerusform>
+            <numerusform>Vybráno %Ln souborů</numerusform>
         </translation>
     </message>
     <message>
@@ -1402,7 +1402,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="177"/>
         <source>A query named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Dotaz s názvem „%1“ již existuje. Přepsat?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="300"/>
@@ -1470,12 +1470,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="64"/>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Všechny soubory ( * )</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="65"/>
         <source>Images</source>
-        <translation type="unfinished">Obrázky</translation>
+        <translation>Obrázky</translation>
     </message>
 </context>
 <context>
@@ -1483,7 +1483,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="74"/>
         <source>Command Button Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení příkazového tlačítka</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="87"/>
@@ -1717,7 +1717,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="35"/>
         <source>Cover Widget Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení widgetu přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="38"/>
@@ -1976,7 +1976,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="36"/>
         <source>Directory Browser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení správce souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="37"/>
@@ -2217,13 +2217,15 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="237"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed.
 During crossfades, each track is processed independently.</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP pro jednotlivé skladby se aplikují na každý stream samostatně před smícháním.
+Během prolínání je každá skladba zpracovávána nezávisle.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="239"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal.
 Effects here process the final combined output.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hlavní DSP se aplikují po smíchání všech aktivních skladeb do jednoho signálu.
+Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="242"/>
@@ -2468,17 +2470,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="35"/>
         <source>Tab</source>
-        <translation>Záložka</translation>
+        <translation>Karta</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Rename Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Přejmenovat kartu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Název:</translation>
     </message>
 </context>
 <context>
@@ -2486,7 +2488,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="166"/>
         <source>Time elapsed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Uplynulý čas: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="173"/>
@@ -2497,7 +2499,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="173"/>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="184"/>
         <source>Estimated: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Odhadovaný: %1</translation>
     </message>
 </context>
 <context>
@@ -2620,33 +2622,33 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="499"/>
         <source>Invalid value on line %L1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatná hodnota na řádku %L1.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="500"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>První neprázdný řádek musí být celé číslo.</numerusform>
+            <numerusform>První %Ln neprázdné řádky musí být celá čísla.</numerusform>
+            <numerusform>Prvních %Ln neprázdných řádků musí být celá čísla.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="511"/>
         <source>The preset file contains %Ln band value(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Soubor předvolby obsahuje %Ln hodnotu pásma.</numerusform>
+            <numerusform>Soubor předvolby obsahuje %Ln hodnoty pásma.</numerusform>
+            <numerusform>Soubor předvolby obsahuje %Ln hodnot pásma.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="512"/>
         <source>Expected %Ln band value(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Očekávána byla %Ln hodnota pásma.</numerusform>
+            <numerusform>Očekávány byly %Ln hodnoty pásma.</numerusform>
+            <numerusform>Očekáváno bylo %Ln hodnot pásma.</numerusform>
         </translation>
     </message>
     <message>
@@ -2745,7 +2747,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="149"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzhled aplikace fooyin ( *.fyl )</translation>
     </message>
 </context>
 <context>
@@ -2965,7 +2967,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="103"/>
         <source>Quit fooyin</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukončit fooyin</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="80"/>
@@ -3043,10 +3045,10 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="412"/>
         <source>Pending operation(s): %Ln</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Čekající operace: %Ln</numerusform>
+            <numerusform>Čekající operace: %Ln</numerusform>
+            <numerusform>Čekající operace: %Ln</numerusform>
         </translation>
     </message>
     <message>
@@ -3107,7 +3109,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="274"/>
         <source>A preset named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolba s názvem „%1“ již existuje. Přepsat?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="394"/>
@@ -3245,7 +3247,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="40"/>
         <source>Filter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení filtrů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="45"/>
@@ -3330,7 +3332,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="105"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro změnu velikost ikon ve widgetu použij &lt;b&gt;Ctrl+Kolečko myši&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="108"/>
@@ -3465,7 +3467,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="254"/>
         <source>All (%L1)</source>
         <extracomment>Label for the filter summary entry that represents all values. %L1 is the number of entries, e.g. All (100).</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Vše (%L1)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="528"/>
@@ -3727,7 +3729,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="46"/>
         <source>GME Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení GME</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="53"/>
@@ -4209,7 +4211,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="316"/>
         <source>A theme named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzhled s názvem „%1“ již existuje. Přepsat?</translation>
     </message>
 </context>
 <context>
@@ -4787,7 +4789,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="245"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzhled aplikace fooyin ( *.fyl )</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
@@ -4987,17 +4989,17 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="104"/>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="114"/>
         <source>Cancel current scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit aktuální skenování</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="106"/>
         <source>Cancel the current library scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit aktuálně probíhající skenování knihovny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>Cancel the current scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit aktuální skenování</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="143"/>
@@ -5100,7 +5102,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="88"/>
         <source>&amp;Cancel scan</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zrušit skenování</translation>
     </message>
 </context>
 <context>
@@ -5108,7 +5110,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="40"/>
         <source>Library Tree Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení stromu knihovny</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="45"/>
@@ -5218,7 +5220,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="105"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro změnu velikost ikon ve widgetu použij &lt;b&gt;Ctrl+Kolečko myši&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="109"/>
@@ -5320,7 +5322,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="88"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;). Leave the whole sort grouping empty to use the display grouping for sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro oddělení úrovní stromu použij &lt;code&gt;||&lt;/code&gt;. &lt;b&gt;Seskupení pro řazení&lt;/b&gt; musí použít stejnou strukturu úrovní &lt;code&gt;||&lt;/code&gt; jako &lt;b&gt;Seskupení pro zobrazení&lt;/b&gt;; každá úroveň řazení se vztahuje k odpovídající úrovni zobrazení a úroveň řazení může být prázdná (např. &lt;code&gt;||%year%||&lt;/code&gt;). Pro použití seskupení pro zobrazení k řazení ponechte seskupení řazení prázdné.</translation>
     </message>
 </context>
 <context>
@@ -5338,12 +5340,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="163"/>
         <source>Display Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Seskupení pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="165"/>
         <source>Sort Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Seskupení pro řazení</translation>
     </message>
 </context>
 <context>
@@ -5370,7 +5372,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="201"/>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="439"/>
         <source>All Music</source>
-        <translation type="unfinished"></translation>
+        <translation>Všechna hudba</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="560"/>
@@ -6154,7 +6156,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="43"/>
         <source>Lyrics Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení textů skladeb</translation>
     </message>
 </context>
 <context>
@@ -6256,7 +6258,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="50"/>
         <source>OpenMPT Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení OpenMPT</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="68"/>
@@ -6418,19 +6420,19 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="168"/>
         <source>Resume decoding below %Ln ms</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Obnovit dekódování při délce kratší než %Ln ms</numerusform>
+            <numerusform>Obnovit dekódování při délce kratší než %Ln ms</numerusform>
+            <numerusform>Obnovit dekódování při délce kratší než %Ln ms</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="169"/>
         <source>Pause decoding at %Ln ms</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Pozastavit dekódování po dosažení délky %Ln ms</numerusform>
+            <numerusform>Pozastavit dekódování po dosažení délky %Ln ms</numerusform>
+            <numerusform>Pozastavit dekódování po dosažení délky %Ln ms</numerusform>
         </translation>
     </message>
     <message>
@@ -7034,7 +7036,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="97"/>
         <source>Expand tabs to fill empty space</source>
-        <translation>Roztáhnout záložky a vyplnit volné místo</translation>
+        <translation>Roztáhnout karty a vyplnit volné místo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="98"/>
@@ -7049,7 +7051,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="100"/>
         <source>Show delete button on tabs</source>
-        <translation>Na záložkách zobrazit tlačítko Smazat</translation>
+        <translation>Na kartách zobrazit tlačítko Smazat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="101"/>
@@ -7134,7 +7136,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="206"/>
         <source>Playlist Tabs</source>
-        <translation>Záložky playlistů</translation>
+        <translation>Karty playlistů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="246"/>
@@ -7169,7 +7171,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
         <source>Tracks to preload</source>
-        <translation type="unfinished"></translation>
+        <translation>Stopy k přednačtení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="189"/>
@@ -7220,10 +7222,10 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1223"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln stopa</numerusform>
+            <numerusform>%Ln stopy</numerusform>
+            <numerusform>%Ln stop</numerusform>
         </translation>
     </message>
 </context>
@@ -7502,7 +7504,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="151"/>
         <source>Playlist Tabs</source>
-        <translation>Záložky playlistů</translation>
+        <translation>Karty playlistů</translation>
     </message>
 </context>
 <context>
@@ -7822,7 +7824,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="223"/>
         <source>fooyin Plugin (*.fyl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin aplikace fooyin ( *.fyl )</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="231"/>
@@ -7904,10 +7906,10 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="296"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln skladba</numerusform>
+            <numerusform>%Ln skladby</numerusform>
+            <numerusform>%Ln skladeb</numerusform>
         </translation>
     </message>
 </context>
@@ -7959,7 +7961,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="34"/>
         <source>Queue Viewer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení prohlížeče fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="37"/>
@@ -8009,7 +8011,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="67"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro změnu velikost ikon ve widgetu použij &lt;b&gt;Ctrl+Kolečko myši&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="71"/>
@@ -8150,7 +8152,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="84"/>
         <source>Used with the &quot;Calculate as albums (by tags)&quot; action</source>
-        <translation type="unfinished"></translation>
+        <translation>Použito pro akci „Vypočítat ReplayGain pro alba (podle tagů)“</translation>
     </message>
 </context>
 <context>
@@ -8873,7 +8875,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="150"/>
         <source>Authentication</source>
-        <translation type="unfinished">Ověření</translation>
+        <translation>Přihlášení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="152"/>
@@ -9660,7 +9662,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="141"/>
         <source>Cancel scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit skenování</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="294"/>
@@ -9678,7 +9680,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="71"/>
         <source>Tab Stack</source>
-        <translation>Panel záložek</translation>
+        <translation>Panel karet</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="269"/>
@@ -9830,7 +9832,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="82"/>
         <source>Use &quot;;&quot; in the editor to enter multiple values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro zadání více hodnot použijte jako oddělovač &quot;;&quot;.</translation>
     </message>
 </context>
 <context>
@@ -10176,12 +10178,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="40"/>
         <source>VU Meter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení indikátoru vybuzení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
         <source>%1 fps</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 fps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="70"/>
@@ -10301,7 +10303,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="42"/>
         <source>WaveBar Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení WaveBaru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="43"/>
@@ -10650,7 +10652,7 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="145"/>
         <source>Playlist Tabs</source>
-        <translation>Záložky playlistů</translation>
+        <translation>Karty playlistů</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="151"/>
@@ -10665,7 +10667,7 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="163"/>
         <source>Tab Stack</source>
-        <translation>Panel záložek</translation>
+        <translation>Panel karet</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="172"/>
@@ -10771,7 +10773,7 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="327"/>
         <source>Tabs</source>
-        <translation>Záložky</translation>
+        <translation>Karty</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="323"/>
@@ -11007,19 +11009,19 @@ na disku.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="239"/>
         <source>Extracted artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Přebal alba extrahován do %Ln souboru</numerusform>
+            <numerusform>Přebaly alb extrahovány do %Ln souborů</numerusform>
+            <numerusform>Přebaly alb extrahovány do %Ln souborů</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="244"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Přebaly alb exportovány do %Ln souboru; u některých se export nezdařil</numerusform>
+            <numerusform>Přebaly alb exportovány do %Ln souborů; u některých se export nezdařil</numerusform>
+            <numerusform>Přebaly alb exportovány do %Ln souborů; u některých se export nezdařil</numerusform>
         </translation>
     </message>
     <message>
