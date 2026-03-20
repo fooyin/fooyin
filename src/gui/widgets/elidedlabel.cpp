@@ -94,7 +94,7 @@ PreparedTextLine prepareRichTextLine(const RichText& richText, const QFont& base
         prepared.text   = text;
         prepared.font   = font;
         prepared.colour = block.format.colour.isValid() ? block.format.colour : baseColour;
-        prepared.width  = fm.boundingRect(text).width();
+        prepared.width  = fm.size(Qt::TextSingleLine, text).width();
         prepared.height = fm.height();
 
         line.totalWidth += prepared.width;
@@ -133,7 +133,7 @@ QSize richTextNaturalSize(const RichText& richText, const QFont& baseFont)
         const QFont font = resolvedBlockFont(baseFont, block.format);
         const QFontMetrics fm{font};
 
-        width += fm.boundingRect(text).width();
+        width += fm.size(Qt::TextSingleLine, text).width();
         height = std::max(height, fm.height());
     }
 
