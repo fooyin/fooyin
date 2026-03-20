@@ -3783,8 +3783,7 @@ void ExpandedTreeView::scrollContentsBy(int dx, int dy)
     }
 
     p->m_scrollDelayOffset = {-dx, -dy};
-    scrollDirtyRegion(dx, dy);
-    viewport()->scroll(dx, dy);
+    viewport()->update();
     p->m_scrollDelayOffset = {0, 0};
 }
 
