@@ -543,7 +543,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="178"/>
         <source>Returns one split segment</source>
-        <translation>Vrátí část řetězce rozděleného podle daného oddělovače</translation>
+        <translation>Vrátí n-tou část rozděleného řetězce (index od 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="179"/>
