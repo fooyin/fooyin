@@ -39,7 +39,6 @@ public:
     void trackChanged(const Track& track);
     void stateChanged(Player::PlayState state);
     void updateLabels(uint64_t time) const;
-    void updateLabelSize() const;
 
     SeekContainer* m_self;
 
@@ -100,23 +99,27 @@ void SeekContainerPrivate::stateChanged(Player::PlayState state)
 
 void SeekContainerPrivate::updateLabels(uint64_t time) const
 {
-    m_elapsed->setText(Utils::msToString(time));
+    const auto prevElapsedSize = m_elapsed->text().size();
+    const auto prevTotalSize   = m_total->text().size();
 
+    const auto elapsed = Utils::msToString(time);
+    m_elapsed->setText(elapsed);
+
+    QString total;
     if(m_elapsedTotal) {
-        const int remaining = static_cast<int>(m_max - time);
-        m_total->setText(u"-"_s + Utils::msToString(remaining < 0 ? 0 : remaining));
+        const int remaining = std::max(0, static_cast<int>(m_max - time));
+        total               = u"-"_s + Utils::msToString(remaining);
     }
     else {
-        m_total->setText(Utils::msToString(m_max));
+        total = Utils::msToString(m_max);
     }
-}
+    m_total->setText(total);
 
-void SeekContainerPrivate::updateLabelSize() const
-{
-    const QFontMetrics fm{m_self->fontMetrics()};
-    const QString zero = Utils::msToString(0) + u"0"_s;
-    m_elapsed->setFixedWidth(fm.horizontalAdvance(zero));
-    m_total->setFixedWidth(fm.horizontalAdvance((m_elapsedTotal ? u"-"_s : QString{}) + zero));
+    if(elapsed.size() != prevElapsedSize || total.size() != prevTotalSize) {
+        const QFontMetrics fm{m_self->fontMetrics()};
+        m_total->setFixedWidth(fm.horizontalAdvance(total));
+        m_elapsed->setFixedWidth(fm.horizontalAdvance(elapsed));
+    }
 }
 
 SeekContainer::SeekContainer(PlayerController* playerController, QWidget* parent)
@@ -157,21 +160,11 @@ void SeekContainer::setLabelsEnabled(bool enabled)
 {
     p->m_elapsed->setHidden(!enabled);
     p->m_total->setHidden(!enabled);
-    p->updateLabelSize();
 }
 
 void SeekContainer::setElapsedTotal(bool enabled)
 {
     p->m_elapsedTotal = enabled;
-    p->updateLabelSize();
-    if(!p->m_elapsedTotal) {
-        p->m_total->setText(Utils::msToString(p->m_max));
-    }
-}
-
-void SeekContainer::showEvent(QShowEvent* event)
-{
-    QWidget::showEvent(event);
-    p->updateLabelSize();
+    p->updateLabels(p->m_playerController->currentPosition());
 }
 } // namespace Fooyin
