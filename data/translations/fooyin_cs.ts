@@ -1422,7 +1422,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="303"/>
         <source>Has Lyrics</source>
-        <translation>S texty skladeb</translation>
+        <translation>S texty písní</translation>
     </message>
 </context>
 <context>
@@ -5591,7 +5591,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="91"/>
         <source>No lyrics script</source>
-        <translation>Skript pro bez textu</translation>
+        <translation>Skript pro bez textu písní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="96"/>
@@ -5820,7 +5820,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="86"/>
         <source>No lyrics script</source>
-        <translation>Skript pro bez textu</translation>
+        <translation>Skript pro bez textu písní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricsgeneralpage.cpp" line="90"/>
@@ -5992,17 +5992,17 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="64"/>
         <source>Automatically search for lyrics on starting playback</source>
-        <translation>Automaticky vyhledat text písně po spuštění přehrávání</translation>
+        <translation>Při spuštění přehrávání automaticky vyhledat text písně</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="65"/>
         <source>Skip remaining sources when lyrics are found</source>
-        <translation>Použít první nalezený text a další zdroje přeskočit</translation>
+        <translation>Použít první nalezený text písně a další zdroje přeskočit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="66"/>
         <source>Skip external sources if local lyrics are found</source>
-        <translation>Pokud je k dispozici lokální text, použít ho a přeskočit externí zdroje</translation>
+        <translation>Přeskočit externí zdroje pokud je k dispozici lokální text písně</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="70"/>
@@ -6058,7 +6058,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="84"/>
         <source>Lyrics will be searched for in the above order.</source>
-        <translation>Texty budou hledány ve výše uvedeném pořadí.</translation>
+        <translation>Texty písní budou hledány ve výše uvedeném pořadí.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="85"/>
@@ -6106,7 +6106,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="508"/>
         <source>Search for lyrics for the current track</source>
-        <translation>Vyhledat text pro aktuální skladbu</translation>
+        <translation>Vyhledat text písně pro aktuální skladbu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="518"/>
@@ -6156,7 +6156,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="43"/>
         <source>Lyrics Settings</source>
-        <translation>Nastavení textů skladeb</translation>
+        <translation>Nastavení textů písní</translation>
     </message>
 </context>
 <context>
