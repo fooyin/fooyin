@@ -345,9 +345,8 @@ void StatusWidgetPrivate::stateChanged(const Player::PlayState state)
             clearMessage();
             break;
         case(Player::PlayState::Playing):
-            updatePlayingText();
-            break;
         case(Player::PlayState::Paused):
+            updatePlayingText();
             break;
     }
 }
