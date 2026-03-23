@@ -367,22 +367,22 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="144"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
         <source>First playback queue index for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Первый индекс очереди воспроизведения для указанного элемента</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="144"/>
         <source>Playback queue indexes for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Индексы очереди воспроизведения для указанного элемента</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="146"/>
         <source>Total amount of tracks in the playback queue for queued items</source>
-        <translation type="unfinished"></translation>
+        <translation>Общее количество дорожек в очереди воспроизведения для элементов в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
@@ -723,7 +723,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Returns the first true value from a list, or else when none match</source>
-        <translation>Возвращает первое истинное значение из списка, или else, если ничего не совпало</translation>
+        <translation>Возвращает первое истинное значение из списка или else, если ничего не совпало</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="216"/>
@@ -756,7 +756,7 @@
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="81"/>
         <source>About fooyin</source>
-        <translation type="unfinished"></translation>
+        <translation>О программе</translation>
     </message>
 </context>
 <context>
@@ -802,7 +802,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="35"/>
         <source>ALSA Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры ALSA</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
@@ -1027,19 +1027,19 @@
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="92"/>
         <source>Exported artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Изображение экспортировано в %Ln файл</numerusform>
+            <numerusform>Изображение экспортировано в %Ln файла</numerusform>
+            <numerusform>Изображение экспортировано в %Ln файлов</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="98"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Изображение экспортировано в %Ln файл; не удалось выполнить некоторые экспорты</numerusform>
+            <numerusform>Изображение экспортировано в %Ln файла; не удалось выполнить некоторые экспорты</numerusform>
+            <numerusform>Изображение экспортировано в %Ln файлов; не удалось выполнить некоторые экспорты</numerusform>
         </translation>
     </message>
     <message>
@@ -1106,19 +1106,19 @@
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="193"/>
         <source>Artwork found in %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Обложка найдена в %Ln файле</numerusform>
+            <numerusform>Обложка найдена в %Ln файлах</numerusform>
+            <numerusform>Обложка найдена в %Ln файлах</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="194"/>
         <source>%Ln file(s) selected</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Выбран %Ln файл</numerusform>
+            <numerusform>Выбрано %Ln файла</numerusform>
+            <numerusform>Выбрано %Ln файлов</numerusform>
         </translation>
     </message>
     <message>
@@ -1180,7 +1180,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation>Автоматически искать отсутствующие обложки на запуске воспроизведения</translation>
+        <translation>Автоматически искать отсутствующие обложки при запуске воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
@@ -1402,7 +1402,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="177"/>
         <source>A query named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Запрос с именем «%1» уже существует. Перезаписать?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="300"/>
@@ -1422,7 +1422,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="303"/>
         <source>Has Lyrics</source>
-        <translation>Имеют Lyrics</translation>
+        <translation>Имеют текст</translation>
     </message>
 </context>
 <context>
@@ -1470,12 +1470,12 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="64"/>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Все файлы (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="65"/>
         <source>Images</source>
-        <translation type="unfinished">Изображения</translation>
+        <translation>Изображения</translation>
     </message>
 </context>
 <context>
@@ -1483,7 +1483,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="74"/>
         <source>Command Button Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры кнопки команды</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="87"/>
@@ -1717,7 +1717,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="35"/>
         <source>Cover Widget Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры виджета обложки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="38"/>
@@ -1976,7 +1976,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="36"/>
         <source>Directory Browser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры проводника</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="37"/>
@@ -2170,7 +2170,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="85"/>
         <source>Client ID</source>
-        <translation>ИД клиента</translation>
+        <translation>Идентификатор клиента</translation>
     </message>
 </context>
 <context>
@@ -2211,19 +2211,21 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="235"/>
         <source>Master DSPs</source>
-        <translation>Мастер DSP</translation>
+        <translation>Мастер-DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="237"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed.
 During crossfades, each track is processed independently.</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP для каждой дорожки применяются к каждому потоку отдельно перед смешиванием дорожек.
+Во время кроссфейдов каждая дорожка обрабатывается независимо.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="239"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal.
 Effects here process the final combined output.</source>
-        <translation type="unfinished"></translation>
+        <translation>Мастер-DSP применяются после того, как все активные дорожки смешаны в один сигнал.
+Эффекты здесь обрабатывают конечный объединённый вывод.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="242"/>
@@ -2473,12 +2475,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Rename Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать вкладку</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя:</translation>
     </message>
 </context>
 <context>
@@ -2486,7 +2488,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="166"/>
         <source>Time elapsed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Прошло: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="173"/>
@@ -2497,7 +2499,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="173"/>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="184"/>
         <source>Estimated: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Расчётное: %1</translation>
     </message>
 </context>
 <context>
@@ -2620,33 +2622,33 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="499"/>
         <source>Invalid value on line %L1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недопустимое значение на строке %L1.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="500"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Первая непустая строка должна содержать целые числа.</numerusform>
+            <numerusform>Первые %Ln непустые строки должны содержать целые числа.</numerusform>
+            <numerusform>Первые %Ln непустых строк должны содержать целые числа.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="511"/>
         <source>The preset file contains %Ln band value(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Файл предустановок содержит %Ln значение полосы.</numerusform>
+            <numerusform>Файл предустановок содержит %Ln значения полосы.</numerusform>
+            <numerusform>Файл предустановок содержит %Ln значений полосы.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="512"/>
         <source>Expected %Ln band value(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Ожидалось %Ln значение полосы.</numerusform>
+            <numerusform>Ожидалось %Ln значения полосы.</numerusform>
+            <numerusform>Ожидалось %Ln значений полосы.</numerusform>
         </translation>
     </message>
     <message>
@@ -2745,7 +2747,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="149"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Оформление fooyin (*.fyl)</translation>
     </message>
 </context>
 <context>
@@ -2965,7 +2967,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="103"/>
         <source>Quit fooyin</source>
-        <translation type="unfinished"></translation>
+        <translation>Выйти из fooyin</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="80"/>
@@ -3043,10 +3045,10 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="412"/>
         <source>Pending operation(s): %Ln</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Запланированных операций: %Ln</numerusform>
+            <numerusform>Запланированных операций: %Ln</numerusform>
+            <numerusform>Запланированных операций: %Ln</numerusform>
         </translation>
     </message>
     <message>
@@ -3107,7 +3109,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="274"/>
         <source>A preset named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаблон с именем «%1» уже существует. Перезаписать?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="394"/>
@@ -3245,7 +3247,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="40"/>
         <source>Filter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры фильтра</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="45"/>
@@ -3330,7 +3332,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="105"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;b&gt;Ctrl+прокрутка&lt;/b&gt; в виджете для изменения размера значков.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="108"/>
@@ -3465,7 +3467,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="254"/>
         <source>All (%L1)</source>
         <extracomment>Label for the filter summary entry that represents all values. %L1 is the number of entries, e.g. All (100).</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Все (%L1)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="528"/>
@@ -3727,7 +3729,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="46"/>
         <source>GME Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры GME</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="53"/>
@@ -3755,19 +3757,19 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="421"/>
         <source>Plugins not found</source>
-        <translation>Плагины не найдены</translation>
+        <translation>Модули не найдены</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="422"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation>Без некоторых плагинов функциональность будет ограничена.</translation>
+        <translation>Без некоторых модулей функциональность будет ограничена.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="423"/>
         <source>Plugin search locations:
 
 </source>
-        <translation>Каталоги для поиска плагинов:
+        <translation>Каталоги для поиска модулей:
 
 </translation>
     </message>
@@ -3936,7 +3938,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="900"/>
         <source>Reload Now</source>
-        <translation>Перечитать сейчас</translation>
+        <translation>Перезагрузить сейчас</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="902"/>
@@ -4209,7 +4211,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="316"/>
         <source>A theme named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема с именем «%1» уже существует. Перезаписать?</translation>
     </message>
 </context>
 <context>
@@ -4275,7 +4277,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="123"/>
         <source>Raise</source>
-        <translation>Добавить объем</translation>
+        <translation>Добавить объём</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="124"/>
@@ -4335,7 +4337,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="189"/>
         <source>Set to &apos;0&apos; to disable the limit.</source>
-        <translation>Поставьте на &apos;0&apos; чтобы отключить лимит.</translation>
+        <translation>Поставьте на &apos;0&apos;, чтобы отключить лимит.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="200"/>
@@ -4675,12 +4677,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
         <source>Show scrollbar (vertical)</source>
-        <translation>Показать меню прокручивания (вертикально)</translation>
+        <translation>Показать полосу прокрутки (вертикально)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="224"/>
         <source>Show scrollbar (horizontal)</source>
-        <translation>Показать меню прокручивания (горизонтально)</translation>
+        <translation>Показать полосу прокрутки (горизонтально)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="233"/>
@@ -4739,7 +4741,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="72"/>
         <source>Loc&amp;k splitters</source>
-        <translation>Заблокировать разделители</translation>
+        <translation>За&amp;блокировать разделители</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
@@ -4787,7 +4789,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="245"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Оформление fooyin (*.fyl)</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
@@ -4807,7 +4809,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="261"/>
         <source>Unless exported, the current layout will be lost.</source>
-        <translation>Текущий оформление будет потеряно, если оно не было экспортировано.</translation>
+        <translation>Текущее оформление будет потеряно, если оно не было экспортировано.</translation>
     </message>
 </context>
 <context>
@@ -4843,7 +4845,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="141"/>
         <source>Mark unavailable tracks on startup</source>
-        <translation>Отмечать недоступные треки при старте</translation>
+        <translation>Отмечать недоступные треки при запуске</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="142"/>
@@ -4987,17 +4989,17 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="104"/>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="114"/>
         <source>Cancel current scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить текущую проверку</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="106"/>
         <source>Cancel the current library scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить текущую проверку фонотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="115"/>
         <source>Cancel the current scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить текущую проверку</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="143"/>
@@ -5100,7 +5102,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="88"/>
         <source>&amp;Cancel scan</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Отменить проверку</translation>
     </message>
 </context>
 <context>
@@ -5108,7 +5110,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="40"/>
         <source>Library Tree Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры дерева фонотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="45"/>
@@ -5218,7 +5220,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="105"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;b&gt;Ctrl+прокрутка&lt;/b&gt; в виджете для изменения размера значков.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="109"/>
@@ -5320,7 +5322,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="88"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;). Leave the whole sort grouping empty to use the display grouping for sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;code&gt;||&lt;/code&gt; для разделения уровней дерева. &lt;b&gt;Сортировка по группам&lt;/b&gt; должна использовать ту же структуру уровней &lt;code&gt;||&lt;/code&gt;, что и &lt;b&gt;Отображение групп&lt;/b&gt;; каждый уровень сортировки применяется к соответствующему уровню отображения, и уровень сортировки может быть пустым (например, &lt;code&gt;||%year%||&lt;/code&gt;). Оставьте всю сортировку по группам пустой, чтобы использовать отображение групп для сортировки.</translation>
     </message>
 </context>
 <context>
@@ -5338,12 +5340,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="163"/>
         <source>Display Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображение групп</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="165"/>
         <source>Sort Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировка по группам</translation>
     </message>
 </context>
 <context>
@@ -5351,7 +5353,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="40"/>
         <source>Artist/Album</source>
-        <translation>Исполнитель/Альбом</translation>
+        <translation>Исполнитель/альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="44"/>
@@ -5370,7 +5372,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="201"/>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="439"/>
         <source>All Music</source>
-        <translation type="unfinished"></translation>
+        <translation>Вся музыка</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="560"/>
@@ -5934,7 +5936,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="111"/>
         <source>Autosave Preference</source>
-        <translation>Автосохранение настроек</translation>
+        <translation>Параметры автосохранения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="119"/>
@@ -6030,7 +6032,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="86"/>
         <source>Only local lyrics will be used if unchecked</source>
-        <translation>Будут использованы только локальные тексты песен, если не будет отмечено</translation>
+        <translation>Если флажок не установлен, будут использованы только локальные тексты песен</translation>
     </message>
 </context>
 <context>
@@ -6051,7 +6053,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="82"/>
         <source>Lyrics sources</source>
-        <translation>Источники лирики</translation>
+        <translation>Источники текстов</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="84"/>
@@ -6114,7 +6116,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="519"/>
         <source>Open editor for the current lyrics</source>
-        <translation>Открытый редактор для текущего текста</translation>
+        <translation>Открыть редактор для текущего текста</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="525"/>
@@ -6154,7 +6156,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="43"/>
         <source>Lyrics Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры текста</translation>
     </message>
 </context>
 <context>
@@ -6256,7 +6258,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="50"/>
         <source>OpenMPT Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры OpenMPT</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="68"/>
@@ -6418,19 +6420,19 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="168"/>
         <source>Resume decoding below %Ln ms</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Возобновить декодирование через %Ln мс</numerusform>
+            <numerusform>Возобновить декодирование через %Ln мс</numerusform>
+            <numerusform>Возобновить декодирование через %Ln мс</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="169"/>
         <source>Pause decoding at %Ln ms</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Приостановить декодирование через %Ln мс</numerusform>
+            <numerusform>Приостановить декодирование через %Ln мс</numerusform>
+            <numerusform>Приостановить декодирование через %Ln мс</numerusform>
         </translation>
     </message>
     <message>
@@ -6525,12 +6527,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="106"/>
         <source>&amp;Order</source>
-        <translation>Порядок</translation>
+        <translation>&amp;Порядок</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="117"/>
         <source>Set playback order to default</source>
-        <translation>Установить порядок по-умолчанию</translation>
+        <translation>Установить порядок по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="123"/>
@@ -6605,7 +6607,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="77"/>
         <source>Play/Pause</source>
-        <translation>Воспроизведение/Пауза</translation>
+        <translation>Воспроизведение/пауза</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="175"/>
@@ -6696,7 +6698,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="106"/>
         <source>Save active playlist state on exit and restore it on next startup</source>
-        <translation>Сохранить состояние активного плейлиста на выходе и восстановить его на следующем запуске</translation>
+        <translation>Сохранить состояние активного плейлиста на выходе и восстановить его при следующем запуске</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="107"/>
@@ -6776,7 +6778,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="122"/>
         <source>The percentage of a track that must be listened to before it is counted as &apos;played&apos;</source>
-        <translation>Часть трека (%), которая должна быть прослушана, чтобы трек считался &quot;прослушанным&quot;</translation>
+        <translation>Часть трека (%), которая должна быть прослушана, чтобы трек считался «прослушанным»</translation>
     </message>
 </context>
 <context>
@@ -6855,7 +6857,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Artist/Album</source>
-        <translation>Исполнитель/Альбом</translation>
+        <translation>Исполнитель/альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
@@ -7034,7 +7036,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="97"/>
         <source>Expand tabs to fill empty space</source>
-        <translation>Расширить вкладки на все доступное пространство</translation>
+        <translation>Расширить вкладки на всё доступное пространство</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="98"/>
@@ -7169,12 +7171,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
         <source>Tracks to preload</source>
-        <translation type="unfinished"></translation>
+        <translation>Дорожки для предзагрузки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="189"/>
         <source>Left/Right</source>
-        <translation>Слева/Справа</translation>
+        <translation>Слева/справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="191"/>
@@ -7220,10 +7222,10 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1223"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln дорожка</numerusform>
+            <numerusform>%Ln дорожки</numerusform>
+            <numerusform>%Ln дорожек</numerusform>
         </translation>
     </message>
 </context>
@@ -7262,7 +7264,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="163"/>
         <source>Edit</source>
-        <translation>&amp;Правка</translation>
+        <translation>Правка</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="294"/>
@@ -7497,7 +7499,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="384"/>
         <source>%1 contents</source>
         <extracomment>%1 refers to the name of a playlist.</extracomment>
-        <translation>%1 содержится</translation>
+        <translation>Содержимое %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="151"/>
@@ -7533,7 +7535,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="580"/>
         <source>Select &amp;all</source>
-        <translation>Выделить в&amp;сё</translation>
+        <translation>Выделить в&amp;се</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="581"/>
@@ -7618,7 +7620,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="210"/>
         <source>Cu&amp;t</source>
-        <translation>Вырезать</translation>
+        <translation>Вы&amp;резать</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="213"/>
@@ -7789,7 +7791,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
         <source>Plugins</source>
-        <translation>Плагины</translation>
+        <translation>Модули</translation>
     </message>
 </context>
 <context>
@@ -7802,7 +7804,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="103"/>
         <source>About</source>
-        <translation>О плагине</translation>
+        <translation>О модуле</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="104"/>
@@ -7812,22 +7814,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="171"/>
         <source>Plugins Changed</source>
-        <translation>Плагины изменены</translation>
+        <translation>Модули изменены</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="223"/>
         <source>Install Plugin</source>
-        <translation>Установить плагин</translation>
+        <translation>Установить модуль</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="223"/>
         <source>fooyin Plugin (*.fyl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Модуль fooyin(*.fyl)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="231"/>
         <source>Plugin Installed</source>
-        <translation>Плагин установлен</translation>
+        <translation>Модуль установлен</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="172"/>
@@ -7874,7 +7876,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="49"/>
         <source>Album/Disc</source>
-        <translation>Альбом/Диск</translation>
+        <translation>Альбом/диск</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
@@ -7884,7 +7886,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Simple Artist/Album/Year</source>
-        <translation>Просто Артист/Альбом/Год</translation>
+        <translation>Просто артист/альбом/год</translation>
     </message>
 </context>
 <context>
@@ -7904,10 +7906,10 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="296"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln дорожка</numerusform>
+            <numerusform>%Ln дорожки</numerusform>
+            <numerusform>%Ln дорожек</numerusform>
         </translation>
     </message>
 </context>
@@ -7951,7 +7953,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="99"/>
         <source>Playback Queue</source>
-        <translation>Очередь проигрывания</translation>
+        <translation>Очередь воспроизведения</translation>
     </message>
 </context>
 <context>
@@ -7959,7 +7961,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="34"/>
         <source>Queue Viewer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры просмотра очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="37"/>
@@ -8009,7 +8011,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="67"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;b&gt;Ctrl+прокрутка&lt;/b&gt; в виджете для изменения размера значков.</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="71"/>
@@ -8150,7 +8152,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="84"/>
         <source>Used with the &quot;Calculate as albums (by tags)&quot; action</source>
-        <translation type="unfinished"></translation>
+        <translation>Используется с действием «Рассчитать как альбомы (по тегам)»</translation>
     </message>
 </context>
 <context>
@@ -8421,7 +8423,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="62"/>
         <source>ReplayGain Editor</source>
-        <translation>ReplayGain редактор</translation>
+        <translation>Редактор ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -8708,7 +8710,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="46"/>
         <source>Edit Scrobbling Service</source>
-        <translation>Править службу скробблинга</translation>
+        <translation>Изменить службу скробблинга</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="48"/>
@@ -8873,7 +8875,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="150"/>
         <source>Authentication</source>
-        <translation type="unfinished">Аутентификация</translation>
+        <translation>Аутентификация</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="152"/>
@@ -9660,7 +9662,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="141"/>
         <source>Cancel scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить проверку</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="294"/>
@@ -9830,7 +9832,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="82"/>
         <source>Use &quot;;&quot; in the editor to enter multiple values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте «;» в редакторе для ввода нескольких значений.</translation>
     </message>
 </context>
 <context>
@@ -9876,7 +9878,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="61"/>
         <source>Auto &amp;track number</source>
-        <translation>Автонумерация</translation>
+        <translation>&amp;Автонумерация</translation>
     </message>
 </context>
 <context>
@@ -10130,7 +10132,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="71"/>
         <source>Show playing &amp;track</source>
-        <translation>Показать проигрываемый трек</translation>
+        <translation>Показать проигрываемый &amp;трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="72"/>
@@ -10176,12 +10178,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="40"/>
         <source>VU Meter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры уровнемера</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
         <source>%1 fps</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 кадр/с</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="70"/>
@@ -10301,7 +10303,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="42"/>
         <source>WaveBar Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры WaveBar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="43"/>
@@ -10427,7 +10429,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="144"/>
         <source>Unplayed</source>
-        <translation>Не проигранное</translation>
+        <translation>Непроигранное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="145"/>
@@ -10627,7 +10629,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="121"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation>Разделитель (Верх/Низ)</translation>
+        <translation>Разделитель (верх/низ)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="122"/>
@@ -11007,19 +11009,19 @@ cost of using more disk space in the cache.</source>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="239"/>
         <source>Extracted artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Изображение извлечено в %Ln файл</numerusform>
+            <numerusform>Изображение извлечено в %Ln файла</numerusform>
+            <numerusform>Изображение извлечено в %Ln файлов</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="244"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Изображение извлечено в %Ln файл: не удалось выполнить некоторые извлечения</numerusform>
+            <numerusform>Изображение извлечено в %Ln файла: не удалось выполнить некоторые извлечения</numerusform>
+            <numerusform>Изображение извлечено в %Ln файлов: не удалось выполнить некоторые извлечения</numerusform>
         </translation>
     </message>
     <message>
