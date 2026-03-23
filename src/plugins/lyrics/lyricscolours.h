@@ -38,26 +38,34 @@ struct Colours
         WordSynced,
         LineUnsynced
     };
-    
+
     QMap<Type, QColor> lyricsColours;
-    
-    [[nodiscard]] static QColor defaultColour(Type type)
+
+    [[nodiscard]] static QColor defaultColour(Type type, const QPalette& palette = QApplication::palette())
     {
         switch(type) {
-            case Type::Background:     return QApplication::palette().base().color();
-            case Type::LineUnplayed:   return QApplication::palette().placeholderText().color();
-            case Type::LinePlayed:     return QApplication::palette().placeholderText().color();
-            case Type::LineSynced:     return QApplication::palette().text().color();
-            case Type::WordLineSynced: return QApplication::palette().text().color();
-            case Type::WordSynced:     return QApplication::palette().highlight().color();
-            case Type::LineUnsynced:   return QApplication::palette().text().color();
-            default:                   return {};
+            case Type::Background:
+                return palette.base().color();
+            case Type::LineUnplayed:
+                return palette.placeholderText().color();
+            case Type::LinePlayed:
+                return palette.placeholderText().color();
+            case Type::LineSynced:
+                return palette.text().color();
+            case Type::WordLineSynced:
+                return palette.text().color();
+            case Type::WordSynced:
+                return palette.highlight().color();
+            case Type::LineUnsynced:
+                return palette.text().color();
+            default:
+                return {};
         }
     }
 
-    [[nodiscard]] QColor colour(Type type) const
+    [[nodiscard]] QColor colour(Type type, const QPalette& palette = QApplication::palette()) const
     {
-        return lyricsColours.value(type, defaultColour(type));
+        return lyricsColours.value(type, defaultColour(type, palette));
     }
 
     void setColour(Type type, const QColor& colour)
