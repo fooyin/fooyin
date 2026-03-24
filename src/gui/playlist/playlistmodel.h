@@ -234,6 +234,7 @@ private:
     void refreshTracksForDependencies(const std::vector<int>& indexes, PlaybackDependencies dependencies);
     void coverUpdated(const Track& track);
     void syncPlayingTrackIndex();
+    void syncStopAtTrackIndex();
     bool trackIsPlaying(const Track& track, int index) const;
 
     ParentChildRangesList determineRowGroups(const QModelIndexList& indexes);
@@ -295,6 +296,7 @@ private:
     Playlist* m_currentPlaylist;
     Player::PlayState m_currentPlayState;
     PlaylistTrack m_playingTrack;
+    PlaylistTrack m_stopAtTrack;
     QPersistentModelIndex m_playingIndex;
     QPersistentModelIndex m_stopAtIndex;
     QModelIndexList m_indexesPendingRemoval;
