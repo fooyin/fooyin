@@ -1685,7 +1685,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
                             break;
                     }
                 }
-                if(index == m_stopAtIndex) {
+                if(index.row() == m_stopAtIndex.row()) {
                     return Gui::pixmapFromTheme(Constants::Icons::Stop);
                 }
             }
