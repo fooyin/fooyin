@@ -1043,9 +1043,8 @@ void PlaylistModel::stopAfterTrack(const QModelIndex& index)
 
     emit dataChanged(index, index, {Qt::DecorationRole});
 
-    if(index.siblingAtColumn(0) == m_playingIndex) {
-        m_settings->set<Settings::Core::StopAfterCurrent>(m_stopAtIndex.isValid());
-    }
+    const bool stopAfterCurrent = index.siblingAtColumn(0) == m_playingIndex;
+    m_settings->set<Settings::Core::StopAfterCurrent>(stopAfterCurrent && m_stopAtIndex.isValid());
 }
 
 TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index)
