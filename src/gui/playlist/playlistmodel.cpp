@@ -1038,6 +1038,7 @@ void PlaylistModel::stopAfterTrack(const QModelIndex& index)
         m_stopAtTrack.indexInPlaylist = m_stopAtIndex.data(PlaylistItem::Index).toInt();
         if(m_currentPlaylist) {
             m_stopAtTrack.playlistId = m_currentPlaylist->id();
+            m_stopAtTrack.track      = m_currentPlaylist->track(m_stopAtTrack.indexInPlaylist).value_or({});
         }
     }
 
@@ -2645,7 +2646,14 @@ void PlaylistModel::syncStopAtTrackIndex()
         return;
     }
 
-    m_stopAtIndex = indexAtPlaylistIndex(m_stopAtTrack.indexInPlaylist, true);
+    auto prevTrack = m_stopAtTrack.track;
+    auto newTrack  = m_currentPlaylist->track(m_stopAtTrack.indexInPlaylist).value_or({});
+    if(prevTrack.sameIdentityAs(newTrack)) {
+        m_stopAtIndex = indexAtPlaylistIndex(m_stopAtTrack.indexInPlaylist, true);
+    }
+    else {
+        m_stopAtIndex = QPersistentModelIndex{};
+    }
 }
 
 bool PlaylistModel::trackIsPlaying(const Track& track, int index) const
