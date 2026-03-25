@@ -26,8 +26,13 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
+#include <QDir>
+#include <QFileInfo>
 #include <QIODevice>
+#include <QMimeData>
+#include <QSet>
 #include <QStyle>
+#include <QUrl>
 
 namespace Fooyin::Gui {
 TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data)
@@ -39,6 +44,44 @@ TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data)
     TrackList tracks = library->tracksForIds(ids);
 
     return tracks;
+}
+
+void populateExternalTrackMimeData(const TrackList& tracks, QMimeData* mimeData)
+{
+    if(!mimeData) {
+        return;
+    }
+
+    QList<QUrl> urls;
+    QStringList paths;
+    QSet<QString> seenPaths;
+
+    for(const Track& track : tracks) {
+        if(!track.isValid() || track.isInArchive()) {
+            continue;
+        }
+
+        const QFileInfo fileInfo{track.filepath()};
+        if(!fileInfo.exists() || !fileInfo.isFile()) {
+            continue;
+        }
+
+        const QString path = QDir::cleanPath(fileInfo.absoluteFilePath());
+        if(path.isEmpty() || seenPaths.contains(path)) {
+            continue;
+        }
+
+        seenPaths.insert(path);
+        urls.push_back(QUrl::fromLocalFile(path));
+        paths.push_back(path);
+    }
+
+    if(urls.empty()) {
+        return;
+    }
+
+    mimeData->setUrls(urls);
+    mimeData->setText(paths.join(QStringLiteral("\n")));
 }
 
 TrackList sortTracksForLibraryViewerPlaylist(SettingsManager* settings, const TrackList& tracks)

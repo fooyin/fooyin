@@ -28,12 +28,15 @@
 #include <QByteArray>
 #include <QModelIndexList>
 
+class QMimeData;
+
 namespace Fooyin {
 class MusicLibrary;
 class SettingsManager;
 
 namespace Gui {
 FYGUI_EXPORT TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data);
+FYGUI_EXPORT void populateExternalTrackMimeData(const TrackList& tracks, QMimeData* mimeData);
 FYGUI_EXPORT TrackList sortTracksForLibraryViewerPlaylist(SettingsManager* settings, const TrackList& tracks);
 FYGUI_EXPORT TrackIds sortTrackIdsForLibraryViewerPlaylist(MusicLibrary* library, SettingsManager* settings,
                                                            const TrackIds& ids);

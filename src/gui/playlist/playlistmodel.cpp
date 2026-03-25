@@ -1782,11 +1782,6 @@ bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, in
 {
     const int dropIndex = determineDropIndex(this, parent, row);
 
-    if(data->hasUrls()) {
-        emit filesDropped(data->urls(), dropIndex);
-        return true;
-    }
-
     bool sameModel{false};
 
     if(data->hasFormat(QString::fromLatin1(MimeModelId))) {
@@ -1827,22 +1822,28 @@ bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, in
 
     const TrackList tracks
         = Gui::tracksFromMimeData(m_library, data->data(QString::fromLatin1(Constants::Mime::TrackIds)));
-    if(tracks.empty()) {
-        return false;
+    if(!tracks.empty()) {
+        PlaylistTrackList playlistTracks;
+        playlistTracks.reserve(tracks.size());
+
+        for(const auto& track : tracks) {
+            PlaylistTrack playlistTrack{.track      = track,
+                                        .playlistId = m_currentPlaylist ? m_currentPlaylist->id() : UId{}};
+            playlistTracks.push_back(playlistTrack);
+        }
+
+        const TrackGroups groups{{dropIndex, playlistTracks}};
+        emit tracksInserted(groups);
+
+        return true;
     }
 
-    PlaylistTrackList playlistTracks;
-    playlistTracks.reserve(tracks.size());
-
-    for(const auto& track : tracks) {
-        PlaylistTrack playlistTrack{.track = track, .playlistId = m_currentPlaylist ? m_currentPlaylist->id() : UId{}};
-        playlistTracks.push_back(playlistTrack);
+    if(data->hasUrls()) {
+        emit filesDropped(data->urls(), dropIndex);
+        return true;
     }
 
-    const TrackGroups groups{{dropIndex, playlistTracks}};
-    emit tracksInserted(groups);
-
-    return true;
+    return false;
 }
 
 PlaylistModel::DropTargetResult PlaylistModel::findDropTarget(PlaylistItem* source, PlaylistItem* target, int& row)
@@ -2119,6 +2120,14 @@ void PlaylistModel::storeMimeData(const QModelIndexList& indexes, QMimeData* mim
 
         QModelIndexList sortedIndexes{indexes};
         std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
+
+        TrackList tracks;
+        tracks.reserve(sortedIndexes.size());
+        for(const QModelIndex& index : sortedIndexes) {
+            tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<PlaylistTrack>().track);
+        }
+
+        Gui::populateExternalTrackMimeData(tracks, mimeData);
         mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
         if(m_currentPlaylist) {
             mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
