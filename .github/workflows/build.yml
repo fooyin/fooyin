@@ -106,7 +106,7 @@ jobs:
       - name: Install git
         run: |
           apt-get update -qq
-          apt-get install -qq --force-yes git
+          apt-get install -qq --yes ca-certificates git
 
       - name: Checkout
         uses: actions/checkout@v6
@@ -158,7 +158,7 @@ jobs:
       - name: Install git
         run: |
           apt-get update -qq
-          apt-get install -qq --force-yes git
+          apt-get install -qq --yes ca-certificates git
 
       - name: Checkout
         uses: actions/checkout@v6
