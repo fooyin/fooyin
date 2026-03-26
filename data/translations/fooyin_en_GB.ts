@@ -23,7 +23,7 @@
 <context>
     <name>Fooyin::ArtworkRow</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkrow.cpp" line="193"/>
+        <location filename="../../src/gui/artwork/artworkrow.cpp" line="194"/>
         <source>Artwork found in %Ln file(s)</source>
         <translation>
             <numerusform>Artwork found in %Ln file</numerusform>
@@ -31,7 +31,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkrow.cpp" line="194"/>
+        <location filename="../../src/gui/artwork/artworkrow.cpp" line="195"/>
         <source>%Ln file(s) selected</source>
         <translation>
             <numerusform>%Ln file selected</numerusform>
@@ -69,7 +69,7 @@
 <context>
     <name>Fooyin::FileOps::FileOpsDialog</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="412"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="414"/>
         <source>Pending operation(s): %Ln</source>
         <translation>
             <numerusform>Pending operation: %Ln</numerusform>
@@ -80,7 +80,7 @@
 <context>
     <name>Fooyin::OutputPageWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="168"/>
+        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="171"/>
         <source>Resume decoding below %Ln ms</source>
         <translation>
             <numerusform>Resume decoding below %Ln ms</numerusform>
@@ -88,7 +88,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="169"/>
+        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="172"/>
         <source>Pause decoding at %Ln ms</source>
         <translation>
             <numerusform>Pause decoding at %Ln ms</numerusform>
@@ -99,7 +99,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1223"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1235"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -121,7 +121,7 @@
 <context>
     <name>Fooyin::SearchDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="132"/>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="134"/>
         <source>%Ln result(s)</source>
         <translation>
             <numerusform>%Ln result</numerusform>
