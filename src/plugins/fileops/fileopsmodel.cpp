@@ -176,6 +176,8 @@ QString FileOpsModel::operationToString(Operation op) const
             return tr("Create");
         case(Operation::Remove):
             return tr("Remove");
+        case(Operation::Delete):
+            return tr("Delete");
     }
     return tr("Unknown");
 }

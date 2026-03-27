@@ -29,7 +29,8 @@ enum class Operation : uint8_t
     Move,
     Rename,
     Create,
-    Remove
+    Remove,
+    Delete
 };
 
 struct FileOpPreset

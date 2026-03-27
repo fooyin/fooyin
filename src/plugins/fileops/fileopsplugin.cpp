@@ -21,16 +21,23 @@
 
 #include "fileopsdefs.h"
 #include "fileopsdialog.h"
+#include "fileopsdeletedialog.h"
 #include "fileopssettings.h"
 
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/utils.h>
+
+#include "fileopsworker.h"
+
+#include <utils/settings/settingsmanager.h>
 
 #include <QMainWindow>
 #include <QMenu>
+#include <QThread>
 
 using namespace Qt::StringLiterals;
 
@@ -122,5 +129,50 @@ void FileOpsPlugin::recreateMenu()
     addSubmenuOrAction(Operation::Copy, tr("&Copy to…"));
     addSubmenuOrAction(Operation::Move, tr("&Move to…"));
     addSubmenuOrAction(Operation::Rename, tr("&Rename to…"));
+
+    auto* deleteAction = new QAction(tr("&Delete"), m_fileOpsMenu);
+    m_opActions.emplace_back(deleteAction);
+
+    auto* deleteCmd = m_actionManager->registerAction(deleteAction, "FileOps.Delete");
+    deleteCmd->setCategories({tr("Edit")});
+
+    QObject::connect(deleteAction, &QAction::triggered, deleteAction, [this]() {
+        const auto tracks = m_trackSelectionController->selectedTracks();
+
+        auto runDelete = [this, tracks]() {
+            auto* worker = new FileOpsWorker(m_library, tracks, m_settings);
+            auto* thread = new QThread(this);
+            worker->moveToThread(thread);
+
+            QObject::connect(worker, &FileOpsWorker::simulated, worker, [worker]() {
+                QMetaObject::invokeMethod(worker, &FileOpsWorker::run);
+            });
+            QObject::connect(worker, &Worker::finished, thread, &QThread::quit);
+            QObject::connect(worker, &Worker::finished, this, [this]() {
+                if(auto* removeCmd = m_actionManager->command(Constants::Actions::Remove)) {
+                    removeCmd->action()->trigger();
+                }
+            });
+            QObject::connect(thread, &QThread::finished, worker, &QObject::deleteLater);
+            QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+
+            thread->start();
+            QMetaObject::invokeMethod(worker, [worker]() {
+                worker->simulate(FileOpPreset{.op = Operation::Delete});
+            });
+        };
+
+        const bool confirm = m_settings->fileValue("FileOps/ConfirmDelete", true).toBool();
+        if(confirm) {
+            auto* dialog = new FileOpsDeleteDialog(tracks, m_settings, Utils::getMainWindow());
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            QObject::connect(dialog, &QDialog::accepted, dialog, [runDelete]() { runDelete(); });
+            dialog->show();
+        }
+        else {
+            runDelete();
+        }
+    });
+    m_fileOpsMenu->addAction(deleteAction);
 }
 } // namespace Fooyin::FileOps

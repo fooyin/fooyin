@@ -96,7 +96,7 @@ void FileOpsWorker::simulate(const FileOpPreset& preset)
         m_trackPaths.emplace(track.filepath(), track);
     }
 
-    if(!preset.dest.isEmpty() || m_preset.op == Operation::Rename) {
+    if(!preset.dest.isEmpty() || m_preset.op == Operation::Rename || m_preset.op == Operation::Delete) {
         switch(m_preset.op) {
             case(Operation::Copy):
                 simulateCopy();
@@ -107,7 +107,11 @@ void FileOpsWorker::simulate(const FileOpPreset& preset)
             case(Operation::Rename):
                 simulateRename();
                 break;
+            case(Operation::Delete):
+                simulateDelete();
+                break;
             case(Operation::Create):
+                break;
             case(Operation::Remove):
                 break;
         }
@@ -148,6 +152,17 @@ void FileOpsWorker::run()
                 }
                 break;
             }
+            case(Operation::Delete): {
+                if(!QFile::moveToTrash(item.source)){
+                    qCWarning(FILEOPS) << "Failed to delete file" << item.destination;
+                }
+                else if(m_trackPaths.contains(item.source)) {
+                    auto range = m_trackPaths.equal_range(item.source);
+                    for(auto it = range.first; it != range.second; ++it)
+                        m_tracksToDelete.push_back(it->second);
+                }
+                break;
+            }
             case(Operation::Rename):
             case(Operation::Move): {
                 renameFile(item);
@@ -167,11 +182,17 @@ void FileOpsWorker::run()
         m_library->updateTrackMetadata(m_tracksToUpdate);
     }
 
+    if(!m_tracksToDelete.empty()) {
+        m_library->removeUnavailbleTracks();
+    }
+
     setState(Idle);
 
     if(m_isMonitoring) {
         m_settings->set<Settings::Core::Internal::MonitorLibraries>(true);
     }
+
+    emit finished();
 }
 
 void FileOpsWorker::simulateMove()
@@ -329,6 +350,16 @@ void FileOpsWorker::simulateRename()
         const QString destFilepath = QDir::cleanPath(track.path() + "/"_L1 + destFilename);
 
         m_operations.emplace_back(Operation::Rename, track.filenameExt(), track.filepath(), destFilepath);
+    }
+}
+
+void FileOpsWorker::simulateDelete()
+{
+    for(const Track& track : m_tracks) {
+        if(!mayRun() || m_tracksProcessed.contains(track.filepath()))
+            continue;
+        m_tracksProcessed.emplace(track.filepath());
+        m_operations.emplace_back(Operation::Delete, track.filenameExt(), track.filepath(), QString{});
     }
 }
 

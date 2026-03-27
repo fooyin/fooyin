@@ -79,6 +79,7 @@ private:
     QSpinBox* m_imagePaddingTop;
 
     QCheckBox* m_skipMissing;
+    QCheckBox* m_confirmDelete;
 
     QGroupBox* m_autoExporting;
     QComboBox* m_exportPathType;
@@ -103,6 +104,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
     , m_skipMissing{new QCheckBox(tr("Skip missing tracks"), this)}
+    , m_confirmDelete{new QCheckBox(tr("Confrim before deleting tracks."), this)}
     , m_autoExporting{new QGroupBox(tr("Auto-export"), this)}
     , m_exportPathType{new QComboBox(this)}
     , m_exportMetadata{new QCheckBox(tr("Write metadata"), this)}
@@ -215,6 +217,13 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     tabsGroupLayout->addWidget(m_tabsCloseButton, row++, 0);
     tabsGroupLayout->addWidget(m_tabsMiddleClose, row++, 0);
 
+
+    auto* deleteGroup       = new QGroupBox(tr("Delete Tracks"), this);
+    auto* deleteGroupLayout = new QGridLayout(deleteGroup);
+
+    row = 0;
+    deleteGroupLayout->addWidget(m_confirmDelete, row++, 0);
+
     auto* mainLayout = new QGridLayout(this);
 
     row = 0;
@@ -225,6 +234,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     mainLayout->addWidget(m_autoExporting, row++, 0);
     mainLayout->addWidget(appearance, row++, 0);
     mainLayout->addWidget(tabsGroup, row++, 0);
+    mainLayout->addWidget(deleteGroup, row++, 0);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     m_exportPathType->addItem(u"Auto"_s);
@@ -281,6 +291,8 @@ void PlaylistGeneralPageWidget::load()
     m_tabsCloseButton->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsCloseButton>());
     m_tabsMiddleClose->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsMiddleClose>());
 
+    m_confirmDelete->setChecked(m_settings->fileValue("FileOps/ConfirmDelete", true).toBool());
+
     m_imagePadding->setValue(m_settings->value<Settings::Gui::Internal::PlaylistImagePadding>());
     m_imagePaddingTop->setValue(m_settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>());
 }
@@ -310,6 +322,8 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::PlaylistTabsCloseButton>(m_tabsCloseButton->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistTabsMiddleClose>(m_tabsMiddleClose->isChecked());
 
+    m_settings->fileSet("FileOps/ConfirmDelete", m_confirmDelete->isChecked());
+
     m_settings->set<Settings::Gui::Internal::PlaylistImagePadding>(m_imagePadding->value());
     m_settings->set<Settings::Gui::Internal::PlaylistImagePaddingTop>(m_imagePaddingTop->value());
 }
@@ -338,6 +352,8 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistTabsClearButton>();
     m_settings->reset<Settings::Gui::Internal::PlaylistTabsCloseButton>();
     m_settings->reset<Settings::Gui::Internal::PlaylistTabsMiddleClose>();
+
+    m_settings->fileRemove("FileOps/ConfirmDelete");
 
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePadding>();
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePaddingTop>();

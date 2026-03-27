@@ -71,6 +71,7 @@ private:
     void simulateMove();
     void simulateCopy();
     void simulateRename();
+    void simulateDelete();
 
     [[nodiscard]] QString evaluatePath(const ParsedScript& script, const Track& track);
 
@@ -100,6 +101,7 @@ private:
     std::set<QString> m_dirsToCreate;
     std::set<QString> m_dirsToRemove;
     TrackList m_tracksToUpdate;
+    TrackList m_tracksToDelete;
 };
 } // namespace FileOps
 } // namespace Fooyin
