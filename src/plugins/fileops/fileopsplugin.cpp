@@ -20,8 +20,8 @@
 #include "fileopsplugin.h"
 
 #include "fileopsdefs.h"
-#include "fileopsdialog.h"
 #include "fileopsdeletedialog.h"
+#include "fileopsdialog.h"
 #include "fileopssettings.h"
 
 #include <gui/guiconstants.h>
@@ -144,9 +144,8 @@ void FileOpsPlugin::recreateMenu()
             auto* thread = new QThread(this);
             worker->moveToThread(thread);
 
-            QObject::connect(worker, &FileOpsWorker::simulated, worker, [worker]() {
-                QMetaObject::invokeMethod(worker, &FileOpsWorker::run);
-            });
+            QObject::connect(worker, &FileOpsWorker::simulated, worker,
+                             [worker]() { QMetaObject::invokeMethod(worker, &FileOpsWorker::run); });
             QObject::connect(worker, &Worker::finished, thread, &QThread::quit);
             QObject::connect(worker, &Worker::finished, this, [this]() {
                 if(auto* removeCmd = m_actionManager->command(Constants::Actions::Remove)) {
@@ -157,9 +156,7 @@ void FileOpsPlugin::recreateMenu()
             QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
 
             thread->start();
-            QMetaObject::invokeMethod(worker, [worker]() {
-                worker->simulate(FileOpPreset{.op = Operation::Delete});
-            });
+            QMetaObject::invokeMethod(worker, [worker]() { worker->simulate(FileOpPreset{.op = Operation::Delete}); });
         };
 
         const bool confirm = m_settings->fileValue("FileOps/ConfirmDelete", true).toBool();
