@@ -67,6 +67,7 @@ public:
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
+    [[nodiscard]] int subsongCount() const override;
 
     [[nodiscard]] bool init(const AudioSource& source) override;
     [[nodiscard]] bool readTrack(const AudioSource& source, Track& track) override;
@@ -75,5 +76,6 @@ public:
 
 private:
     std::unique_ptr<FFmpegReaderPrivate> p;
+    int m_subsongCount;
 };
 } // namespace Fooyin
