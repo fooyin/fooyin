@@ -3930,7 +3930,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="150"/>
         <source>Remember from last run</source>
-        <translation>Obnovat stav před ukončením</translation>
+        <translation>Obnovit stav před ukončením</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="179"/>
