@@ -4635,7 +4635,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Colours &amp; Fonts</source>
-        <translation>Barvy a písma</translation>
+        <translation>Barvy a písmo</translation>
     </message>
 </context>
 <context>
