@@ -153,7 +153,7 @@ void FileOpsWorker::run()
                 break;
             }
             case(Operation::Delete): {
-                if(!QFile::moveToTrash(item.source)){
+                if(!QFile::moveToTrash(item.source)) {
                     qCWarning(FILEOPS) << "Failed to delete file" << item.destination;
                 }
                 else if(m_trackPaths.contains(item.source)) {

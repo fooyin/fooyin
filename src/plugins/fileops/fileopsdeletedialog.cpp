@@ -41,8 +41,8 @@ FileOpsDeleteDialog::FileOpsDeleteDialog(const TrackList& tracks, SettingsManage
     auto* layout = new QVBoxLayout(this);
 
     const QString message = tracks.size() == 1
-        ? tr("Are you sure you want to delete \"%1\"?").arg(tracks.front().title())
-        : tr("Are you sure you want to delete %1 tracks?").arg(tracks.size());
+                              ? tr("Are you sure you want to delete \"%1\"?").arg(tracks.front().title())
+                              : tr("Are you sure you want to delete %1 tracks?").arg(tracks.size());
 
     auto* label = new QLabel(message, this);
     label->setWordWrap(true);
@@ -51,7 +51,7 @@ FileOpsDeleteDialog::FileOpsDeleteDialog(const TrackList& tracks, SettingsManage
     auto* dontAsk = new QCheckBox(tr("Do not ask again"), this);
     layout->addWidget(dontAsk);
 
-    auto* buttons = new QDialogButtonBox(this);
+    auto* buttons      = new QDialogButtonBox(this);
     auto* deleteButton = buttons->addButton(tr("Delete"), QDialogButtonBox::DestructiveRole);
     auto* cancelButton = buttons->addButton(QDialogButtonBox::Cancel);
     cancelButton->setDefault(true);

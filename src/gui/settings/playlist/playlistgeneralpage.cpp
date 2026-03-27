@@ -217,7 +217,6 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     tabsGroupLayout->addWidget(m_tabsCloseButton, row++, 0);
     tabsGroupLayout->addWidget(m_tabsMiddleClose, row++, 0);
 
-
     auto* deleteGroup       = new QGroupBox(tr("Delete Tracks"), this);
     auto* deleteGroupLayout = new QGridLayout(deleteGroup);
 
