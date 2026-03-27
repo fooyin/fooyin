@@ -104,7 +104,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
     , m_skipMissing{new QCheckBox(tr("Skip missing tracks"), this)}
-    , m_confirmDelete{new QCheckBox(tr("Confrim before deleting tracks."), this)}
+    , m_confirmDelete{new QCheckBox(tr("Confirm before deleting tracks"), this)}
     , m_autoExporting{new QGroupBox(tr("Auto-export"), this)}
     , m_exportPathType{new QComboBox(this)}
     , m_exportMetadata{new QCheckBox(tr("Write metadata"), this)}
