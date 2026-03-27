@@ -71,7 +71,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="104"/>
         <source>Unique artists combined into one value</source>
-        <translation>Unikátní umělec kombinovaný do jedné hodnoty</translation>
+        <translation>Unikátní umělci zkombinovaní do jedné hodnoty</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="105"/>
@@ -1153,7 +1153,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="102"/>
         <source>Pixmap cache size</source>
-        <translation>Velikost mezipěměti pixmap</translation>
+        <translation>Velikost mezipaměti pixmap</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="108"/>
@@ -1581,7 +1581,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="302"/>
         <source>Last Played 2 Weeks</source>
-        <translation>Hrané během posedních 2 týdnů</translation>
+        <translation>Hrané během posledních 2 týdnů</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="303"/>
@@ -1692,7 +1692,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="121"/>
         <source>Select a command, or enter a raw `$cmdlink` id or alias.</source>
-        <translation>Vyberte příkaz, nebo zadejte `$cmdlink`id nebo alias.</translation>
+        <translation>Vyberte příkaz, nebo zadejte `$cmdlink` id nebo alias.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="125"/>
@@ -3925,7 +3925,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="149"/>
         <source>Start hidden to tray</source>
-        <translation>Spustit skryté v oznamovací blasti</translation>
+        <translation>Spustit skryté v oznamovací oblasti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="150"/>
@@ -5085,7 +5085,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
         <source>Use &apos;Various Artists&apos; for compilations</source>
-        <translation>Pro kompilace použít &apos;Různí umělci&apos;</translation>
+        <translation>Pro kompilace použít &apos;Various Artists&apos;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="146"/>
@@ -6543,7 +6543,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="77"/>
         <source>Use system proxy</source>
-        <translation>Sytémový proxy</translation>
+        <translation>Systémový proxy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="78"/>
@@ -6915,7 +6915,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="156"/>
         <source>Set playback order to play a random track in the current playlist</source>
-        <translation>Nastavit přehrávání náhodné skladby vaktuálním playlistu</translation>
+        <translation>Nastavit přehrávání náhodné skladby v aktuálním playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="175"/>
@@ -7061,7 +7061,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="108"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
-        <translation>Místo přechodu na předchozí sklabu přehrát skladbu která byla přehrávána délen než 5s od začátku</translation>
+        <translation>Místo přechodu na předchozí skladbu přehrát skladbu která byla přehrávána déle než 5s od začátku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="111"/>
@@ -8230,17 +8230,17 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="49"/>
         <source>Album/Disc</source>
-        <translation>Hlavička Album / Disk</translation>
+        <translation>Záhlaví Album / Disk</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
         <source>Disc Albums</source>
-        <translation>Hlavička Album - Disk</translation>
+        <translation>Záhlaví Album - Disk</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Simple Artist/Album/Year</source>
-        <translation>Jednoduchá hlavička Umělec - Album - Rok</translation>
+        <translation>Jednoduché záhlaví Umělec - Album - Rok</translation>
     </message>
 </context>
 <context>
@@ -9158,7 +9158,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="71"/>
         <source>Filter scrobbles</source>
-        <translation>Filtravat scrobblování</translation>
+        <translation>Filtrovat scrobblování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="76"/>
@@ -9391,7 +9391,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
         <source>Search Library</source>
-        <translation>Hedat v knihovně</translation>
+        <translation>Hledat v knihovně</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="131"/>
@@ -9657,7 +9657,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="298"/>
         <source>Are you sure?</source>
-        <translation>Jseš si jistý?</translation>
+        <translation>Jsi si jistý?</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="299"/>
@@ -10266,7 +10266,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="201"/>
         <source>Are you sure?</source>
-        <translation>Jseš si jistý?</translation>
+        <translation>Jsi si jistý?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="202"/>
