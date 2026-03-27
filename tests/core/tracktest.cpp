@@ -17,6 +17,7 @@
  *
  */
 
+#include <core/constants.h>
 #include <core/track.h>
 #include <core/trackmetadatastore.h>
 
@@ -24,6 +25,8 @@
 #include <QIODevice>
 
 #include <gtest/gtest.h>
+
+#include <cmath>
 
 using namespace Qt::StringLiterals;
 
@@ -224,5 +227,36 @@ TEST(TrackTest, MigratesPooledMetadataToExplicitStore)
     EXPECT_EQ(sharedStore->values(StringPool::Domain::Composer), (QStringList{u"Composer A"_s}));
     EXPECT_EQ(sharedStore->values(StringPool::Domain::Performer), (QStringList{u"Performer A"_s}));
     EXPECT_EQ(sharedStore->values(StringPool::Domain::ExtraTagKey), (QStringList{u"CUSTOM"_s}));
+}
+
+TEST(TrackTest, CalculatesEffectiveReplayGainForOpusHeaderGain)
+{
+    Track track;
+    track.setRGTrackGain(5.0F);
+    track.setRGAlbumGain(5.0F);
+    track.setRGTrackPeak(0.255842F);
+    track.setRGAlbumPeak(0.255842F);
+    track.setExtraProperty(QString::fromLatin1(Constants::OpusHeaderGainQ78), u"-3205"_s);
+
+    EXPECT_TRUE(track.hasOpusHeaderGain());
+    EXPECT_NEAR(track.opusHeaderGainDb(), -12.5195F, 0.0002F);
+
+    EXPECT_TRUE(track.hasEffectiveTrackGain());
+    EXPECT_TRUE(track.hasEffectiveAlbumGain());
+    EXPECT_TRUE(track.hasEffectiveTrackPeak());
+    EXPECT_TRUE(track.hasEffectiveAlbumPeak());
+
+    EXPECT_NEAR(track.effectiveRGTrackGain(), -7.5195F, 0.0002F);
+    EXPECT_NEAR(track.effectiveRGAlbumGain(), -7.5195F, 0.0002F);
+
+    const float expectedPeak = 0.255842F / std::pow(10.0F, track.opusHeaderGainDb() / 20.0F);
+    EXPECT_NEAR(track.effectiveRGTrackPeak(), expectedPeak, 0.00001F);
+    EXPECT_NEAR(track.effectiveRGAlbumPeak(), expectedPeak, 0.00001F);
+    EXPECT_NEAR(track.techInfo(QString::fromLatin1(Constants::MetaData::OpusHeaderGain)).toDouble(), -12.5195, 0.0002);
+
+    EXPECT_FLOAT_EQ(track.rgTrackGain(), 5.0F);
+    EXPECT_FLOAT_EQ(track.rgAlbumGain(), 5.0F);
+    EXPECT_FLOAT_EQ(track.rgTrackPeak(), 0.255842F);
+    EXPECT_FLOAT_EQ(track.rgAlbumPeak(), 0.255842F);
 }
 } // namespace Fooyin::Testing

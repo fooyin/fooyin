@@ -947,16 +947,24 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
 
 void TrackSelectionController::tracksUpdated(const TrackList& tracks)
 {
+    Utils::updateCommonTracks(p->m_tracks.tracks, tracks, Utils::CommonOperation::Update);
     for(auto& [_, selection] : p->m_contextSelection) {
         Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Update);
     }
+
+    p->updateActionState();
+    emit selectionChanged();
 }
 
 void TrackSelectionController::tracksRemoved(const TrackList& tracks)
 {
+    Utils::updateCommonTracks(p->m_tracks.tracks, tracks, Utils::CommonOperation::Remove);
     for(auto& [_, selection] : p->m_contextSelection) {
         Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Remove);
     }
+
+    p->updateActionState();
+    emit selectionChanged();
 }
 } // namespace Fooyin
 

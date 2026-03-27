@@ -23,23 +23,33 @@
 
 #include <QDialog>
 
+#include <cstdint>
+
 class QDialogButtonBox;
 class QLabel;
 class QTableView;
 
 namespace Fooyin {
 class MusicLibrary;
+class SettingsManager;
 
 namespace RGScanner {
 class RGScanResultsModel;
+
+enum class RGScanType : uint8_t
+{
+    Track = 0,
+    SingleAlbum,
+    Album
+};
 
 class RGScanResults : public QDialog
 {
     Q_OBJECT
 
 public:
-    RGScanResults(MusicLibrary* library, TrackList tracks, std::chrono::milliseconds timeTaken,
-                  QWidget* parent = nullptr);
+    RGScanResults(MusicLibrary* library, SettingsManager* settings, TrackList originalTracks, TrackList tracks,
+                  RGScanType scanType, std::chrono::milliseconds timeTaken, QWidget* parent = nullptr);
 
     void accept() override;
 
@@ -48,7 +58,12 @@ public:
 
 private:
     MusicLibrary* m_library;
+    SettingsManager* m_settings;
+
+    TrackList m_originalTracks;
     TrackList m_tracks;
+    RGScanType m_scanType;
+    OpusRGWriteMode m_opusWriteMode;
 
     QTableView* m_resultsView;
     RGScanResultsModel* m_resultsModel;

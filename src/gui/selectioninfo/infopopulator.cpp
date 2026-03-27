@@ -21,6 +21,7 @@
 
 #include "infomodel.h"
 
+#include <core/constants.h>
 #include <core/library/librarymanager.h>
 #include <core/track.h>
 #include <utils/enum.h>
@@ -91,6 +92,8 @@ public:
     std::set<float> m_trackPeak;
     std::set<float> m_albumGain;
     std::set<float> m_albumPeak;
+    std::set<float> m_opusHeaderGain;
+    int m_opusTrackCount{0};
 };
 
 void InfoPopulatorPrivate::reset()
@@ -100,6 +103,8 @@ void InfoPopulatorPrivate::reset()
     m_trackPeak.clear();
     m_albumGain.clear();
     m_albumPeak.clear();
+    m_opusHeaderGain.clear();
+    m_opusTrackCount = 0;
 }
 
 InfoItem* InfoPopulatorPrivate::getOrAddNode(const QString& key, const QString& name, ItemParent parent,
@@ -229,6 +234,31 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
     }
     checkAddEntryNode(u"SampleRate"_s, InfoPopulator::tr("Sample Rate"), ItemParent::General,
                       u"%1 Hz"_s.arg(track.sampleRate()), InfoItem::Percentage);
+
+    if(track.hasEffectiveTrackGain()) {
+        m_trackGain.emplace(track.effectiveRGTrackGain());
+    }
+    if(track.hasEffectiveTrackPeak()) {
+        m_trackPeak.emplace(track.effectiveRGTrackPeak());
+    }
+    if(track.hasEffectiveAlbumGain()) {
+        m_albumGain.emplace(track.effectiveRGAlbumGain());
+    }
+    if(track.hasEffectiveAlbumPeak()) {
+        m_albumPeak.emplace(track.effectiveRGAlbumPeak());
+    }
+    if(track.isOpus()) {
+        ++m_opusTrackCount;
+        m_opusHeaderGain.emplace(track.opusHeaderGainDb());
+    }
+
+    if(m_opusTrackCount == total && m_opusHeaderGain.size() == 1) {
+        checkAddEntryNode(
+            u"OpusHeaderGain"_s, InfoPopulator::tr("Opus header gain"), ItemParent::General,
+            QString::number(*m_opusHeaderGain.cbegin()), InfoItem::Total,
+            InfoItem::FormatFloatFunc{[](double gain) { return u"%1 dB"_s.arg(QString::number(gain, 'f', 2)); }}, true);
+    }
+
     checkAddEntryNode(u"Codec"_s, InfoPopulator::tr("Codec"), ItemParent::General,
                       !track.codec().isEmpty() ? track.codec() : track.extension().toUpper(), InfoItem::Percentage);
     checkAddEntryNode(u"CodecProfile"_s, InfoPopulator::tr("Codec Profile"), ItemParent::General, track.codecProfile(),
@@ -294,6 +324,9 @@ void InfoPopulatorPrivate::addTrackOther(const Track& track)
 {
     const auto props = track.extraProperties();
     for(const auto& [prop, value] : props) {
+        if(prop.startsWith("_"_L1)) {
+            continue;
+        }
         const auto extraProp = u"<%1>"_s.arg(prop);
         checkAddEntryNode(extraProp, extraProp, ItemParent::Other, value, InfoItem::Percentage);
     }
@@ -322,19 +355,6 @@ void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackL
         }
         if(options & InfoItem::Other) {
             addTrackOther(track);
-        }
-
-        if(track.hasTrackGain()) {
-            m_trackGain.emplace(track.rgTrackGain());
-        }
-        if(track.hasTrackPeak()) {
-            m_trackPeak.emplace(track.rgTrackPeak());
-        }
-        if(track.hasAlbumGain()) {
-            m_albumGain.emplace(track.rgAlbumGain());
-        }
-        if(track.hasAlbumPeak()) {
-            m_albumPeak.emplace(track.rgAlbumPeak());
         }
     }
 

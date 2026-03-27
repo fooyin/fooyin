@@ -133,6 +133,8 @@ void RGScannerPageWidget::reset()
     m_settings->fileRemove(ScannerOption);
     m_settings->fileRemove(TruePeakSetting);
     m_settings->fileRemove(AlbumGroupScriptSetting);
+    m_settings->fileRemove(OpusHeaderTargetVolumeSetting);
+    m_settings->fileRemove(OpusHeaderLouderOnlySetting);
 }
 
 RGScannerPage::RGScannerPage(SettingsManager* settings, QObject* parent)

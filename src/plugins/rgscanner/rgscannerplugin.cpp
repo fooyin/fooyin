@@ -19,6 +19,8 @@
 
 #include "rgscannerplugin.h"
 
+#include "opusheadergaindialog.h"
+#include "opusreplaygainutils.h"
 #include "rgscanner.h"
 #include "rgscannerpage.h"
 #include "rgscanresults.h"
@@ -74,12 +76,13 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
 
     auto* scanner = new RGScanner(m_audioLoader, this);
     QObject::connect(scanner, &RGScanner::calculationFinished, this,
-                     [this, scanner, progress](const TrackList& tracks) {
+                     [this, scanner, progress, tracksToScan, type](const TrackList& tracks) {
                          const auto finishTime = progress->elapsedTime();
                          scanner->close();
                          progress->deleteLater();
 
-                         auto* rgResults = new RGScanResults(m_library, tracks, finishTime, Utils::getMainWindow());
+                         auto* rgResults = new RGScanResults(m_library, m_settings, tracksToScan, tracks, type,
+                                                             finishTime, Utils::getMainWindow());
                          rgResults->setAttribute(Qt::WA_DeleteOnClose);
                          rgResults->show();
                      });
@@ -95,13 +98,13 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
     });
 
     switch(type) {
-        case(RGScanType::Track):
+        case RGScanType::Track:
             scanner->calculatePerTrack(tracksToScan);
             break;
-        case(RGScanType::SingleAlbum):
+        case RGScanType::SingleAlbum:
             scanner->calculateAsAlbum(tracksToScan);
             break;
-        case(RGScanType::Album):
+        case RGScanType::Album:
             scanner->calculateByAlbumTags(tracksToScan);
             break;
     }
@@ -118,21 +121,23 @@ void RGScannerPlugin::setupReplayGainMenu()
 
     auto* window = Utils::getMainWindow();
 
-    auto* rgTrackAction       = new QAction(tr("Calculate ReplayGain values per-file"), window);
-    auto* rgSingleAlbumAction = new QAction(tr("Calculate ReplayGain values as a single album"), window);
-    auto* rgAlbumAction       = new QAction(tr("Calculate ReplayGain values as albums (by tags)"), window);
-    auto* rgRemoveAction      = new QAction(tr("Remove ReplayGain information from files"), window);
+    auto* rgTrackAction        = new QAction(tr("Calculate ReplayGain values per-file"), window);
+    auto* rgSingleAlbumAction  = new QAction(tr("Calculate ReplayGain values as a single album"), window);
+    auto* rgAlbumAction        = new QAction(tr("Calculate ReplayGain values as albums (by tags)"), window);
+    auto* opusHeaderGainAction = new QAction(tr("Edit Opus header gain"), window);
+    auto* rgRemoveAction       = new QAction(tr("Remove ReplayGain information from files"), window);
     rgTrackAction->setStatusTip(
         tr("Calculate ReplayGain values for selected files, considering each file individually"));
     rgSingleAlbumAction->setStatusTip(
         tr("Calculate ReplayGain values for selected files, considering all files as part of one album"));
     rgAlbumAction->setStatusTip(tr("Calculate ReplayGain values for selected files, dividing into albums by tags"));
+    opusHeaderGainAction->setStatusTip(tr("Manipulate the Opus header gain field"));
     rgRemoveAction->setStatusTip(tr("Remove ReplayGain values from the selected files"));
 
     const auto removeInfo = [this]() {
         TrackList tracks = m_selectionController->selectedTracks();
         for(Track& track : tracks) {
-            track.clearRGInfo();
+            removeReplayGainInfoFromFile(track);
         }
 
         auto* removeDialog = createRemoveDialog();
@@ -158,28 +163,51 @@ void RGScannerPlugin::setupReplayGainMenu()
         return std::ranges::any_of(m_selectionController->selectedTracks(),
                                    [](const Track& track) { return !track.isInArchive(); });
     };
+    const auto hasWritableOpus = [this]() -> bool {
+        return std::ranges::any_of(m_selectionController->selectedTracks(), isWritableOpusTrack);
+    };
 
     QObject::connect(rgTrackAction, &QAction::triggered, this, [this] { calculateReplayGain(RGScanType::Track); });
     QObject::connect(rgSingleAlbumAction, &QAction::triggered, this,
                      [this] { calculateReplayGain(RGScanType::SingleAlbum); });
     QObject::connect(rgAlbumAction, &QAction::triggered, this, [this] { calculateReplayGain(RGScanType::Album); });
+    QObject::connect(opusHeaderGainAction, &QAction::triggered, this, [this]() {
+        TrackList tracks;
+        for(const Track& track : m_selectionController->selectedTracks()) {
+            if(isWritableOpusTrack(track)) {
+                tracks.emplace_back(track);
+            }
+        }
+
+        if(tracks.empty()) {
+            return;
+        }
+
+        auto* dialog = createOpusHeaderGainDialog(m_audioLoader, m_library, m_settings, tracks, Utils::getMainWindow());
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->show();
+    });
     QObject::connect(rgRemoveAction, &QAction::triggered, this, removeInfo);
 
-    QObject::connect(
-        m_selectionController, &TrackSelectionController::selectionChanged, this,
-        [this, replayGainMenu, rgSingleAlbumAction, rgAlbumAction, rgRemoveAction, canWriteInfo] {
-            const bool tracksWritable = canWriteInfo();
-            replayGainMenu->menu()->setEnabled(tracksWritable);
-            rgAlbumAction->setEnabled(tracksWritable && m_selectionController->selectedTrackCount() > 1);
-            rgSingleAlbumAction->setEnabled(tracksWritable && m_selectionController->selectedTrackCount() > 1);
-            rgRemoveAction->setEnabled(tracksWritable
-                                       && std::ranges::any_of(m_selectionController->selectedTracks(),
-                                                              [](const Track& track) { return track.hasRGInfo(); }));
-        });
+    QObject::connect(m_selectionController, &TrackSelectionController::selectionChanged, this,
+                     [this, replayGainMenu, rgSingleAlbumAction, rgAlbumAction, opusHeaderGainAction, rgRemoveAction,
+                      canWriteInfo, hasWritableOpus] {
+                         const bool tracksWritable = canWriteInfo();
+                         replayGainMenu->menu()->setEnabled(tracksWritable);
+                         rgAlbumAction->setEnabled(tracksWritable && m_selectionController->selectedTrackCount() > 1);
+                         rgSingleAlbumAction->setEnabled(tracksWritable);
+                         opusHeaderGainAction->setEnabled(hasWritableOpus());
+                         rgRemoveAction->setEnabled(
+                             tracksWritable
+                             && std::ranges::any_of(m_selectionController->selectedTracks(), [](const Track& track) {
+                                    return track.hasRGInfo() || track.hasOpusHeaderGain();
+                                }));
+                     });
 
     replayGainMenu->menu()->addAction(rgTrackAction);
     replayGainMenu->menu()->addAction(rgSingleAlbumAction);
     replayGainMenu->menu()->addAction(rgAlbumAction);
+    replayGainMenu->menu()->addAction(opusHeaderGainAction);
     replayGainMenu->menu()->addAction(rgRemoveAction);
 }
 

@@ -123,6 +123,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
         static_cast<int>(Engine::CrossfadeSwitchPolicy::OverlapStart), u"Playback/CrossfadeSwitchPolicy"_s);
     m_settings->createSetting<Internal::OutputDeviceProfiles>(QVariant::fromValue(Engine::OutputDeviceProfiles{}),
                                                               u"Engine/OutputDeviceProfiles"_s);
+    m_settings->createSetting<Internal::OpusHeaderWriteMode>(static_cast<int>(OpusRGWriteMode::Album),
+                                                             u"ReplayGain/OpusHeaderWriteMode"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 

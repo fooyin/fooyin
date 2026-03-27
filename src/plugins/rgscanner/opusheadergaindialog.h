@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,21 @@
 
 #pragma once
 
-namespace Fooyin::RGScanner {
-constexpr auto ScannerPage = "Fooyin.Page.Playback.ReplayGain.Calculating";
+#include <core/track.h>
 
-constexpr auto ScannerOption                 = "RGScanner/Scanner";
-constexpr auto TruePeakSetting               = "RGScanner/TruePeak";
-constexpr auto AlbumGroupScriptSetting       = "RGScanner/AlbumGroupScript";
-constexpr auto OpusHeaderTargetVolumeSetting = "RGScanner/OpusHeaderTargetVolume";
-constexpr auto OpusHeaderLouderOnlySetting   = "RGScanner/OpusHeaderLouderOnly";
-constexpr auto DefaultAlbumGroupScript       = "%albumartist% - %date% - %album%";
+#include <memory>
+
+class QDialog;
+class QWidget;
+
+namespace Fooyin {
+class AudioLoader;
+class MusicLibrary;
+class SettingsManager;
+} // namespace Fooyin
+
+namespace Fooyin::RGScanner {
+[[nodiscard]] QDialog* createOpusHeaderGainDialog(std::shared_ptr<AudioLoader> audioLoader, MusicLibrary* library,
+                                                  SettingsManager* settings, TrackList tracks,
+                                                  QWidget* parent = nullptr);
 } // namespace Fooyin::RGScanner

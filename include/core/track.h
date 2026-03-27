@@ -38,6 +38,13 @@ class Track;
 class TrackPrivate;
 class TrackMetadataStore;
 
+enum class OpusRGWriteMode : uint8_t
+{
+    LeaveNull = 0,
+    Track,
+    Album,
+};
+
 using TrackList = std::vector<Track>;
 using TrackIds  = std::vector<int>;
 
@@ -159,6 +166,18 @@ public:
     [[nodiscard]] float rgAlbumGain() const;
     [[nodiscard]] float rgTrackPeak() const;
     [[nodiscard]] float rgAlbumPeak() const;
+    [[nodiscard]] std::optional<int16_t> opusHeaderGainQ78() const;
+    [[nodiscard]] bool hasOpusHeaderGain() const;
+    [[nodiscard]] float opusHeaderGainDb() const;
+    [[nodiscard]] bool hasEffectiveTrackGain() const;
+    [[nodiscard]] bool hasEffectiveAlbumGain() const;
+    [[nodiscard]] bool hasEffectiveTrackPeak() const;
+    [[nodiscard]] bool hasEffectiveAlbumPeak() const;
+    [[nodiscard]] float effectiveRGTrackGain() const;
+    [[nodiscard]] float effectiveRGAlbumGain() const;
+    [[nodiscard]] float effectiveRGTrackPeak() const;
+    [[nodiscard]] float effectiveRGAlbumPeak() const;
+    [[nodiscard]] bool isOpus() const;
 
     [[nodiscard]] bool hasCue() const;
     [[nodiscard]] bool hasEmbeddedCue() const;
@@ -235,6 +254,8 @@ public:
     void setRGAlbumGain(float gain);
     void setRGTrackPeak(float peak);
     void setRGAlbumPeak(float peak);
+    void setOpusHeaderGainQ78(int16_t gainQ78);
+    void clearOpusHeaderGain();
     void clearRGInfo();
 
     [[nodiscard]] QString metaValue(const QString& name) const;
@@ -253,6 +274,7 @@ public:
 
     void setExtraProperty(const QString& prop, const QString& value);
     void removeExtraProperty(const QString& prop);
+    void normaliseExtraProperties();
     void clearExtraProperties();
     void storeExtraProperties(const QByteArray& props);
 
@@ -302,6 +324,8 @@ struct TrackCoverData
     TrackList tracks;
     TrackCovers coverData;
 };
+
+[[nodiscard]] FYCORE_EXPORT Track prepareOpusRGWriteTrack(const Track& track, OpusRGWriteMode mode);
 } // namespace Fooyin
 
 Q_DECLARE_METATYPE(Fooyin::TrackList)

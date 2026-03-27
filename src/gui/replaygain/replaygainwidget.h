@@ -31,7 +31,8 @@ class ReplayGainWidget : public PropertiesTabWidget
     Q_OBJECT
 
 public:
-    ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, bool readOnly, QWidget* parent = nullptr);
+    ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, bool readOnly, SettingsManager* settings,
+                     QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -45,8 +46,11 @@ private:
     void updateHeaderModes() const;
 
     MusicLibrary* m_library;
+    SettingsManager* m_settings;
+
     ReplayGainView* m_view;
     ReplayGainModel* m_model;
+    OpusRGWriteMode m_opusWriteMode;
 
     TrackList m_pendingTracks;
 };

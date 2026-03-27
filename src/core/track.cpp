@@ -32,6 +32,8 @@
 #include <QRegularExpression>
 
 #include <chrono>
+#include <cmath>
+#include <limits>
 #include <utility>
 
 using namespace Qt::StringLiterals;
@@ -96,6 +98,81 @@ const MetaMap& metaMap()
     };
     // clang-format on
     return metaMap;
+}
+
+std::optional<int> opusHeaderGainQ78(const Fooyin::Track& track)
+{
+    const auto& props         = track.extraProperties();
+    const QString* opusHeader = props.find(QString::fromLatin1(Fooyin::Constants::OpusHeaderGainQ78));
+    if(!opusHeader) {
+        return {};
+    }
+
+    bool ok{false};
+    const int gain = opusHeader->toInt(&ok);
+    return ok ? std::optional{gain} : std::nullopt;
+}
+
+float opusHeaderGainDb(const Fooyin::Track& track)
+{
+    if(const auto gainQ78 = opusHeaderGainQ78(track); gainQ78.has_value()) {
+        return static_cast<float>(*gainQ78) / 256.0F;
+    }
+    return 0.0F;
+}
+
+float q78ToDb(int gainQ78)
+{
+    return static_cast<float>(gainQ78) / 256.0F;
+}
+
+std::optional<int16_t> replayGainToOpusR128Q78(float gainDb)
+{
+    const auto gainQ78 = std::lround((static_cast<double>(gainDb) - 5.0) * 256.0);
+    if(gainQ78 < std::numeric_limits<int16_t>::min() || gainQ78 > std::numeric_limits<int16_t>::max()) {
+        return {};
+    }
+
+    return static_cast<int16_t>(gainQ78);
+}
+
+std::optional<int16_t> adjustCommentGain(std::optional<int16_t> currentGain, int commentDeltaQ78)
+{
+    if(!currentGain.has_value()) {
+        return {};
+    }
+
+    const auto adjustedGain = static_cast<long long>(*currentGain) - commentDeltaQ78;
+    if(adjustedGain < std::numeric_limits<int16_t>::min() || adjustedGain > std::numeric_limits<int16_t>::max()) {
+        return {};
+    }
+
+    return static_cast<int16_t>(adjustedGain);
+}
+
+struct OpusGainState
+{
+    int16_t headerGain{0};
+    std::optional<int16_t> trackGain;
+    std::optional<int16_t> albumGain;
+};
+
+float opusHeaderLinearGain(const Fooyin::Track& track)
+{
+    return std::pow(10.0F, opusHeaderGainDb(track) / 20.0F);
+}
+
+void normaliseExtraProperties(Fooyin::Track::ExtraProperties& props)
+{
+    const QString* opusHeader = props.find(QString::fromLatin1(Fooyin::Constants::OpusHeaderGainQ78));
+    if(!opusHeader) {
+        return;
+    }
+
+    bool ok{false};
+    if(const int gain = opusHeader->toInt(&ok); ok && gain == 0) {
+        props.erase(QString::fromLatin1(Fooyin::Constants::OpusHeaderGainQ78));
+    }
 }
 
 template <typename Value, typename KeyFn>
@@ -830,6 +907,97 @@ float Track::rgAlbumPeak() const
     return p->rgAlbumPeak;
 }
 
+std::optional<int16_t> Track::opusHeaderGainQ78() const
+{
+    if(const auto gainQ78 = ::opusHeaderGainQ78(*this); gainQ78.has_value()
+                                                        && *gainQ78 >= std::numeric_limits<int16_t>::min()
+                                                        && *gainQ78 <= std::numeric_limits<int16_t>::max()) {
+        return static_cast<int16_t>(*gainQ78);
+    }
+
+    return {};
+}
+
+bool Track::hasOpusHeaderGain() const
+{
+    if(const auto gainQ78 = opusHeaderGainQ78(); gainQ78.has_value()) {
+        return *gainQ78 != 0;
+    }
+
+    return false;
+}
+
+float Track::opusHeaderGainDb() const
+{
+    if(const auto gainQ78 = opusHeaderGainQ78(); gainQ78.has_value()) {
+        return static_cast<float>(*gainQ78) / 256.0F;
+    }
+
+    return 0.0F;
+}
+
+bool Track::hasEffectiveTrackGain() const
+{
+    return hasTrackGain() || hasOpusHeaderGain();
+}
+
+bool Track::hasEffectiveAlbumGain() const
+{
+    return hasAlbumGain() || hasOpusHeaderGain();
+}
+
+bool Track::hasEffectiveTrackPeak() const
+{
+    return hasTrackPeak();
+}
+
+bool Track::hasEffectiveAlbumPeak() const
+{
+    return hasAlbumPeak();
+}
+
+float Track::effectiveRGTrackGain() const
+{
+    if(!hasEffectiveTrackGain()) {
+        return Constants::InvalidGain;
+    }
+
+    return (hasTrackGain() ? rgTrackGain() : 0.0F) + opusHeaderGainDb();
+}
+
+float Track::effectiveRGAlbumGain() const
+{
+    if(!hasEffectiveAlbumGain()) {
+        return Constants::InvalidGain;
+    }
+
+    return (hasAlbumGain() ? rgAlbumGain() : 0.0F) + opusHeaderGainDb();
+}
+
+float Track::effectiveRGTrackPeak() const
+{
+    if(!hasTrackPeak()) {
+        return Constants::InvalidPeak;
+    }
+
+    return rgTrackPeak() / opusHeaderLinearGain(*this);
+}
+
+float Track::effectiveRGAlbumPeak() const
+{
+    if(!hasAlbumPeak()) {
+        return Constants::InvalidPeak;
+    }
+
+    return rgAlbumPeak() / opusHeaderLinearGain(*this);
+}
+
+bool Track::isOpus() const
+{
+    return extension().compare(u"opus"_s, Qt::CaseInsensitive) == 0
+        || codec().compare(u"Opus"_s, Qt::CaseInsensitive) == 0;
+}
+
 bool Track::hasCue() const
 {
     return !p->cuePath.isEmpty();
@@ -969,11 +1137,17 @@ QByteArray Track::serialiseExtraProperties() const
         return {};
     }
 
+    ExtraProperties props{p->extraProps};
+    ::normaliseExtraProperties(props);
+    if(props.empty()) {
+        return {};
+    }
+
     QByteArray out;
     QDataStream stream(&out, QIODevice::WriteOnly);
     stream.setVersion(QDataStream::Qt_6_0);
 
-    DataStream::writeContainer(stream, p->extraProps);
+    DataStream::writeContainer(stream, props);
 
     return out;
 }
@@ -1440,6 +1614,16 @@ void Track::setRGAlbumPeak(float peak)
     p->rgAlbumPeak = peak;
 }
 
+void Track::setOpusHeaderGainQ78(int16_t gainQ78)
+{
+    p->extraProps.insertOrAssign(QString::fromLatin1(Fooyin::Constants::OpusHeaderGainQ78), QString::number(gainQ78));
+}
+
+void Track::clearOpusHeaderGain()
+{
+    removeExtraProperty(QString::fromLatin1(Fooyin::Constants::OpusHeaderGainQ78));
+}
+
 void Track::clearRGInfo()
 {
     p->rgTrackGain = Constants::InvalidGain;
@@ -1485,10 +1669,11 @@ QString Track::techInfo(const QString& name) const
         {QString::fromLatin1(Channels),     [validNum](const Track& track) { return validNum(track.channels()); }},
         {QString::fromLatin1(BitDepth),     [validNum](const Track& track) { return validNum(track.bitDepth()); }},
         {QString::fromLatin1(Duration),     [validNum](const Track& track) { return validNum(track.duration()); }},
-        {QString::fromLatin1(RGTrackGain),  [](const Track& track) { return track.hasTrackGain() ? QString::number(track.rgTrackGain()) : QString{}; }},
-        {QString::fromLatin1(RGTrackPeak),  [](const Track& track) { return track.hasTrackPeak() ? QString::number(track.rgTrackPeak()) : QString{}; }},
-        {QString::fromLatin1(RGAlbumGain),  [](const Track& track) { return track.hasAlbumGain() ? QString::number(track.rgAlbumGain()) : QString{}; }},
-        {QString::fromLatin1(RGAlbumPeak),  [](const Track& track) { return track.hasAlbumPeak() ? QString::number(track.rgAlbumPeak()) : QString{}; }}
+        {QString::fromLatin1(RGTrackGain),  [](const Track& track) { return track.hasEffectiveTrackGain() ? QString::number(track.effectiveRGTrackGain()) : QString{}; }},
+        {QString::fromLatin1(RGTrackPeak),  [](const Track& track) { return track.hasEffectiveTrackPeak() ? QString::number(track.effectiveRGTrackPeak()) : QString{}; }},
+        {QString::fromLatin1(RGAlbumGain),  [](const Track& track) { return track.hasEffectiveAlbumGain() ? QString::number(track.effectiveRGAlbumGain()) : QString{}; }},
+        {QString::fromLatin1(RGAlbumPeak),  [](const Track& track) { return track.hasEffectiveAlbumPeak() ? QString::number(track.effectiveRGAlbumPeak()) : QString{}; }},
+        {QString::fromLatin1(OpusHeaderGain), [](const Track& track) { return track.hasOpusHeaderGain() ? QString::number(track.opusHeaderGainDb()) : QString{}; }}
     };
     // clang-format on
 
@@ -1627,6 +1812,11 @@ void Track::removeExtraProperty(const QString& prop)
     p->extraProps.erase(prop);
 }
 
+void Track::normaliseExtraProperties()
+{
+    ::normaliseExtraProperties(p->extraProps);
+}
+
 void Track::clearExtraProperties()
 {
     p->extraProps.clear();
@@ -1646,6 +1836,7 @@ void Track::storeExtraProperties(const QByteArray& props)
 
     Track::ExtraProperties loaded;
     if(p->readPropsToVector(stream, loaded)) {
+        ::normaliseExtraProperties(loaded);
         p->extraProps = std::move(loaded);
     }
 }
@@ -1839,6 +2030,75 @@ QStringList Track::supportedMimeTypes()
            u"application/ogg"_s, u"audio/opus"_s,         u"audio/x-opus+ogg"_s,
            u"audio/x-ms-wma"_s,  u"video/x-ms-asf"_s,     u"application/vnd.ms-asf"_s};
     return supportedTypes;
+}
+
+Track prepareOpusRGWriteTrack(const Track& track, OpusRGWriteMode mode)
+{
+    if(!track.isOpus()) {
+        return track;
+    }
+
+    OpusGainState currentState{
+        .headerGain = static_cast<int16_t>(opusHeaderGainQ78(track).value_or(0)),
+        .trackGain  = track.hasTrackGain() ? replayGainToOpusR128Q78(track.rgTrackGain()) : std::optional<int16_t>{},
+        .albumGain  = track.hasAlbumGain() ? replayGainToOpusR128Q78(track.rgAlbumGain()) : std::optional<int16_t>{},
+    };
+
+    int headerDeltaQ78{0};
+    int commentDeltaQ78{0};
+
+    switch(mode) {
+        case OpusRGWriteMode::Track:
+            if(!currentState.trackGain.has_value()) {
+                return track;
+            }
+
+            commentDeltaQ78 = *currentState.trackGain;
+            headerDeltaQ78  = commentDeltaQ78;
+            break;
+        case OpusRGWriteMode::Album:
+            if(!currentState.albumGain.has_value()) {
+                return track;
+            }
+
+            commentDeltaQ78 = *currentState.albumGain;
+            headerDeltaQ78  = commentDeltaQ78;
+            break;
+        case OpusRGWriteMode::LeaveNull:
+            headerDeltaQ78  = -currentState.headerGain;
+            commentDeltaQ78 = headerDeltaQ78;
+            break;
+    }
+
+    const auto newHeader = static_cast<long long>(currentState.headerGain) + headerDeltaQ78;
+    if(newHeader < std::numeric_limits<int16_t>::min() || newHeader > std::numeric_limits<int16_t>::max()) {
+        return track;
+    }
+
+    Track updatedTrack{track};
+    updatedTrack.setRGTrackGain(Constants::InvalidGain);
+    updatedTrack.setRGAlbumGain(Constants::InvalidGain);
+    updatedTrack.clearOpusHeaderGain();
+
+    if(const auto newTrackGain = adjustCommentGain(currentState.trackGain, commentDeltaQ78); currentState.trackGain) {
+        if(!newTrackGain.has_value()) {
+            return track;
+        }
+        updatedTrack.setRGTrackGain(q78ToDb(*newTrackGain) + 5.0F);
+    }
+
+    if(const auto newAlbumGain = adjustCommentGain(currentState.albumGain, commentDeltaQ78); currentState.albumGain) {
+        if(!newAlbumGain.has_value()) {
+            return track;
+        }
+        updatedTrack.setRGAlbumGain(q78ToDb(*newAlbumGain) + 5.0F);
+    }
+
+    if(newHeader != 0) {
+        updatedTrack.setOpusHeaderGainQ78(static_cast<int16_t>(newHeader));
+    }
+
+    return updatedTrack;
 }
 
 size_t qHash(const Track& track)

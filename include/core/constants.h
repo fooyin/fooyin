@@ -23,8 +23,9 @@ namespace Fooyin::Constants {
 constexpr auto RecordSeparator = "\036";
 constexpr auto UnitSeparator   = "\037";
 
-constexpr auto InvalidGain = -1000;
-constexpr auto InvalidPeak = -1;
+constexpr auto InvalidGain       = -1000;
+constexpr auto InvalidPeak       = -1;
+constexpr auto OpusHeaderGainQ78 = "_OPUS_HEADER_GAIN_Q78";
 
 namespace MetaData {
 constexpr auto Title             = "TITLE";
@@ -81,6 +82,7 @@ constexpr auto RGTrackPeakDB     = "REPLAYGAIN_TRACK_PEAK_DB";
 constexpr auto RGAlbumGain       = "REPLAYGAIN_ALBUM_GAIN";
 constexpr auto RGAlbumPeak       = "REPLAYGAIN_ALBUM_PEAK";
 constexpr auto RGAlbumPeakDB     = "REPLAYGAIN_ALBUM_PEAK_DB";
+constexpr auto OpusHeaderGain    = "OPUS_HEADER_GAIN";
 } // namespace MetaData
 
 constexpr auto FrontCover    = "%frontcover%";

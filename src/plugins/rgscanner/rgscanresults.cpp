@@ -19,9 +19,12 @@
 
 #include "rgscanresults.h"
 
+#include "opusreplaygainutils.h"
 #include "rgscanresultsmodel.h"
 
+#include <core/internalcoresettings.h>
 #include <core/library/musiclibrary.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/stringutils.h>
 
 #include <QDialogButtonBox>
@@ -31,14 +34,49 @@
 #include <QPushButton>
 #include <QTableView>
 
+#include <algorithm>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::RGScanner {
-RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, std::chrono::milliseconds timeTaken,
+namespace {
+const Track* findOriginalTrack(const TrackList& tracks, const Track& scannedTrack)
+{
+    const auto it = std::ranges::find_if(
+        tracks, [&scannedTrack](const Track& originalTrack) { return originalTrack.sameIdentityAs(scannedTrack); });
+    return it != tracks.cend() ? &*it : nullptr;
+}
+
+Track mergePerTrackReplayGainWriteData(const Track& scannedTrack, const TrackList& originalTracks)
+{
+    Track writeTrack{scannedTrack};
+    const Track* originalTrack = findOriginalTrack(originalTracks, scannedTrack);
+    if(!originalTrack) {
+        return writeTrack;
+    }
+
+    if(originalTrack->hasAlbumGain()) {
+        writeTrack.setRGAlbumGain(originalTrack->rgAlbumGain());
+    }
+
+    if(originalTrack->hasAlbumPeak()) {
+        writeTrack.setRGAlbumPeak(originalTrack->rgAlbumPeak());
+    }
+
+    return writeTrack;
+}
+} // namespace
+
+RGScanResults::RGScanResults(MusicLibrary* library, SettingsManager* settings, TrackList originalTracks,
+                             TrackList tracks, const RGScanType scanType, std::chrono::milliseconds timeTaken,
                              QWidget* parent)
     : QDialog{parent}
     , m_library{library}
+    , m_settings{settings}
+    , m_originalTracks{std::move(originalTracks)}
     , m_tracks{std::move(tracks)}
+    , m_scanType{scanType}
+    , m_opusWriteMode{static_cast<OpusRGWriteMode>(settings->value<Settings::Core::Internal::OpusHeaderWriteMode>())}
     , m_resultsView{new QTableView(this)}
     , m_resultsModel{new RGScanResultsModel(m_tracks, this)}
     , m_status{new QLabel(tr("Time taken") + ": "_L1 + Utils::msToString(timeTaken, false), this)}
@@ -76,7 +114,25 @@ void RGScanResults::accept()
     m_status->setText(tr("Writing to file tags…"));
     m_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
-    const auto request = m_library->writeTrackMetadata(m_tracks);
+    TrackList tracksToWrite;
+    tracksToWrite.reserve(m_tracks.size());
+
+    for(const Track& track : std::as_const(m_tracks)) {
+        Track writeTrack = m_scanType == RGScanType::Track ? mergePerTrackReplayGainWriteData(track, m_originalTracks)
+                                                           : Track{track};
+        if(writeTrack.isOpus()) {
+            writeTrack = prepareOpusRGWriteTrack(writeTrack, m_opusWriteMode);
+            if(m_opusWriteMode == OpusRGWriteMode::LeaveNull && track.hasOpusHeaderGain()) {
+                writeTrack.setOpusHeaderGainQ78(0);
+            }
+        }
+        else {
+            writeTrack = prepareOpusRGWriteTrack(writeTrack, m_opusWriteMode);
+        }
+        tracksToWrite.emplace_back(std::move(writeTrack));
+    }
+
+    const auto request = m_library->writeTrackMetadata(tracksToWrite);
     QObject::connect(
         m_buttonBox, &QDialogButtonBox::rejected, this, [request]() { request.cancel(); }, Qt::SingleShotConnection);
 }

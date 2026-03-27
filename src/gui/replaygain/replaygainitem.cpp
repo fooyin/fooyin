@@ -22,6 +22,38 @@
 #include <core/constants.h>
 
 namespace Fooyin {
+namespace {
+float rawGainFromDisplay(const Track& track, float value)
+{
+    return value - track.opusHeaderGainDb();
+}
+
+float rawPeakFromDisplay(const Track& track, float value)
+{
+    return value * std::pow(10.0F, track.opusHeaderGainDb() / 20.0F);
+}
+
+float displayedTrackGain(const Track& track)
+{
+    return track.hasTrackGain() ? track.effectiveRGTrackGain() : Constants::InvalidGain;
+}
+
+float displayedTrackPeak(const Track& track)
+{
+    return track.hasTrackPeak() ? track.effectiveRGTrackPeak() : Constants::InvalidPeak;
+}
+
+float displayedAlbumGain(const Track& track)
+{
+    return track.hasAlbumGain() ? track.effectiveRGAlbumGain() : Constants::InvalidGain;
+}
+
+float displayedAlbumPeak(const Track& track)
+{
+    return track.hasAlbumPeak() ? track.effectiveRGAlbumPeak() : Constants::InvalidPeak;
+}
+} // namespace
+
 ReplayGainItem::ReplayGainItem()
     : ReplayGainItem{Entry, {}, nullptr}
 { }
@@ -94,22 +126,22 @@ Track ReplayGainItem::track() const
 
 float ReplayGainItem::trackGain() const
 {
-    return m_trackGain ? m_trackGain.value() : m_track.rgTrackGain();
+    return m_trackGain ? m_trackGain.value() : displayedTrackGain(m_track);
 }
 
 float ReplayGainItem::trackPeak() const
 {
-    return m_trackPeak ? m_trackPeak.value() : m_track.rgTrackPeak();
+    return m_trackPeak ? m_trackPeak.value() : displayedTrackPeak(m_track);
 }
 
 float ReplayGainItem::albumGain() const
 {
-    return m_albumGain ? m_albumGain.value() : m_track.rgAlbumGain();
+    return m_albumGain ? m_albumGain.value() : displayedAlbumGain(m_track);
 }
 
 float ReplayGainItem::albumPeak() const
 {
-    return m_albumPeak ? m_albumPeak.value() : m_track.rgAlbumPeak();
+    return m_albumPeak ? m_albumPeak.value() : displayedAlbumPeak(m_track);
 }
 
 bool ReplayGainItem::isSummary() const
@@ -139,22 +171,22 @@ void ReplayGainItem::setTrack(const Track& track)
 
 bool ReplayGainItem::setTrackGain(float value)
 {
-    return setGainOrPeak(m_trackGain, value, m_track.rgTrackGain(), Constants::InvalidGain, 2);
+    return setGainOrPeak(m_trackGain, value, displayedTrackGain(m_track), Constants::InvalidGain, 2);
 }
 
 bool ReplayGainItem::setTrackPeak(float value)
 {
-    return setGainOrPeak(m_trackPeak, value, m_track.rgTrackPeak(), Constants::InvalidPeak, 6);
+    return setGainOrPeak(m_trackPeak, value, displayedTrackPeak(m_track), Constants::InvalidPeak, 6);
 }
 
 bool ReplayGainItem::setAlbumGain(float value)
 {
-    return setGainOrPeak(m_albumGain, value, m_track.rgAlbumGain(), Constants::InvalidGain, 2);
+    return setGainOrPeak(m_albumGain, value, displayedAlbumGain(m_track), Constants::InvalidGain, 2);
 }
 
 bool ReplayGainItem::setAlbumPeak(float value)
 {
-    return setGainOrPeak(m_albumPeak, value, m_track.rgAlbumPeak(), Constants::InvalidPeak, 6);
+    return setGainOrPeak(m_albumPeak, value, displayedAlbumPeak(m_track), Constants::InvalidPeak, 6);
 }
 
 void ReplayGainItem::setIsEditable(bool isEditable)
@@ -179,19 +211,19 @@ bool ReplayGainItem::applyChanges()
     }
 
     if(m_trackGain) {
-        m_track.setRGTrackGain(m_trackGain.value());
+        m_track.setRGTrackGain(rawGainFromDisplay(m_track, m_trackGain.value()));
         m_trackGain = {};
     }
     if(m_trackPeak) {
-        m_track.setRGTrackPeak(m_trackPeak.value());
+        m_track.setRGTrackPeak(rawPeakFromDisplay(m_track, m_trackPeak.value()));
         m_trackPeak = {};
     }
     if(m_albumGain) {
-        m_track.setRGAlbumGain(m_albumGain.value());
+        m_track.setRGAlbumGain(rawGainFromDisplay(m_track, m_albumGain.value()));
         m_albumGain = {};
     }
     if(m_albumPeak) {
-        m_track.setRGAlbumPeak(m_albumPeak.value());
+        m_track.setRGAlbumPeak(rawPeakFromDisplay(m_track, m_albumPeak.value()));
         m_albumPeak = {};
     }
 

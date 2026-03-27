@@ -19,8 +19,11 @@
 
 #include "testutils.h"
 
+#include <core/constants.h>
 #include <core/engine/input/taglibparser.h>
 #include <core/track.h>
+
+#include <taglib/opusfile.h>
 
 #include <QBuffer>
 #include <QImage>
@@ -451,6 +454,249 @@ TEST_F(TagWriterTest, OpusWrite)
         ASSERT_TRUE(!writeTag.isEmpty());
         EXPECT_EQ(writeTag.front(), u"Success"_s);
     }
+}
+
+TEST_F(TagWriterTest, OpusR128ReadAsReplayGain)
+{
+    const QString filepath = QStringLiteral(":/audio/audiotest.opus");
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+    {
+        TagLib::Ogg::Opus::File opusFile(localPath.constData());
+        ASSERT_TRUE(opusFile.isValid());
+        ASSERT_TRUE(opusFile.tag());
+
+        opusFile.tag()->addField("R128_TRACK_GAIN", "0", true);
+        opusFile.tag()->addField("R128_ALBUM_GAIN", "256", true);
+        ASSERT_TRUE(opusFile.save());
+    }
+
+    {
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack(source, track));
+
+        ASSERT_TRUE(track.hasTrackGain());
+        ASSERT_TRUE(track.hasAlbumGain());
+        EXPECT_FLOAT_EQ(track.rgTrackGain(), 5.0F);
+        EXPECT_FLOAT_EQ(track.rgAlbumGain(), 6.0F);
+        EXPECT_TRUE(track.extraTag(QStringLiteral("R128_TRACK_GAIN")).isEmpty());
+        EXPECT_TRUE(track.extraTag(QStringLiteral("R128_ALBUM_GAIN")).isEmpty());
+    }
+}
+
+TEST_F(TagWriterTest, OpusWriteUsesR128TagsInsteadOfReplayGainTags)
+{
+    const QString filepath = QStringLiteral(":/audio/audiotest.opus");
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack(source, track));
+
+        track.setId(0);
+        track.setRGTrackGain(5.0F);
+        track.setRGAlbumGain(6.0F);
+        track.setRGTrackPeak(0.25F);
+        track.setRGAlbumPeak(0.5F);
+        track.setExtraProperty(QString::fromLatin1(Constants::OpusHeaderGainQ78), QStringLiteral("-3205"));
+
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+    }
+
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const TagLib::Ogg::Opus::File opusFile(localPath.constData());
+    ASSERT_TRUE(opusFile.isValid());
+    ASSERT_TRUE(opusFile.tag());
+
+    const auto& fields = opusFile.tag()->fieldListMap();
+    ASSERT_TRUE(fields.contains("R128_TRACK_GAIN"));
+    ASSERT_TRUE(fields.contains("R128_ALBUM_GAIN"));
+    EXPECT_EQ(QString::fromUtf8(fields["R128_TRACK_GAIN"].front().toCString(true)), QStringLiteral("0"));
+    EXPECT_EQ(QString::fromUtf8(fields["R128_ALBUM_GAIN"].front().toCString(true)), QStringLiteral("256"));
+
+    EXPECT_FALSE(fields.contains("REPLAYGAIN_TRACK_GAIN"));
+    EXPECT_FALSE(fields.contains("REPLAYGAIN_ALBUM_GAIN"));
+
+    QFile headerFile{file.fileName()};
+    ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
+    const auto headerGain = readOpusHeaderGainQ78(&headerFile);
+    ASSERT_TRUE(headerGain.has_value());
+    EXPECT_EQ(*headerGain, -3205);
+
+    Track rereadTrack{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+    EXPECT_TRUE(rereadTrack.hasOpusHeaderGain());
+    EXPECT_NEAR(rereadTrack.opusHeaderGainDb(), -12.5195F, 0.0002F);
+    EXPECT_FLOAT_EQ(rereadTrack.rgTrackGain(), 5.0F);
+    EXPECT_FLOAT_EQ(rereadTrack.rgAlbumGain(), 6.0F);
+}
+
+TEST_F(TagWriterTest, OpusWriteTrackHeaderModeUsesOpusR128Offset)
+{
+    const QString filepath = QStringLiteral(":/audio/audiotest.opus");
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack(source, track));
+
+        track.setRGTrackGain(-0.25F);
+
+        const Track preparedTrack = prepareOpusRGWriteTrack(track, OpusRGWriteMode::Track);
+        ASSERT_TRUE(m_parser.writeTrack(source, preparedTrack, Flags));
+    }
+
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const TagLib::Ogg::Opus::File opusFile(localPath.constData());
+    ASSERT_TRUE(opusFile.isValid());
+    ASSERT_TRUE(opusFile.tag());
+
+    const auto& fields = opusFile.tag()->fieldListMap();
+    ASSERT_TRUE(fields.contains("R128_TRACK_GAIN"));
+    EXPECT_EQ(QString::fromUtf8(fields["R128_TRACK_GAIN"].front().toCString(true)), QStringLiteral("0"));
+
+    QFile headerFile{file.fileName()};
+    ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
+    const auto headerGain = readOpusHeaderGainQ78(&headerFile);
+    ASSERT_TRUE(headerGain.has_value());
+    EXPECT_EQ(*headerGain, -1344);
+
+    Track rereadTrack{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+    EXPECT_NEAR(rereadTrack.opusHeaderGainDb(), -5.25F, 0.0002F);
+    EXPECT_FLOAT_EQ(rereadTrack.rgTrackGain(), 5.0F);
+    EXPECT_NEAR(rereadTrack.effectiveRGTrackGain(), -0.25F, 0.0002F);
+}
+
+TEST_F(TagWriterTest, OpusReadRejectsInvalidHeaderCrc)
+{
+    const QString filepath = QStringLiteral(":/audio/audiotest.opus");
+    TempResource file{filepath};
+    file.checkValid();
+
+    QFile headerFile{file.fileName()};
+    ASSERT_TRUE(headerFile.open(QIODevice::ReadWrite));
+    ASSERT_TRUE(headerFile.seek(22));
+
+    char crcByte{0};
+    ASSERT_EQ(headerFile.read(&crcByte, 1), 1);
+    ASSERT_TRUE(headerFile.seek(22));
+
+    crcByte ^= static_cast<char>(0x01);
+    ASSERT_EQ(headerFile.write(&crcByte, 1), 1);
+    ASSERT_TRUE(headerFile.flush());
+
+    ASSERT_TRUE(headerFile.seek(0));
+    EXPECT_FALSE(readOpusHeaderGainQ78(&headerFile).has_value());
+}
+
+TEST_F(TagWriterTest, OpusRemoveReplayGainClearsAllReplayGainTags)
+{
+    const QString filepath = QStringLiteral(":/audio/audiotest.opus");
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+    {
+        TagLib::Ogg::Opus::File opusFile(localPath.constData());
+        ASSERT_TRUE(opusFile.isValid());
+        ASSERT_TRUE(opusFile.tag());
+
+        opusFile.tag()->addField("REPLAYGAIN_TRACK_GAIN", "-7.00 dB", true);
+        opusFile.tag()->addField("REPLAYGAIN_ALBUM_GAIN", "-6.00 dB", true);
+        opusFile.tag()->addField("REPLAYGAIN_TRACK_PEAK", "0.25", true);
+        opusFile.tag()->addField("REPLAYGAIN_ALBUM_PEAK", "0.50", true);
+        opusFile.tag()->addField("R128_TRACK_GAIN", "0", true);
+        opusFile.tag()->addField("R128_ALBUM_GAIN", "256", true);
+        ASSERT_TRUE(opusFile.save());
+    }
+
+    {
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack(source, track));
+
+        track.clearRGInfo();
+        track.removeExtraTag(QStringLiteral("REPLAYGAIN_TRACK_GAIN"));
+        track.removeExtraTag(QStringLiteral("REPLAYGAIN_ALBUM_GAIN"));
+        track.removeExtraTag(QStringLiteral("REPLAYGAIN_TRACK_PEAK"));
+        track.removeExtraTag(QStringLiteral("REPLAYGAIN_ALBUM_PEAK"));
+        track.removeExtraTag(QStringLiteral("R128_TRACK_GAIN"));
+        track.removeExtraTag(QStringLiteral("R128_ALBUM_GAIN"));
+
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+    }
+
+    {
+        TagLib::Ogg::Opus::File opusFile(localPath.constData());
+        ASSERT_TRUE(opusFile.isValid());
+        ASSERT_TRUE(opusFile.tag());
+
+        const auto& fields = opusFile.tag()->fieldListMap();
+        EXPECT_FALSE(fields.contains("REPLAYGAIN_TRACK_GAIN"));
+        EXPECT_FALSE(fields.contains("REPLAYGAIN_ALBUM_GAIN"));
+        EXPECT_FALSE(fields.contains("REPLAYGAIN_TRACK_PEAK"));
+        EXPECT_FALSE(fields.contains("REPLAYGAIN_ALBUM_PEAK"));
+        EXPECT_FALSE(fields.contains("R128_TRACK_GAIN"));
+        EXPECT_FALSE(fields.contains("R128_ALBUM_GAIN"));
+    }
+
+    {
+        Track rereadTrack{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+        EXPECT_FALSE(rereadTrack.hasTrackGain());
+        EXPECT_FALSE(rereadTrack.hasAlbumGain());
+        EXPECT_FALSE(rereadTrack.hasTrackPeak());
+        EXPECT_FALSE(rereadTrack.hasAlbumPeak());
+    }
+}
+
+TEST_F(TagWriterTest, OpusWriteCanClearHeaderGain)
+{
+    const QString filepath = QStringLiteral(":/audio/audiotest.opus");
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack(source, track));
+
+        track.setExtraProperty(QString::fromLatin1(Constants::OpusHeaderGainQ78), QStringLiteral("0"));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
+    }
+
+    QFile headerFile{file.fileName()};
+    ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
+    const auto headerGain = readOpusHeaderGainQ78(&headerFile);
+    ASSERT_TRUE(headerGain.has_value());
+    EXPECT_EQ(*headerGain, 0);
+
+    Track rereadTrack{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+    EXPECT_FALSE(rereadTrack.hasOpusHeaderGain());
 }
 
 TEST_F(TagWriterTest, WavWrite)

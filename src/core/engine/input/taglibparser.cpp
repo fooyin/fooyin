@@ -67,11 +67,18 @@
 #include <QMimeDatabase>
 #include <QPixmap>
 
+#include <cmath>
+#include <cstring>
+#include <limits>
+#include <optional>
 #include <set>
 
 Q_LOGGING_CATEGORY(TAGLIB, "fy.taglib")
 
 using namespace Qt::StringLiterals;
+
+constexpr auto OpusR128Scale     = 256.0;
+constexpr auto RGReferenceOffset = 5.0;
 
 constexpr auto BufferSize = 1024;
 
@@ -556,6 +563,185 @@ float gainStringToFloat(const TagLib::String& gainString)
     return ok ? gain : Fooyin::Constants::InvalidGain;
 };
 
+std::optional<float> opusR128ToReplayGain(const TagLib::String& gainString)
+{
+    bool ok{false};
+    const int gainQ78 = convertString(gainString).trimmed().toInt(&ok);
+    if(!ok) {
+        return {};
+    }
+
+    return static_cast<float>((static_cast<double>(gainQ78) / OpusR128Scale) + RGReferenceOffset);
+}
+
+std::optional<int16_t> replayGainToOpusR128Q78(float gainDb)
+{
+    if(!std::isfinite(gainDb)) {
+        return {};
+    }
+
+    const auto gainQ78 = std::lround((static_cast<double>(gainDb) - RGReferenceOffset) * OpusR128Scale);
+
+    if(gainQ78 < std::numeric_limits<int16_t>::min() || gainQ78 > std::numeric_limits<int16_t>::max()) {
+        return {};
+    }
+
+    return static_cast<int16_t>(gainQ78);
+}
+
+struct OpusHeadPage
+{
+    QByteArray page;
+    qsizetype packetOffset{0};
+    qsizetype gainOffset{0};
+};
+
+uint32_t oggPageCrc(QByteArray page)
+{
+    page[22] = 0;
+    page[23] = 0;
+    page[24] = 0;
+    page[25] = 0;
+
+    uint32_t crc{0};
+    for(const char byte : std::as_const(page)) {
+        crc ^= static_cast<uint32_t>(static_cast<unsigned char>(byte)) << 24;
+        for(int bit{0}; bit < 8; ++bit) {
+            crc = (crc & 0x80000000) != 0 ? (crc << 1) ^ 0x04C11DB7 : (crc << 1);
+        }
+    }
+
+    return crc;
+}
+
+std::optional<OpusHeadPage> readOpusHeadPage(QIODevice* device)
+{
+    if(!device || !device->isOpen() || !device->isReadable() || device->isSequential()) {
+        return {};
+    }
+
+    const qint64 originalPos = device->pos();
+
+    if(!device->seek(0)) {
+        return {};
+    }
+
+    struct RestorePos
+    {
+        QIODevice* device;
+        qint64 pos;
+
+        ~RestorePos()
+        {
+            if(device) {
+                device->seek(pos);
+            }
+        }
+    };
+
+    const RestorePos restore{.device = device, .pos = originalPos};
+
+    QByteArray header(27, Qt::Uninitialized);
+    if(device->read(header.data(), header.size()) != header.size()) {
+        return {};
+    }
+
+    if(std::memcmp(header.constData(), "OggS", 4) != 0) {
+        return {};
+    }
+
+    const int segmentCount = static_cast<unsigned char>(header[26]);
+    QByteArray segmentTable(segmentCount, Qt::Uninitialized);
+    if(device->read(segmentTable.data(), segmentTable.size()) != segmentTable.size()) {
+        return {};
+    }
+
+    int packetSize{0};
+    for(const char laceValue : std::as_const(segmentTable)) {
+        packetSize += static_cast<unsigned char>(laceValue);
+    }
+
+    const auto packetOffset = header.size() + segmentTable.size();
+    if(packetSize < 19) {
+        return {};
+    }
+
+    QByteArray page(packetOffset + packetSize, Qt::Uninitialized);
+    std::memcpy(page.data(), header.constData(), static_cast<size_t>(header.size()));
+    std::memcpy(page.data() + header.size(), segmentTable.constData(), static_cast<size_t>(segmentTable.size()));
+
+    if(device->read(page.data() + packetOffset, packetSize) != packetSize) {
+        return {};
+    }
+
+    const auto storedCrc = static_cast<uint32_t>(static_cast<unsigned char>(page[22]))
+                         | (static_cast<uint32_t>(static_cast<unsigned char>(page[23])) << 8)
+                         | (static_cast<uint32_t>(static_cast<unsigned char>(page[24])) << 16)
+                         | (static_cast<uint32_t>(static_cast<unsigned char>(page[25])) << 24);
+    if(oggPageCrc(page) != storedCrc) {
+        return {};
+    }
+
+    if(std::memcmp(page.constData() + packetOffset, "OpusHead", 8) != 0) {
+        return {};
+    }
+
+    return OpusHeadPage{
+        .page         = std::move(page),
+        .packetOffset = packetOffset,
+        .gainOffset   = packetOffset + 16,
+    };
+}
+} // namespace
+
+namespace Fooyin {
+std::optional<int16_t> readOpusHeaderGainQ78(QIODevice* device)
+{
+    const auto page = readOpusHeadPage(device);
+    if(!page.has_value()) {
+        return {};
+    }
+
+    const auto gainLo = static_cast<unsigned char>(page->page[page->gainOffset]);
+    const auto gainHi = static_cast<unsigned char>(page->page[page->gainOffset + 1]);
+    const auto gain   = static_cast<uint16_t>(gainLo | (gainHi << 8));
+    return static_cast<int16_t>(gain);
+}
+
+bool writeOpusHeaderGainQ78(QIODevice* device, int16_t gain)
+{
+    if(!device || !device->isOpen() || !device->isWritable() || device->isSequential()) {
+        return false;
+    }
+
+    const auto page = readOpusHeadPage(device);
+    if(!page.has_value()) {
+        return false;
+    }
+
+    QByteArray updatedPage            = page->page;
+    updatedPage[page->gainOffset]     = static_cast<char>(gain & 0xFF);
+    updatedPage[page->gainOffset + 1] = static_cast<char>((static_cast<uint16_t>(gain) >> 8) & 0xFF);
+
+    const uint32_t crc = oggPageCrc(updatedPage);
+    updatedPage[22]    = static_cast<char>(crc & 0xFF);
+    updatedPage[23]    = static_cast<char>((crc >> 8) & 0xFF);
+    updatedPage[24]    = static_cast<char>((crc >> 16) & 0xFF);
+    updatedPage[25]    = static_cast<char>((crc >> 24) & 0xFF);
+
+    if(!device->seek(0) || device->write(updatedPage.constData(), updatedPage.size()) != updatedPage.size()) {
+        return false;
+    }
+
+    if(auto* file = qobject_cast<QFile*>(device)) {
+        return file->flush();
+    }
+
+    return true;
+}
+} // namespace Fooyin
+
+namespace {
 QString codecForMime(const QString& mimeType)
 {
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
@@ -1783,6 +1969,37 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
     }
 }
 
+void readOpusReplayGain(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& track)
+{
+    if(xiphTags->isEmpty()) {
+        return;
+    }
+
+    const TagLib::Ogg::FieldListMap& fields = xiphTags->fieldListMap();
+    track.setRGTrackGain(Fooyin::Constants::InvalidGain);
+    track.setRGAlbumGain(Fooyin::Constants::InvalidGain);
+    track.removeExtraTag(u"R128_TRACK_GAIN"_s);
+    track.removeExtraTag(u"R128_ALBUM_GAIN"_s);
+
+    if(fields.contains("R128_TRACK_GAIN")) {
+        const TagLib::StringList& gains = fields["R128_TRACK_GAIN"];
+        if(!gains.isEmpty()) {
+            if(const auto gain = opusR128ToReplayGain(gains.front()); gain.has_value()) {
+                track.setRGTrackGain(*gain);
+            }
+        }
+    }
+
+    if(fields.contains("R128_ALBUM_GAIN")) {
+        const TagLib::StringList& gains = fields["R128_ALBUM_GAIN"];
+        if(!gains.isEmpty()) {
+            if(const auto gain = opusR128ToReplayGain(gains.front()); gain.has_value()) {
+                track.setRGAlbumGain(*gain);
+            }
+        }
+    }
+}
+
 QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, Fooyin::Track::Cover cover)
 {
     if(pictures.isEmpty()) {
@@ -1859,6 +2076,50 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
         }
         else {
             xiphTags->addField("FMPS_PLAYCOUNT", convertString(QString::number(track.playCount())));
+        }
+    }
+}
+
+void writeOpusReplayGain(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& track,
+                         Fooyin::AudioReader::WriteOptions options)
+{
+    if(!(options & Fooyin::AudioReader::Metadata)) {
+        return;
+    }
+
+    using namespace Fooyin::Tag::ReplayGain;
+
+    const auto removeField = [xiphTags](QStringView fieldName) {
+        QStringList fieldsToRemove;
+        const auto& fields = xiphTags->fieldListMap();
+
+        for(const auto& field : fields) {
+            if(convertString(field.first).compare(fieldName, Qt::CaseInsensitive) == 0) {
+                fieldsToRemove.emplace_back(convertString(field.first));
+            }
+        }
+
+        for(const QString& field : fieldsToRemove) {
+            xiphTags->removeFields(convertString(field));
+        }
+    };
+
+    removeField(QString::fromLatin1(TrackGain));
+    removeField(QString::fromLatin1(TrackGainAlt));
+    removeField(QString::fromLatin1(AlbumGain));
+    removeField(QString::fromLatin1(AlbumGainAlt));
+    removeField(u"R128_TRACK_GAIN"_s);
+    removeField(u"R128_ALBUM_GAIN"_s);
+
+    if(track.hasTrackGain()) {
+        if(const auto gainQ78 = replayGainToOpusR128Q78(track.rgTrackGain()); gainQ78.has_value()) {
+            xiphTags->addField("R128_TRACK_GAIN", convertString(QString::number(*gainQ78)), true);
+        }
+    }
+
+    if(track.hasAlbumGain()) {
+        if(const auto gainQ78 = replayGainToOpusR128Q78(track.rgAlbumGain()); gainQ78.has_value()) {
+            xiphTags->addField("R128_ALBUM_GAIN", convertString(QString::number(*gainQ78)), true);
         }
     }
 }
@@ -2553,8 +2814,14 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             readProperties(file);
             track.setEncoding(u"Lossy"_s);
 
+            if(const auto headerGain = readOpusHeaderGainQ78(source.device);
+               headerGain.has_value() && *headerGain != 0) {
+                track.setOpusHeaderGainQ78(*headerGain);
+            }
+
             if(file.tag()) {
                 readXiphComment(file.tag(), track);
+                readOpusReplayGain(file.tag(), track);
                 track.setTagTypes({u"XiphComment"_s});
             }
         }
@@ -2920,10 +3187,18 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
             writeProperties(file);
             if(file.tag()) {
                 writeXiphComment(file.tag(), track, options);
+                writeOpusReplayGain(file.tag(), track, options);
             }
             else {
                 logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no Xiph comment block"_s);
                 failureLogged = true;
+            }
+
+            if(const auto headerGain = track.opusHeaderGainQ78(); headerGain.has_value()) {
+                if(!writeOpusHeaderGainQ78(source.device, *headerGain)) {
+                    logWriteFailure(u"write opus header gain"_s, source.filepath, mimeType, u"failed"_s);
+                    failureLogged = true;
+                }
             }
 
             success = failureLogged

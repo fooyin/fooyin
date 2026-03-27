@@ -23,9 +23,11 @@
 #include "replaygainmodel.h"
 #include "replaygainview.h"
 
+#include <core/internalcoresettings.h>
 #include <core/library/libraryutils.h>
 #include <core/library/musiclibrary.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QHeaderView>
 #include <QVBoxLayout>
@@ -35,7 +37,18 @@ using namespace Qt::StringLiterals;
 namespace {
 void mergeTracks(Fooyin::TrackList& destination, const Fooyin::TrackList& source)
 {
-    updateCommonTracks(destination, source, Fooyin::Utils::CommonOperation::Update);
+    for(const Fooyin::Track& track : source) {
+        const auto trackIt = std::ranges::find_if(destination, [&track](const Fooyin::Track& destinationTrack) {
+            return destinationTrack.sameIdentityAs(track);
+        });
+
+        if(trackIt != destination.end()) {
+            *trackIt = track;
+        }
+        else {
+            destination.emplace_back(track);
+        }
+    }
 }
 
 int replayGainColumnWidth(const Fooyin::ReplayGainView* view, const QString& headerText, const QString& sampleText)
@@ -47,11 +60,14 @@ int replayGainColumnWidth(const Fooyin::ReplayGainView* view, const QString& hea
 } // namespace
 
 namespace Fooyin {
-ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, bool readOnly, QWidget* parent)
+ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, bool readOnly,
+                                   SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_library{library}
+    , m_settings{settings}
     , m_view{new ReplayGainView(this)}
     , m_model{new ReplayGainModel(readOnly, this)}
+    , m_opusWriteMode{static_cast<OpusRGWriteMode>(m_settings->value<Settings::Core::Internal::OpusHeaderWriteMode>())}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});
@@ -82,8 +98,14 @@ void ReplayGainWidget::apply()
     commitPendingChanges();
 
     if(!m_pendingTracks.empty()) {
+        TrackList tracksToWrite;
+        tracksToWrite.reserve(m_pendingTracks.size());
+        for(const Track& track : std::as_const(m_pendingTracks)) {
+            tracksToWrite.emplace_back(prepareOpusRGWriteTrack(track, m_opusWriteMode));
+        }
+
         emit tracksChanged(m_pendingTracks);
-        m_library->writeTrackMetadata(m_pendingTracks);
+        m_library->writeTrackMetadata(tracksToWrite);
         m_pendingTracks.clear();
     }
 }

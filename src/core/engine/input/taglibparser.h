@@ -23,7 +23,13 @@
 
 #include <core/engine/audioinput.h>
 
+#include <cstdint>
+#include <optional>
+
 namespace Fooyin {
+[[nodiscard]] FYCORE_EXPORT std::optional<int16_t> readOpusHeaderGainQ78(QIODevice* device);
+[[nodiscard]] FYCORE_EXPORT bool writeOpusHeaderGainQ78(QIODevice* device, int16_t gain);
+
 class FYCORE_EXPORT TagLibReader : public AudioReader
 {
 public:

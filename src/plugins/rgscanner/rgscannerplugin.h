@@ -23,6 +23,8 @@
 #include <core/plugins/plugin.h>
 #include <gui/plugins/guiplugin.h>
 
+#include "rgscanresults.h"
+
 class QDialog;
 
 namespace Fooyin::RGScanner {
@@ -40,12 +42,6 @@ public:
     void initialise(const GuiPluginContext& context) override;
 
 private:
-    enum class RGScanType : uint8_t
-    {
-        Track = 0,
-        SingleAlbum,
-        Album
-    };
     void calculateReplayGain(RGScanType type);
     void setupReplayGainMenu();
     static QDialog* createRemoveDialog();

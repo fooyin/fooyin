@@ -357,17 +357,17 @@ std::optional<ScriptRegistry::FuncRet> trackMetadataValue(const VariableKind kin
         case VariableKind::Subsong:
             return track.subsong();
         case VariableKind::RGTrackGain:
-            return formatGain(track.rgTrackGain());
+            return formatGain(track.effectiveRGTrackGain());
         case VariableKind::RGTrackPeak:
-            return track.rgTrackPeak();
+            return track.effectiveRGTrackPeak();
         case VariableKind::RGTrackPeakDB:
-            return formatPeak(track.rgTrackPeak());
+            return formatPeak(track.effectiveRGTrackPeak());
         case VariableKind::RGAlbumGain:
-            return formatGain(track.rgAlbumGain());
+            return formatGain(track.effectiveRGAlbumGain());
         case VariableKind::RGAlbumPeak:
-            return track.rgAlbumPeak();
+            return track.effectiveRGAlbumPeak();
         case VariableKind::RGAlbumPeakDB:
-            return formatPeak(track.rgAlbumPeak());
+            return formatPeak(track.effectiveRGAlbumPeak());
         default:
             return {};
     }

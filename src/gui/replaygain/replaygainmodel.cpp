@@ -81,7 +81,33 @@ TrackList ReplayGainModel::applyChanges()
 
     for(auto& item : m_nodes | std::views::values) {
         if(item.applyChanges()) {
-            tracks.emplace_back(item.track());
+            const Track changedTrack = item.track();
+            auto trackIt             = std::ranges::find_if(
+                tracks, [&changedTrack](const Track& track) { return track.sameIdentityAs(changedTrack); });
+
+            if(trackIt == tracks.end()) {
+                tracks.emplace_back(changedTrack);
+                trackIt = std::prev(tracks.end());
+            }
+
+            switch(item.type()) {
+                case ReplayGainItem::TrackGain:
+                    trackIt->setRGTrackGain(changedTrack.rgTrackGain());
+                    break;
+                case ReplayGainItem::TrackPeak:
+                    trackIt->setRGTrackPeak(changedTrack.rgTrackPeak());
+                    break;
+                case ReplayGainItem::AlbumGain:
+                    trackIt->setRGAlbumGain(changedTrack.rgAlbumGain());
+                    break;
+                case ReplayGainItem::AlbumPeak:
+                    trackIt->setRGAlbumPeak(changedTrack.rgAlbumPeak());
+                    break;
+                case ReplayGainItem::Header:
+                case ReplayGainItem::Entry:
+                    *trackIt = changedTrack;
+                    break;
+            }
         }
     }
 

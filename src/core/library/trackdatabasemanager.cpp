@@ -141,6 +141,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
             if(m_audioLoader->writeTrackMetadata(updatedTrack, options)) {
                 const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+                updatedTrack.normaliseExtraProperties();
             }
             else {
                 qCWarning(TRK_DBMAN) << "Failed to write metadata to file:" << updatedTrack.filepath();
@@ -200,6 +201,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader
             const QDateTime modifiedTime   = QFileInfo{updatedTrack.filepath()}.lastModified();
             const uint64_t newModifiedTime = modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0;
             updatedTrack.setModifiedTime(newModifiedTime);
+            updatedTrack.normaliseExtraProperties();
             needsTrackUpdate = newModifiedTime != track.modifiedTime();
         }
         if(success && (!needsTrackUpdate || m_trackDatabase.updateTrack(updatedTrack))

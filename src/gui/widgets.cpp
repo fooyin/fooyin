@@ -79,7 +79,6 @@
 #include "settings/widgets/statuswidgetpage.h"
 #include "splitters/splitterwidget.h"
 #include "splitters/tabstackwidget.h"
-#include "statusevent.h"
 #include "widgets/coverwidget.h"
 #include "widgets/dummy.h"
 #include "widgets/spacer.h"
@@ -324,7 +323,7 @@ void Widgets::registerPropertiesTabs()
         const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {
             return !track.hasCue() && !track.isInArchive() && m_core->audioLoader()->canWriteMetadata(track);
         });
-        return new ReplayGainWidget(m_core->library(), tracks, !canWrite, m_window);
+        return new ReplayGainWidget(m_core->library(), tracks, !canWrite, m_settings, m_window);
     });
     m_gui->propertiesDialog()->addTab(tr("Artwork"), [this](const TrackList& tracks) {
         const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {

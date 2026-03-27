@@ -13,17 +13,21 @@ create_fooyin_plugin_internal(
             ${FFMPEG_LIBRARIES}
     SOURCES ffmpegscanner.cpp
             ffmpegscanner.h
+            opusheadergaindialog.cpp
+            opusheadergaindialog.h
+            opusreplaygainutils.cpp
+            opusreplaygainutils.h
             rgscanner.cpp
             rgscanner.h
-        rgscannerdefs.h
+            rgscannerdefs.h
             rgscannerpage.cpp
             rgscannerpage.h
             rgscannerplugin.cpp
             rgscannerplugin.h
-        rgscanresults.cpp
-        rgscanresults.h
-        rgscanresultsmodel.cpp
-        rgscanresultsmodel.h
+            rgscanresults.cpp
+            rgscanresults.h
+            rgscanresultsmodel.cpp
+            rgscanresultsmodel.h
 )
 
 target_include_directories(rgscanner PRIVATE ${FFMPEG_INCLUDE_DIRS})
@@ -33,4 +37,3 @@ if(HAVE_EBUR128)
     target_sources(rgscanner PRIVATE ebur128scanner.cpp ebur128scanner.h)
     target_compile_definitions(rgscanner PRIVATE HAVE_EBUR128)
 endif()
-
