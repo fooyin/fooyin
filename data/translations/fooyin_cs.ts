@@ -319,22 +319,22 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation>Seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="153"/>
         <source>Number of tracks in the list</source>
-        <translation>Počet skladeb v playlistu</translation>
+        <translation>Počet skladeb v seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="154"/>
         <source>Combined duration of the track list</source>
-        <translation>Celková délka playlistu</translation>
+        <translation>Celková délka seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <source>Alias for total playlist duration</source>
-        <translation>Alias pro celkovou délku playlistu</translation>
+        <translation>Alias pro celkovou délku seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="156"/>
@@ -350,12 +350,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="156"/>
         <source>Elapsed time within the active playlist</source>
-        <translation>Uplynulý čas v přehrávaném playlistu ( [hh:]mm:ss )</translation>
+        <translation>Uplynulý čas v přehrávaném seznamu skladeb ( [hh:]mm:ss )</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Unique genres across the track list</source>
-        <translation>Unikátní žánry v playlistu</translation>
+        <translation>Unikátní žánry v seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
@@ -1529,18 +1529,18 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="59"/>
         <source>Edit Autoplaylist</source>
-        <translation>Upravit autoplaylist</translation>
+        <translation>Upravit dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="59"/>
         <source>Create New Autoplaylist</source>
-        <translation>Vytvořit nový autoplaylist</translation>
+        <translation>Vytvořit dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates. 
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation>Pokud povoleno, autoplaylist je při každé změně znovu seřazen podle svého vzoru řazení.
+        <translation>Pokud povoleno, dynamický seznam skladeb je při každé změně znovu seřazen podle svého vzoru řazení.
 Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pouze nově přidávané skladby.</translation>
     </message>
     <message>
@@ -2049,12 +2049,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="195"/>
         <source>Add to &amp;current playlist</source>
-        <translation>Přidat do &amp;vybraného playlistu</translation>
+        <translation>Přidat do &amp;vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="196"/>
         <source>Add to &amp;active playlist</source>
-        <translation>Přidat do &amp;přehrávaného playlistu</translation>
+        <translation>Přidat do &amp;přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="199"/>
@@ -2089,22 +2089,22 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="266"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation>Přidat vybrané skladby do vybraného playlistu</translation>
+        <translation>Přidat vybrané skladby do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="273"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation>Přidat vybrané skladby do přehrávaného playlistu</translation>
+        <translation>Přidat vybrané skladby do přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="280"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation>Nahradit obsah vybraného playlistu vybranými skladbami</translation>
+        <translation>Nahradit obsah vybraného seznamu skladeb vybranými skladbami</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="287"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation>Vytvořit z vybraných skladeb nový playlist</translation>
+        <translation>Vytvořit z vybraných skladeb nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="293"/>
@@ -2139,12 +2139,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="197"/>
         <source>&amp;Replace current playlist</source>
-        <translation>Nah&amp;radit vybraný playlist</translation>
+        <translation>Nah&amp;radit vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="198"/>
         <source>Create &amp;new playlist</source>
-        <translation>Vytvořit &amp;nový playlist</translation>
+        <translation>Vytvořit &amp;nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
@@ -2228,7 +2228,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="51"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation>&quot;Nahradit vybraný playlist&quot; a &quot;Vytvořit nový playlist&quot; ihned spustí přehrávání.</translation>
+        <translation>&quot;Nahradit vybraný seznam skladeb&quot; a &quot;Vytvořit nový seznam skladeb&quot; ihned spustí přehrávání.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
@@ -2275,25 +2275,25 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="95"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="104"/>
         <source>Add to current playlist</source>
-        <translation>Přidat do vybraného playlistu</translation>
+        <translation>Přidat do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="96"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="105"/>
         <source>Add to active playlist</source>
-        <translation>Přidat do přehrávaného playlistu</translation>
+        <translation>Přidat do přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="97"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
         <source>Replace current playlist</source>
-        <translation>Nahradit vybraný playlist</translation>
+        <translation>Nahradit vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
         <source>Create new playlist</source>
-        <translation>Vytvořit nový playlist</translation>
+        <translation>Vytvořit nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="99"/>
@@ -2553,7 +2553,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="44"/>
         <source>Search the current playlist</source>
-        <translation>Vyhledat ve vybraném playlistu</translation>
+        <translation>Vyhledat ve vybraném seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="51"/>
@@ -3136,7 +3136,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="49"/>
         <source>Add the specified files to the current playlist</source>
-        <translation>Přidat vybrané soubory do vybraného playlistu</translation>
+        <translation>Přidat vybrané soubory do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="55"/>
@@ -3146,37 +3146,37 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="56"/>
         <source>Add the contents of the specified directory to the current playlist</source>
-        <translation>Přidat obsah vybrané složky do vybraného playlistu</translation>
+        <translation>Přidat obsah vybrané složky do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="64"/>
         <source>&amp;New playlist</source>
-        <translation>&amp;Nový playlist</translation>
+        <translation>&amp;Nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="65"/>
         <source>Create a new empty playlist</source>
-        <translation>Vytvořit nový prázdný playlist</translation>
+        <translation>Vytvořit nový prázdný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="72"/>
         <source>&amp;New autoplaylist</source>
-        <translation>Nový &amp;autoplaylist</translation>
+        <translation>Nový &amp;dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="73"/>
         <source>Create a new autoplaylist</source>
-        <translation>Vytvořit nový autoplaylist</translation>
+        <translation>Vytvořit nový dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="80"/>
         <source>&amp;Load playlist…</source>
-        <translation>Načíst p&amp;laylist…</translation>
+        <translation>Načíst seznam sk&amp;ladeb…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="87"/>
         <source>&amp;Save playlist…</source>
-        <translation>Uložit playli&amp;st…</translation>
+        <translation>&amp;Uložit seznam skladeb…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="103"/>
@@ -3191,7 +3191,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="81"/>
         <source>Load the playlist from the specified file</source>
-        <translation>Načíst playlist z vybraného souboru</translation>
+        <translation>Načíst seznam skladeb z vybraného souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="46"/>
@@ -3201,17 +3201,17 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="88"/>
         <source>Save the current playlist to the specified file</source>
-        <translation>Uložit vybraný playlist do souboru</translation>
+        <translation>Uložit vybraný seznam skladeb do souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
         <source>Save &amp;all playlists…</source>
-        <translation>Uložit &amp;všechny playlisty…</translation>
+        <translation>Uložit &amp;všechny seznamy skladeb…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="95"/>
         <source>Save all playlists to the specified location</source>
-        <translation>Uložit všechny playlisty do vybraného cílového umístění</translation>
+        <translation>Uložit všechny seznamy skladeb do vybraného cílového umístění</translation>
     </message>
 </context>
 <context>
@@ -3501,7 +3501,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="59"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation>&quot;Nahradit vybraný playlist&quot; a &quot;Vytvořit nový playlist&quot; ihned spustí přehrávání.</translation>
+        <translation>&quot;Nahradit vybraný seznam skladeb&quot; a &quot;Vytvořit nový seznam skladeb&quot; ihned spustí přehrávání.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="61"/>
@@ -3521,12 +3521,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="71"/>
         <source>Filter Selection Playlist</source>
-        <translation>Playlist s výsledky filtrů</translation>
+        <translation>Seznam skladeb s výsledky filtrů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="74"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation>Pokud jde o přehrávaný playlist, uchovat ho i po změně výběru</translation>
+        <translation>Pokud jde o přehrávaný seznam skladeb, uchovat ho i po změně výběru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="79"/>
@@ -3588,25 +3588,25 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="148"/>
         <source>Add to current playlist</source>
-        <translation>Přidat do vybraného playlistu</translation>
+        <translation>Přidat do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="140"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="149"/>
         <source>Add to active playlist</source>
-        <translation>Přidat do přehrávaného playlistu</translation>
+        <translation>Přidat do přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="141"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="150"/>
         <source>Replace current playlist</source>
-        <translation>Nahradit vybraný playlist</translation>
+        <translation>Nahradit vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="151"/>
         <source>Create new playlist</source>
-        <translation>Vytvořit nový playlist</translation>
+        <translation>Vytvořit nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="143"/>
@@ -4055,7 +4055,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="686"/>
         <source>Remove Playlist</source>
-        <translation>Odebrat playlist</translation>
+        <translation>Odstranit seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="688"/>
@@ -4247,17 +4247,17 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
         <source>All Supported Playlists (%1)</source>
-        <translation>Podporované playlisty (%1)</translation>
+        <translation>Podporované seznamy skladeb (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
         <source>Load Playlist</source>
-        <translation>Načíst playlist</translation>
+        <translation>Načíst seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1260"/>
         <source>Save Playlist</source>
-        <translation>Uložit playlist</translation>
+        <translation>Uložit seznam skladeb</translation>
     </message>
 </context>
 <context>
@@ -5196,7 +5196,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation>Odebrat skladby, které nejsou v knihovnách ani v playlistech a zastaralou statistiku přehrávání</translation>
+        <translation>Odebrat skladby, které nejsou v knihovnách ani v seznamech skladeb a zastaralou statistiku přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="61"/>
@@ -5377,7 +5377,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="95"/>
         <source>Sort tracks added to playlists from library viewers by</source>
-        <translation>Seřadit skladby přidané do playlistů z prohlížečů knihovny podle</translation>
+        <translation>Seřadit skladby přidané do seznamů skladeb z prohlížečů knihovny podle</translation>
     </message>
 </context>
 <context>
@@ -5463,7 +5463,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="62"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation>&quot;Nahradit vybraný playlist&quot; a &quot;Vytvořit nový playlist&quot; ihned spustí přehrávání.</translation>
+        <translation>&quot;Nahradit vybraný seznam skladeb&quot; a &quot;Vytvořit nový seznam skladeb&quot; ihned spustí přehrávání.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="64"/>
@@ -5483,12 +5483,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="74"/>
         <source>Library Selection Playlist</source>
-        <translation>Playlist výběru knihovny</translation>
+        <translation>Seznam skladeb výběru knihovny</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="77"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation>Pokud jde o přehrávaný playlist, uchovat ho i po změně výběru</translation>
+        <translation>Pokud jde o přehrávaný seznam skladeb, uchovat ho i po změně výběru</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="82"/>
@@ -5540,25 +5540,25 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="143"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="152"/>
         <source>Add to current playlist</source>
-        <translation>Přidat do vybraného playlistu</translation>
+        <translation>Přidat do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="144"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="153"/>
         <source>Add to active playlist</source>
-        <translation>Přidat do přehrávaného playlistu</translation>
+        <translation>Přidat do přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="145"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="154"/>
         <source>Replace current playlist</source>
-        <translation>Nahradit vybraný playlist</translation>
+        <translation>Nahradit vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="155"/>
         <source>Create new playlist</source>
-        <translation>Vytvořit nový playlist</translation>
+        <translation>Vytvořit nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="147"/>
@@ -6820,7 +6820,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Repeat &amp;playlist</source>
-        <translation>Opakovat &amp;playlist</translation>
+        <translation>O&amp;pakovat seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
@@ -6865,12 +6865,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="86"/>
         <source>Start playing the next track in the current playlist</source>
-        <translation>Přejít na další skladbu aktuálního playlistu</translation>
+        <translation>Přejít na další skladbu aktuálního seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="92"/>
         <source>Start playing the previous track in the current playlist</source>
-        <translation>Přejít na předchozí skladbu aktuálního playlistu</translation>
+        <translation>Přejít na předchozí skladbu aktuálního seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="106"/>
@@ -6895,7 +6895,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="150"/>
         <source>Set playback order to shuffle tracks in the current playlist</source>
-        <translation>Promíchat skladby v aktuálním playlistu</translation>
+        <translation>Promíchat skladby v aktuálním seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="132"/>
@@ -6905,17 +6905,17 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="138"/>
         <source>Set playback order to repeat the current playlist</source>
-        <translation>Nastavit opakování aktuálního playlistu</translation>
+        <translation>Nastavit opakování aktuálního seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="144"/>
         <source>Set playback order to shuffle albums in the current playlist</source>
-        <translation>Promíchat alba v aktuálním playlistu</translation>
+        <translation>Promíchat alba v aktuálním seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="156"/>
         <source>Set playback order to play a random track in the current playlist</source>
-        <translation>Nastavit přehrávání náhodné skladby v aktuálním playlistu</translation>
+        <translation>Nastavit přehrávání náhodné skladby v aktuálním seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="175"/>
@@ -7016,7 +7016,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="85"/>
         <source>Save/restore active playlist state</source>
-        <translation>Uložit / obnovit stav přehrávaného playlistu</translation>
+        <translation>Uložit / obnovit stav přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="89"/>
@@ -7046,12 +7046,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="96"/>
         <source>Stop playback if the active playlist is deleted</source>
-        <translation>Zastavit přehrávání pokud je přehrávaný playlist smazán</translation>
+        <translation>Zastavit přehrávání pokud je přehrávaný seznam skladeb smazán</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="106"/>
         <source>Save active playlist state on exit and restore it on next startup</source>
-        <translation>Při ukončení uložit stav přehrávaného playlistu a obnovit ho při příštím spuštění</translation>
+        <translation>Při ukončení uložit stav přehrávaného seznamu skladeb a obnovit ho při příštím spuštění</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="107"/>
@@ -7076,7 +7076,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="114"/>
         <source>If the current track in a playlist is unavailable, silently continue to the next track</source>
-        <translation>Ignorovat a přeskočit nedostupné skladby playlistu a přehrát ty dostupné</translation>
+        <translation>Ignorovat a přeskočit nedostupné skladby seznamu skladeb a přehrát ty dostupné</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="118"/>
@@ -7147,7 +7147,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="62"/>
         <source>Playlist Switcher</source>
-        <translation>Přepínač playlistů</translation>
+        <translation>Přepínač seznamů skladeb</translation>
     </message>
 </context>
 <context>
@@ -7179,7 +7179,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="132"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation>Seznam skladeb</translation>
     </message>
 </context>
 <context>
@@ -7323,7 +7323,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="107"/>
         <source>Repeat playlist</source>
-        <translation>Opakovat playlist</translation>
+        <translation>Opakovat seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="108"/>
@@ -7358,7 +7358,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="80"/>
         <source>Playlist Controls</source>
-        <translation>Tlačítka playlistu</translation>
+        <translation>Tlačítka seznamu skladeb</translation>
     </message>
 </context>
 <context>
@@ -7371,7 +7371,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="362"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation>Seznam skladeb</translation>
     </message>
 </context>
 <context>
@@ -7409,7 +7409,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="102"/>
         <source>Delete playlists on middle click</source>
-        <translation>Po kliknutí prostředním tlačítkem smazat playlist</translation>
+        <translation>Smazat seznam skladeb kliknutím prostředním tlačítkem</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="105"/>
@@ -7434,7 +7434,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="117"/>
         <source>Number of tracks used to preload the playlist before loading the rest of the playlist</source>
-        <translation>Počet skladeb které budou přednačteny než se začne načítat zbytek playlistu</translation>
+        <translation>Počet skladeb které budou přednačteny než se začne načítat zbytek seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
@@ -7454,7 +7454,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="148"/>
         <source>Skip unavailable tracks when loading playlists</source>
-        <translation>Při načítání playlistu přeskočit nedostupné skladby</translation>
+        <translation>Při načítání seznamu skladeb přeskočit nedostupné skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="150"/>
@@ -7484,12 +7484,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="170"/>
         <source>Export and synchronise playlists in the specified format and location</source>
-        <translation>Exportovat a synchronizovat playlisty v daném umístění a daném formátu</translation>
+        <translation>Exportovat a synchronizovat seznamy skladeb v daném umístění a formátu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="208"/>
         <source>Playlist Tabs</source>
-        <translation>Karty playlistů</translation>
+        <translation>Karty seznamů skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="248"/>
@@ -7567,7 +7567,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.h" line="91"/>
         <source>Loading playlist…</source>
-        <translation>Načítání playlistu…</translation>
+        <translation>Načítání seznamu skladeb…</translation>
     </message>
 </context>
 <context>
@@ -7602,17 +7602,17 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="152"/>
         <source>Create playlist</source>
-        <translation>Vytvořit playlist</translation>
+        <translation>Vytvořit seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="155"/>
         <source>Create autoplaylist</source>
-        <translation>Vytvořit autoplaylist</translation>
+        <translation>Vytvořit dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="158"/>
         <source>Edit autoplaylist</source>
-        <translation>Upravit autoplaylist</translation>
+        <translation>Upravit dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="182"/>
@@ -7622,7 +7622,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="313"/>
         <source>Remove the selected playlists</source>
-        <translation>Odstranit vybrané playlisty</translation>
+        <translation>Odstranit vybrané seznamy skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="316"/>
@@ -7637,12 +7637,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="320"/>
         <source>Remove the selected playlists and groups</source>
-        <translation>Odstranit vybrané playlisty a skupiny</translation>
+        <translation>Odstranit vybrané seznamy skladeb a skupiny</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="312"/>
         <source>Rename the selected playlist</source>
-        <translation>Přejmenovat vybraný playlist</translation>
+        <translation>Přejmenovat vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="193"/>
@@ -7653,7 +7653,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="183"/>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="277"/>
         <source>Playlist Organiser</source>
-        <translation>Organizátor playlistů</translation>
+        <translation>Organizátor seznamů skladeb</translation>
     </message>
 </context>
 <context>
@@ -7667,7 +7667,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="501"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation>Seznam skladeb</translation>
     </message>
 </context>
 <context>
@@ -7796,37 +7796,37 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="289"/>
         <source>Add new playlist</source>
-        <translation>Přidat nový playlist</translation>
+        <translation>Přidat nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="296"/>
         <source>Add new autoplaylist</source>
-        <translation>Přidat nový autoplaylist</translation>
+        <translation>Přidat nový dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="315"/>
         <source>Edit autoplaylist</source>
-        <translation>Upravit autoplaylist</translation>
+        <translation>Upravit dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="325"/>
         <source>Rename playlist</source>
-        <translation>Přejmenovat playlist</translation>
+        <translation>Přejmenovat seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="325"/>
         <source>Rename autoplaylist</source>
-        <translation>Přejmenovat autoplaylist</translation>
+        <translation>Přejmenovat dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="361"/>
         <source>Remove playlist</source>
-        <translation>Odstranit playlist</translation>
+        <translation>Odstranit seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="361"/>
         <source>Remove autoplaylist</source>
-        <translation>Odstranit autoplaylist</translation>
+        <translation>Odstranit dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="338"/>
@@ -7841,12 +7841,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="556"/>
         <source>Add playlist</source>
-        <translation>Přidat playlist</translation>
+        <translation>Přidat seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="564"/>
         <source>Clear playlist</source>
-        <translation>Vymazat playlist</translation>
+        <translation>Vymazat seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="385"/>
@@ -7857,7 +7857,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="152"/>
         <source>Playlist Tabs</source>
-        <translation>Karty playlistů</translation>
+        <translation>Karty seznamů skladeb</translation>
     </message>
 </context>
 <context>
@@ -7865,7 +7865,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistuicontroller.cpp" line="44"/>
         <source>Playlists</source>
-        <translation>Playlisty</translation>
+        <translation>Seznamy skladeb</translation>
     </message>
 </context>
 <context>
@@ -7893,7 +7893,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="584"/>
         <source>Select all tracks in the current playlist</source>
-        <translation>Vybrat všechny skladby aktuálního playlistu</translation>
+        <translation>Vybrat všechny skladby aktuálního seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="829"/>
@@ -7929,7 +7929,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="324"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation>Seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="40"/>
@@ -7944,12 +7944,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="124"/>
         <source>Playlist empty</source>
-        <translation>Prázdný playlist</translation>
+        <translation>Prázdný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="129"/>
         <source>Loading playlist…</source>
-        <translation>Načítání playlistu…</translation>
+        <translation>Načítání seznamu skladeb…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="198"/>
@@ -8024,7 +8024,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="342"/>
         <source>Remove all tracks from the playlist except for the selected tracks</source>
-        <translation>Odebrat z playlistu všechny skladby kromě vybraných</translation>
+        <translation>Odebrat ze seznamu skladeb všechny skladby kromě vybraných</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="346"/>
@@ -8034,12 +8034,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="351"/>
         <source>Undo the previous playlist change</source>
-        <translation>Odvolat předchozí změnu playlistu</translation>
+        <translation>Odvolat předchozí změnu seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="362"/>
         <source>Redo the previous playlist change</source>
-        <translation>Znovu provést odvolanou změnu playlistu</translation>
+        <translation>Znovu provést odvolanou změnu seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="375"/>
@@ -8059,12 +8059,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="407"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation>Odstranit všechny skladby aktuálního playlistu</translation>
+        <translation>Odstranit všechny skladby aktuálního seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="416"/>
         <source>Remove the selected tracks from the current playlist</source>
-        <translation>Odstranit vybrané skladby z aktuálního playlistu</translation>
+        <translation>Odstranit vybrané skladby z aktuálního seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="427"/>
@@ -8084,12 +8084,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="450"/>
         <source>Remove duplicate tracks from the playlist</source>
-        <translation>Odebrat z playlistu duplicitní skladby</translation>
+        <translation>Odebrat ze seznamu skladeb duplicitní skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="455"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
-        <translation>Odebrat z playlistu nedostupné (neexistující) skladby</translation>
+        <translation>Odebrat ze seznamu skladeb nedostupné (neexistující) skladby</translation>
     </message>
 </context>
 <context>
@@ -8843,7 +8843,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="55"/>
         <source>Playlist file format</source>
-        <translation>Formát playlistu</translation>
+        <translation>Formát seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="79"/>
@@ -9386,7 +9386,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
         <source>Search Playlist</source>
-        <translation>Hledat v playlistu</translation>
+        <translation>Hledat v seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
@@ -9456,12 +9456,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="72"/>
         <source>Append search string to the playlist name</source>
-        <translation>Přidat hledaný řetězec k názvu playlistu</translation>
+        <translation>Přidat hledaný řetězec k názvu seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
         <source>Switch focus to playlist on successful search</source>
-        <translation>Po úspěšném hledání aktivovat playlist</translation>
+        <translation>Po úspěšném hledání aktivovat seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="74"/>
@@ -9516,7 +9516,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="106"/>
         <source>Playlist name</source>
-        <translation>Název playlistu</translation>
+        <translation>Název seznamu skladeb</translation>
     </message>
 </context>
 <context>
@@ -9556,27 +9556,27 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="440"/>
         <source>Force the creation of a new results playlist</source>
-        <translation>Vynutit vytvoření nového playlistu s výsledky</translation>
+        <translation>Vynutit vytvoření nového seznamu skladeb s výsledky</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="441"/>
         <source>Force search in the current playlist</source>
-        <translation>Vynutit hledání ve vybraném playlistu</translation>
+        <translation>Vynutit hledání ve vybraném seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="441"/>
         <source>Force search in all playlists</source>
-        <translation>Vynutit hledání ve všech playlistech</translation>
+        <translation>Vynutit hledání ve všech seznamech skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="442"/>
         <source>Force new results playlist using the current playlist as the source</source>
-        <translation>Vynutit nový playlist výsledků založený na vybraném playlistu</translation>
+        <translation>Vynutit nový seznam skladeb výsledků založený na vybraném seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="443"/>
         <source>Force new results playlist using all playlists</source>
-        <translation>Vynutit nový playlist výsledků založený na všech playlistech</translation>
+        <translation>Vynutit nový seznam skladeb výsledků založený na všech seznamech skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="443"/>
@@ -9601,12 +9601,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="515"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation>Seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="521"/>
         <source>All Playlists</source>
-        <translation>Všechny playlisty</translation>
+        <translation>Všechny seznamy skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="532"/>
@@ -9690,7 +9690,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="63"/>
         <source>Always replace playlist</source>
-        <translation>Vždy nahradit playlist</translation>
+        <translation>Vždy nahradit seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="66"/>
@@ -9710,17 +9710,17 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="77"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation>Seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="81"/>
         <source>When opening files, always replace the playlist contents with the incoming tracks</source>
-        <translation>Při otevírání souboru vždy nahradit obsah playlistu otevíranými skladbami</translation>
+        <translation>Při otevírání souboru vždy nahradit obsah seznamu skladeb otevíranými skladbami</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="85"/>
         <source>Playlist name</source>
-        <translation>Název playlistu</translation>
+        <translation>Název seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="87"/>
@@ -10065,7 +10065,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="53"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation>Seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="71"/>
@@ -10317,22 +10317,22 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="159"/>
         <source>Add to current playlist</source>
-        <translation>Přidat do vybraného playlistu</translation>
+        <translation>Přidat do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="160"/>
         <source>Add to active playlist</source>
-        <translation>Přidat do přehrávaného playlistu</translation>
+        <translation>Přidat do přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="161"/>
         <source>Replace current playlist</source>
-        <translation>Nahradit vybraný playlist</translation>
+        <translation>Nahradit vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="162"/>
         <source>Create new playlist</source>
-        <translation>Vytvořit nový playlist</translation>
+        <translation>Vytvořit nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="163"/>
@@ -10402,22 +10402,22 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="189"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation>Přidat vybrané skladby do vybraného playlistu</translation>
+        <translation>Přidat vybrané skladby do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="195"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation>Přidat vybrané skladby do přehrávaného playlistu</translation>
+        <translation>Přidat vybrané skladby do přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="201"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation>Nahradit obsah vybraného playlistu vybranými skladbami</translation>
+        <translation>Nahradit obsah vybraného seznamu skladeb vybranými skladbami</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="212"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation>Vytvořit z vybraných skladeb nový playlist</translation>
+        <translation>Vytvořit z vybraných skladeb nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="229"/>
@@ -10540,7 +10540,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="76"/>
         <source>Show the currently playing track in the playlist</source>
-        <translation>V playlistu zobrazit aktuálně přehrávanou skladbu</translation>
+        <translation>V seznamu skladeb zobrazit aktuálně přehrávanou skladbu</translation>
     </message>
 </context>
 <context>
@@ -11050,17 +11050,17 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="134"/>
         <source>Playlist Switcher</source>
-        <translation>Přepínač playlistů</translation>
+        <translation>Přepínač seznamů skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="147"/>
         <source>Playlist Tabs</source>
-        <translation>Karty playlistů</translation>
+        <translation>Karty seznamů skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="153"/>
         <source>Playlist Organiser</source>
-        <translation>Organizátor playlistů</translation>
+        <translation>Organizátor seznamů skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="161"/>
@@ -11100,7 +11100,7 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="196"/>
         <source>Playlist Controls</source>
-        <translation>Tlačítka playlistu</translation>
+        <translation>Tlačítka seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="201"/>
@@ -11126,7 +11126,7 @@ na disku.</translation>
         <location filename="../../src/gui/widgets.cpp" line="232"/>
         <location filename="../../src/gui/widgets.cpp" line="329"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation>Seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="235"/>
