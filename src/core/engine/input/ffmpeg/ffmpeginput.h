@@ -68,6 +68,7 @@ public:
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
 
+    [[nodiscard]] int subsongCount() const override;
     [[nodiscard]] bool init(const AudioSource& source) override;
     [[nodiscard]] bool readTrack(const AudioSource& source, Track& track) override;
     [[nodiscard]] QByteArray readCover(const AudioSource& source, const Track& track, Track::Cover cover) override;

@@ -946,7 +946,8 @@ public:
             m_ioContext.reset();
         }
 
-        m_stream = {};
+        m_stream       = {};
+        m_chapterCount = 0;
     }
 
     bool setup(const AudioSource& source)
@@ -962,12 +963,21 @@ public:
         }
 
         m_stream = Utils::findAudioStream(m_context.get());
-        return m_stream.isValid();
+        if(!m_stream.isValid()) {
+            return false;
+        }
+
+        if(m_context->nb_chapters > 1) {
+            m_chapterCount = static_cast<int>(m_context->nb_chapters);
+        }
+
+        return true;
     }
 
     IOContextPtr m_ioContext;
     FormatContextPtr m_context;
     Stream m_stream;
+    int m_chapterCount{0};
 };
 
 FFmpegReader::FFmpegReader()
@@ -990,6 +1000,11 @@ bool FFmpegReader::canReadCover() const
 bool FFmpegReader::canWriteMetaData() const
 {
     return false;
+}
+
+int FFmpegReader::subsongCount() const
+{
+    return p->m_chapterCount > 1 ? p->m_chapterCount : 1;
 }
 
 bool FFmpegReader::init(const AudioSource& source)
@@ -1062,6 +1077,51 @@ bool FFmpegReader::readTrack(const AudioSource& /*source*/, Track& track)
     AVDictionaryEntry* tag{nullptr};
     while((tag = av_dict_get(p->m_context->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
         parseTag(track, tag);
+    }
+
+    const int subsong = track.subsong();
+    if(p->m_chapterCount > 1 && subsong >= 0 && subsong < p->m_chapterCount) {
+        const AVChapter* chapter = p->m_context->chapters[subsong];
+
+        const uint64_t startMs = av_rescale_q(chapter->start, chapter->time_base, TimeBaseMs);
+        const uint64_t endMs   = av_rescale_q(chapter->end, chapter->time_base, TimeBaseMs);
+
+        // Container title becomes album (e.g. audiobook title)
+        if(!track.title().isEmpty()) {
+            track.setAlbum(track.title());
+        }
+
+        track.setOffset(startMs);
+        track.setDuration(endMs - startMs);
+
+        // Read chapter-level metadata
+        AVDictionaryEntry* chapterTag{nullptr};
+        QString chapterTitle;
+        QString chapterTrackNumber;
+
+        while((chapterTag = av_dict_get(chapter->metadata, "", chapterTag, AV_DICT_IGNORE_SUFFIX))) {
+            if(strcasecmp(chapterTag->key, "title") == 0) {
+                chapterTitle = convertString(chapterTag->value);
+            }
+            else if(strcasecmp(chapterTag->key, "track") == 0 || strcasecmp(chapterTag->key, "part_number") == 0) {
+                chapterTrackNumber = convertString(chapterTag->value);
+            }
+        }
+
+        if(!chapterTitle.isEmpty()) {
+            track.setTitle(chapterTitle);
+        }
+
+        if(!chapterTrackNumber.isEmpty()) {
+            track.setTrackNumber(chapterTrackNumber);
+        }
+        else {
+            track.setTrackNumber(QString::number(subsong + 1));
+        }
+
+        track.setTrackTotal(QString::number(p->m_chapterCount));
+
+        track.setExtraProperty(u"CHAPTER"_s, u"1"_s);
     }
 
     return true;

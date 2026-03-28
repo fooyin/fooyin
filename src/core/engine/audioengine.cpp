@@ -60,6 +60,11 @@
 Q_LOGGING_CATEGORY(ENGINE, "fy.engine")
 
 namespace {
+bool isBoundedSegmentTrack(const Fooyin::Track& track)
+{
+    return track.hasCue() || track.hasExtraProperty(QStringLiteral("CHAPTER"));
+}
+
 constexpr auto BasePrefillDecodeFrames      = 4096;
 constexpr auto MaxPrefillDecodeFrames       = 262144;
 constexpr auto PrefillChunkDurationMs       = 10;
@@ -2000,7 +2005,7 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
 
     const bool pendingBoundaryRenderedGaplessReached
         = m_autoAdvanceState.boundaryPendingUntilAudible && preparedGaplessActive && preparedGaplessReleaseReady;
-    const bool cueBoundaryMode        = m_currentTrack.hasCue();
+    const bool cueBoundaryMode        = isBoundedSegmentTrack(m_currentTrack);
     const bool audibleBoundaryReached = m_currentTrack.duration() == 0
                                      || boundaryAudiblePosMs >= m_currentTrack.duration()
                                      || pendingBoundaryRenderedGaplessReached;
@@ -2200,7 +2205,7 @@ void AudioEngine::updatePosition()
         uint64_t boundaryAudiblePosMs  = output.relativePosMs;
         const bool hasMappedAudiblePos = pipelineStatus.positionIsMapped || output.hasRenderedSegment;
 
-        if(!hasMappedAudiblePos || m_currentTrack.hasCue()) {
+        if(!hasMappedAudiblePos || isBoundedSegmentTrack(m_currentTrack)) {
             uint64_t timelineDelayMs{pipelineDelayMs};
             if(timelineDelayMs > 0) {
                 timelineDelayMs = scaledDelayMs(timelineDelayMs, delayToSourceScale);
@@ -2208,8 +2213,9 @@ void AudioEngine::updatePosition()
 
             const uint64_t estimatedAudiblePosMs
                 = output.trackEndingPosMs > timelineDelayMs ? (output.trackEndingPosMs - timelineDelayMs) : 0;
-            boundaryAudiblePosMs = m_currentTrack.hasCue() ? estimatedAudiblePosMs
-                                                           : std::max(estimatedAudiblePosMs, boundaryAudiblePosMs);
+            boundaryAudiblePosMs = isBoundedSegmentTrack(m_currentTrack)
+                                     ? estimatedAudiblePosMs
+                                     : std::max(estimatedAudiblePosMs, boundaryAudiblePosMs);
         }
 
         handleTrackEndingSignals(stream, output.trackEndingPosMs, output.relativePosMs, boundaryAudiblePosMs,
@@ -2701,7 +2707,7 @@ AudioEngine::TrackEndingResult AudioEngine::checkTrackEnding(const AudioStreamPt
 
     input.positionMs                     = crossfadeUsesAudibleBoundary ? audiblePosMs : relativePosMs;
     input.durationMs                     = m_currentTrack.duration();
-    input.durationBoundaryEnabled        = m_currentTrack.hasCue();
+    input.durationBoundaryEnabled        = isBoundedSegmentTrack(m_currentTrack);
     input.predictiveTimelineHintsEnabled = shouldEnableTimelineTransitionHints(m_currentTrack, m_decoderPlaybackHints);
     input.timelineDelayMs                = crossfadeUsesAudibleBoundary ? 0 : timelineDelayMs;
     input.remainingOutputMs              = remainingOutputMs;
@@ -2914,9 +2920,15 @@ bool AudioEngine::setStreamToTrackOriginForSegmentSwitch(const Track& track, uin
         return true;
     }
 
-    qCWarning(ENGINE) << "Segment switch stream position exceeded target offset; aborting segment switch:"
-                      << "trackOffsetMs=" << track.offset() << "streamPosMs=" << streamPosMs;
-    return false;
+    // The decoder has already read past the next segment's start offset.
+    // This happens naturally for bounded-segment tracks (chapters / CUE) when
+    // the boundary signal is deferred until the audible position catches up.
+    // The existing stream-to-track origin mapping is still valid because we
+    // are on the same continuous stream, so keep it unchanged.
+    qCDebug(ENGINE) << "Segment switch: stream position already past target offset, keeping current origin:"
+                    << "trackOffsetMs=" << track.offset() << "streamPosMs=" << streamPosMs
+                    << "currentOriginMs=" << m_streamToTrackOriginMs;
+    return true;
 }
 
 bool AudioEngine::initDecoder(const Engine::PlaybackItem& item, bool allowPreparedStream)

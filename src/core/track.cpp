@@ -661,7 +661,7 @@ QString Track::uniqueFilepath() const
 {
     QString path{p->filepath};
 
-    if(hasCue()) {
+    if(hasCue() || p->offset > 0) {
         path.append(QString::number(p->offset));
     }
 
