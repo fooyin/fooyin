@@ -5085,7 +5085,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
         <source>Use &apos;Various Artists&apos; for compilations</source>
-        <translation>Pro kompilace použít &apos;Various Artists&apos;</translation>
+        <translation>Pro kompilace použít ‚Various Artists‘</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="146"/>
@@ -7131,7 +7131,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="122"/>
         <source>The percentage of a track that must be listened to before it is counted as &apos;played&apos;</source>
-        <translation>Procento z délky skladby, které musí být odehráno než bude označeno jako &apos;přehraná&apos;</translation>
+        <translation>Procento z délky skladby, které musí být odehráno než bude označena jako ‚přehraná‘</translation>
     </message>
 </context>
 <context>
@@ -7439,7 +7439,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
         <source>Set to &apos;0&apos; to disable preloading.</source>
-        <translation>Pro zrušení přednačítání nastavte &apos;0&apos;.</translation>
+        <translation>Pro zrušení přednačítání nastavte ‚0‘.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="130"/>
