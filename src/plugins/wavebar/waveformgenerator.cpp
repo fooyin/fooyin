@@ -196,6 +196,8 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     m_loadedDecoder.decoder->start();
     m_loadedDecoder.decoder->seek(track.offset());
 
+    const uint64_t trackOffsetMs = track.offset();
+
     while(true) {
         if(!mayRun()) {
             m_loadedDecoder.decoder->stop();
@@ -226,6 +228,31 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
             break;
         }
 
+        buffer = Audio::convert(buffer, m_requiredFormat);
+
+        // Trim any audio that the decoder produced from before the track's
+        // start offset.  This happens when a seek lands on a keyframe/cluster
+        // earlier than the requested position (common for chapters in MKA/M4B).
+        if(trackOffsetMs > 0 && buffer.startTime() < trackOffsetMs) {
+            const uint64_t bufEndMs = buffer.endTime();
+            if(bufEndMs <= trackOffsetMs) {
+                // Entire buffer is before the chapter start – skip it without
+                // counting against the byte budget.
+                continue;
+            }
+
+            // Partial overlap – trim the leading portion.
+            const uint64_t trimMs = trackOffsetMs - buffer.startTime();
+            const int trimFrames  = m_requiredFormat.framesForDuration(trimMs);
+            const auto trimBytes  = static_cast<size_t>(trimFrames * m_requiredFormat.bytesPerFrame());
+            const auto totalBytes = static_cast<size_t>(buffer.byteCount());
+
+            if(trimBytes > 0 && trimBytes < totalBytes) {
+                buffer = AudioBuffer{buffer.constData().subspan(trimBytes, totalBytes - trimBytes), m_requiredFormat,
+                                     trackOffsetMs};
+            }
+        }
+
         const uint64_t decodedBytes = static_cast<uint64_t>(buffer.byteCount());
         if(decodedBytes > std::numeric_limits<uint64_t>::max() - processedBytes) {
             processedBytes = std::numeric_limits<uint64_t>::max();
@@ -234,7 +261,6 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
             processedBytes += decodedBytes;
         }
 
-        buffer = Audio::convert(buffer, m_requiredFormat);
         processBuffer(buffer);
 
         if(render && processedCount++ == updateThreshold) {
