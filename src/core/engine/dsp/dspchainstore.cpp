@@ -166,7 +166,7 @@ std::unique_ptr<DspNode> DspChainStore::createDsp(const QString& id) const
     return m_registry ? m_registry->create(id) : nullptr;
 }
 
-void DspChainStore::setActiveChain(const Engine::DspChains& chain)
+void DspChainStore::setActiveChain(const DspChains& chain)
 {
     m_activeChain = normaliseChain(chain);
     m_liveRevisionByKey.clear();
@@ -177,19 +177,26 @@ void DspChainStore::setActiveChain(const Engine::DspChains& chain)
     }
 }
 
-bool DspChainStore::updateLiveDspSettings(const Engine::DspChainScope scope, uint64_t instanceId,
-                                          const QByteArray& settings, bool persist)
+void DspChainStore::syncActiveChain(const DspChains& chain)
+{
+    m_activeChain = normaliseChain(chain);
+    m_liveRevisionByKey.clear();
+    persistChain(m_activeChain);
+}
+
+bool DspChainStore::updateLiveDspSettings(const DspChainScope scope, uint64_t instanceId, const QByteArray& settings,
+                                          bool persist)
 {
     if(instanceId == 0) {
         return false;
     }
 
-    auto inChain = [instanceId](const Engine::DspChain& chain) {
+    auto inChain = [instanceId](const DspChain& chain) {
         return std::ranges::any_of(chain, [instanceId](const auto& entry) { return entry.instanceId == instanceId; });
     };
 
     DspChain* targetChain{nullptr};
-    if(scope == Engine::DspChainScope::Master) {
+    if(scope == DspChainScope::Master) {
         targetChain = &m_activeChain.masterChain;
     }
     else {

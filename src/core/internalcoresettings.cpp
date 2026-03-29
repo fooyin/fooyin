@@ -52,6 +52,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     qRegisterMetaType<Engine::FadingValues>("FadingValues");
     qRegisterMetaType<Engine::CrossfadingValues>("CrossfadingValues");
     qRegisterMetaType<Engine::FadeSpec>("FadeSpec");
+    qRegisterMetaType<Engine::OutputDeviceProfiles>("OutputDeviceProfiles");
 
     m_settings->createTempSetting<FirstRun>(true);
     m_settings->createTempSetting<Version>(QString::fromLatin1(VERSION));
@@ -120,6 +121,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::DecodeHighWatermarkRatio>(0.95, u"Engine/DecodeHighWatermarkRatio"_s);
     m_settings->createSetting<Internal::CrossfadeSwitchPolicy>(
         static_cast<int>(Engine::CrossfadeSwitchPolicy::OverlapStart), u"Playback/CrossfadeSwitchPolicy"_s);
+    m_settings->createSetting<Internal::OutputDeviceProfiles>(QVariant::fromValue(Engine::OutputDeviceProfiles{}),
+                                                              u"Engine/OutputDeviceProfiles"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 

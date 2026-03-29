@@ -236,6 +236,74 @@ struct LiveDspSettingsUpdate
     uint64_t revision{0};
 };
 
+struct OutputDeviceProfile
+{
+    QString output;
+    QString device;
+    bool enabled{true};
+    SampleFormat bitDepth{SampleFormat::Unknown};
+    bool dither{false};
+    int dspPresetId{-1};
+
+    [[nodiscard]] bool isValid() const
+    {
+        return !output.isEmpty() && !device.isEmpty();
+    }
+
+    bool operator==(const OutputDeviceProfile&) const = default;
+};
+
+using OutputDeviceProfiles = std::vector<OutputDeviceProfile>;
+
+inline QDataStream& operator<<(QDataStream& stream, const OutputDeviceProfiles& profiles)
+{
+    DataStream::writeContainer(stream, profiles);
+    return stream;
+}
+
+inline QDataStream& operator>>(QDataStream& stream, OutputDeviceProfiles& profiles)
+{
+    DataStream::readContainer(stream, profiles);
+    return stream;
+}
+
+inline QDataStream& operator<<(QDataStream& stream, const OutputDeviceProfile& profile)
+{
+    stream << profile.output;
+    stream << profile.device;
+    stream << profile.enabled;
+    stream << static_cast<quint8>(profile.bitDepth);
+    stream << profile.dither;
+    stream << profile.dspPresetId;
+
+    return stream;
+}
+
+inline QDataStream& operator>>(QDataStream& stream, OutputDeviceProfile& profile)
+{
+    stream >> profile.output;
+    stream >> profile.device;
+    stream >> profile.enabled;
+
+    quint8 bits{0};
+    stream >> bits;
+    profile.bitDepth = static_cast<SampleFormat>(bits);
+
+    stream >> profile.dither;
+    stream >> profile.dspPresetId;
+
+    return stream;
+}
+
+struct OutputProfileRequest
+{
+    QString output;
+    QString device;
+    SampleFormat bitDepth{SampleFormat::Unknown};
+    bool dither{false};
+    DspChains chain;
+};
+
 } // namespace Fooyin::Engine
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::Engine::RGProcessing)
@@ -247,3 +315,5 @@ Q_DECLARE_METATYPE(Fooyin::Engine::TrackCommitContext)
 Q_DECLARE_METATYPE(Fooyin::Engine::AnalysisDataTypes)
 Q_DECLARE_METATYPE(Fooyin::LevelFrame)
 Q_DECLARE_METATYPE(Fooyin::Engine::LiveDspSettingsUpdate)
+Q_DECLARE_METATYPE(Fooyin::Engine::OutputDeviceProfiles)
+Q_DECLARE_METATYPE(Fooyin::Engine::OutputProfileRequest)

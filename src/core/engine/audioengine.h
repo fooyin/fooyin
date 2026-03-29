@@ -165,6 +165,8 @@ public slots:
     void setVolume(double volume);
 
     void setAudioOutput(const Fooyin::OutputCreator& output, const QString& device);
+    void applyOutputProfile(const Fooyin::OutputCreator& output, const QString& device, SampleFormat bitdepth,
+                            bool dither, const Fooyin::Engine::DspChains& chain);
     void setOutputDevice(const QString& device);
     void setAnalysisDataSubscriptions(Fooyin::Engine::AnalysisDataTypes subscriptions);
     void updateLiveDspSettings(const Fooyin::Engine::LiveDspSettingsUpdate& update);

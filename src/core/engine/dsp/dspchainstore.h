@@ -44,6 +44,7 @@ public:
     [[nodiscard]] std::unique_ptr<DspNode> createDsp(const QString& id) const;
 
     void setActiveChain(const Engine::DspChains& chain);
+    void syncActiveChain(const Engine::DspChains& chain);
     bool updateLiveDspSettings(Engine::DspChainScope scope, uint64_t instanceId, const QByteArray& settings,
                                bool persist);
 

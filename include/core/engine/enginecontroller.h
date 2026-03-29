@@ -55,6 +55,8 @@ public:
     [[nodiscard]] virtual OutputNames getAllOutputs() const = 0;
     //! Available devices for a specific output backend.
     [[nodiscard]] virtual OutputDevices getOutputDevices(const QString& output) const = 0;
+    //! Apply a combined output/device/DSP/bitdepth profile.
+    virtual void applyOutputProfile(const Engine::OutputProfileRequest& request) = 0;
 
     /*!
      * Registers an audio output backend factory under @p name.

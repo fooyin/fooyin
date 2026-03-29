@@ -1264,6 +1264,23 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetAudioOutputReinitializesLo
     ASSERT_TRUE(pumpUntil([&newOutputStats]() { return newOutputStats->initCalls.load() >= 1; }, 2000ms));
 }
 
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SetOutputDeviceReinitialisesLoadedOutput)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+
+    const Track track = harness.createTrack(u"switch-device.fyt"_s, 0, 100000);
+    harness.engine.loadTrack(makePlaybackItem(track, 1), false);
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+    ASSERT_EQ(harness.outputStats->initCalls.load(), 1);
+
+    harness.engine.setOutputDevice(u"hw:test"_s);
+
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->uninitCalls.load() >= 1; }, 2000ms));
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->initCalls.load() >= 2; }, 2000ms));
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.outputStats->device() == u"hw:test"_s; }, 2000ms));
+}
+
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, BufferLengthChangeReconfiguresPlaybackWithoutReinitialisingOutput)
 {
     ensureCoreApplication();

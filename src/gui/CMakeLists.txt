@@ -96,6 +96,8 @@ set(SOURCES
     controls/commandbuttonconfigdialog.h
     controls/playlistcontrol.cpp
     controls/playlistcontrol.h
+    controls/outputselector.cpp
+    controls/outputselector.h
     controls/seekbar.cpp
     controls/seekbar.h
     controls/volumecontrol.cpp
@@ -293,6 +295,8 @@ set(SOURCES
     search/searchcontroller.h
     search/searchwidget.cpp
     search/searchwidget.h
+    output/outputprofilemanager.cpp
+    output/outputprofilemanager.h
     selectioninfo/infodelegate.cpp
     selectioninfo/infodelegate.h
     selectioninfo/infoitem.cpp
@@ -341,6 +345,12 @@ set(SOURCES
     settings/playback/decodermodel.h
     settings/playback/decoderdelegate.cpp
     settings/playback/decoderdelegate.h
+    settings/playback/devicepage.cpp
+    settings/playback/devicepage.h
+    settings/playback/outputdevicesdelegate.cpp
+    settings/playback/outputdevicesdelegate.h
+    settings/playback/outputdevicesmodel.cpp
+    settings/playback/outputdevicesmodel.h
     settings/playback/decoderpage.cpp
     settings/playback/decoderpage.h
     settings/playback/dspdelegate.cpp

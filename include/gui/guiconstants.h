@@ -206,6 +206,7 @@ constexpr auto GeneralCore           = "Fooyin.Page.General.Core";
 constexpr auto Playback              = "Fooyin.Page.Playback";
 constexpr auto Fading                = "Fooyin.Page.Playback.Fading";
 constexpr auto Output                = "Fooyin.Page.Playback.Output";
+constexpr auto OutputDevices         = "Fooyin.Page.Playback.Output.Devices";
 constexpr auto Decoding              = "Fooyin.Page.Playback.Decoding";
 constexpr auto ReplayGain            = "Fooyin.Page.Playback.ReplayGain";
 constexpr auto DspManager            = "Fooyin.Page.Playback.DspManager";

@@ -819,6 +819,22 @@ void EngineHandler::setup()
     changeOutput(m_settings->value<Settings::Core::AudioOutput>());
 }
 
+void EngineHandler::applyOutputProfile(const Engine::OutputProfileRequest& request)
+{
+    if(request.output.isEmpty() || request.device.isEmpty()) {
+        return;
+    }
+
+    if(!m_outputs.contains(request.output)) {
+        qCWarning(ENG_HANDLER) << "Output hasn't been registered:" << request.output;
+        return;
+    }
+
+    m_currentOutput = {.name = request.output, .device = request.device};
+    dispatchCommand(&AudioEngine::applyOutputProfile, m_outputs.at(request.output), request.device, request.bitDepth,
+                    request.dither, request.chain);
+}
+
 void EngineHandler::setDspChain(const Engine::DspChains& chain)
 {
     dispatchCommand(&AudioEngine::setDspChain, chain);
@@ -881,8 +897,7 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
 
     if(auto out = m_outputs.at(output)()) {
         const bool isCurrent
-            = m_engine->playbackState() != Engine::PlaybackState::Stopped
-           && (m_currentOutput.name == output || m_currentOutput.device.compare(output, Qt::CaseInsensitive) == 0);
+            = m_engine->playbackState() != Engine::PlaybackState::Stopped && m_currentOutput.name == output;
         return out->getAllDevices(isCurrent);
     }
 

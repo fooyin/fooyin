@@ -23,6 +23,7 @@
 #include "artwork/artworkfinder.h"
 #include "artwork/artworkproperties.h"
 #include "controls/commandbutton.h"
+#include "controls/outputselector.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
 #include "controls/seekbar.h"
@@ -37,6 +38,7 @@
 #include "librarytree/librarytreecontroller.h"
 #include "librarytree/librarytreewidget.h"
 #include "mainwindow.h"
+#include "output/outputprofilemanager.h"
 #include "playlist/organiser/playlistorganiser.h"
 #include "playlist/playlistbox.h"
 #include "playlist/playlistcontroller.h"
@@ -61,6 +63,7 @@
 #include "settings/library/librarysortingpage.h"
 #include "settings/networkpage.h"
 #include "settings/playback/decoderpage.h"
+#include "settings/playback/devicepage.h"
 #include "settings/playback/dspmanagerpage.h"
 #include "settings/playback/fadingpage.h"
 #include "settings/playback/outputpage.h"
@@ -106,10 +109,14 @@ Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, Pla
     , m_playlistController{playlistInteractor->playlistController()}
     , m_libraryTreeController{new LibraryTreeController(m_settings, this)}
     , m_dspPresetRegistry{new DspPresetRegistry(m_settings, this)}
+    , m_outputProfileManager{new OutputProfileManager(m_core->engine(), m_core->dspChainStore(), m_dspPresetRegistry,
+                                                      m_settings, this)}
     , m_dspSettingsRegistry{std::make_unique<DspSettingsRegistry>()}
     , m_pluginSettingsRegistry{std::make_unique<PluginSettingsRegistry>()}
     , m_scriptCommandHandler{scriptCommandHandler}
-{ }
+{
+    m_outputProfileManager->reapplyCurrentProfile();
+}
 
 void Widgets::registerWidgets()
 {
@@ -208,6 +215,11 @@ void Widgets::registerWidgets()
     provider->setSubMenus(u"SeekBar"_s, {tr("Controls")});
 
     provider->registerWidget(
+        u"OutputSelector"_s, [this]() { return new OutputSelector(m_outputProfileManager, m_settings, m_window); },
+        tr("Output Selector"));
+    provider->setSubMenus(u"OutputSelector"_s, {tr("Controls")});
+
+    provider->registerWidget(
         u"SelectionInfo"_s, [this]() { return new InfoWidget(m_core, m_gui->trackSelection(), m_window); },
         tr("Selection Info"));
 
@@ -288,6 +300,7 @@ void Widgets::registerPages()
     new ShellIntegrationPage(m_settings, this);
     new ShortcutsPage(m_gui->actionManager(), m_settings, this);
     new OutputPage(m_core->engine(), m_settings, this);
+    new DevicePage(m_outputProfileManager, m_dspPresetRegistry, m_settings, this);
     new DecoderPage(m_core->audioLoader().get(), m_core->pluginManager(), m_pluginSettingsRegistry.get(), m_settings,
                     this);
     new ReplayGainPage(m_settings, this);

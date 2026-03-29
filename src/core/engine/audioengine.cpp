@@ -4283,6 +4283,63 @@ void AudioEngine::setAudioOutput(const OutputCreator& output, const QString& dev
     }
 }
 
+void AudioEngine::applyOutputProfile(const OutputCreator& output, const QString& device, SampleFormat bitdepth,
+                                     bool dither, const Engine::DspChains& chain)
+{
+    qCDebug(ENGINE) << "Applying output profile:" << "device=" << device << "bitdepth=" << static_cast<int>(bitdepth)
+                    << "dither=" << dither;
+
+    const bool wasPlaying = m_playbackState.load(std::memory_order_relaxed) == Engine::PlaybackState::Playing;
+
+    if(wasPlaying) {
+        cancelFadesForReinit();
+        m_outputController.pauseOutputImmediate(true);
+    }
+
+    m_outputController.setOutputCreator(output);
+    m_outputController.setOutputDevice(device);
+
+    m_pipeline.setOutputBitdepth(bitdepth);
+    m_pipeline.setDither(dither);
+
+    const auto buildNodes = [this](const Engine::DspChain& defs) -> std::vector<DspNodePtr> {
+        if(!m_dspRegistry) {
+            return {};
+        }
+
+        std::vector<DspNodePtr> nodes;
+        nodes.reserve(defs.size());
+
+        for(const auto& entry : defs) {
+            auto node = m_dspRegistry->create(entry.id);
+            if(!node) {
+                continue;
+            }
+
+            node->setInstanceId(entry.instanceId);
+            node->setEnabled(entry.enabled);
+            if(!entry.settings.isEmpty()) {
+                node->loadSettings(entry.settings);
+            }
+
+            nodes.push_back(std::move(node));
+        }
+
+        return nodes;
+    };
+
+    std::vector<DspNodePtr> masterNodes = buildNodes(chain.masterChain);
+    m_pipeline.setDspChain(std::move(masterNodes), chain.perTrackChain, m_format);
+
+    if(m_format.isValid()) {
+        m_outputController.uninitOutput();
+        const bool initOk = m_outputController.initOutput(m_format, m_volume);
+        if(initOk && wasPlaying) {
+            play();
+        }
+    }
+}
+
 void AudioEngine::setOutputDevice(const QString& device)
 {
     if(device == m_outputController.outputDevice()) {
@@ -4292,7 +4349,23 @@ void AudioEngine::setOutputDevice(const QString& device)
     qCDebug(ENGINE) << "Changing output device to:" << device;
 
     m_outputController.setOutputDevice(device);
-    m_pipeline.setOutputDevice(device);
+
+    if(!m_format.isValid()) {
+        m_pipeline.setOutputDevice(device);
+        return;
+    }
+
+    const bool wasPlaying = m_playbackState.load(std::memory_order_relaxed) == Engine::PlaybackState::Playing;
+    if(wasPlaying) {
+        cancelFadesForReinit();
+        m_outputController.pauseOutputImmediate(true);
+    }
+
+    m_outputController.uninitOutput();
+    const bool initOk = m_outputController.initOutput(m_format, m_volume);
+    if(initOk && wasPlaying) {
+        play();
+    }
 }
 
 void AudioEngine::setDspChain(const Engine::DspChains& chain)

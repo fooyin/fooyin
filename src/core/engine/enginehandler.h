@@ -83,6 +83,8 @@ public:
     //! Get devices for a specific output
     [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const override;
 
+    void applyOutputProfile(const Engine::OutputProfileRequest& request) override;
+
     //! Register an audio output
     void addOutput(const QString& name, OutputCreator output) override;
 
