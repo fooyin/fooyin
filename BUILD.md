@@ -53,7 +53,7 @@ sudo pacman -Syu
 sudo pacman -S --needed \
     gcc git cmake pkgconf ninja alsa-lib pipewire icu ffmpeg \
     qt6-base qt6-svg qt6-imageformats qt6-tools kdsingleapplication \
-    taglib libsndfile libopenmpt libgme libarchive libebur128 soundtouch soxr
+    taglib libsndfile libopenmpt libgme libarchive libebur128 soundtouch libsoxr
 ```
 
 ### Fedora
