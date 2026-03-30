@@ -42,7 +42,7 @@
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="500"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="681"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
             <numerusform>The first %Ln non-empty line must contain integer values.</numerusform>
@@ -50,7 +50,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="511"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="692"/>
         <source>The preset file contains %Ln band value(s).</source>
         <translation>
             <numerusform>The preset file contains %Ln band value.</numerusform>
@@ -58,7 +58,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="512"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="693"/>
         <source>Expected %Ln band value(s).</source>
         <translation>
             <numerusform>Expected %Ln band value.</numerusform>
@@ -99,7 +99,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1235"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1243"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -132,7 +132,7 @@
 <context>
     <name>QObject</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkexporter.cpp" line="239"/>
+        <location filename="../../src/gui/artwork/artworkexporter.cpp" line="265"/>
         <source>Extracted artwork to %Ln file(s)</source>
         <translation>
             <numerusform>Extracted artwork to %Ln file</numerusform>
@@ -140,7 +140,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkexporter.cpp" line="244"/>
+        <location filename="../../src/gui/artwork/artworkexporter.cpp" line="270"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
         <translation>
             <numerusform>Extracted artwork to %Ln file; some extractions failed</numerusform>
