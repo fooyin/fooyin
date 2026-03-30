@@ -98,6 +98,8 @@ public:
     [[nodiscard]] std::vector<int> duplicateTrackIndexes(const UId& id) const;
     /** Returns the indexes of all dead tracks in the playlist with @p id. */
     [[nodiscard]] std::vector<int> deadTrackIndexes(const UId& id) const;
+    /** Removes any playlist entries that match the deleted @p tracks. */
+    void handleTracksDeleted(const TrackList& tracks);
 
     void changePlaylistIndex(const UId& id, int index);
     void changeActivePlaylist(const UId& id);

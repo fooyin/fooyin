@@ -51,6 +51,7 @@
 #include <core/coresettings.h>
 #include <core/database/database.h>
 #include <core/engine/enginehandler.h>
+#include <core/engine/enginehelpers.h>
 #include <core/internalcoresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
@@ -174,6 +175,7 @@ public:
     void updateWindowTitle();
     void checkArtwork();
     void handleTrackStatus(Engine::TrackStatus status);
+    void handleTracksDeleted(const TrackList& tracks);
 
     static void removeExpiredCovers(const TrackList& tracks);
 
@@ -372,6 +374,8 @@ void GuiApplicationPrivate::setupConnections()
                      &TrackSelectionController::tracksUpdated);
     QObject::connect(m_library, &MusicLibrary::tracksDeleted, &m_selectionController,
                      &TrackSelectionController::tracksRemoved);
+    QObject::connect(m_library, &MusicLibrary::tracksDeleted, m_self,
+                     [this](const TrackList& tracks) { handleTracksDeleted(tracks); });
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, m_mainWindow.get(),
                      [this]() { updateWindowTitle(); });
@@ -606,6 +610,30 @@ void GuiApplicationPrivate::handleTrackStatus(Engine::TrackStatus status)
     }
     else if(status == Engine::TrackStatus::Unreadable) {
         showTrackUnreableMessage(track);
+    }
+}
+
+void GuiApplicationPrivate::handleTracksDeleted(const TrackList& tracks)
+{
+    const PlaylistTrack currentTrack = m_playerController->currentPlaylistTrack();
+
+    const bool deletingCurrentTrack = currentTrack.isValid()
+                                   && m_playerController->playState() == Player::PlayState::Playing
+                                   && std::ranges::any_of(tracks, [&currentTrack](const Track& track) {
+                                          return sameTrackIdentity(track, currentTrack.track);
+                                      });
+
+    if(deletingCurrentTrack) {
+        // At this point, the tracks have been removed from playlists,
+        // so the next track is now the current track (at the same index)
+        const PlaylistTrack nextTrack = m_playlistHandler->currentTrack();
+        if(nextTrack.isValid()) {
+            m_playerController->changeCurrentTrack(
+                nextTrack, {.reason = Player::AdvanceReason::ManualNext, .userInitiated = false});
+        }
+        else {
+            m_playerController->stop();
+        }
     }
 }
 

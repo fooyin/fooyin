@@ -232,7 +232,9 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_starDelegate{nullptr}
     , m_playlistView{new PlaylistView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
-    , m_playlistContext{new WidgetContext(this, Context{Id{Constants::Context::Playlist}.append(id())}, this)}
+    , m_playlistContext{new WidgetContext(
+          this, Context{IdList{Constants::Context::TrackSelection, Id{Constants::Context::Playlist}.append(id())}},
+          this)}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<PlaylistMiddleClick>())}
     , m_playAction{new QAction(tr("&Play"), this)}
     , m_host{std::make_unique<PlaylistWidgetHost>(this)}

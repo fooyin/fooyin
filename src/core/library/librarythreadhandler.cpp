@@ -738,6 +738,10 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      [this](int operationId, const TrackList& tracks, int failed, bool cancelled) {
                          p->finishWriteOperation(operationId, static_cast<int>(tracks.size()), failed, cancelled);
                      });
+    QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::tracksDeleted, this,
+                     [this](int operationId, const TrackList& tracks, int failed, bool cancelled) {
+                         p->finishWriteOperation(operationId, static_cast<int>(tracks.size()), failed, cancelled);
+                     });
     QObject::connect(&p->m_scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
     QObject::connect(&p->m_scanner, &LibraryScanner::progressChanged, this,
                      [this](const ScanProgress& progress) { p->updateProgress(progress); });
@@ -886,6 +890,18 @@ WriteRequest LibraryThreadHandler::removeUnavailbleTracks(const TrackList& track
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
                               [this, tracks, operationId = operation.id, stopToken = operation.stopToken]() {
                                   p->m_trackDatabaseManager.removeUnavailbleTracks(tracks, operationId, stopToken);
+                              });
+
+    return operation.request;
+}
+
+WriteRequest LibraryThreadHandler::deleteTracks(const TrackList& tracks)
+{
+    const auto operation = p->addWriteOperation();
+
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
+                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken]() {
+                                  p->m_trackDatabaseManager.deleteTracks(tracks, operationId, stopToken);
                               });
 
     return operation.request;

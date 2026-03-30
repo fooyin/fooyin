@@ -599,6 +599,11 @@ WriteRequest UnifiedMusicLibrary::removeUnavailbleTracks()
 {
     return p->m_threadHandler.removeUnavailbleTracks(p->m_tracks);
 }
+
+WriteRequest UnifiedMusicLibrary::deleteTracks(const TrackList& tracks)
+{
+    return p->m_threadHandler.deleteTracks(tracks);
+}
 } // namespace Fooyin
 
 #include "moc_unifiedmusiclibrary.cpp"

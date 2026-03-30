@@ -222,6 +222,11 @@ public:
         return {};
     }
 
+    WriteRequest deleteTracks(const TrackList& /*tracks*/) override
+    {
+        return {};
+    }
+
 private:
     TrackList m_tracks;
 };

@@ -83,20 +83,82 @@ FileOpsWorker::FileOpsWorker(MusicLibrary* library, TrackList tracks, SettingsMa
 
 void FileOpsWorker::simulate(const FileOpPreset& preset)
 {
+    prepareOperations(preset, true);
+}
+
+void FileOpsWorker::deleteFiles()
+{
+    setState(Running);
+
+    reset();
+
+    if(!populateTrackPaths()) {
+        setState(Idle);
+        emit deleteFinished({});
+        emit finished();
+        return;
+    }
+
+    if(m_isMonitoring) {
+        m_settings->set<Settings::Core::Internal::MonitorLibraries>(false);
+    }
+
+    const auto appendDeletedTrack = [this](const Track& deletedTrack) {
+        if(std::ranges::find(m_tracksToDelete, deletedTrack) == m_tracksToDelete.cend()) {
+            m_tracksToDelete.push_back(deletedTrack);
+        }
+    };
+
+    for(const Track& track : m_tracks) {
+        if(!mayRun()) {
+            break;
+        }
+
+        const QString filepath = track.filepath();
+        if(m_tracksProcessed.contains(filepath)) {
+            continue;
+        }
+        m_tracksProcessed.emplace(filepath);
+
+        if(!QFile::moveToTrash(filepath)) {
+            qCWarning(FILEOPS) << "Failed to delete file" << filepath;
+            continue;
+        }
+
+        appendDeletedTrack(track);
+
+        if(m_trackPaths.contains(filepath)) {
+            auto range = m_trackPaths.equal_range(filepath);
+            for(auto it = range.first; it != range.second; ++it) {
+                appendDeletedTrack(it->second);
+            }
+        }
+    }
+
+    if(!m_tracksToDelete.empty()) {
+        m_library->deleteTracks(m_tracksToDelete);
+    }
+
+    setState(Idle);
+
+    if(m_isMonitoring) {
+        m_settings->set<Settings::Core::Internal::MonitorLibraries>(true);
+    }
+
+    emit deleteFinished(m_tracksToDelete);
+    emit finished();
+}
+
+bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimulation)
+{
     setState(Running);
 
     reset();
     m_preset = preset;
 
-    const auto tracks = m_library->tracks();
-    for(const Track& track : tracks) {
-        if(!mayRun()) {
-            return;
-        }
-        m_trackPaths.emplace(track.filepath(), track);
-    }
+    const bool canContinue = populateTrackPaths();
 
-    if(!preset.dest.isEmpty() || m_preset.op == Operation::Rename || m_preset.op == Operation::Delete) {
+    if(canContinue && (!preset.dest.isEmpty() || m_preset.op == Operation::Rename)) {
         switch(m_preset.op) {
             case(Operation::Copy):
                 simulateCopy();
@@ -107,21 +169,36 @@ void FileOpsWorker::simulate(const FileOpPreset& preset)
             case(Operation::Rename):
                 simulateRename();
                 break;
-            case(Operation::Delete):
-                simulateDelete();
-                break;
             case(Operation::Create):
                 break;
             case(Operation::Remove):
                 break;
+            case(Operation::Delete):
+                break;
         }
     }
 
-    if(mayRun()) {
+    const bool shouldContinue = canContinue && mayRun();
+    if(emitSimulation && shouldContinue) {
         emit simulated(m_operations);
     }
 
     setState(Idle);
+
+    return shouldContinue;
+}
+
+bool FileOpsWorker::populateTrackPaths()
+{
+    const auto tracks = m_library->tracks();
+    for(const Track& track : tracks) {
+        if(!mayRun()) {
+            return false;
+        }
+        m_trackPaths.emplace(track.filepath(), track);
+    }
+
+    return true;
 }
 
 void FileOpsWorker::run()
@@ -152,17 +229,6 @@ void FileOpsWorker::run()
                 }
                 break;
             }
-            case(Operation::Delete): {
-                if(!QFile::moveToTrash(item.source)) {
-                    qCWarning(FILEOPS) << "Failed to delete file" << item.destination;
-                }
-                else if(m_trackPaths.contains(item.source)) {
-                    auto range = m_trackPaths.equal_range(item.source);
-                    for(auto it = range.first; it != range.second; ++it)
-                        m_tracksToDelete.push_back(it->second);
-                }
-                break;
-            }
             case(Operation::Rename):
             case(Operation::Move): {
                 renameFile(item);
@@ -172,6 +238,8 @@ void FileOpsWorker::run()
                 copyFile(item);
                 break;
             }
+            case(Operation::Delete):
+                break;
         }
 
         emit operationFinished(item);
@@ -183,7 +251,7 @@ void FileOpsWorker::run()
     }
 
     if(!m_tracksToDelete.empty()) {
-        m_library->removeUnavailbleTracks();
+        m_library->deleteTracks(m_tracksToDelete);
     }
 
     setState(Idle);
@@ -350,16 +418,6 @@ void FileOpsWorker::simulateRename()
         const QString destFilepath = QDir::cleanPath(track.path() + "/"_L1 + destFilename);
 
         m_operations.emplace_back(Operation::Rename, track.filenameExt(), track.filepath(), destFilepath);
-    }
-}
-
-void FileOpsWorker::simulateDelete()
-{
-    for(const Track& track : m_tracks) {
-        if(!mayRun() || m_tracksProcessed.contains(track.filepath()))
-            continue;
-        m_tracksProcessed.emplace(track.filepath());
-        m_operations.emplace_back(Operation::Delete, track.filenameExt(), track.filepath(), QString{});
     }
 }
 

@@ -129,6 +129,7 @@ private:
     void handlePlaylistMetadataUpdated(Playlist* playlist);
     void handlePlaylistTracksAdded(Playlist* playlist, const TrackList& tracks, int index);
     void handlePlaylistTracksPatched(Playlist* playlist, const PlaylistChangeset& changeSet);
+    void handlePlaylistTracksRemoved(Playlist* playlist, const std::vector<int>& indexes);
 
     void handleTracksQueued(const QueueTracks& tracks);
     void handleTracksDequeued(const QueueTracks& tracks);

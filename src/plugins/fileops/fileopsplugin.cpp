@@ -19,6 +19,7 @@
 
 #include "fileopsplugin.h"
 
+#include "fileopsconfigdialog.h"
 #include "fileopsdefs.h"
 #include "fileopsdeletedialog.h"
 #include "fileopsdialog.h"
@@ -40,6 +41,32 @@
 #include <QThread>
 
 using namespace Qt::StringLiterals;
+
+namespace {
+bool canOperateOnTracks(const Fooyin::TrackList& tracks)
+{
+    return !tracks.empty()
+        && std::ranges::all_of(tracks, [](const Fooyin::Track& track) { return !track.isInArchive(); });
+}
+
+class FileOpsPluginSettingsProvider : public Fooyin::PluginSettingsProvider
+{
+public:
+    explicit FileOpsPluginSettingsProvider(Fooyin::SettingsManager* settings)
+        : m_settings{settings}
+    { }
+
+    void showSettings(QWidget* parent) override
+    {
+        auto* dialog = new Fooyin::FileOps::FileOpsConfigDialog(m_settings, parent);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->show();
+    }
+
+private:
+    Fooyin::SettingsManager* m_settings;
+};
+} // namespace
 
 namespace Fooyin::FileOps {
 FileOpsPlugin::FileOpsPlugin()
@@ -64,6 +91,11 @@ void FileOpsPlugin::initialise(const GuiPluginContext& context)
     recreateMenu();
 }
 
+std::unique_ptr<PluginSettingsProvider> FileOpsPlugin::settingsProvider() const
+{
+    return std::make_unique<FileOpsPluginSettingsProvider>(m_settings);
+}
+
 void FileOpsPlugin::recreateMenu()
 {
     auto* selectionMenu = m_actionManager->actionContainer(Constants::Menus::Context::TrackSelection);
@@ -72,6 +104,11 @@ void FileOpsPlugin::recreateMenu()
         m_fileOpsMenu = m_actionManager->createMenu("FileOperations");
         m_fileOpsMenu->menu()->setTitle(tr("&File operations"));
         selectionMenu->addMenu(Constants::Menus::Context::Utilities, m_fileOpsMenu);
+
+        QObject::connect(
+            m_trackSelectionController, &TrackSelectionController::selectionChanged, m_fileOpsMenu, [this]() {
+                m_fileOpsMenu->menu()->setEnabled(canOperateOnTracks(m_trackSelectionController->selectedTracks()));
+            });
     }
     else {
         for(auto* menu : m_opActions) {
@@ -79,12 +116,7 @@ void FileOpsPlugin::recreateMenu()
         }
         m_opActions.clear();
     }
-
-    QObject::connect(m_trackSelectionController, &TrackSelectionController::selectionChanged, m_fileOpsMenu, [this]() {
-        const auto tracks = m_trackSelectionController->selectedTracks();
-        const bool canOp  = std::ranges::all_of(tracks, [](const Track& track) { return !track.isInArchive(); });
-        m_fileOpsMenu->menu()->setEnabled(canOp);
-    });
+    m_fileOpsMenu->menu()->setEnabled(canOperateOnTracks(m_trackSelectionController->selectedTracks()));
 
     auto openDialog = [this](Operation op, const QString& presetName = {}) {
         auto* dialog = new FileOpsDialog(m_library, m_trackSelectionController->selectedTracks(), op, m_settings,
@@ -93,7 +125,7 @@ void FileOpsPlugin::recreateMenu()
         QObject::connect(dialog, &FileOpsDialog::presetsChanged, this, &FileOpsPlugin::recreateMenu);
 
         dialog->loadPreset(presetName);
-        dialog->show();
+        dialog->open();
     };
 
     const auto presets = FileOps::getMappedPresets();
@@ -133,38 +165,43 @@ void FileOpsPlugin::recreateMenu()
     auto* deleteAction = new QAction(tr("&Delete"), m_fileOpsMenu);
     m_opActions.emplace_back(deleteAction);
 
-    auto* deleteCmd = m_actionManager->registerAction(deleteAction, "FileOps.Delete");
+    auto* deleteCmd
+        = m_actionManager->registerAction(deleteAction, "FileOps.Delete", Context{Constants::Context::TrackSelection});
     deleteCmd->setCategories({tr("Edit")});
 
-    QObject::connect(deleteAction, &QAction::triggered, deleteAction, [this]() {
-        const auto tracks = m_trackSelectionController->selectedTracks();
+    const auto updateDeleteAction = [this, deleteAction]() {
+        deleteAction->setEnabled(canOperateOnTracks(m_trackSelectionController->selectedTracks()));
+    };
 
-        auto runDelete = [this, tracks]() {
-            auto* worker = new FileOpsWorker(m_library, tracks, m_settings);
+    QObject::connect(m_trackSelectionController, &TrackSelectionController::selectionChanged, deleteAction,
+                     updateDeleteAction);
+    updateDeleteAction();
+
+    QObject::connect(deleteAction, &QAction::triggered, deleteAction, [this]() {
+        const auto selection = m_trackSelectionController->selectedSelection();
+        if(!canOperateOnTracks(selection.tracks)) {
+            return;
+        }
+
+        const auto runDelete = [this, selection]() {
+            auto* worker = new FileOpsWorker(m_library, selection.tracks, m_settings);
             auto* thread = new QThread(this);
             worker->moveToThread(thread);
 
-            QObject::connect(worker, &FileOpsWorker::simulated, worker,
-                             [worker]() { QMetaObject::invokeMethod(worker, &FileOpsWorker::run); });
             QObject::connect(worker, &Worker::finished, thread, &QThread::quit);
-            QObject::connect(worker, &Worker::finished, this, [this]() {
-                if(auto* removeCmd = m_actionManager->command(Constants::Actions::Remove)) {
-                    removeCmd->action()->trigger();
-                }
-            });
             QObject::connect(thread, &QThread::finished, worker, &QObject::deleteLater);
             QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
 
             thread->start();
-            QMetaObject::invokeMethod(worker, [worker]() { worker->simulate(FileOpPreset{.op = Operation::Delete}); });
+            QMetaObject::invokeMethod(worker, &FileOpsWorker::deleteFiles);
         };
 
-        const bool confirm = m_settings->fileValue("FileOps/ConfirmDelete", true).toBool();
+        const bool confirm = m_settings->fileValue(Settings::ConfirmDelete, true).toBool();
         if(confirm) {
-            auto* dialog = new FileOpsDeleteDialog(tracks, m_settings, Utils::getMainWindow());
+            auto* dialog = new FileOpsDeleteDialog(selection.tracks, m_settings, Utils::getMainWindow());
             dialog->setAttribute(Qt::WA_DeleteOnClose);
             QObject::connect(dialog, &QDialog::accepted, dialog, [runDelete]() { runDelete(); });
-            dialog->show();
+            dialog->open();
         }
         else {
             runDelete();

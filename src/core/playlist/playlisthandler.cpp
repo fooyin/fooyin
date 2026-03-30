@@ -70,6 +70,7 @@ public:
     bool noConcretePlaylists();
 
     void handleTracksChanged(const TrackList& tracks);
+    void handleTracksDeleted(const TrackList& tracks);
     void handleTracksUpdated(const TrackList& tracks);
 
     void prepareUpcomingTrack();
@@ -212,6 +213,39 @@ void PlaylistHandlerPrivate::handleTracksChanged(const TrackList& tracks)
             playlist->replaceTracks(playlistTracks);
             emit m_self->tracksChanged(playlist.get(), updatedIndexes);
         }
+    }
+}
+
+void PlaylistHandlerPrivate::handleTracksDeleted(const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    const TrackKeySet deletedTrackKeys = playlistTrackKeySet(tracks);
+
+    for(auto& playlist : m_playlists) {
+        if(playlist->isAutoPlaylist()) {
+            continue;
+        }
+
+        std::vector<int> indexesToRemove;
+        indexesToRemove.reserve(playlist->trackCount());
+
+        const TrackList playlistTracks = playlist->tracks();
+        for(int i{0}; const auto& track : playlistTracks) {
+            if(deletedTrackKeys.contains(track.uniqueFilepath())) {
+                indexesToRemove.emplace_back(i);
+            }
+            ++i;
+        }
+
+        if(indexesToRemove.empty()) {
+            continue;
+        }
+
+        const auto removedIndexes = playlist->removeTracks(indexesToRemove);
+        emit m_self->tracksRemoved(playlist.get(), removedIndexes);
     }
 }
 
@@ -451,7 +485,6 @@ PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<Aud
 
     QObject::connect(p->m_library, &MusicLibrary::tracksLoaded, this, [this]() { p->populatePlaylists(); });
     QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this, [this]() { p->regenerateAutoPlaylists(); });
-    QObject::connect(p->m_library, &MusicLibrary::tracksDeleted, this, [this]() { p->regenerateAutoPlaylists(); });
     QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this, [this](const TrackList& tracks) {
         p->handleTracksChanged(tracks);
         p->regenerateAutoPlaylists(tracks);
@@ -803,6 +836,12 @@ std::vector<int> PlaylistHandler::deadTrackIndexes(const UId& id) const
     }
 
     return {};
+}
+
+void PlaylistHandler::handleTracksDeleted(const TrackList& tracks)
+{
+    p->handleTracksDeleted(tracks);
+    p->regenerateAutoPlaylists(tracks);
 }
 
 void PlaylistHandler::changePlaylistIndex(const UId& id, int index)

@@ -77,6 +77,7 @@ public:
     void trackWasPlayed(const Track& track);
     void cleanupTracks();
     WriteRequest removeUnavailbleTracks() override;
+    WriteRequest deleteTracks(const TrackList& tracks) override;
 
 private:
     std::unique_ptr<UnifiedMusicLibraryPrivate> p;

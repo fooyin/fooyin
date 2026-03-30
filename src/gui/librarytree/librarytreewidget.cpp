@@ -200,7 +200,10 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     , m_libraryTree{new LibraryTreeView(this)}
     , m_model{new LibraryTreeModel(core->libraryManager(), core->audioLoader(), m_settings, this)}
     , m_sortProxy{new LibraryTreeSortModel(this)}
-    , m_widgetContext{new WidgetContext(this, Context{Id{"Fooyin.Context.LibraryTree."}.append(this->id())}, this)}
+    , m_widgetContext{new WidgetContext(
+          this,
+          Context{IdList{Constants::Context::TrackSelection, Id{"Fooyin.Context.LibraryTree."}.append(this->id())}},
+          this)}
     , m_addToQueueAction{new QAction(tr("&Add to playback queue"), this)}
     , m_queueNextAction{new QAction(tr("&Queue to play next"), this)}
     , m_removeFromQueueAction{new QAction(tr("&Remove from playback queue"), this)}

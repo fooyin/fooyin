@@ -208,6 +208,9 @@ void ApplicationPrivate::registerInputs()
 
 void ApplicationPrivate::setupConnections()
 {
+    QObject::connect(m_library, &MusicLibrary::tracksDeleted, m_self,
+                     [this](const TrackList& tracks) { m_playlistHandler->handleTracksDeleted(tracks); });
+
     QObject::connect(&m_engine, &EngineController::trackStatusContextChanged, m_self,
                      [this](const Engine::TrackStatusContext& context) {
                          if(context.status == Engine::TrackStatus::Invalid) {

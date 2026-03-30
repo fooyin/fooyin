@@ -72,6 +72,7 @@ public:
     void checkTrackAvailability(const TrackList& tracks);
 
     WriteRequest removeUnavailbleTracks(const TrackList& tracks);
+    WriteRequest deleteTracks(const TrackList& tracks);
     void cleanupTracks();
     void libraryRemoved(int id);
 

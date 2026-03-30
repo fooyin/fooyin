@@ -208,6 +208,8 @@ public:
 
     /** Remove unavailable tracks from the library and database. */
     virtual WriteRequest removeUnavailbleTracks() = 0;
+    /** Delete @p tracks from the library and database. */
+    virtual WriteRequest deleteTracks(const TrackList& tracks) = 0;
 
 signals:
     /** Emitted whenever the progress state for a scan request changes. */

@@ -95,6 +95,7 @@ private:
     void finishSortRequest(uint64_t token, bool sortingColumn);
 
     void applyPlaylistChangeSet(PlaylistWidgetSessionHost& host, const PlaylistChangeset& changeSet);
+    void handlePlaylistTracksRemoved(PlaylistWidgetSessionHost& host, const std::vector<int>& indexes);
     void refreshActionState(PlaylistWidget* widget);
     void handleTrackIndexesChanged(PlaylistWidget* widget, int playingIndex);
     void stopAfterTrack(PlaylistWidget* widget) const;

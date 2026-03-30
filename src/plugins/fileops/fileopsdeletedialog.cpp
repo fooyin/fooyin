@@ -19,6 +19,8 @@
 
 #include "fileopsdeletedialog.h"
 
+#include "fileopssettings.h"
+
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -29,19 +31,18 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto ConfirmDelete = "FileOps/ConfirmDelete";
-
 namespace Fooyin::FileOps {
 
 FileOpsDeleteDialog::FileOpsDeleteDialog(const TrackList& tracks, SettingsManager* settings, QWidget* parent)
     : QDialog{parent}
 {
     setWindowTitle(tr("Delete Files"));
+    setModal(true);
 
     auto* layout = new QVBoxLayout(this);
 
     const QString message = tracks.size() == 1
-                              ? tr("Are you sure you want to delete \"%1\"?").arg(tracks.front().title())
+                              ? tr("Are you sure you want to delete \"%1\"?").arg(tracks.front().effectiveTitle())
                               : tr("Are you sure you want to delete %1 tracks?").arg(tracks.size());
 
     auto* label = new QLabel(message, this);
@@ -59,7 +60,7 @@ FileOpsDeleteDialog::FileOpsDeleteDialog(const TrackList& tracks, SettingsManage
 
     QObject::connect(deleteButton, &QPushButton::clicked, this, [this, dontAsk, settings]() {
         if(dontAsk->isChecked()) {
-            settings->fileSet(ConfirmDelete, false);
+            settings->fileSet(Settings::ConfirmDelete, false);
         }
         accept();
     });

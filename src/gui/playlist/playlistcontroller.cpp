@@ -58,6 +58,8 @@ PlaylistController::PlaylistController(Application* app, TrackSelectionControlle
     QObject::connect(m_handler, &PlaylistHandler::tracksChanged, this, &PlaylistController::handlePlaylistUpdated);
     QObject::connect(m_handler, &PlaylistHandler::tracksUpdated, this, &PlaylistController::handleTracksUpdated);
     QObject::connect(m_handler, &PlaylistHandler::tracksAdded, this, &PlaylistController::handlePlaylistTracksAdded);
+    QObject::connect(m_handler, &PlaylistHandler::tracksRemoved, this,
+                     &PlaylistController::handlePlaylistTracksRemoved);
     QObject::connect(m_handler, &PlaylistHandler::playlistRemoved, this, &PlaylistController::handlePlaylistRemoved);
 
     QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this,
@@ -343,6 +345,15 @@ void PlaylistController::handlePlaylistTracksPatched(Playlist* playlist, const P
     }
 
     emit currentPlaylistTracksPatched(changeSet);
+}
+
+void PlaylistController::handlePlaylistTracksRemoved(Playlist* playlist, const std::vector<int>& indexes)
+{
+    if(m_changingTracks || !m_workspace->isCurrentPlaylist(playlist)) {
+        return;
+    }
+
+    emit currentPlaylistTracksRemoved(indexes);
 }
 
 void PlaylistController::handleTracksQueued(const QueueTracks& tracks)

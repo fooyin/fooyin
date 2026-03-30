@@ -29,6 +29,7 @@
 #include "filtermodel.h"
 
 #include <core/track.h>
+#include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
 #include <gui/widgets/expandedtreeview.h>
@@ -114,7 +115,9 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     , m_resetThrottler{new SignalThrottler(this)}
     , m_index{-1}
     , m_multipleColumns{false}
-    , m_widgetContext{new WidgetContext(this, Context{Id{"Fooyin.Context.FilterWidget."}.append(id())}, this)}
+    , m_widgetContext{new WidgetContext(
+          this, Context{IdList{Constants::Context::TrackSelection, Id{"Fooyin.Context.FilterWidget."}.append(id())}},
+          this)}
     , m_searching{false}
     , m_updating{false}
     , m_showHeader{true}

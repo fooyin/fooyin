@@ -62,16 +62,20 @@ public:
 
     void simulate(const FileOpPreset& preset);
     void run();
+    void deleteFiles();
 
 signals:
     void simulated(const Fooyin::FileOps::FileOperations& operations);
+    void deleteFinished(const Fooyin::TrackList& deletedTracks);
     void operationFinished(const Fooyin::FileOps::FileOpsItem& operation);
 
 private:
+    bool prepareOperations(const FileOpPreset& preset, bool emitSimulation);
+    bool populateTrackPaths();
+
     void simulateMove();
     void simulateCopy();
     void simulateRename();
-    void simulateDelete();
 
     [[nodiscard]] QString evaluatePath(const ParsedScript& script, const Track& track);
 

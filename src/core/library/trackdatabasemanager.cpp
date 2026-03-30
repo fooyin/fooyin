@@ -279,6 +279,42 @@ void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks)
     removeUnavailbleTracks(tracks, -1, {});
 }
 
+void TrackDatabaseManager::deleteTracks(const TrackList& tracks)
+{
+    deleteTracks(tracks, -1, {});
+}
+
+void TrackDatabaseManager::deleteTracks(const TrackList& tracks, int operationId, std::stop_token stopToken)
+{
+    setState(Running);
+
+    TrackList tracksToDelete;
+    int failedCount{0};
+    bool cancelled{false};
+
+    for(const Track& track : tracks) {
+        if(!shouldContinue(stopToken) || !mayRun()) {
+            cancelled = true;
+            break;
+        }
+
+        tracksToDelete.push_back(track);
+    }
+
+    if(!tracksToDelete.empty() && m_trackDatabase.deleteTracks(tracksToDelete)) {
+        emit removedTracks(tracksToDelete);
+    }
+    else if(!tracksToDelete.empty()) {
+        failedCount = static_cast<int>(tracksToDelete.size());
+    }
+
+    if(operationId >= 0) {
+        emit tracksDeleted(operationId, tracksToDelete, failedCount, cancelled);
+    }
+
+    setState(Idle);
+}
+
 void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks, int operationId, std::stop_token stopToken)
 {
     setState(Running);

@@ -302,6 +302,10 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
                      [widget, this](const TrackList& tracks, int index) {
                          playlistTracksAdded(widgetSessionHost(widget), tracks, index);
                      });
+    QObject::connect(widget->playlistController(), &PlaylistController::currentPlaylistTracksRemoved, widget,
+                     [widget, this](const std::vector<int>& indexes) {
+                         handlePlaylistTracksRemoved(widgetSessionHost(widget), indexes);
+                     });
     QObject::connect(widget->playlistController(), &PlaylistController::currentPlaylistTracksPatched, widget,
                      [widget, this](const PlaylistChangeset& changeSet) {
                          applyPlaylistChangeSet(widgetSessionHost(widget), changeSet);
@@ -595,6 +599,36 @@ void EditablePlaylistSession::applyPlaylistChangeSet(PlaylistWidgetSessionHost& 
     else {
         applyMovesAndUpdates();
     }
+}
+
+void EditablePlaylistSession::handlePlaylistTracksRemoved(PlaylistWidgetSessionHost& sessionHost,
+                                                          const std::vector<int>& indexes)
+{
+    auto& host            = editableHost(sessionHost.sessionWidget());
+    auto* currentPlaylist = host.playlistController()->currentPlaylist();
+    if(!currentPlaylist || indexes.empty()) {
+        return;
+    }
+
+    if(hasSearch()) {
+        handleTracksChanged(sessionHost, {}, false);
+        return;
+    }
+
+    QModelIndexList trackIndexesToRemove;
+    for(const int index : indexes) {
+        const QModelIndex trackIndex = host.playlistModel()->indexAtPlaylistIndex(index, false);
+        if(trackIndex.isValid()) {
+            trackIndexesToRemove.push_back(trackIndex);
+        }
+    }
+
+    if(!trackIndexesToRemove.empty()) {
+        host.playlistModel()->removeTracks(trackIndexesToRemove);
+    }
+
+    host.playlistModel()->updateHeader(currentPlaylist);
+    refreshActionState(sessionHost.sessionWidget());
 }
 
 void EditablePlaylistSession::handleAboutToBeReset(PlaylistWidgetSessionHost& sessionHost)
@@ -893,8 +927,10 @@ void EditablePlaylistSession::tracksRemoved(PlaylistWidgetSessionHost& sessionHo
     }
 
     const auto oldTracks = host.playlistController()->currentPlaylist()->playlistTracks();
+    host.playlistController()->aboutToChangeTracks();
     host.playlistController()->playlistHandler()->removePlaylistTracks(
         host.playlistController()->currentPlaylist()->id(), indexes);
+    host.playlistController()->changedTracks();
 
     if(indexes.size() > 500) {
         auto* resetCmd = new ResetTracks(host.playerController(), host.playlistModel(),
