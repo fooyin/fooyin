@@ -193,17 +193,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Numeric rating</source>
-        <translation>Hodnocení (0.0 – 1.0)</translation>
+        <translation>Hodnocení (0.1 – 1.0, 0.2 == ★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="130"/>
         <source>Rating shown as stars</source>
-        <translation>Hodnocení (1 – 10; 2 == 1 hvězda)</translation>
+        <translation>Hodnocení (★ – ★★★★★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="133"/>
         <source>Rating editor representation</source>
-        <translation>Hodnocení (☆☆☆☆☆ – ★★★★★)</translation>
+        <translation>Hodnocení (1 – 10; 2 == ★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="134"/>
@@ -377,12 +377,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="132"/>
         <source>Rating shown as stars with trailing empty stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnocení (☆☆☆☆☆ – ★★★★★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="140"/>
         <source>File created timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Časová značka vytvoření souboru (RRRR-MM-DD hh:mm:ss)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="162"/>
@@ -2057,17 +2057,17 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="271"/>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="272"/>
         <source>Devices</source>
-        <translation type="unfinished"></translation>
+        <translation>Zařízení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="272"/>
         <source>Playback</source>
-        <translation type="unfinished">Přehrávání</translation>
+        <translation>Přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="272"/>
         <source>Output</source>
-        <translation type="unfinished">Výstup</translation>
+        <translation>Výstup</translation>
     </message>
 </context>
 <context>
@@ -2075,12 +2075,12 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="101"/>
         <source>Only checked devices will appear in the output device selector widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>V nabídce výběru výstupních zařízení budou zobrazena jen zatržená zařízení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="107"/>
         <source>Output</source>
-        <translation type="unfinished">Výstup</translation>
+        <translation>Výstup</translation>
     </message>
 </context>
 <context>
@@ -2564,7 +2564,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/gui/settings/playback/outputdevicesdelegate.cpp" line="67"/>
         <location filename="../../src/gui/settings/playback/outputdevicesdelegate.cpp" line="84"/>
         <source>&lt;not set&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;nenastaveno&gt;</translation>
     </message>
 </context>
 <context>
@@ -2922,17 +2922,17 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="158"/>
         <source>+20 dB</source>
-        <translation type="unfinished">+20 dB</translation>
+        <translation>+20 dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="158"/>
         <source>+0 dB</source>
-        <translation type="unfinished">+0 dB</translation>
+        <translation>+0 dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="159"/>
         <source>-20 dB</source>
-        <translation type="unfinished">-20 dB</translation>
+        <translation>-20 dB</translation>
     </message>
 </context>
 <context>
@@ -3275,12 +3275,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsconfigdialog.cpp" line="36"/>
         <source>Confirm before deleting tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Potvrdit smazání skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsconfigdialog.cpp" line="38"/>
         <source>File Operations Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení operací se soubory</translation>
     </message>
 </context>
 <context>
@@ -3288,27 +3288,27 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="39"/>
         <source>Delete Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat soubory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="45"/>
         <source>Are you sure you want to delete &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Opravdu chcete „%1“ smazat?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="46"/>
         <source>Are you sure you want to delete %1 tracks?</source>
-        <translation type="unfinished"></translation>
+        <translation>Opravu chcete smazat skladby? Počet: %1.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="52"/>
         <source>Do not ask again</source>
-        <translation type="unfinished"></translation>
+        <translation>Příště se neptat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="56"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation>Smazat</translation>
     </message>
 </context>
 <context>
@@ -3478,7 +3478,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation>Smazat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
@@ -3511,12 +3511,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="165"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Smazat</translation>
+        <translation>&amp;Smazat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="170"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit</translation>
     </message>
 </context>
 <context>
@@ -4720,12 +4720,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="209"/>
         <source>Track Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazení skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="210"/>
         <source>Interface</source>
-        <translation type="unfinished">Rozhraní</translation>
+        <translation>Rozhraní</translation>
     </message>
 </context>
 <context>
@@ -4733,88 +4733,89 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="75"/>
         <source>Prefer currently playing track</source>
-        <translation type="unfinished">Upřednostnit přehrávanou skladbu</translation>
+        <translation>Upřednostnit přehrávanou skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="76"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished">Upřednostnit výběr</translation>
+        <translation>Upřednostnit výběr</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="83"/>
         <source>Now Playing</source>
-        <translation type="unfinished">Přehrávání</translation>
+        <translation>Přehrávané</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="87"/>
         <source>Window title</source>
-        <translation type="unfinished">Název okna</translation>
+        <translation>Název okna</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
         <source>Controls the star size used by the rating editor widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost hvězd v editoru hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Used for the filled portion of %rating_stars% and %rating_stars_padded%</source>
-        <translation type="unfinished"></translation>
+        <translation>Použito pro „plnou“ část %rating_stars% a %rating_stars_padded%</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="96"/>
         <source>Used for the half-step portion of %rating_stars% and %rating_stars_padded%.
 If the default half-star does not render correctly with your system font, choose a different symbol here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použito pro „poloviční“ část %rating_stars% a %rating_stars_padded%.
+Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuje správně, vyberte zde jiný symbol.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="99"/>
         <source>Used for the trailing empty portion of %rating_stars_padded%</source>
-        <translation type="unfinished"></translation>
+        <translation>Použito pro „prázdnou“ část %rating_stars_padded%</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="100"/>
         <source>Preview of %rating_stars_padded% using the current font.</source>
-        <translation type="unfinished"></translation>
+        <translation>Náhled %rating_stars_padded% s aktuálně používaným písmem.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>Ratings</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
         <source>Rating editor star size</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost hvězdy v editoru hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
         <source>Full star symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Plná hvězda</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="110"/>
         <source>Half star symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Poloviční hvězda</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="112"/>
         <source>Empty star symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Prázdná hvězda</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="114"/>
         <source>Preview</source>
-        <translation type="unfinished">Náhled</translation>
+        <translation>Náhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="118"/>
         <source>Selection Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazení výběru</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="126"/>
         <source>Selection info</source>
-        <translation type="unfinished">Informace výběru</translation>
+        <translation>Informace výběru</translation>
     </message>
 </context>
 <context>
@@ -4890,7 +4891,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="135"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Statistiky přehrávání</translation>
+        <translation>Statistiky přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="138"/>
@@ -4990,7 +4991,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="203"/>
         <source>Created</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="205"/>
@@ -5055,17 +5056,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="242"/>
         <source>Playcount</source>
-        <translation type="unfinished">Počet přehrání</translation>
+        <translation>Počet přehrání</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="246"/>
         <source>First Played</source>
-        <translation type="unfinished">Poprvé přehráno</translation>
+        <translation>Poprvé přehráno</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="250"/>
         <source>Last Played</source>
-        <translation type="unfinished">Naposledy přehráno</translation>
+        <translation>Naposledy přehráno</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="265"/>
@@ -5151,7 +5152,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="275"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Statistiky přehrávání</translation>
+        <translation>Statistiky přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="283"/>
@@ -6789,66 +6790,66 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="55"/>
         <source>Device</source>
         <extracomment>Audio output device</extracomment>
-        <translation type="unfinished">Zařízení</translation>
+        <translation>Zařízení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="58"/>
         <source>DSP</source>
         <extracomment>DSP chain set for an audio output device</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="60"/>
         <source>Bitdepth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitová hloubka</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="265"/>
         <source>&lt;not set&gt;</source>
         <extracomment>No DSP chain has been set for this output device</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;nenastaveno&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="275"/>
         <source>&lt;missing&gt;</source>
         <extracomment>The DSP chain set for this output device can no longer be found</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;nenalezeno&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="282"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="300"/>
         <source>16-bit (dithered)</source>
-        <translation type="unfinished">16 bitů (rozptyl)</translation>
+        <translation>16 bitů (rozptyl)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="282"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="299"/>
         <source>16-bit</source>
-        <translation type="unfinished">16 bitů</translation>
+        <translation>16 bitů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="284"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="301"/>
         <source>24-bit</source>
-        <translation type="unfinished">24 bitů</translation>
+        <translation>24 bitů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="286"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="302"/>
         <source>32-bit</source>
-        <translation type="unfinished">32 bitů</translation>
+        <translation>32 bitů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="288"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="303"/>
         <source>32-bit float</source>
-        <translation type="unfinished">32 bitů (float)</translation>
+        <translation>32 bitů (float)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="291"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="298"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
 </context>
 <context>
@@ -6990,22 +6991,22 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="44"/>
         <source>Output</source>
-        <translation type="unfinished">Výstup</translation>
+        <translation>Výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="81"/>
         <source>Output Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Výběr výstupu</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="141"/>
         <source>Show label</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit popisek</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="147"/>
         <source>Configure listed devices…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit uvedená zařízení…</translation>
     </message>
 </context>
 <context>
@@ -11330,7 +11331,7 @@ na disku.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="219"/>
         <source>Output Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Výběr výstupu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="224"/>
