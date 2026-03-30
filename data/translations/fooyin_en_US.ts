@@ -377,12 +377,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="132"/>
         <source>Rating shown as stars with trailing empty stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Rating shown as stars with trailing empty stars</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="140"/>
         <source>File created timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>File created timestamp</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="162"/>
@@ -2053,12 +2053,12 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="271"/>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="272"/>
         <source>Devices</source>
-        <translation type="unfinished"></translation>
+        <translation>Devices</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="272"/>
         <source>Playback</source>
-        <translation type="unfinished">Playback</translation>
+        <translation>Playback</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="272"/>
@@ -2071,7 +2071,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="101"/>
         <source>Only checked devices will appear in the output device selector widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Only checked devices will appear in the output device selector widget.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="107"/>
