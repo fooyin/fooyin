@@ -56,7 +56,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="151"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="152"/>
         <source>Metadata</source>
-        <translation type="unfinished">元数据</translation>
+        <translation>元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="102"/>
