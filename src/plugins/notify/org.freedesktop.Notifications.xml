@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node>
+    <interface name="org.freedesktop.Notifications">
+        <method name="Notify">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In6" value="QVariantMap" />
+            <arg name="app_name" type="s" direction="in" />
+            <arg name="replaces_id" type="u" direction="in" />
+            <arg name="app_icon" type="s" direction="in" />
+            <arg name="summary" type="s" direction="in" />
+            <arg name="body" type="s" direction="in" />
+            <arg name="actions" type="as" direction="in" />
+            <arg name="hints" type="a{sv}" direction="in" />
+            <arg name="expire_timeout" type="i" direction="in" />
+            <arg name="id" type="u" direction="out" />
+        </method>
+        <signal name="NotificationClosed">
+            <arg name="id" type="u" />
+            <arg name="reason" type="u" />
+        </signal>
+    </interface>
+</node>

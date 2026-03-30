@@ -19,6 +19,7 @@
 
 #include "notifyplugin.h"
 
+#include "notificationsinterface.h"
 #include "settings/notifypage.h"
 #include "settings/notifysettings.h"
 
@@ -28,9 +29,9 @@
 #include <QApplication>
 #include <QDBusArgument>
 #include <QDBusConnection>
-#include <QDBusInterface>
 #include <QDBusMetaType>
-#include <QDBusReply>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
 #include <QLoggingCategory>
 #include <QPixmap>
 
@@ -38,9 +39,8 @@ Q_LOGGING_CATEGORY(NOTIFY, "fy.notify")
 
 using namespace Qt::StringLiterals;
 
-constexpr auto DbusService   = "org.freedesktop.Notifications";
-constexpr auto DbusPath      = "/org/freedesktop/Notifications";
-constexpr auto DbusInterface = "org.freedesktop.Notifications";
+constexpr auto DbusService = "org.freedesktop.Notifications";
+constexpr auto DbusPath    = "/org/freedesktop/Notifications";
 
 namespace {
 struct ImageData
@@ -89,27 +89,16 @@ Q_DECLARE_METATYPE(ImageData)
 
 namespace Fooyin::Notify {
 NotifyPlugin::NotifyPlugin()
-{
-    qDBusRegisterMetaType<ImageData>();
-}
+    : m_notificationGeneration{0}
+    , m_lastNotificationId{0}
+    , m_notificationRequestInFlight{false}
+{ }
 
 void NotifyPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
     m_audioLoader      = context.audioLoader;
     m_settings         = context.settingsManager;
-
-    m_notifySettings = std::make_unique<NotifySettings>(m_settings);
-
-    const bool connected = QDBusConnection::sessionBus().connect(
-        QString::fromLatin1(DbusService), QString::fromLatin1(DbusPath), QString::fromLatin1(DbusInterface),
-        u"NotificationClosed"_s, this, SLOT(notificationClosed(uint, uint)));
-
-    if(!connected) {
-        qCWarning(NOTIFY) << "Failed to connect to NotificationClosed signal";
-    }
-
-    QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this, &NotifyPlugin::trackChanged);
 }
 
 void NotifyPlugin::initialise(const GuiPluginContext& /*context*/)
@@ -117,12 +106,22 @@ void NotifyPlugin::initialise(const GuiPluginContext& /*context*/)
     m_coverProvider = new CoverProvider(m_audioLoader, m_settings, this);
     m_coverProvider->setUsePlaceholder(false);
 
-    m_notifyPage = new NotifyPage(m_settings, this);
-}
+    m_notifySettings = std::make_unique<NotifySettings>(m_settings);
+    m_notifyPage     = new NotifyPage(m_settings, this);
 
-void NotifyPlugin::shutdown()
-{
-    // Nothing to clean up
+    qDBusRegisterMetaType<ImageData>();
+
+    m_notifications = new OrgFreedesktopNotificationsInterface(
+        QString::fromLatin1(DbusService), QString::fromLatin1(DbusPath), QDBusConnection::sessionBus(), this);
+
+    if(!m_notifications->isValid()) {
+        qCWarning(NOTIFY) << "Failed to connect to D-Bus notification service";
+    }
+
+    QObject::connect(m_notifications, &OrgFreedesktopNotificationsInterface::NotificationClosed, this,
+                     &NotifyPlugin::notificationClosed);
+
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &NotifyPlugin::trackChanged);
 }
 
 void NotifyPlugin::notificationClosed(uint id, uint /*reason*/)
@@ -132,26 +131,29 @@ void NotifyPlugin::notificationClosed(uint id, uint /*reason*/)
     }
 }
 
-void NotifyPlugin::trackChanged(const PlaylistTrack& playlistTrack)
+void NotifyPlugin::trackChanged(const Track& track)
 {
+    ++m_notificationGeneration;
+
     if(!m_settings->value<Settings::Notify::Enabled>()) {
         return;
     }
 
-    if(!playlistTrack.isValid()) {
+    if(!track.isValid()) {
         return;
     }
-
-    const Track& track = playlistTrack.track;
 
     if(!m_coverProvider || !m_settings->value<Settings::Notify::ShowAlbumArt>()) {
         showNotification(track, QPixmap{});
         return;
     }
 
-    m_coverProvider->trackCoverFull(track, Track::Cover::Front).then([this, track](const QPixmap& cover) {
-        showNotification(track, cover);
-    });
+    m_coverProvider->trackCoverFull(track, Track::Cover::Front)
+        .then(this, [this, loadGeneration = m_notificationGeneration, track](const QPixmap& cover) {
+            if(loadGeneration == m_notificationGeneration && m_settings->value<Settings::Notify::Enabled>()) {
+                showNotification(track, cover);
+            }
+        });
 }
 
 void NotifyPlugin::showNotification(const Track& track, const QPixmap& cover)
@@ -167,22 +169,44 @@ void NotifyPlugin::showNotification(const Track& track, const QPixmap& cover)
 
 void NotifyPlugin::sendDbusNotification(const QString& title, const QString& body, const QPixmap& cover)
 {
-    QDBusInterface iface(QString::fromLatin1(DbusService), QString::fromLatin1(DbusPath),
-                         QString::fromLatin1(DbusInterface), QDBusConnection::sessionBus());
+    m_pendingNotification = PendingNotification{
+        .title = title,
+        .body  = body,
+        .cover = cover,
+    };
 
-    if(!iface.isValid()) {
-        qCWarning(NOTIFY) << "Failed to connect to D-Bus notification service";
+    if(m_notificationRequestInFlight) {
         return;
     }
 
+    sendPendingNotification();
+}
+
+void NotifyPlugin::sendPendingNotification()
+{
+    if(!m_pendingNotification.has_value()) {
+        return;
+    }
+
+    if(!m_notifications || !m_notifications->isValid()) {
+        qCWarning(NOTIFY) << "Failed to connect to D-Bus notification service";
+        m_pendingNotification.reset();
+        return;
+    }
+
+    const PendingNotification notification = std::move(*m_pendingNotification);
+    m_pendingNotification.reset();
+    m_notificationRequestInFlight = true;
+
     const QString appName = QApplication::applicationDisplayName();
     const int timeout     = m_settings->value<Settings::Notify::Timeout>();
+
     const QStringList actions;
     QVariantMap hints;
 
     // Add album art as image-data hint if available
-    if(!cover.isNull()) {
-        const QImage image = cover.toImage()
+    if(!notification.cover.isNull()) {
+        const QImage image = notification.cover.toImage()
                                  .scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation)
                                  .convertToFormat(QImage::Format_RGBA8888);
 
@@ -202,15 +226,29 @@ void NotifyPlugin::sendDbusNotification(const QString& title, const QString& bod
         hints[u"image-data"_s] = QVariant::fromValue(imageData);
     }
 
-    QDBusReply<uint> reply
-        = iface.call(u"Notify"_s, appName, m_lastNotificationId, QString{}, title, body, actions, hints, timeout);
+    auto* watcher
+        = new QDBusPendingCallWatcher(m_notifications->Notify(appName, m_lastNotificationId, {}, notification.title,
+                                                              notification.body, actions, hints, timeout),
+                                      this);
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &NotifyPlugin::notificationCallFinished);
+}
 
-    if(reply.isValid()) {
+void NotifyPlugin::notificationCallFinished(QDBusPendingCallWatcher* watcher)
+{
+    const QDBusPendingReply<uint> reply = *watcher;
+    watcher->deleteLater();
+
+    if(!reply.isError()) {
         m_lastNotificationId = reply.value();
-        qCDebug(NOTIFY) << "Notification sent:" << title << "-" << body;
     }
     else {
         qCWarning(NOTIFY) << "Failed to send notification:" << reply.error().message();
+    }
+
+    m_notificationRequestInFlight = false;
+
+    if(m_pendingNotification.has_value()) {
+        sendPendingNotification();
     }
 }
 } // namespace Fooyin::Notify

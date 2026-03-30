@@ -25,10 +25,14 @@
 #include <gui/coverprovider.h>
 #include <gui/plugins/guiplugin.h>
 
-namespace Fooyin {
-struct PlaylistTrack;
+#include <QDBusPendingCallWatcher>
+#include <QPixmap>
 
-namespace Notify {
+#include <optional>
+
+class OrgFreedesktopNotificationsInterface;
+
+namespace Fooyin::Notify {
 class NotifyPage;
 class NotifySettings;
 
@@ -46,26 +50,37 @@ public:
 
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
-    void shutdown() override;
 
 private slots:
     void notificationClosed(uint id, uint reason);
+    void notificationCallFinished(QDBusPendingCallWatcher* watcher);
 
 private:
-    void trackChanged(const PlaylistTrack& playlistTrack);
+    struct PendingNotification
+    {
+        QString title;
+        QString body;
+        QPixmap cover;
+    };
+
+    void trackChanged(const Track& track);
     void showNotification(const Track& track, const QPixmap& cover);
     void sendDbusNotification(const QString& title, const QString& body, const QPixmap& cover);
+    void sendPendingNotification();
 
-    PlayerController* m_playerController{nullptr};
+    PlayerController* m_playerController;
     std::shared_ptr<AudioLoader> m_audioLoader;
-    SettingsManager* m_settings{nullptr};
-    CoverProvider* m_coverProvider{nullptr};
+    SettingsManager* m_settings;
+    CoverProvider* m_coverProvider;
 
+    OrgFreedesktopNotificationsInterface* m_notifications;
     std::unique_ptr<NotifySettings> m_notifySettings;
-    NotifyPage* m_notifyPage{nullptr};
+    NotifyPage* m_notifyPage;
+    std::optional<PendingNotification> m_pendingNotification;
 
     ScriptParser m_scriptParser;
-    uint32_t m_lastNotificationId{0};
+    uint64_t m_notificationGeneration;
+    uint32_t m_lastNotificationId;
+    bool m_notificationRequestInFlight;
 };
-} // namespace Notify
-} // namespace Fooyin
+} // namespace Fooyin::Notify

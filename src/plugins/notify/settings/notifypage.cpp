@@ -21,13 +21,14 @@
 
 #include "notifysettings.h"
 
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
-#include <QLineEdit>
 #include <QSpinBox>
 
 using namespace Qt::StringLiterals;
@@ -48,8 +49,8 @@ private:
     SettingsManager* m_settings;
 
     QCheckBox* m_enable;
-    QLineEdit* m_titleField;
-    QLineEdit* m_bodyField;
+    ScriptLineEdit* m_titleField;
+    ScriptLineEdit* m_bodyField;
     QCheckBox* m_showAlbumArt;
     QSpinBox* m_timeout;
 };
@@ -57,36 +58,38 @@ private:
 NotifyPageWidget::NotifyPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_enable{new QCheckBox(tr("Enabled"), this)}
-    , m_titleField{new QLineEdit(this)}
-    , m_bodyField{new QLineEdit(this)}
+    , m_titleField{new ScriptLineEdit(this)}
+    , m_bodyField{new ScriptLineEdit(this)}
     , m_showAlbumArt{new QCheckBox(tr("Show album art"), this)}
     , m_timeout{new QSpinBox(this)}
 {
     auto* fieldsGroup  = new QGroupBox(tr("Notification Content"), this);
     auto* fieldsLayout = new QGridLayout(fieldsGroup);
 
-    m_titleField->setToolTip(tr("Notification title using fooyin script (e.g. %title%)"));
-    m_bodyField->setToolTip(tr("Notification body using fooyin script (e.g. %artist%[ - %album%])"));
-
     int row{0};
     fieldsLayout->addWidget(new QLabel(tr("Title") + ":"_L1, this), row, 0);
     fieldsLayout->addWidget(m_titleField, row++, 1);
     fieldsLayout->addWidget(new QLabel(tr("Body") + ":"_L1, this), row, 0);
     fieldsLayout->addWidget(m_bodyField, row++, 1);
+    fieldsLayout->addWidget(m_showAlbumArt, row++, 0, 1, 2);
 
     m_timeout->setRange(-1, 60000);
     m_timeout->setSuffix(u" ms"_s);
     m_timeout->setSpecialValueText(tr("System default"));
-    m_timeout->setSingleStep(500);
-    m_timeout->setToolTip(tr("Notification display time in milliseconds (-1 = system default)"));
+    m_timeout->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
+    m_timeout->setAccelerated(true);
+    m_timeout->setToolTip(tr("Notification display time in milliseconds"));
 
-    auto* layout = new QGridLayout(this);
+    auto* layout        = new QGridLayout(this);
+    auto* timeoutLayout = new QHBoxLayout();
+    timeoutLayout->setContentsMargins(0, 0, 0, 0);
+    timeoutLayout->addWidget(m_timeout);
+    timeoutLayout->addStretch();
 
     row = 0;
     layout->addWidget(m_enable, row++, 0, 1, 2);
-    layout->addWidget(m_showAlbumArt, row++, 0, 1, 2);
     layout->addWidget(new QLabel(tr("Timeout") + ":"_L1, this), row, 0);
-    layout->addWidget(m_timeout, row++, 1);
+    layout->addLayout(timeoutLayout, row++, 1);
     layout->addWidget(fieldsGroup, row++, 0, 1, 2);
     layout->setRowStretch(row, 1);
 }
