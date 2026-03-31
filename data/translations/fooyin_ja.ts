@@ -435,17 +435,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="172"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリ</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
         <source>Current library name</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のライブラリ名</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="172"/>
         <source>Current library path</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のライブラリのパス</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="173"/>
@@ -963,7 +963,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="35"/>
         <source>ALSA Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ALSAの設定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
