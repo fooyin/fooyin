@@ -700,37 +700,37 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="218"/>
         <source>Returns the unit separator character</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns the unit separator character</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="219"/>
         <source>Returns a newline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns a newline</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="220"/>
         <source>Returns a tab character</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns a tab character</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="221"/>
         <source>Moves leading articles to the end</source>
-        <translation type="unfinished"></translation>
+        <translation>移動領頭文章至末尾</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="222"/>
         <source>Removes leading articles</source>
-        <translation type="unfinished"></translation>
+        <translation>移除領頭文章</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="223"/>
         <source>Pads text on the left</source>
-        <translation type="unfinished"></translation>
+        <translation>鋪陳文字於左側</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="224"/>
         <source>Pads text on the right</source>
-        <translation type="unfinished"></translation>
+        <translation>鋪陳文字於右側</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
@@ -1074,7 +1074,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
         <source>Format</source>
-        <translation type="unfinished">格式</translation>
+        <translation>格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="117"/>
@@ -1140,12 +1140,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="74"/>
         <source>Prefer directory artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>偏好目錄圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="75"/>
         <source>Prefer embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>偏好嵌入圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="79"/>
@@ -1198,31 +1198,31 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="89"/>
         <source>No embedded artwork found to export</source>
-        <translation type="unfinished"></translation>
+        <translation>無找到嵌入圖面進行匯出</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="92"/>
         <source>Exported artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>匯出圖面至 %Ln 檔案</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="98"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已經匯出嵌入圖面至 %Ln 檔案；有些匯出失敗</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="95"/>
         <source>Failed to export artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>匯出圖面失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="106"/>
         <source>Exported artwork to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>已經匯出圖面至 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="223"/>
@@ -1278,15 +1278,15 @@
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="194"/>
         <source>Artwork found in %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>找到圖面於 %Ln 檔案</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="195"/>
         <source>%Ln file(s) selected</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 檔案已經選取</numerusform>
         </translation>
     </message>
     <message>
@@ -1312,12 +1312,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="297"/>
         <source>Export this embedded artwork to a file in the track directory without prompting</source>
-        <translation type="unfinished"></translation>
+        <translation>匯出此嵌入圖面至曲目目錄的檔案 不用提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="298"/>
         <source>Choose where to export this embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇要進行匯出此嵌入圖面的位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="306"/>
@@ -1544,7 +1544,8 @@
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates. 
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates. 
+When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="95"/>
@@ -1559,7 +1560,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="99"/>
         <source>Sort</source>
-        <translation type="unfinished">排序</translation>
+        <translation>排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="176"/>
@@ -1569,7 +1570,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="177"/>
         <source>A query named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>查詢名稱為 &quot;%1&quot; 已經存在。覆蓋它嗎？</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="300"/>
@@ -1605,33 +1606,33 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="77"/>
         <source>Open properties for the currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟目前播放曲目的屬性</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="79"/>
         <source>Open the folder of the currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟目前播放曲目的資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="137"/>
         <source>Command Button</source>
-        <translation type="unfinished"></translation>
+        <translation>指令按鈕</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="413"/>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="424"/>
         <source>Right-click to configure this button.</source>
-        <translation type="unfinished"></translation>
+        <translation>右鍵點按進行設定此按鈕。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="439"/>
         <source>Command is currently unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>指令目前無可供用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="443"/>
         <source>Custom icon missing; using fallback icon.</source>
-        <translation type="unfinished"></translation>
+        <translation>自訂圖示遺失；使用備用圖示。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="65"/>
@@ -1642,7 +1643,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="66"/>
         <source>Images</source>
-        <translation type="unfinished">圖片</translation>
+        <translation>圖片</translation>
     </message>
 </context>
 <context>
@@ -1650,7 +1651,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
         <source>Command Button Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>指令按鈕設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="91"/>
@@ -1725,17 +1726,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="139"/>
         <source>Click the image to choose a custom icon. If none is set, the button uses the command&apos;s default icon.</source>
-        <translation type="unfinished">Click the image to choose a custom icon. If none is set, the button uses the command&apos;s default icon.</translation>
+        <translation>點按圖片進行選擇自訂圖示。如果無設置，按鈕將使用指令的預設圖示。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="159"/>
         <source>Enter a command id or alias</source>
-        <translation type="unfinished">Enter a command id or alias</translation>
+        <translation>輸入指令 ID 或別名</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="161"/>
         <source>Use command label</source>
-        <translation type="unfinished">Use command label</translation>
+        <translation>使用指令標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="162"/>
@@ -1899,12 +1900,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="40"/>
         <source>Fade length</source>
-        <translation type="unfinished">淡出長度</translation>
+        <translation>淡入淡出長度</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
         <source>Display</source>
-        <translation type="unfinished">顯示</translation>
+        <translation>顯示</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="45"/>
@@ -1970,7 +1971,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderdelegate.cpp" line="37"/>
         <source>Configure</source>
-        <translation type="unfinished">設定</translation>
+        <translation>調整設定</translation>
     </message>
 </context>
 <context>
@@ -2009,17 +2010,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="193"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="201"/>
         <source>Disabled</source>
-        <translation type="unfinished">已經停用</translation>
+        <translation>已經停用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="203"/>
         <source>VBR update interval</source>
-        <translation type="unfinished">VBR (可變位元率)更新間隔</translation>
+        <translation>VBR (可變位元率)更新間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="205"/>
@@ -2039,7 +2040,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="281"/>
         <source>Configure…</source>
-        <translation type="unfinished">調配設定…</translation>
+        <translation>調整設定…</translation>
     </message>
 </context>
 <context>
@@ -2053,12 +2054,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="272"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="272"/>
         <source>Output</source>
-        <translation type="unfinished">輸出</translation>
+        <translation>輸出</translation>
     </message>
 </context>
 <context>
@@ -2213,47 +2214,47 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="37"/>
         <source>Tree</source>
-        <translation type="unfinished">樹階</translation>
+        <translation>樹階</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="38"/>
         <source>List</source>
-        <translation type="unfinished">清單</translation>
+        <translation>清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="39"/>
         <source>Show icons</source>
-        <translation type="unfinished">顯示圖示</translation>
+        <translation>顯示圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="40"/>
         <source>Show indent</source>
-        <translation type="unfinished">顯示縮排</translation>
+        <translation>顯示縮排</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
         <source>Show horizontal scrollbar</source>
-        <translation type="unfinished">顯示水平滾動軸</translation>
+        <translation>顯示水平滾動軸</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
         <source>Show controls</source>
-        <translation type="unfinished">顯示控制元件</translation>
+        <translation>顯示控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="43"/>
         <source>Show location</source>
-        <translation type="unfinished">顯示位置</translation>
+        <translation>顯示位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
         <source>Show symlinks</source>
-        <translation type="unfinished">顯示系統連結</translation>
+        <translation>顯示系統連結</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
         <source>Show hidden</source>
-        <translation type="unfinished">顯示隱藏</translation>
+        <translation>顯示隱藏</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="48"/>
@@ -2410,12 +2411,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="35"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="38"/>
         <source>Configure</source>
-        <translation type="unfinished">設定</translation>
+        <translation>調整設定</translation>
     </message>
 </context>
 <context>
@@ -2873,15 +2874,15 @@ Effects here process the final combined output.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="692"/>
         <source>The preset file contains %Ln band value(s).</source>
-        <translation type="unfinished">
-            <numerusform>The preset file contains %Ln band value.</numerusform>
+        <translation>
+            <numerusform>預設集檔案包含 %Ln 頻段值。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="693"/>
         <source>Expected %Ln band value(s).</source>
-        <translation type="unfinished">
-            <numerusform>Expected %Ln band value.</numerusform>
+        <translation>
+            <numerusform>預計 %Ln 頻段值。</numerusform>
         </translation>
     </message>
     <message>
@@ -3029,17 +3030,17 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="418"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="419"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="419"/>
         <source>Fading</source>
-        <translation type="unfinished">淡入淡出</translation>
+        <translation>淡入淡出</translation>
     </message>
 </context>
 <context>
@@ -3047,17 +3048,17 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="86"/>
         <source>Fading</source>
-        <translation type="unfinished">淡入淡出</translation>
+        <translation>淡入淡出</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="87"/>
         <source>Pause</source>
-        <translation type="unfinished">暫停</translation>
+        <translation>暫停</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="88"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="93"/>
@@ -3461,7 +3462,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Delete</source>
-        <translation type="unfinished">刪除</translation>
+        <translation>刪除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
@@ -3494,12 +3495,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="165"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">刪除(&amp;D)</translation>
+        <translation>刪除(&amp;D)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="170"/>
         <source>Edit</source>
-        <translation type="unfinished">編輯</translation>
+        <translation>編輯</translation>
     </message>
 </context>
 <context>
@@ -3586,7 +3587,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="49"/>
         <source>Override row height</source>
-        <translation type="unfinished">Override row height</translation>
+        <translation>覆蓋行列高度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="55"/>
@@ -4287,12 +4288,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1526"/>
         <source>Failed to open artwork file</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟圖面檔案失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1532"/>
         <source>Artwork file is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面檔案空白</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
@@ -4530,7 +4531,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="315"/>
         <source>A theme named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>主題名稱 &quot;%1&quot; 已經存在。覆蓋它嗎？</translation>
     </message>
 </context>
 <context>
@@ -4538,12 +4539,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="184"/>
         <source>Display</source>
-        <translation type="unfinished">顯示</translation>
+        <translation>顯示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="185"/>
         <source>Interface</source>
-        <translation type="unfinished">介面</translation>
+        <translation>介面</translation>
     </message>
 </context>
 <context>
@@ -4551,52 +4552,52 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="69"/>
         <source>Auto-detect theme</source>
-        <translation type="unfinished">自動檢測風格</translation>
+        <translation>自動偵測主題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="70"/>
         <source>Light</source>
-        <translation type="unfinished">亮色</translation>
+        <translation>亮色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="71"/>
         <source>Dark</source>
-        <translation type="unfinished">暗色</translation>
+        <translation>暗色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="72"/>
         <source>Use system icons</source>
-        <translation type="unfinished">使用系統圖示</translation>
+        <translation>使用系統圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="75"/>
         <source>Theme</source>
-        <translation type="unfinished">風格</translation>
+        <translation>主題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="78"/>
         <source>Icons</source>
-        <translation type="unfinished">圖示</translation>
+        <translation>圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="89"/>
         <source>Style</source>
-        <translation type="unfinished">樣式</translation>
+        <translation>樣式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="94"/>
         <source>Images</source>
-        <translation type="unfinished">圖片</translation>
+        <translation>圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="101"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished">圖片分配限制</translation>
+        <translation>圖片分配限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="103"/>
         <source>Set to &apos;0&apos; to disable the limit.</source>
-        <translation type="unfinished">設定 &apos;0&apos; 以停用限制。</translation>
+        <translation>設定 &apos;0&apos; 以停用限制。</translation>
     </message>
 </context>
 <context>
@@ -4604,7 +4605,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="227"/>
         <source>Layout</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="228"/>
@@ -4703,12 +4704,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="209"/>
         <source>Track Display</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目顯示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="210"/>
         <source>Interface</source>
-        <translation type="unfinished">介面</translation>
+        <translation>介面</translation>
     </message>
 </context>
 <context>
@@ -4716,88 +4717,89 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="75"/>
         <source>Prefer currently playing track</source>
-        <translation type="unfinished">顯示目前播放曲目</translation>
+        <translation>偏好目前播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="76"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished">顯示選中的曲目</translation>
+        <translation>偏好目前選擇</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="83"/>
         <source>Now Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>立即播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="87"/>
         <source>Window title</source>
-        <translation type="unfinished">視窗標題</translation>
+        <translation>視窗標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
         <source>Controls the star size used by the rating editor widget</source>
-        <translation type="unfinished"></translation>
+        <translation>由評等編輯器工具控制所使用的星星大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Used for the filled portion of %rating_stars% and %rating_stars_padded%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Used for the filled portion of %rating_stars% and %rating_stars_padded%</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="96"/>
         <source>Used for the half-step portion of %rating_stars% and %rating_stars_padded%.
 If the default half-star does not render correctly with your system font, choose a different symbol here.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Used for the half-step portion of %rating_stars% and %rating_stars_padded%.
+If the default half-star does not render correctly with your system font, choose a different symbol here.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="99"/>
         <source>Used for the trailing empty portion of %rating_stars_padded%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Used for the trailing empty portion of %rating_stars_padded%</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="100"/>
         <source>Preview of %rating_stars_padded% using the current font.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Preview of %rating_stars_padded% using the current font.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>Ratings</source>
-        <translation type="unfinished"></translation>
+        <translation>評等</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
         <source>Rating editor star size</source>
-        <translation type="unfinished"></translation>
+        <translation>評等編輯器星星大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
         <source>Full star symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>全星符號</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="110"/>
         <source>Half star symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>半星符號</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="112"/>
         <source>Empty star symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>空星符號</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="114"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>預覽</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="118"/>
         <source>Selection Display</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇顯示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="126"/>
         <source>Selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇資訊</translation>
     </message>
 </context>
 <context>
@@ -4873,7 +4875,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="135"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>播放統計</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="138"/>
@@ -4973,7 +4975,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="203"/>
         <source>Created</source>
-        <translation type="unfinished"></translation>
+        <translation>已經建立</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="205"/>
@@ -5038,17 +5040,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="242"/>
         <source>Playcount</source>
-        <translation type="unfinished">播放次數</translation>
+        <translation>播放次數</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="246"/>
         <source>First Played</source>
-        <translation type="unfinished">首次播放</translation>
+        <translation>首次播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="250"/>
         <source>Last Played</source>
-        <translation type="unfinished">上次播放</translation>
+        <translation>上次播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="265"/>
@@ -5134,7 +5136,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="275"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>播放統計</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="283"/>
@@ -5216,7 +5218,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="245"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 配置 (*.fyl)</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
@@ -5282,22 +5284,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
         <source>Save ratings to file tags when possible</source>
-        <translation type="unfinished"></translation>
+        <translation>盡可能將評等儲存至檔案標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="146"/>
         <source>Save playcounts to file tags when possible</source>
-        <translation type="unfinished"></translation>
+        <translation>盡可能將播放次數儲存至檔案標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="147"/>
         <source>Overwrite rating in database when songs are re-read</source>
-        <translation type="unfinished"></translation>
+        <translation>重新讀取歌曲時 覆蓋資料庫中的評等</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="148"/>
         <source>Overwrite playcount in database when files are re-read</source>
-        <translation type="unfinished"></translation>
+        <translation>重新讀取檔案時 覆蓋資料庫中的播放計數</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="159"/>
