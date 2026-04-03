@@ -803,7 +803,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="238"/>
         <source>Builds a text progress bar</source>
-        <translation type="unfinished">Builds a text progress bar</translation>
+        <translation>建構文字進度列</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="238"/>
@@ -816,7 +816,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
         <source>Builds an alternate text progress bar</source>
-        <translation type="unfinished">Builds an alternate text progress bar</translation>
+        <translation>建構替代文字進度列</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
@@ -1731,7 +1731,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="159"/>
         <source>Enter a command id or alias</source>
-        <translation>輸入指令 ID 或別名</translation>
+        <translation>輸入指令 id 或別名</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="161"/>
@@ -2730,7 +2730,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Rename Tab</source>
-        <translation>移除分頁</translation>
+        <translation>重新命名分頁</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
@@ -3073,7 +3073,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="100"/>
         <source>Seek</source>
-        <translation>尋找</translation>
+        <translation>查尋</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="101"/>
@@ -4126,27 +4126,27 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="673"/>
         <source>Seek</source>
-        <translation>尋找</translation>
+        <translation>查尋</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="675"/>
         <source>Seek forward (small step)</source>
-        <translation>向前尋找(小步)</translation>
+        <translation>向前查尋(小步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="682"/>
         <source>Seek forward (large step)</source>
-        <translation>向前尋找(大步)</translation>
+        <translation>向前查尋(大步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="689"/>
         <source>Seek backward (small step)</source>
-        <translation>向後尋找(小步)</translation>
+        <translation>向後查尋(小步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="697"/>
         <source>Seek backward (large step)</source>
-        <translation>向後尋找(大步)</translation>
+        <translation>向後查尋(大步)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="722"/>
@@ -5633,7 +5633,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示捲軸</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
@@ -5688,85 +5688,85 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="85"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="91"/>
         <source>Appearance</source>
-        <translation type="unfinished">外觀</translation>
+        <translation>外觀</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="94"/>
         <source>Icon</source>
-        <translation type="unfinished">圖示</translation>
+        <translation>圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="104"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>在工具中使用 &lt;b&gt;Ctrl+Scroll&lt;/b&gt; 來調整圖示大小。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="108"/>
         <source>Width</source>
-        <translation type="unfinished">寬度</translation>
+        <translation>寬度</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="110"/>
         <source>Height</source>
-        <translation type="unfinished">高度</translation>
+        <translation>高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="140"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="150"/>
         <source>None</source>
-        <translation type="unfinished">無</translation>
+        <translation>無</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="141"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished"></translation>
+        <translation>展開/縮合/播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="142"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="151"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">加入到目前播放清單</translation>
+        <translation>添加至目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="143"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="152"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">加入到現行播放清單</translation>
+        <translation>添加至現行播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="144"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="153"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>取代目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="145"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="154"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>建立新的播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="155"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">加入到播放佇列</translation>
+        <translation>添加至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="147"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">加入到播放佇列前端</translation>
+        <translation>添加至播放佇列前端</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="157"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>取代播放佇列</translation>
     </message>
 </context>
 <context>
@@ -5782,17 +5782,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="165"/>
         <source>Manage Library Tree Groupings</source>
-        <translation type="unfinished"></translation>
+        <translation>管理音樂庫樹階群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="169"/>
         <source>Grouping presets are shared across all widgets.</source>
-        <translation type="unfinished"></translation>
+        <translation>群組預設集在全部工具之間共用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="177"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>還原預設</translation>
     </message>
 </context>
 <context>
@@ -5800,17 +5800,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="81"/>
         <source>Script Editor</source>
-        <translation type="unfinished">指令碼編輯器</translation>
+        <translation>指令腳本編輯器</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;). Leave the whole sort grouping empty to use the display grouping for sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;). Leave the whole sort grouping empty to use the display grouping for sorting.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="96"/>
         <source>Add artwork to the tree by placing a cover variable such as &lt;code&gt;%frontcover%&lt;/code&gt; at the start or end of a level.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add artwork to the tree by placing a cover variable such as &lt;code&gt;%frontcover%&lt;/code&gt; at the start or end of a level.</translation>
     </message>
 </context>
 <context>
@@ -5828,12 +5828,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="163"/>
         <source>Display Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="165"/>
         <source>Sort Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>排序群組</translation>
     </message>
 </context>
 <context>
@@ -5860,7 +5860,7 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="199"/>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="445"/>
         <source>All Music</source>
-        <translation type="unfinished"></translation>
+        <translation>全部音樂</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="565"/>
@@ -5911,7 +5911,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="380"/>
         <source>Manage groupings...</source>
-        <translation type="unfinished"></translation>
+        <translation>管理群組...</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="425"/>
@@ -5921,7 +5921,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="488"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1075"/>
@@ -5944,7 +5944,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="86"/>
         <source>Co&amp;py Log</source>
-        <translation type="unfinished"></translation>
+        <translation>複製記錄(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="88"/>
@@ -5975,7 +5975,7 @@ and last played uses the later value.</source>
         <location filename="../../src/utils/logging/logwidget.cpp" line="117"/>
         <location filename="../../src/utils/logging/logwidget.cpp" line="235"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">複製(&amp;C)</translation>
+        <translation>複製(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="245"/>
@@ -5988,244 +5988,244 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="45"/>
         <source>Seek on click</source>
-        <translation type="unfinished">點按尋找</translation>
+        <translation>點按查尋</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="47"/>
         <source>Synced scroll duration</source>
-        <translation type="unfinished">同步滾動時間</translation>
+        <translation>同步滾動時間</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="49"/>
         <source>Edge fade size</source>
-        <translation type="unfinished"></translation>
+        <translation>邊緣淡入淡出大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="50"/>
         <source>Manual</source>
-        <translation type="unfinished">手動</translation>
+        <translation>手動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="51"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="191"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="216"/>
         <source>Synced</source>
-        <translation type="unfinished">同步</translation>
+        <translation>已經同步</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="52"/>
         <source>Automatic</source>
-        <translation type="unfinished">自動</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="53"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示捲軸</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="60"/>
         <source>Colours</source>
-        <translation type="unfinished">顏色</translation>
+        <translation>顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="61"/>
         <source>Background colour</source>
-        <translation type="unfinished">背景顏色</translation>
+        <translation>背景顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="63"/>
         <source>Line colour</source>
-        <translation type="unfinished">行列顏色</translation>
+        <translation>行列顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="65"/>
         <source>Unplayed line colour</source>
-        <translation type="unfinished">尚未播放線條顏色</translation>
+        <translation>尚未播放行列顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="67"/>
         <source>Played line colour</source>
-        <translation type="unfinished">已經播放的行列顏色</translation>
+        <translation>已經播放的行列顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="69"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="71"/>
         <source>Current line colour</source>
-        <translation type="unfinished">正在播放的行列顏色</translation>
+        <translation>正在播放的行列顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="73"/>
         <source>Current word colour</source>
-        <translation type="unfinished">目前字詞顏色</translation>
+        <translation>目前字詞顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="75"/>
         <source>Line font</source>
-        <translation type="unfinished"></translation>
+        <translation>行列字型</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="77"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="79"/>
         <source>Current line font</source>
-        <translation type="unfinished">目前行列字型</translation>
+        <translation>目前行列字型</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="81"/>
         <source>Current word font</source>
-        <translation type="unfinished">目前單詞字型</translation>
+        <translation>目前字詞字型</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="85"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="126"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="253"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="88"/>
         <source>This will only function with synced lyrics.</source>
-        <translation type="unfinished">只對有同步時間的歌詞發生效用。</translation>
+        <translation>這僅作用於已經同步歌詞。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="90"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation type="unfinished">若在目前曲目未找到歌詞時即會顯示。</translation>
+        <translation>若目前曲目的歌詞無法找到時即會顯示。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="95"/>
         <source>No lyrics script</source>
-        <translation type="unfinished">無歌詞時的指令腳本</translation>
+        <translation>無歌詞指令腳本</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="100"/>
         <source>Scrolling</source>
-        <translation type="unfinished">滾動</translation>
+        <translation>滾動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="106"/>
         <source>Scroll Mode</source>
-        <translation type="unfinished">滾動模式</translation>
+        <translation>滾動模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="108"/>
         <source>No automatic scrolling will take place</source>
-        <translation type="unfinished">不會發生自動滾動</translation>
+        <translation>不會發生自動滾動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="109"/>
         <source>Synced lyrics will be scrolled</source>
-        <translation type="unfinished">同步歌詞會進行滾動</translation>
+        <translation>已經同步歌詞會進行滾動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="110"/>
         <source>All lyrics will be scrolled</source>
-        <translation type="unfinished">全部歌詞都會進行滾動</translation>
+        <translation>全部歌詞都會進行滾動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="129"/>
         <source>Align to centre</source>
-        <translation type="unfinished">置中對齊</translation>
+        <translation>置中對齊</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="130"/>
         <source>Align to left</source>
-        <translation type="unfinished"></translation>
+        <translation>靠左對齊</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="131"/>
         <source>Align to right</source>
-        <translation type="unfinished"></translation>
+        <translation>靠右對齊</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="138"/>
         <source>Line spacing</source>
-        <translation type="unfinished">行列間距</translation>
+        <translation>行列間距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
         <source>Alignment</source>
-        <translation type="unfinished">對齊</translation>
+        <translation>對齊</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="144"/>
         <source>Fade</source>
-        <translation type="unfinished"></translation>
+        <translation>淡入淡出</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="147"/>
         <source>Off</source>
-        <translation type="unfinished">關閉</translation>
+        <translation>關閉</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="148"/>
         <source>Synced only</source>
-        <translation type="unfinished">僅有已同步的</translation>
+        <translation>僅有已經同步的</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
         <source>Scrolling lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>滾動歌詞</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="150"/>
         <source>All lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>全部歌詞</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="156"/>
         <source>Apply to</source>
-        <translation type="unfinished"></translation>
+        <translation>套用至</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="161"/>
         <source>Margins</source>
-        <translation type="unfinished">邊距</translation>
+        <translation>邊距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="170"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="172"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="174"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="176"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="179"/>
         <source>Top and bottom margins only apply to unsynced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>頂部和底部邊距僅適用於尚未同步的歌詞。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="189"/>
         <source>Fonts</source>
-        <translation type="unfinished">字型</translation>
+        <translation>字型</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="193"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="218"/>
         <source>Synced Words</source>
-        <translation type="unfinished">字詞同步</translation>
+        <translation>已經同步字詞</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="251"/>
         <source>Layout</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="252"/>
         <source>Style</source>
-        <translation type="unfinished">樣式</translation>
+        <translation>樣式</translation>
     </message>
 </context>
 <context>
@@ -6233,7 +6233,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="115"/>
         <source>Seek</source>
-        <translation>尋找</translation>
+        <translation>查尋</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="116"/>
@@ -6588,7 +6588,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="653"/>
         <source>Show scrollbar</source>
-        <translation>顯示滾動軸</translation>
+        <translation>顯示捲軸</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="662"/>
@@ -6613,7 +6613,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="43"/>
         <source>Lyrics Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>歌詞設定</translation>
     </message>
 </context>
 <context>
@@ -6715,7 +6715,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="50"/>
         <source>OpenMPT Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenMPT 設定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="68"/>
@@ -6770,66 +6770,66 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="55"/>
         <source>Device</source>
         <extracomment>Audio output device</extracomment>
-        <translation type="unfinished">裝置</translation>
+        <translation>裝置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="58"/>
         <source>DSP</source>
         <extracomment>DSP chain set for an audio output device</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="60"/>
         <source>Bitdepth</source>
-        <translation type="unfinished"></translation>
+        <translation>位元深度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="265"/>
         <source>&lt;not set&gt;</source>
         <extracomment>No DSP chain has been set for this output device</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;不設定&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="275"/>
         <source>&lt;missing&gt;</source>
         <extracomment>The DSP chain set for this output device can no longer be found</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;遺失&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="282"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="300"/>
         <source>16-bit (dithered)</source>
-        <translation type="unfinished">16-bit (抖動處理)</translation>
+        <translation>16-bit (抖動處理)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="282"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="299"/>
         <source>16-bit</source>
-        <translation type="unfinished">16-bit</translation>
+        <translation>16-bit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="284"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="301"/>
         <source>24-bit</source>
-        <translation type="unfinished">24-bit</translation>
+        <translation>24-bit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="286"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="302"/>
         <source>32-bit</source>
-        <translation type="unfinished">32-bit</translation>
+        <translation>32-bit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="288"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="303"/>
         <source>32-bit float</source>
-        <translation type="unfinished">32-bit 浮動</translation>
+        <translation>32-bit 浮動</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="291"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="298"/>
         <source>Automatic</source>
-        <translation type="unfinished">自動</translation>
+        <translation>自動</translation>
     </message>
 </context>
 <context>
@@ -6875,7 +6875,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="91"/>
         <source>Buffer</source>
-        <translation type="unfinished"></translation>
+        <translation>緩衝</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="95"/>
@@ -6885,12 +6885,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="116"/>
         <source>Decode starts/resumes when buffered audio drops below this watermark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Decode starts/resumes when buffered audio drops below this watermark</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="117"/>
         <source>Decode pauses when buffered audio reaches this watermark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Decode pauses when buffered audio reaches this watermark</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="121"/>
@@ -6930,30 +6930,30 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="135"/>
         <source>Length</source>
-        <translation type="unfinished">長度</translation>
+        <translation>長度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="137"/>
         <source>Low watermark</source>
-        <translation type="unfinished"></translation>
+        <translation>低浮水印</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="140"/>
         <source>High watermark</source>
-        <translation type="unfinished"></translation>
+        <translation>高浮水印</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="171"/>
         <source>Resume decoding below %Ln ms</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
+            <numerusform>Resume decoding below %Ln ms</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="172"/>
         <source>Pause decoding at %Ln ms</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
+            <numerusform>Pause decoding at %Ln ms</numerusform>
         </translation>
     </message>
     <message>
@@ -6967,22 +6967,22 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="44"/>
         <source>Output</source>
-        <translation type="unfinished">輸出</translation>
+        <translation>輸出</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="81"/>
         <source>Output Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>輸出選擇器</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="141"/>
         <source>Show label</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="147"/>
         <source>Configure listed devices…</source>
-        <translation type="unfinished"></translation>
+        <translation>調整設定所列出的裝置…</translation>
     </message>
 </context>
 <context>
@@ -7227,7 +7227,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="93"/>
         <source>Clear queue on exit</source>
-        <translation type="unfinished"></translation>
+        <translation>退出時清除佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="95"/>
@@ -7262,7 +7262,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="112"/>
         <source>Do not restore the playback queue on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation>下次啟動時不要還原播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="114"/>
@@ -7277,7 +7277,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="148"/>
         <source>Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="157"/>
@@ -7287,12 +7287,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="170"/>
         <source>Seek step (small)</source>
-        <translation>尋找步階(小)</translation>
+        <translation>查尋步階(小)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="172"/>
         <source>Seek step (large)</source>
-        <translation>尋找步階(大)</translation>
+        <translation>查尋步階(大)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="174"/>
@@ -7570,7 +7570,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
         <source>Show scrollbar</source>
-        <translation>顯示滾動軸</translation>
+        <translation>顯示捲軸</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="96"/>
@@ -7700,7 +7700,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="251"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>取代播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="350"/>
@@ -7715,7 +7715,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="115"/>
         <source>Tracks to preload</source>
-        <translation type="unfinished"></translation>
+        <translation>要預先載入的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="191"/>
@@ -7766,8 +7766,8 @@ and last played uses the later value.</source>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1243"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 曲目</numerusform>
         </translation>
     </message>
 </context>
@@ -7926,7 +7926,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="223"/>
         <source>Align subheaders to edge of image columns</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Align subheaders to edge of image columns</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
@@ -8054,7 +8054,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistuicontroller.cpp" line="44"/>
         <source>Playlists</source>
-        <translation type="unfinished">播放清單</translation>
+        <translation>播放清單</translation>
     </message>
 </context>
 <context>
@@ -8062,37 +8062,37 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="239"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">播放(&amp;P)</translation>
+        <translation>播放(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="578"/>
         <source>Start playback of the selected track</source>
-        <translation type="unfinished">啟動播放所選的曲目</translation>
+        <translation>啟動播放所選的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="585"/>
         <source>Edit</source>
-        <translation type="unfinished">編輯</translation>
+        <translation>編輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="588"/>
         <source>Select &amp;all</source>
-        <translation type="unfinished">全選(&amp;A)</translation>
+        <translation>選擇全部(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="589"/>
         <source>Select all tracks in the current playlist</source>
-        <translation type="unfinished">目前播放清單選擇全部曲目</translation>
+        <translation>於目前播放清單選擇全部曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="834"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished">重置列為預設</translation>
+        <translation>重設欄位至預設</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="906"/>
         <source>Single-column mode</source>
-        <translation type="unfinished">單列模式</translation>
+        <translation>單欄模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="861"/>
@@ -8107,13 +8107,13 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="940"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>欄位</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="875"/>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="961"/>
         <source>More…</source>
-        <translation type="unfinished">更多…</translation>
+        <translation>更多…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="326"/>
@@ -8123,162 +8123,162 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="40"/>
         <source>No results</source>
-        <translation type="unfinished">查無結果</translation>
+        <translation>查無結果</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="45"/>
         <source>Searching…</source>
-        <translation type="unfinished">搜尋中…</translation>
+        <translation>搜尋中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="124"/>
         <source>Playlist empty</source>
-        <translation type="unfinished">播放清單空白</translation>
+        <translation>播放清單空白</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="129"/>
         <source>Loading playlist…</source>
-        <translation type="unfinished">正在載入播放清單…</translation>
+        <translation>正在載入播放清單…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="198"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">取消動作(&amp;U)</translation>
+        <translation>取消動作(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="201"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">再次動作(&amp;R)</translation>
+        <translation>重覆動作(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="204"/>
         <source>&amp;Crop</source>
-        <translation type="unfinished">裁剪(&amp;C)</translation>
+        <translation>裁剪(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="207"/>
         <source>&amp;Stop after this</source>
-        <translation type="unfinished">目前曲目後停止(&amp;S)</translation>
+        <translation>在此曲目之後停止(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="211"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished">剪下(&amp;T)</translation>
+        <translation>剪下(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="214"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">複製(&amp;C)</translation>
+        <translation>複製(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="217"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished">貼上(&amp;P)</translation>
+        <translation>貼上(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="220"/>
         <source>C&amp;lear</source>
-        <translation type="unfinished">清除(&amp;l)</translation>
+        <translation>清除(&amp;l)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="223"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished">移除(&amp;R)</translation>
+        <translation>移除(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="227"/>
         <source>Remove duplicates</source>
-        <translation type="unfinished">移除重覆的</translation>
+        <translation>移除重覆的</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="230"/>
         <source>Remove dead tracks</source>
-        <translation type="unfinished">移除喪失曲目</translation>
+        <translation>移除喪失曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="233"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished">加入到播放佇列(&amp;Q)</translation>
+        <translation>添加至播放佇列(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="237"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished">佇列播放下一首(&amp;Q)</translation>
+        <translation>佇列播放下一首(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="241"/>
         <source>Remove from playback q&amp;ueue</source>
-        <translation type="unfinished">從播放佇列中移除(&amp;U)</translation>
+        <translation>從播放佇列中移除(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="346"/>
         <source>Remove all tracks from the playlist except for the selected tracks</source>
-        <translation type="unfinished">移除非所選的曲目</translation>
+        <translation>從播放清單中移除非所選的全部曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="350"/>
         <source>Stop playback at the end of the selected track</source>
-        <translation type="unfinished">所選曲目播放完畢後後停止</translation>
+        <translation>所選曲目播放完畢之後停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="355"/>
         <source>Undo the previous playlist change</source>
-        <translation type="unfinished">撤銷前一次播放清單的變更</translation>
+        <translation>撤銷前一次播放清單的變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="366"/>
         <source>Redo the previous playlist change</source>
-        <translation type="unfinished">重做前一次播放清單的變更</translation>
+        <translation>重做前一次播放清單的變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="379"/>
         <source>Cut the selected tracks</source>
-        <translation type="unfinished">剪下所選中的曲目</translation>
+        <translation>剪下所選的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="388"/>
         <source>Copy the selected tracks</source>
-        <translation type="unfinished">複製所選的曲目</translation>
+        <translation>複製所選曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="398"/>
         <source>Paste the selected tracks</source>
-        <translation type="unfinished">貼上所選的曲目</translation>
+        <translation>貼上所選曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="411"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">移除目前播放清單中全部曲目</translation>
+        <translation>移除全部曲目 從目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="420"/>
         <source>Remove the selected tracks from the current playlist</source>
-        <translation type="unfinished">移除目前播放清單中所選的曲目</translation>
+        <translation>移除所選的曲目 從目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="431"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加所選曲目至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="438"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加所選曲目至播放佇列前端</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="445"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>移除所選曲目 從播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="454"/>
         <source>Remove duplicate tracks from the playlist</source>
-        <translation type="unfinished">從播放清單中移除重覆的曲目</translation>
+        <translation>移除重覆的曲目 從播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="459"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
-        <translation type="unfinished">從播放清單中移除喪失(不存在的)曲目</translation>
+        <translation>移除喪失(不存在的)曲目 從播放清單</translation>
     </message>
 </context>
 <context>
@@ -8367,7 +8367,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="241"/>
         <source>fooyin Plugin (*.fyl)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 外掛 (*.fyl)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="249"/>
@@ -8449,8 +8449,8 @@ and last played uses the later value.</source>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="296"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 曲目</numerusform>
         </translation>
     </message>
 </context>
@@ -8502,67 +8502,67 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="34"/>
         <source>Queue Viewer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>佇列檢視設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="37"/>
         <source>Show header</source>
-        <translation type="unfinished">顯示標題</translation>
+        <translation>顯示標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="38"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示捲軸</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="39"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">替用行列顏色</translation>
+        <translation>替用行列顏色</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="40"/>
         <source>Show playing queue track</source>
-        <translation type="unfinished">顯示播放佇列曲目</translation>
+        <translation>顯示播放佇列曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="41"/>
         <source>Icon</source>
-        <translation type="unfinished">圖示</translation>
+        <translation>圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="45"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="48"/>
         <source>Left script</source>
-        <translation type="unfinished">左指令碼</translation>
+        <translation>左指令腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="50"/>
         <source>Right script</source>
-        <translation type="unfinished">右指令碼</translation>
+        <translation>右指令腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="53"/>
         <source>Appearance</source>
-        <translation type="unfinished">外觀</translation>
+        <translation>外觀</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="67"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>在工具中使用 &lt;b&gt;Ctrl+Scroll&lt;/b&gt; 來調整圖示大小。</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="71"/>
         <source>Width</source>
-        <translation type="unfinished">寬度</translation>
+        <translation>寬度</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="73"/>
         <source>Height</source>
-        <translation type="unfinished">高度</translation>
+        <translation>高度</translation>
     </message>
 </context>
 <context>
@@ -8693,7 +8693,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="84"/>
         <source>Used with the &quot;Calculate as albums (by tags)&quot; action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Used with the &quot;Calculate as albums (by tags)&quot; action</translation>
     </message>
 </context>
 <context>
@@ -9044,53 +9044,53 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="159"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="187"/>
         <source>Script Display</source>
-        <translation type="unfinished"></translation>
+        <translation>指令腳本顯示</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="187"/>
         <source>Right-click to configure this panel.</source>
-        <translation type="unfinished"></translation>
+        <translation>右鍵點按可調整設定此面板。</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="303"/>
         <source>Align</source>
-        <translation type="unfinished"></translation>
+        <translation>對齊</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="305"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="307"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="308"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="316"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>中央</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="309"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="313"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="315"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="317"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
 </context>
 <context>
@@ -9098,83 +9098,83 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="66"/>
         <source>Default</source>
-        <translation type="unfinished">預設</translation>
+        <translation>預設</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="68"/>
         <source>Text</source>
-        <translation type="unfinished">文字</translation>
+        <translation>文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="70"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="72"/>
         <source>Links</source>
-        <translation type="unfinished"></translation>
+        <translation>連結</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="80"/>
         <source>Format</source>
-        <translation type="unfinished">格式</translation>
+        <translation>格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="81"/>
         <source>Appearance</source>
-        <translation type="unfinished">外觀</translation>
+        <translation>外觀</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="83"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="84"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="88"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>中央</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="85"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="87"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="89"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="91"/>
         <source>Alignment</source>
-        <translation type="unfinished">對齊</translation>
+        <translation>對齊</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="94"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="96"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="100"/>
         <source>Font</source>
-        <translation type="unfinished"></translation>
+        <translation>字型</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="107"/>
         <source>Colours</source>
-        <translation type="unfinished">顏色</translation>
+        <translation>顏色</translation>
     </message>
 </context>
 <context>
@@ -9182,52 +9182,52 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="547"/>
         <source>Structure</source>
-        <translation type="unfinished"></translation>
+        <translation>結構</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="548"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation>參照</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="614"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>項目</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="614"/>
         <source>Category</source>
-        <translation type="unfinished">類別</translation>
+        <translation>類別</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="614"/>
         <source>Description</source>
-        <translation type="unfinished">描述</translation>
+        <translation>描述</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="685"/>
         <source>Variables</source>
-        <translation type="unfinished"></translation>
+        <translation>參數</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="686"/>
         <source>Functions</source>
-        <translation type="unfinished">功能</translation>
+        <translation>功能</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="687"/>
         <source>Formatting</source>
-        <translation type="unfinished"></translation>
+        <translation>格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="688"/>
         <source>Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>指令</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="690"/>
         <source>Filter</source>
-        <translation type="unfinished">篩選器</translation>
+        <translation>篩選器</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="840"/>
@@ -9421,7 +9421,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="150"/>
         <source>Authentication</source>
-        <translation type="unfinished">驗證</translation>
+        <translation>驗證</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="152"/>
@@ -9725,13 +9725,13 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="118"/>
         <source>Search Bar</source>
-        <translation>搜尋欄</translation>
+        <translation>搜尋列</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="128"/>
         <location filename="../../src/gui/search/searchwidget.cpp" line="536"/>
         <source>Manage connected widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>管理已經連接的工具</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="440"/>
@@ -9814,7 +9814,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="314"/>
         <source>Seekbar</source>
-        <translation>搜尋列</translation>
+        <translation>查尋列</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="350"/>
@@ -9875,7 +9875,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="63"/>
         <source>Always replace playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>總是取代播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="66"/>
@@ -9900,7 +9900,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="81"/>
         <source>When opening files, always replace the playlist contents with the incoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟檔案時，總是使用進入的曲目來取代播放清單內容</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="85"/>
@@ -9919,12 +9919,12 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="55"/>
         <source>%1 is already assigned to %2</source>
         <extracomment>%1 is the shortcut text. %2 is the action currently using that shortcut.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 已經分派至 %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="327"/>
         <source>Resolve duplicate shortcuts before applying changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>在套用變更之前解決重複的快速鍵。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="348"/>
@@ -9961,7 +9961,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="116"/>
         <source>Overwrite Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>覆蓋快速鍵</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="132"/>
@@ -9971,7 +9971,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="231"/>
         <source>Duplicate shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>重覆的快速鍵</translation>
     </message>
 </context>
 <context>
@@ -10020,102 +10020,102 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="54"/>
         <source>Allow imaging on upsampling</source>
-        <translation type="unfinished"></translation>
+        <translation>允許升取樣生成圖像</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="73"/>
         <source>Hz</source>
-        <translation type="unfinished">Hz</translation>
+        <translation>Hz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="75"/>
         <source>Target sample rate</source>
-        <translation type="unfinished">目標取樣率</translation>
+        <translation>目標取樣率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="77"/>
         <source>Very High (168 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>極高 (168 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="78"/>
         <source>High (120 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>高 (120 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="79"/>
         <source>Medium (108 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>中 (108 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="80"/>
         <source>Low (96 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>低 (96 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="81"/>
         <source>Quick (90 dB)</source>
-        <translation type="unfinished"></translation>
+        <translation>快 (90 dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="82"/>
         <source>Quality</source>
-        <translation type="unfinished"></translation>
+        <translation>品質</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="95"/>
         <source>Bandwidth</source>
-        <translation type="unfinished"></translation>
+        <translation>頻寬</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="99"/>
         <source>Linear</source>
-        <translation type="unfinished">線性</translation>
+        <translation>線性</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="100"/>
         <source>Intermediate</source>
-        <translation type="unfinished"></translation>
+        <translation>中等</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="101"/>
         <source>Minimum</source>
-        <translation type="unfinished"></translation>
+        <translation>最少</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="102"/>
         <source>Phase response</source>
-        <translation type="unfinished"></translation>
+        <translation>相位響應</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="104"/>
         <source>Exclude these sample rates</source>
-        <translation type="unfinished">排除這些取樣頻率</translation>
+        <translation>排除這些取樣頻率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="106"/>
         <source>Resample only these sample rates</source>
-        <translation type="unfinished">僅對這些取樣頻率進行重新取樣</translation>
+        <translation>僅對這些取樣頻率進行重新取樣</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="108"/>
         <source>Rate filtering</source>
-        <translation type="unfinished"></translation>
+        <translation>頻率篩選</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="110"/>
         <source>e.g. 44100, 48000, 96000</source>
-        <translation type="unfinished">例如 44100, 48000, 96000</translation>
+        <translation>例如 44100, 48000, 96000</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="111"/>
         <source>Filtered rates</source>
-        <translation type="unfinished"></translation>
+        <translation>已經篩選的頻率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="178"/>
         <source> %</source>
-        <translation type="unfinished"></translation>
+        <translation> %</translation>
     </message>
 </context>
 <context>
@@ -10155,7 +10155,7 @@ and last played uses the later value.</source>
         <location filename="../../src/utils/stardelegate.cpp" line="93"/>
         <source>mixed</source>
         <extracomment>Indicates that the selected tracks have different ratings in the tag editor.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>混合</translation>
     </message>
 </context>
 <context>
@@ -10191,7 +10191,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
         <source>Status Bar</source>
-        <translation type="unfinished">狀態列</translation>
+        <translation>狀態列</translation>
     </message>
 </context>
 <context>
@@ -10237,7 +10237,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="145"/>
         <source>Cancel scan</source>
-        <translation type="unfinished"></translation>
+        <translation>取消掃瞄</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="319"/>
@@ -10407,7 +10407,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="79"/>
         <source>Use &quot;;&quot; in the editor to enter multiple values.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &quot;;&quot; 在編輯器中輸入多重數值。</translation>
     </message>
 </context>
 <context>
@@ -10415,7 +10415,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditormodel.cpp" line="647"/>
         <source>Multiple values. Choose a rating to apply it to all selected tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>多重數值。選擇一個評等將其套用至全部所選的曲目。</translation>
     </message>
 </context>
 <context>
@@ -10423,7 +10423,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="50"/>
         <source>Capitalise</source>
-        <translation type="unfinished"></translation>
+        <translation>大寫</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="51"/>
@@ -10483,13 +10483,13 @@ and last played uses the later value.</source>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="165"/>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="210"/>
         <source>Previous</source>
-        <translation>上一個</translation>
+        <translation>上一首</translation>
     </message>
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="178"/>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="216"/>
         <source>Next</source>
-        <translation>下一個</translation>
+        <translation>下一首</translation>
     </message>
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="213"/>
@@ -10512,12 +10512,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="161"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>取代目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="162"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>建立新的播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="163"/>
@@ -10552,22 +10552,22 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="169"/>
         <source>Auto-extract artwork to files</source>
-        <translation type="unfinished"></translation>
+        <translation>自動擷取圖面至檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="170"/>
         <source>Front cover…</source>
-        <translation type="unfinished"></translation>
+        <translation>正面封面…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="171"/>
         <source>Back cover…</source>
-        <translation type="unfinished"></translation>
+        <translation>背面封面…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="172"/>
         <source>Artist picture…</source>
-        <translation type="unfinished"></translation>
+        <translation>藝人圖像…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="173"/>
@@ -10632,27 +10632,27 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="305"/>
         <source>Extract embedded artwork for the selected tracks to files in their directories without prompting</source>
-        <translation type="unfinished"></translation>
+        <translation>將所選曲目的嵌入圖面擷取至其目錄檔案 無需提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="315"/>
         <source>Attach image</source>
-        <translation type="unfinished"></translation>
+        <translation>附加圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="317"/>
         <source>Attach an image file as the front cover for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>附加圖片檔案作為所選曲目的正面封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="326"/>
         <source>Attach an image file as the back cover for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>附加圖片檔案作為所選曲目的背面封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="335"/>
         <source>Attach an image file as the artist picture for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>附加圖片檔案作為所選曲目的藝人圖像</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="348"/>
@@ -10710,12 +10710,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="68"/>
         <source>Focus Search &amp;Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>焦點搜尋列(&amp;B)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="69"/>
         <source>Focus the first Search Bar found in the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>焦點第一個搜尋列所找到的 於目前配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
@@ -10756,87 +10756,87 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="49"/>
         <source>Custom colours</source>
-        <translation type="unfinished">自訂顏色</translation>
+        <translation>自訂顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="56"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="40"/>
         <source>VU Meter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>VU 音量度量設定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
         <source>%1 fps</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 fps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="70"/>
         <source>Peak hold time</source>
-        <translation type="unfinished">峰值維持時間</translation>
+        <translation>峰值維持時間</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="72"/>
         <source>Falloff time</source>
-        <translation type="unfinished">衰減時間</translation>
+        <translation>衰減時間</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="74"/>
         <source>Refresh rate</source>
-        <translation type="unfinished"></translation>
+        <translation>重新整理頻率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="78"/>
         <source>Dimension</source>
-        <translation type="unfinished">大小</translation>
+        <translation>空間維度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="92"/>
         <source>Channel spacing</source>
-        <translation type="unfinished">聲道間距</translation>
+        <translation>聲道間距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="94"/>
         <source>Bar size</source>
-        <translation type="unfinished">條列大小</translation>
+        <translation>條列大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="96"/>
         <source>Bar spacing</source>
-        <translation type="unfinished">條列間隔</translation>
+        <translation>條列間隔</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="99"/>
         <source>Sections</source>
-        <translation type="unfinished">部分</translation>
+        <translation>區段</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="101"/>
         <source>Section spacing</source>
-        <translation type="unfinished">部分間距</translation>
+        <translation>區段間距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="109"/>
         <source>Background colour</source>
-        <translation type="unfinished">背景顏色</translation>
+        <translation>背景顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="111"/>
         <source>Peak colour</source>
-        <translation type="unfinished">峰值顏色</translation>
+        <translation>峰值顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="113"/>
         <source>Legend colour</source>
-        <translation type="unfinished"></translation>
+        <translation>圖例顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="115"/>
         <source>Bar colours</source>
-        <translation type="unfinished">條列顏色</translation>
+        <translation>條列顏色</translation>
     </message>
 </context>
 <context>
@@ -10891,183 +10891,183 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="42"/>
         <source>WaveBar Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>WaveBar 設定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="43"/>
         <source>Show labels</source>
-        <translation type="unfinished">顯示標籤</translation>
+        <translation>顯示標籤</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="44"/>
         <source>Show elapsed total</source>
-        <translation type="unfinished">顯示已用時間總計</translation>
+        <translation>顯示已用時間總計</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="45"/>
         <source>Min/Max</source>
-        <translation type="unfinished">最小/最大</translation>
+        <translation>最小/最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="46"/>
         <source>RMS</source>
-        <translation type="unfinished">RMS</translation>
+        <translation>RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="47"/>
         <source>Silence</source>
-        <translation type="unfinished">靜音</translation>
+        <translation>靜音</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="48"/>
         <source>Off</source>
-        <translation type="unfinished">關閉</translation>
+        <translation>關閉</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="49"/>
         <source>Stereo</source>
-        <translation type="unfinished">立體聲</translation>
+        <translation>立體聲</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="50"/>
         <source>Mono</source>
-        <translation type="unfinished">單聲道</translation>
+        <translation>單聲道</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="51"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished">顯示進度游標</translation>
+        <translation>顯示進度游標</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="58"/>
         <source>Custom colours</source>
-        <translation type="unfinished">自訂顏色</translation>
+        <translation>自訂顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="77"/>
         <source>Clear Cache</source>
-        <translation type="unfinished">清空快取</translation>
+        <translation>清除快取</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="79"/>
         <source>Appearance</source>
-        <translation type="unfinished">外觀</translation>
+        <translation>外觀</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="84"/>
         <source>Display</source>
-        <translation type="unfinished">顯示</translation>
+        <translation>顯示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="86"/>
         <source>Draw a line in place of silence</source>
-        <translation type="unfinished">在靜音之處繪出一條線</translation>
+        <translation>在靜音之處繪出線條</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="91"/>
         <source>Downmix</source>
-        <translation type="unfinished">混音</translation>
+        <translation>降低混音</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="101"/>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="168"/>
         <source>Cursor</source>
-        <translation type="unfinished">游標</translation>
+        <translation>游標</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="106"/>
         <source>Cursor width</source>
-        <translation type="unfinished">游標寬度</translation>
+        <translation>游標寬度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="110"/>
         <source>Scale</source>
-        <translation type="unfinished">規模</translation>
+        <translation>規模</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="118"/>
         <source>Channel scale</source>
-        <translation type="unfinished">聲道規模</translation>
+        <translation>聲道規模</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="120"/>
         <source>Max scale</source>
-        <translation type="unfinished">最大規模</translation>
+        <translation>最大規模</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="124"/>
         <source>Dimension</source>
-        <translation type="unfinished">大小</translation>
+        <translation>空間維度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="132"/>
         <source>Bar width</source>
-        <translation type="unfinished">條列寬度</translation>
+        <translation>條列寬度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="134"/>
         <source>Bar gap</source>
-        <translation type="unfinished">條列間隙</translation>
+        <translation>條列間隙</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="136"/>
         <source>Centre gap</source>
-        <translation type="unfinished">中央間隙</translation>
+        <translation>中央間隙</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="144"/>
         <source>Unplayed</source>
-        <translation type="unfinished">尚未播放</translation>
+        <translation>尚未播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="145"/>
         <source>Played</source>
-        <translation type="unfinished">已經播放</translation>
+        <translation>已經播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="146"/>
         <source>Border</source>
-        <translation type="unfinished">邊框</translation>
+        <translation>邊框</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="147"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="150"/>
         <source>Max</source>
-        <translation type="unfinished">最大</translation>
+        <translation>最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="154"/>
         <source>Min</source>
-        <translation type="unfinished">最小</translation>
+        <translation>最小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="158"/>
         <source>RMS Max</source>
-        <translation type="unfinished">RMS 最大</translation>
+        <translation>RMS 最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="162"/>
         <source>RMS Min</source>
-        <translation type="unfinished">RMS 最小</translation>
+        <translation>RMS 最小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="166"/>
         <source>Playing</source>
-        <translation type="unfinished">播放中</translation>
+        <translation>播放中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="167"/>
         <source>Seeking</source>
-        <translation type="unfinished">尋找中</translation>
+        <translation>查尋中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="175"/>
         <source>Cache</source>
-        <translation type="unfinished">快取</translation>
+        <translation>快取</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="177"/>
@@ -11075,7 +11075,7 @@ and last played uses the later value.</source>
 for waveform data. Higher values will result 
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
-        <translation type="unfinished">用於波形資料的樣本數量 (每聲道)。 
+        <translation>用於波形資料使用的樣本數量 (每聲道)。 
  
 較高的值會產生更準確細緻的波形， 
 但是代價是佔用更多磁碟快取空間。</translation>
@@ -11083,7 +11083,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="181"/>
         <source>Number of samples</source>
-        <translation type="unfinished">樣本數量</translation>
+        <translation>樣本數量</translation>
     </message>
 </context>
 <context>
@@ -11091,12 +11091,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="87"/>
         <source>Waveform Seekbar</source>
-        <translation>波形搜尋列</translation>
+        <translation>波形查尋列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="88"/>
         <source>Visualisations</source>
-        <translation type="unfinished">視覺化</translation>
+        <translation>視覺化</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="92"/>
@@ -11149,7 +11149,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="199"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished">磁碟快取用量</translation>
+        <translation>磁碟快取用量</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="479"/>
@@ -11189,7 +11189,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="545"/>
         <source>Downmix</source>
-        <translation>混音</translation>
+        <translation>降低混音</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="548"/>
@@ -11281,7 +11281,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="190"/>
         <source>Command Button</source>
-        <translation type="unfinished"></translation>
+        <translation>指令按鈕</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="204"/>
@@ -11296,12 +11296,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="214"/>
         <source>Seekbar</source>
-        <translation>搜尋列</translation>
+        <translation>查尋列</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="219"/>
         <source>Output Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>輸出選擇器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="224"/>
@@ -11342,7 +11342,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="277"/>
         <source>Script Display</source>
-        <translation type="unfinished"></translation>
+        <translation>指令腳本顯示</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="320"/>
@@ -11460,12 +11460,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek forward</source>
-        <translation>往前尋找</translation>
+        <translation>往前查尋</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek backward</source>
-        <translation>往後尋找</translation>
+        <translation>往後查尋</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="446"/>
@@ -11583,66 +11583,66 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="94"/>
         <source>Image Files</source>
-        <translation type="unfinished"></translation>
+        <translation>圖片檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="94"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>全部檔案 (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="98"/>
         <source>Extract Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>擷取圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="262"/>
         <source>No embedded artwork found to extract</source>
-        <translation type="unfinished"></translation>
+        <translation>找無嵌入圖面可進行擷取</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="265"/>
         <source>Extracted artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已經擷取圖面至 %Ln 檔案</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="270"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已經擷取圖面至 %Ln 檔案；有些擷取失敗</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="268"/>
         <source>Failed to extract artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>擷取圖面失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="57"/>
         <source>Images</source>
-        <translation type="unfinished">圖片</translation>
+        <translation>圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="58"/>
         <source>Open Image</source>
-        <translation type="unfinished">開啟圖片</translation>
+        <translation>開啟圖片</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="84"/>
         <source>Tempo multiplier</source>
-        <translation type="unfinished"></translation>
+        <translation>節奏倍增器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="86"/>
         <source>Pitch shift</source>
-        <translation type="unfinished"></translation>
+        <translation>音調調動</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="88"/>
         <source>Rate multiplier</source>
-        <translation type="unfinished"></translation>
+        <translation>頻率倍增器</translation>
     </message>
 </context>
 <context>
