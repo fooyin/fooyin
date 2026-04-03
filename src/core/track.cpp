@@ -1100,6 +1100,7 @@ bool Track::hasMatch(const QString& term) const
            contains(performer()) ||
            contains(composer()) ||
            contains(genre()) ||
+           contains(comment()) ||
            contains(filepath());
     // clang-format on
 }
