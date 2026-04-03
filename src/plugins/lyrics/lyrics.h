@@ -23,6 +23,7 @@
 #include <QFont>
 #include <QString>
 #include <QStringList>
+#include <cstdint>
 
 namespace Fooyin::Lyrics {
 struct Metadata
@@ -115,7 +116,7 @@ struct Lyrics
     QString source;
     bool isLocal{false};
     Metadata metadata;
-    uint64_t offset{0};
+    int64_t offset{0};
     std::vector<ParsedLine> lines;
 
     [[nodiscard]] bool isValid() const noexcept

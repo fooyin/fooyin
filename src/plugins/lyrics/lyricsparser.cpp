@@ -148,7 +148,14 @@ bool parseTag(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
         if(value.size() > 1 && value.startsWith("+"_L1)) {
             offsetStr = offsetStr.sliced(1);
         }
-        lyrics.offset = offsetStr.toUInt();
+        bool ok                = false;
+        const qlonglong parsed = offsetStr.toLongLong(&ok);
+        if(ok) {
+            lyrics.offset = static_cast<int64_t>(parsed);
+        }
+        else {
+            lyrics.offset = 0;
+        }
     }
     else if(field == "re"_L1 || field == "tool"_L1) {
         lyrics.metadata.tool = value;
@@ -204,7 +211,13 @@ Token timestamp(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
     }
 
     uint64_t time = ((minutes * 60 + seconds) * 1000) + milliseconds;
-    time += lyrics.offset;
+
+    // Apply signed offset (may be negative). Clamp to zero to avoid underflow.
+    int64_t adjusted = static_cast<int64_t>(time) + static_cast<int64_t>(lyrics.offset);
+    if(adjusted < 0) {
+        adjusted = 0;
+    }
+    time = static_cast<uint64_t>(adjusted);
 
     Token token;
     token.type      = isWord ? TokWordTimestamp : TokTimestamp;
