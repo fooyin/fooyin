@@ -4,7 +4,7 @@
 <context>
     <name>Fooyin::ArtworkProperties</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="92"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="300"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation>
             <numerusform>Exported artwork to %Ln file</numerusform>
@@ -12,7 +12,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="98"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="308"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
         <translation>
             <numerusform>Exported artwork to %Ln file; some exports failed</numerusform>
@@ -23,7 +23,7 @@
 <context>
     <name>Fooyin::ArtworkRow</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkrow.cpp" line="194"/>
+        <location filename="../../src/gui/artwork/artworkrow.cpp" line="197"/>
         <source>Artwork found in %Ln file(s)</source>
         <translation>
             <numerusform>Artwork found in %Ln file</numerusform>
@@ -31,7 +31,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkrow.cpp" line="195"/>
+        <location filename="../../src/gui/artwork/artworkrow.cpp" line="198"/>
         <source>%Ln file(s) selected</source>
         <translation>
             <numerusform>%Ln file selected</numerusform>
@@ -74,6 +74,44 @@
         <translation>
             <numerusform>Pending operation: %Ln</numerusform>
             <numerusform>Pending operations: %Ln</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::FileOps::FileOpsPlugin</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="195"/>
+        <source>Deleted %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::LibraryMenu</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="138"/>
+        <source>%Ln track(s) added</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="139"/>
+        <source>%Ln track(s) updated</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/menubar/librarymenu.cpp" line="140"/>
+        <source>%Ln track(s) removed</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
