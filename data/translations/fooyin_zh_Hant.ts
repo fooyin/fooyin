@@ -238,7 +238,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
         <source>Library added timestamp</source>
-        <translation>曲庫所添加的時間戳記</translation>
+        <translation>音樂庫所添加的時間戳記</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="142"/>
@@ -253,7 +253,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="144"/>
         <source>Path relative to the library root</source>
-        <translation>相對於曲庫根目錄的路徑</translation>
+        <translation>相對於音樂庫根目錄的路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
@@ -435,7 +435,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="172"/>
         <source>Library</source>
-        <translation>音樂歌曲庫</translation>
+        <translation>歌曲音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
@@ -650,52 +650,52 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="203"/>
         <source>Returns a substring</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns a substring</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="204"/>
         <source>Finds a substring position</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Finds a substring position</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
         <source>Finds a substring position ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Finds a substring position ignoring case</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
         <source>Finds the last substring position</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Finds the last substring position</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="210"/>
         <source>Finds the last substring position ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Finds the last substring position ignoring case</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
         <source>Returns the text length</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns the text length</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="214"/>
         <source>Returns the longest string</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns the longest string</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Compares two strings</source>
-        <translation type="unfinished"></translation>
+        <translation>比較兩組字串</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="216"/>
         <source>Compares two strings ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation>比較兩組字串 忽略大小寫</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
         <source>Tests whether one string is longer</source>
-        <translation type="unfinished"></translation>
+        <translation>測試哪組字串較長</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="218"/>
@@ -831,17 +831,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Percent-encodes text for use in URLs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Percent-encodes text for use in URLs</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
         <source>Formats milliseconds as time</source>
-        <translation type="unfinished"></translation>
+        <translation>將毫秒格式化作為時間</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Returns the value stored in a script variable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns the value stored in a script variable</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
@@ -853,17 +853,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="248"/>
         <source>Stores a script variable and returns the value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stores a script variable and returns the value</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="250"/>
         <source>Stores a script variable and returns nothing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stores a script variable and returns nothing</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="252"/>
         <source>Returns then when condition is true</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns then when condition is true</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
@@ -878,27 +878,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="254"/>
         <source>Returns the first non-empty value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns the first non-empty value</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="256"/>
         <source>Returns the first true value from a list, or else when none match</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Returns the first true value from a list, or else when none match</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
         <source>Compares numeric values</source>
-        <translation type="unfinished"></translation>
+        <translation>比較數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <source>Checks whether text is longer than a limit</source>
-        <translation type="unfinished"></translation>
+        <translation>檢查文字長度是否超過限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
         <source>Looks up a raw tag field by name</source>
-        <translation type="unfinished"></translation>
+        <translation>依照名稱查詢原始標籤字段</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
@@ -909,7 +909,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
         <source>Looks up technical track information</source>
-        <translation type="unfinished"></translation>
+        <translation>查詢技術追蹤資訊</translation>
     </message>
 </context>
 <context>
@@ -950,7 +950,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Library</source>
-        <translation>媒體庫(&amp;L)</translation>
+        <translation>音樂庫(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="71"/>
@@ -3526,7 +3526,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filtercolumneditordialog.cpp" line="70"/>
         <source>Script Editor</source>
-        <translation>指令碼編輯器</translation>
+        <translation>指令腳本編輯器</translation>
     </message>
 </context>
 <context>
@@ -3871,7 +3871,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="343"/>
         <source>Library Filter</source>
-        <translation>媒體庫篩選器</translation>
+        <translation>音樂庫篩選器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="230"/>
@@ -3908,7 +3908,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="49"/>
         <source>Library Filter</source>
-        <translation>媒體庫篩選器</translation>
+        <translation>音樂庫篩選器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="50"/>
@@ -4817,12 +4817,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="59"/>
         <source>&amp;Scripting help</source>
-        <translation>指令碼說明(&amp;S)</translation>
+        <translation>指令腳本說明(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="60"/>
         <source>Open the scripting documentation</source>
-        <translation>開啟指令碼說明文件</translation>
+        <translation>開啟指令腳本說明文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
@@ -4970,7 +4970,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="198"/>
         <source>Library</source>
-        <translation>媒體庫</translation>
+        <translation>音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="203"/>
@@ -5251,7 +5251,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="312"/>
         <source>Library</source>
-        <translation>媒體庫</translation>
+        <translation>音樂庫</translation>
     </message>
 </context>
 <context>
@@ -5259,12 +5259,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="140"/>
         <source>Auto refresh on startup</source>
-        <translation>啟動時自動更新媒體庫</translation>
+        <translation>啟動時自動重新整理</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="141"/>
         <source>Monitor libraries</source>
-        <translation>監控媒體庫更新</translation>
+        <translation>監探音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="142"/>
@@ -5304,12 +5304,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="159"/>
         <source>Scan libraries for changes on startup</source>
-        <translation>啟動時掃瞄媒體庫更新</translation>
+        <translation>啟動時掃瞄音樂庫變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="160"/>
         <source>Monitor libraries for external changes</source>
-        <translation>監控媒體庫更新</translation>
+        <translation>監探音樂庫用於外部變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="162"/>
@@ -5329,28 +5329,29 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="173"/>
         <source>Scanning</source>
-        <translation type="unfinished"></translation>
+        <translation>掃瞄</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="180"/>
         <source>Availability</source>
-        <translation type="unfinished"></translation>
+        <translation>可用性</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="187"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="193"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>播放統計</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="196"/>
         <source>When enabled, a rating found in file tags replaces the database rating.
 When disabled, the database rating is kept and file tags are only used when the database rating is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>當設作啟用後，檔案標籤中的評等將取代資料庫的評等。 
+當設為停用後，將保留資料庫評等，僅當資料庫評等為空白時才使用檔案標籤。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="200"/>
@@ -5358,7 +5359,10 @@ When disabled, the database rating is kept and file tags are only used when the 
 Missing values still fall back to the database.
 When disabled, playcount uses the higher value, first played uses the earlier non-empty value,
 and last played uses the later value.</source>
-        <translation type="unfinished"></translation>
+        <translation>當設為啟用後，檔案標籤中的播放計數和播放時間戳記會取代資料庫中的數值。 
+遺失數值時仍會退回至資料庫。 
+當設為停用時，播放計數使用較高的數值，首次播放使用較早的非空白數值， 
+最後播放的內容使用較後期的數值。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="292"/>
@@ -5371,7 +5375,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="51"/>
         <source>Library</source>
-        <translation>媒體庫</translation>
+        <translation>音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="54"/>
@@ -5386,7 +5390,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation>移除不在任何播放清單中非媒體庫的曲目，以及過期的播放統計數據</translation>
+        <translation>移除不在任何播放清單中非音樂庫的曲目，以及過期的播放統計數據</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="61"/>
@@ -5406,7 +5410,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="67"/>
         <source>Remove unavailable tracks from the database and libraries</source>
-        <translation>移除無法可用的曲目從資料庫及音樂庫</translation>
+        <translation>移除無法可用的曲目 從資料庫及音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
@@ -5416,7 +5420,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="73"/>
         <source>Update tracks in libraries which have been modified on disk</source>
-        <translation>在媒體庫中更新已經修改的曲目</translation>
+        <translation>在音樂庫中更新已經修改的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="78"/>
@@ -5426,7 +5430,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="80"/>
         <source>Reload metadata from files for all tracks in libraries</source>
-        <translation>在媒體庫中重新載入全部曲目資料</translation>
+        <translation>在音樂庫中重新載入全部曲目詮釋資料</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="85"/>
@@ -5436,7 +5440,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="86"/>
         <source>Search all libraries</source>
-        <translation>搜尋全部媒體庫</translation>
+        <translation>搜尋全部音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="91"/>
@@ -5456,23 +5460,23 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="99"/>
         <source>Open the library page in the settings dialog</source>
-        <translation>在設定對話框中開啟媒體庫頁面</translation>
+        <translation>在設定對話框中開啟音樂庫頁面</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="106"/>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="117"/>
         <source>Cancel current scan</source>
-        <translation type="unfinished"></translation>
+        <translation>取消目前掃瞄</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="109"/>
         <source>Cancel the current library scan</source>
-        <translation type="unfinished"></translation>
+        <translation>取消目前音樂庫掃瞄</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="118"/>
         <source>Cancel the current scan</source>
-        <translation type="unfinished"></translation>
+        <translation>取消目前掃瞄</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="146"/>
@@ -5544,7 +5548,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="153"/>
         <source>Library</source>
-        <translation>媒體庫</translation>
+        <translation>音樂庫</translation>
     </message>
 </context>
 <context>
@@ -5552,22 +5556,22 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="85"/>
         <source>Script Editor</source>
-        <translation>指令碼編輯器</translation>
+        <translation>指令腳本編輯器</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="87"/>
         <source>Preserve library viewer order</source>
-        <translation type="unfinished"></translation>
+        <translation>保留音樂庫檢視順序</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="91"/>
         <source>Sort tracks in library by</source>
-        <translation>排序方式</translation>
+        <translation>音樂庫中排序曲目依照</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="93"/>
         <source>Sort tracks added to playlists from library viewers by</source>
-        <translation type="unfinished"></translation>
+        <translation>從音樂庫檢視器已經添加至播放清單的曲目進行排序 依照</translation>
     </message>
 </context>
 <context>
@@ -5585,7 +5589,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="88"/>
         <source>&amp;Cancel scan</source>
-        <translation type="unfinished"></translation>
+        <translation>取消掃瞄(&amp;C)</translation>
     </message>
 </context>
 <context>
@@ -5593,42 +5597,42 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="40"/>
         <source>Library Tree Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>音樂庫樹階設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="44"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>立即開始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="45"/>
         <source>Enabled</source>
-        <translation type="unfinished">已經啟用</translation>
+        <translation>已經啟用</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="46"/>
         <source>Switch when changed</source>
-        <translation type="unfinished"></translation>
+        <translation>當有變更時進行切換</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="47"/>
         <source>Keep alive</source>
-        <translation type="unfinished">維持現行</translation>
+        <translation>維持現行</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
         <source>Restore state on startup</source>
-        <translation type="unfinished">啟動時恢復先前狀態</translation>
+        <translation>啟動時還原狀態</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="50"/>
         <source>Expand/collapse animation</source>
-        <translation type="unfinished">展開/縮合動畫</translation>
+        <translation>展開/縮合動畫</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="51"/>
         <source>Show header</source>
-        <translation type="unfinished">顯示標題</translation>
+        <translation>顯示標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
@@ -5638,52 +5642,52 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">替用行列顏色</translation>
+        <translation>替用行列顏色</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="54"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>覆蓋行列高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="58"/>
         <source>Manage groupings...</source>
-        <translation type="unfinished"></translation>
+        <translation>管理群組...</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="61"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>對於 &quot;取代目前播放清單&quot; 和 &quot;建立新的播放清單&quot; ，立即開始播放。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="63"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">點選行為</translation>
+        <translation>點按行為</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="66"/>
         <source>Double-click</source>
-        <translation type="unfinished">點按二下</translation>
+        <translation>點按二下</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
         <source>Middle-click</source>
-        <translation type="unfinished">點按中鍵</translation>
+        <translation>點按中鍵</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="73"/>
         <source>Library Selection Playlist</source>
-        <translation type="unfinished">媒體庫選擇播放清單</translation>
+        <translation>音樂庫選擇播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="76"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished">如果這是現行的播放清單，當變更選擇時維持現行</translation>
+        <translation>如果這是現行的播放清單，當變更選擇時維持現行</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
         <source>Name</source>
-        <translation type="unfinished">名稱</translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="85"/>
@@ -5774,7 +5778,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreecontroller.cpp" line="37"/>
         <source>Library Selection</source>
-        <translation>媒體庫選項</translation>
+        <translation>音樂庫選擇</translation>
     </message>
 </context>
 <context>
@@ -5865,7 +5869,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="565"/>
         <source>Library Tree</source>
-        <translation>媒體庫樹階</translation>
+        <translation>音樂庫樹階</translation>
     </message>
 </context>
 <context>
@@ -5873,7 +5877,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="110"/>
         <source>Loading Library…</source>
-        <translation>載入媒體庫…</translation>
+        <translation>載入音樂庫…</translation>
     </message>
 </context>
 <context>
@@ -5886,7 +5890,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="207"/>
         <source>&amp;Add to playback queue</source>
-        <translation>加入到播放佇列(&amp;A)</translation>
+        <translation>添入至播放佇列(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="208"/>
@@ -5926,7 +5930,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1075"/>
         <source>Library Tree</source>
-        <translation>媒體庫樹階</translation>
+        <translation>音樂庫樹階</translation>
     </message>
 </context>
 <context>
@@ -7378,7 +7382,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="73"/>
         <source>Script Editor</source>
-        <translation>指令碼編輯器</translation>
+        <translation>指令腳本編輯器</translation>
     </message>
 </context>
 <context>
@@ -9232,7 +9236,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="840"/>
         <source>Script Editor</source>
-        <translation>指令碼編輯器</translation>
+        <translation>指令腳本編輯器</translation>
     </message>
 </context>
 <context>
@@ -9240,7 +9244,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="45"/>
         <source>Open in script editor</source>
-        <translation>在指令碼編輯器中開啟</translation>
+        <translation>在指令腳本輯器中開啟</translation>
     </message>
 </context>
 <context>
@@ -9248,7 +9252,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="70"/>
         <source>Open in script editor</source>
-        <translation>在指令碼編輯器中開啟</translation>
+        <translation>在指令腳本編輯器中開啟</translation>
     </message>
 </context>
 <context>
@@ -9578,7 +9582,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
         <source>Search Library</source>
-        <translation>搜尋媒體庫</translation>
+        <translation>搜尋音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="131"/>
@@ -9618,7 +9622,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Library</source>
-        <translation>媒體庫</translation>
+        <translation>音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
@@ -9709,7 +9713,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="63"/>
         <source>Search library…</source>
-        <translation>搜尋媒體庫…</translation>
+        <translation>搜尋音樂庫…</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="95"/>
@@ -9781,7 +9785,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="509"/>
         <source>Library</source>
-        <translation>媒體庫</translation>
+        <translation>音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="515"/>
@@ -9989,7 +9993,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="159"/>
         <source>Sort Script</source>
-        <translation>排序指令碼</translation>
+        <translation>排序指令腳本</translation>
     </message>
 </context>
 <context>
@@ -10229,7 +10233,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="74"/>
         <source>Scripts</source>
-        <translation>指令碼</translation>
+        <translation>指令腳本</translation>
     </message>
 </context>
 <context>
@@ -10700,12 +10704,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
         <source>&amp;Script editor</source>
-        <translation>指令碼編輯器(&amp;S)</translation>
+        <translation>指令腳本編輯器(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="60"/>
         <source>Open the script editor dialog</source>
-        <translation>開啟指令碼編輯器對話框</translation>
+        <translation>開啟指令腳本編輯器對話框</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="68"/>
@@ -11261,7 +11265,7 @@ cost of using more disk space in the cache.</source>
         <location filename="../../src/gui/widgets.cpp" line="182"/>
         <location filename="../../src/gui/widgets.cpp" line="343"/>
         <source>Library Tree</source>
-        <translation>媒體庫樹階</translation>
+        <translation>音樂庫樹階</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="198"/>
@@ -11513,7 +11517,7 @@ cost of using more disk space in the cache.</source>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1637"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1677"/>
         <source>Expected end of script</source>
-        <translation>期望指令碼結束</translation>
+        <translation>預計指令腳本結束</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="44"/>
