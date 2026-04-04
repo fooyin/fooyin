@@ -19,8 +19,10 @@
 
 #include "editableplaylistsession.h"
 
+#include "core/library/tracksort.h"
 #include "internalguisettings.h"
 #include "playlist/playlistinteractor.h"
+#include "playlist/presetregistry.h"
 #include "playlistcommands.h"
 #include "playlistcontroller.h"
 #include "playlistuicontroller.h"
@@ -650,6 +652,11 @@ void EditablePlaylistSession::resetTree(PlaylistWidgetSessionHost& sessionHost)
         return;
     }
 
+    if(host.playlistView()->hasActiveInlineEditor()) {
+        refreshActionState(sessionHost.sessionWidget());
+        return;
+    }
+
     host.resetSort(false);
     restorePlaylistViewState(host, host.playlistController()->currentPlaylist());
     refreshActionState(sessionHost.sessionWidget());
@@ -687,6 +694,11 @@ void EditablePlaylistSession::handleTracksChanged(PlaylistWidgetSessionHost& ses
         host.resetSort(true);
     }
 
+    if(host.playlistView()->hasActiveInlineEditor() && !indexes.empty()) {
+        host.playlistModel()->updateTracks(indexes);
+        return;
+    }
+
     setFilteredTracks({});
     savePlaylistViewState(host, host.playlistController()->currentPlaylist());
     host.playlistController()->setSearch(host.playlistController()->currentPlaylist(), {});
@@ -694,6 +706,10 @@ void EditablePlaylistSession::handleTracksChanged(PlaylistWidgetSessionHost& ses
     emit widget->changeSearch({});
 
     auto restoreSelection = [&host](int currentIndex, const std::vector<int>& selectedIndexes) {
+        if(host.playlistView()->hasActiveInlineEditor()) {
+            return;
+        }
+
         restorePlaylistViewState(host, host.playlistController()->currentPlaylist());
         restoreSelectedPlaylistIndexes(host, selectedIndexes);
         if(currentIndex >= 0) {

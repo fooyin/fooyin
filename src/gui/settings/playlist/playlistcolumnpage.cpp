@@ -24,6 +24,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/scripting/scripteditor.h>
+#include <gui/widgets/checkboxdelegate.h>
 #include <gui/widgets/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -61,14 +62,16 @@ PlaylistColumnPageWidget::PlaylistColumnPageWidget(PlaylistColumnRegistry* colum
     , m_openEditor{new QToolButton(this)}
 {
     m_columnList->setExtendableModel(m_model);
+    m_columnList->setItemDelegateForColumn(0, new CheckBoxDelegate(this));
 
     // Hide index column
-    m_columnList->hideColumn(0);
+    m_columnList->hideColumn(1);
 
-    m_columnList->setExtendableColumn(1);
+    m_columnList->setExtendableColumn(2);
     m_columnList->verticalHeader()->hide();
-    m_columnList->horizontalHeader()->setStretchLastSection(true);
+    m_columnList->horizontalHeader()->setStretchLastSection(false);
     m_columnList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    m_columnList->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
 
     m_openEditor->setText(tr("Script Editor"));
     m_columnList->addCustomTool(m_openEditor);
@@ -118,7 +121,7 @@ void PlaylistColumnPageWidget::updateButtonState()
     });
 
     m_columnList->removeRowAction()->setEnabled(hasCustom);
-    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 2);
+    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 3);
 }
 
 PlaylistColumnPage::PlaylistColumnPage(PlaylistColumnRegistry* columnRegistry, SettingsManager* settings,

@@ -24,11 +24,39 @@
 #include <utils/stardelegate.h>
 #include <utils/stareditor.h>
 
+#include <QApplication>
 #include <QHeaderView>
+#include <QKeyEvent>
+#include <QLineEdit>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QResizeEvent>
+#include <QScrollBar>
+#include <QTimer>
+
+#include <algorithm>
 
 using namespace Qt::StringLiterals;
+
+constexpr auto EditorDelay          = 600;
+constexpr auto MultipleValuesPrefix = "<<multiple values>>"_L1;
+
+namespace {
+bool sameRow(const QModelIndex& lhs, const QModelIndex& rhs)
+{
+    return lhs.isValid() && rhs.isValid() && lhs.row() == rhs.row() && lhs.parent() == rhs.parent();
+}
+
+QString normaliseBulkEditorValue(QString value)
+{
+    if(value.startsWith(QLatin1String{MultipleValuesPrefix})) {
+        value.remove(0, QLatin1StringView{MultipleValuesPrefix}.size());
+    }
+
+    return value.trimmed();
+}
+
+} // namespace
 
 namespace Fooyin {
 PlaylistView::PlaylistView(QWidget* parent)
@@ -36,13 +64,20 @@ PlaylistView::PlaylistView(QWidget* parent)
     , m_playlistLoaded{false}
     , m_starDelegate{nullptr}
     , m_ratingColumn{-1}
+    , m_bulkEditor{nullptr}
+    , m_bulkEditColumnIndex{-1}
+    , m_cancelledPendingEditClick{false}
+    , m_cancelledActiveEditorClick{false}
+    , m_suppressNextClickEdit{false}
+    , m_singleWriteInProgress{false}
+    , m_bulkWriteInProgress{false}
 {
     setObjectName(u"PlaylistView"_s);
 
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setSelectionBehavior(SelectRows);
+    setSelectionMode(ExtendedSelection);
     setDragEnabled(true);
-    setDragDropMode(QAbstractItemView::DragDrop);
+    setDragDropMode(DragDrop);
     setDefaultDropAction(Qt::MoveAction);
     setDropIndicatorShown(true);
     setTextElideMode(Qt::ElideRight);
@@ -84,6 +119,7 @@ void PlaylistView::setupRatingDelegate()
 void PlaylistView::playlistAboutToBeReset()
 {
     m_playlistLoaded = false;
+    cancelPendingEditor();
 }
 
 void PlaylistView::playlistReset()
@@ -96,8 +132,61 @@ bool PlaylistView::playlistLoaded() const
     return m_playlistLoaded;
 }
 
+bool PlaylistView::hasActiveInlineEditor() const
+{
+    return state() == EditingState || (m_bulkEditor && m_bulkEditor->isVisible());
+}
+
+void PlaylistView::setSingleWriteInProgress(bool inProgress)
+{
+    m_singleWriteInProgress = inProgress;
+
+    if(inProgress) {
+        cancelPendingEditor();
+    }
+}
+
+void PlaylistView::handleSingleWriteFinished()
+{
+    m_singleWriteInProgress = false;
+}
+
+void PlaylistView::setBulkWriteInProgress(bool inProgress)
+{
+    m_bulkWriteInProgress = inProgress;
+
+    if(inProgress) {
+        cancelPendingEditor();
+    }
+}
+
+void PlaylistView::handleBulkWriteFinished()
+{
+    m_bulkWriteInProgress = false;
+}
+
+void PlaylistView::keyPressEvent(QKeyEvent* event)
+{
+    if(m_bulkWriteInProgress) {
+        event->accept();
+        return;
+    }
+
+    if(event->key() == Qt::Key_F2 && event->modifiers() == Qt::NoModifier && startBulkEditSession()) {
+        event->accept();
+        return;
+    }
+
+    ExpandedTreeView::keyPressEvent(event);
+}
+
 void PlaylistView::mouseMoveEvent(QMouseEvent* event)
 {
+    if(m_bulkWriteInProgress) {
+        event->accept();
+        return;
+    }
+
     if(m_starDelegate) {
         const QModelIndex index = indexAt(event->pos());
         if(index.isValid() && index.column() == m_ratingColumn) {
@@ -113,22 +202,91 @@ void PlaylistView::mouseMoveEvent(QMouseEvent* event)
 
 void PlaylistView::mousePressEvent(QMouseEvent* event)
 {
-    if(editTriggers() & QAbstractItemView::NoEditTriggers || event->button() != Qt::LeftButton) {
+    const QModelIndex index = indexAt(event->pos());
+
+    if(m_bulkEditor && m_bulkEditor->isVisible() && !m_bulkEditor->geometry().contains(event->pos())) {
+        m_suppressNextClickEdit = event->button() == Qt::LeftButton;
+        endBulkEditSession(true);
+    }
+
+    m_cancelledActiveEditorClick = m_suppressNextClickEdit;
+    m_suppressNextClickEdit      = false;
+    m_cancelledPendingEditClick  = m_pendingEditIndex.isValid() && sameRow(index, m_pendingEditIndex);
+    cancelPendingEditor();
+    m_pressedSelectedIndex = QPersistentModelIndex{};
+
+    if(m_bulkWriteInProgress) {
+        event->accept();
+        return;
+    }
+
+    if(editTriggers() & NoEditTriggers || event->button() != Qt::LeftButton) {
         ExpandedTreeView::mousePressEvent(event);
         return;
     }
 
-    const QModelIndex index = indexAt(event->pos());
+    if(index.isValid() && index.column() != m_ratingColumn && (index.flags() & Qt::ItemIsEditable) != 0
+       && selectionModel() && selectionModel()->isSelected(index)) {
+        m_pressedSelectedIndex = index;
+    }
+
     if(!index.isValid() || index.column() != m_ratingColumn) {
         ExpandedTreeView::mousePressEvent(event);
         return;
     }
 
-    const auto starRating = qvariant_cast<StarRating>(index.data());
+    const auto starRating = index.data().value<StarRating>();
     const auto align      = static_cast<Qt::Alignment>(index.data(Qt::TextAlignmentRole).toInt());
     const auto rating     = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating, align);
 
-    if(selectedIndexes().contains(index)) {
+    if(index.flags().testFlag(Qt::ItemIsEditable)) {
+        const auto setRating = [this, rating](const QModelIndex& modelIndex) {
+            auto modelRating = modelIndex.data().value<StarRating>();
+            modelRating.setRating(rating);
+            model()->setData(modelIndex, QVariant::fromValue(modelRating), Qt::EditRole);
+        };
+
+        if(selectedIndexes().contains(index)) {
+            const QModelIndexList selected = selectionModel()->selectedRows();
+            QModelIndexList ratingIndexes;
+
+            for(const QModelIndex& selectedIndex : selected) {
+                if(selectedIndex.data(PlaylistItem::Type).toInt() != PlaylistItem::Track) {
+                    continue;
+                }
+
+                const QModelIndex ratingIndex = selectedIndex.siblingAtColumn(m_ratingColumn);
+                if(ratingIndex.isValid()) {
+                    ratingIndexes.push_back(ratingIndex);
+                }
+            }
+
+            auto* playlistModel = qobject_cast<PlaylistModel*>(model());
+            if(playlistModel && ratingIndexes.size() > 1) {
+                auto modelRating = index.data().value<StarRating>();
+                modelRating.setRating(rating);
+
+                const auto bulkEdit = playlistModel->setBulkData(ratingIndexes, QVariant::fromValue(modelRating));
+                if(bulkEdit.has_value()) {
+                    emit bulkWriteRequested(*bulkEdit);
+                }
+                else {
+                    for(const QModelIndex& ratingIndex : std::as_const(ratingIndexes)) {
+                        setRating(ratingIndex);
+                    }
+                }
+            }
+            else {
+                for(const QModelIndex& ratingIndex : std::as_const(ratingIndexes)) {
+                    setRating(ratingIndex);
+                }
+            }
+        }
+        else {
+            setRating(index);
+        }
+    }
+    else if(selectedIndexes().contains(index)) {
         TrackList tracks;
         const QModelIndexList selected = selectionModel()->selectedRows();
         for(const QModelIndex& selectedIndex : selected) {
@@ -147,6 +305,61 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
     }
 
     ExpandedTreeView::mousePressEvent(event);
+}
+
+void PlaylistView::mouseReleaseEvent(QMouseEvent* event)
+{
+    if(m_bulkWriteInProgress) {
+        event->accept();
+        return;
+    }
+
+    const QModelIndex index = indexAt(event->pos());
+
+    ExpandedTreeView::mouseReleaseEvent(event);
+
+    if(event->button() == Qt::LeftButton && !m_cancelledPendingEditClick && !m_cancelledActiveEditorClick
+       && m_pressedSelectedIndex.isValid() && index == m_pressedSelectedIndex) {
+        queueEditor(index);
+    }
+
+    m_pressedSelectedIndex       = QPersistentModelIndex{};
+    m_cancelledPendingEditClick  = false;
+    m_cancelledActiveEditorClick = false;
+}
+
+void PlaylistView::resizeEvent(QResizeEvent* event)
+{
+    ExpandedTreeView::resizeEvent(event);
+    updateBulkEditorGeometry();
+}
+
+void PlaylistView::scrollContentsBy(int dx, int dy)
+{
+    ExpandedTreeView::scrollContentsBy(dx, dy);
+    updateBulkEditorGeometry();
+}
+
+void PlaylistView::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_editTimer.timerId()) {
+        m_editTimer.stop();
+
+        const QPersistentModelIndex pendingIndex = m_pendingEditIndex;
+        m_pendingEditIndex                       = QPersistentModelIndex{};
+        reopenEditor(pendingIndex);
+        return;
+    }
+
+    ExpandedTreeView::timerEvent(event);
+}
+
+void PlaylistView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
+{
+    const bool closingFromLeftClick = (QApplication::mouseButtons() & Qt::LeftButton) != 0;
+    m_suppressNextClickEdit         = closingFromLeftClick;
+
+    ExpandedTreeView::closeEditor(editor, hint);
 }
 
 void PlaylistView::leaveEvent(QEvent* event)
@@ -205,9 +418,395 @@ QAbstractItemView::DropIndicatorPosition PlaylistView::dropPosition(const QPoint
     return dropPos;
 }
 
+bool PlaylistView::eventFilter(QObject* watched, QEvent* event)
+{
+    if(!m_bulkEditor || watched != m_bulkEditor) {
+        return ExpandedTreeView::eventFilter(watched, event);
+    }
+
+    if(event->type() == QEvent::KeyPress) {
+        auto* keyEvent = static_cast<QKeyEvent*>(event);
+
+        switch(keyEvent->key()) {
+            case Qt::Key_Tab:
+                if((keyEvent->modifiers() & ~Qt::ShiftModifier) == Qt::NoModifier) {
+                    advanceBulkEditColumn((keyEvent->modifiers() & Qt::ShiftModifier) != 0 ? -1 : 1);
+                    return true;
+                }
+                break;
+            case Qt::Key_Backtab:
+                advanceBulkEditColumn(-1);
+                return true;
+            case Qt::Key_Return:
+            case Qt::Key_Enter:
+                endBulkEditSession(true);
+                return true;
+            case Qt::Key_Escape:
+                endBulkEditSession(false);
+                return true;
+            default:
+                break;
+        }
+    }
+    else if(event->type() == QEvent::FocusOut && m_bulkEditor->isVisible()) {
+        if(m_bulkEditor && m_bulkEditor->isVisible() && !m_bulkEditor->hasFocus()) {
+            endBulkEditSession(true);
+        }
+    }
+
+    return ExpandedTreeView::eventFilter(watched, event);
+}
+
+QModelIndexList PlaylistView::selectedTrackRows() const
+{
+    if(!selectionModel()) {
+        return {};
+    }
+
+    QModelIndexList rows;
+
+    const auto selected = selectionModel()->selectedRows();
+    for(const QModelIndex& index : selected) {
+        if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+            rows.push_back(index);
+        }
+    }
+
+    std::ranges::sort(rows, [](const QModelIndex& lhs, const QModelIndex& rhs) {
+        return lhs.data(PlaylistItem::Index).toInt() < rhs.data(PlaylistItem::Index).toInt();
+    });
+
+    return rows;
+}
+
+std::vector<int> PlaylistView::bulkEditableColumns() const
+{
+    if(!header()) {
+        return {};
+    }
+
+    const QModelIndexList rows = selectedTrackRows();
+    if(rows.empty()) {
+        return {};
+    }
+
+    const QModelIndex& anchorRow = rows.front();
+
+    std::vector<int> columns;
+
+    for(int visualIndex{0}; visualIndex < header()->count(); ++visualIndex) {
+        const int logicalIndex = header()->logicalIndex(visualIndex);
+
+        if(logicalIndex < 0 || header()->isSectionHidden(logicalIndex) || logicalIndex == m_ratingColumn) {
+            continue;
+        }
+
+        const QModelIndex probeIndex = anchorRow.siblingAtColumn(logicalIndex);
+        if(probeIndex.isValid() && (model()->flags(probeIndex) & Qt::ItemIsEditable) != 0) {
+            columns.push_back(logicalIndex);
+        }
+    }
+
+    return columns;
+}
+
+QModelIndex PlaylistView::bulkEditAnchorIndex(int column) const
+{
+    if(m_bulkEditRows.empty()) {
+        return {};
+    }
+
+    return m_bulkEditRows.front().siblingAtColumn(column);
+}
+
+QRect PlaylistView::bulkEditRect(int column) const
+{
+    if(m_bulkEditRows.empty() || !header() || header()->isSectionHidden(column)) {
+        return {};
+    }
+
+    const int x     = header()->sectionViewportPosition(column);
+    const int width = header()->sectionSize(column);
+    if(x < 0 || width <= 0) {
+        return {};
+    }
+
+    const QRect topRect = visualRect(m_bulkEditRows.front().siblingAtColumn(column));
+    if(!topRect.isValid()) {
+        return {};
+    }
+
+    int height{0};
+
+    for(const QModelIndex& rowIndex : m_bulkEditRows) {
+        const QModelIndex index = rowIndex.siblingAtColumn(column);
+        if(!index.isValid()) {
+            continue;
+        }
+
+        height += sizeHintForIndex(index).height();
+    }
+
+    if(height <= 0) {
+        return {};
+    }
+
+    return QRect{x, topRect.top(), width, height}.adjusted(0, 0, -1, -1);
+}
+
+QString PlaylistView::bulkEditValueForColumn(int column, bool& mixedValues) const
+{
+    mixedValues = false;
+
+    QString currentValue;
+    QStringList distinctValues;
+
+    for(const QModelIndex& rowIndex : m_bulkEditRows) {
+        const QModelIndex index = rowIndex.siblingAtColumn(column);
+        if(!index.isValid()) {
+            continue;
+        }
+
+        const QString value = index.data(Qt::EditRole).toString();
+        if(!distinctValues.contains(value)) {
+            distinctValues.push_back(value);
+        }
+
+        if(distinctValues.size() == 1) {
+            currentValue = value;
+            continue;
+        }
+
+        mixedValues = true;
+    }
+
+    if(mixedValues) {
+        QStringList nonEmptyValues{distinctValues};
+        nonEmptyValues.removeAll(QString{});
+        return QString{MultipleValuesPrefix} + u' ' + nonEmptyValues.join("; "_L1);
+    }
+
+    return currentValue;
+}
+
+bool PlaylistView::startBulkEditSession()
+{
+    if(m_bulkWriteInProgress || editTriggers() == NoEditTriggers || state() == EditingState) {
+        return false;
+    }
+
+    const QModelIndexList rows = selectedTrackRows();
+    if(rows.size() < 2) {
+        return false;
+    }
+
+    const std::vector<int> columns = bulkEditableColumns();
+    if(columns.empty()) {
+        return false;
+    }
+
+    cancelPendingEditor();
+
+    if(!m_bulkEditor) {
+        m_bulkEditor = new QLineEdit(viewport());
+        m_bulkEditor->hide();
+        m_bulkEditor->installEventFilter(this);
+    }
+
+    m_bulkEditRows        = rows;
+    m_bulkEditColumns     = columns;
+    m_bulkEditColumnIndex = 0;
+
+    showBulkEditor();
+    return true;
+}
+
+bool PlaylistView::commitBulkEdit(int columnIndex)
+{
+    const int resolvedColumnIndex = columnIndex >= 0 ? columnIndex : m_bulkEditColumnIndex;
+    if(!m_bulkEditor || !m_bulkEditor->isModified() || m_bulkEditRows.empty() || resolvedColumnIndex < 0
+       || std::cmp_greater_equal(resolvedColumnIndex, m_bulkEditColumns.size())) {
+        return false;
+    }
+
+    auto* playlistModel = qobject_cast<PlaylistModel*>(model());
+    if(!playlistModel) {
+        return false;
+    }
+
+    QModelIndexList indexes;
+    const int column = m_bulkEditColumns.at(resolvedColumnIndex);
+
+    for(const QModelIndex& rowIndex : std::as_const(m_bulkEditRows)) {
+        const QModelIndex index = rowIndex.siblingAtColumn(column);
+        if(index.isValid()) {
+            indexes.push_back(index);
+        }
+    }
+
+    const auto bulkEdit = playlistModel->setBulkData(indexes, normaliseBulkEditorValue(m_bulkEditor->text()));
+    if(!bulkEdit.has_value()) {
+        return false;
+    }
+
+    emit bulkWriteRequested(*bulkEdit);
+    return true;
+}
+
+void PlaylistView::advanceBulkEditColumn(int offset)
+{
+    if(m_bulkEditColumns.empty() || m_bulkEditColumnIndex < 0) {
+        return;
+    }
+
+    const int count           = static_cast<int>(m_bulkEditColumns.size());
+    const int nextColumnIndex = (m_bulkEditColumnIndex + offset + count) % count;
+
+    if(!m_bulkEditor || !m_bulkEditor->isModified()) {
+        m_bulkEditColumnIndex = nextColumnIndex;
+        showBulkEditor();
+        return;
+    }
+
+    if(m_bulkEditor) {
+        m_bulkEditor->hide();
+    }
+
+    if(commitBulkEdit(m_bulkEditColumnIndex)) {
+        return;
+    }
+
+    m_bulkEditColumnIndex = nextColumnIndex;
+    showBulkEditor();
+}
+
+void PlaylistView::centreRectInView(const QRect& rect)
+{
+    if(!rect.isValid()) {
+        return;
+    }
+
+    const QPoint viewportCentre = viewport()->rect().center();
+
+    if(auto* hBar = horizontalScrollBar()) {
+        hBar->setValue(hBar->value() + rect.center().x() - viewportCentre.x());
+    }
+
+    if(auto* vBar = verticalScrollBar()) {
+        vBar->setValue(vBar->value() + rect.center().y() - viewportCentre.y());
+    }
+}
+
+void PlaylistView::endBulkEditSession(bool commitChanges)
+{
+    if(m_bulkEditor) {
+        m_bulkEditor->hide();
+    }
+
+    if(commitChanges) {
+        commitBulkEdit();
+    }
+
+    if(m_bulkEditor) {
+        m_bulkEditor->clear();
+        m_bulkEditor->setModified(false);
+    }
+
+    m_bulkEditRows.clear();
+    m_bulkEditColumns.clear();
+    m_bulkEditColumnIndex = -1;
+}
+
+void PlaylistView::showBulkEditor()
+{
+    if(!m_bulkEditor || m_bulkEditRows.empty() || m_bulkEditColumnIndex < 0
+       || std::cmp_greater_equal(m_bulkEditColumnIndex, m_bulkEditColumns.size())) {
+        return;
+    }
+
+    const int column        = m_bulkEditColumns.at(m_bulkEditColumnIndex);
+    const QModelIndex index = bulkEditAnchorIndex(column);
+    if(!index.isValid()) {
+        endBulkEditSession(false);
+        return;
+    }
+
+    setCurrentIndex(index);
+
+    bool mixedValues{false};
+    const QString value = bulkEditValueForColumn(column, mixedValues);
+
+    m_bulkEditor->blockSignals(true);
+    m_bulkEditor->setText(value);
+    m_bulkEditor->setModified(false);
+    m_bulkEditor->blockSignals(false);
+
+    m_bulkEditor->show();
+    m_bulkEditor->raise();
+    updateBulkEditorGeometry();
+
+    centreRectInView(m_bulkEditor->geometry());
+    m_bulkEditor->setFocus();
+    m_bulkEditor->selectAll();
+}
+
+void PlaylistView::updateBulkEditorGeometry()
+{
+    if(!m_bulkEditor || !m_bulkEditor->isVisible() || m_bulkEditColumnIndex < 0
+       || std::cmp_greater_equal(m_bulkEditColumnIndex, m_bulkEditColumns.size())) {
+        return;
+    }
+
+    const QModelIndex index = bulkEditAnchorIndex(m_bulkEditColumns.at(m_bulkEditColumnIndex));
+    if(!index.isValid()) {
+        m_bulkEditor->hide();
+        return;
+    }
+
+    const QRect editorRect = bulkEditRect(m_bulkEditColumns.at(m_bulkEditColumnIndex));
+    if(!editorRect.isValid()) {
+        m_bulkEditor->hide();
+        return;
+    }
+
+    m_bulkEditor->setGeometry(editorRect);
+}
+
+void PlaylistView::queueEditor(const QModelIndex& index)
+{
+    if(m_bulkWriteInProgress || (m_bulkEditor && m_bulkEditor->isVisible()) || editTriggers() == NoEditTriggers
+       || !index.isValid() || index.column() == m_ratingColumn || (model()->flags(index) & Qt::ItemIsEditable) == 0
+       || state() == EditingState) {
+        return;
+    }
+
+    m_pendingEditIndex = index;
+    m_editTimer.start(EditorDelay, this);
+}
+
+void PlaylistView::cancelPendingEditor()
+{
+    m_editTimer.stop();
+    m_pendingEditIndex = QPersistentModelIndex{};
+}
+
+void PlaylistView::reopenEditor(const QModelIndex& index)
+{
+    if(m_bulkWriteInProgress || (m_bulkEditor && m_bulkEditor->isVisible()) || editTriggers() == NoEditTriggers
+       || !index.isValid() || index.column() == m_ratingColumn || (model()->flags(index) & Qt::ItemIsEditable) == 0) {
+        return;
+    }
+
+    setCurrentIndex(index);
+
+    if(state() != EditingState && currentIndex() == index && selectionModel() && selectionModel()->isSelected(index)) {
+        edit(index);
+    }
+}
+
 void PlaylistView::ratingHoverIn(const QModelIndex& index, const QPoint& pos)
 {
-    if(editTriggers() & QAbstractItemView::NoEditTriggers) {
+    if(editTriggers() & NoEditTriggers) {
         return;
     }
 
@@ -228,7 +827,7 @@ void PlaylistView::ratingHoverIn(const QModelIndex& index, const QPoint& pos)
 
 void PlaylistView::ratingHoverOut()
 {
-    if(editTriggers() & QAbstractItemView::NoEditTriggers) {
+    if(editTriggers() & NoEditTriggers) {
         return;
     }
 

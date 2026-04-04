@@ -25,16 +25,22 @@
 namespace Fooyin {
 struct PlaylistColumn
 {
+    static constexpr qint32 Magic   = -0x50434F4C;
+    static constexpr qint32 Version = 1;
+
     int id{-1};
+    bool enabled{true};
     int index{-1};
     bool isDefault{false};
     QString name;
     QString field;
+    QString writeField;
     bool isPixmap{false};
 
     bool operator==(const PlaylistColumn& other) const
     {
-        return std::tie(id, index, name, field) == std::tie(other.id, other.index, other.name, other.field);
+        return std::tie(id, enabled, index, name, field, writeField)
+            == std::tie(other.id, other.enabled, other.index, other.name, other.field, other.writeField);
     }
 
     [[nodiscard]] bool isValid() const
@@ -44,19 +50,40 @@ struct PlaylistColumn
 
     friend QDataStream& operator<<(QDataStream& stream, const PlaylistColumn& column)
     {
+        stream << Magic;
+        stream << Version;
         stream << column.id;
+        stream << column.enabled;
         stream << column.index;
         stream << column.name;
         stream << column.field;
+        stream << column.writeField;
         return stream;
     }
 
     friend QDataStream& operator>>(QDataStream& stream, PlaylistColumn& column)
     {
-        stream >> column.id;
-        stream >> column.index;
-        stream >> column.name;
-        stream >> column.field;
+        qint32 magicOrId{-1};
+        stream >> magicOrId;
+
+        if(magicOrId == Magic) {
+            qint32 version{0};
+            stream >> version;
+
+            stream >> column.id;
+            stream >> column.enabled;
+            stream >> column.index;
+            stream >> column.name;
+            stream >> column.field;
+            stream >> column.writeField;
+        }
+        else {
+            column.id = magicOrId;
+            stream >> column.index;
+            stream >> column.name;
+            stream >> column.field;
+        }
+
         return stream;
     }
 };

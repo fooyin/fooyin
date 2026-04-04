@@ -31,7 +31,10 @@
 #include <QPixmap>
 #include <QThread>
 
+#include <expected>
+
 namespace Fooyin {
+class AudioLoader;
 class CoverProvider;
 class MusicLibrary;
 class Playlist;
@@ -91,16 +94,15 @@ public:
     Q_DECLARE_FLAGS(PlaybackDependencies, PlaybackDependency)
     Q_FLAG(PlaybackDependencies)
 
-    PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider, SettingsManager* settings,
-                  QObject* parent = nullptr);
+    PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader* audioLoader, CoverProvider* coverProvider,
+                  SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistModel() override;
-
-    void invalidateData() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     bool setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role) override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
@@ -116,6 +118,14 @@ public:
 
     [[nodiscard]] bool playlistIsLoaded() const;
     [[nodiscard]] bool haveTracks() const;
+
+    enum class BulkEditError : uint8_t
+    {
+        InvalidRequest = 0,
+        NoChanges,
+    };
+    [[nodiscard]] std::expected<TrackList, BulkEditError> setBulkData(const QModelIndexList& indexes,
+                                                                      const QVariant& value);
 
     MoveOperation moveTracks(const MoveOperation& operation);
 
@@ -155,11 +165,15 @@ public:
     void tracksChanged();
 
 signals:
+    void metadataWriteRequested(const Fooyin::TrackList& tracks);
     void playlistLoaded();
     void filesDropped(const QList<QUrl>& urls, int index);
     void tracksInserted(const Fooyin::TrackGroups& groups);
     void tracksMoved(const Fooyin::MoveOperation& operation);
     void playlistTracksChanged(int index);
+
+protected:
+    void invalidateData() override;
 
 public slots:
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
@@ -168,6 +182,19 @@ public slots:
     void refreshPlayingTrackBitrateData();
 
 private:
+    struct EditableTrackContext
+    {
+        int column{-1};
+        QString writeField;
+        bool ratingField{false};
+    };
+    [[nodiscard]] std::optional<EditableTrackContext> editableTrackContextForColumn(int column) const;
+    [[nodiscard]] std::expected<EditableTrackContext, BulkEditError>
+    editableTrackContext(const QModelIndex& index) const;
+    [[nodiscard]] bool canEditTrack(const Track& track, const EditableTrackContext& context) const;
+    [[nodiscard]] std::expected<Track, BulkEditError>
+    prepareEditedTrack(const QModelIndex& index, const EditableTrackContext& context, const QVariant& value) const;
+
     QModelIndex rightIndex(const QModelIndex& index) const;
 
     void populateModel(PendingData data);
@@ -175,6 +202,8 @@ private:
     void updateModel(ItemKeyMap data);
     void updateTracks(const ItemList& tracks, const std::set<int>& columnsUpdated);
     void mergeTrackParents(const TrackIdNodeMap& parents);
+    [[nodiscard]] bool tryUpdateTrackGroupInPlace(const PendingData& data);
+    [[nodiscard]] bool hasSameParentChain(const PlaylistItem* currentItem, const PlaylistItem* updatedItem) const;
 
     QVariant trackData(PlaylistItem* item, const QModelIndex& index, int role) const;
     QVariant headerData(PlaylistItem* item, int column, int role) const;
@@ -258,6 +287,7 @@ private:
 
     TrackItemResult itemForTrackIndex(int index);
 
+    AudioLoader* m_audioLoader;
     MusicLibrary* m_library;
     SettingsManager* m_settings;
     CoverProvider* m_coverProvider;

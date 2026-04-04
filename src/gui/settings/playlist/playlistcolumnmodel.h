@@ -34,7 +34,7 @@ public:
     ColumnItem();
     explicit ColumnItem(PlaylistColumn column, ColumnItem* parent);
 
-    [[nodiscard]] PlaylistColumn column() const;
+    [[nodiscard]] const PlaylistColumn& column() const;
     void changeColumn(const PlaylistColumn& column);
 
 private:

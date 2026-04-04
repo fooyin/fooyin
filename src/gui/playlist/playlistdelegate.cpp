@@ -27,7 +27,10 @@
 
 #include <QApplication>
 #include <QHeaderView>
+#include <QLineEdit>
 #include <QPainter>
+
+constexpr auto EditorInitialisedProperty = "fy_editor_initialised";
 
 namespace Fooyin {
 struct DrawTextResult
@@ -42,7 +45,7 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
 {
     DrawTextResult result;
 
-    QStyle* style               = option.widget ? option.widget->style() : QApplication::style();
+    const QStyle* style         = option.widget ? option.widget->style() : QApplication::style();
     const auto selected         = option.state & QStyle::State_Selected;
     const auto colour           = selected ? QPalette::HighlightedText : QPalette::NoRole;
     const QColor defaultColour  = option.palette.color(QPalette::Text);
@@ -139,7 +142,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     opt.text.clear();
     opt.icon = {};
 
-    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
@@ -187,13 +190,13 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     const auto [subtitleBound, _]
         = drawTextBlocks(painter, opt, subtitleRect, subtitle, Qt::AlignVCenter | Qt::AlignLeft);
 
-    const QRect titleRect{coverFrameRect.right() + 2 * offset, rect.top() + titleOffset, leftWidth, rect.height()};
+    const QRect titleRect{coverFrameRect.right() + (2 * offset), rect.top() + titleOffset, leftWidth, rect.height()};
     drawTextBlocks(painter, opt, titleRect, title, Qt::AlignTop);
 
-    const QRect infoRect{coverFrameRect.right() + 2 * offset, rect.top() - infoOffset, leftWidth, rect.height()};
+    const QRect infoRect{coverFrameRect.right() + (2 * offset), rect.top() - infoOffset, leftWidth, rect.height()};
     drawTextBlocks(painter, opt, infoRect, info, Qt::AlignBottom);
 
-    const QLineF headerLine(coverFrameRect.right() + 2 * offset, coverFrameRect.bottom() + coverFrameWidth,
+    const QLineF headerLine(coverFrameRect.right() + (2 * offset), coverFrameRect.bottom() + coverFrameWidth,
                             rect.right() - offset, coverFrameRect.bottom() + coverFrameWidth);
 
     painter->setPen(linePen);
@@ -228,7 +231,7 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
     opt.text.clear();
     opt.icon = {};
 
-    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
@@ -271,11 +274,9 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
     }
 }
 
-void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QModelIndex& index)
 {
-    QStyleOptionViewItem opt{option};
-
-    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
@@ -324,7 +325,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 {
     QStyleOptionViewItem opt{option};
 
-    QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
 
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
 
@@ -402,6 +403,23 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     }
 }
 
+void PlaylistDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
+{
+    if(auto* lineEdit = qobject_cast<QLineEdit*>(editor)) {
+        const bool initialised = lineEdit->property(EditorInitialisedProperty).toBool();
+        if(initialised && lineEdit->hasFocus()) {
+            // Prevent track updates from updating the text in the editor
+            return;
+        }
+
+        QStyledItemDelegate::setEditorData(editor, index);
+        lineEdit->setProperty(EditorInitialisedProperty, true);
+        return;
+    }
+
+    QStyledItemDelegate::setEditorData(editor, index);
+}
+
 void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     painter->save();
@@ -413,15 +431,15 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 
     const auto type = index.data(PlaylistItem::Type).toInt();
     switch(type) {
-        case(PlaylistItem::Track):
+        case PlaylistItem::Track:
             paintTrack(painter, opt, index);
             break;
-        case(PlaylistItem::Header): {
+        case PlaylistItem::Header: {
             const auto simple = index.data(PlaylistItem::Simple).toBool();
             simple ? paintSimpleHeader(painter, opt, index) : paintHeader(painter, opt, index);
             break;
         }
-        case(PlaylistItem::Subheader):
+        case PlaylistItem::Subheader:
             paintSubheader(painter, opt, index);
             break;
         default:

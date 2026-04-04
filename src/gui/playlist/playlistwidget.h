@@ -24,15 +24,12 @@
 #include "playlistcontroller.h"
 #include "playlistmodel.h"
 #include "playlistpreset.h"
-#include "presetregistry.h"
 
 #include <gui/fywidget.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
 
 #include <core/library/sortingregistry.h>
-#include <core/library/tracksort.h>
-#include <core/player/playbackqueue.h>
 
 #include <QByteArray>
 #include <QModelIndexList>
@@ -141,6 +138,9 @@ private:
     void setColumnVisible(int columnId, bool visible);
     void setSingleMode(bool enabled);
     void updateSpans();
+
+    void handleMetadataWriteRequested(const TrackList& tracks);
+    void handleBulkWriteRequested(const TrackList& tracks);
 
 public:
     void setupConnections();
