@@ -1245,7 +1245,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="53"/>
         <source>Add</source>
-        <translation>增加</translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="54"/>
@@ -1297,7 +1297,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="294"/>
         <source>Add image</source>
-        <translation>加入圖片</translation>
+        <translation>添加圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
@@ -1580,7 +1580,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="301"/>
         <source>Recently Added</source>
-        <translation>最近加入的</translation>
+        <translation>最近已經添加</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="302"/>
@@ -2077,12 +2077,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="273"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇全部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="278"/>
         <source>Select none</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇無</translation>
     </message>
 </context>
 <context>
@@ -2095,17 +2095,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="195"/>
         <source>Add to &amp;current playlist</source>
-        <translation>加入到目前播放清單(&amp;C)</translation>
+        <translation>添加至目前播放清單(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="196"/>
         <source>Add to &amp;active playlist</source>
-        <translation>加入到現行播放清單(&amp;A)</translation>
+        <translation>添加至現行播放清單(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="199"/>
         <source>Add to playback &amp;queue</source>
-        <translation>加入到播放佇列(&amp;Q)</translation>
+        <translation>添加至播放佇列(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
@@ -2155,12 +2155,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="293"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation>將所選曲目加入到播放佇列</translation>
+        <translation>將所選曲目添加至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="299"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation>加入所選曲目於播放佇列前端</translation>
+        <translation>添加所選曲目至播放佇列前端</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="305"/>
@@ -2566,7 +2566,7 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/gui/settings/playback/outputdevicesdelegate.cpp" line="67"/>
         <location filename="../../src/gui/settings/playback/outputdevicesdelegate.cpp" line="84"/>
         <source>&lt;not set&gt;</source>
-        <translation>&lt;未設定&gt;</translation>
+        <translation>&lt;無設定&gt;</translation>
     </message>
 </context>
 <context>
@@ -3392,7 +3392,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="164"/>
         <source>Presets</source>
-        <translation>預設</translation>
+        <translation>預設集</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="179"/>
@@ -3414,7 +3414,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="275"/>
         <source>Preset already exists</source>
-        <translation>預設已經存在</translation>
+        <translation>預設集已經存在</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="276"/>
@@ -3515,13 +3515,13 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="194"/>
         <source>No tracks deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>無曲目被刪除</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="195"/>
         <source>Deleted %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已經刪除 %Ln 曲目</numerusform>
         </translation>
     </message>
 </context>
@@ -4354,12 +4354,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1208"/>
         <source>Add Files</source>
-        <translation>加入檔案</translation>
+        <translation>添加檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
         <source>Add Folders</source>
-        <translation>加入資料夾</translation>
+        <translation>添加資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1250"/>
@@ -5001,7 +5001,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="207"/>
         <source>Added</source>
-        <translation>已經加入</translation>
+        <translation>已經添加</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="215"/>
@@ -5206,7 +5206,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
         <source>Add the layout from the specified file</source>
-        <translation>增加配置來自指定檔案</translation>
+        <translation>添加配置來自指定檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="86"/>
@@ -5502,27 +5502,27 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="137"/>
         <source>Library scan finished: %1, %2, %3</source>
-        <translation type="unfinished"></translation>
+        <translation>音樂庫掃瞄完成： %1, %2, %3</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="138"/>
         <source>%Ln track(s) added</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 曲目已經添加</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="139"/>
         <source>%Ln track(s) updated</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 曲目已經更新</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="140"/>
         <source>%Ln track(s) removed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 曲目已經移除</numerusform>
         </translation>
     </message>
     <message>
@@ -6751,7 +6751,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>通知</translation>
     </message>
 </context>
 <context>
@@ -6764,37 +6764,37 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
         <source>Show album art</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示專輯圖面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="76"/>
         <source>Show Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示上一個</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="77"/>
         <source>Show Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示播放/暫停</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
         <source>Show Next</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示下一個</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="79"/>
         <source>Timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>逾時</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Notification Content</source>
-        <translation type="unfinished"></translation>
+        <translation>通知內容</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="84"/>
         <source>Playback controls</source>
-        <translation type="unfinished"></translation>
+        <translation>播放控制</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="92"/>
@@ -6804,7 +6804,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="94"/>
         <source>Body</source>
-        <translation type="unfinished"></translation>
+        <translation>形體</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="101"/>
@@ -6815,22 +6815,22 @@ and last played uses the later value.</source>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="153"/>
         <source>Notification display time in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>通知顯示時間 毫秒</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="149"/>
         <source>Album art is not available for the active notification backend</source>
-        <translation type="unfinished"></translation>
+        <translation>專輯封面無法供用於現行通知後端</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="151"/>
         <source>Playback controls are not available for the active notification backend</source>
-        <translation type="unfinished"></translation>
+        <translation>播放控制無法供用於現行通知後端</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="154"/>
         <source>Notification timeout is not available for the active notification backend</source>
-        <translation type="unfinished"></translation>
+        <translation>通知逾時無法供用於現行通知後端</translation>
     </message>
 </context>
 <context>
@@ -7751,7 +7751,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="99"/>
         <source>Show add button</source>
-        <translation>顯示加入按鈕</translation>
+        <translation>顯示添加按鈕</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="100"/>
@@ -7856,12 +7856,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="249"/>
         <source>Add to playback queue</source>
-        <translation>加入到播放佇列</translation>
+        <translation>添加至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="250"/>
         <source>Add to front of playback queue</source>
-        <translation>加入到播放佇列前端</translation>
+        <translation>添加至播放佇列前端</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="251"/>
@@ -8017,7 +8017,7 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="500"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="501"/>
         <source>Presets</source>
-        <translation>預設</translation>
+        <translation>預設集</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="501"/>
@@ -8071,13 +8071,13 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="351"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="372"/>
         <source>Preset Name</source>
-        <translation>預設名稱</translation>
+        <translation>預設集名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="436"/>
         <source>Copy of %1</source>
         <extracomment>%1 refers to the name of a playlist preset.</extracomment>
-        <translation>%1 複本</translation>
+        <translation>%1 的複本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="270"/>
@@ -8097,12 +8097,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
         <source>Show cover</source>
-        <translation>顯示專輯封面</translation>
+        <translation>顯示封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="229"/>
         <source>Simple header</source>
-        <translation>簡單標題</translation>
+        <translation>簡式標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="262"/>
@@ -8113,7 +8113,7 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="275"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="285"/>
         <source>Subheaders</source>
-        <translation>小標題</translation>
+        <translation>次標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="297"/>
@@ -8133,17 +8133,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="348"/>
         <source>New preset</source>
-        <translation>新建預設</translation>
+        <translation>新建預設集</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="351"/>
         <source>Add Preset</source>
-        <translation>增加預設</translation>
+        <translation>添加預設集</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="372"/>
         <source>Rename Preset</source>
-        <translation>重新命名預設</translation>
+        <translation>重新命名預設集</translation>
     </message>
 </context>
 <context>
@@ -8151,12 +8151,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="289"/>
         <source>Add new playlist</source>
-        <translation>加入新建播放清單</translation>
+        <translation>添加新建播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="296"/>
         <source>Add new autoplaylist</source>
-        <translation>加入新建自動播放清單</translation>
+        <translation>添加新建自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="315"/>
@@ -8196,7 +8196,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="556"/>
         <source>Add playlist</source>
-        <translation>加入播放清單</translation>
+        <translation>添加播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="564"/>
@@ -8268,7 +8268,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="916"/>
         <source>Presets</source>
-        <translation>預設</translation>
+        <translation>預設集</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="940"/>
@@ -8585,12 +8585,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="49"/>
         <source>Album/Disc</source>
-        <translation>專輯/唱片</translation>
+        <translation>專輯/碟片</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
         <source>Disc Albums</source>
-        <translation>唱片專輯</translation>
+        <translation>碟片專輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
@@ -9457,7 +9457,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="124"/>
         <source>Add Scrobbling Service</source>
-        <translation>增加聆聽記錄服務</translation>
+        <translation>添加聆聽記錄服務</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="166"/>
@@ -10461,7 +10461,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="336"/>
         <source>Remember &amp;last tab</source>
-        <translation type="unfinished"></translation>
+        <translation>記住上次分頁(&amp;L)</translation>
     </message>
 </context>
 <context>
@@ -10673,12 +10673,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="159"/>
         <source>Add to current playlist</source>
-        <translation>加入到目前播放清單</translation>
+        <translation>添加至目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="160"/>
         <source>Add to active playlist</source>
-        <translation>加入到現行播放清單</translation>
+        <translation>添加至現行播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="161"/>
@@ -10693,7 +10693,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="163"/>
         <source>Add to playback queue</source>
-        <translation>加入到播放佇列</translation>
+        <translation>添加至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="164"/>
@@ -10778,12 +10778,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="229"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation>將所選曲目加入播放佇列</translation>
+        <translation>將所選曲目添加至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="241"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation>加入所選曲目到播放佇列前端</translation>
+        <translation>添加所選曲目至播放佇列前端</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="253"/>
@@ -11162,27 +11162,30 @@ and last played uses the later value.</source>
 Higher values can improve detail, but may increase CPU usage.
 For best results at higher values, increase Number of samples as well.
 Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can produce artifacts.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Internal horizontal render scale for the waveform.
+Higher values can improve detail, but may increase CPU usage.
+For best results at higher values, increase Number of samples as well.
+Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can produce artifacts.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="126"/>
         <source>2x</source>
-        <translation type="unfinished"></translation>
+        <translation>2x</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="127"/>
         <source>4x</source>
-        <translation type="unfinished"></translation>
+        <translation>4x</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="128"/>
         <source>8x</source>
-        <translation type="unfinished"></translation>
+        <translation>8x</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="131"/>
         <source>Supersampling</source>
-        <translation type="unfinished"></translation>
+        <translation>超級取樣</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="134"/>
@@ -11274,7 +11277,9 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
         <source>Number of samples (per channel) to use for waveform data.
 Higher values produce a more accurate and detailed waveform, but use more disk space in the cache.
 Higher supersampling values work best with higher sample counts.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Number of samples (per channel) to use for waveform data.
+Higher values produce a more accurate and detailed waveform, but use more disk space in the cache.
+Higher supersampling values work best with higher sample counts.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="199"/>
