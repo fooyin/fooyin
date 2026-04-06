@@ -424,12 +424,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Returns 1 while playback is active</source>
-        <translation>Liefert 1 zurück während Wiedergabe aktiv ist</translation>
+        <translation>Gibt 1 zurück während Wiedergabe aktiv ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="170"/>
         <source>Returns 1 while playback is paused</source>
-        <translation>Liefert 1 zurück während Wiedergabe pausiert ist</translation>
+        <translation>Gibt 1 zurück während Wiedergabe pausiert ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
@@ -547,22 +547,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="190"/>
         <source>Returns the smallest numeric value</source>
-        <translation>Liefert den kleinsten numerischen Wert zurück</translation>
+        <translation>Gibt den kleinsten numerischen Wert zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="191"/>
         <source>Returns the largest numeric value</source>
-        <translation>Liefert den größten numerischen Wert zurück</translation>
+        <translation>Gibt den größten numerischen Wert zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="192"/>
         <source>Returns the remainder of a division</source>
-        <translation>Liefert den Rest einer Division zurück</translation>
+        <translation>Gibt den Rest einer Division zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="193"/>
         <source>Returns a random number in range</source>
-        <translation>Liefert eine zufällige Zahl aus einem Bereich zurück</translation>
+        <translation>Gibt eine zufällige Zahl aus einem Bereich zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="194"/>
@@ -625,7 +625,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="198"/>
         <source>Returns a slice of text</source>
-        <translation>Liefert einen Teil eines Textes zurück</translation>
+        <translation>Gibt einen Teil eines Textes zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="199"/>
@@ -635,12 +635,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="200"/>
         <source>Returns characters from the left</source>
-        <translation>Liefert Zeichen von links zurück</translation>
+        <translation>Gibt Zeichen von links zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="201"/>
         <source>Returns characters from the right</source>
-        <translation>Liefert Zeichen von rechts zurück</translation>
+        <translation>Gibt Zeichen von rechts zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="202"/>
@@ -1074,7 +1074,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="115"/>
         <source>Format</source>
-        <translation type="unfinished">Format</translation>
+        <translation>Dateiformat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="117"/>
@@ -1099,7 +1099,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="124"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatisch</translation>
+        <translation>Automatisch</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="230"/>
@@ -1466,7 +1466,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="212"/>
         <source>Artwork</source>
-        <translation type="unfinished">Artwork</translation>
+        <translation>Artwork</translation>
     </message>
 </context>
 <context>
@@ -1564,7 +1564,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="99"/>
         <source>Sort</source>
-        <translation type="unfinished">Sortieren</translation>
+        <translation>Sortieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="176"/>
@@ -1647,7 +1647,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="66"/>
         <source>Images</source>
-        <translation type="unfinished">Bilder</translation>
+        <translation>Bilder</translation>
     </message>
 </context>
 <context>
@@ -1876,7 +1876,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="522"/>
         <source>Remove this artwork</source>
-        <translation type="unfinished">Entferne dieses Artwork</translation>
+        <translation>Dieses Artwork entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="556"/>
@@ -1889,22 +1889,22 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="35"/>
         <source>Cover Widget Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Artwork-Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="38"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished">Seitenverhältnis beibehalten</translation>
+        <translation>Seitenverhältnis beibehalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="39"/>
         <source>Fade cover changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumcover-Wechsel überblenden</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="40"/>
         <source>Fade length</source>
-        <translation type="unfinished">Überblendlänge</translation>
+        <translation>Überblendlänge</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
@@ -1914,47 +1914,47 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="45"/>
         <source>Cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumcover-Typ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="47"/>
         <source>Front</source>
-        <translation type="unfinished"></translation>
+        <translation>Voderseite</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="48"/>
         <source>Back</source>
-        <translation type="unfinished">Zurück</translation>
+        <translation>Rückseite</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="49"/>
         <source>Artist</source>
-        <translation type="unfinished">Künstler</translation>
+        <translation>Künstler</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="61"/>
         <source>Alignment</source>
-        <translation type="unfinished">Ausrichtung</translation>
+        <translation>Ausrichtung</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="63"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Zentriert</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="64"/>
         <source>Left</source>
-        <translation type="unfinished">Links</translation>
+        <translation>Links</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="65"/>
         <source>Right</source>
-        <translation type="unfinished">Rechts</translation>
+        <translation>Rechts</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="84"/>
         <source>Cover change</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumcover-Wechsel</translation>
     </message>
 </context>
 <context>
@@ -1975,7 +1975,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/settings/playback/decoderdelegate.cpp" line="37"/>
         <source>Configure</source>
-        <translation type="unfinished">Konfigurieren</translation>
+        <translation>Konfigurieren</translation>
     </message>
 </context>
 <context>
@@ -2014,17 +2014,17 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="193"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="201"/>
         <source>Disabled</source>
-        <translation type="unfinished">Deaktiviert</translation>
+        <translation>Deaktiviert</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="203"/>
         <source>VBR update interval</source>
-        <translation type="unfinished">VBR Updateintervall</translation>
+        <translation>VBR Updateintervall</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="205"/>
@@ -2058,12 +2058,12 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="298"/>
         <source>Playback</source>
-        <translation type="unfinished">Wiedergabe</translation>
+        <translation>Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="298"/>
         <source>Output</source>
-        <translation type="unfinished">Ausgabe</translation>
+        <translation>Ausgabe</translation>
     </message>
 </context>
 <context>
@@ -2076,17 +2076,17 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="112"/>
         <source>Output</source>
-        <translation type="unfinished">Ausgabe</translation>
+        <translation>Ausgabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="273"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle auswählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="278"/>
         <source>Select none</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle abwählen</translation>
     </message>
 </context>
 <context>
@@ -2223,42 +2223,42 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="36"/>
         <source>Directory Browser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Verzeichnis-Browser</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="37"/>
         <source>Tree</source>
-        <translation type="unfinished">Baumansicht</translation>
+        <translation>Baumansicht</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="38"/>
         <source>List</source>
-        <translation type="unfinished">Listenansicht</translation>
+        <translation>Listenansicht</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="39"/>
         <source>Show icons</source>
-        <translation type="unfinished">Zeige Icons</translation>
+        <translation>Zeige Symbole</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="40"/>
         <source>Show indent</source>
-        <translation type="unfinished">Einrücken</translation>
+        <translation>Einrückung anzeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
         <source>Show horizontal scrollbar</source>
-        <translation type="unfinished">Zeige horizontale Bildlaufleiste</translation>
+        <translation>Zeige horizontale Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
         <source>Show controls</source>
-        <translation type="unfinished">Zeige Steuerung</translation>
+        <translation>Zeige Steuerung</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="43"/>
         <source>Show location</source>
-        <translation type="unfinished">Zeige Verzeichnis</translation>
+        <translation>Zeige Verzeichnis</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
@@ -2268,7 +2268,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
         <source>Show hidden</source>
-        <translation type="unfinished">Zeige versteckte Spalten</translation>
+        <translation>Zeige versteckte Elemente</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="48"/>
@@ -2278,60 +2278,60 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="51"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished">Bei &quot;Aktuelle Wiedergabeliste ersetzen&quot; und &quot;Neue Wiedergabeliste erstellen&quot; die Wiedergabe sofort starten.</translation>
+        <translation>Bei &quot;Aktuelle Wiedergabeliste ersetzen&quot; und &quot;Neue Wiedergabeliste erstellen&quot; die Wiedergabe sofort starten.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Klickverhalten</translation>
+        <translation>Klickverhalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doppelklick</translation>
+        <translation>Doppelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="58"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Mittelklick</translation>
+        <translation>Mittelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="63"/>
         <source>Browser Mode</source>
-        <translation type="unfinished">Browser-Modus</translation>
+        <translation>Browser-Modus</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="69"/>
         <source>Browser Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Browser-Filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="74"/>
         <source>Display Options</source>
-        <translation type="unfinished">Anzeigeoptionen</translation>
+        <translation>Anzeigeoptionen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="93"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>None</source>
-        <translation type="unfinished">Keine</translation>
+        <translation>Keins</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="94"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished">Ausklappen/Einklappen/Abspielen</translation>
+        <translation>Ausklappen/Einklappen/Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="95"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="104"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Füge zur aktuellen Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="96"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="105"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Füge zur aktiven Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="97"/>
@@ -2349,13 +2349,13 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="99"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="108"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Füge zur Wiedergabewarteschlange hinzu</translation>
+        <translation>Füge zur Wiedergabewarteschlange hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="100"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="109"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Setze an den Anfang der Wiedergabewarteschlange</translation>
+        <translation>Setze an den Anfang der Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="101"/>
@@ -2425,12 +2425,12 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="35"/>
         <source>Remove</source>
-        <translation type="unfinished">Entfernen</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="38"/>
         <source>Configure</source>
-        <translation type="unfinished">Konfigurieren</translation>
+        <translation>Konfigurieren</translation>
     </message>
 </context>
 <context>
@@ -2438,7 +2438,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="845"/>
         <source>Playback</source>
-        <translation type="unfinished">Wiedergabe</translation>
+        <translation>Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="845"/>
@@ -2451,7 +2451,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="203"/>
         <source>Load</source>
-        <translation type="unfinished">Laden</translation>
+        <translation>Laden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="204"/>
@@ -2744,12 +2744,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Rename Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Tab umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Name:</translation>
     </message>
 </context>
 <context>
@@ -2776,7 +2776,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="213"/>
         <source>Load</source>
-        <translation type="unfinished">Laden</translation>
+        <translation>Laden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="214"/>
@@ -2786,7 +2786,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="215"/>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="216"/>
@@ -2832,12 +2832,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="333"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="803"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="581"/>
         <source>Presets</source>
-        <translation type="unfinished">Vorlagen</translation>
+        <translation>Voreinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="581"/>
@@ -2847,7 +2847,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="603"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Vorlage existiert bereits</translation>
+        <translation>Voreinstellung existiert bereits</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="604"/>
@@ -3047,17 +3047,17 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="418"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="419"/>
         <source>Playback</source>
-        <translation type="unfinished">Wiedergabe</translation>
+        <translation>Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="419"/>
         <source>Fading</source>
-        <translation type="unfinished">Überblenden</translation>
+        <translation>Überblenden</translation>
     </message>
 </context>
 <context>
@@ -3065,17 +3065,17 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="86"/>
         <source>Fading</source>
-        <translation type="unfinished">Überblenden</translation>
+        <translation>Fading</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="87"/>
         <source>Pause</source>
-        <translation type="unfinished">Pause</translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="88"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="93"/>
@@ -3140,49 +3140,49 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="177"/>
         <source>Pause, stop, and between-tracks fades without overlap. Between-tracks fades are used instead of auto track-change crossfades.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pause, Stopp und Übergänge zwischen den Titeln ohne Überlappung. Beim Titelwechsel werden Übergänge zwischen den Titeln anstelle von automatischen Überblendungen verwendet.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="234"/>
         <source>Overlapping fades for seek and track changes. Auto track change uses overlap; use Between tracks above for non-overlapping fades.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Überlappende Überblendungen für Spulen und Titelwechsel. Automatische Titelwechsel nutzen Überlappung; für nicht überlappende Überblendungen oben die Option &quot;Zwischen Titeln&quot; auswählen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="188"/>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="245"/>
         <source>Fade In</source>
-        <translation type="unfinished">Einblenden</translation>
+        <translation>Fade-In</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="189"/>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="246"/>
         <source>Fade Out</source>
-        <translation type="unfinished">Ausblenden</translation>
+        <translation>Fade-Out</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="190"/>
         <source>Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurve</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="225"/>
         <source>Overlap start</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Beginn der Überlappung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="227"/>
         <source>Overlap midpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Mitte der Überlappung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="229"/>
         <source>End of track</source>
-        <translation type="unfinished"></translation>
+        <translation>Ende des Titels</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="231"/>
         <source>Controls when the UI switches tracks during automatic crossfade transitions</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestimmt, wann die Benutzeroberfläche den Titel während eines automatischen Crossfade-Übergangs wechselt</translation>
     </message>
 </context>
 <context>
@@ -3311,7 +3311,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="56"/>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
 </context>
 <context>
@@ -3480,7 +3480,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
@@ -3518,7 +3518,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="171"/>
         <source>Edit</source>
-        <translation type="unfinished">Bearbeiten</translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="194"/>
@@ -3557,7 +3557,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filtercolumneditordialog.cpp" line="70"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Skript-Editor</translation>
+        <translation>Skript-Editor</translation>
     </message>
 </context>
 <context>
@@ -3603,7 +3603,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="45"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="46"/>
@@ -3613,7 +3613,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="47"/>
         <source>Keep alive</source>
-        <translation type="unfinished">Beibehalten</translation>
+        <translation>Beibehalten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="49"/>
@@ -3633,42 +3633,42 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="60"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Klickverhalten</translation>
+        <translation>Klickverhalten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="63"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doppelklick</translation>
+        <translation>Doppelklick</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="65"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Mittelklick</translation>
+        <translation>Mittelklick</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="70"/>
         <source>Filter Selection Playlist</source>
-        <translation type="unfinished">Filterauswahl-Wiedergabeliste</translation>
+        <translation>Filterauswahl-Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="73"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished">Wenn die Wiedergabeliste aktiv ist, behalte sie bei Änderung der Auswahl bei</translation>
+        <translation>Wenn die Wiedergabeliste aktiv ist, behalte sie bei Änderung der Auswahl bei</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="78"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="82"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aussehen</translation>
+        <translation>Aussehen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="89"/>
         <source>Artwork Mode</source>
-        <translation type="unfinished">Artwork-Modus</translation>
+        <translation>Artwork-Modus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="99"/>
@@ -3683,12 +3683,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="107"/>
         <source>Width</source>
-        <translation type="unfinished">Breite</translation>
+        <translation>Breite</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="109"/>
         <source>Height</source>
-        <translation type="unfinished">Höhe</translation>
+        <translation>Höhe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="112"/>
@@ -3703,25 +3703,25 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="118"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="137"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="146"/>
         <source>None</source>
-        <translation type="unfinished">Keine</translation>
+        <translation>Keins</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="138"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="147"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Füge zur aktuellen Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="148"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Füge zur aktiven Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="140"/>
@@ -3739,13 +3739,13 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="151"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Füge zur Wiedergabewarteschlange hinzu</translation>
+        <translation>Füge zur Wiedergabewarteschlange hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="143"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="152"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Setze an den Anfang der Wiedergabewarteschlange</translation>
+        <translation>Setze an den Anfang der Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="144"/>
@@ -4074,7 +4074,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="45"/>
         <source>Fade non-looping tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht-wiederholende Titel überblenden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="47"/>
@@ -4569,12 +4569,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="184"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="185"/>
         <source>Interface</source>
-        <translation type="unfinished">Benutzeroberfläche</translation>
+        <translation>Benutzeroberfläche</translation>
     </message>
 </context>
 <context>
@@ -4582,52 +4582,52 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="69"/>
         <source>Auto-detect theme</source>
-        <translation type="unfinished">Thema automatisch ändern</translation>
+        <translation>Thema automatisch ändern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="70"/>
         <source>Light</source>
-        <translation type="unfinished">Hell</translation>
+        <translation>Hell</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="71"/>
         <source>Dark</source>
-        <translation type="unfinished">Dunkel</translation>
+        <translation>Dunkel</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="72"/>
         <source>Use system icons</source>
-        <translation type="unfinished">Benutze Systemicons</translation>
+        <translation>Benutze Systemsymbole</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="75"/>
         <source>Theme</source>
-        <translation type="unfinished">Thema</translation>
+        <translation>Thema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="78"/>
         <source>Icons</source>
-        <translation type="unfinished">Symbole</translation>
+        <translation>Symbole</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="89"/>
         <source>Style</source>
-        <translation type="unfinished">Stil</translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="94"/>
         <source>Images</source>
-        <translation type="unfinished">Bilder</translation>
+        <translation>Bilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="101"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished">Limit für Bildergröße</translation>
+        <translation>Limit für Bildergröße</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="103"/>
         <source>Set to &apos;0&apos; to disable the limit.</source>
-        <translation type="unfinished">Ein Wert von &apos;0&apos; deaktiviert das Limit.</translation>
+        <translation>Ein Wert von &apos;0&apos; deaktiviert das Limit.</translation>
     </message>
 </context>
 <context>
@@ -4739,7 +4739,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="210"/>
         <source>Interface</source>
-        <translation type="unfinished">Benutzeroberfläche</translation>
+        <translation>Benutzeroberfläche</translation>
     </message>
 </context>
 <context>
@@ -4747,12 +4747,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="75"/>
         <source>Prefer currently playing track</source>
-        <translation type="unfinished">Bevorzuge aktuell spielendes Lied</translation>
+        <translation>Bevorzuge aktuell spielendes Lied</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="76"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished">Bevorzuge aktuelle Auswahl</translation>
+        <translation>Bevorzuge aktuelle Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="83"/>
@@ -4762,7 +4762,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="87"/>
         <source>Window title</source>
-        <translation type="unfinished">Fenstertitel</translation>
+        <translation>Fenstertitel</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
@@ -4819,17 +4819,17 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="114"/>
         <source>Preview</source>
-        <translation type="unfinished">Vorschau</translation>
+        <translation>Vorschau</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="118"/>
         <source>Selection Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahlanzeige</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="126"/>
         <source>Selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahlinfo</translation>
     </message>
 </context>
 <context>
@@ -5070,17 +5070,17 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="244"/>
         <source>Playcount</source>
-        <translation type="unfinished">Wiedergabeanzahl</translation>
+        <translation>Abspielzähler</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="248"/>
         <source>First Played</source>
-        <translation type="unfinished">Zuerst gespielt</translation>
+        <translation>Erstmals gespielt</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="252"/>
         <source>Last Played</source>
-        <translation type="unfinished">Zuletzt gespielt</translation>
+        <translation>Zuletzt gespielt</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="267"/>
@@ -5166,7 +5166,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="275"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Wiedergabe-Statistik</translation>
+        <translation type="unfinished">Wiedergabe-Statistiken</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="283"/>
@@ -5248,7 +5248,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="245"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation type="unfinished">fooyin Layout (*.fyl)</translation>
+        <translation>fooyin Layout (*.fyl)</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
@@ -5369,7 +5369,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="187"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadaten</translation>
+        <translation>Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="193"/>
@@ -5496,45 +5496,45 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="106"/>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="117"/>
         <source>Cancel current scan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktive Überprüfung abbrechen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="109"/>
         <source>Cancel the current library scan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bricht die aktuell laufende Bibliotheks-Überprüfung ab</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="118"/>
         <source>Cancel the current scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Die aktive Überprüfung abbrechen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="137"/>
         <source>Library scan finished: %1, %2, %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotheks-Überprüfung abgeschlossen: %1, %2, %3</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="138"/>
         <source>%Ln track(s) added</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Titel hinzugefügt</numerusform>
+            <numerusform>%Ln Titel hinzugefügt</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="139"/>
         <source>%Ln track(s) updated</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Titel aktualisiert</numerusform>
+            <numerusform>%Ln Titel aktualisiert</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="140"/>
         <source>%Ln track(s) removed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Titel entfernt</numerusform>
+            <numerusform>%Ln Titel entfernt</numerusform>
         </translation>
     </message>
     <message>
@@ -5545,7 +5545,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="157"/>
         <source>Abort</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="161"/>
@@ -5620,7 +5620,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="87"/>
         <source>Preserve library viewer order</source>
-        <translation type="unfinished"></translation>
+        <translation>Behalte Reihenfolge der Bibliotheksansichten bei</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="91"/>
@@ -5630,7 +5630,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="93"/>
         <source>Sort tracks added to playlists from library viewers by</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortiere Titel, die über Bibliotheksansichten zu Wiedergabelisten hinzugefügt wurden, nach:</translation>
     </message>
 </context>
 <context>
@@ -5648,7 +5648,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="88"/>
         <source>&amp;Cancel scan</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüfung &amp;abbrechen</translation>
     </message>
 </context>
 <context>
@@ -5656,17 +5656,17 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="40"/>
         <source>Library Tree Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Bibliotheksbaum</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="44"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Wiedergabe sofort starten</translation>
+        <translation>Wiedergabe sofort starten</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="45"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="46"/>
@@ -5676,130 +5676,130 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="47"/>
         <source>Keep alive</source>
-        <translation type="unfinished">Beibehalten</translation>
+        <translation>Beibehalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
         <source>Restore state on startup</source>
-        <translation type="unfinished">Stelle Status nach Start wieder her</translation>
+        <translation>Stelle Status beim Programmstart wieder her</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="50"/>
         <source>Expand/collapse animation</source>
-        <translation type="unfinished">Aus-/Einklappanimation</translation>
+        <translation>Aus-/Einklappanimation</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="51"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Überschrift</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zeige Bildlaufleiste</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Abwechselnde Zeilenfarben</translation>
+        <translation>Abwechselnde Zeilenfarben</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="54"/>
         <source>Override row height</source>
-        <translation type="unfinished">Zeilenhöhe übersteuern</translation>
+        <translation>Zeilenhöhe überschreiben</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="58"/>
         <source>Manage groupings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppierungen verwalten...</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="61"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished">Bei &quot;Aktuelle Wiedergabeliste ersetzen&quot; und &quot;Neue Wiedergabeliste erstellen&quot; die Wiedergabe sofort starten.</translation>
+        <translation>Bei &quot;Aktuelle Wiedergabeliste ersetzen&quot; und &quot;Neue Wiedergabeliste erstellen&quot; die Wiedergabe sofort starten.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="63"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Klickverhalten</translation>
+        <translation>Klickverhalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="66"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doppelklick</translation>
+        <translation>Doppelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Mittelklick</translation>
+        <translation>Mittelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="73"/>
         <source>Library Selection Playlist</source>
-        <translation type="unfinished">Bibliotheksauswahl-Wiedergabeliste</translation>
+        <translation>Bibliotheksauswahl-Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="76"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished">Wenn die Wiedergabeliste aktiv ist, behalte sie bei Änderung der Auswahl bei</translation>
+        <translation>Wenn die Wiedergabeliste aktiv ist, behalte sie bei Änderung der Auswahl bei</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="85"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="91"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aussehen</translation>
+        <translation>Aussehen</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="94"/>
         <source>Icon</source>
-        <translation type="unfinished">Symbol</translation>
+        <translation>Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="104"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation type="unfinished">Mit &lt;b&gt;Strg+Rollen&lt;/b&gt; im Widget die Größe der Icons verändern.</translation>
+        <translation type="unfinished">Mit &lt;b&gt;Strg+Scrollen&lt;/b&gt; im Widget die Größe der Icons verändern.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="108"/>
         <source>Width</source>
-        <translation type="unfinished">Breite</translation>
+        <translation>Breite</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="110"/>
         <source>Height</source>
-        <translation type="unfinished">Höhe</translation>
+        <translation>Höhe</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="140"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="150"/>
         <source>None</source>
-        <translation type="unfinished">Keine</translation>
+        <translation>Keins</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="141"/>
         <source>Expand/Collapse/Play</source>
-        <translation type="unfinished">Ausklappen/Einklappen/Abspielen</translation>
+        <translation>Ausklappen/Einklappen/Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="142"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="151"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Füge zur aktuellen Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="143"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="152"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Füge zur aktiven Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="144"/>
@@ -5817,13 +5817,13 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="155"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Füge zur Wiedergabewarteschlange hinzu</translation>
+        <translation>Füge zur Wiedergabewarteschlange hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="147"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Setze an den Anfang der Wiedergabewarteschlange</translation>
+        <translation>Setze an den Anfang der Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
@@ -5845,12 +5845,12 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="165"/>
         <source>Manage Library Tree Groupings</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwalte Bibliotheksbaum-Gruppierungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="169"/>
         <source>Grouping presets are shared across all widgets.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gruppierungs-Voreinstellungen gelten für alle Widgets.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="177"/>
@@ -5863,17 +5863,17 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="81"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Skript-Editor</translation>
+        <translation>Skript-Editor</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;). Leave the whole sort grouping empty to use the display grouping for sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende &lt;code&gt;||&lt;/code&gt; um Baum-Ebenen zu trennen. Die &lt;b&gt;Sortierung-Gruppierung&lt;/b&gt; muss dieselbe &lt;code&gt;||&lt;/code&gt; Ebenenstruktur wie die &lt;b&gt;Anzeige-Gruppierung&lt;/b&gt; aufweisen; jede Sortierungsebene wird auf die entsprechende Anzeige-Ebene angewandt, wobei eine Sortierungs-Ebene leer sein darf (beispielsweise &lt;code&gt;||%year%||&lt;/code&gt;). Sie gesamte Sortierungs-Gruppierung zum Verwenden der Anzeigen-Gruppierung leer lassen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="96"/>
         <source>Add artwork to the tree by placing a cover variable such as &lt;code&gt;%frontcover%&lt;/code&gt; at the start or end of a level.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Füge Artwork dem Baum durch das Einfügen einer Albumcover-Variabel wie &lt;code&gt;%frontcover%&lt;/code&gt; am Anfang oder Ende einer Ebene hinzu.</translation>
     </message>
 </context>
 <context>
@@ -5891,12 +5891,12 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="163"/>
         <source>Display Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzeige-Gruppierung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="165"/>
         <source>Sort Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortierung-Gruppierung</translation>
     </message>
 </context>
 <context>
@@ -5923,7 +5923,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="199"/>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="445"/>
         <source>All Music</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Musik</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="565"/>
@@ -5974,7 +5974,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="385"/>
         <source>Manage groupings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppierungen verwalten...</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="430"/>
@@ -5984,7 +5984,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="493"/>
         <source>Playback</source>
-        <translation type="unfinished">Wiedergabe</translation>
+        <translation>Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1080"/>
@@ -6038,7 +6038,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
         <location filename="../../src/utils/logging/logwidget.cpp" line="117"/>
         <location filename="../../src/utils/logging/logwidget.cpp" line="235"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopieren</translation>
+        <translation>&amp;Kopieren</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="245"/>
@@ -6051,12 +6051,12 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="45"/>
         <source>Seek on click</source>
-        <translation type="unfinished">Spule bei Klick</translation>
+        <translation>Spule bei Klick</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="47"/>
         <source>Synced scroll duration</source>
-        <translation type="unfinished">Synchronisierte Bildlaufdauer</translation>
+        <translation>Synchronisierte Bildlaufdauer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="49"/>
@@ -6066,229 +6066,229 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="50"/>
         <source>Manual</source>
-        <translation type="unfinished">Manuell</translation>
+        <translation>Manuell</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="51"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="191"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="216"/>
         <source>Synced</source>
-        <translation type="unfinished">Synchronisiert</translation>
+        <translation>Synchronisiert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="52"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatisch</translation>
+        <translation>Automatisch</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="53"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zeige Bildlaufleiste</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="60"/>
         <source>Colours</source>
-        <translation type="unfinished">Farben</translation>
+        <translation>Farben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="61"/>
         <source>Background colour</source>
-        <translation type="unfinished">Hintergrundfarbe</translation>
+        <translation>Hintergrundfarbe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="63"/>
         <source>Line colour</source>
-        <translation type="unfinished">Zeilenfarbe</translation>
+        <translation>Farbe der Zeilen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="65"/>
         <source>Unplayed line colour</source>
-        <translation type="unfinished">Zeilenfarbe ungespielt</translation>
+        <translation>Farbe der ungespielten Zeilen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="67"/>
         <source>Played line colour</source>
-        <translation type="unfinished">Zeilenfarbe gespielt</translation>
+        <translation>Farbe der gespielten Zeilen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="69"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="71"/>
         <source>Current line colour</source>
-        <translation type="unfinished">Zeilenfarbe aktuell</translation>
+        <translation>Farbe der aktuellen Zeile</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="73"/>
         <source>Current word colour</source>
-        <translation type="unfinished">Wortfarbe aktuell</translation>
+        <translation>Farbe des aktuellen Worts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="75"/>
         <source>Line font</source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftart der Zeile</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="77"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="79"/>
         <source>Current line font</source>
-        <translation type="unfinished">Zeilenschriftart aktuell</translation>
+        <translation>Schriftart der aktuellen Zeile</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="81"/>
         <source>Current word font</source>
-        <translation type="unfinished">Wortschriftart aktuell</translation>
+        <translation>Schriftart des aktuellen Worts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="85"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="126"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="253"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="88"/>
         <source>This will only function with synced lyrics.</source>
-        <translation type="unfinished">Das funktioniert nur mit synchronisiertem Songtext.</translation>
+        <translation>Das funktioniert nur mit synchronisiertem Songtext.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="90"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation type="unfinished">Dies wird angezeigt, wenn der Songtext des aktuellen Titels nicht gefunden werden kann.</translation>
+        <translation>Dies wird angezeigt, wenn der Songtext des aktuellen Titels nicht gefunden werden kann.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="95"/>
         <source>No lyrics script</source>
-        <translation type="unfinished">Beschreibung ohne Liedtext</translation>
+        <translation>Beschreibung ohne Liedtext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="100"/>
         <source>Scrolling</source>
-        <translation type="unfinished">Scrollen</translation>
+        <translation>Bildlauf</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="106"/>
         <source>Scroll Mode</source>
-        <translation type="unfinished">Scroll-Modus</translation>
+        <translation>Bildlauf-Modus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="108"/>
         <source>No automatic scrolling will take place</source>
-        <translation type="unfinished">Es erfolgt kein automatisches Scrollen</translation>
+        <translation>Es erfolgt kein automatischer Bildlauf</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="109"/>
         <source>Synced lyrics will be scrolled</source>
-        <translation type="unfinished">Synchronisierte Songtexte werden gescrollt</translation>
+        <translation>Synchronisierte Songtexte werden gescrollt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="110"/>
         <source>All lyrics will be scrolled</source>
-        <translation type="unfinished">Alle Songtexte werden gescrolled</translation>
+        <translation>Alle Songtexte werden gescrollt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="129"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Mittig ausrichten</translation>
+        <translation>Mittig ausrichten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="130"/>
         <source>Align to left</source>
-        <translation type="unfinished">Linksbündig ausrichten</translation>
+        <translation>Linksbündig ausrichten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="131"/>
         <source>Align to right</source>
-        <translation type="unfinished">Rechtsbündig ausrichten</translation>
+        <translation>Rechtsbündig ausrichten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="138"/>
         <source>Line spacing</source>
-        <translation type="unfinished">Zeilenabstand</translation>
+        <translation>Zeilenabstand</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
         <source>Alignment</source>
-        <translation type="unfinished">Ausrichtung</translation>
+        <translation>Ausrichtung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="144"/>
         <source>Fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein- und Ausblenden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="147"/>
         <source>Off</source>
-        <translation type="unfinished">Aus</translation>
+        <translation>Aus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="148"/>
         <source>Synced only</source>
-        <translation type="unfinished">Nur Synchronisierte</translation>
+        <translation>Nur Synchronisierte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
         <source>Scrolling lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrollende Songtexte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="150"/>
         <source>All lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Songtexte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="156"/>
         <source>Apply to</source>
-        <translation type="unfinished"></translation>
+        <translation>Anwenden auf:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="161"/>
         <source>Margins</source>
-        <translation type="unfinished">Ränder</translation>
+        <translation>Ränder</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="170"/>
         <source>Left</source>
-        <translation type="unfinished">Links</translation>
+        <translation>Links</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="172"/>
         <source>Right</source>
-        <translation type="unfinished">Rechts</translation>
+        <translation>Rechts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="174"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Oben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="176"/>
         <source>Bottom</source>
-        <translation type="unfinished">Ganz nach Unten</translation>
+        <translation>Unten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="179"/>
         <source>Top and bottom margins only apply to unsynced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der obere und untere Rand wird nur bei unsynchronisierten Songtexten angewandt.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="189"/>
         <source>Fonts</source>
-        <translation type="unfinished">Schriftarten</translation>
+        <translation>Schriftarten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="193"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="218"/>
         <source>Synced Words</source>
-        <translation type="unfinished">Synchronisierte Wörter</translation>
+        <translation>Synchronisierte Wörter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="251"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="252"/>
         <source>Style</source>
-        <translation type="unfinished">Stil</translation>
+        <translation>Stil</translation>
     </message>
 </context>
 <context>
@@ -6327,7 +6327,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="137"/>
         <source>Update and Next Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualisieren und nächste Zeile</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="138"/>
@@ -6676,7 +6676,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="43"/>
         <source>Lyrics Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Songtexte</translation>
     </message>
 </context>
 <context>
@@ -6758,12 +6758,12 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="207"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Benachrichtigungen</translation>
     </message>
 </context>
 <context>
@@ -6771,78 +6771,78 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="72"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
         <source>Show album art</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Album-Artwork</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="76"/>
         <source>Show Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige &quot;Vorheriger Titel&quot;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="77"/>
         <source>Show Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige &quot;Abspielen/Pause&quot;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
         <source>Show Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige &quot;Nächster Titel&quot;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="79"/>
         <source>Timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Benachrichtigungsdauer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Notification Content</source>
-        <translation type="unfinished"></translation>
+        <translation>Benachrichtigungsinhalt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="84"/>
         <source>Playback controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabesteuerung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="92"/>
         <source>Title</source>
-        <translation type="unfinished">Titel</translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="94"/>
         <source>Body</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhalt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="101"/>
         <source>System default</source>
-        <translation type="unfinished">System-Voreinstellung</translation>
+        <translation>System-Voreinstellung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="153"/>
         <source>Notification display time in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzeigezeit der Benachrichtigung in Millisekunden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="149"/>
         <source>Album art is not available for the active notification backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Album-Artwork ist für das aktive Benachrichtigungs-Backend nicht verfügbar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="151"/>
         <source>Playback controls are not available for the active notification backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabesteuerung ist für das aktive Benachrichtigungs-Backend nicht verfügbar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="154"/>
         <source>Notification timeout is not available for the active notification backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Benachrichtigungsdauer ist für das aktive Benachrichtigungs-Backend nicht verfügbar</translation>
     </message>
 </context>
 <context>
@@ -6850,22 +6850,22 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
         <source>Pause</source>
-        <translation type="unfinished">Pause</translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="236"/>
         <source>Previous</source>
-        <translation type="unfinished">Vorheriges</translation>
+        <translation>Vorheriger Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="250"/>
         <source>Next</source>
-        <translation type="unfinished">Nächstes</translation>
+        <translation>Nächster Titel</translation>
     </message>
 </context>
 <context>
@@ -7186,7 +7186,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>&amp;Next</source>
-        <translation>&amp;Weiter</translation>
+        <translation>&amp;Nächster Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
