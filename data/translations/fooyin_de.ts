@@ -5397,7 +5397,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="292"/>
         <source>Directory</source>
-        <translation>Pfad</translation>
+        <translation>Verzeichnis</translation>
     </message>
 </context>
 <context>
