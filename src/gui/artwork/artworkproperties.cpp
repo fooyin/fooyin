@@ -193,8 +193,10 @@ void ArtworkProperties::loadTrackArtwork()
         }
 
         m_loading = false;
-        m_artworkWidget->show();
-        update();
+        if(isVisible()) {
+            m_artworkWidget->show();
+            update();
+        }
     };
 
     QObject::disconnect(m_watcher, nullptr, this, nullptr);
@@ -255,6 +257,31 @@ void ArtworkProperties::apply()
     });
 }
 
+void ArtworkProperties::setTrackScope(const TrackList& tracks)
+{
+    updateTracks(tracks);
+
+    m_cancelLoading->store(true);
+    m_loaded  = false;
+    m_loading = false;
+
+    for(ArtworkRow* row : m_rows) {
+        row->setLoadedState({}, 0, static_cast<int>(m_tracks.size()), false);
+    }
+
+    m_artworkWidget->hide();
+
+    if(isVisible()) {
+        loadTrackArtwork();
+    }
+}
+
+bool ArtworkProperties::commitPendingChanges()
+{
+    return std::ranges::none_of(m_rows,
+                                [](const ArtworkRow* row) { return row->status() != ArtworkRow::Status::None; });
+}
+
 void ArtworkProperties::updateTracks(const TrackList& tracks)
 {
     m_tracks = tracks;
@@ -309,6 +336,29 @@ QString ArtworkProperties::exportStatusMessage(int written, int failed, bool inc
     }
 
     return {};
+}
+
+void ArtworkProperties::showEvent(QShowEvent* event)
+{
+    PropertiesTabWidget::showEvent(event);
+
+    if(m_writing) {
+        update();
+        return;
+    }
+
+    if(m_loading) {
+        update();
+        return;
+    }
+
+    if(!m_loaded) {
+        loadTrackArtwork();
+        return;
+    }
+
+    m_artworkWidget->show();
+    update();
 }
 } // namespace Fooyin
 

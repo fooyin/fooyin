@@ -40,6 +40,10 @@ InfoView::InfoView(QWidget* parent)
 
 void InfoView::resizeView()
 {
+    if(!model() || model()->columnCount() <= 0) {
+        return;
+    }
+
     const int lastColumn    = model()->columnCount() - 1;
     const int viewportWidth = viewport()->width();
 

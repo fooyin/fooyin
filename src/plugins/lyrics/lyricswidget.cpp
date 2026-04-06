@@ -259,7 +259,8 @@ void LyricsWidget::updateLyrics(const Track& track, bool force)
 
     m_lyricsView->setDisplayString(m_parser.evaluate(m_config.noLyricsScript, track));
 
-    m_finderConnection = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::loadLyrics);
+    m_finderConnection = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this,
+                                          [this](const Track& /*track*/, const Lyrics& lyrics) { loadLyrics(lyrics); });
 
     if(m_settings->fileValue(Settings::AutoSearch, false).toBool()) {
         m_lyricsFinder->findLyrics(track);
@@ -637,7 +638,8 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(searchLyrics, &QAction::triggered, this, [this]() {
         QObject::disconnect(m_finderConnection);
         m_finderConnection
-            = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::loadLyrics);
+            = QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this,
+                               [this](const Track& /*track*/, const Lyrics& lyrics) { loadLyrics(lyrics); });
         m_lyrics.clear();
         m_lyricsFinder->findLyrics(m_currentTrack);
     });

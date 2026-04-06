@@ -52,10 +52,14 @@ public:
 
     void load() override;
     void apply() override;
+
+    void setTrackScope(const TrackList& tracks) override;
+    bool commitPendingChanges() override;
     void updateTracks(const TrackList& tracks) override;
 
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void showEvent(QShowEvent* event) override;
 
 private:
     static QString exportStatusMessage(int written, int failed, bool includeEmptyMessage = false);

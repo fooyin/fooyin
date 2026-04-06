@@ -26,8 +26,40 @@
 
 #include <QPointer>
 
+#include <set>
+
+class QMenu;
+class QAction;
+class QWidget;
+
 namespace Fooyin {
+class ActionManager;
 class SettingsManager;
+class FYGUI_EXPORT PropertiesDialogSession
+{
+public:
+    void reset(const TrackList& tracks);
+
+    [[nodiscard]] const TrackList& originalTracks() const;
+    [[nodiscard]] const TrackList& workingTracks() const;
+    [[nodiscard]] TrackList activeTracks() const;
+
+    [[nodiscard]] const std::set<int>& activeTrackIndexes() const;
+    [[nodiscard]] bool isAllTracksScope() const;
+    bool setActiveTrackIndexes(std::set<int> trackIndexes);
+
+    void updateTracks(const TrackList& tracks);
+    void acceptChanges();
+
+    [[nodiscard]] bool hasChanges() const;
+    [[nodiscard]] bool hasOnlyStatChanges() const;
+    [[nodiscard]] bool isTrackDirty(int index) const;
+
+private:
+    TrackList m_originalTracks;
+    TrackList m_workingTracks;
+    std::set<int> m_activeTrackIndexes;
+};
 
 class FYGUI_EXPORT PropertiesTabWidget : public FyWidget
 {
@@ -44,10 +76,19 @@ public:
     virtual void load();
     virtual void apply();
     virtual void finish();
+
     virtual void addTools(QMenu* menu);
+
+    virtual void setSession(PropertiesDialogSession* session);
+    virtual void setTrackScope(const TrackList& tracks);
     virtual void updateTracks(const TrackList& tracks);
 
+    [[nodiscard]] virtual bool isAvailableForScope(const TrackList& tracks) const;
+    [[nodiscard]] virtual bool hasPendingScopeChanges() const;
+    [[nodiscard]] virtual bool commitPendingChanges();
+
 signals:
+    void pendingChangesStateChanged();
     void tracksChanged(const Fooyin::TrackList& tracks);
 };
 
@@ -87,7 +128,7 @@ class FYGUI_EXPORT PropertiesDialog : public QObject
 public:
     using TabList = std::vector<PropertiesTab>;
 
-    explicit PropertiesDialog(QObject* parent = nullptr);
+    explicit PropertiesDialog(ActionManager* actionManager, QObject* parent = nullptr);
     ~PropertiesDialog() override;
 
     void addTab(const QString& title, const WidgetBuilder& widgetBuilder);
@@ -97,6 +138,10 @@ public:
     void show(const TrackList& tracks);
 
 private:
+    ActionManager* m_actionManager;
+    QAction* m_toggleScopeAction;
+    QAction* m_previousTrackAction;
+    QAction* m_nextTrackAction;
     TabList m_tabs;
 };
 } // namespace Fooyin

@@ -258,8 +258,8 @@ bool TagEditorItem::setValue(const QString& newValue)
             m_valueChanged = false;
             m_changedValues.clear();
             m_changedValue.clear();
-            setStatus(None);
-            return false;
+            setStatus(m_titleChanged ? Changed : None);
+            return true;
         }
     }
 
@@ -284,8 +284,8 @@ bool TagEditorItem::setTitle(const QString& title)
         if(status() == Changed) {
             m_titleChanged = false;
             m_changedTitle.clear();
-            setStatus(None);
-            return false;
+            setStatus(m_valueChanged ? Changed : None);
+            return true;
         }
     }
 

@@ -49,7 +49,7 @@ public:
     void reset();
 
 signals:
-    void lyricsFound(const Fooyin::Lyrics::Lyrics& lyrics);
+    void lyricsFound(const Fooyin::Track& track, const Fooyin::Lyrics::Lyrics& lyrics);
     void lyricsSearchFinished(const Fooyin::Track& track, bool foundAny);
 
 private:

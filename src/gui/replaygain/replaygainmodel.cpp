@@ -85,6 +85,10 @@ TrackList ReplayGainModel::applyChanges()
         }
     }
 
+    if(tracks.empty()) {
+        return {};
+    }
+
     beginResetModel();
     endResetModel();
 
@@ -193,18 +197,18 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
             bool isPeak{false};
 
             switch(type) {
-                case(ReplayGainItem::TrackPeak):
+                case ReplayGainItem::TrackPeak:
                     value  = formatPeak(item->trackPeak(), 6);
                     isPeak = true;
                     break;
-                case(ReplayGainItem::AlbumGain):
+                case ReplayGainItem::AlbumGain:
                     value = formatGain(item->albumGain(), 2);
                     break;
-                case(ReplayGainItem::AlbumPeak):
+                case ReplayGainItem::AlbumPeak:
                     value  = formatPeak(item->albumPeak(), 6);
                     isPeak = true;
                     break;
-                case(ReplayGainItem::TrackGain):
+                case ReplayGainItem::TrackGain:
                 default:
                     value = formatGain(item->trackGain(), 2);
                     break;
@@ -222,6 +226,40 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
     if(column == 1) {
         if(item->multipleValues()) {
             return u"<<multiple values>>"_s;
+        }
+
+        if(m_tracks.size() == 1) {
+            float numericValue{Constants::InvalidGain};
+            QString value;
+            bool isPeak{false};
+
+            switch(type) {
+                case ReplayGainItem::TrackPeak:
+                    numericValue = item->trackPeak();
+                    value        = formatPeak(numericValue, 6);
+                    isPeak       = true;
+                    break;
+                case ReplayGainItem::AlbumGain:
+                    numericValue = item->albumGain();
+                    value        = formatGain(numericValue, 2);
+                    break;
+                case ReplayGainItem::AlbumPeak:
+                    numericValue = item->albumPeak();
+                    value        = formatPeak(numericValue, 6);
+                    isPeak       = true;
+                    break;
+                case ReplayGainItem::TrackGain:
+                default:
+                    numericValue = item->trackGain();
+                    value        = formatGain(numericValue, 2);
+                    break;
+            }
+
+            if(value.isEmpty()) {
+                return {};
+            }
+
+            return (isEdit || isPeak) ? value : u"%1 dB"_s.arg(value).prepend(numericValue > 0 ? "+"_L1 : ""_L1);
         }
 
         const float trackGain = item->trackGain();
@@ -272,8 +310,12 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
         return false;
     }
 
-    bool ok              = false;
-    const float setValue = value.toFloat(&ok);
+    bool ok{false};
+    const float setValue = textValue.toFloat(&ok);
+
+    if(!ok && !textValue.isEmpty()) {
+        return false;
+    }
 
     const auto setGainOrPeak = [this, &index, item](auto setFunc, float validValue) {
         bool changed{false};

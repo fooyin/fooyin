@@ -33,10 +33,12 @@
 #include <QGroupBox>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QSignalBlocker>
 #include <QTextBlock>
 #include <QTextEdit>
 
 #include <algorithm>
+#include <ranges>
 
 using namespace Qt::StringLiterals;
 
@@ -54,9 +56,18 @@ bool hasSameTagLyrics(const Fooyin::Track& lhs, const Fooyin::Track& rhs, const 
 } // namespace
 
 namespace Fooyin::Lyrics {
+QString LyricsEditor::trackKey(const Track& track)
+{
+    if(track.isInDatabase()) {
+        return u"id:%1"_s.arg(track.id());
+    }
+
+    return u"%1|%2"_s.arg(track.uniqueFilepath()).arg(track.subsong());
+}
+
 LyricsEditor::LyricsEditor(const Track& track, std::shared_ptr<NetworkAccessManager> networkAccess,
                            LyricsSaver* lyricsSaver, PlayerController* playerController, SettingsManager* settings,
-                           QWidget* parent)
+                           TrackEditable canEditTrack, QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_track{track}
     , m_lyricsSaver{lyricsSaver}
@@ -64,6 +75,8 @@ LyricsEditor::LyricsEditor(const Track& track, std::shared_ptr<NetworkAccessMana
     , m_settings{settings}
     , m_networkAccess{std::move(networkAccess)}
     , m_lyricsFinder{new LyricsFinder(m_networkAccess, m_settings, this)}
+    , m_canEditTrack{std::move(canEditTrack)}
+    , m_hasPendingScopeChanges{false}
 {
     setupUi();
     setupConnections();
@@ -78,23 +91,50 @@ LyricsEditor::LyricsEditor(Lyrics lyrics, PlayerController* playerController, Ly
     , m_settings{settings}
     , m_lyricsFinder{nullptr}
     , m_lyrics{std::move(lyrics)}
+    , m_hasPendingScopeChanges{false}
 {
     setupUi();
     setupConnections();
     updateTrack(m_playerController->currentTrack());
+
+    if(auto* draft = currentDraft()) {
+        draft->originalLyrics       = m_lyrics;
+        draft->workingLyrics        = m_lyrics;
+        draft->originalLyricsLoaded = true;
+        draft->dirty                = false;
+        loadCurrentDraft();
+        updatePendingState();
+    }
 }
 
 void LyricsEditor::updateTrack(const Track& track)
 {
-    if(m_track.isValid() && !m_track.sameIdentityAs(track)) {
-        return;
-    }
-
     const bool preserveLyrics = m_lyrics.isValid() && hasSameTagLyrics(m_track, track, m_settings);
 
-    m_track = track;
+    m_track           = track;
+    m_currentTrackKey = track.isValid() ? trackKey(track) : QString{};
 
-    if(m_lyricsFinder && !preserveLyrics) {
+    Draft* draft{nullptr};
+
+    if(track.isValid()) {
+        draft = &ensureDraft(track);
+        if(!draft->originalTagTrack.isValid()) {
+            draft->originalTagTrack = track;
+        }
+
+        if(preserveLyrics && !draft->originalLyricsLoaded) {
+            draft->originalLyrics       = m_lyrics;
+            draft->workingLyrics        = m_lyrics;
+            draft->originalLyricsLoaded = true;
+            draft->dirty                = false;
+        }
+    }
+
+    loadCurrentDraft();
+    setControlsEnabled();
+    updatePendingState();
+
+    if(m_lyricsFinder && draft && !draft->originalLyricsLoaded && !preserveLyrics) {
         m_lyricsFinder->findLocalLyrics(m_track);
     }
 }
@@ -109,21 +149,247 @@ QString LyricsEditor::layoutName() const
     return u"LyricsEditor"_s;
 }
 
+void LyricsEditor::setTrackScope(const TrackList& tracks)
+{
+    if(tracks.size() == 1) {
+        updateTrack(tracks.front());
+    }
+}
+
+bool LyricsEditor::isAvailableForScope(const TrackList& tracks) const
+{
+    return tracks.size() == 1 && tracks.front().isValid() && (!m_canEditTrack || m_canEditTrack(tracks.front()));
+}
+
+bool LyricsEditor::hasPendingScopeChanges() const
+{
+    return m_hasPendingScopeChanges;
+}
+
+bool LyricsEditor::commitPendingChanges()
+{
+    if(!m_track.isValid()) {
+        return true;
+    }
+
+    storeCurrentDraftText();
+
+    auto* draft = currentDraft();
+    if(!draft) {
+        updatePendingState();
+        return true;
+    }
+
+    const auto saveMethod = static_cast<SaveMethod>(
+        m_settings->fileValue(Settings::SaveMethod, static_cast<int>(SaveMethod::Directory)).toInt());
+
+    if(saveMethod == SaveMethod::Tag) {
+        if(draft->dirty) {
+            if(const auto updatedTrack = m_lyricsSaver->updateLyricsTag(draft->workingLyrics, m_track)) {
+                m_track = *updatedTrack;
+                m_pendingTagTracks.emplace(m_currentTrackKey, *updatedTrack);
+                emit tracksChanged({*updatedTrack});
+            }
+        }
+        else {
+            m_pendingTagTracks.erase(m_currentTrackKey);
+            if(const auto restoredTrack = m_lyricsSaver->restoreLyricsTags(draft->originalTagTrack, m_track);
+               restoredTrack != m_track) {
+                m_track = restoredTrack;
+                emit tracksChanged({restoredTrack});
+            }
+        }
+    }
+
+    updatePendingState();
+    return true;
+}
+
 void LyricsEditor::apply()
 {
-    const QString text = m_lyricsText->toPlainText();
-    m_lyrics           = parse(text);
-    m_lyrics.data      = text;
-    emit lyricsEdited(m_lyrics);
+    commitPendingChanges();
 
-    if(m_lyricsSaver && m_track.isValid()) {
-        m_lyricsSaver->saveLyrics(m_lyrics, m_track);
+    if(!m_lyricsSaver) {
+        return;
     }
+
+    const auto saveMethod = static_cast<SaveMethod>(
+        m_settings->fileValue(Settings::SaveMethod, static_cast<int>(SaveMethod::Directory)).toInt());
+
+    if(saveMethod == SaveMethod::Tag) {
+        if(!m_pendingTagTracks.empty()) {
+            TrackList tracks;
+            tracks.reserve(m_pendingTagTracks.size());
+            for(const auto& track : m_pendingTagTracks | std::views::values) {
+                tracks.emplace_back(track);
+            }
+            m_lyricsSaver->writeLyricsToTags(tracks);
+        }
+    }
+    else {
+        for(const auto& draft : m_drafts | std::views::values) {
+            if(draft.dirty && draft.originalTagTrack.isValid()) {
+                m_lyricsSaver->saveLyricsToFile(draft.workingLyrics, draft.originalTagTrack);
+            }
+        }
+    }
+
+    for(auto& [key, draft] : m_drafts) {
+        if(!draft.dirty) {
+            continue;
+        }
+
+        draft.originalLyrics       = draft.workingLyrics;
+        draft.originalLyricsLoaded = true;
+        draft.dirty                = false;
+
+        if(m_pendingTagTracks.contains(key)) {
+            draft.originalTagTrack = m_pendingTagTracks.at(key);
+        }
+    }
+
+    m_pendingTagTracks.clear();
+    loadCurrentDraft();
+    updatePendingState();
+}
+
+void LyricsEditor::finish()
+{
+    m_drafts.clear();
+    m_pendingTagTracks.clear();
+    m_currentTrackKey.clear();
+    m_hasPendingScopeChanges = false;
 }
 
 QSize LyricsEditor::sizeHint() const
 {
     return Utils::proportionateSize(this, 0.25, 0.5);
+}
+
+void LyricsEditor::updateLyrics(const Track& track, const Lyrics& lyrics)
+{
+    const QString key = trackKey(track);
+    if(!m_drafts.contains(key)) {
+        return;
+    }
+
+    Draft& draft              = m_drafts.at(key);
+    const bool isCurrentDraft = (key == m_currentTrackKey);
+    const QString currentText = isCurrentDraft ? m_lyricsText->toPlainText() : draft.workingLyrics.data;
+
+    draft.originalLyrics       = lyrics;
+    draft.originalLyricsLoaded = true;
+
+    if(!draft.dirty) {
+        draft.workingLyrics = lyrics;
+    }
+    else {
+        draft.dirty = (currentText != draft.originalLyrics.data);
+    }
+
+    if(isCurrentDraft) {
+        loadCurrentDraft();
+        updatePendingState();
+    }
+}
+
+LyricsEditor::Draft& LyricsEditor::ensureDraft(const Track& track)
+{
+    auto& draft = m_drafts[trackKey(track)];
+    if(!draft.originalTagTrack.isValid()) {
+        draft.originalTagTrack = track;
+    }
+    return draft;
+}
+
+LyricsEditor::Draft* LyricsEditor::currentDraft()
+{
+    if(m_currentTrackKey.isEmpty()) {
+        return nullptr;
+    }
+
+    auto it = m_drafts.find(m_currentTrackKey);
+    return it != m_drafts.end() ? &it->second : nullptr;
+}
+
+const LyricsEditor::Draft* LyricsEditor::currentDraft() const
+{
+    if(m_currentTrackKey.isEmpty()) {
+        return nullptr;
+    }
+
+    const auto it = m_drafts.find(m_currentTrackKey);
+    return it != m_drafts.cend() ? &it->second : nullptr;
+}
+
+Lyrics LyricsEditor::lyricsFromText(const QString& text) const
+{
+    Lyrics lyrics = parse(text);
+    lyrics.data   = text;
+    return lyrics;
+}
+
+void LyricsEditor::loadCurrentDraft()
+{
+    if(const auto* draft = currentDraft()) {
+        m_lyrics = draft->workingLyrics;
+    }
+    else {
+        m_lyrics = {};
+    }
+
+    const QSignalBlocker blocker{m_lyricsText};
+    m_lyricsText->setPlainText(m_lyrics.data);
+}
+
+void LyricsEditor::storeCurrentDraftText()
+{
+    auto* draft = currentDraft();
+    if(!draft) {
+        return;
+    }
+
+    const QString currentText = m_lyricsText->toPlainText();
+    draft->workingLyrics      = lyricsFromText(currentText);
+    draft->dirty              = (currentText != draft->originalLyrics.data);
+    m_lyrics                  = draft->workingLyrics;
+}
+
+void LyricsEditor::setControlsEnabled()
+{
+    const bool canControlPlayback = m_lyricsSaver && m_track.isValid() && m_track == m_playerController->currentTrack();
+
+    m_playPause->setEnabled(canControlPlayback);
+    m_seek->setEnabled(canControlPlayback);
+    m_insert->setEnabled(canControlPlayback);
+    m_insertNext->setEnabled(canControlPlayback);
+    m_rewind->setEnabled(canControlPlayback);
+    m_forward->setEnabled(canControlPlayback);
+}
+
+void LyricsEditor::updatePendingState()
+{
+    bool hasPendingChanges{false};
+
+    if(const auto* draft = currentDraft()) {
+        hasPendingChanges = (m_lyricsText->toPlainText() != draft->workingLyrics.data);
+    }
+
+    if(!hasPendingChanges) {
+        for(const auto& draft : m_drafts | std::views::values) {
+            if(draft.dirty) {
+                hasPendingChanges = true;
+                break;
+            }
+        }
+    }
+
+    if(m_hasPendingScopeChanges == hasPendingChanges) {
+        return;
+    }
+
+    m_hasPendingScopeChanges = hasPendingChanges;
+    emit pendingChangesStateChanged();
 }
 
 void LyricsEditor::setupUi()
@@ -187,6 +453,7 @@ void LyricsEditor::setupUi()
 void LyricsEditor::setupConnections()
 {
     QObject::connect(m_lyricsText, &QTextEdit::cursorPositionChanged, this, &LyricsEditor::highlightCurrentLine);
+    QObject::connect(m_lyricsText, &QTextEdit::textChanged, this, &LyricsEditor::updatePendingState);
     QObject::connect(m_playPause, &QPushButton::clicked, m_playerController, &PlayerController::playPause);
     QObject::connect(m_seek, &QPushButton::clicked, this, &LyricsEditor::seek);
     QObject::connect(m_reset, &QPushButton::clicked, this, &LyricsEditor::reset);
@@ -200,18 +467,26 @@ void LyricsEditor::setupConnections()
     QObject::connect(m_playerController, &PlayerController::positionChanged, this, &LyricsEditor::updateButtons);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &LyricsEditor::updateButtons);
 
+    loadCurrentDraft();
+    setControlsEnabled();
+
     if(m_lyricsFinder) {
         QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &LyricsEditor::updateTrack);
-        QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, [this](const Lyrics& lyrics) {
-            m_lyrics = lyrics;
-            reset();
-        });
+        QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsEditor::updateLyrics);
     }
 }
 
 void LyricsEditor::reset()
 {
-    m_lyricsText->setPlainText(m_lyrics.data);
+    auto* draft = currentDraft();
+    if(!draft) {
+        return;
+    }
+
+    draft->workingLyrics = draft->originalLyrics;
+    draft->dirty         = false;
+    loadCurrentDraft();
+    updatePendingState();
 }
 
 void LyricsEditor::seek()
@@ -233,11 +508,11 @@ void LyricsEditor::updateButtons()
     const auto time = u" [%1]"_s.arg(formatTimestamp(m_playerController->currentPosition()));
 
     switch(m_playerController->playState()) {
-        case(Player::PlayState::Playing):
+        case Player::PlayState::Playing:
             m_playPause->setText(tr("Pause") + time);
             break;
-        case(Player::PlayState::Paused):
-        case(Player::PlayState::Stopped):
+        case Player::PlayState::Paused:
+        case Player::PlayState::Stopped:
             m_playPause->setText(tr("Play") + time);
             break;
     }

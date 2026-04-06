@@ -20,8 +20,11 @@
 #pragma once
 
 #include <core/scripting/scriptparser.h>
+#include <core/track.h>
 
 #include <QObject>
+
+#include <optional>
 
 class QTimer;
 
@@ -51,8 +54,11 @@ public:
 
     void autoSaveLyrics(const Lyrics& lyrics, const Track& track);
     void saveLyrics(const Lyrics& lyrics, const Track& track);
+    void writeLyricsToTags(const TrackList& tracks);
     void saveLyricsToFile(const Lyrics& lyrics, const Track& track);
-    void saveLyricsToTag(const Lyrics& lyrics, const Track& track);
+    void writeLyricsToTag(const Lyrics& lyrics, const Track& track);
+    [[nodiscard]] std::optional<Track> updateLyricsTag(const Lyrics& lyrics, const Track& track) const;
+    [[nodiscard]] Track restoreLyricsTags(const Track& originalTrack, const Track& track) const;
 
     static QString lyricsToLrc(const Lyrics& lyrics, const SaveOptions& options);
     static void lyricsToLrc(const Lyrics& lyrics, QIODevice* device, const SaveOptions& options);

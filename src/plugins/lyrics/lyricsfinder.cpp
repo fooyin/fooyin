@@ -242,7 +242,7 @@ void LyricsFinder::onSearchResult(const std::vector<LyricData>& data)
             lyrics.metadata.artist = lyricData.artist;
         }
 
-        emit lyricsFound(lyrics);
+        emit lyricsFound(m_params.track, lyrics);
     }
 
     const bool foundLocal    = m_currentSource->isLocal();

@@ -19,14 +19,13 @@
 
 #pragma once
 
+#include "tageditorfield.h"
+
 #include <core/track.h>
 #include <gui/fywidget.h>
 #include <gui/propertiesdialog.h>
-#include <gui/widgets/extendabletableview.h>
 
 #include <QWidget>
-
-class QToolButton;
 
 namespace Fooyin {
 class ActionManager;
@@ -58,6 +57,10 @@ public:
 
     [[nodiscard]] bool hasTools() const override;
     void addTools(QMenu* menu) override;
+    void setSession(PropertiesDialogSession* session) override;
+    void setTrackScope(const TrackList& tracks) override;
+    [[nodiscard]] bool hasPendingScopeChanges() const override;
+    bool commitPendingChanges() override;
     void apply() override;
     void updateTracks(const TrackList& tracks) override;
 
@@ -66,15 +69,32 @@ signals:
     void trackStatsChanged(const Fooyin::TrackList& tracks);
 
 private:
+    void configureDelegates(const std::vector<TagEditorField>& items);
+    void refreshModel();
+    TrackList commitCurrentScopeEdits();
+    void updatePendingScopeState();
+    [[nodiscard]] TrackList activeTracks() const;
+    static void mergeTracks(TrackList& destination, const TrackList& source);
+
     void saveState() const;
     void restoreState() const;
 
     TagEditorFieldRegistry* m_registry;
     SettingsManager* m_settings;
+    PropertiesDialogSession* m_session;
 
     bool m_readOnly;
     TagEditorView* m_view;
     TagEditorModel* m_model;
+
+    TrackList m_tracks;
+    TrackList m_pendingTracks;
+
+    bool m_firstReset;
+    int m_activeTrackIndex;
+    bool m_hasPendingScopeChanges;
+    bool m_hasPendingMetadataChanges;
+    bool m_hasPendingStatChanges;
 
     std::set<int> m_delegateRows;
     TagEditorAutocompleteDelegate* m_autocompleteDelegate;

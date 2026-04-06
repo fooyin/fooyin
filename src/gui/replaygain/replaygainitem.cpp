@@ -29,31 +29,31 @@ ReplayGainItem::ReplayGainItem()
 ReplayGainItem::ReplayGainItem(ItemType type, QString name, float value, const Track& track, ReplayGainItem* parent)
     : ReplayGainItem{type, std::move(name), track, parent}
 {
-    m_summaryItem = true;
+    m_summaryItem = !track.isValid();
 
     switch(type) {
-        case(TrackGain):
+        case TrackGain:
             if(value != Constants::InvalidGain) {
                 m_trackGain = value;
             }
             break;
-        case(TrackPeak):
+        case TrackPeak:
             if(value != Constants::InvalidPeak) {
                 m_trackPeak = value;
             }
             break;
-        case(AlbumGain):
+        case AlbumGain:
             if(value != Constants::InvalidGain) {
                 m_albumGain = value;
             }
             break;
-        case(AlbumPeak):
+        case AlbumPeak:
             if(value != Constants::InvalidPeak) {
                 m_albumPeak = value;
             }
             break;
-        case(Header):
-        case(Entry):
+        case Header:
+        case Entry:
             break;
     }
 }
@@ -174,7 +174,7 @@ void ReplayGainItem::setSummaryFunc(const SummaryFunc& func)
 
 bool ReplayGainItem::applyChanges()
 {
-    if(m_isEditable && status() != Changed) {
+    if(status() != Changed) {
         return false;
     }
 

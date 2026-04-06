@@ -36,6 +36,7 @@
         <file>icons/dark/scalable/actions/script-literal.svg</file>
         <file>icons/dark/scalable/actions/script-variable.svg</file>
         <file>icons/dark/scalable/actions/scrobble.svg</file>
+        <file>icons/dark/scalable/actions/sidebar-right.svg</file>
         <file>icons/dark/scalable/actions/view-log.svg</file>
         <file>icons/dark/scalable/actions/view-refresh.svg</file>
         <file>icons/dark/scalable/actions/view-scripteditor.svg</file>
@@ -76,6 +77,7 @@
         <file>icons/light/scalable/actions/script-literal.svg</file>
         <file>icons/light/scalable/actions/script-variable.svg</file>
         <file>icons/light/scalable/actions/scrobble.svg</file>
+        <file>icons/light/scalable/actions/sidebar-right.svg</file>
         <file>icons/light/scalable/actions/view-log.svg</file>
         <file>icons/light/scalable/actions/view-refresh.svg</file>
         <file>icons/light/scalable/actions/view-scripteditor.svg</file>

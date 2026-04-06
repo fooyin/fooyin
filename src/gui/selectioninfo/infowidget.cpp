@@ -75,6 +75,7 @@ InfoWidget::InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, 
     , m_showVerticalScrollbar{true}
     , m_showHorizontalScrollbar{false}
     , m_alternatingColours{true}
+    , m_pendingViewReset{false}
 {
     setObjectName(InfoWidget::name());
 
@@ -85,9 +86,9 @@ InfoWidget::InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, 
     m_view->setItemDelegate(new ItemDelegate(this));
     m_proxyModel->setSourceModel(m_model);
     m_view->setModel(m_proxyModel);
-    m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-
-    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { resetView(); });
+    m_view->header()->setSectionResizeMode(0, QHeaderView::Interactive);
+    m_view->header()->setSectionResizeMode(1, QHeaderView::Fixed);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { queueViewReset(); });
 
     m_model->resetModel(tracks);
 }
@@ -116,12 +117,14 @@ InfoWidget::InfoWidget(Application* app, TrackSelectionController* selectionCont
     m_view->setItemDelegate(new ItemDelegate(this));
     m_proxyModel->setSourceModel(m_model);
     m_view->setModel(m_proxyModel);
+    m_view->header()->setSectionResizeMode(0, QHeaderView::Interactive);
+    m_view->header()->setSectionResizeMode(1, QHeaderView::Fixed);
 
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { m_resetTimer.start(50, this); });
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
                      [this]() { m_resetTimer.start(50, this); });
-    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { resetView(); });
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { queueViewReset(); });
 
     using namespace Settings::Gui::Internal;
 
@@ -188,9 +191,62 @@ void InfoWidget::finalise()
     m_view->setAlternatingRowColors(m_alternatingColours);
 }
 
+void InfoWidget::updateTracks(const TrackList& tracks)
+{
+    if(m_selectionController) {
+        return;
+    }
+
+    m_model->resetModel(tracks);
+}
+
 bool InfoWidget::canApply() const
 {
     return false;
+}
+
+void InfoWidget::hideEvent(QHideEvent* event)
+{
+    PropertiesTabWidget::hideEvent(event);
+
+    m_view->setUpdatesEnabled(false);
+    m_view->viewport()->setUpdatesEnabled(false);
+    m_view->header()->setUpdatesEnabled(false);
+}
+
+void InfoWidget::showEvent(QShowEvent* event)
+{
+    PropertiesTabWidget::showEvent(event);
+
+    m_view->setUpdatesEnabled(true);
+    m_view->viewport()->setUpdatesEnabled(true);
+    m_view->header()->setUpdatesEnabled(true);
+
+    if(m_pendingViewReset) {
+        queueViewReset();
+    }
+}
+
+void InfoWidget::queueViewReset()
+{
+    if(!isVisible()) {
+        m_pendingViewReset = true;
+        return;
+    }
+
+    m_pendingViewReset = false;
+    QMetaObject::invokeMethod(
+        this,
+        [this]() {
+            if(!isVisible()) {
+                m_pendingViewReset = true;
+                return;
+            }
+
+            m_view->resizeView();
+            resetView();
+        },
+        Qt::QueuedConnection);
 }
 
 void InfoWidget::contextMenuEvent(QContextMenuEvent* event)

@@ -27,6 +27,7 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
+#include <core/library/libraryutils.h>
 #include <gui/widgets/multilinedelegate.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -35,11 +36,10 @@
 
 #include <QCheckBox>
 #include <QContextMenuEvent>
-#include <QHBoxLayout>
 #include <QHeaderView>
 #include <QMenu>
 #include <QMessageBox>
-#include <QToolButton>
+#include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
 
@@ -52,9 +52,15 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TagEditorFieldReg
     : PropertiesTabWidget{parent}
     , m_registry{registry}
     , m_settings{settings}
+    , m_session{nullptr}
     , m_readOnly{false}
     , m_view{new TagEditorView(actionManager, this)}
     , m_model{new TagEditorModel(settings, this)}
+    , m_firstReset{true}
+    , m_activeTrackIndex{-1}
+    , m_hasPendingScopeChanges{false}
+    , m_hasPendingMetadataChanges{false}
+    , m_hasPendingStatChanges{false}
     , m_autocompleteDelegate{new TagEditorAutocompleteDelegate(this)}
     , m_multilineDelegate{nullptr}
     , m_starDelegate{nullptr}
@@ -66,7 +72,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TagEditorFieldReg
     resize(600, 720);
     setMinimumSize(300, 400);
 
-    auto* layout = new QHBoxLayout(this);
+    auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});
     layout->addWidget(m_view);
 
@@ -85,6 +91,9 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TagEditorFieldReg
             restoreState();
         },
         Qt::QueuedConnection);
+    QObject::connect(m_model, &QAbstractItemModel::dataChanged, this, [this]() { updatePendingScopeState(); });
+    QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, [this]() { updatePendingScopeState(); });
+    QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, [this]() { updatePendingScopeState(); });
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
         const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
         m_view->removeRowAction()->setEnabled(!m_readOnly && !selected.empty());
@@ -101,7 +110,44 @@ TagEditorWidget::~TagEditorWidget()
 
 void TagEditorWidget::setTracks(const TrackList& tracks)
 {
-    // Reset all delegates
+    const auto items = m_registry->items();
+    configureDelegates(items);
+
+    m_tracks = tracks;
+    m_pendingTracks.clear();
+    m_activeTrackIndex          = -1;
+    m_hasPendingScopeChanges    = false;
+    m_hasPendingMetadataChanges = false;
+    m_hasPendingStatChanges     = false;
+
+    refreshModel();
+
+    const auto refreshEditor = [this]() {
+        const auto fieldItems = m_registry->items();
+        configureDelegates(fieldItems);
+        this->refreshModel();
+    };
+
+    QObject::disconnect(m_registry, nullptr, this, nullptr);
+    QObject::connect(m_registry, &TagEditorFieldRegistry::itemAdded, this, refreshEditor);
+    QObject::connect(m_registry, &TagEditorFieldRegistry::itemChanged, this, refreshEditor);
+    QObject::connect(m_registry, &TagEditorFieldRegistry::itemRemoved, this, refreshEditor);
+}
+
+void TagEditorWidget::setReadOnly(bool readOnly)
+{
+    m_readOnly = readOnly;
+
+    m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers
+                                        : (QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked
+                                           | QAbstractItemView::EditKeyPressed));
+    m_view->addRowAction()->setDisabled(readOnly);
+    m_view->removeRowAction()->setDisabled(readOnly);
+    m_autoTrackNum->setDisabled(readOnly);
+}
+
+void TagEditorWidget::configureDelegates(const std::vector<TagEditorField>& items)
+{
     for(const int row : m_delegateRows) {
         m_view->setItemDelegateForRow(row, nullptr);
     }
@@ -109,7 +155,6 @@ void TagEditorWidget::setTracks(const TrackList& tracks)
     m_view->setRatingRow(-1);
     m_model->setRatingRow(-1);
 
-    const auto items = m_registry->items();
     for(int row{0}; const auto& item : items) {
         if(item.scriptField.compare(QLatin1String{Fooyin::Constants::MetaData::RatingEditor}, Qt::CaseInsensitive)
            == 0) {
@@ -130,30 +175,72 @@ void TagEditorWidget::setTracks(const TrackList& tracks)
         }
         ++row;
     }
-
-    m_model->reset(tracks, items);
-    m_autocompleteDelegate->setTracks(tracks);
-
-    const auto refreshModel = [this]() {
-        setTracks(m_model->tracks());
-    };
-
-    QObject::disconnect(m_registry, nullptr, this, nullptr);
-    QObject::connect(m_registry, &TagEditorFieldRegistry::itemAdded, this, refreshModel);
-    QObject::connect(m_registry, &TagEditorFieldRegistry::itemChanged, this, refreshModel);
-    QObject::connect(m_registry, &TagEditorFieldRegistry::itemRemoved, this, refreshModel);
 }
 
-void TagEditorWidget::setReadOnly(bool readOnly)
+void TagEditorWidget::refreshModel()
 {
-    m_readOnly = readOnly;
+    const auto items       = m_registry->items();
+    const TrackList tracks = activeTracks();
+    m_model->reset(tracks, items);
+    m_autocompleteDelegate->setTracks(tracks);
+    updatePendingScopeState();
+}
 
-    m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers
-                                        : (QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked
-                                           | QAbstractItemView::EditKeyPressed));
-    m_view->addRowAction()->setDisabled(readOnly);
-    m_view->removeRowAction()->setDisabled(readOnly);
-    m_autoTrackNum->setDisabled(readOnly);
+TrackList TagEditorWidget::commitCurrentScopeEdits()
+{
+    if(!m_model->haveChanges()) {
+        return {};
+    }
+
+    const bool statOnly = m_model->haveOnlyStatChanges();
+
+    m_model->applyChanges();
+
+    const TrackList changedTracks = m_model->tracks();
+    mergeTracks(m_tracks, changedTracks);
+    mergeTracks(m_pendingTracks, changedTracks);
+
+    if(statOnly) {
+        m_hasPendingStatChanges = true;
+    }
+    else {
+        m_hasPendingMetadataChanges = true;
+    }
+
+    return changedTracks;
+}
+
+TrackList TagEditorWidget::activeTracks() const
+{
+    if(m_session) {
+        return m_session->activeTracks();
+    }
+
+    if(m_activeTrackIndex < 0 || std::cmp_greater_equal(m_activeTrackIndex, m_tracks.size())) {
+        return m_tracks;
+    }
+
+    return {m_tracks.at(static_cast<TrackList::size_type>(m_activeTrackIndex))};
+}
+
+bool TagEditorWidget::hasPendingScopeChanges() const
+{
+    return m_hasPendingScopeChanges;
+}
+
+void TagEditorWidget::mergeTracks(TrackList& destination, const TrackList& source)
+{
+    for(const Track& updatedTrack : source) {
+        const auto destinationIt = std::ranges::find_if(
+            destination, [&updatedTrack](const Track& track) { return track.sameIdentityAs(updatedTrack); });
+
+        if(destinationIt != destination.end()) {
+            *destinationIt = updatedTrack;
+            continue;
+        }
+
+        destination.emplace_back(updatedTrack);
+    }
 }
 
 QString TagEditorWidget::name() const
@@ -177,23 +264,64 @@ void TagEditorWidget::addTools(QMenu* menu)
     menu->addAction(m_changeFields);
 }
 
-void TagEditorWidget::apply()
+void TagEditorWidget::setSession(PropertiesDialogSession* session)
 {
-    if(!m_model->haveChanges()) {
+    m_session = session;
+}
+
+void TagEditorWidget::setTrackScope(const TrackList& tracks)
+{
+    if(!m_session) {
+        m_tracks           = tracks;
+        m_activeTrackIndex = tracks.size() == 1 ? 0 : -1;
+    }
+
+    refreshModel();
+}
+
+void TagEditorWidget::updatePendingScopeState()
+{
+    const bool hasPendingChanges = m_model->haveChanges();
+    if(m_hasPendingScopeChanges == hasPendingChanges) {
         return;
     }
 
-    const bool updateStats = m_model->haveOnlyStatChanges();
+    m_hasPendingScopeChanges = hasPendingChanges;
+    emit pendingChangesStateChanged();
+}
+
+bool TagEditorWidget::commitPendingChanges()
+{
+    const TrackList changedTracks = commitCurrentScopeEdits();
+    if(!changedTracks.empty()) {
+        emit tracksChanged(changedTracks);
+    }
+    return true;
+}
+
+void TagEditorWidget::apply()
+{
+    const TrackList changedTracks = commitCurrentScopeEdits();
+    if(!changedTracks.empty()) {
+        emit tracksChanged(changedTracks);
+    }
+
+    if(m_pendingTracks.empty()) {
+        return;
+    }
+
+    const bool updateStats = m_hasPendingStatChanges && !m_hasPendingMetadataChanges;
 
     auto applyChanges = [this, updateStats]() {
-        m_model->applyChanges();
-        emit tracksChanged(m_model->tracks());
         if(updateStats) {
-            emit trackStatsChanged(m_model->tracks());
+            emit trackStatsChanged(m_pendingTracks);
         }
         else {
-            emit trackMetadataChanged(m_model->tracks());
+            emit trackMetadataChanged(m_pendingTracks);
         }
+        m_pendingTracks.clear();
+        m_hasPendingMetadataChanges = false;
+        m_hasPendingStatChanges     = false;
     };
 
     if(m_settings->fileValue(DontAskAgain).toBool()) {
@@ -224,7 +352,15 @@ void TagEditorWidget::apply()
 
 void TagEditorWidget::updateTracks(const TrackList& tracks)
 {
-    m_model->updateTracks(tracks);
+    if(!m_session) {
+        const TrackList changedTracks = commitCurrentScopeEdits();
+        if(!changedTracks.empty()) {
+            emit tracksChanged(changedTracks);
+        }
+        mergeTracks(m_tracks, tracks);
+    }
+
+    refreshModel();
 }
 
 void TagEditorWidget::saveState() const

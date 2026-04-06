@@ -51,13 +51,17 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
 
+    void updateTracks(const TrackList& tracks) override;
     [[nodiscard]] bool canApply() const override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void hideEvent(QHideEvent* event) override;
+    void showEvent(QShowEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
 
 private:
+    void queueViewReset();
     void resetModel();
     void resetView();
 
@@ -76,5 +80,6 @@ private:
     bool m_showVerticalScrollbar;
     bool m_showHorizontalScrollbar;
     bool m_alternatingColours;
+    bool m_pendingViewReset;
 };
 } // namespace Fooyin

@@ -171,10 +171,10 @@ void LyricsSaver::autoSaveLyrics(const Lyrics& lyrics, const Track& track)
         const auto saveMethod = static_cast<SaveMethod>(
             m_settings->fileValue(Settings::SaveMethod, static_cast<int>(SaveMethod::Directory)).toInt());
         switch(saveMethod) {
-            case(SaveMethod::Tag):
-                saveLyricsToTag(lyrics, track);
+            case SaveMethod::Tag:
+                writeLyricsToTag(lyrics, track);
                 break;
-            case(SaveMethod::Directory):
+            case SaveMethod::Directory:
                 saveLyricsToFile(lyrics, track);
                 break;
         }
@@ -183,16 +183,16 @@ void LyricsSaver::autoSaveLyrics(const Lyrics& lyrics, const Track& track)
     const auto saveScheme = static_cast<SaveScheme>(m_settings->fileValue(Settings::SaveScheme, 0).toInt());
 
     switch(saveScheme) {
-        case(SaveScheme::Autosave):
+        case SaveScheme::Autosave:
             saveToMethod();
             break;
-        case(SaveScheme::AutosavePeriod): {
+        case SaveScheme::AutosavePeriod: {
             m_autosaveTimer = new QTimer(this);
             m_autosaveTimer->setSingleShot(true);
             QObject::connect(m_autosaveTimer, &QTimer::timeout, this, saveToMethod);
             m_autosaveTimer->start(std::min(AutosaveTimer, static_cast<int>(track.duration() / 3)));
         }
-        case(SaveScheme::Manual):
+        case SaveScheme::Manual:
             break;
     }
 }
@@ -211,13 +211,22 @@ void LyricsSaver::saveLyrics(const Lyrics& lyrics, const Track& track)
     const auto saveMethod = static_cast<SaveMethod>(
         m_settings->fileValue(Settings::SaveMethod, static_cast<int>(SaveMethod::Directory)).toInt());
     switch(saveMethod) {
-        case(SaveMethod::Tag):
-            saveLyricsToTag(lyrics, track);
+        case SaveMethod::Tag:
+            writeLyricsToTag(lyrics, track);
             break;
-        case(SaveMethod::Directory):
+        case SaveMethod::Directory:
             saveLyricsToFile(lyrics, track);
             break;
     }
+}
+
+void LyricsSaver::writeLyricsToTags(const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    m_library->writeTrackMetadata(tracks);
 }
 
 void LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
@@ -241,10 +250,20 @@ void LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
     file.close();
 }
 
-void LyricsSaver::saveLyricsToTag(const Lyrics& lyrics, const Track& track)
+void LyricsSaver::writeLyricsToTag(const Lyrics& lyrics, const Track& track)
+{
+    const auto updatedTrack = updateLyricsTag(lyrics, track);
+    if(!updatedTrack) {
+        return;
+    }
+
+    m_library->writeTrackMetadata({*updatedTrack});
+}
+
+std::optional<Track> LyricsSaver::updateLyricsTag(const Lyrics& lyrics, const Track& track) const
 {
     if(track.isInArchive()) {
-        return;
+        return {};
     }
 
     const QString tag = lyrics.type == Lyrics::Type::Unsynced
@@ -252,7 +271,7 @@ void LyricsSaver::saveLyricsToTag(const Lyrics& lyrics, const Track& track)
                           : m_settings->fileValue(Settings::SaveSyncedTag, u"LYRICS"_s).toString();
     if(tag.isEmpty()) {
         qCInfo(LYRICS) << "Unable to save lyrics to an empty tag";
-        return;
+        return {};
     }
 
     const QString lrc
@@ -260,7 +279,29 @@ void LyricsSaver::saveLyricsToTag(const Lyrics& lyrics, const Track& track)
 
     Track updatedTrack{track};
     updatedTrack.replaceExtraTag(tag, lrc);
-    m_library->writeTrackMetadata({updatedTrack});
+    return updatedTrack;
+}
+
+Track LyricsSaver::restoreLyricsTags(const Track& originalTrack, const Track& track) const
+{
+    Track restoredTrack{track};
+
+    QStringList tags;
+    tags.append(m_settings->fileValue(Settings::SaveSyncedTag, u"LYRICS"_s).toString());
+    tags.append(m_settings->fileValue(Settings::SaveUnsyncedTag, u"UNSYNCED LYRICS"_s).toString());
+    tags.removeAll(QString{});
+    tags.removeDuplicates();
+
+    for(const QString& tag : std::as_const(tags)) {
+        if(originalTrack.hasExtraTag(tag)) {
+            restoredTrack.replaceExtraTag(tag, originalTrack.extraTag(tag));
+        }
+        else {
+            restoredTrack.removeExtraTag(tag);
+        }
+    }
+
+    return restoredTrack;
 }
 
 QString LyricsSaver::lyricsToLrc(const Lyrics& lyrics, const SaveOptions& options)

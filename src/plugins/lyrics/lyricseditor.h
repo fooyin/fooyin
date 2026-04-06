@@ -26,6 +26,8 @@
 
 #include <QDialog>
 
+#include <unordered_map>
+
 class QTextEdit;
 
 namespace Fooyin {
@@ -41,8 +43,11 @@ class LyricsEditor : public PropertiesTabWidget
     Q_OBJECT
 
 public:
+    using TrackEditable = std::function<bool(const Track&)>;
+
     LyricsEditor(const Track& track, std::shared_ptr<NetworkAccessManager> networkAccess, LyricsSaver* lyricsSaver,
-                 PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+                 PlayerController* playerController, SettingsManager* settings, TrackEditable canEditTrack = {},
+                 QWidget* parent = nullptr);
     LyricsEditor(Lyrics lyrics, PlayerController* playerController, LyricsSaver* lyricsSaver, SettingsManager* settings,
                  QWidget* parent = nullptr);
 
@@ -50,8 +55,13 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+    void setTrackScope(const TrackList& tracks) override;
+    [[nodiscard]] bool isAvailableForScope(const TrackList& tracks) const override;
+    [[nodiscard]] bool hasPendingScopeChanges() const override;
+    bool commitPendingChanges() override;
 
     void apply() override;
+    void finish() override;
 
     [[nodiscard]] QSize sizeHint() const override;
 
@@ -59,6 +69,28 @@ signals:
     void lyricsEdited(const Fooyin::Lyrics::Lyrics& lyrics);
 
 private:
+    struct Draft
+    {
+        Track originalTagTrack;
+        Lyrics originalLyrics;
+        Lyrics workingLyrics;
+        bool originalLyricsLoaded{false};
+        bool dirty{false};
+    };
+
+    void updateLyrics(const Track& track, const Lyrics& lyrics);
+
+    static QString trackKey(const Track& track);
+    [[nodiscard]] Draft& ensureDraft(const Track& track);
+    [[nodiscard]] Draft* currentDraft();
+    [[nodiscard]] const Draft* currentDraft() const;
+    [[nodiscard]] Lyrics lyricsFromText(const QString& text) const;
+
+    void loadCurrentDraft();
+    void storeCurrentDraftText();
+    void setControlsEnabled();
+    void updatePendingState();
+
     void setupUi();
     void setupConnections();
     void reset();
@@ -78,6 +110,11 @@ private:
     std::shared_ptr<NetworkAccessManager> m_networkAccess;
     LyricsFinder* m_lyricsFinder;
     Lyrics m_lyrics;
+    TrackEditable m_canEditTrack;
+    std::unordered_map<QString, Draft> m_drafts;
+    std::unordered_map<QString, Track> m_pendingTagTracks;
+    QString m_currentTrackKey;
+    bool m_hasPendingScopeChanges;
 
     QPushButton* m_playPause;
     QPushButton* m_seek;

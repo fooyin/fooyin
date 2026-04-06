@@ -23,6 +23,7 @@
 #include "replaygainmodel.h"
 #include "replaygainview.h"
 
+#include <core/library/libraryutils.h>
 #include <core/library/musiclibrary.h>
 #include <utils/actions/actionmanager.h>
 
@@ -30,6 +31,20 @@
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
+
+namespace {
+void mergeTracks(Fooyin::TrackList& destination, const Fooyin::TrackList& source)
+{
+    updateCommonTracks(destination, source, Fooyin::Utils::CommonOperation::Update);
+}
+
+int replayGainColumnWidth(const Fooyin::ReplayGainView* view, const QString& headerText, const QString& sampleText)
+{
+    const int textWidth = std::max(view->fontMetrics().horizontalAdvance(sampleText),
+                                   view->header()->fontMetrics().horizontalAdvance(headerText));
+    return textWidth + 24;
+}
+} // namespace
 
 namespace Fooyin {
 ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, bool readOnly, QWidget* parent)
@@ -44,17 +59,12 @@ ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& track
 
     m_view->setItemDelegate(new ReplayGainDelegate(this));
     m_view->setModel(m_model);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
+        QMetaObject::invokeMethod(this, [this]() { updateHeaderModes(); }, Qt::QueuedConnection);
+    });
     m_model->resetModel(tracks);
 
-    if(tracks.size() == 1) {
-        m_view->header()->setSectionResizeMode(QHeaderView::Stretch);
-    }
-    else {
-        m_view->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-        for(int i{1}; i < m_view->header()->count(); ++i) {
-            m_view->header()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
-        }
-    }
+    updateHeaderModes();
 }
 
 QString ReplayGainWidget::name() const
@@ -69,16 +79,61 @@ QString ReplayGainWidget::layoutName() const
 
 void ReplayGainWidget::apply()
 {
-    const TrackList changedTracks = m_model->applyChanges();
-    if(!changedTracks.empty()) {
-        emit tracksChanged(changedTracks);
-        m_library->writeTrackMetadata(changedTracks);
+    commitPendingChanges();
+
+    if(!m_pendingTracks.empty()) {
+        emit tracksChanged(m_pendingTracks);
+        m_library->writeTrackMetadata(m_pendingTracks);
+        m_pendingTracks.clear();
     }
+}
+
+void ReplayGainWidget::setTrackScope(const TrackList& tracks)
+{
+    m_model->resetModel(tracks);
+    updateHeaderModes();
+}
+
+bool ReplayGainWidget::commitPendingChanges()
+{
+    const TrackList changedTracks = m_model->applyChanges();
+    if(changedTracks.empty()) {
+        return true;
+    }
+
+    mergeTracks(m_pendingTracks, changedTracks);
+    emit tracksChanged(changedTracks);
+    return true;
 }
 
 void ReplayGainWidget::updateTracks(const TrackList& tracks)
 {
     m_model->updateTracks(tracks);
+    updateHeaderModes();
+}
+
+void ReplayGainWidget::updateHeaderModes() const
+{
+    auto* header = m_view->header();
+    header->setStretchLastSection(false);
+
+    if(m_model->columnCount({}) == 2) {
+        header->setSectionResizeMode(0, QHeaderView::Stretch);
+        header->setSectionResizeMode(1, QHeaderView::Interactive);
+        header->resizeSection(
+            1, replayGainColumnWidth(m_view, m_model->headerData(1, Qt::Horizontal, Qt::DisplayRole).toString(),
+                                     u"+123.45 dB"_s));
+    }
+    else {
+        header->setSectionResizeMode(0, QHeaderView::Stretch);
+        for(int i{1}; i < header->count(); ++i) {
+            header->setSectionResizeMode(i, QHeaderView::Interactive);
+            const QString sampleText = (i == 2 || i == 4) ? u"123.456789"_s : u"+123.45 dB"_s;
+            header->resizeSection(
+                i, replayGainColumnWidth(m_view, m_model->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString(),
+                                         sampleText));
+        }
+    }
 }
 } // namespace Fooyin
 

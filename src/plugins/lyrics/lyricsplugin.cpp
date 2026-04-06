@@ -57,10 +57,9 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider = context.widgetProvider;
 
     context.propertiesDialog->addTab(tr("Lyrics"), [this](const TrackList& tracks) -> LyricsEditor* {
-        if(tracks.size() == 1 && m_audioLoader->canWriteMetadata(tracks.front())) {
-            return new LyricsEditor(tracks.front(), m_networkAccess, m_lyricsSaver, m_playerController, m_settings);
-        }
-        return nullptr;
+        return new LyricsEditor(tracks.empty() ? Track{} : tracks.front(), m_networkAccess, m_lyricsSaver,
+                                m_playerController, m_settings,
+                                [this](const Track& track) { return m_audioLoader->canWriteMetadata(track); });
     });
 
     m_widgetProvider->registerWidget(

@@ -38,10 +38,16 @@ public:
 
     void apply() override;
     void updateTracks(const TrackList& tracks) override;
+    void setTrackScope(const TrackList& tracks) override;
+    bool commitPendingChanges() override;
 
 private:
+    void updateHeaderModes() const;
+
     MusicLibrary* m_library;
     ReplayGainView* m_view;
     ReplayGainModel* m_model;
+
+    TrackList m_pendingTracks;
 };
 } // namespace Fooyin
