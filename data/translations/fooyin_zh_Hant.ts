@@ -735,7 +735,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
         <source>Repeats text</source>
-        <translation>重覆文字</translation>
+        <translation>重複文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="226"/>
@@ -7177,7 +7177,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Repeat &amp;playlist</source>
-        <translation>重覆播放清單(&amp;P)</translation>
+        <translation>重複播放清單(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
@@ -7247,7 +7247,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="126"/>
         <source>Set playback order to repeat the current track</source>
-        <translation>設定播放順序去重覆目前曲目</translation>
+        <translation>設定播放順序去重複目前曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="150"/>
@@ -7257,12 +7257,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="132"/>
         <source>Set playback order to repeat the current album</source>
-        <translation>設成重覆播放目前專輯</translation>
+        <translation>設成重複播放目前專輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="138"/>
         <source>Set playback order to repeat the current playlist</source>
-        <translation>設成重覆播放目前播放清單</translation>
+        <translation>設成重複播放目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="144"/>
@@ -7307,12 +7307,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
         <source>Repeat &amp;track</source>
-        <translation>重覆曲目(&amp;T)</translation>
+        <translation>重複曲目(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Repeat &amp;album</source>
-        <translation>重覆專輯(&amp;A)</translation>
+        <translation>重複專輯(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="80"/>
@@ -7665,7 +7665,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="60"/>
         <source>Repeat</source>
-        <translation>重覆</translation>
+        <translation>重複</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="64"/>
@@ -7680,17 +7680,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="107"/>
         <source>Repeat playlist</source>
-        <translation>重覆播放清單</translation>
+        <translation>重複播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="108"/>
         <source>Repeat album</source>
-        <translation>重覆專輯</translation>
+        <translation>重複專輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="109"/>
         <source>Repeat track</source>
-        <translation>重覆單曲</translation>
+        <translation>重複單曲</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="141"/>
@@ -8314,7 +8314,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="201"/>
         <source>&amp;Redo</source>
-        <translation>重覆動作(&amp;R)</translation>
+        <translation>再次動作(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="204"/>
@@ -8354,7 +8354,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="227"/>
         <source>Remove duplicates</source>
-        <translation>移除重覆的</translation>
+        <translation>移除重複項目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="230"/>
@@ -8439,7 +8439,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="454"/>
         <source>Remove duplicate tracks from the playlist</source>
-        <translation>移除重覆的曲目 從播放清單</translation>
+        <translation>移除重複的曲目 從播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="459"/>
@@ -10137,7 +10137,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="231"/>
         <source>Duplicate shortcuts</source>
-        <translation>重覆的快速鍵</translation>
+        <translation>重複的快速鍵</translation>
     </message>
 </context>
 <context>
