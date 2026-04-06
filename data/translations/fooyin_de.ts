@@ -3523,14 +3523,14 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="194"/>
         <source>No tracks deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Titel gelöscht</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="195"/>
         <source>Deleted %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln Titel gelöscht</numerusform>
+            <numerusform>%Ln Titel gelöscht</numerusform>
         </translation>
     </message>
 </context>
@@ -4079,7 +4079,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="47"/>
         <source>GME Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>GME-Einstellungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="54"/>
@@ -4767,53 +4767,54 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
         <source>Controls the star size used by the rating editor widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Steuert die Größe der Sterne im Bewertungseditor-Widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Used for the filled portion of %rating_stars% and %rating_stars_padded%</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwendet für die ausgefüllten Teile von %rating_stars% und %rating_stars_padded%</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="96"/>
         <source>Used for the half-step portion of %rating_stars% and %rating_stars_padded%.
 If the default half-star does not render correctly with your system font, choose a different symbol here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwendet für die halbgefüllten Teile von %rating_stars% und %rating_stars_padded%.
+Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richtig dargestellt wird, kann hier ein anderes Symbol gewählt werden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="99"/>
         <source>Used for the trailing empty portion of %rating_stars_padded%</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwendet für die nicht gefüllten Teile von %rating_stars% und %rating_stars_padded%</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="100"/>
         <source>Preview of %rating_stars_padded% using the current font.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschau von %rating_stars_padded% in der aktuellen Schriftart.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>Ratings</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewertungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
         <source>Rating editor star size</source>
-        <translation type="unfinished"></translation>
+        <translation>Größe der Sterne im Bewertungseditor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
         <source>Full star symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol für vollen Stern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="110"/>
         <source>Half star symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol für halben Stern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="112"/>
         <source>Empty star symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol für leeren Stern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="114"/>
@@ -5004,7 +5005,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="205"/>
         <source>Created</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="207"/>
@@ -5313,22 +5314,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
         <source>Save ratings to file tags when possible</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewertungen wenn möglich in Datei-Tags speichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="146"/>
         <source>Save playcounts to file tags when possible</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielzähler wenn möglich in Datei-Tags speichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="147"/>
         <source>Overwrite rating in database when songs are re-read</source>
-        <translation type="unfinished"></translation>
+        <translation>Beim erneuten Einlesen von Titeln die Bewertung überschreiben</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="148"/>
         <source>Overwrite playcount in database when files are re-read</source>
-        <translation type="unfinished"></translation>
+        <translation>Beim erneuten Einlesen von Titeln den Abspielzähler überschreiben</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="159"/>
@@ -5358,12 +5359,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="173"/>
         <source>Scanning</source>
-        <translation type="unfinished"></translation>
+        <translation>Scanne</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="180"/>
         <source>Availability</source>
-        <translation type="unfinished"></translation>
+        <translation>Verfügbarkeit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="187"/>
@@ -5379,7 +5380,8 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="196"/>
         <source>When enabled, a rating found in file tags replaces the database rating.
 When disabled, the database rating is kept and file tags are only used when the database rating is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn aktiviert überschreibt eine in Datei-Tags gespeicherte Bewertung die Bewertung in der Datenbank.
+Wenn nicht aktiviert wird die Bewertung in der Datenbank beibehalten und Datei-Tags nur ausgewertet, wenn es noch keine Bewertung in der Datenbank gibt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="200"/>
@@ -5387,7 +5389,10 @@ When disabled, the database rating is kept and file tags are only used when the 
 Missing values still fall back to the database.
 When disabled, playcount uses the higher value, first played uses the earlier non-empty value,
 and last played uses the later value.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn aktiviert überschreiben in Datei-Tags gespeicherte Abspielzähler und -zeitpunkte die Werte in der Datenbank.
+Fehlende Werte werden weiterhin in der Datenbank gespeichert.
+Wenn nicht aktiviert wird der Abspielzähler auf den höheren Wert gesetzt, der Zeitpunkt des ersten Abspielens auf den
+frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den spätesten Wert.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="292"/>
