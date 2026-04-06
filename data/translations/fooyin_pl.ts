@@ -2231,7 +2231,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="37"/>
         <source>Tree</source>
-        <translation type="unfinished">Drzewko</translation>
+        <translation>Drzewo</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="38"/>
@@ -4842,12 +4842,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="53"/>
         <source>&amp;Quick start</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Szybki start</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="54"/>
         <source>Open the quick start guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz skróconą instrukcję obsługi</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="59"/>
@@ -4862,7 +4862,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
         <source>S&amp;earching help</source>
-        <translation type="unfinished"></translation>
+        <translation>Pomoc w kweren&amp;dowaniu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="65"/>
@@ -5446,12 +5446,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
         <source>&amp;Scan for changes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Prześ&amp;ledź zmiany</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="73"/>
         <source>Update tracks in libraries which have been modified on disk</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaktualizuj utwory w bibliotekach, które zostały zmodyfikowane na dysku</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="78"/>
@@ -5932,7 +5932,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="565"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Drzewko biblioteki</translation>
+        <translation>Drzewo biblioteki</translation>
     </message>
 </context>
 <context>
@@ -5993,7 +5993,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1080"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Drzewko biblioteki</translation>
+        <translation>Drzewo biblioteki</translation>
     </message>
 </context>
 <context>
@@ -11483,7 +11483,7 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="182"/>
         <location filename="../../src/gui/widgets.cpp" line="343"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Drzewko biblioteki</translation>
+        <translation>Drzewo biblioteki</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="198"/>
