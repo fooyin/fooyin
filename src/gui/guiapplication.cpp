@@ -1412,6 +1412,7 @@ GuiApplication::~GuiApplication() = default;
 
 void GuiApplication::shutdown()
 {
+    qApp->removeEventFilter(this);
     p->m_actionManager->saveSettings();
     p->m_editableLayout->saveLayout();
     p->m_editableLayout.reset();
