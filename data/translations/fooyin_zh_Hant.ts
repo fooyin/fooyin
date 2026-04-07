@@ -630,7 +630,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="199"/>
         <source>Removes characters from the end</source>
-        <translation type="unfinished">Removes characters from the end</translation>
+        <translation>從末端尾移除字元</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="200"/>
@@ -740,7 +740,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="226"/>
         <source>Trims surrounding whitespace</source>
-        <translation type="unfinished">Trims surrounding whitespace</translation>
+        <translation>裁剪周圍的空白</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="227"/>
@@ -783,12 +783,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="234"/>
         <source>Elides text at the end</source>
-        <translation type="unfinished">Elides text at the end</translation>
+        <translation>剔除於末端的文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <source>Elides text in the middle</source>
-        <translation type="unfinished">Elides text in the middle</translation>
+        <translation>剔除於中端的文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="236"/>
@@ -821,17 +821,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Builds a clickable document or web link</source>
-        <translation type="unfinished">Builds a clickable document or web link</translation>
+        <translation>建立起可以點按的文件或網頁連結</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Builds a clickable link to a fooyin command</source>
-        <translation type="unfinished">Builds a clickable link to a fooyin command</translation>
+        <translation>建立起可以點按 連結至 fooyin 指令</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Percent-encodes text for use in URLs</source>
-        <translation type="unfinished">Percent-encodes text for use in URLs</translation>
+        <translation>百分比編碼文字使用於 URLs</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
@@ -1544,8 +1544,8 @@
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates. 
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished">When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates. 
-When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</translation>
+        <translation>當啟用時，每當重新產生時，自動播放清單都會按其排序模式完全重新排序。 
+當停用時，將保留現有曲目順序，並且僅對新近添加符合的曲目進行排序並且附加。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="95"/>
@@ -1696,7 +1696,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="121"/>
         <source>Select a command, or enter a raw `$cmdlink` id or alias.</source>
-        <translation type="unfinished">Select a command, or enter a raw `$cmdlink` id or alias.</translation>
+        <translation>選擇一個指令，或輸入原始的 &quot;$cmdlink&quot; id 或別名。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="125"/>
@@ -2877,8 +2877,8 @@ Effects here process the final combined output.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="681"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
-        <translation type="unfinished">
-            <numerusform>The first %Ln non-empty line must contain integer values.</numerusform>
+        <translation>
+            <numerusform>第一個 %Ln 非空白行列必須包含整數值。</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -3133,7 +3133,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="177"/>
         <source>Pause, stop, and between-tracks fades without overlap. Between-tracks fades are used instead of auto track-change crossfades.</source>
-        <translation type="unfinished">Pause, stop, and between-tracks fades without overlap. Between-tracks fades are used instead of auto track-change crossfades.</translation>
+        <translation>暫停、停止和曲目之間淡入淡出 不會出現重疊。曲目之間淡入淡出進行使用，而非自動曲目變更的交叉淡入淡出。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="234"/>
@@ -6746,7 +6746,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="207"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
@@ -6759,7 +6759,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="72"/>
         <source>Enabled</source>
-        <translation type="unfinished">已經啟用</translation>
+        <translation>已經啟用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
@@ -6799,7 +6799,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="92"/>
         <source>Title</source>
-        <translation type="unfinished">標題</translation>
+        <translation>標題</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="94"/>
@@ -6809,7 +6809,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="101"/>
         <source>System default</source>
-        <translation type="unfinished">系統預設</translation>
+        <translation>系統預設</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
@@ -6838,22 +6838,22 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
         <source>Pause</source>
-        <translation type="unfinished">暫停</translation>
+        <translation>暫停</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="236"/>
         <source>Previous</source>
-        <translation type="unfinished">上一首</translation>
+        <translation>上一首</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="250"/>
         <source>Next</source>
-        <translation type="unfinished">下一首</translation>
+        <translation>下一首</translation>
     </message>
 </context>
 <context>
