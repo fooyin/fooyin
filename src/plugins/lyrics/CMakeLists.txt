@@ -46,6 +46,8 @@ create_fooyin_plugin_internal(
             sources/neteaselyrics.h
             sources/qqlyrics.cpp
             sources/qqlyrics.h
+            sources/kugoulyrics.cpp
+            sources/kugoulyrics.h
             sources/taglyrics.cpp
             sources/taglyrics.h
 )

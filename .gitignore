@@ -71,3 +71,4 @@ tmp/
 /.vs
 /vcpkg_installed
 /out/
+/deb/
