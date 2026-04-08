@@ -28,6 +28,7 @@ namespace Fooyin::TagEditor {
 class TagEditorFieldRegistry;
 class TagEditorFieldsPage;
 class TagEditorPropertiesTab;
+class TagEditorPanel;
 
 class TagEditorPlugin : public QObject,
                         public Plugin,
@@ -44,6 +45,7 @@ public:
 
 private:
     TagEditorPropertiesTab* createEditor(const TrackList& tracks);
+    TagEditorPanel* createPanel();
 
     ActionManager* m_actionManager;
     MusicLibrary* m_library;

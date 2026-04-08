@@ -23,6 +23,7 @@
 #include "settings/tageditorpage.h"
 #include "tageditorpropertiestab.h"
 #include "tagfilldialog.h"
+#include "tageditorpanel.h"
 
 #include <core/engine/audioloader.h>
 #include <core/library/musiclibrary.h>
@@ -70,8 +71,8 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
 
     m_fieldsPage = new TagEditorFieldsPage(m_registry, m_settings, this);
 
-    // m_widgetProvider->registerWidget(
-    //     u"TagEditor"_s, [this]() { return createEditor(); }, u"Tag Editor"_s);
+    m_widgetProvider->registerWidget(
+        u"TagEditorPanel"_s, [this]() { return createPanel(); }, tr("Tag Editor"));
 
     m_propertiesDialog->insertTab(0, u"Metadata"_s, [this](const TrackList& tracks) { return createEditor(tracks); });
 
@@ -113,6 +114,12 @@ TagEditorPropertiesTab* TagEditorPlugin::createEditor(const TrackList& tracks)
     QObject::connect(tagEditor, &TagEditorPropertiesTab::trackStatsChanged, m_library,
                      [this](const TrackList& changedTracks) { m_library->updateTrackStats(changedTracks); });
     return tagEditor;
+}
+
+TagEditorPanel* TagEditorPlugin::createPanel()
+{
+    return new TagEditorPanel(m_actionManager, m_registry, m_library, m_audioLoader,
+                              m_trackSelection, m_settings);
 }
 } // namespace Fooyin::TagEditor
 
