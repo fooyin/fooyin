@@ -23,6 +23,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
 
+    <key>CFBundleIconFile</key>
+    <string>fooyin.icns</string>
+
     <key>CFBundleSignature</key>
     <string>????</string>
 

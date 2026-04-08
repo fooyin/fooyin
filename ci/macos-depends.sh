@@ -3,8 +3,6 @@
 source ci/setup.sh
 
 export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
-export CC=$(brew --prefix llvm)/bin/clang
-export CXX=$(brew --prefix llvm)/bin/clang++
 brew update
 brew install \
     cmake \
@@ -12,6 +10,6 @@ brew install \
     qt \
     taglib \
     ffmpeg \
-    icu4c@77 \
+    icu4c@78 \
     sdl2 \
     llvm

@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
@@ -33,7 +33,7 @@ jobs:
           ./ci/macos-build.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: macos-${{ matrix.arch }}
-          path: txz
+          path: dmg

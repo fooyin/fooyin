@@ -1,0 +1,80 @@
+cmake_minimum_required(VERSION 3.16)
+
+if(NOT DEFINED CMAKE_INSTALL_PREFIX)
+    message(FATAL_ERROR "CMAKE_INSTALL_PREFIX is not set")
+endif()
+
+set(APP_BUNDLE_DIR "${CMAKE_INSTALL_PREFIX}/@FOOYIN_BUNDLE_NAME@")
+set(FRAMEWORKS_DIR "${APP_BUNDLE_DIR}/Contents/Frameworks")
+set(ICU_UC_BUNDLE_NAME "@FOOYIN_ICU_UC_LIBRARY_NAME@")
+set(ICU_I18N_BUNDLE_NAME "@FOOYIN_ICU_I18N_LIBRARY_NAME@")
+set(ICU_DATA_BUNDLE_NAME "@FOOYIN_ICU_DATA_LIBRARY_NAME@")
+
+file(MAKE_DIRECTORY "${FRAMEWORKS_DIR}")
+
+execute_process(
+    COMMAND "@MACDEPLOYQT_EXECUTABLE@"
+            "${APP_BUNDLE_DIR}"
+            -appstore-compliant
+            -always-overwrite
+            -no-codesign
+    RESULT_VARIABLE macdeployqt_result
+)
+if(NOT macdeployqt_result EQUAL 0)
+    message(FATAL_ERROR "macdeployqt failed with exit code ${macdeployqt_result}")
+endif()
+
+function(copy_icu_library source_path dest_name install_name)
+    set(dest_path "${FRAMEWORKS_DIR}/${dest_name}")
+    file(REMOVE "${dest_path}")
+    if(NOT EXISTS "${source_path}")
+        message(FATAL_ERROR "ICU source does not exist: ${source_path}")
+    endif()
+    execute_process(
+        COMMAND "${CMAKE_COMMAND}" -E copy "${source_path}" "${dest_path}"
+        RESULT_VARIABLE copy_result
+    )
+    if(NOT copy_result EQUAL 0)
+        message(FATAL_ERROR "Failed to copy ${source_path} to ${dest_path}")
+    endif()
+
+    file(CHMOD "${dest_path}"
+        PERMISSIONS
+            OWNER_READ OWNER_WRITE OWNER_EXECUTE
+            GROUP_READ GROUP_EXECUTE
+            WORLD_READ WORLD_EXECUTE
+    )
+
+    execute_process(
+        COMMAND /usr/bin/install_name_tool -id "@loader_path/${install_name}" "${dest_path}"
+        RESULT_VARIABLE install_name_result
+    )
+    if(NOT install_name_result EQUAL 0)
+        message(FATAL_ERROR "Failed to set install name on ${dest_path}")
+    endif()
+endfunction()
+
+copy_icu_library("@FOOYIN_ICU_DATA_LIBRARY_REALPATH@" "${ICU_DATA_BUNDLE_NAME}" "${ICU_DATA_BUNDLE_NAME}")
+copy_icu_library("@FOOYIN_ICU_UC_LIBRARY_REALPATH@" "${ICU_UC_BUNDLE_NAME}" "${ICU_UC_BUNDLE_NAME}")
+copy_icu_library("@FOOYIN_ICU_I18N_LIBRARY_REALPATH@" "${ICU_I18N_BUNDLE_NAME}" "${ICU_I18N_BUNDLE_NAME}")
+
+execute_process(
+    COMMAND /usr/bin/install_name_tool
+            -change "@loader_path/${ICU_DATA_BUNDLE_NAME}" "@loader_path/${ICU_DATA_BUNDLE_NAME}"
+            "${FRAMEWORKS_DIR}/${ICU_UC_BUNDLE_NAME}"
+    RESULT_VARIABLE icu_uc_fixup_result
+)
+if(NOT icu_uc_fixup_result EQUAL 0)
+    message(FATAL_ERROR "Failed to fix up ${ICU_UC_BUNDLE_NAME}")
+endif()
+
+execute_process(
+    COMMAND /usr/bin/install_name_tool
+            -change "@loader_path/${ICU_UC_BUNDLE_NAME}" "@loader_path/${ICU_UC_BUNDLE_NAME}"
+            -change "@loader_path/${ICU_DATA_BUNDLE_NAME}" "@loader_path/${ICU_DATA_BUNDLE_NAME}"
+            "${FRAMEWORKS_DIR}/${ICU_I18N_BUNDLE_NAME}"
+    RESULT_VARIABLE icu_i18n_fixup_result
+)
+if(NOT icu_i18n_fixup_result EQUAL 0)
+    message(FATAL_ERROR "Failed to fix up ${ICU_I18N_BUNDLE_NAME}")
+endif()

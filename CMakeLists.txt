@@ -132,6 +132,10 @@ set_package_properties(Qt6Network PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Svg PROPERTIES TYPE REQUIRED)
 
 find_package(ICU COMPONENTS uc i18n REQUIRED)
+if(APPLE)
+    include(FooyinMacIcu)
+    fooyin_prepare_macos_icu()
+endif()
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(
     FFmpeg REQUIRED
@@ -170,7 +174,12 @@ include(GNUInstallDirs)
 set(DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}")
 fooyin_convert_to_relative_path(DATAROOTDIR)
 
-if(INSTALL_FHS)
+if(APPLE)
+  set(FOOYIN_BUNDLE_NAME "${PROJECT_NAME}.app")
+  set(BIN_INSTALL_DIR "${FOOYIN_BUNDLE_NAME}/Contents/MacOS")
+  set(LIB_INSTALL_DIR "${FOOYIN_BUNDLE_NAME}/Contents/Frameworks")
+  set(TRANSLATION_INSTALL_DIR "${FOOYIN_BUNDLE_NAME}/Contents/Resources/translations")
+elseif(INSTALL_FHS)
   set(BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
   set(LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/fooyin")
   set(TRANSLATION_INSTALL_DIR "${DATAROOTDIR}/fooyin/translations")
@@ -193,7 +202,11 @@ set(ICON_INSTALL_DIR "${DATAROOTDIR}/icons")
 set(DOC_INSTALL_DIR "${DATAROOTDIR}/doc/fooyin/")
 file(RELATIVE_PATH FOOYIN_RELATIVE_TRANSLATION_PATH "/${BIN_INSTALL_DIR}" "/${TRANSLATION_INSTALL_DIR}")
 
-set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
+if(APPLE)
+    set(FOOYIN_PLUGIN_INSTALL_DIR "${FOOYIN_BUNDLE_NAME}/Contents/PlugIns")
+else()
+    set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
+endif()
 file(RELATIVE_PATH FOOYIN_RELATIVE_PLUGIN_PATH "/${BIN_INSTALL_DIR}" "/${FOOYIN_PLUGIN_INSTALL_DIR}")
 
 if(NOT FOOYIN_OUTPUT_PREFIX)
@@ -314,6 +327,9 @@ target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin_lib PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
 target_compile_options(fooyin_lib PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 target_link_options(fooyin_lib INTERFACE ${FOOYIN_LINK_OPTIONS})
+if(APPLE)
+    target_include_directories(fooyin_lib BEFORE PRIVATE "${FOOYIN_ICU_INCLUDE_DIR}")
+endif()
 
 # ---- Fooyin translations ----
 
@@ -379,7 +395,16 @@ set(SOURCES ${SOURCES} src/app/commandline.cpp src/app/main.cpp)
 qt_add_resources(SOURCES data/data.qrc)
 qt_add_resources(SOURCES data/icons.qrc)
 
-add_executable(fooyin WIN32 ${SOURCES} ${TRANSLATIONS})
+set(FOOYIN_EXECUTABLE_ARGS WIN32)
+if(APPLE)
+    list(APPEND FOOYIN_EXECUTABLE_ARGS MACOSX_BUNDLE)
+endif()
+
+add_executable(fooyin ${FOOYIN_EXECUTABLE_ARGS} ${SOURCES} ${TRANSLATIONS})
+if(APPLE)
+    set_target_properties(fooyin PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}")
+    target_include_directories(fooyin BEFORE PRIVATE "${FOOYIN_ICU_INCLUDE_DIR}")
+endif()
 fooyin_set_rpath(fooyin ${BIN_INSTALL_DIR})
 target_compile_features(fooyin PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
@@ -403,7 +428,31 @@ endif()
 
 if(APPLE)
     configure_file(dist/macos/org.fooyin.fooyin.plist.in Info.plist @ONLY)
-    target_link_options(fooyin PRIVATE LINKER:-sectcreate,__TEXT,__info_plist,Info.plist)
+    include(FooyinMacDmg)
+    fooyin_prepare_macos_dmg_assets()
+    include(FooyinMacIcon)
+    fooyin_setup_macos_icon(fooyin)
+    set_target_properties(
+        fooyin
+        PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
+    )
+    if(TARGET Qt6::macdeployqt)
+        get_target_property(MACDEPLOYQT_EXECUTABLE Qt6::macdeployqt IMPORTED_LOCATION)
+    endif()
+    if(NOT MACDEPLOYQT_EXECUTABLE)
+        find_program(
+            MACDEPLOYQT_EXECUTABLE macdeployqt
+            HINTS "${Qt6_DIR}/../../../bin"
+        )
+    endif()
+    if(NOT MACDEPLOYQT_EXECUTABLE)
+        message(FATAL_ERROR "macdeployqt not found")
+    endif()
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/FooyinMacBundleFixup.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake/FooyinMacBundleFixup.cmake"
+        @ONLY
+    )
 endif()
 
 # ---- Fooyin install ----
@@ -427,6 +476,8 @@ if(WIN32)
             COMMENT "Copying fooyin translation files ..."
         )
     endif()
+elseif(APPLE)
+    install(SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/cmake/FooyinMacBundleFixup.cmake" COMPONENT fooyin)
 endif()
 
 # ---- Fooyin uninstall ----

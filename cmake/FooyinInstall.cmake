@@ -17,6 +17,22 @@ if(WIN32)
         RENAME Readme.txt
         COMPONENT fooyin
     )
+elseif(APPLE)
+    install(
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/${LICENSE_FILE}"
+        DESTINATION "${FOOYIN_BUNDLE_NAME}/Contents/Resources"
+        RENAME LICENSE
+        COMPONENT fooyin
+    )
+
+    install(
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/${README_FILE}"
+        DESTINATION "${FOOYIN_BUNDLE_NAME}/Contents/Resources"
+        RENAME README
+        COMPONENT fooyin
+    )
+
+    install(FILES ${TRANSLATIONS} DESTINATION ${TRANSLATION_INSTALL_DIR})
 elseif(UNIX)
     install(
         FILES "${CMAKE_CURRENT_SOURCE_DIR}/${LICENSE_FILE}"
@@ -73,11 +89,19 @@ endif()
 
 # ---- Fooyin executable ----
 
-install(
-    TARGETS fooyin
-    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-    COMPONENT fooyin
-)
+if(APPLE)
+    install(
+        TARGETS fooyin
+        BUNDLE DESTINATION .
+        COMPONENT fooyin
+    )
+else()
+    install(
+        TARGETS fooyin
+        RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+        COMPONENT fooyin
+    )
+endif()
 
 # ---- Fooyin config ----
 

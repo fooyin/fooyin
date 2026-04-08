@@ -1,0 +1,23 @@
+function(fooyin_prepare_macos_icu)
+    if(NOT APPLE)
+        return()
+    endif()
+
+    get_filename_component(_fooyin_icu_library_dir "${ICU_UC_LIBRARY_RELEASE}" DIRECTORY)
+    get_filename_component(_fooyin_icu_uc_name "${ICU_UC_LIBRARY_RELEASE}" NAME)
+    get_filename_component(_fooyin_icu_i18n_name "${ICU_I18N_LIBRARY_RELEASE}" NAME)
+    string(REPLACE "libicuuc" "libicudata" _fooyin_icu_data_name "${_fooyin_icu_uc_name}")
+    set(_fooyin_icu_data_library "${_fooyin_icu_library_dir}/${_fooyin_icu_data_name}")
+
+    file(REAL_PATH "${ICU_UC_LIBRARY_RELEASE}" _fooyin_icu_uc_realpath)
+    file(REAL_PATH "${ICU_I18N_LIBRARY_RELEASE}" _fooyin_icu_i18n_realpath)
+    file(REAL_PATH "${_fooyin_icu_data_library}" _fooyin_icu_data_realpath)
+
+    set(FOOYIN_ICU_INCLUDE_DIR "${ICU_INCLUDE_DIR}" PARENT_SCOPE)
+    set(FOOYIN_ICU_UC_LIBRARY_NAME "${_fooyin_icu_uc_name}" PARENT_SCOPE)
+    set(FOOYIN_ICU_I18N_LIBRARY_NAME "${_fooyin_icu_i18n_name}" PARENT_SCOPE)
+    set(FOOYIN_ICU_DATA_LIBRARY_NAME "${_fooyin_icu_data_name}" PARENT_SCOPE)
+    set(FOOYIN_ICU_UC_LIBRARY_REALPATH "${_fooyin_icu_uc_realpath}" PARENT_SCOPE)
+    set(FOOYIN_ICU_I18N_LIBRARY_REALPATH "${_fooyin_icu_i18n_realpath}" PARENT_SCOPE)
+    set(FOOYIN_ICU_DATA_LIBRARY_REALPATH "${_fooyin_icu_data_realpath}" PARENT_SCOPE)
+endfunction()
