@@ -4,7 +4,7 @@
 <context>
     <name>Fooyin::ArtworkProperties</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="300"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="327"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation>
             <numerusform>Exported artwork to %Ln file</numerusform>
@@ -12,7 +12,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="308"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="335"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
         <translation>
             <numerusform>Exported artwork to %Ln file; some exports failed</numerusform>
@@ -148,7 +148,7 @@
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="296"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="630"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>

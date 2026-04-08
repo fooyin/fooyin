@@ -1196,12 +1196,12 @@
         <translation>Künstler</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="294"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="321"/>
         <source>No embedded artwork found to export</source>
         <translation>Kein eingebettetes Artwork für Export gefunden</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="300"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="327"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation>
             <numerusform>Artwork in %Ln Datei exportiert</numerusform>
@@ -1209,7 +1209,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="308"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="335"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
         <translation>
             <numerusform>Artwork in %Ln Datei exportiert; Export teilweise fehlgeschlagen</numerusform>
@@ -1217,7 +1217,7 @@
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="304"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="331"/>
         <source>Failed to export artwork</source>
         <translation>Export des Artwork fehlgeschlagen</translation>
     </message>
@@ -1227,17 +1227,17 @@
         <translation>Artwork nach %1 exportiert</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="213"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="215"/>
         <source>Artwork Properties</source>
         <translation>Artwork-Eigenschaften</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="274"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="301"/>
         <source>Loading artwork…</source>
         <translation>Lade Artwork…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="278"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="305"/>
         <source>Saving artwork to files…</source>
         <translation>Speichere Artwork in Datei…</translation>
     </message>
@@ -3823,83 +3823,83 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
 <context>
     <name>Fooyin::Filters::FilterWidget</name>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="759"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="763"/>
         <source>Display</source>
         <translation>Anzeige</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="593"/>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="763"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="596"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="767"/>
         <source>Columns</source>
         <translation>Spalten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="764"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="768"/>
         <source>Artwork (bottom labels)</source>
         <translation>Artwork (Beschriftung unten)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="765"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="769"/>
         <source>Artwork (right labels)</source>
         <translation>Artwork (Beschriftung rechts)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="766"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="770"/>
         <source>Artwork (no labels)</source>
         <translation>Artwork (ohne Beschriftung)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="829"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="833"/>
         <source>Summary item</source>
         <translation>Übersichtsobjekt</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="767"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="771"/>
         <source>Front cover</source>
         <translation>Albumcover (Vorderseite)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="768"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="772"/>
         <source>Back cover</source>
         <translation>Albumcover (Rückseite)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="835"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="839"/>
         <source>Show header</source>
         <translation>Zeige Überschrift</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="843"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="847"/>
         <source>Show scrollbar</source>
         <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="851"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="855"/>
         <source>Alternating row colours</source>
         <translation>Abwechselnde Zeilenfarben</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="636"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="639"/>
         <source>Multiple columns</source>
         <translation>Mehrere Spalten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="662"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="665"/>
         <source>Manage groups</source>
         <translation>Gruppen verwalten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="769"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="773"/>
         <source>Artist</source>
         <translation>Künstler</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="644"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="647"/>
         <source>More…</source>
         <translation>Mehr…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="283"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="286"/>
         <source>Library Filter</source>
         <translation>Bibliotheksfilter</translation>
     </message>
@@ -3910,7 +3910,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="245"/>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="666"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="669"/>
         <source>Configure...</source>
         <translation>Konfigurieren...</translation>
     </message>
@@ -4306,22 +4306,22 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <translation>Titel nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1449"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1450"/>
         <source>Searching for artwork…</source>
         <translation>Suche nach Artwork…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1463"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1464"/>
         <source>Artwork search finished</source>
         <translation>Artworksuche beendet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1526"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1527"/>
         <source>Failed to open artwork file</source>
         <translation>Datei mit Artwork kann nicht geöffnet werden</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1532"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1533"/>
         <source>Artwork file is empty</source>
         <translation>Datei mit Artwork ist leer</translation>
     </message>
@@ -5111,7 +5111,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
 <context>
     <name>Fooyin::InfoView</name>
     <message>
-        <location filename="../../src/gui/selectioninfo/infoview.cpp" line="78"/>
+        <location filename="../../src/gui/selectioninfo/infoview.cpp" line="82"/>
         <source>No Selection</source>
         <translation>Keine Auswahl</translation>
     </message>
@@ -5119,62 +5119,62 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
 <context>
     <name>Fooyin::InfoWidget</name>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="140"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="143"/>
         <source>Selection Info</source>
         <translation>Auswahlinfo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="207"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="263"/>
         <source>Show header</source>
         <translation>Header anzeigen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="271"/>
         <source>Show scrollbar (vertical)</source>
         <translation>Zeige Bildlaufleiste (vertikal)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="224"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="280"/>
         <source>Show scrollbar (horizontal)</source>
         <translation>Zeige Bildlaufleiste (horizontal)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="233"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="289"/>
         <source>Alternating row colours</source>
         <translation>Abwechselnde Zeilenfarben</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="243"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="299"/>
         <source>Metadata</source>
         <translation>Metadaten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="251"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="307"/>
         <source>Extended metadata</source>
         <translation>Erweiterte Metadaten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="259"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="315"/>
         <source>Location</source>
         <translation>Ort</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="267"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="323"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="275"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="331"/>
         <source>Playback Statistics</source>
         <translation>Wiedergabe-Statistiken</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="283"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="339"/>
         <source>ReplayGain</source>
         <translation>ReplayGain</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="291"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="347"/>
         <source>Other</source>
         <translation>Andere</translation>
     </message>
@@ -6294,68 +6294,68 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
 <context>
     <name>Fooyin::Lyrics::LyricsEditor</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="134"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="400"/>
         <source>Seek</source>
         <translation>Spulen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="135"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="401"/>
         <source>Reset Changes</source>
         <translation>Setze Änderungen zurück</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="136"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="402"/>
         <source>Insert/Update</source>
         <translation>Einfügen/Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="140"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="406"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="141"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="407"/>
         <source>Remove All</source>
         <translation>Alles entfernen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="104"/>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="131"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="144"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="397"/>
         <source>Lyrics Editor</source>
         <translation>Songtext-Editor</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="137"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="403"/>
         <source>Update and Next Line</source>
         <translation>Aktualisieren und nächste Zeile</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="138"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="404"/>
         <source>Rewind line (-100ms)</source>
         <translation>Zeile früher (-100ms)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="139"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="405"/>
         <source>Forward line (+100ms)</source>
         <translation>Zeile später (+100ms)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="149"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="415"/>
         <source>Operation</source>
         <translation>Operation</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="157"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="423"/>
         <source>Timestamps</source>
         <translation>Zeitstempel</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="237"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="512"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="241"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="516"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
@@ -6363,7 +6363,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
 <context>
     <name>Fooyin::Lyrics::LyricsEditorDialog</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="356"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="631"/>
         <source>Lyrics Editor</source>
         <translation>Songtext-Editor</translation>
     </message>
@@ -6372,8 +6372,8 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <name>Fooyin::Lyrics::LyricsPlugin</name>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="59"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="68"/>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="69"/>
-        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="70"/>
         <source>Lyrics</source>
         <translation>Songtexte</translation>
     </message>
@@ -6609,67 +6609,67 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
         <translation>Titel</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="274"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="275"/>
         <source>Lyrics</source>
         <translation>Songtexte</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="625"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="626"/>
         <source>Select lyrics</source>
         <translation>Wähle Songtext</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="635"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="636"/>
         <source>Search for lyrics</source>
         <translation>Suche nach Songtexten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="636"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="637"/>
         <source>Search for lyrics for the current track</source>
         <translation>Suche nach Songtexten für den aktuell wiedergegebenen Titel</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="646"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="648"/>
         <source>Edit lyrics</source>
         <translation>Bearbeite Songtext</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="647"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="649"/>
         <source>Open editor for the current lyrics</source>
         <translation>Öffne den Editor für den aktuellen Songtext</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="653"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="655"/>
         <source>Save lyrics</source>
         <translation>Speichere Songtext</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="654"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="656"/>
         <source>Save lyrics using current settings</source>
         <translation>Speichere den Songtext mit den aktuellen Einstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="663"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="665"/>
         <source>Show scrollbar</source>
         <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="672"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="674"/>
         <source>Text-align</source>
         <translation>Textausrichtung</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="675"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="677"/>
         <source>Align to centre</source>
         <translation>Mittig ausrichten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="676"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="678"/>
         <source>Align to left</source>
         <translation>Linksbündig ausrichten</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="677"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="679"/>
         <source>Align to right</source>
         <translation>Rechtsbündig ausrichten</translation>
     </message>
@@ -8614,26 +8614,71 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     </message>
 </context>
 <context>
-    <name>Fooyin::PropertiesDialogWidget</name>
+    <name>Fooyin::PropertiesDialog</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="182"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="203"/>
-        <source>Tools</source>
-        <translation>Werkzeuge</translation>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="959"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="979"/>
+        <source>Toggle Sidebar</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="186"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="293"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="960"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="990"/>
+        <source>Previous Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="961"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1000"/>
+        <source>Next Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
+        <source>Tracks</source>
+        <translation type="unfinished">Titel</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
+        <source>Properties</source>
+        <translation type="unfinished">Eigenschaften</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::PropertiesDialogWidget</name>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="439"/>
+        <source>Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="443"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="626"/>
         <source>Properties</source>
         <translation>Eigenschaften</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="296"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="630"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln Titel</numerusform>
             <numerusform>%Ln Titel</numerusform>
         </translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="923"/>
+        <source>Pending Changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="924"/>
+        <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="936"/>
+        <source>All Tracks (%1)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8960,32 +9005,32 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
 <context>
     <name>Fooyin::ReplayGainModel</name>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="127"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="131"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="129"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="133"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="129"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="133"/>
         <source>Track Gain</source>
         <translation>Titel-Verstärkung</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="131"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="135"/>
         <source>Track Peak</source>
         <translation>Titel-Spitzenwert</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="133"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="137"/>
         <source>Album Gain</source>
         <translation>Album-Verstärkung</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="135"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="139"/>
         <source>Album Peak</source>
         <translation>Album-Spitzenwert</translation>
     </message>
@@ -9144,7 +9189,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
 <context>
     <name>Fooyin::ReplayGainWidget</name>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="62"/>
+        <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="72"/>
         <source>ReplayGain Editor</source>
         <translation>ReplayGain-Editor</translation>
     </message>
@@ -9252,7 +9297,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="308"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="316"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zentriert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="309"/>
@@ -9316,7 +9361,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="84"/>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="88"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zentriert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="85"/>
@@ -10208,7 +10253,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="73"/>
         <source>Hz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="75"/>
@@ -10273,12 +10318,12 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="104"/>
         <source>Exclude these sample rates</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Diese Abtastraten ausschließen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="106"/>
         <source>Resample only these sample rates</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nur diese Abtastraten neu abtasten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="108"/>
@@ -10288,7 +10333,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="110"/>
         <source>e.g. 44100, 48000, 96000</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">z.B. 44100, 48000, 96000</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="111"/>
@@ -10632,27 +10677,32 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
 <context>
     <name>Fooyin::TagEditor::TagEditorWidget</name>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="62"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="70"/>
         <source>&amp;Change default fields…</source>
         <translation>Ändere &amp;Standardfelder…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="206"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="87"/>
+        <source>Tools</source>
+        <translation type="unfinished">Werkzeuge</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="334"/>
         <source>Are you sure?</source>
         <translation>Sicher?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="207"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="335"/>
         <source>Metadata in the associated files will be overwritten.</source>
         <translation>Metadaten in den zugehörigen Dateien werden überschrieben.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="209"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="337"/>
         <source>Don&apos;t ask again</source>
         <translation>Nicht erneut fragen</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="61"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="69"/>
         <source>Auto &amp;track number</source>
         <translation>&amp;Titelnummer automatisch erstellen</translation>
     </message>
@@ -11514,7 +11564,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="219"/>
         <source>Output Selector</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ausgabegerät</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="224"/>
