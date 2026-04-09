@@ -8634,29 +8634,29 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="959"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="979"/>
         <source>Toggle Sidebar</source>
-        <translation type="unfinished"></translation>
+        <translation>Přepnout panel</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="960"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="990"/>
         <source>Previous Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Předchozí skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="961"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1000"/>
         <source>Next Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Další skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
         <source>Tracks</source>
-        <translation type="unfinished">Skladby</translation>
+        <translation>Skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
         <source>Properties</source>
-        <translation type="unfinished">Vlastnosti</translation>
+        <translation>Vlastnosti</translation>
     </message>
 </context>
 <context>
@@ -8664,7 +8664,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="439"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Výběr</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="443"/>
@@ -8684,17 +8684,17 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="923"/>
         <source>Pending Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Čekající změny</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="924"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít nebo zrušit čekající změny aktuální karty před změnou skladeb nebo karet.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="936"/>
         <source>All Tracks (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Všechny skladby (%1)</translation>
     </message>
 </context>
 <context>
@@ -10701,7 +10701,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="87"/>
         <source>Tools</source>
-        <translation type="unfinished">Nástroje</translation>
+        <translation>Nástroje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="334"/>
