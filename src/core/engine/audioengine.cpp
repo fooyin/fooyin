@@ -80,6 +80,17 @@ constexpr auto AudiblePauseWatchdogMarginMs = 100;
 constexpr auto MinLiveBitrateKbps           = 8;
 constexpr auto LiveBitrateWindowMs          = 1000;
 
+bool outputReinitRequired(const Fooyin::AudioFormat& currentOutput, const Fooyin::AudioFormat& desiredOutput)
+{
+    if(!currentOutput.isValid() || !desiredOutput.isValid()) {
+        return false;
+    }
+
+    const auto normalisedCurrent = Fooyin::normaliseChannelLayout(currentOutput);
+    const auto normalisedDesired = Fooyin::normaliseChannelLayout(desiredOutput);
+    return !Fooyin::Audio::outputFormatsMatch(normalisedCurrent, normalisedDesired);
+}
+
 std::pair<double, double> sanitiseWatermarkRatios(double lowRatio, double highRatio)
 {
     lowRatio  = std::clamp(lowRatio, 0.05, DecodeHighWatermarkMaxRatio);
@@ -933,8 +944,7 @@ void AudioEngine::reconfigureActiveStreamBuffering(uint64_t positionMs)
 
     const AudioFormat currentOutput = m_pipeline.outputFormat();
     const bool inputFormatChanged   = oldInputFormat.isValid() && !Audio::inputFormatsMatch(oldInputFormat, m_format);
-    const bool outputFormatChanged  = currentOutput.isValid() && desiredOutput.isValid()
-                                   && !Audio::outputFormatsMatch(currentOutput, desiredOutput);
+    const bool outputFormatChanged  = outputReinitRequired(currentOutput, desiredOutput);
     const bool hasOutput            = m_pipeline.hasOutput();
 
     if(!hasOutput || outputFormatChanged) {
@@ -2494,9 +2504,8 @@ void AudioEngine::setupSettings()
             desiredOutput = inputFormat;
         }
 
-        const bool outputFormatChanged = inputFormat.isValid() && m_pipeline.hasOutput() && desiredOutput.isValid()
-                                      && currentOutput.isValid()
-                                      && !Audio::outputFormatsMatch(currentOutput, desiredOutput);
+        const bool outputFormatChanged
+            = inputFormat.isValid() && m_pipeline.hasOutput() && outputReinitRequired(currentOutput, desiredOutput);
 
         if(outputFormatChanged) {
             reinitOutputForCurrentFormat();
@@ -3383,8 +3392,7 @@ void AudioEngine::executeFullReinitLoad(const Engine::PlaybackItem& item, bool m
 
     if(preparedNextMatchesItem && hasOutput && m_preparedNext->format.isValid()) {
         const AudioFormat preparedDesiredOutput = desiredOutputForFormat(m_preparedNext->format);
-        const bool outputFormatChanged          = currentOutput.isValid() && preparedDesiredOutput.isValid()
-                                               && !Audio::outputFormatsMatch(currentOutput, preparedDesiredOutput);
+        const bool outputFormatChanged          = outputReinitRequired(currentOutput, preparedDesiredOutput);
 
         if(outputFormatChanged) {
             qCDebug(ENGINE) << "Format change bypasses prepared decoder reuse; reopening decoder at track start";
@@ -3410,8 +3418,7 @@ void AudioEngine::executeFullReinitLoad(const Engine::PlaybackItem& item, bool m
     m_transitions.clearTrackEnding();
     const AudioFormat desiredOutput = desiredOutputForFormat(m_format);
     const bool inputFormatChanged   = oldInputFormat.isValid() && !Audio::inputFormatsMatch(oldInputFormat, m_format);
-    const bool outputFormatChanged  = currentOutput.isValid() && desiredOutput.isValid()
-                                   && !Audio::outputFormatsMatch(currentOutput, desiredOutput);
+    const bool outputFormatChanged  = outputReinitRequired(currentOutput, desiredOutput);
 
     if(!hasOutput || outputFormatChanged) {
         if(outputFormatChanged && hasOutput) {
@@ -4500,9 +4507,8 @@ void AudioEngine::setDspChain(const Engine::DspChains& chain)
         desiredOutput = inputFormat;
     }
 
-    const bool outputFormatChanged = inputFormat.isValid() && m_pipeline.hasOutput() && desiredOutput.isValid()
-                                  && currentOutput.isValid()
-                                  && !Audio::outputFormatsMatch(currentOutput, desiredOutput);
+    const bool outputFormatChanged
+        = inputFormat.isValid() && m_pipeline.hasOutput() && outputReinitRequired(currentOutput, desiredOutput);
 
     if(outputFormatChanged) {
         reinitOutputForCurrentFormat();

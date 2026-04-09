@@ -80,7 +80,7 @@ void SortingModel::processQueue()
         const SortScript sortScript          = node.sortScript();
 
         switch(status) {
-            case(SortingItem::Added): {
+            case SortingItem::Added: {
                 if(sortScript.script.isEmpty()) {
                     break;
                 }
@@ -95,7 +95,7 @@ void SortingModel::processQueue()
                 }
                 break;
             }
-            case(SortingItem::Removed): {
+            case SortingItem::Removed: {
                 if(m_sortRegistry->removeById(sortScript.id)) {
                     beginRemoveRows({}, node.row(), node.row());
                     m_root.removeChild(node.row());
@@ -107,7 +107,7 @@ void SortingModel::processQueue()
                 }
                 break;
             }
-            case(SortingItem::Changed): {
+            case SortingItem::Changed: {
                 if(m_sortRegistry->changeItem(sortScript)) {
                     if(const auto changedItem = m_sortRegistry->itemById(sortScript.id)) {
                         node.changeSort(changedItem.value());
@@ -119,7 +119,7 @@ void SortingModel::processQueue()
                 }
                 break;
             }
-            case(SortingItem::None):
+            case SortingItem::None:
                 break;
         }
     }
@@ -143,7 +143,7 @@ Qt::ItemFlags SortingModel::flags(const QModelIndex& index) const
 QVariant SortingModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {
-        return (Qt::AlignHCenter);
+        return Qt::AlignCenter;
     }
 
     if(role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical) {
@@ -151,11 +151,11 @@ QVariant SortingModel::headerData(int section, Qt::Orientation orientation, int 
     }
 
     switch(section) {
-        case(0):
+        case 0:
             return tr("Index");
-        case(1):
+        case 1:
             return tr("Name");
-        case(2):
+        case 2:
             return tr("Sort Script");
         default:
             break;
@@ -182,13 +182,13 @@ QVariant SortingModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::DisplayRole || role == Qt::EditRole) {
         switch(index.column()) {
-            case(0):
+            case 0:
                 return item->sortScript().index;
-            case(1): {
+            case 1: {
                 const QString& name = item->sortScript().name;
                 return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
-            case(2): {
+            case 2: {
                 const QString& field = item->sortScript().script;
                 return !field.isEmpty() ? field : u"<enter sort script here>"_s;
             }
@@ -210,7 +210,7 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
     SortScript sortScript = item->sortScript();
 
     switch(index.column()) {
-        case(1): {
+        case 1: {
             if(value.toString() == u"<enter name here>"_s || sortScript.name == value.toString()) {
                 if(item->status() == SortingItem::Added) {
                     emit pendingRowCancelled();
@@ -220,7 +220,7 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
             sortScript.name = value.toString();
             break;
         }
-        case(2): {
+        case 2: {
             if(sortScript.script == value.toString()) {
                 return false;
             }

@@ -34,7 +34,7 @@ QVariant RGScanResultsModel::headerData(int section, Qt::Orientation orientation
     }
 
     if(role == Qt::TextAlignmentRole) {
-        return (Qt::AlignHCenter);
+        return Qt::AlignCenter;
     }
 
     if(role != Qt::DisplayRole) {

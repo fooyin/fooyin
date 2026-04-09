@@ -1,0 +1,41 @@
+on run argv
+    set volumeName to item 1 of argv
+
+    tell application "Finder"
+        tell disk volumeName
+            open
+            delay 1
+
+            set current view of container window to icon view
+            set toolbar visible of container window to false
+            set statusbar visible of container window to false
+            set pathbar visible of container window to false
+            set sidebar width of container window to 0
+            set bounds of container window to {120, 120, 800, 540}
+
+            set theViewOptions to the icon view options of container window
+            set arrangement of theViewOptions to not arranged
+            set icon size of theViewOptions to 128
+            set text size of theViewOptions to 14
+            set background picture of theViewOptions to file ".background:background.png"
+
+            set position of item "@FOOYIN_BUNDLE_NAME@" of container window to {150, 215}
+            set position of item "Applications" of container window to {520, 215}
+            try
+                set position of item ".background" of container window to {900, 500}
+            end try
+            try
+                set position of item ".fseventsd" of container window to {980, 500}
+            end try
+            try
+                set position of item ".Trashes" of container window to {1060, 500}
+            end try
+
+            update without registering applications
+            delay 2
+            close
+            open
+            delay 1
+        end tell
+    end tell
+end run

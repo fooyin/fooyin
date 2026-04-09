@@ -71,4 +71,4 @@ tmp/
 /.vs
 /vcpkg_installed
 /out/
-/deb/
+.qtcreator/

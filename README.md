@@ -62,8 +62,9 @@ The player is built around extensibility. fooyin supports plugins for widgets, d
 
 ## Platform support
 
-fooyin is developed primarily on Linux, with build support for Linux, Windows, and FreeBSD. 
-Official Windows support is coming soon.
+fooyin is developed primarily on Linux, with build support for Linux, macOS, Windows, and FreeBSD. 
+
+Official support for Windows and macOS is coming soon.
 
 ## Roadmap
 

@@ -79,8 +79,14 @@ jobs:
         run: .\ci\windows-build.ps1
         shell: pwsh
 
-      - name: Upload artifacts
+      - name: Upload installer artifact
         uses: actions/upload-artifact@v6
         with:
-          name: windows-${{ matrix.arch }}
-          path: artifacts
+          name: windows-setup-${{ matrix.arch }}
+          path: artifacts/*.exe
+
+      - name: Upload portable artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: windows-portable-${{ matrix.arch }}
+          path: artifacts/*.zip

@@ -256,7 +256,7 @@ Qt::ItemFlags LibraryModel::flags(const QModelIndex& index) const
 QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {
-        return Qt::AlignHCenter;
+        return Qt::AlignCenter;
     }
 
     if(role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical) {

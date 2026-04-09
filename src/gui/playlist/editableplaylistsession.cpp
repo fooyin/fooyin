@@ -351,10 +351,11 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     QObject::connect(m_stopAfterAction, &QAction::triggered, widget, [widget, this]() { stopAfterTrack(widget); });
 
     host.actionManager()->addContextObject(host.playlistContext());
+    Context actionContext = host.playlistContext()->context();
+    actionContext.erase(Constants::Context::TrackSelection);
 
     m_undoAction->setStatusTip(PlaylistWidget::tr("Undo the previous playlist change"));
-    auto* undoCmd = host.actionManager()->registerAction(m_undoAction, Constants::Actions::Undo,
-                                                         host.playlistContext()->context());
+    auto* undoCmd = host.actionManager()->registerAction(m_undoAction, Constants::Actions::Undo, actionContext);
     undoCmd->setCategories(editCategory);
     undoCmd->setDefaultShortcut(QKeySequence::Undo);
     editMenu->addAction(undoCmd);
@@ -364,8 +365,7 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
                      [this, widget]() { refreshActionState(widget); });
 
     m_redoAction->setStatusTip(PlaylistWidget::tr("Redo the previous playlist change"));
-    auto* redoCmd = host.actionManager()->registerAction(m_redoAction, Constants::Actions::Redo,
-                                                         host.playlistContext()->context());
+    auto* redoCmd = host.actionManager()->registerAction(m_redoAction, Constants::Actions::Redo, actionContext);
     redoCmd->setCategories(editCategory);
     redoCmd->setDefaultShortcut(QKeySequence::Redo);
     editMenu->addAction(redoCmd);
@@ -377,8 +377,7 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     editMenu->addSeparator();
 
     m_cutAction->setStatusTip(PlaylistWidget::tr("Cut the selected tracks"));
-    auto* cutCommand
-        = host.actionManager()->registerAction(m_cutAction, Constants::Actions::Cut, host.playlistContext()->context());
+    auto* cutCommand = host.actionManager()->registerAction(m_cutAction, Constants::Actions::Cut, actionContext);
     cutCommand->setCategories(editCategory);
     cutCommand->setDefaultShortcut(QKeySequence::Cut);
     editMenu->addAction(cutCommand);
@@ -386,8 +385,7 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
                      [widget, this]() { cutTracks(widgetSessionHost(widget)); });
 
     m_copyAction->setStatusTip(PlaylistWidget::tr("Copy the selected tracks"));
-    auto* copyCommand = host.actionManager()->registerAction(m_copyAction, Constants::Actions::Copy,
-                                                             host.playlistContext()->context());
+    auto* copyCommand = host.actionManager()->registerAction(m_copyAction, Constants::Actions::Copy, actionContext);
     copyCommand->setCategories(editCategory);
     copyCommand->setDefaultShortcut(QKeySequence::Copy);
     editMenu->addAction(copyCommand);
@@ -396,8 +394,7 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     m_copyAction->setEnabled(host.playlistView()->selectionModel()->hasSelection());
 
     m_pasteAction->setStatusTip(PlaylistWidget::tr("Paste the selected tracks"));
-    auto* pasteCommand = host.actionManager()->registerAction(m_pasteAction, Constants::Actions::Paste,
-                                                              host.playlistContext()->context());
+    auto* pasteCommand = host.actionManager()->registerAction(m_pasteAction, Constants::Actions::Paste, actionContext);
     pasteCommand->setCategories(editCategory);
     pasteCommand->setDefaultShortcut(QKeySequence::Paste);
     editMenu->addAction(m_pasteAction);
@@ -409,8 +406,7 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     editMenu->addSeparator();
 
     m_clearAction->setStatusTip(PlaylistWidget::tr("Remove all tracks from the current playlist"));
-    auto* clearCmd = host.actionManager()->registerAction(m_clearAction, Constants::Actions::Clear,
-                                                          host.playlistContext()->context());
+    auto* clearCmd = host.actionManager()->registerAction(m_clearAction, Constants::Actions::Clear, actionContext);
     clearCmd->setCategories(editCategory);
     clearCmd->setAttribute(ProxyAction::UpdateText);
     editMenu->addAction(clearCmd);
@@ -419,8 +415,8 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
 
     m_removeTrackAction->setStatusTip(PlaylistWidget::tr("Remove the selected tracks from the current playlist"));
     m_removeTrackAction->setEnabled(false);
-    auto* removeCmd = host.actionManager()->registerAction(m_removeTrackAction, Constants::Actions::Remove,
-                                                           host.playlistContext()->context());
+    auto* removeCmd
+        = host.actionManager()->registerAction(m_removeTrackAction, Constants::Actions::Remove, actionContext);
     removeCmd->setCategories(editCategory);
     removeCmd->setAttribute(ProxyAction::UpdateText);
     removeCmd->setDefaultShortcut(QKeySequence::Delete);
@@ -430,22 +426,19 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
 
     m_addToQueueAction->setStatusTip(PlaylistWidget::tr("Add the selected tracks to the playback queue"));
     m_addToQueueAction->setEnabled(false);
-    host.actionManager()->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue,
-                                         host.playlistContext()->context());
+    host.actionManager()->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue, actionContext);
     QObject::connect(m_addToQueueAction, &QAction::triggered, widget,
                      [widget, this]() { queueSelectedTracks(widgetSessionHost(widget), false, false); });
 
     m_queueNextAction->setStatusTip(PlaylistWidget::tr("Add the selected tracks to the front of the playback queue"));
     m_queueNextAction->setEnabled(false);
-    host.actionManager()->registerAction(m_queueNextAction, Constants::Actions::QueueNext,
-                                         host.playlistContext()->context());
+    host.actionManager()->registerAction(m_queueNextAction, Constants::Actions::QueueNext, actionContext);
     QObject::connect(m_queueNextAction, &QAction::triggered, widget,
                      [widget, this]() { queueSelectedTracks(widgetSessionHost(widget), true, false); });
 
     m_removeFromQueueAction->setStatusTip(PlaylistWidget::tr("Remove the selected tracks from the playback queue"));
     m_removeFromQueueAction->setVisible(false);
-    host.actionManager()->registerAction(m_removeFromQueueAction, Constants::Actions::RemoveFromQueue,
-                                         host.playlistContext()->context());
+    host.actionManager()->registerAction(m_removeFromQueueAction, Constants::Actions::RemoveFromQueue, actionContext);
     QObject::connect(m_removeFromQueueAction, &QAction::triggered, widget,
                      [widget, this]() { dequeueSelectedTracks(widgetSessionHost(widget)); });
 

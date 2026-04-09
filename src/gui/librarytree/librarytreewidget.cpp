@@ -226,6 +226,8 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     }
 
     m_actionManager->addContextObject(m_widgetContext);
+    Context actionContext = m_widgetContext->context();
+    actionContext.erase(Constants::Context::TrackSelection);
 
     m_model->setPlayState(playlistController->playerController()->playState());
 
@@ -238,16 +240,15 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
                      [this]() { handlePlayback(m_libraryTree->selectionModel()->selectedRows()); });
 
     m_addToQueueAction->setEnabled(false);
-    m_actionManager->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue, m_widgetContext->context());
+    m_actionManager->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue, actionContext);
     QObject::connect(m_addToQueueAction, &QAction::triggered, this, [this]() { queueSelectedTracks(false); });
 
     m_queueNextAction->setEnabled(false);
-    m_actionManager->registerAction(m_queueNextAction, Constants::Actions::QueueNext, m_widgetContext->context());
+    m_actionManager->registerAction(m_queueNextAction, Constants::Actions::QueueNext, actionContext);
     QObject::connect(m_queueNextAction, &QAction::triggered, this, [this]() { queueSelectedTracks(true); });
 
     m_removeFromQueueAction->setVisible(false);
-    m_actionManager->registerAction(m_removeFromQueueAction, Constants::Actions::RemoveFromQueue,
-                                    m_widgetContext->context());
+    m_actionManager->registerAction(m_removeFromQueueAction, Constants::Actions::RemoveFromQueue, actionContext);
     QObject::connect(m_removeFromQueueAction, &QAction::triggered, this, [this]() { dequeueSelectedTracks(); });
 
     setObjectName(LibraryTreeWidget::name());

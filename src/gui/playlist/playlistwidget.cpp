@@ -579,6 +579,8 @@ void PlaylistWidget::setupActions()
     QObject::connect(m_playAction, &QAction::triggered, this, [this]() { startPlayback(); });
 
     m_actionManager->addContextObject(m_playlistContext);
+    Context actionContext = m_playlistContext->context();
+    actionContext.erase(Constants::Context::TrackSelection);
 
     auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
@@ -587,8 +589,7 @@ void PlaylistWidget::setupActions()
 
     auto* selectAllAction = new QAction(tr("Select &all"), this);
     selectAllAction->setStatusTip(tr("Select all tracks in the current playlist"));
-    auto* selectAllCmd
-        = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_playlistContext->context());
+    auto* selectAllCmd = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, actionContext);
     selectAllCmd->setCategories(editCategory);
     selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);
     editMenu->addAction(selectAllCmd);

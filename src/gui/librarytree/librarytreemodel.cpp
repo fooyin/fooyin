@@ -555,7 +555,7 @@ QVariant LibraryTreeModel::headerData(int /*section*/, Qt::Orientation orientati
     }
 
     if(role == Qt::TextAlignmentRole) {
-        return (Qt::AlignHCenter);
+        return Qt::AlignCenter;
     }
 
     if(role != Qt::DisplayRole) {

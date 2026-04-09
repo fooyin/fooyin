@@ -13,6 +13,7 @@ set(
     mediacontrol
     mpris
     notify
+    nowplaying
     openmpt
     pipewire
     rawaudio
@@ -61,6 +62,10 @@ endif()
 
 if(WIN32)
     list(APPEND FOOYIN_DEFAULT_PLUGINS mediacontrol thumbnailtoolbar)
+endif()
+
+if(APPLE)
+    list(APPEND FOOYIN_DEFAULT_PLUGINS nowplaying)
 endif()
 
 fooyin_resolve_plugin_selection(
@@ -117,5 +122,13 @@ else()
     endif()
     if("thumbnailtoolbar" IN_LIST FOOYIN_RESOLVED_PLUGINS)
         message(STATUS "thumbnailtoolbar plugin is only available on Windows; skipping.")
+    endif()
+endif()
+
+if (APPLE)
+    fooyin_add_selected_plugin(nowplaying)
+else()
+    if("nowplaying" IN_LIST FOOYIN_RESOLVED_PLUGINS)
+        message(STATUS "nowplaying plugin is only available on macOS; skipping.")
     endif()
 endif()

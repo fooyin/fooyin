@@ -409,7 +409,7 @@ Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
 QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {
-        return Qt::AlignHCenter;
+        return Qt::AlignCenter;
     }
 
     if(orientation == Qt::Orientation::Vertical) {
@@ -421,7 +421,7 @@ QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int r
     }
 
     if(role == Qt::DisplayRole) {
-        if(section < 0 || section >= static_cast<int>(p->m_columns.size())) {
+        if(section < 0 || std::cmp_greater_equal(section, p->m_columns.size())) {
             return tr("Filter");
         }
         return p->m_columns.at(section).name;
@@ -659,7 +659,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
         endRemoveRows();
     }
 
-    for(int rowIndex{0}; rowIndex < static_cast<int>(rows.size()); ++rowIndex) {
+    for(int rowIndex{0}; std::cmp_less(rowIndex, rows.size()); ++rowIndex) {
         const FilterRow& row = rows.at(rowIndex);
         auto* item           = parent->child(rowOffset + rowIndex);
 
@@ -678,7 +678,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
 
     parent->resetChildren();
 
-    for(int rowIndex{0}; rowIndex < static_cast<int>(rows.size()); ++rowIndex) {
+    for(int rowIndex{0}; std::cmp_less(rowIndex, rows.size()); ++rowIndex) {
         const FilterRow& row = rows.at(rowIndex);
         auto* item           = parent->child(rowOffset + rowIndex);
 

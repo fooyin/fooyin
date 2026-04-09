@@ -1196,26 +1196,26 @@
         <translation>艺术家</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="294"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="321"/>
         <source>No embedded artwork found to export</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="300"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="327"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="308"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="335"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="304"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="331"/>
         <source>Failed to export artwork</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1225,17 +1225,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="213"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="215"/>
         <source>Artwork Properties</source>
         <translation>插图属性</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="274"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="301"/>
         <source>Loading artwork…</source>
         <translation>正在加载插图…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="278"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="305"/>
         <source>Saving artwork to files…</source>
         <translation>保存插图到文件…</translation>
     </message>
@@ -3811,83 +3811,83 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::Filters::FilterWidget</name>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="759"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="763"/>
         <source>Display</source>
         <translation>显示</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="593"/>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="763"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="596"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="767"/>
         <source>Columns</source>
         <translation>列</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="764"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="768"/>
         <source>Artwork (bottom labels)</source>
         <translation>专辑插图 (底部标签)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="765"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="769"/>
         <source>Artwork (right labels)</source>
         <translation>专辑插图 (右标签)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="766"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="770"/>
         <source>Artwork (no labels)</source>
         <translation>专辑插图 (无标签)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="829"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="833"/>
         <source>Summary item</source>
         <translation>汇总项</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="767"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="771"/>
         <source>Front cover</source>
         <translation>封面</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="768"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="772"/>
         <source>Back cover</source>
         <translation>背面</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="835"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="839"/>
         <source>Show header</source>
         <translation>显示标题</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="843"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="847"/>
         <source>Show scrollbar</source>
         <translation>显示滚动条</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="851"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="855"/>
         <source>Alternating row colours</source>
         <translation>交替行颜色</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="636"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="639"/>
         <source>Multiple columns</source>
         <translation>多列</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="662"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="665"/>
         <source>Manage groups</source>
         <translation>管理分组</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="769"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="773"/>
         <source>Artist</source>
         <translation>艺术家</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="644"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="647"/>
         <source>More…</source>
         <translation>更多…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="283"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="286"/>
         <source>Library Filter</source>
         <translation>媒体库筛选器</translation>
     </message>
@@ -3898,7 +3898,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="245"/>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="666"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="669"/>
         <source>Configure...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4294,22 +4294,22 @@ Effects here process the final combined output.</source>
         <translation>未找到音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1449"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1450"/>
         <source>Searching for artwork…</source>
         <translation>正在搜索插图…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1463"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1464"/>
         <source>Artwork search finished</source>
         <translation>插图搜索完成</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1526"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1527"/>
         <source>Failed to open artwork file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1532"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1533"/>
         <source>Artwork file is empty</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5098,7 +5098,7 @@ If the default half-star does not render correctly with your system font, choose
 <context>
     <name>Fooyin::InfoView</name>
     <message>
-        <location filename="../../src/gui/selectioninfo/infoview.cpp" line="78"/>
+        <location filename="../../src/gui/selectioninfo/infoview.cpp" line="82"/>
         <source>No Selection</source>
         <translation>无选择</translation>
     </message>
@@ -5106,62 +5106,62 @@ If the default half-star does not render correctly with your system font, choose
 <context>
     <name>Fooyin::InfoWidget</name>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="140"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="143"/>
         <source>Selection Info</source>
         <translation>选中信息</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="207"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="263"/>
         <source>Show header</source>
         <translation>显示标题</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="215"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="271"/>
         <source>Show scrollbar (vertical)</source>
         <translation>显示滚动条（垂直）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="224"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="280"/>
         <source>Show scrollbar (horizontal)</source>
         <translation>显示滚动条（水平）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="233"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="289"/>
         <source>Alternating row colours</source>
         <translation>交替行颜色</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="243"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="299"/>
         <source>Metadata</source>
         <translation>元数据</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="251"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="307"/>
         <source>Extended metadata</source>
         <translation>扩展元数据</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="259"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="315"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="267"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="323"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="275"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="331"/>
         <source>Playback Statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="283"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="339"/>
         <source>ReplayGain</source>
         <translation>回放增益</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="291"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="347"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
@@ -6274,68 +6274,68 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Lyrics::LyricsEditor</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="134"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="400"/>
         <source>Seek</source>
         <translation>定位</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="135"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="401"/>
         <source>Reset Changes</source>
         <translation>重置变更</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="136"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="402"/>
         <source>Insert/Update</source>
         <translation>插入/更新</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="140"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="406"/>
         <source>Remove</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="141"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="407"/>
         <source>Remove All</source>
         <translation>全部删除</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="104"/>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="131"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="144"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="397"/>
         <source>Lyrics Editor</source>
         <translation>歌词编辑器</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="137"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="403"/>
         <source>Update and Next Line</source>
         <translation>更新与下一行</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="138"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="404"/>
         <source>Rewind line (-100ms)</source>
         <translation>回退线（-100毫秒）</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="139"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="405"/>
         <source>Forward line (+100ms)</source>
         <translation>前导线 (+100毫秒)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="149"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="415"/>
         <source>Operation</source>
         <translation>操作</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="157"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="423"/>
         <source>Timestamps</source>
         <translation>时间戳</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="237"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="512"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="241"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="516"/>
         <source>Play</source>
         <translation>播放</translation>
     </message>
@@ -6343,7 +6343,7 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Lyrics::LyricsEditorDialog</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="356"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="631"/>
         <source>Lyrics Editor</source>
         <translation>歌词编辑器</translation>
     </message>
@@ -6352,8 +6352,8 @@ and last played uses the later value.</source>
     <name>Fooyin::Lyrics::LyricsPlugin</name>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="59"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="68"/>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="69"/>
-        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="70"/>
         <source>Lyrics</source>
         <translation>歌词</translation>
     </message>
@@ -6589,67 +6589,67 @@ and last played uses the later value.</source>
         <translation>标题</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="274"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="275"/>
         <source>Lyrics</source>
         <translation>歌词</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="625"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="626"/>
         <source>Select lyrics</source>
         <translation>选择歌词</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="635"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="636"/>
         <source>Search for lyrics</source>
         <translation>搜索歌词</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="636"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="637"/>
         <source>Search for lyrics for the current track</source>
         <translation>搜索当前曲目的歌词</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="646"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="648"/>
         <source>Edit lyrics</source>
         <translation>编辑歌词</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="647"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="649"/>
         <source>Open editor for the current lyrics</source>
         <translation>打开编辑器编辑当前歌词</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="653"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="655"/>
         <source>Save lyrics</source>
         <translation>保存歌词</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="654"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="656"/>
         <source>Save lyrics using current settings</source>
         <translation>使用当前配置保存歌词</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="663"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="665"/>
         <source>Show scrollbar</source>
         <translation>显示滚动条</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="672"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="674"/>
         <source>Text-align</source>
         <translation>文本对齐</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="675"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="677"/>
         <source>Align to centre</source>
         <translation>居中对齐</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="676"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="678"/>
         <source>Align to left</source>
         <translation>左对齐</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="677"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="679"/>
         <source>Align to right</source>
         <translation>右对齐</translation>
     </message>
@@ -8591,25 +8591,70 @@ and last played uses the later value.</source>
     </message>
 </context>
 <context>
-    <name>Fooyin::PropertiesDialogWidget</name>
+    <name>Fooyin::PropertiesDialog</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="182"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="203"/>
-        <source>Tools</source>
-        <translation>工具</translation>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="959"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="979"/>
+        <source>Toggle Sidebar</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="186"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="293"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="960"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="990"/>
+        <source>Previous Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="961"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1000"/>
+        <source>Next Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
+        <source>Tracks</source>
+        <translation type="unfinished">音轨</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
+        <source>Properties</source>
+        <translation type="unfinished">属性</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::PropertiesDialogWidget</name>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="439"/>
+        <source>Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="443"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="626"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="296"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="630"/>
         <source>%Ln track(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="923"/>
+        <source>Pending Changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="924"/>
+        <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="936"/>
+        <source>All Tracks (%1)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8936,32 +8981,32 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::ReplayGainModel</name>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="127"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="131"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="129"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="133"/>
         <source>Value</source>
         <translation>值</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="129"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="133"/>
         <source>Track Gain</source>
         <translation>音轨增益</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="131"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="135"/>
         <source>Track Peak</source>
         <translation>音轨峰值</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="133"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="137"/>
         <source>Album Gain</source>
         <translation>专辑增益</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="135"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="139"/>
         <source>Album Peak</source>
         <translation>专辑峰值</translation>
     </message>
@@ -9120,7 +9165,7 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::ReplayGainWidget</name>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="62"/>
+        <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="72"/>
         <source>ReplayGain Editor</source>
         <translation>回放增益编辑器</translation>
     </message>
@@ -10607,27 +10652,32 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::TagEditor::TagEditorWidget</name>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="62"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="70"/>
         <source>&amp;Change default fields…</source>
         <translation>更改默认字段(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="206"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="87"/>
+        <source>Tools</source>
+        <translation type="unfinished">工具</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="334"/>
         <source>Are you sure?</source>
         <translation>你确定吗？</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="207"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="335"/>
         <source>Metadata in the associated files will be overwritten.</source>
         <translation>关联文件中的元数据标签将被覆盖。</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="209"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="337"/>
         <source>Don&apos;t ask again</source>
         <translation>不再显示此消息</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="61"/>
+        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="69"/>
         <source>Auto &amp;track number</source>
         <translation>自动编号(&amp;T)</translation>
     </message>

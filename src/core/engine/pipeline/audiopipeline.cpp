@@ -887,7 +887,7 @@ AudioFormat AudioPipeline::setDspChain(std::vector<DspNodePtr> masterNodes, cons
             pipeline.resetMasterRateObservation();
         }
 
-        return pipeline.m_renderer.predictMasterOutputFormat(effectiveInput);
+        return newOutput;
     });
 }
 

@@ -671,7 +671,7 @@ Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
 QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {
-        return (Qt::AlignHCenter);
+        return Qt::AlignCenter;
     }
 
     if(orientation == Qt::Orientation::Vertical) {
