@@ -4,6 +4,7 @@ set(
     FOOYIN_KNOWN_PLUGINS
     alsa
     discord
+    coreaudio
     equaliser
     fileops
     filters
@@ -65,6 +66,7 @@ if(WIN32)
 endif()
 
 if(APPLE)
+    list(APPEND FOOYIN_DEFAULT_PLUGINS coreaudio)
     list(APPEND FOOYIN_DEFAULT_PLUGINS nowplaying)
 endif()
 
@@ -126,9 +128,13 @@ else()
 endif()
 
 if (APPLE)
+    fooyin_add_selected_plugin(coreaudio)
     fooyin_add_selected_plugin(nowplaying)
 else()
     if("nowplaying" IN_LIST FOOYIN_RESOLVED_PLUGINS)
         message(STATUS "nowplaying plugin is only available on macOS; skipping.")
+    endif ()
+    if ("coreaudio" IN_LIST FOOYIN_RESOLVED_PLUGINS)
+        message(STATUS "coreaudio plugin is only available on macOS; skipping.")
     endif()
 endif()
