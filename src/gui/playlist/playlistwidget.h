@@ -131,6 +131,7 @@ private:
     void applyInitialViewSettings();
     void applySessionTexts();
     void refreshViewStyle();
+    void updateMetadataEditTriggers(bool readOnly);
     void handleColumnChanged(const PlaylistColumn& column);
     void handleColumnRemoved(int id);
     void changePreset(const PlaylistPreset& preset);

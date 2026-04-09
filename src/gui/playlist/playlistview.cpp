@@ -120,6 +120,7 @@ void PlaylistView::playlistAboutToBeReset()
 {
     m_playlistLoaded = false;
     cancelPendingEditor();
+    endBulkEditSession(false);
 }
 
 void PlaylistView::playlistReset()
@@ -531,12 +532,7 @@ QRect PlaylistView::bulkEditRect(int column) const
         return {};
     }
 
-    const QRect topRect = visualRect(m_bulkEditRows.front().siblingAtColumn(column));
-    if(!topRect.isValid()) {
-        return {};
-    }
-
-    int height{0};
+    QRect rowsRect;
 
     for(const QModelIndex& rowIndex : m_bulkEditRows) {
         const QModelIndex index = rowIndex.siblingAtColumn(column);
@@ -544,14 +540,19 @@ QRect PlaylistView::bulkEditRect(int column) const
             continue;
         }
 
-        height += sizeHintForIndex(index).height();
+        const QRect visualIndexRect = visualRect(index);
+        if(!visualIndexRect.isValid()) {
+            continue;
+        }
+
+        rowsRect = rowsRect.isNull() ? visualIndexRect : rowsRect.united(visualIndexRect);
     }
 
-    if(height <= 0) {
+    if(!rowsRect.isValid()) {
         return {};
     }
 
-    return QRect{x, topRect.top(), width, height}.adjusted(0, 0, -1, -1);
+    return QRect{x, rowsRect.top(), width, rowsRect.height()}.adjusted(0, 0, -1, -1);
 }
 
 QString PlaylistView::bulkEditValueForColumn(int column, bool& mixedValues) const

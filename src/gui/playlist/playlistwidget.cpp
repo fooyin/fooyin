@@ -577,6 +577,14 @@ void PlaylistWidget::setupConnections()
 
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(
         this, [this]() { m_session->changePlaylist(sessionHost(), m_playlistController->currentPlaylist(), nullptr); });
+    m_settings->subscribe<PlaylistInlineTagEditing>(this, [this]() {
+        Playlist* currentPlaylist = m_playlistController->currentPlaylist();
+
+        const bool forceSortedAutoPlaylist
+            = currentPlaylist && currentPlaylist->isAutoPlaylist() && currentPlaylist->forceSorted();
+
+        updateMetadataEditTriggers(m_session->hasSearch() || forceSortedAutoPlaylist);
+    });
 }
 
 void PlaylistWidget::handleMetadataWriteRequested(const TrackList& tracks)
@@ -685,9 +693,7 @@ void PlaylistWidget::resetModelThrottled() const
 void PlaylistWidget::setReadOnly(bool readOnly, bool allowSorting)
 {
     m_header->setSectionsClickable(!readOnly || allowSorting);
-    const bool canEditMetadata = m_session->capabilities().editablePlaylist && !readOnly;
-    m_playlistView->setEditTriggers(canEditMetadata ? QAbstractItemView::EditKeyPressed
-                                                    : QAbstractItemView::NoEditTriggers);
+    updateMetadataEditTriggers(readOnly);
     m_session->applyReadOnlyState(sessionHost(), readOnly);
 }
 
@@ -884,6 +890,14 @@ void PlaylistWidget::applyInitialViewSettings()
     m_model->setFont(QApplication::font("Fooyin::PlaylistView"));
 }
 
+void PlaylistWidget::updateMetadataEditTriggers(bool readOnly)
+{
+    const bool canEditMetadata
+        = m_session->capabilities().editablePlaylist && !readOnly && m_settings->value<PlaylistInlineTagEditing>();
+    m_playlistView->setEditTriggers(canEditMetadata ? QAbstractItemView::EditKeyPressed
+                                                    : QAbstractItemView::NoEditTriggers);
+}
+
 void PlaylistWidget::showHeaderMenu(const QPoint& pos)
 {
     auto* menu = new QMenu(this);
@@ -1013,14 +1027,15 @@ void PlaylistWidget::addColumnsMenu(QMenu* parent)
     };
 
     for(const auto& column : m_columnRegistry->items()) {
-        if(!column.enabled) {
+        const bool columnVisible = hasColumn(column.id);
+        if(!column.enabled && !columnVisible) {
             continue;
         }
 
         auto* columnAction = new QAction(column.name, columnsMenu);
         columnAction->setData(column.id);
         columnAction->setCheckable(true);
-        columnAction->setChecked(hasColumn(column.id));
+        columnAction->setChecked(columnVisible);
         columnsMenu->addAction(columnAction);
         columnGroup->addAction(columnAction);
     }

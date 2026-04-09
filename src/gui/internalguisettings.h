@@ -167,6 +167,7 @@ enum GuiInternalSettings : uint32_t
     ImageAllocationLimit       = 37 | Type::Int,
     PlaylistTrackPreloadCount  = 38 | Type::Int,
     TrackCoverSourcePreference = 39 | Type::Int,
+    PlaylistInlineTagEditing   = 40 | Type::Bool,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

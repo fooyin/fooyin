@@ -64,6 +64,7 @@ private:
     QSpinBox* m_preloadCount;
 
     QComboBox* m_middleClick;
+    QCheckBox* m_inlineTagEditing;
 
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
@@ -92,6 +93,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
     , m_settings{settings}
     , m_preloadCount{new QSpinBox(this)}
     , m_middleClick{new QComboBox(this)}
+    , m_inlineTagEditing{new QCheckBox(tr("Enable inline tag editing"), this)}
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show header"), this)}
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
@@ -120,11 +122,13 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
 
     m_preloadCount->setMinimum(0);
     m_preloadCount->setMaximum(10000);
+    m_inlineTagEditing->setToolTip(tr("Allow editing writable track tag columns directly from the playlist"));
 
     int row{0};
     behaviourLayout->addWidget(preloadCountLabel, row, 0);
     behaviourLayout->addWidget(m_preloadCount, row++, 1);
     behaviourLayout->addWidget(new QLabel(u"🛈 "_s + tr("Set to '0' to disable preloading."), this), row++, 0, 1, 2);
+    behaviourLayout->addWidget(m_inlineTagEditing, row++, 0, 1, 2);
     behaviourLayout->setColumnStretch(behaviourLayout->columnCount(), 1);
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
@@ -235,6 +239,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlist
 void PlaylistGeneralPageWidget::load()
 {
     m_preloadCount->setValue(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
+    m_inlineTagEditing->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistInlineTagEditing>());
 
     using ActionIndexMap = std::map<int, int>;
     ActionIndexMap middleActions;
@@ -288,6 +293,7 @@ void PlaylistGeneralPageWidget::load()
 void PlaylistGeneralPageWidget::apply()
 {
     m_settings->set<Settings::Gui::Internal::PlaylistTrackPreloadCount>(m_preloadCount->value());
+    m_settings->set<Settings::Gui::Internal::PlaylistInlineTagEditing>(m_inlineTagEditing->isChecked());
 
     m_settings->set<Settings::Gui::Internal::PlaylistMiddleClick>(m_middleClick->currentData().toInt());
 
@@ -317,6 +323,7 @@ void PlaylistGeneralPageWidget::apply()
 void PlaylistGeneralPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistInlineTagEditing>();
 
     m_settings->reset<Settings::Gui::Internal::PlaylistMiddleClick>();
 
