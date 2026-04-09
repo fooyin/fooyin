@@ -2076,7 +2076,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="273"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>すべて選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="278"/>
@@ -8233,7 +8233,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="588"/>
         <source>Select &amp;all</source>
-        <translation type="unfinished"></translation>
+        <translation>すべて選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="589"/>
@@ -8685,12 +8685,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="169"/>
         <source>&amp;Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;すべて選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="170"/>
         <source>Select all tracks in the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>再生キューにあるトラックをすべて選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="99"/>
