@@ -1700,7 +1700,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="121"/>
         <source>Select a command, or enter a raw `$cmdlink` id or alias.</source>
-        <translation>Befehl auswählen, oder eine rohe `$cmdlink` ID oder Alias eingeben.</translation>
+        <translation>Befehl auswählen oder rohe &quot;$cmdlink&quot; ID oder Alias eingeben.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="125"/>
@@ -2612,7 +2612,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="44"/>
         <source>Search the current playlist</source>
-        <translation>Durchsuche aktuelle Wiedergabeliste</translation>
+        <translation>Durchsuche die aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="51"/>
@@ -2670,7 +2670,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="410"/>
         <source>Paste (Insert)</source>
-        <translation>Einfügen</translation>
+        <translation>Einfügen (Einsetzen)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
@@ -2680,7 +2680,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="475"/>
         <source>&amp;Move</source>
-        <translation>Bewegen</translation>
+        <translation>&amp;Bewegen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="548"/>
@@ -5435,12 +5435,12 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="66"/>
         <source>Remove &amp;unavailable tracks</source>
-        <translation>—Entfernen nicht verfügbarer Titel</translation>
+        <translation>Entferne &amp;nicht verfügbare Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="67"/>
         <source>Remove unavailable tracks from the database and libraries</source>
-        <translation>Entferne nicht verfügbare Titel aus der Datenbank und Bibliotheken</translation>
+        <translation>Entferne nicht verfügbare Titel aus Datenbank und Bibliotheken</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
@@ -5555,7 +5555,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="185"/>
         <source>Optimising database…</source>
-        <translation>Optimierte Datenbank…</translation>
+        <translation>Optimiere Datenbank…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="195"/>
@@ -5630,7 +5630,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="93"/>
         <source>Sort tracks added to playlists from library viewers by</source>
-        <translation>Sortiere Titel, die über Bibliotheksansichten zu Wiedergabelisten hinzugefügt wurden, nach:</translation>
+        <translation>Sortiere Titel, die über Bibliotheksansichten zu Wiedergabelisten hinzugefügt wurden, nach</translation>
     </message>
 </context>
 <context>
@@ -6237,7 +6237,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="156"/>
         <source>Apply to</source>
-        <translation>Anwenden auf:</translation>
+        <translation>Anwenden auf</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="161"/>
