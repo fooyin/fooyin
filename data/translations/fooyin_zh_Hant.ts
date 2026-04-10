@@ -8604,19 +8604,19 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="959"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="979"/>
         <source>Toggle Sidebar</source>
-        <translation type="unfinished"></translation>
+        <translation>切換側邊列</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="960"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="990"/>
         <source>Previous Track</source>
-        <translation type="unfinished"></translation>
+        <translation>上一個曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="961"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1000"/>
         <source>Next Track</source>
-        <translation type="unfinished"></translation>
+        <translation>下一個曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
@@ -8634,7 +8634,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="439"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>區段</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="443"/>
@@ -8652,17 +8652,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="923"/>
         <source>Pending Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>待處理變更</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="924"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
-        <translation type="unfinished"></translation>
+        <translation>在切換曲目或分頁卡之前，套用或清除目前分頁的待處理變更。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="936"/>
         <source>All Tracks (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>全部曲目 (%1)</translation>
     </message>
 </context>
 <context>
