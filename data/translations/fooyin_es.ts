@@ -58,12 +58,12 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="156"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadatos</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="103"/>
         <source>Track title</source>
-        <translation type="unfinished"></translation>
+        <translation>Título de la pista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="104"/>
@@ -78,17 +78,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
         <source>Album title</source>
-        <translation type="unfinished"></translation>
+        <translation>Título del álbum</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="107"/>
         <source>Album artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artista del álbum</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
         <source>Track number</source>
-        <translation type="unfinished"></translation>
+        <translation>Número de la pista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="109"/>
@@ -98,7 +98,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="110"/>
         <source>Disc number</source>
-        <translation type="unfinished"></translation>
+        <translation>Número del disco</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="111"/>
@@ -108,17 +108,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="112"/>
         <source>Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Géneros</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="113"/>
         <source>Composers</source>
-        <translation type="unfinished"></translation>
+        <translation>Compositores</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="114"/>
         <source>Performers</source>
-        <translation type="unfinished"></translation>
+        <translation>Intérpretes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="115"/>
@@ -143,12 +143,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="119"/>
         <source>Release date</source>
-        <translation type="unfinished"></translation>
+        <translation>Fecha de lanzamiento</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="120"/>
         <source>Release year</source>
-        <translation type="unfinished"></translation>
+        <translation>Año de lanzamiento</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="121"/>
@@ -163,12 +163,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="123"/>
         <source>Track bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Tasa de bits de la pista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="124"/>
         <source>Sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Frecuencia de muestreo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="125"/>
@@ -188,7 +188,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="128"/>
         <source>Play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteo de reproducciones</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
@@ -208,17 +208,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="134"/>
         <source>Codec name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre del códec</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="135"/>
         <source>Codec profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Perfil del códec</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="136"/>
         <source>Encoding tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta de codificación</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="137"/>
@@ -258,12 +258,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de archivo sin extensión</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="146"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Extensión del archivo</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
