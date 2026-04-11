@@ -10,7 +10,14 @@ if (-not (Test-Path $ARTIFACTS_DIR)) {
 }
 
 Write-Host "Configuring CMake with preset $CMAKE_PRESET..."
-& cmake --preset $CMAKE_PRESET -DBUILD_TESTING=OFF
+$cmakeArgs = @("--preset", $CMAKE_PRESET, "-DBUILD_TESTING=OFF")
+
+if ($env:QT_HOST_PATH) {
+    $cmakeArgs += "-DQT_HOST_PATH=$env:QT_HOST_PATH"
+    $cmakeArgs += "-DQt6LinguistTools_DIR=$env:QT_HOST_PATH/lib/cmake/Qt6LinguistTools"
+}
+
+& cmake @cmakeArgs
 if ($LASTEXITCODE -ne 0) {
     Write-Error "CMake configuration failed with exit code $LASTEXITCODE."
     exit $LASTEXITCODE

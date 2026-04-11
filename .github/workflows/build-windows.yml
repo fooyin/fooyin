@@ -10,20 +10,22 @@ env:
 jobs:
   windows:
     name: Windows
-    runs-on: windows-latest
     strategy:
       matrix:
         include:
           - arch: amd64
+            runner: windows-latest
             qt-arch: win64_msvc2022_64
             msvc-arch: amd64
             triplet: x64-windows
             cmake-preset: release-vcpkg
-          # - arch: arm64
-          #   qt-arch: win64_msvc2022_arm64_cross_compiled
-          #   msvc-arch: amd64_arm64
-          #   triplet: arm64-windows
-          #   cmake-preset: release-vcpkg-arm64
+          - arch: arm64
+            runner: windows-11-arm
+            qt-arch: win64_msvc2022_arm64
+            msvc-arch: arm64
+            triplet: arm64-windows
+            cmake-preset: release-vcpkg-arm64
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Checkout
