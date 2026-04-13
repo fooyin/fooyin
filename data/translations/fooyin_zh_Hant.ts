@@ -3175,7 +3175,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="231"/>
         <source>Controls when the UI switches tracks during automatic crossfade transitions</source>
-        <translation type="unfinished">Controls when the UI switches tracks during automatic crossfade transitions</translation>
+        <translation>進行控制 當 UI 在自動交叉淡入淡出過渡期間切換曲目之時</translation>
     </message>
 </context>
 <context>
@@ -4763,7 +4763,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Used for the filled portion of %rating_stars% and %rating_stars_padded%</source>
-        <translation type="unfinished">Used for the filled portion of %rating_stars% and %rating_stars_padded%</translation>
+        <translation>用於 % rating_stars% 和 % rating_stars_padded% 的填充部分</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="96"/>
@@ -4775,12 +4775,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="99"/>
         <source>Used for the trailing empty portion of %rating_stars_padded%</source>
-        <translation type="unfinished">Used for the trailing empty portion of %rating_stars_padded%</translation>
+        <translation>用於 % rating_stars_padded% 的末尾空白部分</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="100"/>
         <source>Preview of %rating_stars_padded% using the current font.</source>
-        <translation type="unfinished">Preview of %rating_stars_padded% using the current font.</translation>
+        <translation>% rating_stars_pangled% 的預覽 使用目前的字型 。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
@@ -8621,12 +8621,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
         <source>Tracks</source>
-        <translation type="unfinished">曲目</translation>
+        <translation>曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
         <source>Properties</source>
-        <translation type="unfinished">屬性</translation>
+        <translation>屬性</translation>
     </message>
 </context>
 <context>
@@ -10667,7 +10667,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="87"/>
         <source>Tools</source>
-        <translation type="unfinished">工具</translation>
+        <translation>工具</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="334"/>
