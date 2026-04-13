@@ -567,17 +567,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="194"/>
         <source>Rounds a numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>对数值进行四舍五入</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="195"/>
         <source>Formats a number with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>将数字格式化为带前导零的数字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="196"/>
         <source>Replaces text fragments</source>
-        <translation type="unfinished"></translation>
+        <translation>替换文本片段</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="196"/>
@@ -615,157 +615,157 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>String</source>
-        <translation type="unfinished"></translation>
+        <translation>字符串</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="197"/>
         <source>Converts text to ASCII</source>
-        <translation type="unfinished"></translation>
+        <translation>转换文本为 ASCII 字符集</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="198"/>
         <source>Returns a slice of text</source>
-        <translation type="unfinished"></translation>
+        <translation>返回一段文本</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="199"/>
         <source>Removes characters from the end</source>
-        <translation type="unfinished"></translation>
+        <translation>删除末尾的字符</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="200"/>
         <source>Returns characters from the left</source>
-        <translation type="unfinished"></translation>
+        <translation>返回左侧的字符</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="201"/>
         <source>Returns characters from the right</source>
-        <translation type="unfinished"></translation>
+        <translation>返回右侧的字符</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="202"/>
         <source>Inserts text at a position</source>
-        <translation type="unfinished"></translation>
+        <translation>在指定位置插入文本</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="203"/>
         <source>Returns a substring</source>
-        <translation type="unfinished"></translation>
+        <translation>返回子字符串</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="204"/>
         <source>Finds a substring position</source>
-        <translation type="unfinished"></translation>
+        <translation>查找子字符串位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
         <source>Finds a substring position ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation>查找子字符串位置（忽略大小写）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
         <source>Finds the last substring position</source>
-        <translation type="unfinished"></translation>
+        <translation>查找最后一个子字符串位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="210"/>
         <source>Finds the last substring position ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation>查找最后一个子字符串的位置（忽略大小写）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
         <source>Returns the text length</source>
-        <translation type="unfinished"></translation>
+        <translation>返回文本长度</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="214"/>
         <source>Returns the longest string</source>
-        <translation type="unfinished"></translation>
+        <translation>返回最长字符串</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Compares two strings</source>
-        <translation type="unfinished"></translation>
+        <translation>比较两个字符串</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="216"/>
         <source>Compares two strings ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation>比较两个字符串，忽略大小写</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
         <source>Tests whether one string is longer</source>
-        <translation type="unfinished"></translation>
+        <translation>测试一个字符串是否比另一个字符串更长</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="218"/>
         <source>Returns the unit separator character</source>
-        <translation type="unfinished"></translation>
+        <translation>返回单位分隔符</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="219"/>
         <source>Returns a newline</source>
-        <translation type="unfinished"></translation>
+        <translation>返回换行符</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="220"/>
         <source>Returns a tab character</source>
-        <translation type="unfinished"></translation>
+        <translation>返回一个制表符</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="221"/>
         <source>Moves leading articles to the end</source>
-        <translation type="unfinished"></translation>
+        <translation>将主要文章移至末尾</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="222"/>
         <source>Removes leading articles</source>
-        <translation type="unfinished"></translation>
+        <translation>删除前导文章</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="223"/>
         <source>Pads text on the left</source>
-        <translation type="unfinished"></translation>
+        <translation>左侧有文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="224"/>
         <source>Pads text on the right</source>
-        <translation type="unfinished"></translation>
+        <translation>右侧有文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
         <source>Repeats text</source>
-        <translation type="unfinished"></translation>
+        <translation>重复文本</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="226"/>
         <source>Trims surrounding whitespace</source>
-        <translation type="unfinished"></translation>
+        <translation>修剪空白区域周围的装饰</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="227"/>
         <source>Converts text to lowercase</source>
-        <translation type="unfinished"></translation>
+        <translation>文本转换为小写</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="228"/>
         <source>Converts text to uppercase</source>
-        <translation type="unfinished"></translation>
+        <translation>文本转换为大写</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="229"/>
         <source>Builds an abbreviation</source>
-        <translation type="unfinished"></translation>
+        <translation>构建缩写</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="230"/>
         <source>Capitalises words</source>
-        <translation type="unfinished"></translation>
+        <translation>单词首字母大写</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
         <source>Returns a directory name from a path</source>
-        <translation type="unfinished"></translation>
+        <translation>从路径返回目录名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
@@ -778,32 +778,32 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="232"/>
         <source>Returns a parent directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>返回父目录路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="234"/>
         <source>Elides text at the end</source>
-        <translation type="unfinished"></translation>
+        <translation>省略结尾处的文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <source>Elides text in the middle</source>
-        <translation type="unfinished"></translation>
+        <translation>中间的文字滑落</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="236"/>
         <source>Returns a file extension</source>
-        <translation type="unfinished"></translation>
+        <translation>返回文件扩展名</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
         <source>Returns a filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>返回不带扩展名的文件名</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="238"/>
         <source>Builds a text progress bar</source>
-        <translation type="unfinished"></translation>
+        <translation>构建文本进度条</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="238"/>
@@ -811,59 +811,59 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="242"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="244"/>
         <source>Utility</source>
-        <translation type="unfinished"></translation>
+        <translation>实用程序</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
         <source>Builds an alternate text progress bar</source>
-        <translation type="unfinished"></translation>
+        <translation>构建备用文本进度条</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Builds a clickable document or web link</source>
-        <translation type="unfinished"></translation>
+        <translation>生成可点击的文档或网页链接</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Builds a clickable link to a fooyin command</source>
-        <translation type="unfinished"></translation>
+        <translation>创建一个指向 fooyin 命令的可点击链接</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Percent-encodes text for use in URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>对文本进行百分比编码，以便在 URL 中使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
         <source>Formats milliseconds as time</source>
-        <translation type="unfinished"></translation>
+        <translation>将毫秒格式化为时间</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Returns the value stored in a script variable</source>
-        <translation type="unfinished"></translation>
+        <translation>返回存储在脚本变量中的值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
         <source>Variable</source>
-        <translation type="unfinished"></translation>
+        <translation>变量</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="248"/>
         <source>Stores a script variable and returns the value</source>
-        <translation type="unfinished"></translation>
+        <translation>存储脚本变量并返回其值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="250"/>
         <source>Stores a script variable and returns nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>存储一个脚本变量，不返回任何内容</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="252"/>
         <source>Returns then when condition is true</source>
-        <translation type="unfinished"></translation>
+        <translation>当条件为真时返回</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
@@ -873,43 +873,43 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="261"/>
         <source>Conditional</source>
-        <translation type="unfinished"></translation>
+        <translation>条件</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="254"/>
         <source>Returns the first non-empty value</source>
-        <translation type="unfinished"></translation>
+        <translation>返回第一个非空值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="256"/>
         <source>Returns the first true value from a list, or else when none match</source>
-        <translation type="unfinished"></translation>
+        <translation>返回列表中第一个匹配项，如果没有匹配项则返回其他值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
         <source>Compares numeric values</source>
-        <translation type="unfinished"></translation>
+        <translation>比较数值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <source>Checks whether text is longer than a limit</source>
-        <translation type="unfinished"></translation>
+        <translation>检查文本长度是否超过限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
         <source>Looks up a raw tag field by name</source>
-        <translation type="unfinished"></translation>
+        <translation>按名称查找原始标签字段</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
         <source>Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>查找</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
         <source>Looks up technical track information</source>
-        <translation type="unfinished"></translation>
+        <translation>查找音轨信息</translation>
     </message>
 </context>
 <context>
@@ -917,7 +917,7 @@
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="82"/>
         <source>About fooyin</source>
-        <translation type="unfinished"></translation>
+        <translation>关于 fooyin</translation>
     </message>
 </context>
 <context>
@@ -963,7 +963,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="35"/>
         <source>ALSA Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ALSA 设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="42"/>
@@ -1049,7 +1049,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="83"/>
         <source>Quality</source>
-        <translation type="unfinished"></translation>
+        <translation>质量</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="99"/>
@@ -1094,7 +1094,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="122"/>
         <source>File type</source>
-        <translation type="unfinished"></translation>
+        <translation>文件类型</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="124"/>
@@ -1135,17 +1135,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="74"/>
         <source>Prefer current selection</source>
-        <translation>显示选中的音轨</translation>
+        <translation>优先选择当前选项</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="75"/>
         <source>Prefer directory artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>首选目录封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="76"/>
         <source>Prefer embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>优先使用内嵌封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="80"/>
@@ -1155,7 +1155,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="90"/>
         <source>Local Source</source>
-        <translation type="unfinished"></translation>
+        <translation>本地资源</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="100"/>
@@ -1198,31 +1198,31 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="321"/>
         <source>No embedded artwork found to export</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到要导出的嵌入式图像</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="327"/>
         <source>Exported artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已将插图导出到 %Ln 文件</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="335"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已将插图导出到 %Ln 文件；部分导出失败</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="331"/>
         <source>Failed to export artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>导出插图失败</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="96"/>
         <source>Exported artwork to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>已将插图导出至 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="215"/>
@@ -1278,15 +1278,15 @@
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="197"/>
         <source>Artwork found in %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>在 %Ln 文件中找到的艺术作品</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="198"/>
         <source>%Ln file(s) selected</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已选择 %Ln 个文件</numerusform>
         </translation>
     </message>
     <message>
@@ -1302,27 +1302,27 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>Auto-export to file</source>
-        <translation type="unfinished"></translation>
+        <translation>自动导出到文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
         <source>Export as…</source>
-        <translation type="unfinished"></translation>
+        <translation>导出为…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="303"/>
         <source>Export this embedded artwork to a file in the track directory without prompting</source>
-        <translation type="unfinished"></translation>
+        <translation>无需提示即可将此嵌入式封面导出到曲目目录中的文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="304"/>
         <source>Choose where to export this embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>选择将此嵌入式图片导出到哪里</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="312"/>
         <source>Remove this artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>移除此艺术作品</translation>
     </message>
 </context>
 <context>
@@ -1434,7 +1434,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="95"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation>将以如下顺序搜索插图。</translation>
+        <translation>我们将按上述顺序搜索插图。</translation>
     </message>
 </context>
 <context>
@@ -1442,27 +1442,27 @@
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="206"/>
         <source>Fit to window</source>
-        <translation type="unfinished"></translation>
+        <translation>适合窗口</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="207"/>
         <source>Actual size</source>
-        <translation type="unfinished"></translation>
+        <translation>实际大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="208"/>
         <source>Zoom in</source>
-        <translation type="unfinished"></translation>
+        <translation>放大</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="209"/>
         <source>Zoom out</source>
-        <translation type="unfinished"></translation>
+        <translation>缩小</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="212"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>插图</translation>
     </message>
 </context>
 <context>
@@ -1508,7 +1508,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="53"/>
         <source>Force-sorted</source>
-        <translation type="unfinished"></translation>
+        <translation>强制排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="54"/>
@@ -1544,7 +1544,8 @@
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="87"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates. 
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>启用此功能后，自动播放列表每次重新生成时都会按照其排序规则完全重新排序。
+禁用此功能后，现有曲目顺序将保持不变，只有新添加的匹配曲目才会进行排序并添加到列表中。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="95"/>
@@ -1569,7 +1570,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="177"/>
         <source>A query named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>名为“%1”的查询已存在。是否覆盖它？</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="300"/>
@@ -1605,39 +1606,39 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="77"/>
         <source>Open properties for the currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>打开当前播放曲目的属性</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="79"/>
         <source>Open the folder of the currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>打开当前播放曲目的文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="137"/>
         <source>Command Button</source>
-        <translation type="unfinished"></translation>
+        <translation>命令按钮</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="413"/>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="424"/>
         <source>Right-click to configure this button.</source>
-        <translation type="unfinished"></translation>
+        <translation>右键单击以配置此按钮。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="439"/>
         <source>Command is currently unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>该命令目前不可用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="443"/>
         <source>Custom icon missing; using fallback icon.</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义图标缺失；使用备用图标。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="65"/>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="68"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>所有文件 (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="66"/>
@@ -1650,57 +1651,57 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
         <source>Command Button Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>命令按钮设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="91"/>
         <source>Icon only</source>
-        <translation type="unfinished"></translation>
+        <translation>仅图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="92"/>
         <source>Text only</source>
-        <translation type="unfinished"></translation>
+        <translation>仅文本</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="93"/>
         <source>Text beside icon</source>
-        <translation type="unfinished"></translation>
+        <translation>图标旁的文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="94"/>
         <source>Text under icon</source>
-        <translation type="unfinished"></translation>
+        <translation>图标下方的文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="108"/>
         <source>Click to choose an icon</source>
-        <translation type="unfinished"></translation>
+        <translation>点击选择一个图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="113"/>
         <source>Browse for icon</source>
-        <translation type="unfinished"></translation>
+        <translation>浏览图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="114"/>
         <source>Clear custom icon</source>
-        <translation type="unfinished"></translation>
+        <translation>清除自定义图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="118"/>
         <source>Button</source>
-        <translation type="unfinished"></translation>
+        <translation>按钮</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="121"/>
         <source>Select a command, or enter a raw `$cmdlink` id or alias.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择命令，或输入原始 `$cmdlink` ID 或别名。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="125"/>
         <source>Command</source>
-        <translation type="unfinished"></translation>
+        <translation>命令</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="127"/>
@@ -1720,32 +1721,32 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="136"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>预览</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="139"/>
         <source>Click the image to choose a custom icon. If none is set, the button uses the command&apos;s default icon.</source>
-        <translation type="unfinished"></translation>
+        <translation>点击图片选择自定义图标。如果未设置图标，按钮将使用命令的默认图标。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="159"/>
         <source>Enter a command id or alias</source>
-        <translation type="unfinished"></translation>
+        <translation>输入命令 id 或别名</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="161"/>
         <source>Use command label</source>
-        <translation type="unfinished"></translation>
+        <translation>使用命令标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="162"/>
         <source>No custom icon selected</source>
-        <translation type="unfinished"></translation>
+        <translation>未选择自定义图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="178"/>
         <source>Select Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>选择图标</translation>
     </message>
 </context>
 <context>
@@ -1753,27 +1754,27 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="42"/>
         <source>Restore defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复默认</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="44"/>
         <source>Save as default</source>
-        <translation type="unfinished"></translation>
+        <translation>保存为默认</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="48"/>
         <source>Restore saved defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复已保存的默认设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="49"/>
         <source>Restore factory defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复出厂设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="50"/>
         <source>Clear saved defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>清除已保存的默认设置</translation>
     </message>
 </context>
 <context>
@@ -1821,7 +1822,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="495"/>
         <source>View full size</source>
-        <translation type="unfinished"></translation>
+        <translation>查看完整尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="508"/>
@@ -1836,12 +1837,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="510"/>
         <source>Auto-extract to file</source>
-        <translation type="unfinished"></translation>
+        <translation>自动提取到文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="511"/>
         <source>Extract as…</source>
-        <translation type="unfinished"></translation>
+        <translation>提取为…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="512"/>
@@ -1851,32 +1852,32 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="517"/>
         <source>Search for artwork for this cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索此封面类型的艺术作品</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="518"/>
         <source>Search for artwork and automatically choose the best match for this cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索封面图片并自动选择与此封面类型最匹配的图片</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="520"/>
         <source>Extract this embedded artwork to a file in the track directory without prompting</source>
-        <translation type="unfinished"></translation>
+        <translation>无需提示，将此嵌入的艺术作品提取到曲目目录中的文件中</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="521"/>
         <source>Choose where to extract this embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>选择提取此嵌入式艺术作品的位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="522"/>
         <source>Remove this artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>移除此插图</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="556"/>
         <source>Extracted artwork to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>已提取插图到 %1</translation>
     </message>
 </context>
 <context>
@@ -1884,7 +1885,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="35"/>
         <source>Cover Widget Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>封面小部件设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="38"/>
@@ -1894,7 +1895,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="39"/>
         <source>Fade cover changes</source>
-        <translation type="unfinished"></translation>
+        <translation>封面切换淡入淡出</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="40"/>
@@ -1909,12 +1910,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="45"/>
         <source>Cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>封面类型</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="47"/>
         <source>Front</source>
-        <translation type="unfinished"></translation>
+        <translation>正面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="48"/>
@@ -1934,22 +1935,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="63"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>居中</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="64"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左对齐</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="65"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右对齐</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="84"/>
         <source>Cover change</source>
-        <translation type="unfinished"></translation>
+        <translation>封面更换</translation>
     </message>
 </context>
 <context>
@@ -2024,7 +2025,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="205"/>
         <source>Set to &apos;0&apos; to disable VBR updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>设置为“0”可禁用 VBR 更新。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="211"/>
@@ -2039,7 +2040,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="281"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>配置…</translation>
     </message>
 </context>
 <context>
@@ -2048,7 +2049,7 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="297"/>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="298"/>
         <source>Devices</source>
-        <translation type="unfinished"></translation>
+        <translation>设备</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="298"/>
@@ -2066,7 +2067,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="106"/>
         <source>Only checked devices will appear in the output device selector widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>只有已选中的设备才会显示在输出设备选择器小部件中。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="112"/>
@@ -2076,12 +2077,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="273"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>全选</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="278"/>
         <source>Select none</source>
-        <translation type="unfinished"></translation>
+        <translation>选择无</translation>
     </message>
 </context>
 <context>
@@ -2184,22 +2185,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="197"/>
         <source>&amp;Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>替换当前播放列表(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="198"/>
         <source>Create &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>创建新的播放列表(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
         <source>Replace playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>替换播放队列(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="263"/>
         <source>Start playback of the selected files</source>
-        <translation>播放选中的文件</translation>
+        <translation>开始播放所选文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="235"/>
@@ -2218,7 +2219,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="36"/>
         <source>Directory Browser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>目录浏览器设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="37"/>
@@ -2258,7 +2259,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
         <source>Show symlinks</source>
-        <translation type="unfinished"></translation>
+        <translation>显示符号链接</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
@@ -2268,12 +2269,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="48"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>立即开始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="51"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>对于“替换当前播放列表”和“创建新播放列表”，立即开始播放。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
@@ -2298,7 +2299,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="69"/>
         <source>Browser Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>浏览器筛选器</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="74"/>
@@ -2332,13 +2333,13 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="97"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>替换当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>创建新的播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="99"/>
@@ -2356,7 +2357,7 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="101"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="110"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>替换播放队列</translation>
     </message>
 </context>
 <context>
@@ -2438,7 +2439,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="845"/>
         <source>DSP Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP 管理器</translation>
     </message>
 </context>
 <context>
@@ -2451,7 +2452,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="204"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="205"/>
