@@ -8594,19 +8594,19 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="959"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="979"/>
         <source>Toggle Sidebar</source>
-        <translation type="unfinished"></translation>
+        <translation>サイドバー切替</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="960"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="990"/>
         <source>Previous Track</source>
-        <translation type="unfinished"></translation>
+        <translation>前のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="961"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1000"/>
         <source>Next Track</source>
-        <translation type="unfinished"></translation>
+        <translation>次のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="963"/>
@@ -8624,7 +8624,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="439"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="443"/>
@@ -8642,12 +8642,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="923"/>
         <source>Pending Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>保留中の変更点</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="924"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックまたはタブを切り替える前に、未変更の現在のタブの変更点を適用またはクリアしてください</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="936"/>
@@ -8660,7 +8660,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="77"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="79"/>
@@ -10657,12 +10657,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="87"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>ツール</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="334"/>
         <source>Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>よろしいですか？</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="335"/>
@@ -10685,7 +10685,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/theme/themeregistry.cpp" line="46"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ダークモード</translation>
     </message>
 </context>
 <context>
