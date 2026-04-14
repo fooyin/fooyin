@@ -73,7 +73,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="105"/>
         <source>Unique artists combined into one value</source>
-        <translation>独特的艺术家汇聚成一个价值</translation>
+        <translation>将不同的艺术家合并为一个值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
@@ -123,7 +123,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="115"/>
         <source>Track duration formatted as time</source>
-        <translation>曲目时长，格式为时间</translation>
+        <translation>曲目时长格式化为时间</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="116"/>
@@ -238,7 +238,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
         <source>Library added timestamp</source>
-        <translation>库添加时间戳</translation>
+        <translation>媒体库添加时间戳</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="142"/>
@@ -2059,7 +2059,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="298"/>
         <source>Output</source>
-        <translation>音频输出</translation>
+        <translation>输出</translation>
     </message>
 </context>
 <context>
@@ -2072,7 +2072,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="112"/>
         <source>Output</source>
-        <translation>音频输出</translation>
+        <translation>输出</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="273"/>
@@ -3669,7 +3669,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="104"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation>在控件中使用&lt;b&gt;Ctrl+Scroll&lt;/b&gt; 来调整图标大小。</translation>
+        <translation>在控件中使用 &lt;b&gt;Ctrl+Scroll&lt;/b&gt; 来调整图标大小。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="107"/>
@@ -5856,7 +5856,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;). Leave the whole sort grouping empty to use the display grouping for sorting.</source>
-        <translation>使用 &lt;code&gt;||&lt;/code&gt; 来拆分树状结构层级。排序分组必须使用与显示分组相同的 &lt;code&gt;||&lt;/code&gt; 层级结构；每个排序层级都对应其对应的显示层级，并且排序层级可以为空（例如 &lt;code&gt;||%year%||&lt;/code&gt;）。如果将整个排序分组留空，则可以使用显示分组进行排序。</translation>
+        <translation>使用 &lt;code&gt;||&lt;/code&gt; 来拆分树状结构层级。 &lt;b&gt;排序分组&lt;/b&gt; 必须使用与 &lt;b&gt;显示分组&lt;/b&gt; 相同的 &lt;code&gt;||&lt;/code&gt; 层级结构；每个排序层级都对应其对应的显示层级，并且排序层级可以为空（例如 &lt;code&gt;||%year%||&lt;/code&gt;）。如果将整个排序分组留空，则可以使用显示分组进行排序。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="96"/>
@@ -8763,7 +8763,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="67"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
-        <translation>在控件中使用&lt;b&gt;Ctrl+Scroll&lt;/b&gt; 来调整图标大小。</translation>
+        <translation>在控件中使用 &lt;b&gt;Ctrl+Scroll&lt;/b&gt; 来调整图标大小。</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="71"/>
@@ -10073,7 +10073,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="141"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="142"/>
@@ -10172,7 +10172,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="116"/>
         <source>Overwrite Shortcut</source>
-        <translation>覆盖快捷方式</translation>
+        <translation>覆盖快捷键</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="132"/>
@@ -10182,7 +10182,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="231"/>
         <source>Duplicate shortcuts</source>
-        <translation>重复快捷方式</translation>
+        <translation>重复快捷键</translation>
     </message>
 </context>
 <context>
@@ -10430,7 +10430,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="79"/>
         <source>Track selection</source>
-        <translation>选中的音轨</translation>
+        <translation>曲目选择</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="67"/>
@@ -10695,7 +10695,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/theme/themeregistry.cpp" line="46"/>
         <source>Dark mode</source>
-        <translation>暗黑模式</translation>
+        <translation>深色模式</translation>
     </message>
 </context>
 <context>
@@ -11334,7 +11334,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="199"/>
         <source>Number of samples</source>
-        <translation>样本数量</translation>
+        <translation>采样数量</translation>
     </message>
 </context>
 <context>
@@ -11608,7 +11608,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="329"/>
         <source>Artwork</source>
-        <translation>图片</translation>
+        <translation>插画</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="341"/>
@@ -11849,13 +11849,13 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="262"/>
         <source>No embedded artwork found to extract</source>
-        <translation>未找到要提取的嵌入艺术作品</translation>
+        <translation>未找到要提取的插图作品</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="265"/>
         <source>Extracted artwork to %Ln file(s)</source>
         <translation>
-            <numerusform>已将艺术作品提取到 %Ln 文件</numerusform>
+            <numerusform>已将插图提取到 %Ln 文件</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -11868,7 +11868,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="268"/>
         <source>Failed to extract artwork</source>
-        <translation>提取艺术作品失败</translation>
+        <translation>提取插图作品失败</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="57"/>
