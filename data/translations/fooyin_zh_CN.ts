@@ -1112,7 +1112,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="183"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="184"/>
@@ -1330,7 +1330,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation>搜索中</translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="142"/>
@@ -1987,7 +1987,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="294"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="295"/>
@@ -2010,7 +2010,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="193"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="201"/>
@@ -2365,7 +2365,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
@@ -3213,12 +3213,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="72"/>
         <source>&amp;New autoplaylist</source>
-        <translation>新自动播放列表(&amp;N)</translation>
+        <translation>新建自动播放列表(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="73"/>
         <source>Create a new autoplaylist</source>
-        <translation>新建一个新自动播放列表</translation>
+        <translation>创建一个新的自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="80"/>
@@ -3959,7 +3959,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/generalpage.cpp" line="251"/>
         <location filename="../../src/gui/settings/generalpage.cpp" line="252"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
 </context>
 <context>
@@ -4891,7 +4891,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="134"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="137"/>
@@ -5152,7 +5152,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="323"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="331"/>
@@ -5267,7 +5267,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="311"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="312"/>
@@ -6680,7 +6680,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="197"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="198"/>
@@ -7003,7 +7003,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="364"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="365"/>
@@ -7036,7 +7036,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="89"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="91"/>
@@ -7335,7 +7335,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="280"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="281"/>
@@ -7438,7 +7438,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="118"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="148"/>
@@ -7723,7 +7723,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="361"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="362"/>
@@ -8156,7 +8156,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="296"/>
         <source>Add new autoplaylist</source>
-        <translation>添加新自动播放列表</translation>
+        <translation>添加新的自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="315"/>
@@ -8495,7 +8495,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="262"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="263"/>
@@ -8595,7 +8595,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Simple Artist/Album/Year</source>
-        <translation>简单的艺术家/专辑/年份</translation>
+        <translation>简洁艺术家/专辑/年份</translation>
     </message>
 </context>
 <context>
@@ -9024,7 +9024,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="208"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="209"/>
@@ -9533,7 +9533,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="182"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="183"/>
@@ -9824,7 +9824,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="202"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
@@ -9834,7 +9834,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="203"/>
         <source>Searching</source>
-        <translation>搜索中</translation>
+        <translation>搜索</translation>
     </message>
 </context>
 <context>
@@ -10397,7 +10397,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="121"/>
         <source>General</source>
-        <translation>常规设置</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
