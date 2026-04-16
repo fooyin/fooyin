@@ -193,17 +193,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Numeric rating</source>
-        <translation>分數評等</translation>
+        <translation>分數評分</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="130"/>
         <source>Rating shown as stars</source>
-        <translation>評等顯示為星星</translation>
+        <translation>評分顯示為星星</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="133"/>
         <source>Rating editor representation</source>
-        <translation>評等編輯器呈現</translation>
+        <translation>評分編輯器呈現</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="134"/>
@@ -377,7 +377,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="132"/>
         <source>Rating shown as stars with trailing empty stars</source>
-        <translation>評等顯示為星星 尾隨空白星星</translation>
+        <translation>評分顯示為星星 尾隨空白星星</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="140"/>
@@ -4758,7 +4758,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
         <source>Controls the star size used by the rating editor widget</source>
-        <translation>由評等編輯器工具控制所使用的星星大小</translation>
+        <translation>由評分編輯器工具來控制所使用的星星大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
@@ -4785,12 +4785,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>Ratings</source>
-        <translation>評等</translation>
+        <translation>評分</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="106"/>
         <source>Rating editor star size</source>
-        <translation>評等編輯器星星大小</translation>
+        <translation>評分編輯器星星大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
@@ -5305,7 +5305,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
         <source>Save ratings to file tags when possible</source>
-        <translation>盡可能將評等儲存至檔案標籤</translation>
+        <translation>盡可能將評分儲存至檔案標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="146"/>
@@ -5315,7 +5315,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="147"/>
         <source>Overwrite rating in database when songs are re-read</source>
-        <translation>重新讀取歌曲時 覆蓋資料庫中的評等</translation>
+        <translation>重新讀取歌曲時 覆蓋資料庫中的評分</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="148"/>
@@ -5371,8 +5371,8 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="196"/>
         <source>When enabled, a rating found in file tags replaces the database rating.
 When disabled, the database rating is kept and file tags are only used when the database rating is empty.</source>
-        <translation>當設作啟用後，檔案標籤中的評等將取代資料庫的評等。 
-當設為停用後，將保留資料庫評等，僅當資料庫評等為空白時才使用檔案標籤。</translation>
+        <translation>當設作啟用後，檔案標籤中的評分將取代資料庫的評分。 
+當設為停用後，將保留資料庫評分，僅當資料庫評分為空白時才使用檔案標籤。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="200"/>
@@ -10631,7 +10631,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditormodel.cpp" line="647"/>
         <source>Multiple values. Choose a rating to apply it to all selected tracks.</source>
-        <translation>多重數值。選擇一個評等將其套用至全部所選的曲目。</translation>
+        <translation>多重數值。選擇一個評分將其套用至全部所選的曲目。</translation>
     </message>
 </context>
 <context>
