@@ -24,6 +24,7 @@
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <utils/datastream.h>
+#include <utils/stringcollator.h>
 #include <utils/utils.h>
 
 #include <QApplication>
@@ -338,32 +339,13 @@ void PlaylistOrganiserModel::playlistRemoved(Playlist* playlist)
 
 void PlaylistOrganiserModel::sortAllPlaylists(const SortOrder order)
 {
-    for(auto& m_node : m_nodes) {
-        // find root
-        if(m_node.second.parent()->type() == PlaylistOrganiserItem::Type::Root) {
-            emit layoutAboutToBeChanged();
-
-            // sort children of root
-            m_node.second.parent()->sortChildren(
-                [order](const PlaylistOrganiserItem* first, const PlaylistOrganiserItem* second) {
-                    if(order == Descending) {
-                        return 0 < QString::localeAwareCompare(first->title(), second->title());
-                    }
-
-                    return 0 >= QString::localeAwareCompare(first->title(), second->title());
-                });
-
-            emit layoutChanged();
-
-            // exit
-            break;
-        }
-    }
+    emit layoutAboutToBeChanged();
+    sortPlaylists(rootItem(), order);
+    emit layoutChanged();
 }
 
 void PlaylistOrganiserModel::sortGroupPlaylists(const QModelIndexList& indices, const SortOrder order)
 {
-    // abort unless we only have a single playlist selected
     if(indices.size() != 1) {
         return;
     }
@@ -375,16 +357,62 @@ void PlaylistOrganiserModel::sortGroupPlaylists(const QModelIndexList& indices, 
     }
 
     emit layoutAboutToBeChanged();
+    sortPlaylists(sortGroup, order);
+    emit layoutChanged();
+}
 
-    // TODO: share this function with sortAllPlaylist somehow
-    sortGroup->sortChildren([order](const PlaylistOrganiserItem* first, const PlaylistOrganiserItem* second) {
-        if(order == Descending) {
-            return 0 < QString::localeAwareCompare(first->title(), second->title());
+void PlaylistOrganiserModel::sortPlaylists(PlaylistOrganiserItem* parent, const SortOrder order)
+{
+    if(!parent) {
+        return;
+    }
+
+    auto children = parent->children();
+    if(children.empty()) {
+        return;
+    }
+
+    std::vector<PlaylistOrganiserItem*> playlists;
+    playlists.reserve(children.size());
+
+    for(auto* child : children) {
+        if(!child) {
+            continue;
         }
-        return 0 >= QString::localeAwareCompare(first->title(), second->title());
+
+        if(child->type() == PlaylistOrganiserItem::PlaylistItem) {
+            playlists.emplace_back(child);
+        }
+        else {
+            sortPlaylists(child, order);
+        }
+    }
+
+    if(playlists.size() < 2) {
+        return;
+    }
+
+    StringCollator collator;
+    collator.setCaseSensitivity(Qt::CaseInsensitive);
+
+    std::ranges::sort(playlists, [&collator, order](auto* first, auto* second) {
+        const int compare = collator.compare(first->title(), second->title());
+        return order == Descending ? compare > 0 : compare < 0;
     });
 
-    emit layoutChanged();
+    auto nextPlaylist = playlists.cbegin();
+    for(auto& child : children) {
+        if(child && child->type() == PlaylistOrganiserItem::PlaylistItem) {
+            child = *nextPlaylist;
+            ++nextPlaylist;
+        }
+    }
+
+    parent->clearChildren();
+    for(auto* child : children) {
+        parent->appendChild(child);
+    }
+    parent->resetChildren();
 }
 
 QModelIndex PlaylistOrganiserModel::indexForPlaylist(Playlist* playlist)

@@ -179,13 +179,13 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     , m_editAutoPlaylistCmd{actionManager->registerAction(m_editAutoPlaylist, Constants::Actions::EditAutoPlaylist,
                                                           m_context->context())}
 
-    , m_sortAllPlaylistsAsc{new QAction(tr("Sort all playlists"), this)}
-    , m_sortAllPlaylistsAscCmd{actionManager->registerAction(
-          m_sortAllPlaylistsAsc, "PlaylistOrganiser.SortAllPlaylistsAsc", m_context->context())}
+    , m_sortAllPlaylists{new QAction(tr("Sort all playlists"), this)}
+    , m_sortAllPlaylistsCmd{actionManager->registerAction(m_sortAllPlaylists, "PlaylistOrganiser.SortAllPlaylists",
+                                                          m_context->context())}
 
-    , m_sortGroupPlaylistsAsc{new QAction(tr("Sort playlists in this group"), this)}
-    , m_sortGroupPlaylistsAscCmd{actionManager->registerAction(
-          m_sortGroupPlaylistsAsc, "PlaylistOrganiser.SortGroupPlaylistsAsc", m_context->context())}
+    , m_sortGroupPlaylists{new QAction(tr("Sort playlists in group"), this)}
+    , m_sortGroupPlaylistsCmd{actionManager->registerAction(
+          m_sortGroupPlaylists, "PlaylistOrganiser.SortGroupPlaylists", m_context->context())}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -222,30 +222,28 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     m_newGroupCmd->setAttribute(ProxyAction::UpdateText);
     m_newGroupCmd->setDefaultShortcut(QKeySequence::AddTab);
 
-    m_sortAllPlaylistsAscCmd->setCategories(organiserCategory);
-    m_sortAllPlaylistsAsc->setStatusTip(tr("Sort all playlists"));
-    m_sortGroupPlaylistsAscCmd->setCategories(organiserCategory);
-    m_sortGroupPlaylistsAsc->setStatusTip(tr("Sort all playlists in this group"));
+    m_sortAllPlaylistsCmd->setCategories(organiserCategory);
+    m_sortAllPlaylists->setStatusTip(tr("Sort all playlists alphabetically"));
+    m_sortGroupPlaylistsCmd->setCategories(organiserCategory);
+    m_sortGroupPlaylists->setStatusTip(tr("Sort playlists in the selected group alphabetically"));
+
+    const auto sortAndRestoreState = [this](auto&& sortFn) {
+        const QByteArray state = saveExpandedState(m_organiserTree, m_model);
+        sortFn();
+        restoreExpandedState(m_organiserTree, m_model, state);
+    };
 
     QAction::connect(m_newGroup, &QAction::triggered, this, [this]() {
         const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
         createGroup(indexes.empty() ? QModelIndex{} : indexes.front());
     });
-    QAction::connect(m_sortAllPlaylistsAsc, &QAction::triggered, this, [this]() {
-        m_model->sortAllPlaylists(PlaylistOrganiserModel::SortOrder::Ascending);
-
-        // Restore State of expanded TreeItems
-        const auto state = m_settings->fileValue(OrganiserState).toByteArray();
-        restoreExpandedState(m_organiserTree, m_model, state);
+    QAction::connect(m_sortAllPlaylists, &QAction::triggered, this, [this, sortAndRestoreState]() {
+        sortAndRestoreState([this]() { m_model->sortAllPlaylists(PlaylistOrganiserModel::SortOrder::Ascending); });
     });
-    QAction::connect(m_sortGroupPlaylistsAsc, &QAction::triggered, this, [this]() {
+    QAction::connect(m_sortGroupPlaylists, &QAction::triggered, this, [this, sortAndRestoreState]() {
         const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
-
-        m_model->sortGroupPlaylists(indexes, PlaylistOrganiserModel::SortOrder::Ascending);
-
-        // Restore State of expanded TreeItems
-        const auto state = m_settings->fileValue(OrganiserState).toByteArray();
-        restoreExpandedState(m_organiserTree, m_model, state);
+        sortAndRestoreState(
+            [this, indexes]() { m_model->sortGroupPlaylists(indexes, PlaylistOrganiserModel::SortOrder::Ascending); });
     });
     QObject::connect(m_removePlaylist, &QAction::triggered, this,
                      [this]() { m_model->removeItems(m_organiserTree->selectionModel()->selectedIndexes()); });
@@ -376,6 +374,14 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(m_newAutoPlaylistCmd->action());
     menu->addAction(m_newGroupCmd->action());
 
+    menu->addSeparator();
+
+    menu->addAction(m_sortAllPlaylistsCmd->action());
+    menu->addAction(m_sortGroupPlaylistsCmd->action());
+    m_sortGroupPlaylists->setEnabled(groupCount == 1 && playlistCount == 0); // only enable if a group is selected
+
+    menu->addSeparator();
+
     if(index.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
         if(auto* savePlaylist = m_actionManager->command(Constants::Actions::SavePlaylist)) {
             menu->addSeparator();
@@ -395,13 +401,6 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
 
     menu->addAction(m_renameCmd->action());
     menu->addAction(m_removeCmd->action());
-
-    menu->addSeparator();
-
-    menu->addAction(m_sortAllPlaylistsAscCmd->action());
-
-    menu->addAction(m_sortGroupPlaylistsAscCmd->action());
-    m_sortGroupPlaylistsAsc->setEnabled(groupCount == 1 && playlistCount == 0); // only enable if a group is selected
 
     menu->popup(event->globalPos());
 }

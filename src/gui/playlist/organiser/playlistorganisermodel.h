@@ -87,6 +87,7 @@ signals:
     void tracksDroppedOnGroup(const std::vector<int>& trackIds, const QString& group, int index);
 
 private:
+    void sortPlaylists(PlaylistOrganiserItem* parent, SortOrder order);
     QByteArray saveIndexes(const QModelIndexList& indexes) const;
     QModelIndexList restoreIndexes(QByteArray data);
     void recurseSaveModel(QDataStream& stream, PlaylistOrganiserItem* parent);
