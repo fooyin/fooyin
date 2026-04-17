@@ -7388,7 +7388,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="92"/>
         <source>Stop playback after queue finishes</source>
-        <translation>佇列終結後停止播放</translation>
+        <translation>佇列結束之後停止播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="93"/>
