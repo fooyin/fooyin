@@ -1098,6 +1098,8 @@ bool FFmpegReader::readTrack(const AudioSource& /*source*/, Track& track)
         AVDictionaryEntry* chapterTag{nullptr};
         QString chapterTitle;
         QString chapterTrackNumber;
+        float chapterRGTrackGain{Fooyin::Constants::InvalidGain};
+        float chapterRGTrackPeak{Fooyin::Constants::InvalidPeak};
 
         while((chapterTag = av_dict_get(chapter->metadata, "", chapterTag, AV_DICT_IGNORE_SUFFIX))) {
             if(strcasecmp(chapterTag->key, "title") == 0) {
@@ -1105,6 +1107,12 @@ bool FFmpegReader::readTrack(const AudioSource& /*source*/, Track& track)
             }
             else if(strcasecmp(chapterTag->key, "track") == 0 || strcasecmp(chapterTag->key, "part_number") == 0) {
                 chapterTrackNumber = convertString(chapterTag->value);
+            }
+            else if(strcasecmp(chapterTag->key, "REPLAYGAIN_TRACK_GAIN") == 0) {
+                chapterRGTrackGain = parseReplayGain(convertString(chapterTag->value));
+            }
+            else if(strcasecmp(chapterTag->key, "REPLAYGAIN_TRACK_PEAK") == 0) {
+                chapterRGTrackPeak = parseReplayPeak(convertString(chapterTag->value));
             }
         }
 
@@ -1120,6 +1128,13 @@ bool FFmpegReader::readTrack(const AudioSource& /*source*/, Track& track)
         }
 
         track.setTrackTotal(QString::number(p->m_chapterCount));
+
+        if(chapterRGTrackGain != Fooyin::Constants::InvalidGain) {
+            track.setRGTrackGain(chapterRGTrackGain);
+        }
+        if(chapterRGTrackPeak != Fooyin::Constants::InvalidPeak) {
+            track.setRGTrackPeak(chapterRGTrackPeak);
+        }
 
         track.setExtraProperty(u"CHAPTER"_s, u"1"_s);
     }
