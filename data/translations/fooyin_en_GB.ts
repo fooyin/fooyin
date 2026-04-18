@@ -150,9 +150,9 @@
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="646"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Writing metadata to %Ln track…</numerusform>
+            <numerusform>Writing metadata to %Ln tracks…</numerusform>
         </translation>
     </message>
 </context>
