@@ -967,7 +967,7 @@ public:
             return false;
         }
 
-        if(m_context->nb_chapters > 1) {
+        if(m_context->nb_chapters >= 1) {
             m_chapterCount = static_cast<int>(m_context->nb_chapters);
         }
 
