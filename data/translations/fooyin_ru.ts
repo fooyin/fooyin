@@ -106,12 +106,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
         <source>Primary artist</source>
-        <translation>Основной исполнитель</translation>
+        <translation>Основной артист</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
         <source>Unique artists combined into one value</source>
-        <translation>Уникальные исполнители, объединённые в одно значение</translation>
+        <translation>Уникальные артисты, объединённые в одно значение</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="110"/>
@@ -121,7 +121,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="112"/>
         <source>Album artist</source>
-        <translation>Исполнитель альбома</translation>
+        <translation>Артист альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="114"/>
@@ -421,7 +421,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Rating shown as stars with trailing empty stars</source>
-        <translation>Рейтинг, отображаемый звёздами с пустыми звёздами в конце</translation>
+        <translation>Оценка, отображаемая звёздами с пустыми звёздами в конце</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="175"/>
@@ -1429,7 +1429,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation>Автоматически искать отсутствующие обложки при запуске воспроизведения</translation>
+        <translation>Автоматически искать недоступные обложки при запуске проигрывания</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
@@ -1921,7 +1921,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="463"/>
         <source>Artist</source>
-        <translation>Исполнитель</translation>
+        <translation>Артист</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="495"/>
@@ -2029,7 +2029,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="49"/>
         <source>Artist</source>
-        <translation>Исполнитель</translation>
+        <translation>Артист</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="61"/>
@@ -3190,7 +3190,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="107"/>
         <source>Auto switch policy</source>
-        <translation>Политика автоматического переключения</translation>
+        <translation>Политика автопереключения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="143"/>
@@ -3657,7 +3657,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Album Artist</source>
-        <translation>Исполнитель альбома</translation>
+        <translation>Артист альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="41"/>
@@ -4360,7 +4360,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="829"/>
         <location filename="../../src/gui/guiapplication.cpp" line="838"/>
         <source>Rating</source>
-        <translation>Рейтинг</translation>
+        <translation>Оценка</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1043"/>
@@ -4380,7 +4380,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1051"/>
         <source>OK</source>
-        <translation>Хорошо</translation>
+        <translation>ОК</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1125"/>
@@ -4709,12 +4709,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="101"/>
         <source>Image allocation limit</source>
-        <translation>Предел распределения на изображения</translation>
+        <translation>Предел размещения для изображений</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="103"/>
         <source>Set to &apos;0&apos; to disable the limit.</source>
-        <translation>Укажите на «0», чтобы отключить предел.</translation>
+        <translation>Укажите «0», чтобы отключить предел.</translation>
     </message>
 </context>
 <context>
@@ -4859,17 +4859,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
         <source>Controls how individual tracks are labelled in the properties sidebar.</source>
-        <translation type="unfinished">Определяет, как отдельные треки подписываются на боковой панели свойств.</translation>
+        <translation>Определяет, как отдельные дорожки подписываются на боковой панели свойств.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
         <source>Sidebar track display</source>
-        <translation type="unfinished">Отображение треков на боковой панели</translation>
+        <translation>Отображение дорожек в боковой панели</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
         <source>Controls the star size used by the rating editor widget</source>
-        <translation>Управляет размером звёзд, используемым виджетом редактора рейтинга</translation>
+        <translation>Управляет размером звёзд, используемым виджетом редактора оценки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="109"/>
@@ -4896,12 +4896,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="116"/>
         <source>Ratings</source>
-        <translation>Рейтинги</translation>
+        <translation>Оценки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="120"/>
         <source>Rating editor star size</source>
-        <translation>Размер звёзд в редакторе рейтинга</translation>
+        <translation>Размер звёзд в редакторе оценки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="122"/>
@@ -5047,7 +5047,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="165"/>
         <source>Album Artist</source>
-        <translation>Исполнитель альбома</translation>
+        <translation>Артист альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="168"/>
@@ -5152,7 +5152,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="257"/>
         <source>Opus header gain</source>
-        <translation type="unfinished">Усиление заголовка Opus</translation>
+        <translation>Усиление заголовка Opus</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="262"/>
@@ -5406,7 +5406,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="142"/>
         <source>Mark unavailable tracks on playback</source>
-        <translation>Отмечать недоступные треки при воспроизведении</translation>
+        <translation>Отмечать недоступные дорожки при проигрывании</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="143"/>
@@ -5421,7 +5421,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="145"/>
         <source>Save ratings to file tags when possible</source>
-        <translation>Сохранять рейтинги в теги файлов, когда это возможно</translation>
+        <translation>Сохранять оценки в теги файлов, когда это возможно</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="146"/>
@@ -5431,7 +5431,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="147"/>
         <source>Overwrite rating in database when songs are re-read</source>
-        <translation>Перезаписывать рейтинг в базе данных при повторном чтении песен</translation>
+        <translation>Перезаписывать оценку в базе данных при повторном чтении песен</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="148"/>
@@ -5487,8 +5487,8 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="196"/>
         <source>When enabled, a rating found in file tags replaces the database rating.
 When disabled, the database rating is kept and file tags are only used when the database rating is empty.</source>
-        <translation>При включении рейтинг, найденный в тегах файла, заменяет рейтинг в базе данных.
-При отключении сохраняется рейтинг из базы данных, а теги файлов используются только когда рейтинг в базе данных пуст.</translation>
+        <translation>При включении оценка, найденная в тегах файла, заменяет оценку в базе данных.
+При отключении сохраняется оценка из базы данных, а теги файлов используются, только когда оценка в базе данных пуста.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="200"/>
@@ -6014,7 +6014,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="40"/>
         <source>Artist/Album</source>
-        <translation>Исполнитель/альбом</translation>
+        <translation>Артист/альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="44"/>
@@ -6516,7 +6516,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="84"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
-        <translation>Автосохранение через 60 секунд или 1/3 продолжительности трека</translation>
+        <translation>Автосохранение через 60 секунд или 1/3 длины дорожки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="85"/>
@@ -7638,7 +7638,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="192"/>
         <source>Enabled</source>
-        <translation type="unfinished">Включено</translation>
+        <translation>Включено</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="194"/>
@@ -7653,29 +7653,29 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="198"/>
         <source>Display Script</source>
-        <translation type="unfinished">Скрипт отображения</translation>
+        <translation>Скрипт отображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="200"/>
         <source>Sort Script</source>
-        <translation type="unfinished">Скрипт сортировки</translation>
+        <translation>Скрипт сортировки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="202"/>
         <source>Write Field</source>
-        <translation type="unfinished">Поле записи</translation>
+        <translation>Поле записи</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="275"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="325"/>
         <source>Use display script</source>
-        <translation type="unfinished">Использовать скрипт отображения</translation>
+        <translation>Использовать скрипт отображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="278"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="333"/>
         <source>No write field</source>
-        <translation type="unfinished">Нет поля записи</translation>
+        <translation>Нет поля записи</translation>
     </message>
 </context>
 <context>
@@ -7715,17 +7715,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Artist</source>
-        <translation>Исполнитель трека</translation>
+        <translation>Артист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
         <source>Artist/Album</source>
-        <translation>Исполнитель/альбом</translation>
+        <translation>Артист/альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
         <source>Album Artist</source>
-        <translation>Исполнитель альбома</translation>
+        <translation>Артист альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
@@ -7785,7 +7785,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="60"/>
         <source>Rating</source>
-        <translation>Рейтинг</translation>
+        <translation>Оценка</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
@@ -7810,7 +7810,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="65"/>
         <source>Artist Picture</source>
-        <translation>Изображение исполнителя</translation>
+        <translation>Изображение артиста</translation>
     </message>
 </context>
 <context>
@@ -7939,17 +7939,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="99"/>
         <source>Enable inline tag editing</source>
-        <translation type="unfinished">Включить встроенное редактирование тегов</translation>
+        <translation>Включить встроенную правку тегов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
         <source>Move deleted or empty playlists to trash</source>
-        <translation type="unfinished">Перемещать удалённые или пустые плейлисты в корзину</translation>
+        <translation>Перемещать удалённые или пустые плейлисты в корзину</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="117"/>
         <source>Save last state of deleted playlists</source>
-        <translation type="unfinished">Сохранять последнее состояние удалённых плейлистов</translation>
+        <translation>Сохранять последнее состояние удалённых плейлистов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="119"/>
@@ -7959,7 +7959,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source>Save any changes made to a playlist before it was deleted</source>
-        <translation type="unfinished">Сохранять любые изменения, внесённые в плейлист до его удаления</translation>
+        <translation>Сохранять любые изменения, внесённые в плейлист до его удаления</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="129"/>
@@ -7969,7 +7969,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="135"/>
         <source>Allow editing writable track tag columns directly from the playlist</source>
-        <translation type="unfinished">Разрешить редактирование изменяемых столбцов тегов треков прямо из плейлиста</translation>
+        <translation>Разрешить редактирование изменяемых столбцов тегов дорожек прямо из плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="140"/>
@@ -8029,17 +8029,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="246"/>
         <source>Auto</source>
-        <translation type="unfinished">Автоматически</translation>
+        <translation>Автоматически</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="247"/>
         <source>Absolute</source>
-        <translation type="unfinished">Абсолютный</translation>
+        <translation>Абсолютный</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="248"/>
         <source>Relative</source>
-        <translation type="unfinished">Относительный</translation>
+        <translation>Относительный</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="265"/>
@@ -8167,12 +8167,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="203"/>
         <source>Sort all playlists</source>
-        <translation type="unfinished">Сортировать все плейлисты</translation>
+        <translation>Сортировать все плейлисты</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="207"/>
         <source>Sort playlists in group</source>
-        <translation type="unfinished">Сортировать плейлисты в группе</translation>
+        <translation>Сортировать плейлисты в группе</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="231"/>
@@ -8182,12 +8182,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="247"/>
         <source>Sort all playlists alphabetically</source>
-        <translation type="unfinished">Сортировать все плейлисты по алфавиту</translation>
+        <translation>Сортировать все плейлисты по алфавиту</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="249"/>
         <source>Sort playlists in the selected group alphabetically</source>
-        <translation type="unfinished">Сортировать плейлисты в выбранной группе по алфавиту</translation>
+        <translation>Сортировать плейлисты в выбранной группе по алфавиту</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="472"/>
@@ -8231,44 +8231,44 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="56"/>
         <source>Playlist Organiser Settings</source>
-        <translation type="unfinished">Настройки организатора плейлистов</translation>
+        <translation>Настройки организатора плейлистов</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="59"/>
         <source>Playing text</source>
-        <translation type="unfinished">Текст воспроизведения</translation>
+        <translation>Текст воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="61"/>
         <source>Playing background</source>
-        <translation type="unfinished">Фон воспроизведения</translation>
+        <translation>Фон воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="64"/>
         <source>Scripts</source>
-        <translation type="unfinished">Скрипты</translation>
+        <translation>Скрипты</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="68"/>
         <source>Available variables: &lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</source>
-        <translation type="unfinished">Доступные переменные: &lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</translation>
+        <translation>Доступные переменные: &lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="75"/>
         <source>Left</source>
         <extracomment>Refers to the left script field.</extracomment>
-        <translation type="unfinished">Слева</translation>
+        <translation>Левый</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="78"/>
         <source>Right</source>
         <extracomment>Refers to the right script field.</extracomment>
-        <translation type="unfinished">Справа</translation>
+        <translation>Правый</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="83"/>
         <source>Colours</source>
-        <translation type="unfinished">Цвета</translation>
+        <translation>Цвета</translation>
     </message>
 </context>
 <context>
@@ -8358,7 +8358,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="225"/>
         <source>Display covers below every subheader</source>
-        <translation type="unfinished">Показывать обложки под каждым подзаголовком</translation>
+        <translation>Показывать обложки под каждым подзаголовком</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="230"/>
@@ -8499,25 +8499,25 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="639"/>
         <source>Writing metadata…</source>
-        <translation type="unfinished">Запись метаданных…</translation>
+        <translation>Запись метаданных…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="639"/>
         <source>Abort</source>
-        <translation type="unfinished">Прервать</translation>
+        <translation>Прервать</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="645"/>
         <source>Writing Metadata</source>
-        <translation type="unfinished">Запись метаданных</translation>
+        <translation>Запись метаданных</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="646"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform>Запись метаданных в %Ln трек…</numerusform>
-            <numerusform>Запись метаданных в %Ln трека…</numerusform>
-            <numerusform>Запись метаданных в %Ln треков…</numerusform>
+        <translation>
+            <numerusform>Запись метаданных в %Ln дорожку…</numerusform>
+            <numerusform>Запись метаданных в %Ln дорожки…</numerusform>
+            <numerusform>Запись метаданных в %Ln дорожек…</numerusform>
         </translation>
     </message>
     <message>
@@ -9089,7 +9089,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="38"/>
         <source>OK</source>
-        <translation>Хорошо</translation>
+        <translation>ОК</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="41"/>
@@ -9245,7 +9245,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="125"/>
         <source>Edit Opus header gain</source>
-        <translation type="unfinished">Изменить усиление заголовка Opus</translation>
+        <translation>Изменить усиление заголовка Opus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="126"/>
@@ -9270,7 +9270,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="132"/>
         <source>Manipulate the Opus header gain field</source>
-        <translation type="unfinished">Управление полем усиления заголовка Opus</translation>
+        <translation>Управление полем усиления заголовка Opus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="133"/>
@@ -9379,17 +9379,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
         <source>Leave null</source>
-        <translation type="unfinished">Оставить пустым</translation>
+        <translation>Оставить пустым</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="79"/>
         <source>Use Track Gain</source>
-        <translation type="unfinished">Использовать усиление трека</translation>
+        <translation>Использовать усиление дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="80"/>
         <source>Use Album Gain</source>
-        <translation type="unfinished">Использовать усиление альбома</translation>
+        <translation>Использовать усиление альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="84"/>
@@ -9419,22 +9419,22 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="116"/>
         <source>Opus Header Gain</source>
-        <translation type="unfinished">Усиление заголовка Opus</translation>
+        <translation>Усиление заголовка Opus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="125"/>
         <source>Write track gain to the Opus header and keep album gain in the R128 comment field</source>
-        <translation type="unfinished">Записать усиление трека в заголовок Opus, а усиление альбома оставить в поле комментария R128</translation>
+        <translation>Записать усиление дорожки в заголовок Opus, а усиление альбома оставить в поле комментария R128</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="127"/>
         <source>Write album gain to the Opus header and keep track gain in the R128 comment field</source>
-        <translation type="unfinished">Записать усиление альбома в заголовок Opus, а усиление трека оставить в поле комментария R128</translation>
+        <translation>Записать усиление альбома в заголовок Opus, а усиление дорожки оставить в поле комментария R128</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="129"/>
         <source>Do not write ReplayGain values to the Opus header unless changed explicitly elsewhere</source>
-        <translation type="unfinished">Не записывать значения ReplayGain в заголовок Opus, если они не были явно изменены в другом месте</translation>
+        <translation>Не записывать значения ReplayGain в заголовок Opus, если они не были явно изменены в другом месте</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="135"/>
@@ -9898,7 +9898,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="76"/>
         <source>Album Artist</source>
-        <translation>Исполнитель альбома</translation>
+        <translation>Артист альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
@@ -9933,7 +9933,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="106"/>
         <source>Artist</source>
-        <translation>Исполнитель</translation>
+        <translation>Артист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="108"/>
@@ -10090,7 +10090,7 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="194"/>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="226"/>
         <source>Disconnect</source>
-        <translation>Отключить</translation>
+        <translation>Отсоединить</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="167"/>
@@ -10155,7 +10155,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="163"/>
         <source>Show all when search is empty</source>
-        <translation type="unfinished">Показывать всё, когда поиск пуст</translation>
+        <translation>Показывать всё, когда поиск пуст</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="173"/>
@@ -10331,7 +10331,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="534"/>
         <source>Show all when search is empty</source>
-        <translation type="unfinished">Показывать всё, когда поиск пуст</translation>
+        <translation>Показывать всё, когда поиск пуст</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="544"/>
@@ -10384,7 +10384,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="358"/>
         <source>Show remaining time</source>
-        <translation type="unfinished">Показывать оставшееся время</translation>
+        <translation>Показывать оставшееся время</translation>
     </message>
 </context>
 <context>
@@ -10723,12 +10723,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/context/staticcontextmenupage.cpp" line="46"/>
         <source>Interface</source>
-        <translation type="unfinished">Интерфейс</translation>
+        <translation>Интерфейс</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/staticcontextmenupage.cpp" line="46"/>
         <source>Context Menu</source>
-        <translation type="unfinished">Контекстное меню</translation>
+        <translation>Контекстное меню</translation>
     </message>
 </context>
 <context>
@@ -10876,33 +10876,33 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="140"/>
         <source>Preview</source>
-        <translation type="unfinished">Предпросмотр</translation>
+        <translation>Предпросмотр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="144"/>
         <source>Auto Capitalisation</source>
-        <translation type="unfinished">Автоматический капитализация</translation>
+        <translation>Автоматическая капитализация</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="146"/>
         <source>Automatically Fill Values</source>
-        <translation type="unfinished">Автоматически заполнить значения</translation>
+        <translation>Автоматически заполнить значения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="151"/>
         <source>File names</source>
-        <translation type="unfinished">Имена файлов</translation>
+        <translation>Имена файлов</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="152"/>
         <source>Other…</source>
-        <translation type="unfinished">Другое…</translation>
+        <translation>Другое…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="156"/>
         <source>Patterns use literal text and %field% captures.
 This does not support full scripting.</source>
-        <translation type="unfinished">Шаблоны используют обычный текст и захваты %field%.
+        <translation>Шаблоны используют обычный текст и записи %field%.
 Полные скрипты не поддерживаются.</translation>
     </message>
     <message>
@@ -10910,92 +10910,92 @@ This does not support full scripting.</source>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="241"/>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="244"/>
         <source>Source</source>
-        <translation type="unfinished">Источник</translation>
+        <translation>Источник</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="165"/>
         <source>Pattern</source>
-        <translation type="unfinished">Шаблон</translation>
+        <translation>Шаблон</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="239"/>
         <source>File Name</source>
-        <translation type="unfinished">Имя файла</translation>
+        <translation>Имя файла</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="318"/>
         <source>Track Title</source>
-        <translation type="unfinished">Название трека</translation>
+        <translation>Название дорожки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="321"/>
         <source>Artist Name</source>
-        <translation type="unfinished">Имя исполнителя</translation>
+        <translation>Имя артиста</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="324"/>
         <source>Album Title</source>
-        <translation type="unfinished">Название альбома</translation>
+        <translation>Название альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="327"/>
         <source>Album Artist</source>
-        <translation type="unfinished">Исполнитель альбома</translation>
+        <translation>Артист альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="330"/>
         <source>Track Number</source>
-        <translation type="unfinished">Номер трека</translation>
+        <translation>Номер дорожки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="333"/>
         <source>Total Tracks</source>
-        <translation type="unfinished">Количество треков</translation>
+        <translation>Всего дорожек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="336"/>
         <source>Disc Number</source>
-        <translation type="unfinished">Номер диска</translation>
+        <translation>Номер диска</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="339"/>
         <source>Total Discs</source>
-        <translation type="unfinished">Всего дисков</translation>
+        <translation>Всего дисков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="342"/>
         <source>Genre</source>
-        <translation type="unfinished">Жанр</translation>
+        <translation>Жанр</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="345"/>
         <source>Genres</source>
-        <translation type="unfinished">Жанры</translation>
+        <translation>Жанры</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="348"/>
         <source>Composer</source>
-        <translation type="unfinished">Композитор</translation>
+        <translation>Композитор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="351"/>
         <source>Performer</source>
-        <translation type="unfinished">Исполнитель</translation>
+        <translation>Исполнитель</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="354"/>
         <source>Comment</source>
-        <translation type="unfinished">Комментарий</translation>
+        <translation>Комментарий</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="357"/>
         <source>Date</source>
-        <translation type="unfinished">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="360"/>
         <source>Rating</source>
-        <translation type="unfinished">Рейтинг</translation>
+        <translation>Оценка</translation>
     </message>
 </context>
 <context>
@@ -11038,7 +11038,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
         <source>Album Artist</source>
-        <translation>Исполнитель альбома</translation>
+        <translation>Артист альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
@@ -11068,7 +11068,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Rating</source>
-        <translation>Рейтинг</translation>
+        <translation>Оценка</translation>
     </message>
 </context>
 <context>
@@ -11120,7 +11120,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditormodel.cpp" line="647"/>
         <source>Multiple values. Choose a rating to apply it to all selected tracks.</source>
-        <translation>Несколько значений. Выберите рейтинг, чтобы применить его ко всем выбранным дорожкам.</translation>
+        <translation>Несколько значений. Выберите оценку, чтобы применить её ко всем выбранным дорожкам.</translation>
     </message>
 </context>
 <context>
@@ -11128,7 +11128,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="78"/>
         <source>Automatically fill values…</source>
-        <translation type="unfinished">Автоматически заполнить значения…</translation>
+        <translation>Автоматически заполнить значения…</translation>
     </message>
 </context>
 <context>
@@ -11159,7 +11159,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="74"/>
         <source>Automatically &amp;fill values…</source>
-        <translation type="unfinished">Автоматически &amp;заполнить значения…</translation>
+        <translation>Автоматически &amp;заполнить значения…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="75"/>
@@ -11225,22 +11225,22 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="36"/>
         <source>Track</source>
-        <translation type="unfinished">Трек</translation>
+        <translation>Дорожка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="37"/>
         <source>Interface</source>
-        <translation type="unfinished">Интерфейс</translation>
+        <translation>Интерфейс</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="37"/>
         <source>Context Menu</source>
-        <translation type="unfinished">Контекстное меню</translation>
+        <translation>Контекстное меню</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="40"/>
         <source>Unchecked items will be hidden from track selection context menus.</source>
-        <translation type="unfinished">Неотмеченные элементы будут скрыты в контекстных меню выделения треков.</translation>
+        <translation>Неотмеченные элементы будут скрыты в контекстных меню выделения дорожек.</translation>
     </message>
 </context>
 <context>
@@ -11293,27 +11293,27 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="216"/>
         <source>Track actions</source>
-        <translation type="unfinished">Действия с треками</translation>
+        <translation>Действия с дорожками</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="224"/>
         <source>Playback queue</source>
-        <translation type="unfinished">Очередь воспроизведения</translation>
+        <translation>Очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="232"/>
         <source>Playlist actions</source>
-        <translation type="unfinished">Действия с плейлистами</translation>
+        <translation>Действия с плейлистами</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="245"/>
         <source>Copy file path</source>
-        <translation type="unfinished">Копировать путь к файлу</translation>
+        <translation>Копировать путь к файлу</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="246"/>
         <source>Copy directory path</source>
-        <translation type="unfinished">Копировать путь к каталогу</translation>
+        <translation>Копировать путь к каталогу</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="248"/>
@@ -11333,7 +11333,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="251"/>
         <source>Artist picture…</source>
-        <translation>Фото исполнителя…</translation>
+        <translation>Изображение артиста…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="252"/>
@@ -11393,12 +11393,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="368"/>
         <source>Copy the file paths of the selected tracks</source>
-        <translation type="unfinished">Копировать пути к файлам выбранных треков</translation>
+        <translation>Копировать пути к файлам выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="380"/>
         <source>Copy the containing directories of the selected tracks</source>
-        <translation type="unfinished">Копировать каталоги, содержащие выбранные треки</translation>
+        <translation>Копировать каталоги, содержащие выбранные дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="396"/>
@@ -11428,7 +11428,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="451"/>
         <source>Attach an image file as the artist picture for the selected tracks</source>
-        <translation>Прикрепить файл изображения в качестве фото исполнителя для выбранных дорожек</translation>
+        <translation>Прикрепить файл изображения в качестве изображения артиста для выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="466"/>
@@ -11677,7 +11677,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="44"/>
         <source>Show remaining time</source>
-        <translation type="unfinished">Показывать оставшееся время</translation>
+        <translation>Показывать оставшееся время</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="45"/>
@@ -11942,7 +11942,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="184"/>
         <source>Generating waveform data…</source>
-        <translation>Генерация данных формы сигнала…</translation>
+        <translation>Создание данных волноформы…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="184"/>
@@ -11970,7 +11970,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="526"/>
         <source>Show remaining time</source>
-        <translation type="unfinished">Показывать оставшееся время</translation>
+        <translation>Показывать оставшееся время</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="535"/>
@@ -12191,47 +12191,47 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="102"/>
         <source>Play</source>
-        <translation type="unfinished">Воспроизвести</translation>
+        <translation>Играть</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="106"/>
         <source>Playlist</source>
-        <translation type="unfinished">Плейлист</translation>
+        <translation>Плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="110"/>
         <source>Queue</source>
-        <translation type="unfinished">Очередь</translation>
+        <translation>Очередь</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="114"/>
         <source>Grouping</source>
-        <translation type="unfinished">Группировка</translation>
+        <translation>Группировка</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="117"/>
         <source>Configure</source>
-        <translation type="unfinished">Настроить</translation>
+        <translation>Настроить</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="121"/>
         <source>Open folder</source>
-        <translation type="unfinished">Открыть папку</translation>
+        <translation>Открыть папку</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="124"/>
         <source>Track actions</source>
-        <translation type="unfinished">Действия с треками</translation>
+        <translation>Действия с дорожками</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="298"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Дерево фонотеки</translation>
+        <translation>Дерево фонотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="300"/>
         <source>Unchecked items will be hidden from the library tree context menu.</source>
-        <translation type="unfinished">Неотмеченные элементы будут скрыты в контекстном меню дерева фонотеки.</translation>
+        <translation>Неотмеченные элементы будут скрыты в контекстном меню дерева фонотеки.</translation>
     </message>
 </context>
 <context>
@@ -12239,57 +12239,57 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="54"/>
         <source>Play</source>
-        <translation type="unfinished">Воспроизвести</translation>
+        <translation>Играть</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="57"/>
         <source>Stop after this</source>
-        <translation type="unfinished">Остановить после этого</translation>
+        <translation>Остановить после этого</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="61"/>
         <source>Remove</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="64"/>
         <source>Crop</source>
-        <translation type="unfinished">Обрезать</translation>
+        <translation>Обрезать</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="67"/>
         <source>Sort</source>
-        <translation type="unfinished">Сортировать</translation>
+        <translation>Сортировать</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
         <source>Clipboard</source>
-        <translation type="unfinished">Буфер обмена</translation>
+        <translation>Буфер обмена</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Presets</source>
-        <translation type="unfinished">Предустановки</translation>
+        <translation>Предустановки</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="79"/>
         <source>Queue</source>
-        <translation type="unfinished">Очередь</translation>
+        <translation>Очередь</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Track actions</source>
-        <translation type="unfinished">Действия с треками</translation>
+        <translation>Действия с дорожками</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="309"/>
         <source>Playlist</source>
-        <translation type="unfinished">Плейлист</translation>
+        <translation>Плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="312"/>
         <source>Unchecked items will be hidden from the playlist context menu.</source>
-        <translation type="unfinished">Неотмеченные элементы будут скрыты в контекстном меню плейлиста.</translation>
+        <translation>Неотмеченные элементы будут скрыты в контекстном меню плейлиста.</translation>
     </message>
 </context>
 <context>
@@ -12563,7 +12563,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenumodel.cpp" line="74"/>
         <source>Separator</source>
-        <translation type="unfinished">Разделитель</translation>
+        <translation>Разделитель</translation>
     </message>
 </context>
 <context>
