@@ -2694,7 +2694,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="105"/>
         <source>Enter layout editing mode to edit</source>
-        <translation>Зайдите в режим редактирования оформления для изменения</translation>
+        <translation>Войдите в режим редактирования макета для правки</translation>
     </message>
 </context>
 <context>
@@ -2785,7 +2785,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="548"/>
         <source>Edit</source>
-        <translation>&amp;Правка</translation>
+        <translation>Правка</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="550"/>
@@ -2795,7 +2795,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="551"/>
         <source>Undo the previous layout edit</source>
-        <translation>Отменить предыдущее исправление оформления</translation>
+        <translation>Отменить предыдущую правку макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="562"/>
@@ -2805,7 +2805,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="563"/>
         <source>Redo the previous layout edit</source>
-        <translation>Вернуть предыдущее исправление оформления</translation>
+        <translation>Вернуть предыдущую правку макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="443"/>
@@ -3061,7 +3061,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="53"/>
         <source>Export Layout</source>
-        <translation>Экспорт оформления</translation>
+        <translation>Экспорт макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="62"/>
@@ -3076,7 +3076,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="65"/>
         <source>&amp;Browse…</source>
-        <translation>&amp;Выбрать…</translation>
+        <translation>&amp;Обзор…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="72"/>
@@ -3086,22 +3086,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="111"/>
         <source>Failed to save the current layout</source>
-        <translation>Не удалось сохранить текущее оформление</translation>
+        <translation>Не удалось сохранить текущий макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="143"/>
         <source>Failed to export layout</source>
-        <translation>Ошибка экспорта оформления</translation>
+        <translation>Не удалось экспортировать макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="149"/>
         <source>Save Layout</source>
-        <translation>Сохранить оформление</translation>
+        <translation>Сохранить макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="149"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation>Оформление fooyin (*.fyl)</translation>
+        <translation>Макет fooyin (*.fyl)</translation>
     </message>
 </context>
 <context>
@@ -4722,7 +4722,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="227"/>
         <source>Layout</source>
-        <translation>Оформление</translation>
+        <translation>Макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="228"/>
@@ -4780,17 +4780,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="97"/>
         <source>Import Layout</source>
-        <translation>Импорт оформления</translation>
+        <translation>Импорт макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="98"/>
         <source>Export Layout</source>
-        <translation>Экспорт оформления</translation>
+        <translation>Экспорт макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="104"/>
         <source>Layout</source>
-        <translation>Оформление</translation>
+        <translation>Макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="123"/>
@@ -5220,7 +5220,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infoview.cpp" line="82"/>
         <source>No Selection</source>
-        <translation>Нет выбранных</translation>
+        <translation>Нет выбранного</translation>
     </message>
 </context>
 <context>
@@ -5292,7 +5292,7 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="57"/>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="113"/>
         <source>Layout</source>
-        <translation>Оформление</translation>
+        <translation>Макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="60"/>
@@ -5302,42 +5302,42 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="61"/>
         <source>Toggle layout editing mode</source>
-        <translation>Переключить в режим редактирования оформления</translation>
+        <translation>Переключить в режим редактирования макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="72"/>
         <source>Loc&amp;k splitters</source>
-        <translation>За&amp;блокировать разделители</translation>
+        <translation>Заб&amp;локировать разделители</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
         <source>Prevent manual resizing of splitters when not in layout editing mode</source>
-        <translation>Предотвратить ручное перемещение разделителей, если не включён режим редактирования оформления</translation>
+        <translation>Предотвратить ручное перемещение разделителей, если не включён режим редактирования макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
         <source>&amp;Import layout…</source>
-        <translation>&amp;Импортировать оформление…</translation>
+        <translation>&amp;Импортировать макет…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
         <source>Add the layout from the specified file</source>
-        <translation>Добавить оформление из указанного файла</translation>
+        <translation>Добавить макет из указанного файла</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="86"/>
         <source>E&amp;xport layout…</source>
-        <translation>&amp;Экспортировать оформление…</translation>
+        <translation>&amp;Экспортировать макет…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="87"/>
         <source>Save the current layout to the specified file</source>
-        <translation>Сохранить текущее оформление в указанный файл</translation>
+        <translation>Сохранить текущий макет в указанный файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
         <source>Replace the current layout</source>
-        <translation>Заменить текущее оформление</translation>
+        <translation>Заменить текущий макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="113"/>
@@ -5350,32 +5350,32 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="245"/>
         <source>Open Layout</source>
-        <translation>Открыть оформление</translation>
+        <translation>Открыть макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="245"/>
         <source>fooyin Layout (*.fyl)</source>
-        <translation>Оформление fooyin (*.fyl)</translation>
+        <translation>Макет fooyin (*.fyl)</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
         <source>Invalid Layout</source>
-        <translation>Некорректное оформление</translation>
+        <translation>Недопустимый макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
         <source>Layout could not be imported.</source>
-        <translation>Оформление не может быть импортировано.</translation>
+        <translation>Макет нельзя импортировать.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="260"/>
         <source>Replace existing layout?</source>
-        <translation>Заменить оформление?</translation>
+        <translation>Заменить существующий макет?</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="261"/>
         <source>Unless exported, the current layout will be lost.</source>
-        <translation>Текущее оформление будет потеряно, если оно не было экспортировано.</translation>
+        <translation>Текущий макет будет потерян, если он не был экспортирован.</translation>
     </message>
 </context>
 <context>
@@ -6137,12 +6137,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="98"/>
         <source>Warning</source>
-        <translation>Внимание</translation>
+        <translation>Предупреждение</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="99"/>
         <source>Critical</source>
-        <translation>Критично</translation>
+        <translation>Важное</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="117"/>
@@ -6393,7 +6393,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="251"/>
         <source>Layout</source>
-        <translation>Оформление</translation>
+        <translation>Макет</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="252"/>
@@ -6794,7 +6794,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/mainwindow.cpp" line="171"/>
         <source>Layout Editing Mode</source>
-        <translation>Режим редактирования оформления</translation>
+        <translation>Режим редактирования макета</translation>
     </message>
 </context>
 <context>
@@ -7509,7 +7509,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="90"/>
         <source>Reset the above after stopping</source>
-        <translation>Сбросить вышеуказанное значение после остановки</translation>
+        <translation>Сбросить вышеуказанное после остановки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="92"/>
@@ -7594,7 +7594,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="178"/>
         <source>Shuffle</source>
-        <translation>Перемешивать</translation>
+        <translation>Случайный порядок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="181"/>
@@ -7823,7 +7823,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="64"/>
         <source>Shuffle</source>
-        <translation>Перемешивать</translation>
+        <translation>Перемешать</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="106"/>
@@ -8649,7 +8649,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="233"/>
         <source>Remove dead tracks</source>
-        <translation>Убрать несуществующие дорожки</translation>
+        <translation>Убрать недоступные дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
@@ -8734,7 +8734,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="455"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
-        <translation>Убрать несуществующие дорожки из плейлиста</translation>
+        <translation>Убрать недоступные дорожки из плейлиста</translation>
     </message>
 </context>
 <context>
@@ -10815,7 +10815,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="327"/>
         <source>Layout Editing Mode</source>
-        <translation>Режим редактирования оформления</translation>
+        <translation>Режим редактирования макета</translation>
     </message>
 </context>
 <context>
@@ -11491,7 +11491,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="69"/>
         <source>Focus the first Search Bar found in the current layout</source>
-        <translation>Переместить фокус на первую строку поиска в текущей компоновке</translation>
+        <translation>Переместить фокус на первую строку поиска в текущем макете</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
