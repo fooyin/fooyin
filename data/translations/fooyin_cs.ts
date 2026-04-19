@@ -774,12 +774,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="335"/>
         <source>Pads text on the left</source>
-        <translation>Odsadit text zleva</translation>
+        <translation>Odsadí text zleva</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="338"/>
         <source>Pads text on the right</source>
-        <translation>Odsadit text zprava</translation>
+        <translation>Odsadí text zprava</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="339"/>
