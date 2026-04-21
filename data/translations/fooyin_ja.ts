@@ -6575,12 +6575,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="136"/>
         <source>Searching</source>
-        <translation type="unfinished">検索中</translation>
+        <translation>検索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="137"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>歌詞</translation>
     </message>
 </context>
 <context>
@@ -6588,7 +6588,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="64"/>
         <source>Automatically search for lyrics on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>再生開始時に歌詞を自動検索</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="65"/>
@@ -6839,7 +6839,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>通知</translation>
     </message>
 </context>
 <context>
@@ -6852,37 +6852,37 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
         <source>Show album art</source>
-        <translation type="unfinished"></translation>
+        <translation>アルバムアートを表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="76"/>
         <source>Show Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>前を表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="77"/>
         <source>Show Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>再生／一時停止を表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
         <source>Show Next</source>
-        <translation type="unfinished"></translation>
+        <translation>次を表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="79"/>
         <source>Timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>タイムアウト</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Notification Content</source>
-        <translation type="unfinished"></translation>
+        <translation>通知の内容</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="84"/>
         <source>Playback controls</source>
-        <translation type="unfinished"></translation>
+        <translation>再生コントロール</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="92"/>
@@ -6892,7 +6892,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="94"/>
         <source>Body</source>
-        <translation type="unfinished"></translation>
+        <translation>本文</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="101"/>
@@ -6903,7 +6903,7 @@ and last played uses the later value.</source>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="104"/>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="153"/>
         <source>Notification display time in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>通知の表示時間（ミリ秒）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="149"/>
@@ -6926,7 +6926,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>一時停止</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
@@ -10690,7 +10690,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="407"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>ステータスバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="497"/>
@@ -10718,7 +10718,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>ステータスバー</translation>
     </message>
 </context>
 <context>
@@ -12081,7 +12081,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="262"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>ステータスバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="271"/>
@@ -12131,7 +12131,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="374"/>
         <source>Status bar</source>
-        <translation type="unfinished"></translation>
+        <translation>ステータスバー</translation>
     </message>
 </context>
 <context>
