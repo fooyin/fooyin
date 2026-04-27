@@ -2587,14 +2587,12 @@ void AudioEngine::updatePlaybackState(Engine::PlaybackState state)
     if(prevState != state) {
         switch(state) {
             case Engine::PlaybackState::Playing:
-                m_visualisationBackend->setPlaying();
                 m_audioClock.setPlaying(m_audioClock.position());
                 if(!isCrossfading(m_phase) && !isFadingTransport(m_phase) && m_phase != Playback::Phase::Seeking) {
                     setPhase(Playback::Phase::Playing, PhaseChangeReason::PlaybackStatePlaying);
                 }
                 break;
             case Engine::PlaybackState::Paused:
-                m_visualisationBackend->setPaused();
                 m_audioClock.setPaused();
                 setPhase(Playback::Phase::Paused, PhaseChangeReason::PlaybackStatePaused);
                 break;

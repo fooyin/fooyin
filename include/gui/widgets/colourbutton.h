@@ -40,6 +40,7 @@ public:
 
 Q_SIGNALS:
     void clicked();
+    void colourUpdated(const QColor& colour);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;

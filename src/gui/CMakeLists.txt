@@ -53,6 +53,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandingcombobox.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/extendabletableview.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/fontbutton.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/gradienteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/lineediteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/metadatacompleter.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/multilinedelegate.h
@@ -486,6 +487,7 @@ set(SOURCES
     widgets/expandingcombobox.cpp
     widgets/extendabletableview.cpp
     widgets/fontbutton.cpp
+    widgets/gradienteditor.cpp
     widgets/hovermenu.cpp
     widgets/hovermenu.h
     widgets/lineediteditor.cpp

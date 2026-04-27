@@ -22,24 +22,51 @@
 #include <algorithm>
 #include <numbers>
 
-#include <algorithm>
-#include <chrono>
+#include <functional>
 #include <mutex>
 #include <utility>
 
 constexpr uint64_t BacklogPaddingMs       = 100;
-constexpr uint64_t ContinuityToleranceMs  = 10;
+constexpr uint64_t ContinuityToleranceMs  = 100;
 constexpr uint64_t DefaultBacklogDuration = 250;
 
 namespace {
-int64_t nowNs()
+int previousPowerOfTwo(int value)
 {
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch())
-        .count();
+    int power{1};
+    while(power <= value / 2) {
+        power *= 2;
+    }
+    return power;
 }
+
+float spectrumWindowGain(Fooyin::VisualisationSession::SpectrumWindowFunction windowFunction, float phase)
+{
+    using WindowFunction = Fooyin::VisualisationSession::SpectrumWindowFunction;
+
+    switch(windowFunction) {
+        case WindowFunction::BlackmanHarris:
+            return 0.35875F - (0.48829F * std::cos(phase)) + (0.14128F * std::cos(2.0F * phase))
+                 - (0.01168F * std::cos(3.0F * phase));
+        case WindowFunction::Hann:
+            return 0.5F * (1.0F - std::cos(phase));
+        case WindowFunction::None:
+            return 1.0F;
+    }
+
+    return 1.0F;
+}
+
 } // namespace
 
 namespace Fooyin {
+size_t VisualisationBackend::WindowCacheKeyHash::operator()(const WindowCacheKey& key) const
+{
+    const auto fftHash      = std::hash<int>{}(key.fftSize);
+    const auto functionHash = std::hash<int>{}(static_cast<int>(key.function));
+    return fftHash ^ (functionHash + 0x9e3779b9U + (fftHash << 6U) + (fftHash >> 2U));
+}
+
 VisualisationBackend::SessionToken VisualisationBackend::registerSession()
 {
     const std::unique_lock lock{m_mutex};
@@ -65,8 +92,6 @@ VisualisationBackend::VisualisationBackend()
     , m_startStreamFrame{0}
     , m_nextStreamFrame{0}
     , m_currentTimeMs{0}
-    , m_timeAnchorNs{0}
-    , m_isPlaying{false}
 { }
 
 bool VisualisationBackend::unregisterSession(SessionToken token)
@@ -92,44 +117,16 @@ bool VisualisationBackend::hasActiveSessions() const
 void VisualisationBackend::setCurrentTimeMs(uint64_t currentTimeMs)
 {
     m_currentTimeMs.store(currentTimeMs, std::memory_order_relaxed);
-    m_timeAnchorNs.store(nowNs(), std::memory_order_relaxed);
 }
 
 uint64_t VisualisationBackend::currentTimeMs() const
 {
-    const uint64_t baseTimeMs = m_currentTimeMs.load(std::memory_order_relaxed);
-    if(!m_isPlaying.load(std::memory_order_relaxed)) {
-        return baseTimeMs;
-    }
-
-    const int64_t anchorNs = m_timeAnchorNs.load(std::memory_order_relaxed);
-    const int64_t deltaNs  = nowNs() - anchorNs;
-    if(deltaNs <= 0) {
-        return baseTimeMs;
-    }
-
-    return baseTimeMs + static_cast<uint64_t>(deltaNs / 1'000'000LL);
-}
-
-void VisualisationBackend::setPlaying()
-{
-    m_currentTimeMs.store(currentTimeMs(), std::memory_order_relaxed);
-    m_timeAnchorNs.store(nowNs(), std::memory_order_relaxed);
-    m_isPlaying.store(true, std::memory_order_relaxed);
-}
-
-void VisualisationBackend::setPaused()
-{
-    m_currentTimeMs.store(currentTimeMs(), std::memory_order_relaxed);
-    m_timeAnchorNs.store(nowNs(), std::memory_order_relaxed);
-    m_isPlaying.store(false, std::memory_order_relaxed);
+    return m_currentTimeMs.load(std::memory_order_relaxed);
 }
 
 void VisualisationBackend::setStopped()
 {
     m_currentTimeMs.store(0, std::memory_order_relaxed);
-    m_timeAnchorNs.store(nowNs(), std::memory_order_relaxed);
-    m_isPlaying.store(false, std::memory_order_relaxed);
 }
 
 void VisualisationBackend::appendFrame(const PcmFrame& frame)
@@ -229,6 +226,41 @@ bool VisualisationBackend::resolveWindow(WindowRange& out, uint64_t timeMs, int 
     return true;
 }
 
+bool VisualisationBackend::resolveSpectrumWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
+                                                         int minimumFrameCount) const
+{
+    // Keep startup/track change windows anchored to playback time. The generic end-window resolver clamps to
+    // the first full window, which makes larger FFT sizes appear frozen until playback catches up.
+    if(std::cmp_less(m_frameCount, minimumFrameCount) || !m_format.isValid() || m_format.sampleRate() <= 0
+       || m_format.channelCount() <= 0 || requestedFrameCount < minimumFrameCount) {
+        return false;
+    }
+
+    const uint64_t availableStartFrame = m_startStreamFrame;
+    const uint64_t availableEndFrame   = m_nextStreamFrame;
+    const uint64_t timeFrame           = msToFrames(endTimeMs, m_format.sampleRate());
+    const uint64_t clampedEndFrame     = std::clamp(timeFrame, availableStartFrame, availableEndFrame);
+
+    if(clampedEndFrame <= availableStartFrame) {
+        return false;
+    }
+
+    const uint64_t availableWindowFrames = clampedEndFrame - availableStartFrame;
+    int frameCount                       = requestedFrameCount;
+    if(std::cmp_less(availableWindowFrames, requestedFrameCount)) {
+        frameCount = previousPowerOfTwo(static_cast<int>(availableWindowFrames));
+    }
+
+    if(frameCount < minimumFrameCount) {
+        return false;
+    }
+
+    const auto windowFrames = static_cast<uint64_t>(frameCount);
+    out.startFrame          = clampedEndFrame - windowFrames;
+    out.frameCount          = frameCount;
+    return true;
+}
+
 bool VisualisationBackend::getPcmWindow(VisualisationSession::PcmWindow& out, uint64_t centerTimeMs,
                                         uint64_t durationMs, const ChannelSelection& selection) const
 {
@@ -284,12 +316,13 @@ bool VisualisationBackend::getSpectrumWindowEndingAt(VisualisationSession::Spect
                                                      SpectrumWindowFunction windowFunction) const
 {
     VisualisationSession::PcmWindow window;
+    const int startupFrameCount = std::min(fftSize, 4096);
 
     {
         const std::shared_lock lock{m_mutex};
 
         WindowRange range;
-        if(!resolveWindow(range, endTimeMs, fftSize, 2, WindowAnchor::End)) {
+        if(!resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, startupFrameCount)) {
             return false;
         }
 
@@ -421,9 +454,31 @@ bool VisualisationBackend::fillSpectrumWindow(VisualisationSession::SpectrumWind
     const int channelCount = window.format.channelCount();
 
     const int transformChannelCount = selection.mixMode == ChannelSelection::MixMode::AllChannels ? channelCount : 1;
+    const bool applyWindow          = window.frameCount > 2 && windowFunction != SpectrumWindowFunction::None;
+
+    float magnitudeScale{1.0F};
+    std::vector<float> windowGains;
+
+    if(applyWindow) {
+        windowGains.resize(static_cast<size_t>(window.frameCount), 1.0F);
+
+        float gainSum{0.0F};
+        const auto denom = static_cast<float>(window.frameCount - 1);
+
+        for(int frameIndex{0}; frameIndex < window.frameCount; ++frameIndex) {
+            const float phase = (static_cast<float>(frameIndex) * 2.0F * std::numbers::pi_v<float>) / denom;
+            const float gain  = spectrumWindowGain(windowFunction, phase);
+            windowGains[static_cast<size_t>(frameIndex)] = gain;
+            gainSum += gain;
+        }
+
+        if(gainSum > 0.0F) {
+            magnitudeScale = static_cast<float>(window.frameCount) / gainSum;
+        }
+    }
 
     for(int channel{0}; channel < transformChannelCount; ++channel) {
-        if(window.frameCount == 2 || windowFunction == SpectrumWindowFunction::None) {
+        if(!applyWindow) {
             for(int frameIndex{0}; frameIndex < window.frameCount; ++frameIndex) {
                 const size_t sampleIndex = (static_cast<size_t>(frameIndex) * static_cast<size_t>(channelCount))
                                          + static_cast<size_t>(channel);
@@ -431,26 +486,11 @@ bool VisualisationBackend::fillSpectrumWindow(VisualisationSession::SpectrumWind
             }
         }
         else {
-            const auto denom = static_cast<float>(window.frameCount - 1);
             for(int frameIndex{0}; frameIndex < window.frameCount; ++frameIndex) {
-                const float phase = (static_cast<float>(frameIndex) * 2.0F * std::numbers::pi_v<float>) / denom;
-                float windowGain{1.0};
-
-                switch(windowFunction) {
-                    case SpectrumWindowFunction::Hann:
-                        windowGain = 0.5F * (1.0F - std::cos(phase));
-                        break;
-                    case SpectrumWindowFunction::BlackmanHarris:
-                        windowGain = 0.35875F - (0.48829F * std::cos(phase)) + (0.14128F * std::cos(2.0F * phase))
-                                   - (0.01168F * std::cos(3.0F * phase));
-                        break;
-                    case SpectrumWindowFunction::None:
-                        break;
-                }
-
                 const size_t sampleIndex = (static_cast<size_t>(frameIndex) * static_cast<size_t>(channelCount))
                                          + static_cast<size_t>(channel);
-                fftInput[static_cast<size_t>(frameIndex)] = samples[sampleIndex] * windowGain;
+                fftInput[static_cast<size_t>(frameIndex)]
+                    = samples[sampleIndex] * windowGains[static_cast<size_t>(frameIndex)];
             }
         }
 
@@ -459,7 +499,7 @@ bool VisualisationBackend::fillSpectrumWindow(VisualisationSession::SpectrumWind
         }
 
         for(size_t bin{0}; bin < out.magnitudes.size(); ++bin) {
-            out.magnitudes[bin] = std::max(out.magnitudes[bin], magnitudes[bin]);
+            out.magnitudes[bin] = std::max(out.magnitudes[bin], magnitudes[bin] * magnitudeScale);
         }
     }
 

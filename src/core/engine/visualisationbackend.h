@@ -40,16 +40,14 @@ public:
 
     VisualisationBackend();
 
-    [[nodiscard]] SessionToken registerSession();
-    [[nodiscard]] bool unregisterSession(SessionToken token);
+    SessionToken registerSession();
+    bool unregisterSession(SessionToken token);
     void requestBacklog(SessionToken token, uint64_t durationMs);
 
     [[nodiscard]] bool hasActiveSessions() const;
 
     void setCurrentTimeMs(uint64_t currentTimeMs);
     [[nodiscard]] uint64_t currentTimeMs() const;
-    void setPlaying();
-    void setPaused();
     void setStopped();
 
     void appendFrame(const PcmFrame& frame);
@@ -80,9 +78,24 @@ private:
         int frameCount{0};
     };
 
+    struct WindowCacheKey
+    {
+        int fftSize{0};
+        SpectrumWindowFunction function{SpectrumWindowFunction::Hann};
+
+        [[nodiscard]] bool operator==(const WindowCacheKey&) const = default;
+    };
+
+    struct WindowCacheKeyHash
+    {
+        [[nodiscard]] size_t operator()(const WindowCacheKey& key) const;
+    };
+
     [[nodiscard]] static uint64_t msToFrames(uint64_t ms, int sampleRate);
     [[nodiscard]] bool resolveWindow(WindowRange& out, uint64_t timeMs, int requestedFrameCount, int minimumFrameCount,
                                      WindowAnchor anchor) const;
+    [[nodiscard]] bool resolveSpectrumWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
+                                                     int minimumFrameCount) const;
     [[nodiscard]] bool fillWindow(VisualisationSession::PcmWindow& out, uint64_t startFrame, int frameCount,
                                   const ChannelSelection& selection) const;
     [[nodiscard]] bool fillSpectrumWindow(VisualisationSession::SpectrumWindow& out,
@@ -107,10 +120,11 @@ private:
     uint64_t m_nextStreamFrame;
 
     std::atomic<uint64_t> m_currentTimeMs;
-    std::atomic<int64_t> m_timeAnchorNs;
-    std::atomic<bool> m_isPlaying;
 
     mutable std::mutex m_fftMutex;
     mutable std::unordered_map<int, Dsp::RealFft> m_fftCache;
+    mutable std::unordered_map<WindowCacheKey, std::vector<float>, WindowCacheKeyHash> m_windowCache;
+    mutable std::vector<float> m_fftInputScratch;
+    mutable std::vector<float> m_magnitudeScratch;
 };
 } // namespace Fooyin

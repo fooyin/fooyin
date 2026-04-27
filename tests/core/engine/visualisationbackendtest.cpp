@@ -84,14 +84,52 @@ TEST(VisualisationBackendTest, ComputesSpectrumForMonoPcmBacklog)
     const auto dominant = std::ranges::max_element(spectrum.magnitudes);
     ASSERT_NE(dominant, spectrum.magnitudes.end());
     EXPECT_EQ(std::distance(spectrum.magnitudes.begin(), dominant), targetBin);
-    EXPECT_GT(*dominant, 0.2F);
+    EXPECT_GT(*dominant, 0.9F);
+}
+
+TEST(VisualisationBackendTest, CompensatesWindowGainForSpectrumMagnitude)
+{
+    static constexpr int fftSize    = 1024;
+    static constexpr int sampleRate = 1024;
+    static constexpr int targetBin  = 7;
+    static constexpr float twoPi    = std::numbers::pi_v<float> * 2.0F;
+
+    Fooyin::PcmFrame frame;
+    frame.format       = Fooyin::AudioFormat{Fooyin::SampleFormat::F32, sampleRate, 1};
+    frame.frameCount   = fftSize;
+    frame.streamTimeMs = 0;
+
+    for(int index{0}; index < fftSize; ++index) {
+        const float phase
+            = twoPi * static_cast<float>(targetBin) * static_cast<float>(index) / static_cast<float>(fftSize);
+        frame.samples[static_cast<size_t>(index)] = std::sin(phase);
+    }
+
+    for(const auto windowFunction : {Fooyin::VisualisationSession::SpectrumWindowFunction::Hann,
+                                     Fooyin::VisualisationSession::SpectrumWindowFunction::BlackmanHarris,
+                                     Fooyin::VisualisationSession::SpectrumWindowFunction::None}) {
+        Fooyin::VisualisationBackend backend;
+        const auto token = backend.registerSession();
+        backend.requestBacklog(token, 1000);
+        backend.appendFrame(frame);
+
+        Fooyin::VisualisationSession::SpectrumWindow spectrum;
+        ASSERT_TRUE(backend.getSpectrumWindow(spectrum, 500, fftSize, {}, windowFunction));
+        ASSERT_TRUE(spectrum.isValid());
+
+        const auto dominant = std::ranges::max_element(spectrum.magnitudes);
+        ASSERT_NE(dominant, spectrum.magnitudes.end());
+        EXPECT_EQ(std::distance(spectrum.magnitudes.begin(), dominant), targetBin);
+        EXPECT_GT(*dominant, 0.9F);
+        EXPECT_LT(*dominant, 1.1F);
+    }
 }
 
 TEST(VisualisationBackendTest, ResetsBacklogWhenGapExceedsTolerance)
 {
     static constexpr auto frameCount               = 128;
     static constexpr auto sampleRate               = 1000;
-    static constexpr uint64_t discontinuityStartMs = 300;
+    static constexpr uint64_t discontinuityStartMs = 400;
 
     Fooyin::VisualisationBackend backend;
     const auto token = backend.registerSession();
