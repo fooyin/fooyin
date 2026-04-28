@@ -6,37 +6,37 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="42"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放列表</translation>
+        <translation>播放列表</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="46"/>
         <source>Queue</source>
-        <translation type="unfinished">队列</translation>
+        <translation>队列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="50"/>
         <source>Filter options</source>
-        <translation type="unfinished">过滤选项</translation>
+        <translation>筛选选项</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="53"/>
         <source>Configure</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="57"/>
         <source>Track actions</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨操作</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="54"/>
         <source>Library Filter</source>
-        <translation type="unfinished">媒体库筛选器</translation>
+        <translation>媒体库筛选器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="56"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>未处理的项目将不会出现在媒体库筛选菜单中。</translation>
     </message>
 </context>
 <context>
@@ -416,7 +416,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="58"/>
         <source>Functions</source>
-        <translation type="unfinished">函数</translation>
+        <translation>函数</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
@@ -431,7 +431,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
         <source>Combined file size of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目列表的总文件大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="220"/>
@@ -912,22 +912,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
         <source>Returns true when all expressions are true</source>
-        <translation type="unfinished"></translation>
+        <translation>当所有表达式都为真时返回真值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="395"/>
         <source>Returns the opposite truth value</source>
-        <translation type="unfinished"></translation>
+        <translation>返回相反的真假值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
         <source>Returns true when at least one expression is true</source>
-        <translation type="unfinished"></translation>
+        <translation>当至少有一个表达式为真时返回真值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
         <source>Returns true when an odd number of expressions are true</source>
-        <translation type="unfinished"></translation>
+        <translation>当表达式中为真的数量为奇数时返回真值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="404"/>
@@ -1855,22 +1855,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="77"/>
         <source>Insert separator before</source>
-        <translation type="unfinished"></translation>
+        <translation>在前面插入分隔符</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="81"/>
         <source>Insert separator after</source>
-        <translation type="unfinished"></translation>
+        <translation>插入分隔符后</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="87"/>
         <source>Add separator</source>
-        <translation type="unfinished"></translation>
+        <translation>添加分隔符</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="92"/>
         <source>Remove separator</source>
-        <translation type="unfinished"></translation>
+        <translation>移除分隔符</translation>
     </message>
 </context>
 <context>
@@ -3563,7 +3563,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="102"/>
         <source>File operations</source>
-        <translation type="unfinished"></translation>
+        <translation>文件操作</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="144"/>
@@ -3981,7 +3981,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="291"/>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="690"/>
         <source>Configure…</source>
-        <translation type="unfinished">配置…</translation>
+        <translation>配置…</translation>
     </message>
 </context>
 <context>
@@ -4028,7 +4028,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/fywidget.cpp" line="146"/>
         <source>Configure…</source>
-        <translation type="unfinished">配置…</translation>
+        <translation>配置…</translation>
     </message>
 </context>
 <context>
@@ -4836,17 +4836,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
         <source>Properties Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>属性对话框</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
         <source>Controls how individual tracks are labelled in the properties sidebar.</source>
-        <translation type="unfinished"></translation>
+        <translation>控制在属性侧边栏中对各个曲目进行的标签设置方式。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
         <source>Sidebar track display</source>
-        <translation type="unfinished"></translation>
+        <translation>侧边栏轨道显示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
@@ -5134,7 +5134,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="257"/>
         <source>Opus header gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Opus 头部增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="262"/>
@@ -7610,7 +7610,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="192"/>
         <source>Enabled</source>
-        <translation type="unfinished">已启用</translation>
+        <translation>已启用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="194"/>
@@ -7625,29 +7625,29 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="198"/>
         <source>Display Script</source>
-        <translation type="unfinished"></translation>
+        <translation>显示脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="200"/>
         <source>Sort Script</source>
-        <translation type="unfinished">排序脚本</translation>
+        <translation>排序脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="202"/>
         <source>Write Field</source>
-        <translation type="unfinished"></translation>
+        <translation>写入字段</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="275"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="325"/>
         <source>Use display script</source>
-        <translation type="unfinished"></translation>
+        <translation>使用显示脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="278"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="333"/>
         <source>No write field</source>
-        <translation type="unfinished"></translation>
+        <translation>没有写入字段</translation>
     </message>
 </context>
 <context>
@@ -7911,17 +7911,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="99"/>
         <source>Enable inline tag editing</source>
-        <translation type="unfinished"></translation>
+        <translation>启用内联标签编辑功能</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
         <source>Move deleted or empty playlists to trash</source>
-        <translation type="unfinished"></translation>
+        <translation>移动已删除或空的播放列表移到回收站</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="117"/>
         <source>Save last state of deleted playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>保存已删除播放列表的最后状态</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="119"/>
@@ -7931,7 +7931,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
         <source>Save any changes made to a playlist before it was deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>在删除播放列表之前请保存其所做的任何更改</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="129"/>
@@ -7941,7 +7941,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="135"/>
         <source>Allow editing writable track tag columns directly from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>允许直接从播放列表中编辑可写入的曲目标签列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="140"/>
@@ -8001,17 +8001,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="246"/>
         <source>Auto</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="247"/>
         <source>Absolute</source>
-        <translation type="unfinished"></translation>
+        <translation>绝对</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="248"/>
         <source>Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>相对</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="265"/>
@@ -8137,12 +8137,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="203"/>
         <source>Sort all playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>排序所有播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="207"/>
         <source>Sort playlists in group</source>
-        <translation type="unfinished"></translation>
+        <translation>按组对播放列表进行排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="231"/>
@@ -8152,12 +8152,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="247"/>
         <source>Sort all playlists alphabetically</source>
-        <translation type="unfinished"></translation>
+        <translation>按字母顺序排列所有播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="249"/>
         <source>Sort playlists in the selected group alphabetically</source>
-        <translation type="unfinished"></translation>
+        <translation>在所选组中对播放列表进行字母顺序排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="472"/>
@@ -8201,44 +8201,44 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="56"/>
         <source>Playlist Organiser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表组织者设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="59"/>
         <source>Playing text</source>
-        <translation type="unfinished"></translation>
+        <translation>播放文本</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="61"/>
         <source>Playing background</source>
-        <translation type="unfinished"></translation>
+        <translation>播放背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="64"/>
         <source>Scripts</source>
-        <translation type="unfinished">脚本</translation>
+        <translation>脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="68"/>
         <source>Available variables: &lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>可用变量：&lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="75"/>
         <source>Left</source>
         <extracomment>Refers to the left script field.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>左侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="78"/>
         <source>Right</source>
         <extracomment>Refers to the right script field.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>右侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="83"/>
         <source>Colours</source>
-        <translation type="unfinished">颜色</translation>
+        <translation>颜色</translation>
     </message>
 </context>
 <context>
@@ -8328,7 +8328,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="225"/>
         <source>Display covers below every subheader</source>
-        <translation type="unfinished"></translation>
+        <translation>在每个子标题下面显示封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="230"/>
@@ -8469,23 +8469,23 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="639"/>
         <source>Writing metadata…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在写入元数据…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="639"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>中止</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="645"/>
         <source>Writing Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>正在写入元数据</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="646"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>正在将元数据写入 %Ln 音轨…</numerusform>
         </translation>
     </message>
     <message>
@@ -9211,7 +9211,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="125"/>
         <source>Edit Opus header gain</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑 Opus 头部增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="126"/>
@@ -9236,7 +9236,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="132"/>
         <source>Manipulate the Opus header gain field</source>
-        <translation type="unfinished"></translation>
+        <translation>调整 Opus 头部增益字段的值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="133"/>
@@ -9345,17 +9345,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
         <source>Leave null</source>
-        <translation type="unfinished"></translation>
+        <translation>留空</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="79"/>
         <source>Use Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>使用音轨增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="80"/>
         <source>Use Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>使用专辑增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="84"/>
@@ -9385,22 +9385,22 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="116"/>
         <source>Opus Header Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Opus 头部增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="125"/>
         <source>Write track gain to the Opus header and keep album gain in the R128 comment field</source>
-        <translation type="unfinished"></translation>
+        <translation>写入音轨增益 Opus 头部，而将专辑增益保存在 R128 注释字段中</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="127"/>
         <source>Write album gain to the Opus header and keep track gain in the R128 comment field</source>
-        <translation type="unfinished"></translation>
+        <translation>写入专辑增益 Opus 头部，并将跟踪增益记录在 R128 注释字段中</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="129"/>
         <source>Do not write ReplayGain values to the Opus header unless changed explicitly elsewhere</source>
-        <translation type="unfinished"></translation>
+        <translation>除非另有明确说明，否则切勿将 ReplayGain 值写入 Opus 头部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="135"/>
@@ -10119,7 +10119,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="163"/>
         <source>Show all when search is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>当搜索框为空时显示全部内容</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="173"/>
@@ -10295,7 +10295,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="534"/>
         <source>Show all when search is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>当搜索框为空时显示全部内容</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="544"/>
@@ -10348,7 +10348,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="358"/>
         <source>Show remaining time</source>
-        <translation type="unfinished"></translation>
+        <translation>显示剩余时间</translation>
     </message>
 </context>
 <context>
@@ -10687,12 +10687,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/context/staticcontextmenupage.cpp" line="46"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/staticcontextmenupage.cpp" line="46"/>
         <source>Context Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>上下文菜单</translation>
     </message>
 </context>
 <context>
@@ -10840,125 +10840,126 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="140"/>
         <source>Preview</source>
-        <translation type="unfinished">预览</translation>
+        <translation>预览</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="144"/>
         <source>Auto Capitalisation</source>
-        <translation type="unfinished"></translation>
+        <translation>自动首字母大写</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="146"/>
         <source>Automatically Fill Values</source>
-        <translation type="unfinished"></translation>
+        <translation>自动填充值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="151"/>
         <source>File names</source>
-        <translation type="unfinished"></translation>
+        <translation>文件名</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="152"/>
         <source>Other…</source>
-        <translation type="unfinished"></translation>
+        <translation>其他…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="156"/>
         <source>Patterns use literal text and %field% captures.
 This does not support full scripting.</source>
-        <translation type="unfinished"></translation>
+        <translation>模式采用纯文本形式，并使用 %field% 进行捕获。
+它不支持完整的脚本功能。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="162"/>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="241"/>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="244"/>
         <source>Source</source>
-        <translation type="unfinished">源</translation>
+        <translation>来源</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="165"/>
         <source>Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="239"/>
         <source>File Name</source>
-        <translation type="unfinished">文件名称</translation>
+        <translation>文件名称</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="318"/>
         <source>Track Title</source>
-        <translation type="unfinished">曲目标题</translation>
+        <translation>曲目标题</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="321"/>
         <source>Artist Name</source>
-        <translation type="unfinished">艺术家名称</translation>
+        <translation>艺术家名称</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="324"/>
         <source>Album Title</source>
-        <translation type="unfinished">专辑标题</translation>
+        <translation>专辑标题</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="327"/>
         <source>Album Artist</source>
-        <translation type="unfinished">专辑艺术家</translation>
+        <translation>专辑艺术家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="330"/>
         <source>Track Number</source>
-        <translation type="unfinished">音轨号</translation>
+        <translation>音轨编号</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="333"/>
         <source>Total Tracks</source>
-        <translation type="unfinished">音轨数量</translation>
+        <translation>音轨数量</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="336"/>
         <source>Disc Number</source>
-        <translation type="unfinished">唱片号</translation>
+        <translation>唱片编号</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="339"/>
         <source>Total Discs</source>
-        <translation type="unfinished">唱片数量</translation>
+        <translation>唱片数量</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="342"/>
         <source>Genre</source>
-        <translation type="unfinished">流派</translation>
+        <translation>流派</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="345"/>
         <source>Genres</source>
-        <translation type="unfinished">类型</translation>
+        <translation>流派</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="348"/>
         <source>Composer</source>
-        <translation type="unfinished">作曲家</translation>
+        <translation>作曲家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="351"/>
         <source>Performer</source>
-        <translation type="unfinished">表演者</translation>
+        <translation>表演者</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="354"/>
         <source>Comment</source>
-        <translation type="unfinished">备注</translation>
+        <translation>备注</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="357"/>
         <source>Date</source>
-        <translation type="unfinished">日期</translation>
+        <translation>日期</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="360"/>
         <source>Rating</source>
-        <translation type="unfinished">评分</translation>
+        <translation>评分</translation>
     </message>
 </context>
 <context>
@@ -11091,7 +11092,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="78"/>
         <source>Automatically fill values…</source>
-        <translation type="unfinished"></translation>
+        <translation>自动填充值…</translation>
     </message>
 </context>
 <context>
@@ -11122,7 +11123,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="74"/>
         <source>Automatically &amp;fill values…</source>
-        <translation type="unfinished"></translation>
+        <translation>自动填充值(&amp;F)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="75"/>
@@ -11188,22 +11189,22 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="36"/>
         <source>Track</source>
-        <translation type="unfinished">音轨号</translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="37"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="37"/>
         <source>Context Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>上下文菜单</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="40"/>
         <source>Unchecked items will be hidden from track selection context menus.</source>
-        <translation type="unfinished"></translation>
+        <translation>未处理的项目将不会出现在可选跟踪上下文菜单中。</translation>
     </message>
 </context>
 <context>
@@ -11256,27 +11257,27 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="216"/>
         <source>Track actions</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目操作</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="224"/>
         <source>Playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="232"/>
         <source>Playlist actions</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表操作</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="245"/>
         <source>Copy file path</source>
-        <translation type="unfinished"></translation>
+        <translation>复制文件路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="246"/>
         <source>Copy directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>复制目录路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="248"/>
@@ -11356,12 +11357,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="368"/>
         <source>Copy the file paths of the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>复制所选曲目对应的文件路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="380"/>
         <source>Copy the containing directories of the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>复制所选曲目所在的目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="396"/>
@@ -11640,7 +11641,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="44"/>
         <source>Show remaining time</source>
-        <translation type="unfinished"></translation>
+        <translation>显示剩余时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="45"/>
@@ -11933,7 +11934,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="526"/>
         <source>Show remaining time</source>
-        <translation type="unfinished"></translation>
+        <translation>显示剩余时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="535"/>
@@ -12154,47 +12155,47 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="102"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="106"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放列表</translation>
+        <translation>播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="110"/>
         <source>Queue</source>
-        <translation type="unfinished">队列</translation>
+        <translation>队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="114"/>
         <source>Grouping</source>
-        <translation type="unfinished">分组</translation>
+        <translation>分组</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="117"/>
         <source>Configure</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="121"/>
         <source>Open folder</source>
-        <translation type="unfinished">打开文件夹</translation>
+        <translation>打开文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="124"/>
         <source>Track actions</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目操作</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="298"/>
         <source>Library Tree</source>
-        <translation type="unfinished">媒体库树</translation>
+        <translation>媒体库树</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="300"/>
         <source>Unchecked items will be hidden from the library tree context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>未处理的项目将不会出现在媒体库树的上下文菜单中。</translation>
     </message>
 </context>
 <context>
@@ -12202,57 +12203,57 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="54"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="57"/>
         <source>Stop after this</source>
-        <translation type="unfinished"></translation>
+        <translation>在此之后停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="61"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="64"/>
         <source>Crop</source>
-        <translation type="unfinished"></translation>
+        <translation>裁剪</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="67"/>
         <source>Sort</source>
-        <translation type="unfinished">排序</translation>
+        <translation>排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
         <source>Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>剪贴板</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Presets</source>
-        <translation type="unfinished">预设</translation>
+        <translation>预设</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="79"/>
         <source>Queue</source>
-        <translation type="unfinished">队列</translation>
+        <translation>队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Track actions</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目操作</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="309"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放列表</translation>
+        <translation>播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="312"/>
         <source>Unchecked items will be hidden from the playlist context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>未处理的项目将不会出现在播放列表的上下文菜单中。</translation>
     </message>
 </context>
 <context>
@@ -12522,7 +12523,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenumodel.cpp" line="74"/>
         <source>Separator</source>
-        <translation type="unfinished"></translation>
+        <translation>分隔符</translation>
     </message>
 </context>
 <context>
