@@ -3,6 +3,7 @@ Name=fooyin
 Type=Application
 GenericName=fooyin Music Player
 Comment=Manages and plays your local music collection
+Comment[ru]=Организация и воспроизведение вашей локальной фонотеки
 Exec=fooyin %F
 TryExec=fooyin
 Icon=org.fooyin.fooyin
