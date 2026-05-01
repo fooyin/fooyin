@@ -1079,12 +1079,12 @@
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkdialog.cpp" line="207"/>
+        <location filename="../../src/gui/artwork/artworkdialog.cpp" line="212"/>
         <source>Searching…</source>
         <translation>Пошук…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkdialog.cpp" line="213"/>
+        <location filename="../../src/gui/artwork/artworkdialog.cpp" line="218"/>
         <source>No artwork found</source>
         <translation>Обкладинку не знайдено</translation>
     </message>
@@ -1183,17 +1183,17 @@
 <context>
     <name>Fooyin::ArtworkGeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="183"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="202"/>
         <source>General</source>
         <translation>Загальне</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="184"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="203"/>
         <source>Interface</source>
         <translation>Вигляд</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="184"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="203"/>
         <source>Artwork</source>
         <translation>Обкладинка</translation>
     </message>
@@ -1201,52 +1201,67 @@
 <context>
     <name>Fooyin::ArtworkPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="73"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="75"/>
         <source>Prefer currently playing track</source>
         <translation>Надавати перевагу поточній доріжці</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="74"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="76"/>
         <source>Prefer current selection</source>
         <translation>Надавати перевагу обраній композиції</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="75"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="77"/>
         <source>Prefer directory artwork</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="76"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="78"/>
         <source>Prefer embedded artwork</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="80"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="83"/>
         <source>Display</source>
         <translation>Відображення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="90"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="93"/>
         <source>Local Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="100"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="103"/>
+        <source>Thumbnails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="106"/>
+        <source>Grouping script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="107"/>
+        <source>Groups artwork thumbnails that should share the same cached image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="115"/>
         <source>Cache</source>
         <translation>Кеш</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="103"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="118"/>
         <source>Pixmap cache size</source>
         <translation>Розмір кешу зображень</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="109"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="124"/>
         <source>Clear Cache</source>
         <translation>Очистити кеш</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="176"/>
+        <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="195"/>
         <source>Disk cache usage</source>
         <translation>Використання кешу диска</translation>
     </message>
@@ -1254,27 +1269,27 @@
 <context>
     <name>Fooyin::ArtworkProperties</name>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="68"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="69"/>
         <source>Front Cover</source>
         <translation>Передня обкладинка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="69"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="70"/>
         <source>Back Cover</source>
         <translation>Задня обкладинка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="70"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="71"/>
         <source>Artist</source>
         <translation>Виконавець</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="321"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="314"/>
         <source>No embedded artwork found to export</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="327"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="320"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1283,7 +1298,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="335"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="328"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1292,27 +1307,22 @@
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="331"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="324"/>
         <source>Failed to export artwork</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="96"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="97"/>
         <source>Exported artwork to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="215"/>
-        <source>Artwork Properties</source>
-        <translation>Властивості обкладинки</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="301"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="294"/>
         <source>Loading artwork…</source>
         <translation>Завантаження обкладинки…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="305"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="298"/>
         <source>Saving artwork to files…</source>
         <translation>Збереження обкладинки у файл…</translation>
     </message>
@@ -1883,102 +1893,107 @@ When disabled, existing track order is preserved and only newly added matching t
 <context>
     <name>Fooyin::CoverWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="358"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="373"/>
         <source>Artwork Panel</source>
         <translation>Панель обкладинки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="424"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="437"/>
         <source>Keep aspect ratio</source>
         <translation>Зберігати пропорції</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="437"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="450"/>
         <source>Align to centre</source>
         <translation>Вирівняти по центру</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="438"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="451"/>
         <source>Align to left</source>
         <translation>Вирівняти по лівому краю</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="439"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="452"/>
         <source>Align to right</source>
         <translation>Вирівняти по правому краю</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="461"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="474"/>
         <source>Front cover</source>
         <translation>Передня обкладинка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="462"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="475"/>
         <source>Back cover</source>
         <translation>Задня обкладинка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="463"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="476"/>
         <source>Artist</source>
         <translation>Виконавець</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="495"/>
-        <source>View full size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="508"/>
-        <source>Search for artwork…</source>
-        <translation>Пошук обкладинки…</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="509"/>
-        <source>Quicksearch for artwork</source>
-        <translation>Швидкий пошук обкладинок</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="510"/>
-        <source>Auto-extract to file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="511"/>
-        <source>Extract as…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="512"/>
-        <source>Remove artwork</source>
-        <translation>Видалити обкладинку</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="517"/>
-        <source>Search for artwork for this cover type</source>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="507"/>
+        <source>Artwork settings…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="518"/>
+        <source>View full size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="531"/>
+        <source>Search for artwork…</source>
+        <translation>Пошук обкладинки…</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="532"/>
+        <source>Quicksearch for artwork</source>
+        <translation>Швидкий пошук обкладинок</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="533"/>
+        <source>Auto-extract to file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="534"/>
+        <source>Extract as…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="535"/>
+        <source>Remove artwork</source>
+        <translation>Видалити обкладинку</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="540"/>
+        <source>Search for artwork for this cover type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="541"/>
         <source>Search for artwork and automatically choose the best match for this cover type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="520"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="543"/>
         <source>Extract this embedded artwork to a file in the track directory without prompting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="521"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="544"/>
         <source>Choose where to extract this embedded artwork</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="522"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="545"/>
         <source>Remove this artwork</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="556"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="579"/>
         <source>Extracted artwork to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2410,55 +2425,55 @@ When disabled, existing track order is preserved and only newly added matching t
         <translation type="unfinished">Параметри відображення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="93"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="95"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="105"/>
         <source>None</source>
         <translation type="unfinished">Порожньо</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="94"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="96"/>
         <source>Expand/Collapse/Play</source>
         <translation type="unfinished">Розгорнути/Згорнути/Відтворити</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="95"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="104"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="97"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
         <source>Add to current playlist</source>
         <translation type="unfinished">Додати до поточного списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="96"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="105"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
         <source>Add to active playlist</source>
         <translation type="unfinished">Додати до активного списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="97"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="99"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="108"/>
         <source>Replace current playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="100"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="109"/>
         <source>Create new playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="99"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="108"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="101"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="110"/>
         <source>Add to playback queue</source>
         <translation type="unfinished">Додати до черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="100"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="109"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="111"/>
         <source>Add to front of playback queue</source>
         <translation type="unfinished">Додати до початку черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="101"/>
-        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="110"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="112"/>
         <source>Replace playback queue</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2466,12 +2481,12 @@ When disabled, existing track order is preserved and only newly added matching t
 <context>
     <name>Fooyin::Discord::DiscordPage</name>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="132"/>
         <source>General</source>
         <translation>Загальне</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="133"/>
         <source>Discord</source>
         <translation>Discord</translation>
     </message>
@@ -2479,42 +2494,52 @@ When disabled, existing track order is preserved and only newly added matching t
 <context>
     <name>Fooyin::Discord::DiscordPageWidget</name>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="60"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="61"/>
         <source>Enable</source>
         <translation>Увімкнути</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="61"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="62"/>
         <source>Show playstate</source>
         <translation>Показати стан гри</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="67"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="63"/>
+        <source>Clear on pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="69"/>
         <source>Fields</source>
         <translation>Полях</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="71"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="73"/>
         <source>Title</source>
         <translation>Назва</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="73"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="75"/>
         <source>Artist</source>
         <translation>Виконавець</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="75"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="77"/>
         <source>Album</source>
         <translation>Альбом</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="82"/>
         <source>Display a small icon in Discord showing the current playback state</source>
         <translation>Відображати в Discord маленьку іконку, яка показує поточний стан відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="85"/>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="83"/>
+        <source>Clear status when paused</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Client ID</source>
         <translation>Ідентифікатор клієнта</translation>
     </message>
@@ -2834,7 +2859,7 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::EditableTabBar</name>
     <message>
-        <location filename="../../src/gui/widgets/editabletabbar.cpp" line="35"/>
+        <location filename="../../src/gui/widgets/editabletabbar.cpp" line="36"/>
         <source>Tab</source>
         <translation>Вкладка</translation>
     </message>
@@ -3399,52 +3424,62 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FileOps::FileOpsDialog</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="119"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="125"/>
         <source>Copy</source>
         <translation>Копіювати</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="120"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="126"/>
         <source>Move</source>
         <translation>Перемістити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="121"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="127"/>
         <source>Rename</source>
         <translation>Перейменувати</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="125"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="128"/>
+        <source>Extract</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="132"/>
         <source>Remove empty source folders</source>
         <translation>Видалити порожні вихідні каталоги</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="127"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="133"/>
+        <source>Delete archive after extraction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="135"/>
         <source>&amp;Load</source>
         <translation>&amp;Завантажити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="128"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="136"/>
         <source>&amp;Save</source>
         <translation>&amp;Зберегти</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="129"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="137"/>
         <source>&amp;Delete</source>
         <translation>&amp;Видалити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="386"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="426"/>
         <source>Determining operations…</source>
         <translation>Визначення операцій…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="410"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="462"/>
         <source>Nothing to do</source>
         <translation>Нічого робити</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="414"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="466"/>
         <source>Pending operation(s): %Ln</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -3453,12 +3488,12 @@ Effects here process the final combined output.</source>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="422"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="474"/>
         <source>Select Directory</source>
         <translation>Вибір каталогу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="440"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="492"/>
         <source>File Operation</source>
         <translation>Операції з файлами</translation>
     </message>
@@ -3466,54 +3501,69 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FileOps::FileOpsDialogPrivate</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="159"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="174"/>
         <source>Operation</source>
         <translation>Операція</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="161"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="176"/>
         <source>Destination</source>
         <translation>Призначення</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="162"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="177"/>
         <source>Filename</source>
         <translation>Ім&apos;я файлу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="164"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="179"/>
         <source>Presets</source>
         <translation>Попередні налаштування</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="179"/>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="392"/>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="408"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="194"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="432"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="460"/>
         <source>&amp;Run</source>
         <translation>&amp;Виконати</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="241"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="265"/>
         <source>Copy entire source folder contents</source>
         <translation>Копіювати весь вміст вихідного каталогу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="242"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="268"/>
         <source>Move entire source folder contents</source>
         <translation>Перемістити весь вміст вихідного каталогу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="275"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="271"/>
+        <source>Extract entire source archive contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="320"/>
         <source>Preset already exists</source>
         <translation>Попереднє налаштування вже існує</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="276"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="321"/>
         <source>A preset named &quot;%1&quot; already exists. Overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="396"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="439"/>
+        <source>Delete source archive after extraction?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="440"/>
+        <source>Source archive files will be moved to the trash after every file from each archive has been extracted. Continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="448"/>
         <source>&amp;Abort</source>
         <translation>&amp;Перервати</translation>
     </message>
@@ -3521,52 +3571,58 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FileOps::FileOpsModel</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="88"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="89"/>
         <source>Operation</source>
         <translation>Операція</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="90"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="91"/>
         <source>Source</source>
         <translation>Джерело</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="92"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="93"/>
         <source>Destination</source>
         <translation>Призначення</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="170"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="171"/>
         <source>Copy</source>
         <translation>Копіювати</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="172"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="173"/>
         <source>Move</source>
         <translation>Перемістити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="174"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="175"/>
         <source>Rename</source>
         <translation>Перейменувати</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="176"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="177"/>
         <source>Create</source>
         <translation>Створити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="178"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="179"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="185"/>
         <source>Remove</source>
         <translation>Вилучити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="181"/>
         <source>Delete</source>
         <translation type="unfinished">Видалити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="183"/>
+        <source>Extract</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="187"/>
         <source>Unknown</source>
         <translation>Невідомо</translation>
     </message>
@@ -3574,42 +3630,47 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="102"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="111"/>
         <source>File operations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="144"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="157"/>
         <source>&amp;Copy to…</source>
         <translation>&amp;Копіювати в…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="145"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="158"/>
         <source>&amp;Move to…</source>
         <translation>&amp;Перемістити в…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="146"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="159"/>
         <source>&amp;Rename to…</source>
         <translation>&amp;Перейменувати на…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="148"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="160"/>
+        <source>&amp;Extract to…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="162"/>
         <source>&amp;Delete</source>
         <translation type="unfinished">&amp;Видалити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="151"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="165"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="166"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="180"/>
         <source>No tracks deleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="167"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="181"/>
         <source>Deleted %Ln track(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -3841,7 +3902,7 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::Filters::FilterController</name>
     <message>
-        <location filename="../../src/plugins/filters/filtercontroller.cpp" line="937"/>
+        <location filename="../../src/plugins/filters/filtercontroller.cpp" line="938"/>
         <source>Filter Results</source>
         <translation>Фільтрувати результати</translation>
     </message>
@@ -3907,83 +3968,83 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::Filters::FilterWidget</name>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="783"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="781"/>
         <source>Display</source>
         <translation>Відображення</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="617"/>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="787"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="615"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="785"/>
         <source>Columns</source>
         <translation>Колонки</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="788"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="786"/>
         <source>Artwork (bottom labels)</source>
         <translation>Обкладинка (позначки знизу)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="789"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="787"/>
         <source>Artwork (right labels)</source>
         <translation>Обкладинка (позначки з правого боку)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="790"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="788"/>
         <source>Artwork (no labels)</source>
         <translation>Обкладинка (без позначок)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="853"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="851"/>
         <source>Summary item</source>
         <translation>Підсумковий пункт</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="791"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="789"/>
         <source>Front cover</source>
         <translation>Передня обкладинка</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="792"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="790"/>
         <source>Back cover</source>
         <translation>Задня обкладинка</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="859"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="857"/>
         <source>Show header</source>
         <translation>Показувати заголовок</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="867"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="865"/>
         <source>Show scrollbar</source>
         <translation>Показувати смугу прокручування</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="875"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="873"/>
         <source>Alternating row colours</source>
         <translation>Чергування кольорів рядків</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="660"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="658"/>
         <source>Multiple columns</source>
         <translation>Кілька колонок</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="686"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="684"/>
         <source>Manage groups</source>
         <translation>Керувати групами</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="793"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="791"/>
         <source>Artist</source>
         <translation>Виконавець</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="668"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="666"/>
         <source>More…</source>
         <translation>Більше…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="307"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="305"/>
         <source>Library Filter</source>
         <translation>Фільтр бібліотеки</translation>
     </message>
@@ -3994,7 +4055,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="291"/>
-        <location filename="../../src/plugins/filters/filterwidget.cpp" line="690"/>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="688"/>
         <source>Configure…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4189,17 +4250,17 @@ Effects here process the final combined output.</source>
 <context>
     <name>Fooyin::GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="530"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="540"/>
         <source>Plugins not found</source>
         <translation>Плагіни не знайдено</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="531"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="541"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>Для повної функціональності необхідні деякі плагіни.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="532"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="542"/>
         <source>Plugin search locations:
 
 </source>
@@ -4208,264 +4269,269 @@ Effects here process the final combined output.</source>
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="535"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="545"/>
         <source>Quit</source>
         <translation>Вийти</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="653"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="663"/>
         <source>Volume</source>
         <translation>Гучність</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="655"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="665"/>
         <source>Volume up</source>
         <translation>Збільшити гучність</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="662"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="672"/>
         <source>Volume down</source>
         <translation>Зменшити гучність</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="669"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="679"/>
         <source>Mute</source>
         <translation>Вимкнути звук</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="675"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="685"/>
         <source>Playback</source>
         <translation>Відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="675"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="685"/>
         <source>Seek</source>
         <translation>Шукати</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="677"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="687"/>
         <source>Seek forward (small step)</source>
         <translation>Рухатися вперед (маленький крок)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="684"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="694"/>
         <source>Seek forward (large step)</source>
         <translation>Переміщення вперед (великий крок)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="691"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="701"/>
         <source>Seek backward (small step)</source>
         <translation>Перемотування назад (невеликий крок)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="699"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="709"/>
         <source>Seek backward (large step)</source>
         <translation>Перемотування назад (великий крок)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="724"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="734"/>
         <source>Remove Playlist</source>
         <translation>Вилучити список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="726"/>
-        <source>File</source>
-        <translation>Файл</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="734"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="745"/>
         <source>Toggle Menubar</source>
         <translation>Перемикання панелі меню</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="736"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="747"/>
         <source>View</source>
         <translation>Переглянути</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="745"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="756"/>
         <source>Reading tracks…</source>
         <translation>Читання доріжок…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="745"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="756"/>
         <source>Abort</source>
         <translation>Перервати</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="774"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="785"/>
         <source>Current file</source>
         <translation>Поточний файл</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="787"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="825"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="798"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="836"/>
         <source>Tagging</source>
         <translation>Теги</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="790"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="801"/>
         <source>Reload tags from files</source>
         <translation>Перезавантажити теги з файлів</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="791"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="802"/>
         <source>Reload tags from modified files</source>
         <translation>Перезавантажити теги зі змінених файлів</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="793"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="804"/>
         <source>Replace tags in selected tracks with tags from the files</source>
         <translation>Замінити теги у вибраних доріжках тегами з файлів</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="795"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="806"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
         <translation>Замінити теги у вибраних доріжках тегами з файлів, якщо вони були змінені</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="831"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="842"/>
         <source>Rate 0</source>
         <translation>Оцінка 0</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="832"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="843"/>
         <source>Rate 1</source>
         <translation>Оцінка 1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="833"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="844"/>
         <source>Rate 2</source>
         <translation>Оцінка 2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="834"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="845"/>
         <source>Rate 3</source>
         <translation>Оцінка 3</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="835"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="846"/>
         <source>Rate 4</source>
         <translation>Оцінка 4</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="836"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="847"/>
         <source>Rate 5</source>
         <translation>Оцінка 5</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="829"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="838"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="840"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="849"/>
         <source>Rating</source>
         <translation>Рейтинг</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1043"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
         <source>Reload Required</source>
         <translation>Необхідне перезавантаження</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1044"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1055"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>Доріжки слід перезавантажити з диска для оновлення збережених метаданих через зміни в базі даних.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1060"/>
         <source>Reload Now</source>
         <translation>Перезавантажити зараз</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1051"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1062"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1125"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1169"/>
         <source>Playback Error</source>
         <translation>Помилка відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1178"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
         <source>Track Not Found</source>
         <translation>Доріжку не знайдено</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1467"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1521"/>
         <source>Searching for artwork…</source>
         <translation>Пошук обкладинки…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1481"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1535"/>
         <source>Artwork search finished</source>
         <translation>Пошук обкладинки завершено</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1544"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1605"/>
         <source>Failed to open artwork file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1550"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1611"/>
         <source>Artwork file is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1150"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1194"/>
         <source>Continue</source>
         <translation>Продовжити</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="887"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="736"/>
+        <source>Playlist</source>
+        <translation type="unfinished">Список відтворення</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="737"/>
+        <source>Remove Current Playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="898"/>
         <source>Utilities</source>
         <translation>Утиліти</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1152"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1196"/>
         <source>Stop</source>
         <translation>Зупинити</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1156"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>Завжди продовжувати відтворення, якщо доріжка недоступна</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1183"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1227"/>
         <source>No Decoder Available</source>
         <translation>Декодер недоступний</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1257"/>
         <source>All Supported Media Files (%1)</source>
         <translation>Усі підтримувані медіафайли (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
         <source>Audio Files (%1)</source>
         <translation>Аудіофайли (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1269"/>
         <source>Add Files</source>
         <translation>Додати файли</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1239"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1283"/>
         <source>Add Folders</source>
         <translation>Додати каталоги</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1267"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1311"/>
         <source>All Supported Playlists (%1)</source>
         <translation>Усі підтримувані списки відтворення (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1277"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1321"/>
         <source>Load Playlist</source>
         <translation>Завантажити список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1312"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1361"/>
         <source>Save Playlist</source>
         <translation>Зберегти список відтворення</translation>
     </message>
@@ -4984,6 +5050,75 @@ If the default half-star does not render correctly with your system font, choose
     </message>
 </context>
 <context>
+    <name>Fooyin::InfoPanel</name>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="145"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="182"/>
+        <source>&amp;Copy</source>
+        <translation type="unfinished">&amp;Копіювати</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="398"/>
+        <source>Show header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="406"/>
+        <source>Show scrollbar (vertical)</source>
+        <translation type="unfinished">Показати смугу прокручування (вертикальну)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="415"/>
+        <source>Show scrollbar (horizontal)</source>
+        <translation type="unfinished">Показати смугу прокручування (горизонтальну)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="424"/>
+        <source>Alternating row colours</source>
+        <translation type="unfinished">Чергування кольорів рядків</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="434"/>
+        <source>Metadata</source>
+        <translation type="unfinished">Метадані</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="442"/>
+        <source>Extended metadata</source>
+        <translation type="unfinished">Розширені метадані</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="450"/>
+        <source>Location</source>
+        <translation type="unfinished">Розташування</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="458"/>
+        <source>General</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="466"/>
+        <source>Playback Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="474"/>
+        <source>ReplayGain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="482"/>
+        <source>Other</source>
+        <translation type="unfinished">Інше</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="513"/>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::InfoPopulator</name>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="133"/>
@@ -5222,64 +5357,9 @@ If the default half-star does not render correctly with your system font, choose
 <context>
     <name>Fooyin::InfoWidget</name>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="143"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="242"/>
         <source>Selection Info</source>
         <translation>Інформація про вибране</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="263"/>
-        <source>Show header</source>
-        <translation>Показувати заголовок</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="271"/>
-        <source>Show scrollbar (vertical)</source>
-        <translation>Показати смугу прокручування (вертикальну)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="280"/>
-        <source>Show scrollbar (horizontal)</source>
-        <translation>Показати смугу прокручування (горизонтальну)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="289"/>
-        <source>Alternating row colours</source>
-        <translation>Чергування кольорів рядків</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="299"/>
-        <source>Metadata</source>
-        <translation>Метадані</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="307"/>
-        <source>Extended metadata</source>
-        <translation>Розширені метадані</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="315"/>
-        <source>Location</source>
-        <translation>Розташування</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="323"/>
-        <source>General</source>
-        <translation>Загальне</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="331"/>
-        <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="339"/>
-        <source>ReplayGain</source>
-        <translation>ReplayGain</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="347"/>
-        <source>Other</source>
-        <translation>Інше</translation>
     </message>
 </context>
 <context>
@@ -5756,180 +5836,182 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::LibraryTreeConfigDialog</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="40"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="41"/>
         <source>Library Tree Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="44"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="45"/>
         <source>Start playback immediately</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="45"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="46"/>
         <source>Enabled</source>
         <translation type="unfinished">Увімкнено</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="46"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="47"/>
         <source>Switch when changed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="47"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="48"/>
         <source>Keep alive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="50"/>
         <source>Restore state on startup</source>
         <translation type="unfinished">Відновлення стану під час запуску</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="50"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="51"/>
         <source>Expand/collapse animation</source>
         <translation type="unfinished">Розгорнути/згорнути анімацію</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="51"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Show header</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
         <source>Show scrollbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="54"/>
         <source>Alternating row colours</source>
         <translation type="unfinished">Чергування кольорів рядків</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="54"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="55"/>
         <source>Override row height</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="58"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="59"/>
         <source>Manage groupings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="61"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="62"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="63"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="72"/>
         <source>Click Behaviour</source>
         <translation type="unfinished">Поведінка при натисканні</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="66"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="76"/>
         <source>Double-click</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
         <source>Middle-click</source>
         <translation type="unfinished">Натискання середньої кнопки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="73"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="83"/>
         <source>Library Selection Playlist</source>
         <translation type="unfinished">Список відтворення для бібліотеки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="76"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="86"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="92"/>
         <source>Name</source>
         <translation type="unfinished">Ім&apos;я</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="85"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="69"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="96"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="91"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="70"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="102"/>
         <source>Appearance</source>
         <translation type="unfinished">Зовнішній вигляд</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="94"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="105"/>
         <source>Icon</source>
         <translation type="unfinished">Значок</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="104"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="115"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="108"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="119"/>
         <source>Width</source>
         <translation type="unfinished">Ширина</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="110"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="121"/>
         <source>Height</source>
         <translation type="unfinished">Висота</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="140"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="150"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="166"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="176"/>
         <source>None</source>
         <translation type="unfinished">Порожньо</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="141"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="167"/>
         <source>Expand/Collapse/Play</source>
         <translation type="unfinished">Розгорнути/Згорнути/Відтворити</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="142"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="151"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="168"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="177"/>
         <source>Add to current playlist</source>
         <translation type="unfinished">Додати до поточного списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="143"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="152"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="169"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="178"/>
         <source>Add to active playlist</source>
         <translation type="unfinished">Додати до активного списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="144"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="153"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="170"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="179"/>
         <source>Replace current playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="145"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="154"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="171"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="180"/>
         <source>Create new playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="155"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="172"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="181"/>
         <source>Add to playback queue</source>
         <translation type="unfinished">Додати до черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="147"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="173"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="182"/>
         <source>Add to front of playback queue</source>
         <translation type="unfinished">Додати до початку черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="157"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="174"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="183"/>
         <source>Replace playback queue</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6044,7 +6126,7 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::LibraryTreeWidget</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="367"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="622"/>
         <source>Grouping</source>
         <translation>Групування</translation>
     </message>
@@ -6074,22 +6156,22 @@ and last played uses the later value.</source>
         <translation>Розпочати відтворення вибраних треків</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="383"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="638"/>
         <source>Manage groupings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="428"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="683"/>
         <source>Open folder</source>
         <translation>Відкрити папку</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="589"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="846"/>
         <source>Playback</source>
         <translation type="unfinished">Відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1198"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="267"/>
         <source>Library Tree</source>
         <translation>Бібліотечне дерево</translation>
     </message>
@@ -6172,8 +6254,9 @@ and last played uses the later value.</source>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="51"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="191"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="216"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="165"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="208"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="233"/>
         <source>Synced</source>
         <translation type="unfinished">Синхронізовано</translation>
     </message>
@@ -6188,207 +6271,222 @@ and last played uses the later value.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="60"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="54"/>
+        <source>Centre first synced line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="55"/>
+        <source>Centre last synced line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="62"/>
         <source>Colours</source>
         <translation type="unfinished">Кольори</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="61"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="63"/>
         <source>Background colour</source>
         <translation type="unfinished">Колір фону</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="63"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="65"/>
         <source>Line colour</source>
         <translation type="unfinished">Колір лінії</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="65"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="67"/>
         <source>Unplayed line colour</source>
         <translation type="unfinished">Колір невідтвореної лінії</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="67"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="69"/>
         <source>Played line colour</source>
         <translation type="unfinished">Колір відтвореної лінії</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="69"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="71"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="73"/>
         <source>Current line colour</source>
         <translation type="unfinished">Поточний колір лінії</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="73"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="75"/>
         <source>Current word colour</source>
         <translation type="unfinished">Поточний колір слова</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="75"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="77"/>
         <source>Line font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="77"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="79"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="81"/>
         <source>Current line font</source>
         <translation type="unfinished">Шрифт поточного рядка</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="81"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="83"/>
         <source>Current word font</source>
         <translation type="unfinished">Поточний шрифт слова</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="85"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="126"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="253"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="87"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="128"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="270"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="88"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="90"/>
         <source>This will only function with synced lyrics.</source>
         <translation type="unfinished">Це працюватиме лише із синхронізованими текстами пісень.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="90"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="92"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
         <translation type="unfinished">Це відображатиметься, якщо текст пісні для поточного треку не знайдено.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="95"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="97"/>
         <source>No lyrics script</source>
         <translation type="unfinished">Без сценарію тексту пісні</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="100"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="102"/>
         <source>Scrolling</source>
         <translation type="unfinished">Прокручування</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="106"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="108"/>
         <source>Scroll Mode</source>
         <translation type="unfinished">Режим прокручування</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="108"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="110"/>
         <source>No automatic scrolling will take place</source>
         <translation type="unfinished">Автоматичне прокручування не відбуватиметься</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="109"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="111"/>
         <source>Synced lyrics will be scrolled</source>
         <translation type="unfinished">Синхронізовані тексти пісень будуть прокручені</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="110"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="112"/>
         <source>All lyrics will be scrolled</source>
         <translation type="unfinished">Усі тексти пісень будуть прокручені</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="129"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="131"/>
         <source>Align to centre</source>
         <translation type="unfinished">Вирівняти по центру</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="130"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="132"/>
         <source>Align to left</source>
         <translation type="unfinished">Вирівняти по лівому краю</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="131"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="133"/>
         <source>Align to right</source>
         <translation type="unfinished">Вирівняти по правому краю</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="138"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
         <source>Line spacing</source>
         <translation type="unfinished">Міжрядковий інтервал</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="142"/>
         <source>Alignment</source>
         <translation type="unfinished">Вирівнювання</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="144"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="146"/>
         <source>Fade</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="147"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
         <source>Off</source>
         <translation type="unfinished">Вимк</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="148"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="150"/>
         <source>Synced only</source>
         <translation type="unfinished">Тільки синхронізовано</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="151"/>
         <source>Scrolling lyrics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="150"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="152"/>
         <source>All lyrics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="156"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="158"/>
         <source>Apply to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="161"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="163"/>
         <source>Margins</source>
         <translation type="unfinished">Поля</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="170"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="174"/>
         <source>Left</source>
         <translation type="unfinished">Зліва</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="172"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="176"/>
         <source>Right</source>
         <translation type="unfinished">Справа</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="174"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="178"/>
         <source>Top</source>
         <translation type="unfinished">Зверху</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="176"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="180"/>
         <source>Bottom</source>
         <translation type="unfinished">Знизу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="179"/>
-        <source>Top and bottom margins only apply to unsynced lyrics.</source>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="183"/>
+        <source>Top and bottom margins apply to unsynced lyrics, and to synced lyrics when centring is disabled for that edge.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="189"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="193"/>
+        <source>These options control whether the first and last synced lines are centred in view.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="206"/>
         <source>Fonts</source>
         <translation type="unfinished">Шрифти</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="193"/>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="218"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="210"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="235"/>
         <source>Synced Words</source>
         <translation type="unfinished">Синхронізовані слова</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="251"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="268"/>
         <source>Layout</source>
         <translation type="unfinished">Макет</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="252"/>
+        <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="269"/>
         <source>Style</source>
         <translation type="unfinished">Стиль</translation>
     </message>
@@ -6396,68 +6494,67 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Lyrics::LyricsEditor</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="415"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="117"/>
         <source>Seek</source>
         <translation>Шукати</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="416"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="118"/>
         <source>Reset Changes</source>
         <translation>Скинути зміни</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="417"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="119"/>
         <source>Insert/Update</source>
         <translation>Вставити/Оновити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="421"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="123"/>
         <source>Remove</source>
         <translation>Вилучити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="422"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="124"/>
         <source>Remove All</source>
         <translation>Вилучити Всі</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="149"/>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="412"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="114"/>
         <source>Lyrics Editor</source>
         <translation>Редактор текстів пісень</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="418"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="120"/>
         <source>Update and Next Line</source>
         <translation>Оновлення та наступний рядок</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="419"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="121"/>
         <source>Rewind line (-100ms)</source>
         <translation>Лінія перемотування (-100 мс)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="420"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="122"/>
         <source>Forward line (+100ms)</source>
         <translation>Пряма лінія (+100 мс)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="430"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="132"/>
         <source>Operation</source>
         <translation>Операція</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="438"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="140"/>
         <source>Timestamps</source>
         <translation>Позначки часу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="526"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="205"/>
         <source>Pause</source>
         <translation>Пауза</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="530"/>
+        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="209"/>
         <source>Play</source>
         <translation>Відтворити</translation>
     </message>
@@ -6465,7 +6562,7 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Lyrics::LyricsEditorDialog</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="645"/>
+        <location filename="../../src/plugins/lyrics/lyricseditordialog.cpp" line="39"/>
         <source>Lyrics Editor</source>
         <translation>Редактор текстів пісень</translation>
     </message>
@@ -6473,22 +6570,41 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Lyrics::LyricsPlugin</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="59"/>
-        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="68"/>
-        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="69"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="72"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="81"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="82"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="89"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="94"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="103"/>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="112"/>
         <source>Lyrics</source>
         <translation>Тексти пісень</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="92"/>
+        <source>Edit lyrics</source>
+        <translation type="unfinished">Редагувати текст пісні</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="101"/>
+        <source>Quicksearch for lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="110"/>
+        <source>Search for lyrics…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Fooyin::Lyrics::LyricsSavingPage</name>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="286"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="313"/>
         <source>Saving</source>
         <translation>Збереження</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="287"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="314"/>
         <source>Lyrics</source>
         <translation>Тексти пісень</translation>
     </message>
@@ -6496,104 +6612,226 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Lyrics::LyricsSavingPageWidget</name>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="82"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="85"/>
         <source>Manual save</source>
         <translation>Ручне збереження</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="83"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="86"/>
         <source>Autosave</source>
         <translation>Автозбереження</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="84"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="87"/>
         <source>Autosave after 60 seconds or 1/3 of track duration</source>
         <translation>Автоматичне збереження через 60 секунд або 1/3 тривалості треку</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="85"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="88"/>
         <source>Save to metadata tag</source>
         <translation>Зберегти в тег метаданих</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="86"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="89"/>
         <source>Save to directory</source>
         <translation>Зберегти в каталог</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="87"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="90"/>
         <source>Save all</source>
         <translation>Зберегти все</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="88"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="91"/>
         <source>Synced only</source>
         <translation>Тільки синхронізовано</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="89"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="92"/>
         <source>Unsynced only</source>
         <translation>Тільки несинхронізовані</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="94"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="97"/>
         <source>Collapse duplicate lines</source>
         <translation>Згорнути дублікати рядків</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="95"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="98"/>
         <source>Save metadata</source>
         <translation>Зберегти метадані</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="97"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="101"/>
         <source>Save Scheme</source>
         <translation>Зберегти схему</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="105"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="109"/>
         <source>Save Method</source>
         <translation>Зберегти метод</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="112"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="116"/>
         <source>Autosave Preference</source>
         <translation>Налаштування автозбереження</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="120"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="124"/>
         <source>Save Location</source>
         <translation>Зберегти місцезнаходження</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="123"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="127"/>
         <source>Synced lyric tag</source>
         <translation>Тег синхронізованого тексту пісні</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="124"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="128"/>
         <source>Unsynced lyric tag</source>
         <translation>Несинхронізований тег тексту пісні</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="125"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="129"/>
         <source>Directory</source>
         <translation>Довідник</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="126"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="130"/>
         <source>Filename</source>
         <translation>Ім&apos;я файлу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="138"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="142"/>
         <source>Save Format</source>
         <translation>Зберегти формат</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="275"/>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="149"/>
+        <source>Save Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="152"/>
+        <source>Keep Original</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="153"/>
+        <source>Remove original</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="155"/>
+        <source>Determines what happens if lyrics are saved to a different location (file ↔ tag).
+Keep original: keeps the previous version of the lyrics in its original location.
+Remove original: deletes the previous file or tag after saving.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="160"/>
+        <source>Conflict policy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="302"/>
         <source>Select Directory</source>
         <translation>Виберіть каталог</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Lyrics::LyricsSearchDialog</name>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="71"/>
+        <source>Title</source>
+        <translation type="unfinished">Назва</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="72"/>
+        <source>Album</source>
+        <translation type="unfinished">Альбом</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="73"/>
+        <source>Artist</source>
+        <translation type="unfinished">Виконавець</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="74"/>
+        <source>Search</source>
+        <translation type="unfinished">Пошук</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="83"/>
+        <source>Search for Lyrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="201"/>
+        <source>Searching…</source>
+        <translation type="unfinished">Пошук…</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="234"/>
+        <source>%Ln result(s)</source>
+        <translation type="unfinished">
+            <numerusform>%Ln результат</numerusform>
+            <numerusform>%Ln результати</numerusform>
+            <numerusform>%Ln результатів</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="237"/>
+        <source>No lyrics found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="277"/>
+        <source>Saved lyrics from %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Lyrics::LyricsSearchModel</name>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="87"/>
+        <source>Title</source>
+        <translation type="unfinished">Назва</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="89"/>
+        <source>Album</source>
+        <translation type="unfinished">Альбом</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="91"/>
+        <source>Artist</source>
+        <translation type="unfinished">Виконавець</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="93"/>
+        <source>Source</source>
+        <translation type="unfinished">Джерело</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="95"/>
+        <source>Synced</source>
+        <translation type="unfinished">Синхронізовано</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="146"/>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="148"/>
+        <source>Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="150"/>
+        <source>Word</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6696,84 +6934,99 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Lyrics::LyricsWidget</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="221"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="225"/>
         <source>Artist</source>
         <translation>Виконавець</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="221"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="225"/>
         <source>Album</source>
         <translation>Альбом</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="221"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="225"/>
         <source>Title</source>
         <translation>Назва</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="276"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="280"/>
         <source>Lyrics</source>
         <translation>Тексти пісень</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="627"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="630"/>
         <source>Select lyrics</source>
         <translation>Виберіть текст пісні</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="637"/>
-        <source>Search for lyrics</source>
-        <translation>Пошук текстів пісень</translation>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="640"/>
+        <source>Auto-search for lyrics</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="638"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="641"/>
         <source>Search for lyrics for the current track</source>
         <translation>Пошук тексту пісні для поточного треку</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="649"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="652"/>
+        <source>Search for lyrics…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="653"/>
+        <source>Open the lyrics search dialog for the current track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="658"/>
         <source>Edit lyrics</source>
         <translation>Редагувати текст пісні</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="650"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="659"/>
         <source>Open editor for the current lyrics</source>
         <translation>Відкрити редактор для поточного тексту пісні</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="656"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="665"/>
         <source>Save lyrics</source>
         <translation>Зберегти текст пісні</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="657"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="666"/>
         <source>Save lyrics using current settings</source>
         <translation>Зберегти текст пісні з поточними налаштуваннями</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="666"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="675"/>
         <source>Show scrollbar</source>
         <translation>Показати смугу прокручування</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="675"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="684"/>
         <source>Text-align</source>
         <translation>Вирівнювання тексту</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="678"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="687"/>
         <source>Align to centre</source>
         <translation>Вирівняти по центру</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="679"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="688"/>
         <source>Align to left</source>
         <translation>Вирівняти по лівому краю</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="680"/>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="689"/>
         <source>Align to right</source>
         <translation>Вирівняти по правому краю</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="718"/>
+        <source>Lyrics settings…</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="43"/>
@@ -6792,12 +7045,12 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::NetworkPage</name>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="197"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="200"/>
         <source>General</source>
         <translation>Загальне</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/networkpage.cpp" line="198"/>
+        <location filename="../../src/gui/settings/networkpage.cpp" line="201"/>
         <source>Networking</source>
         <translation>Нетворкінг</translation>
     </message>
@@ -7278,7 +7531,7 @@ and last played uses the later value.</source>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="236"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="282"/>
         <source>&amp;Play</source>
         <translation>&amp;Відтворювати</translation>
     </message>
@@ -7293,157 +7546,237 @@ and last played uses the later value.</source>
         <translation>&amp;Наступний</translation>
     </message>
     <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
+        <source>&amp;Previous album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
+        <source>&amp;Next album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
+        <source>Random &amp;track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
+        <source>Random &amp;album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
         <source>Repeat &amp;playlist</source>
         <translation>Повторити список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="56"/>
         <source>&amp;Shuffle tracks</source>
         <translation>&amp;Перемішати треки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="53"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="57"/>
         <source>Shu&amp;ffle albums</source>
         <translation>Перемішати альбоми</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="54"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="58"/>
         <source>&amp;Random</source>
         <translation>&amp;Випадкове</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="59"/>
         <source>Stop &amp;after current</source>
         <translation>Зупинка та післяструмовий</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="56"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="60"/>
         <source>&amp;Reset the above after stopping</source>
         <translation>&amp;Скиньте вищезазначене після зупинки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="64"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="68"/>
         <source>Playback</source>
         <translation>Відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="71"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="75"/>
         <source>Stop playback</source>
         <translation>Зупинити відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="77"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="81"/>
         <source>Pause or unpause playback</source>
         <translation>Призупинення або відновлення відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="86"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="90"/>
         <source>Start playing the next track in the current playlist</source>
         <translation>Почати відтворення наступного треку в поточному списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="92"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="96"/>
         <source>Start playing the previous track in the current playlist</source>
         <translation>Почати відтворення попереднього треку в поточному списку відтворення</translation>
     </message>
     <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="103"/>
+        <source>Random</source>
+        <translation type="unfinished">Випадкове</translation>
+    </message>
+    <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="106"/>
+        <source>Ra&amp;ndom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="109"/>
+        <source>Start playing a random track in the current playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="112"/>
+        <source>Random Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="115"/>
+        <source>Start playing the first track of a random album in the current playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="118"/>
+        <source>Random Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="122"/>
+        <source>Skip to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="125"/>
+        <source>Skip &amp;to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="128"/>
+        <source>Start playing the first track of the next album in the current playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="131"/>
+        <source>Next Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="134"/>
+        <source>Start playing the first track of the previous album in the current playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="137"/>
+        <source>Previous Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="152"/>
         <source>Order</source>
         <translation>Замовлення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="109"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="155"/>
         <source>&amp;Order</source>
         <translation>&amp;Замовлення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="120"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="166"/>
         <source>Set playback order to default</source>
         <translation>Встановити порядок відтворення за замовчуванням</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="126"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="172"/>
         <source>Set playback order to repeat the current track</source>
         <translation>Встановити порядок відтворення для повторення поточної доріжки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="150"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="196"/>
         <source>Set playback order to shuffle tracks in the current playlist</source>
         <translation>Встановити порядок відтворення у випадковому порядку для треків у поточному списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="132"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="178"/>
         <source>Set playback order to repeat the current album</source>
         <translation>Встановити порядок відтворення для повторення поточного альбому</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="138"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="184"/>
         <source>Set playback order to repeat the current playlist</source>
         <translation>Встановити порядок відтворення для повторення поточного списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="144"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="190"/>
         <source>Set playback order to shuffle albums in the current playlist</source>
         <translation>Встановити порядок відтворення в випадковому порядку для альбомів у поточному списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="156"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="202"/>
         <source>Set playback order to play a random track in the current playlist</source>
         <translation>Встановити порядок відтворення для випадкового відтворення треку в поточному списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="175"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="221"/>
         <source>Cursor follows play&amp;back</source>
         <translation>Курсор слідує за відтворенням і назад</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="176"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="222"/>
         <source>Select the currently playing track when changed</source>
         <translation>Вибір поточної доріжки, що відтворюється, при зміні</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="177"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="223"/>
         <source>Playback follows &amp;cursor</source>
         <translation>Відтворення відбувається за курсором</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="185"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="231"/>
         <source>Reset &apos;Stop after current&apos; after stopping</source>
         <translation>Скидання «Зупинка після струму» після зупинки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="232"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="278"/>
         <source>&amp;Pause</source>
         <translation>&amp;Пауза</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
         <source>&amp;Default</source>
         <translation>&amp;За замовчуванням</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="53"/>
         <source>Repeat &amp;track</source>
         <translation>Повторити та відстежити</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="54"/>
         <source>Repeat &amp;album</source>
         <translation>Повторити &amp;альбом</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="80"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="84"/>
         <source>Play/Pause</source>
         <translation>Відтворення/Пауза</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="178"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="224"/>
         <source>Start playback of the currently selected track on next</source>
         <translation>Розпочати відтворення вибраної доріжки на наступній</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="180"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="226"/>
         <source>Stop playback at the end of the current track</source>
         <translation>Зупинити відтворення в кінці поточної доріжки</translation>
     </message>
@@ -7620,9 +7953,87 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::PlaylistBox</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistbox.cpp" line="62"/>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="53"/>
+        <source>&amp;Edit autoplaylist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="56"/>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="252"/>
+        <source>Re&amp;name playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="58"/>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="256"/>
+        <source>&amp;Remove playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="60"/>
+        <source>Add &amp;new playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="63"/>
+        <source>Add new &amp;autoplaylist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="100"/>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="193"/>
         <source>Playlist Switcher</source>
         <translation>Перемикач списків відтворення</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="192"/>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="195"/>
+        <source>Edit the selected autoplaylist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="199"/>
+        <source>Rename the selected playlist</source>
+        <translation type="unfinished">Перейменувати вибраний список відтворення</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="202"/>
+        <source>Rename</source>
+        <translation type="unfinished">Перейменувати</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="207"/>
+        <source>Remove the selected playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="210"/>
+        <source>Remove</source>
+        <translation type="unfinished">Вилучити</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="215"/>
+        <source>Create a new empty playlist</source>
+        <translation type="unfinished">Створити новий порожній список відтворення</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="225"/>
+        <source>Create a new autoplaylist</source>
+        <translation type="unfinished">Створити новий автоматичний список відтворення</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="252"/>
+        <source>Re&amp;name autoplaylist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistbox.cpp" line="256"/>
+        <source>&amp;Remove autoplaylist</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8092,7 +8503,7 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::PlaylistInteractor</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistinteractor.h" line="95"/>
+        <location filename="../../src/gui/playlist/playlistinteractor.h" line="102"/>
         <source>Reading tracks…</source>
         <translation>Читання треків…</translation>
     </message>
@@ -8107,15 +8518,155 @@ and last played uses the later value.</source>
         <translation>Поточний файл</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistinteractor.h" line="101"/>
+        <location filename="../../src/gui/playlist/playlistinteractor.h" line="108"/>
         <source>Loading playlist…</source>
         <translation>Завантаження списку відтворення…</translation>
     </message>
 </context>
 <context>
+    <name>Fooyin::PlaylistManagerModel</name>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="174"/>
+        <source>Playlist name</source>
+        <translation type="unfinished">Назва списку відтворення</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="176"/>
+        <source>Tracks</source>
+        <translation type="unfinished">Доріжки</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="178"/>
+        <source>Duration</source>
+        <translation type="unfinished">Тривалість</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="180"/>
+        <source>Total size</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::PlaylistManagerWidget</name>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="98"/>
+        <source>Activate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="99"/>
+        <source>&amp;Edit autoplaylist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="102"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="359"/>
+        <source>Re&amp;name playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="104"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="366"/>
+        <source>&amp;Remove playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="106"/>
+        <source>Add &amp;new playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="109"/>
+        <source>Add new &amp;autoplaylist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="179"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="283"/>
+        <source>Playlist Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="270"/>
+        <source>%1 contents</source>
+        <extracomment>%1 refers to the name of a playlist.</extracomment>
+        <translation type="unfinished">%1 зміст</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="282"/>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="285"/>
+        <source>Activate the selected playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="292"/>
+        <source>Edit the selected autoplaylist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="297"/>
+        <source>Rename the selected playlist</source>
+        <translation type="unfinished">Перейменувати вибраний список відтворення</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="300"/>
+        <source>Rename</source>
+        <translation type="unfinished">Перейменувати</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="305"/>
+        <source>Remove the selected playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="308"/>
+        <source>Remove</source>
+        <translation type="unfinished">Вилучити</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="313"/>
+        <source>Create a new empty playlist</source>
+        <translation type="unfinished">Створити новий порожній список відтворення</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="321"/>
+        <source>Create a new autoplaylist</source>
+        <translation type="unfinished">Створити новий автоматичний список відтворення</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="359"/>
+        <source>Re&amp;name autoplaylist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="366"/>
+        <source>&amp;Remove autoplaylist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="466"/>
+        <source>Options</source>
+        <translation type="unfinished">Опції</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="468"/>
+        <source>Activate on single click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="497"/>
+        <source>Restore playlist order</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1443"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1507"/>
         <source>%Ln track(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8407,68 +8958,73 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::PlaylistTabs</name>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="289"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="287"/>
         <source>Add new playlist</source>
         <translation>Додати новий список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="296"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="294"/>
         <source>Add new autoplaylist</source>
         <translation>Додати новий автоматичний список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="315"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="313"/>
         <source>Edit autoplaylist</source>
         <translation>Редагувати Автоматичний список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="325"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="323"/>
         <source>Rename playlist</source>
         <translation>Перейменувати список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="325"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="323"/>
         <source>Rename autoplaylist</source>
         <translation>Перейменувати автоматичний список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="361"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="351"/>
+        <source>Save playlist…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="360"/>
         <source>Remove playlist</source>
         <translation>Вилучити список відтворення&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="361"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="360"/>
         <source>Remove autoplaylist</source>
         <translation>Вилучити автоматичний список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="338"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="336"/>
         <source>Move left</source>
         <translation>Рухатися ліворуч</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="343"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="341"/>
         <source>Move right</source>
         <translation>Рухатися праворуч</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="558"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="557"/>
         <source>Add playlist</source>
         <translation>Додати список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="566"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="565"/>
         <source>Clear playlist</source>
         <translation>Очистити список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="387"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="386"/>
         <source>%1 contents</source>
         <extracomment>%1 refers to the name of a playlist.</extracomment>
         <translation>%1 зміст</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="152"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="149"/>
         <source>Playlist Tabs</source>
         <translation>Вкладки списків відтворення</translation>
     </message>
@@ -8489,22 +9045,22 @@ and last played uses the later value.</source>
         <translation type="unfinished">&amp;Відтворювати</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="639"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="656"/>
         <source>Writing metadata…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="639"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="656"/>
         <source>Abort</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="645"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="662"/>
         <source>Writing Metadata</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="646"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="663"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8513,53 +9069,53 @@ and last played uses the later value.</source>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="666"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="683"/>
         <source>Start playback of the selected track</source>
         <translation type="unfinished">Розпочати відтворення вибраної доріжки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="675"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="692"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="678"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="695"/>
         <source>Select &amp;all</source>
         <translation type="unfinished">Вибрати &amp;всі</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="679"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="696"/>
         <source>Select all tracks in the current playlist</source>
         <translation type="unfinished">Вибрати всі треки в поточному списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="932"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="949"/>
         <source>Reset columns to default</source>
         <translation type="unfinished">Скинути значення стовпців за замовчуванням</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1004"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1021"/>
         <source>Single-column mode</source>
         <translation type="unfinished">Режим одного стовпця</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="959"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="976"/>
         <source>Sort</source>
         <translation>Сортувати</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1014"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1031"/>
         <source>Presets</source>
         <translation>Пресети</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1038"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1055"/>
         <source>Columns</source>
         <translation type="unfinished">Колонки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="973"/>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1064"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="990"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1081"/>
         <source>More…</source>
         <translation type="unfinished">Більше…</translation>
     </message>
@@ -8883,30 +9439,30 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::PropertiesDialog</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="990"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1010"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="982"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1002"/>
         <source>Toggle Sidebar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="991"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1021"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="983"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1013"/>
         <source>Previous Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="992"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1031"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="984"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1023"/>
         <source>Next Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="994"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="986"/>
         <source>Tracks</source>
         <translation type="unfinished">Доріжки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="994"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="986"/>
         <source>Properties</source>
         <translation type="unfinished">Властивості</translation>
     </message>
@@ -8920,12 +9476,12 @@ and last played uses the later value.</source>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="447"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="630"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="622"/>
         <source>Properties</source>
         <translation>Властивості</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="634"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="626"/>
         <source>%Ln track(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8934,17 +9490,17 @@ and last played uses the later value.</source>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="936"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="928"/>
         <source>Pending Changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="937"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="929"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="954"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="946"/>
         <source>All Tracks (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8952,42 +9508,42 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::QueueViewer</name>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="78"/>
-        <source>Remove</source>
-        <translation>Вилучити</translation>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="82"/>
+        <source>&amp;Remove</source>
+        <translation type="unfinished">&amp;Вилучити</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="80"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="84"/>
         <source>&amp;Clear</source>
         <translation>&amp;Очистити</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="132"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="168"/>
         <source>Show playing queue track</source>
         <translation>Показати трек черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="154"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="190"/>
         <source>Remove the selected tracks from the playback queue</source>
         <translation>Вилучити вибрані треки з черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="164"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="200"/>
         <source>Remove all tracks in the playback queue</source>
         <translation>Вилучити всі треки з черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="170"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="206"/>
         <source>&amp;Select all</source>
         <translation>&amp;Вибрати все</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="171"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="207"/>
         <source>Select all tracks in the playback queue</source>
         <translation>Вибрати всі треки в черзі відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="100"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="108"/>
         <source>Playback Queue</source>
         <translation>Черга відтворення</translation>
     </message>
@@ -9500,14 +10056,6 @@ and last played uses the later value.</source>
     </message>
 </context>
 <context>
-    <name>Fooyin::ReplayGainWidget</name>
-    <message>
-        <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="88"/>
-        <source>ReplayGain Editor</source>
-        <translation>Редактор ReplayGain</translation>
-    </message>
-</context>
-<context>
     <name>Fooyin::ResamplerSettingsWidget</name>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="49"/>
@@ -9581,54 +10129,64 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::ScriptDisplay</name>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="159"/>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="187"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="123"/>
+        <source>&amp;Copy</source>
+        <translation type="unfinished">&amp;Копіювати</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="132"/>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="176"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="204"/>
         <source>Script Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="187"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="204"/>
         <source>Right-click to configure this panel.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="303"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="325"/>
         <source>Align</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="305"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="327"/>
         <source>Horizontal</source>
         <translation type="unfinished">Горизонтальний</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="307"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="329"/>
         <source>Left</source>
         <translation type="unfinished">Зліва</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="308"/>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="316"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="330"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="338"/>
         <source>Centre</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="309"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="331"/>
         <source>Right</source>
         <translation type="unfinished">Справа</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="313"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="335"/>
         <source>Vertical</source>
         <translation type="unfinished">Вертикальний</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="315"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="337"/>
         <source>Top</source>
         <translation type="unfinished">Зверху</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="317"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="339"/>
         <source>Bottom</source>
         <translation type="unfinished">Знизу</translation>
     </message>
@@ -9842,17 +10400,17 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerAuthSession</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="110"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="114"/>
         <source>Malformed login callback.</source>
         <translation>Неправильно сформований зворотний виклик входу.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="116"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="120"/>
         <source>No login token in callback.</source>
         <translation>Немає токена входу у зворотному виклику.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="127"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="131"/>
         <source>The application has successfully logged in. This window can now be closed.</source>
         <translation>Програма успішно ввійшла в систему. Тепер це вікно можна закрити.</translation>
     </message>
@@ -9860,17 +10418,17 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerPage</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="182"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="183"/>
         <source>General</source>
         <translation>Загальне</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="183"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="184"/>
         <source>Networking</source>
         <translation>Нетворкінг</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="183"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="184"/>
         <source>Scrobbling</source>
         <translation>Скроблінг</translation>
     </message>
@@ -9878,57 +10436,57 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerPageWidget</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="69"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="70"/>
         <source>Enable scrobbling</source>
         <translation>Увімкнути скробблінг</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="71"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="72"/>
         <source>Filter scrobbles</source>
         <translation>Фільтрувати скроблі</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="76"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="77"/>
         <source>Album Artist</source>
         <translation>Виконавець альбому</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="80"/>
         <source>Scrobble delay</source>
         <translation>Затримка Scrobble</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="80"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="81"/>
         <source>Time to wait before submitting scrobbles</source>
         <translation>Час зачекати перед надсиланням Scrobbles</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="88"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="89"/>
         <source>Query</source>
         <translation>Запит</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="89"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="90"/>
         <source>Enter a query - tracks that match the query will NOT be scrobbled</source>
         <translation>Введіть запит – треки, що відповідають запиту, НЕ будуть скробловані</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="100"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="101"/>
         <source>Fields</source>
         <translation>Полем</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="104"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="105"/>
         <source>Title</source>
         <translation>Назва</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="106"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="107"/>
         <source>Artist</source>
         <translation>Виконавець</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="108"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="109"/>
         <source>Album</source>
         <translation>Альбом</translation>
     </message>
@@ -9959,22 +10517,22 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerService</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="150"/>
+        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="166"/>
         <source>Authentication</source>
         <translation type="unfinished">Автентифікація</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="152"/>
+        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="168"/>
         <source>Open url in web browser?</source>
         <translation>Відкрити URL-адресу у веббраузері?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="159"/>
+        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="175"/>
         <source>Open</source>
         <translation>Відчинено</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="161"/>
+        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="177"/>
         <source>Copy URL</source>
         <translation>Копіювати URL-адресу</translation>
     </message>
@@ -9982,17 +10540,17 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerServicesPage</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="369"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
         <source>Services</source>
         <translation>Послуги</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="371"/>
         <source>Networking</source>
         <translation>Нетворкінг</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="370"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="371"/>
         <source>Scrobbling</source>
         <translation>Скроблінг</translation>
     </message>
@@ -10000,62 +10558,62 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerServicesPageWidget</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="99"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="100"/>
         <source>Services</source>
         <translation>Послуги</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="101"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="102"/>
         <source>Add Service</source>
         <translation>Додати послугу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="180"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="181"/>
         <source>Sign Out</source>
         <translation>Вийти у</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="184"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="185"/>
         <source>Signed in</source>
         <translation>Увійшов з</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="185"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="186"/>
         <source>Signed in as %1</source>
         <translation>Увійшов як %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="189"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="190"/>
         <source>Sign In</source>
         <translation>Увійти з</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="192"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="193"/>
         <source>Not signed in</source>
         <translation>Ви не ввійшли</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="259"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="260"/>
         <source>Edit</source>
         <translation>Редагувати</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="261"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="262"/>
         <source>Delete</source>
         <translation>Видалити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="278"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="279"/>
         <source>Token</source>
         <translation>Токен</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="281"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="282"/>
         <source>URL</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="302"/>
+        <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="303"/>
         <source>You can find your token here</source>
         <translation>Ви можете знайти свій токен тут</translation>
     </message>
@@ -10063,9 +10621,24 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerToggle</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="64"/>
+        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="69"/>
         <source>Scrobble Toggle</source>
         <translation>Перемикач Scrobble</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="96"/>
+        <source>Enable scrobbling</source>
+        <translation type="unfinished">Увімкнути скробблінг</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="105"/>
+        <source>Scrobbling settings…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="113"/>
+        <source>Scrobbling services…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10356,7 +10929,7 @@ and last played uses the later value.</source>
         <translation>Допомога</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1106"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1150"/>
         <source>Quick Search</source>
         <translation>Швидкий пошук</translation>
     </message>
@@ -10726,22 +11299,32 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::StatusWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="407"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="501"/>
         <source>Status Bar</source>
         <translation>Рядок стану</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="497"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="596"/>
         <source>Show icon</source>
         <translation>Показати значок</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="503"/>
-        <source>Show track selection</source>
-        <translation>Показати вибір треку</translation>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="602"/>
+        <source>Show selection info</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="510"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="609"/>
+        <source>Show current playlist info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="628"/>
+        <source>Status bar settings…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="616"/>
         <source>Show action tips</source>
         <translation>Показати поради щодо дій</translation>
     </message>
@@ -10749,12 +11332,12 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::StatusWidgetPage</name>
     <message>
-        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="121"/>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="139"/>
         <source>General</source>
         <translation>Загальне</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="122"/>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="140"/>
         <source>Status Bar</source>
         <translation type="unfinished">Рядок стану</translation>
     </message>
@@ -10762,37 +11345,52 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::StatusWidgetPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="61"/>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="63"/>
         <source>Show icon</source>
         <translation>Показати значок</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="62"/>
-        <source>Show track selection</source>
-        <translation>Показати вибір треку</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="63"/>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="66"/>
         <source>Show action tips</source>
         <translation>Показати поради щодо дій</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="77"/>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="83"/>
+        <source>Shown in the status bar when no tracks are selected, or when selection info is disabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="86"/>
         <source>Playing track</source>
         <translation>Відтворення треку</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="79"/>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="88"/>
         <source>Track selection</source>
         <translation>Вибір треку</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="67"/>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
+        <source>Current playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="71"/>
         <source>Display</source>
         <translation>Відображення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="74"/>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="64"/>
+        <source>Show selection info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
+        <source>Show current playlist info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="79"/>
         <source>Scripts</source>
         <translation>Скрипти</translation>
     </message>
@@ -10800,12 +11398,12 @@ and last played uses the later value.</source>
 <context>
     <name>Fooyin::StatusWidgetPrivate</name>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="151"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="150"/>
         <source>Cancel scan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="327"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="349"/>
         <source>Layout Editing Mode</source>
         <translation>Режим редагування макета</translation>
     </message>
@@ -10823,42 +11421,42 @@ and last played uses the later value.</source>
         <translation>Стек вкладок</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="284"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="285"/>
         <source>&amp;Position</source>
         <translation>&amp;Позиція</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="288"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="289"/>
         <source>&amp;North</source>
         <translation>&amp;Північ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="289"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="290"/>
         <source>&amp;East</source>
         <translation>&amp;Схід</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="290"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="291"/>
         <source>&amp;South</source>
         <translation>&amp;Південь</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="291"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="292"/>
         <source>&amp;West</source>
         <translation>&amp;Захід</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="330"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="331"/>
         <source>&amp;Rename</source>
         <translation>&amp;Перейменувати</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="333"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="335"/>
         <source>Re&amp;move</source>
         <translation>Ви&amp;лучити</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="336"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="338"/>
         <source>Remember &amp;last tab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10987,6 +11585,29 @@ This does not support full scripting.</source>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="360"/>
         <source>Rating</source>
         <translation type="unfinished">Рейтинг</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::TagEditor::TagEditorEditor</name>
+    <message>
+        <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="60"/>
+        <source>Auto &amp;track number</source>
+        <translation type="unfinished">Номер авто та відстеження</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="61"/>
+        <source>Automatically &amp;fill values…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="62"/>
+        <source>&amp;Change default fields…</source>
+        <translation type="unfinished">&amp;Змінити поля за замовчуванням…</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="76"/>
+        <source>Tools</source>
+        <translation type="unfinished">Інструменти</translation>
     </message>
 </context>
 <context>
@@ -11123,64 +11744,44 @@ This does not support full scripting.</source>
     </message>
 </context>
 <context>
+    <name>Fooyin::TagEditor::TagEditorPropertiesTab</name>
+    <message>
+        <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="137"/>
+        <source>Are you sure?</source>
+        <translation type="unfinished">Ви впевнені?</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="138"/>
+        <source>Metadata in the associated files will be overwritten.</source>
+        <translation type="unfinished">Метадані у пов&apos;язаних файлах будуть перезаписані.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="140"/>
+        <source>Don&apos;t ask again</source>
+        <translation type="unfinished">Не питати більше</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::TagEditor::TagEditorView</name>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="50"/>
+        <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="53"/>
         <source>Capitalise</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="51"/>
+        <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="54"/>
         <source>Copy</source>
         <translation>Копіювати</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="52"/>
+        <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="56"/>
         <source>Paste</source>
         <translation>Вставити</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="53"/>
+        <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="58"/>
         <source>Paste fields</source>
         <translation>Вставити поля</translation>
-    </message>
-</context>
-<context>
-    <name>Fooyin::TagEditor::TagEditorWidget</name>
-    <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="74"/>
-        <source>Automatically &amp;fill values…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="75"/>
-        <source>&amp;Change default fields…</source>
-        <translation>&amp;Змінити поля за замовчуванням…</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="92"/>
-        <source>Tools</source>
-        <translation type="unfinished">Інструменти</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="395"/>
-        <source>Are you sure?</source>
-        <translation>Ви впевнені?</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="396"/>
-        <source>Metadata in the associated files will be overwritten.</source>
-        <translation>Метадані у пов&apos;язаних файлах будуть перезаписані.</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="398"/>
-        <source>Don&apos;t ask again</source>
-        <translation>Не питати більше</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="73"/>
-        <source>Auto &amp;track number</source>
-        <translation>Номер авто та відстеження</translation>
     </message>
 </context>
 <context>
@@ -11237,132 +11838,132 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::TrackSelectionControllerPrivate</name>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="237"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="238"/>
         <source>Add to current playlist</source>
         <translation>Додати до поточного списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="238"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="239"/>
         <source>Add to active playlist</source>
         <translation>Додати до активного списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="239"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="240"/>
         <source>Replace current playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="240"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="241"/>
         <source>Create new playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="241"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="242"/>
         <source>Add to playback queue</source>
         <translation>Додати до черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="242"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="243"/>
         <source>Queue to play next</source>
         <translation>Додати наступним у черзі</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="243"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="244"/>
         <source>Remove from playback queue</source>
         <translation>Вилучити з черги відтворення&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="244"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="245"/>
         <source>Open containing folder</source>
         <translation>Відкрити папку, що містить</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="247"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="248"/>
         <source>Search for artwork…</source>
         <translation>Пошук творів мистецтва…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="216"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="217"/>
         <source>Track actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="224"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="225"/>
         <source>Playback queue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="232"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="233"/>
         <source>Playlist actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="245"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="246"/>
         <source>Copy file path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="246"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="247"/>
         <source>Copy directory path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="248"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="249"/>
         <source>Auto-extract artwork to files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="249"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="250"/>
         <source>Front cover…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="250"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="251"/>
         <source>Back cover…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="251"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="252"/>
         <source>Artist picture…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="252"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="253"/>
         <source>Remove all artwork</source>
         <translation>Вилучити всі ілюстрації</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="253"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="254"/>
         <source>Properties</source>
         <translation>Властивості</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="271"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="272"/>
         <source>Tracks</source>
         <translation>Доріжки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="273"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="274"/>
         <source>Append selected tracks to the current playlist</source>
         <translation>Додати вибрані доріжки до поточного списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="280"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="281"/>
         <source>Append selected tracks to the active playlist</source>
         <translation>Додати вибрані доріжки до активного списку відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="287"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="288"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
         <translation>Замінити вміст поточного списку відтворення вибраними доріжками</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="300"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="301"/>
         <source>Create a new playlist containing the selected tracks</source>
         <translation>Створити новий список відтворення з вибраних доріжок</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="314"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="315"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation>Додати вибрані доріжки до черги відтворення</translation>
     </message>
@@ -11372,47 +11973,47 @@ This does not support full scripting.</source>
         <translation>Додати вибрані доріжки до початку черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="340"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="339"/>
         <source>Remove the selected tracks from the playback queue</source>
         <translation>Вилучити вибрані треки з черги відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="357"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="355"/>
         <source>Open the directory containing the selected tracks</source>
         <translation>Відкрити каталог, що містить вибрані треки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="368"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="366"/>
         <source>Copy the file paths of the selected tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="380"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="378"/>
         <source>Copy the containing directories of the selected tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="396"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="394"/>
         <source>Search for artwork for the selected tracks</source>
         <translation>Пошук обкладинок для вибраних треків</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="412"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="410"/>
         <source>Extract embedded artwork for the selected tracks to files in their directories without prompting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="425"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="423"/>
         <source>Attach image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="427"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="425"/>
         <source>Attach an image file as the front cover for the selected tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="439"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="438"/>
         <source>Attach an image file as the back cover for the selected tracks</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11422,17 +12023,17 @@ This does not support full scripting.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="466"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="467"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
         <translation>Вилучити всі обкладинки, пов&apos;язані з вибраними треками (вбудовані, каталог)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="480"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="481"/>
         <source>Open the properties dialog</source>
         <translation>Відкрийте діалогове вікно властивостей</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="928"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="933"/>
         <source>Playback</source>
         <translation>Відтворення</translation>
     </message>
@@ -11446,8 +12047,8 @@ This does not support full scripting.</source>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="42"/>
-        <source>&amp;Quick setup</source>
-        <translation>&amp;Швидке налаштування</translation>
+        <source>Quick &amp;setup</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="44"/>
@@ -11475,22 +12076,42 @@ This does not support full scripting.</source>
         <translation>Відкрити діалогове вікно редактора скриптів</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="68"/>
-        <source>Focus Search &amp;Bar</source>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="66"/>
+        <source>&amp;Playlist Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="69"/>
-        <source>Focus the first Search Bar found in the current layout</source>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="67"/>
+        <source>Open the playlist manager window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="74"/>
+        <source>Playback &amp;Queue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
+        <source>Open the playback queue window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
+        <source>Focus Search &amp;Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
+        <source>Focus the first Search Bar found in the current layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="90"/>
         <source>Show playing &amp;track</source>
         <translation>Показати відтворюваний трек</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="76"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="91"/>
         <source>Show the currently playing track in the playlist</source>
         <translation>Відображення поточної доріжки у списку відтворення</translation>
     </message>
@@ -11618,37 +12239,37 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::VuMeter::VuMeterWidget</name>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="766"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="776"/>
         <source>Peak Meter</source>
         <translation>Піковий метр</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="766"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="776"/>
         <source>VU Meter</source>
         <translation>VU-метр</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1192"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1202"/>
         <source>Show peaks</source>
         <translation>Показати піки</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1197"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1207"/>
         <source>Show legend</source>
         <translation>Показати легенду</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1202"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1212"/>
         <source>Orientation</source>
         <translation>Орієнтація</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1205"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1215"/>
         <source>Horizontal</source>
         <translation>Горизонтальний</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1206"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1216"/>
         <source>Vertical</source>
         <translation>Вертикальний</translation>
     </message>
@@ -11656,104 +12277,115 @@ This does not support full scripting.</source>
 <context>
     <name>Fooyin::WaveBar::WaveBarConfigDialog</name>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="42"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="43"/>
         <source>WaveBar Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="43"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="44"/>
         <source>Show labels</source>
         <translation type="unfinished">Показати мітки</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="44"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="45"/>
         <source>Show remaining time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="45"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="46"/>
         <source>Min/Max</source>
         <translation type="unfinished">Мін/Макс</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="46"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="47"/>
         <source>RMS</source>
         <translation type="unfinished">RMS</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="47"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="48"/>
         <source>Silence</source>
         <translation type="unfinished">Тиша</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="48"/>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="125"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="49"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="141"/>
         <source>Off</source>
         <translation type="unfinished">Вимк</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="49"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="50"/>
         <source>Stereo</source>
         <translation type="unfinished">Стерео</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="50"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="51"/>
         <source>Mono</source>
         <translation type="unfinished">Моно</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="51"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="52"/>
         <source>Show progress cursor</source>
         <translation type="unfinished">Показати курсор прогресу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="59"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="60"/>
         <source>Custom colours</source>
         <translation type="unfinished">Кольори на замовлення</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="78"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="79"/>
         <source>Clear Cache</source>
         <translation type="unfinished">Очистити кеш</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="80"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="91"/>
         <source>Appearance</source>
         <translation type="unfinished">Зовнішній вигляд</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="85"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="87"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="96"/>
         <source>Display</source>
         <translation type="unfinished">Відображення</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="87"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="88"/>
+        <source>Colours</source>
+        <translation type="unfinished">Кольори</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="89"/>
+        <source>Global</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="98"/>
         <source>Draw a line in place of silence</source>
         <translation type="unfinished">Намалюй лінію замість мовчання</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="92"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="104"/>
         <source>Downmix</source>
         <translation type="unfinished">Даунмікс</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="102"/>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="186"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="115"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="204"/>
         <source>Cursor</source>
         <translation type="unfinished">Курсор</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="107"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="122"/>
         <source>Cursor width</source>
         <translation type="unfinished">Ширина курсора</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="111"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="126"/>
         <source>Scale</source>
         <translation type="unfinished">Масштаб</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="121"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="137"/>
         <source>Internal horizontal render scale for the waveform.
 Higher values can improve detail, but may increase CPU usage.
 For best results at higher values, increase Number of samples as well.
@@ -11761,119 +12393,119 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="126"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
         <source>2x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="127"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="143"/>
         <source>4x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="128"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="144"/>
         <source>8x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="131"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="147"/>
         <source>Supersampling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="134"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="150"/>
         <source>Channel scale</source>
         <translation type="unfinished">Масштаб каналу</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="136"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="152"/>
         <source>Max scale</source>
         <translation type="unfinished">Максимальний масштаб</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="158"/>
         <source>Dimension</source>
         <translation type="unfinished">Вимір</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="150"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="168"/>
         <source>Bar width</source>
         <translation type="unfinished">Ширина смуги</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="152"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="170"/>
         <source>Bar gap</source>
         <translation type="unfinished">Розрив бару</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="154"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="172"/>
         <source>Centre gap</source>
         <translation type="unfinished">Центральний проміжок</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="162"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="180"/>
         <source>Unplayed</source>
         <translation type="unfinished">Незіграний</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="163"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="181"/>
         <source>Played</source>
         <translation type="unfinished">Грається</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="164"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="182"/>
         <source>Border</source>
         <translation type="unfinished">Кордон</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="165"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="183"/>
         <source>Background</source>
         <translation type="unfinished">Тло</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="168"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="186"/>
         <source>Max</source>
         <translation type="unfinished">Макс</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="172"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="190"/>
         <source>Min</source>
         <translation type="unfinished">Хв</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="176"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="194"/>
         <source>RMS Max</source>
         <translation type="unfinished">RMS Max&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="180"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="198"/>
         <source>RMS Min</source>
         <translation type="unfinished">RMS Min&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="184"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="202"/>
         <source>Playing</source>
         <translation type="unfinished">Відтворюємо</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="185"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="203"/>
         <source>Seeking</source>
         <translation type="unfinished">Шукаю</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="193"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="211"/>
         <source>Cache</source>
         <translation type="unfinished">Кеш</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="195"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="213"/>
         <source>Number of samples (per channel) to use for waveform data.
 Higher values produce a more accurate and detailed waveform, but use more disk space in the cache.
 Higher supersampling values work best with higher sample counts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="199"/>
+        <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="217"/>
         <source>Number of samples</source>
         <translation type="unfinished">Кількість зразків</translation>
     </message>
@@ -12002,172 +12634,177 @@ Higher supersampling values work best with higher sample counts.</source>
 <context>
     <name>Fooyin::Widgets</name>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="129"/>
+        <location filename="../../src/gui/widgets.cpp" line="130"/>
         <source>Dummy</source>
         <translation>Заповнювач</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="135"/>
+        <location filename="../../src/gui/widgets.cpp" line="136"/>
         <source>Splitter (Top/Bottom)</source>
         <translation>Роздільник (верхній/нижній)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="136"/>
-        <location filename="../../src/gui/widgets.cpp" line="142"/>
-        <location filename="../../src/gui/widgets.cpp" line="160"/>
-        <location filename="../../src/gui/widgets.cpp" line="178"/>
+        <location filename="../../src/gui/widgets.cpp" line="137"/>
+        <location filename="../../src/gui/widgets.cpp" line="143"/>
+        <location filename="../../src/gui/widgets.cpp" line="162"/>
+        <location filename="../../src/gui/widgets.cpp" line="188"/>
         <source>Splitters</source>
         <translation>Розгалужувачі</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="141"/>
+        <location filename="../../src/gui/widgets.cpp" line="142"/>
         <source>Splitter (Left/Right)</source>
         <translation>Роздільник (лівий/правий)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="146"/>
+        <location filename="../../src/gui/widgets.cpp" line="148"/>
         <source>Playlist Switcher</source>
         <translation>Перемикач списків відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="159"/>
+        <location filename="../../src/gui/widgets.cpp" line="161"/>
         <source>Playlist Tabs</source>
         <translation>Вкладки списків відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="165"/>
+        <location filename="../../src/gui/widgets.cpp" line="167"/>
         <source>Playlist Organiser</source>
         <translation>Організатор списків відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="173"/>
+        <location filename="../../src/gui/widgets.cpp" line="183"/>
         <source>Playback Queue</source>
         <translation>Черга відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="177"/>
+        <location filename="../../src/gui/widgets.cpp" line="187"/>
         <source>Tab Stack</source>
         <translation>Стек вкладок</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="186"/>
-        <location filename="../../src/gui/widgets.cpp" line="372"/>
+        <location filename="../../src/gui/widgets.cpp" line="196"/>
+        <location filename="../../src/gui/widgets.cpp" line="384"/>
         <source>Library Tree</source>
         <translation>Бібліотечне дерево</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="202"/>
+        <location filename="../../src/gui/widgets.cpp" line="212"/>
         <source>Player Controls</source>
         <translation>Елементи керування гравцем</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="195"/>
-        <location filename="../../src/gui/widgets.cpp" line="203"/>
-        <location filename="../../src/gui/widgets.cpp" line="209"/>
-        <location filename="../../src/gui/widgets.cpp" line="214"/>
+        <location filename="../../src/gui/widgets.cpp" line="205"/>
+        <location filename="../../src/gui/widgets.cpp" line="213"/>
         <location filename="../../src/gui/widgets.cpp" line="219"/>
         <location filename="../../src/gui/widgets.cpp" line="224"/>
+        <location filename="../../src/gui/widgets.cpp" line="229"/>
+        <location filename="../../src/gui/widgets.cpp" line="234"/>
         <source>Controls</source>
         <translation>Елементи керування</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="194"/>
+        <location filename="../../src/gui/widgets.cpp" line="175"/>
+        <source>Playlist Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="204"/>
         <source>Command Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="208"/>
+        <location filename="../../src/gui/widgets.cpp" line="218"/>
         <source>Playlist Controls</source>
         <translation>Елементи керування списком відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="213"/>
+        <location filename="../../src/gui/widgets.cpp" line="223"/>
         <source>Volume Controls</source>
         <translation>Регулювання гучності</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="218"/>
+        <location filename="../../src/gui/widgets.cpp" line="228"/>
         <source>Seekbar</source>
         <translation>Панель пошуку</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="223"/>
+        <location filename="../../src/gui/widgets.cpp" line="233"/>
         <source>Output Selector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="228"/>
+        <location filename="../../src/gui/widgets.cpp" line="239"/>
         <source>Selection Info</source>
         <translation>Інформація про вибір</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="241"/>
+        <location filename="../../src/gui/widgets.cpp" line="252"/>
         <source>Artwork Panel</source>
         <translation>Панель обкладинки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="249"/>
-        <location filename="../../src/gui/widgets.cpp" line="373"/>
+        <location filename="../../src/gui/widgets.cpp" line="260"/>
+        <location filename="../../src/gui/widgets.cpp" line="385"/>
         <source>Playlist</source>
         <translation>Список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="252"/>
+        <location filename="../../src/gui/widgets.cpp" line="263"/>
         <source>Spacer</source>
         <translation>Розпірка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="262"/>
+        <location filename="../../src/gui/widgets.cpp" line="273"/>
         <source>Status Bar</source>
         <translation>Рядок стану</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="271"/>
+        <location filename="../../src/gui/widgets.cpp" line="282"/>
         <source>Search Bar</source>
         <translation>Рядок пошуку</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="273"/>
+        <location filename="../../src/gui/widgets.cpp" line="284"/>
         <source>Directory Browser</source>
         <translation>Переглядач каталогів</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="281"/>
+        <location filename="../../src/gui/widgets.cpp" line="292"/>
         <source>Script Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="349"/>
+        <location filename="../../src/gui/widgets.cpp" line="360"/>
         <source>Details</source>
         <translation>Деталі</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="352"/>
+        <location filename="../../src/gui/widgets.cpp" line="363"/>
         <source>ReplayGain</source>
         <translation>ReplayGain&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="358"/>
+        <location filename="../../src/gui/widgets.cpp" line="369"/>
         <source>Artwork</source>
         <translation>Обкладинка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="370"/>
+        <location filename="../../src/gui/widgets.cpp" line="382"/>
         <source>Default</source>
         <translation>За замовчуванням</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="375"/>
+        <location filename="../../src/gui/widgets.cpp" line="387"/>
         <source>Tabs</source>
         <translation>Вкладки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="371"/>
+        <location filename="../../src/gui/widgets.cpp" line="383"/>
         <source>Lists</source>
         <translation>Списки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="374"/>
+        <location filename="../../src/gui/widgets.cpp" line="386"/>
         <source>Status bar</source>
         <translation>Рядок стану&apos;</translation>
     </message>
@@ -12210,12 +12847,12 @@ Higher supersampling values work best with higher sample counts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="298"/>
+        <location filename="../../src/gui/widgets.cpp" line="309"/>
         <source>Library Tree</source>
         <translation type="unfinished">Бібліотечне дерево</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="300"/>
+        <location filename="../../src/gui/widgets.cpp" line="311"/>
         <source>Unchecked items will be hidden from the library tree context menu.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12268,12 +12905,12 @@ Higher supersampling values work best with higher sample counts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="309"/>
+        <location filename="../../src/gui/widgets.cpp" line="320"/>
         <source>Playlist</source>
         <translation type="unfinished">Список відтворення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="312"/>
+        <location filename="../../src/gui/widgets.cpp" line="323"/>
         <source>Unchecked items will be hidden from the playlist context menu.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12522,12 +13159,12 @@ Higher supersampling values work best with higher sample counts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="62"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="63"/>
         <source>Images</source>
         <translation type="unfinished">Зображення</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="63"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="64"/>
         <source>Open Image</source>
         <translation type="unfinished">Відкрити зображення</translation>
     </message>
@@ -12555,7 +13192,7 @@ Higher supersampling values work best with higher sample counts.</source>
 <context>
     <name>TrackSelectionController</name>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="394"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="392"/>
         <source>Artwork</source>
         <translation>Обкладинка</translation>
     </message>
