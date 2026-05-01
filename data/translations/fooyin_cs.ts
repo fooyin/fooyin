@@ -7668,7 +7668,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="125"/>
         <source>Skip &amp;to</source>
-        <translation>&amp;Přejít na</translation>
+        <translation>Přejí&amp;t na</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="128"/>
@@ -8382,7 +8382,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="135"/>
         <source>Allow editing writable track tag columns directly from the playlist</source>
-        <translation>Povolit úpravu zapisovatelných tagů přímo z playlistu</translation>
+        <translation>Povolit úpravu zapisovatelných tagů přímo ze seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="140"/>
@@ -12089,7 +12089,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="66"/>
         <source>&amp;Playlist Manager</source>
-        <translation>S&amp;právce seznamů stop</translation>
+        <translation>S&amp;právce seznamů skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="67"/>
