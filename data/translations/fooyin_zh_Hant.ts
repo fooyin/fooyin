@@ -561,7 +561,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
         <source>Adds numeric arguments</source>
-        <translation>添增數字參數</translation>
+        <translation>添加數字參數</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
@@ -2663,12 +2663,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="663"/>
         <source>Add to Per-Track</source>
-        <translation>添增至各依曲目</translation>
+        <translation>添加至各依曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="664"/>
         <source>Add to Master</source>
-        <translation>添增至主控</translation>
+        <translation>添加至主控</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="791"/>
@@ -7952,12 +7952,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="60"/>
         <source>Add &amp;new playlist</source>
-        <translation>添增新建播放清單(&amp;N)</translation>
+        <translation>添加新建播放清單(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="63"/>
         <source>Add new &amp;autoplaylist</source>
-        <translation>添增新建自動播放清單(&amp;A)</translation>
+        <translation>添加新建自動播放清單(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="100"/>
@@ -8553,12 +8553,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="106"/>
         <source>Add &amp;new playlist</source>
-        <translation>添增新建播放清單(&amp;N)</translation>
+        <translation>添加新建播放清單(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="109"/>
         <source>Add new &amp;autoplaylist</source>
-        <translation>添增新建自動播放清單(&amp;A)</translation>
+        <translation>添加新建自動播放清單(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="179"/>
@@ -10539,7 +10539,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="102"/>
         <source>Add Service</source>
-        <translation>添增服務</translation>
+        <translation>添加服務</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="181"/>
