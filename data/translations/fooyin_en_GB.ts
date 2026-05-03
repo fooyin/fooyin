@@ -120,7 +120,7 @@
     <message numerus="yes">
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="234"/>
         <source>%Ln result(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln result</numerusform>
             <numerusform>%Ln results</numerusform>
         </translation>
