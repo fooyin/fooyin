@@ -9356,7 +9356,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="108"/>
         <source>Configure</source>
-        <translation>Nastavení…</translation>
+        <translation>Nastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="109"/>
