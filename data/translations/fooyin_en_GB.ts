@@ -118,7 +118,7 @@
 <context>
     <name>Fooyin::Lyrics::LyricsSearchDialog</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="234"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="242"/>
         <source>%Ln result(s)</source>
         <translation>
             <numerusform>%Ln result</numerusform>
@@ -159,7 +159,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="663"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="682"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
