@@ -5950,7 +5950,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
         <source>Supports &lt;right&gt; for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes.</source>
-        <translation>Podporuje &lt;right&gt; pro doprava zarovnaný text, %trackcount% pro skladby a %childcount% pro podřízené uzly.</translation>
+        <translation>Podporuje &lt;right&gt; pro doprava zarovnaný text, %trackcount% pro počet skladeb a %childcount% pro počet podřízených uzlů.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
@@ -6114,7 +6114,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</source>
-        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; v úrovni zobrazení pro zarovnání textu doprava. Použij &lt;code&gt;%trackcount%&lt;/code&gt; pro skladby a &lt;code&gt;%childcount%&lt;/code&gt; pro podřízené uzly.</translation>
+        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; v úrovni zobrazení pro zarovnání textu doprava. Použij &lt;code&gt;%trackcount%&lt;/code&gt; pro počet skladeb a &lt;code&gt;%childcount%&lt;/code&gt; pro počet podřízených uzlů.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
