@@ -1203,12 +1203,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="75"/>
         <source>Prefer currently playing track</source>
-        <translation>顯示目前播放曲目</translation>
+        <translation>偏好目前所播放的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="76"/>
         <source>Prefer current selection</source>
-        <translation>顯示選中的曲目</translation>
+        <translation>偏好目前的選擇項目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="77"/>
@@ -1258,7 +1258,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="124"/>
         <source>Clear Cache</source>
-        <translation>清空快取</translation>
+        <translation>清除快取</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="195"/>
@@ -1286,7 +1286,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="314"/>
         <source>No embedded artwork found to export</source>
-        <translation>無找到嵌入圖面進行匯出</translation>
+        <translation>無找嵌入的圖面進行匯出</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="320"/>
@@ -1341,7 +1341,7 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="121"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="209"/>
         <source>No artwork present</source>
-        <translation>無圖面呈現</translation>
+        <translation>無圖面展示</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="95"/>
@@ -1385,7 +1385,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>Auto-export to file</source>
-        <translation>自動匯出成檔案</translation>
+        <translation>自動匯出至檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -1395,7 +1395,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="303"/>
         <source>Export this embedded artwork to a file in the track directory without prompting</source>
-        <translation>匯出此嵌入圖面至曲目目錄的檔案 不用提示</translation>
+        <translation>匯出此嵌入圖面至曲目目錄中的檔案 不用提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="304"/>
@@ -1431,7 +1431,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="64"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation>在開始播放時自動搜尋缺漏圖面</translation>
+        <translation>在開始播放時自動搜尋遺失的圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="68"/>
@@ -1466,7 +1466,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="91"/>
         <source>Size of thumbnails in Artwork Finder when searching for artwork</source>
-        <translation>當搜尋圖面時，於尋找圖面器的縮圖大小</translation>
+        <translation>當搜尋圖面時，於尋找圖面器中的縮圖大小</translation>
     </message>
 </context>
 <context>
@@ -1517,7 +1517,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="95"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation>圖面將會搜尋於以上順序。</translation>
+        <translation>圖面將會進行搜尋 基於以上的順序。</translation>
     </message>
 </context>
 <context>
@@ -1948,12 +1948,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="533"/>
         <source>Auto-extract to file</source>
-        <translation>自動擷取至檔案</translation>
+        <translation>自動提取至檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="534"/>
         <source>Extract as…</source>
-        <translation>擷取成為…</translation>
+        <translation>提取成為…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="535"/>
@@ -1973,12 +1973,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="543"/>
         <source>Extract this embedded artwork to a file in the track directory without prompting</source>
-        <translation>將此嵌入的圖面擷取到曲目檔案目錄中 不加提示</translation>
+        <translation>將此嵌入的圖面提取到曲目檔案目錄中 不需提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="544"/>
         <source>Choose where to extract this embedded artwork</source>
-        <translation>選擇擷取此嵌入圖面的所在位置</translation>
+        <translation>選擇提取此嵌入圖面的位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="545"/>
@@ -1988,7 +1988,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="579"/>
         <source>Extracted artwork to %1</source>
-        <translation>已將圖面擷取至 %1</translation>
+        <translation>已經將圖面提取至 %1</translation>
     </message>
 </context>
 <context>
@@ -6041,7 +6041,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="96"/>
         <source>Add artwork to the tree by placing a cover variable such as &lt;code&gt;%frontcover%&lt;/code&gt; at the start or end of a level.</source>
-        <translation type="unfinished">Add artwork to the tree by placing a cover variable such as &lt;code&gt;%frontcover%&lt;/code&gt; at the start or end of a level.</translation>
+        <translation>添加圖面至樹階層，利用放置封面參數，例如 &lt;code&gt;%frontcover%&lt;/code&gt; 於層級的開頭或結尾。</translation>
     </message>
 </context>
 <context>
@@ -11638,12 +11638,12 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="55"/>
         <source>Disc Number</source>
-        <translation>唱片編號</translation>
+        <translation>碟片編號</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="56"/>
         <source>Total Discs</source>
-        <translation>唱片數量</translation>
+        <translation>碟片數量</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="57"/>
@@ -11883,7 +11883,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="249"/>
         <source>Auto-extract artwork to files</source>
-        <translation>自動擷取圖面至檔案</translation>
+        <translation>自動提取圖面至檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="250"/>
@@ -11973,7 +11973,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="410"/>
         <source>Extract embedded artwork for the selected tracks to files in their directories without prompting</source>
-        <translation>將所選曲目的嵌入圖面擷取至其目錄檔案 無需提示</translation>
+        <translation>將所選曲目的嵌入圖面提取至其目錄檔案 無需提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="423"/>
@@ -11998,7 +11998,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="467"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
-        <translation>已經成功移除全部圖面，關聯於所選曲目(內嵌的、目錄夾)</translation>
+        <translation>已經成功移除全部圖面，其關聯於所選的曲目(內嵌的、目錄中的)</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="481"/>
@@ -13106,31 +13106,31 @@ Higher supersampling values work best with higher sample counts.</translation>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="98"/>
         <source>Extract Artwork</source>
-        <translation>擷取圖面</translation>
+        <translation>提取圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="262"/>
         <source>No embedded artwork found to extract</source>
-        <translation>找無嵌入圖面可進行擷取</translation>
+        <translation>找無嵌入圖面可進行提取</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="265"/>
         <source>Extracted artwork to %Ln file(s)</source>
         <translation>
-            <numerusform>已經擷取圖面至 %Ln 檔案</numerusform>
+            <numerusform>已經提取圖面至 %Ln 檔案</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="270"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
         <translation>
-            <numerusform>已經擷取圖面至 %Ln 檔案；有些擷取失敗</numerusform>
+            <numerusform>已經提取圖面至 %Ln 檔案；有些提取失敗</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="268"/>
         <source>Failed to extract artwork</source>
-        <translation>擷取圖面失敗</translation>
+        <translation>提取圖面失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="63"/>
