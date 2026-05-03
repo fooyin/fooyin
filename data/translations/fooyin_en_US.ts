@@ -1373,7 +1373,7 @@
         <source>%Ln file(s) selected</source>
         <translation>
             <numerusform>%Ln file selected</numerusform>
-            <numerusform></numerusform>
+            <numerusform>%Ln files selected</numerusform>
         </translation>
     </message>
     <message>
@@ -6763,7 +6763,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="234"/>
         <source>%Ln result(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln result</numerusform>
             <numerusform>%Ln results</numerusform>
         </translation>
@@ -9047,9 +9047,9 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="663"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Writing metadata to %Ln track…</numerusform>
+            <numerusform>Writing metadata to %Ln tracks…</numerusform>
         </translation>
     </message>
     <message>
