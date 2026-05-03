@@ -6,37 +6,37 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="43"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Přidat do vybraného seznamu skladeb</translation>
+        <translation>Přidat do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="46"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Přidat do přehrávaného seznamu skladeb</translation>
+        <translation>Přidat do přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="49"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Nahradit vybraný seznam skladeb</translation>
+        <translation>Nahradit vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="52"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Vytvořit nový seznam skladeb</translation>
+        <translation>Vytvořit nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="56"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Přidat do fronty přehrávání</translation>
+        <translation>Přidat do fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="59"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat na začátek fronty</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="63"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Odebrat z fronty</translation>
+        <translation>Odebrat z fronty</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="67"/>
@@ -51,7 +51,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="74"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Nabídka skladby</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="54"/>
@@ -5872,7 +5872,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
         <location filename="../../src/gui/librarytree/librarytreescriptenvironment.cpp" line="94"/>
         <source>All Music (%trackcount%)</source>
         <extracomment>Default Library Tree summary node title. Keep %trackcount% unchanged; it is a script variable.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Veškerá hudba (%trackcount%)</translation>
     </message>
 </context>
 <context>
@@ -5910,7 +5910,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Show summary node</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit uzel souhrnu</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="54"/>
@@ -5950,7 +5950,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
         <source>Supports &lt;right&gt; for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Podporuje &lt;right&gt; pro doprava zarovnaný text, %trackcount% pro skladby a %childcount% pro podřízené uzly.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
@@ -5997,7 +5997,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="108"/>
         <source>Summary title</source>
-        <translation type="unfinished"></translation>
+        <translation>Název souhrnu</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="116"/>
@@ -6109,12 +6109,12 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro oddělení úrovní stromu použij &lt;code&gt;||&lt;/code&gt;. &lt;b&gt;Seskupení pro řazení&lt;/b&gt; musí použít stejnou strukturu úrovní &lt;code&gt;||&lt;/code&gt; jako &lt;b&gt;Seskupení pro zobrazení&lt;/b&gt;; každá úroveň řazení se vztahuje k odpovídající úrovni zobrazení a úroveň řazení může být prázdná (např. &lt;code&gt;||%year%||&lt;/code&gt;).</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; v úrovni zobrazení pro zarovnání textu doprava. Použij &lt;code&gt;%trackcount%&lt;/code&gt; pro skladby a &lt;code&gt;%childcount%&lt;/code&gt; pro podřízené uzly.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
@@ -12888,37 +12888,37 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="115"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Přidat do vybraného seznamu skladeb</translation>
+        <translation>Přidat do vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="119"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Přidat do přehrávaného seznamu skladeb</translation>
+        <translation>Přidat do přehrávaného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="123"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Nahradit vybraný seznam skladeb</translation>
+        <translation>Nahradit vybraný seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="127"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Vytvořit nový seznam skladeb</translation>
+        <translation>Vytvořit nový seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="132"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Přidat do fronty přehrávání</translation>
+        <translation>Přidat do fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat na začátek fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="140"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Odebrat z fronty</translation>
+        <translation>Odebrat z fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="144"/>
@@ -12938,7 +12938,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="154"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Nabídka skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="309"/>
@@ -12991,22 +12991,22 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="79"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Přidat do fronty přehrávání</translation>
+        <translation>Přidat do fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat na začátek fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="86"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Odebrat z fronty</translation>
+        <translation>Odebrat z fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="89"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Nabídka skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="320"/>
