@@ -6,37 +6,37 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="43"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">添加至目前播放清單</translation>
+        <translation>添加至目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="46"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">添加至現行播放清單</translation>
+        <translation>添加至現行播放清單</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="49"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">取代目前播放清單</translation>
+        <translation>取代目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="52"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">建立新的播放清單</translation>
+        <translation>建立新的播放清單</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="56"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">添加至播放佇列</translation>
+        <translation>添加至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="59"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">佇列播放下一首</translation>
+        <translation>佇列排至播放下一首</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="63"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">從播放佇列中移除</translation>
+        <translation>從播放佇列中移除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="67"/>
@@ -51,7 +51,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="74"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目選單</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="54"/>
@@ -5848,7 +5848,7 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/librarytree/librarytreescriptenvironment.cpp" line="94"/>
         <source>All Music (%trackcount%)</source>
         <extracomment>Default Library Tree summary node title. Keep %trackcount% unchanged; it is a script variable.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>全部音樂 (%trackcount%)</translation>
     </message>
 </context>
 <context>
@@ -5886,7 +5886,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Show summary node</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示概略節點</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="54"/>
@@ -5926,7 +5926,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
         <source>Supports &lt;right&gt; for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes.</source>
-        <translation type="unfinished"></translation>
+        <translation>支援 &lt;right&gt; 用於靠右對齊文字 、 %trackcount% 用於曲目、%childcount% 用於子節點。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
@@ -5973,7 +5973,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="108"/>
         <source>Summary title</source>
-        <translation type="unfinished"></translation>
+        <translation>概略標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="116"/>
@@ -6085,12 +6085,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
@@ -12850,37 +12850,37 @@ Higher supersampling values work best with higher sample counts.</translation>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="115"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">添加至目前播放清單</translation>
+        <translation>添加至目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="119"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">添加至現行播放清單</translation>
+        <translation>添加至現行播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="123"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">取代目前播放清單</translation>
+        <translation>取代目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="127"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">建立新的播放清單</translation>
+        <translation>建立新的播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="132"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">添加至播放佇列</translation>
+        <translation>添加至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">佇列播放下一首</translation>
+        <translation>佇列排至播放下一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="140"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">從播放佇列中移除</translation>
+        <translation>從播放佇列中移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="144"/>
@@ -12900,7 +12900,7 @@ Higher supersampling values work best with higher sample counts.</translation>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="154"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目選單</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="309"/>
@@ -12953,22 +12953,22 @@ Higher supersampling values work best with higher sample counts.</translation>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="79"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">添加至播放佇列</translation>
+        <translation>添加至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">佇列播放下一首</translation>
+        <translation type="unfinished">佇列排至播放下一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="86"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">從播放佇列中移除</translation>
+        <translation>從播放佇列中移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="89"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目選單</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="320"/>
