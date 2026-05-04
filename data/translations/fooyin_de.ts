@@ -6,37 +6,37 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="43"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Füge zur aktuellen Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="46"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Füge zur aktiven Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="49"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Ersetze aktuelle Wiedergabeliste</translation>
+        <translation>Ersetze aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="52"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Erstelle neue Wiedergabeliste</translation>
+        <translation>Erstelle neue Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="56"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Füge zur Wiedergabewarteschlange hinzu</translation>
+        <translation>Füge zur Wiedergabewarteschlange hinzu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="59"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Gebe als nächstes wieder</translation>
+        <translation>Gebe als nächstes wieder</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="63"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Entferne aus Wiedergabewarteschlange</translation>
+        <translation>Entferne aus Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="67"/>
@@ -51,7 +51,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="74"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel-Menü</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="54"/>
@@ -1258,17 +1258,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="103"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschaubilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="106"/>
         <source>Grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppierungs-Skript</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="107"/>
         <source>Groups artwork thumbnails that should share the same cached image</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppiere Artwork-Vorschaubilder, die dasselbe Bild aus dem Cache verwenden sollen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="115"/>
@@ -1957,7 +1957,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="507"/>
         <source>Artwork settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork-Einstellungen…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="518"/>
@@ -2528,7 +2528,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="63"/>
         <source>Clear on pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurücksetzen beim Pausieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="69"/>
@@ -2558,7 +2558,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="83"/>
         <source>Clear status when paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Status beim Pausieren zurücksetzen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
@@ -3462,7 +3462,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="128"/>
         <source>Extract</source>
-        <translation type="unfinished"></translation>
+        <translation>Entpacken</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="132"/>
@@ -3472,7 +3472,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="133"/>
         <source>Delete archive after extraction</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösche das Archiv nach dem Entpacken</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="135"/>
@@ -3560,7 +3560,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="271"/>
         <source>Extract entire source archive contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Entpacke alle Inhalte des Quell-Archivs</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="320"/>
@@ -3575,12 +3575,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="439"/>
         <source>Delete source archive after extraction?</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösche Quell-Archiv nach dem Entpacken?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="440"/>
         <source>Source archive files will be moved to the trash after every file from each archive has been extracted. Continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Quell-Archive werden in den Papierkorb verschoben, nachdem jede Datei des entsprechenden Archivs entpackt wurde. Fortfahren?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="448"/>
@@ -3639,7 +3639,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="183"/>
         <source>Extract</source>
-        <translation type="unfinished"></translation>
+        <translation>Entpacken</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="187"/>
@@ -3672,7 +3672,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="160"/>
         <source>&amp;Extract to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Entpacke nach…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="162"/>
@@ -4492,12 +4492,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="737"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="738"/>
         <source>Remove Current Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferne aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="899"/>
@@ -5075,67 +5075,67 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="145"/>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="182"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopieren</translation>
+        <translation>&amp;Kopieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="398"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschriften anzeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="406"/>
         <source>Show scrollbar (vertical)</source>
-        <translation type="unfinished">Zeige Bildlaufleiste (vertikal)</translation>
+        <translation>Zeige Bildlaufleiste (vertikal)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="415"/>
         <source>Show scrollbar (horizontal)</source>
-        <translation type="unfinished">Zeige Bildlaufleiste (horizontal)</translation>
+        <translation>Zeige Bildlaufleiste (horizontal)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="424"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Abwechselnde Zeilenfarben</translation>
+        <translation>Abwechselnde Zeilenfarben</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="434"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadaten</translation>
+        <translation>Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="442"/>
         <source>Extended metadata</source>
-        <translation type="unfinished">Erweiterte Metadaten</translation>
+        <translation>Erweiterte Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="450"/>
         <source>Location</source>
-        <translation type="unfinished">Ort</translation>
+        <translation>Ort</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="458"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="466"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Wiedergabe-Statistik</translation>
+        <translation>Wiedergabe-Statistiken</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="474"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">ReplayGain</translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="482"/>
         <source>Other</source>
-        <translation type="unfinished">Andere</translation>
+        <translation>Andere</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="513"/>
         <source>Edit</source>
-        <translation type="unfinished">Bearbeiten</translation>
+        <translation>Bearbeiten</translation>
     </message>
 </context>
 <context>
@@ -5860,7 +5860,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
         <location filename="../../src/gui/librarytree/librarytreescriptenvironment.cpp" line="94"/>
         <source>All Music (%trackcount%)</source>
         <extracomment>Default Library Tree summary node title. Keep %trackcount% unchanged; it is a script variable.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Alle Titel (%trackcount%)</translation>
     </message>
 </context>
 <context>
@@ -5898,7 +5898,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Show summary node</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Zusammenfassungsknoten</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="54"/>
@@ -5938,7 +5938,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
         <source>Supports &lt;right&gt; for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unterstützt &lt;right&gt; für rechtsbündig ausgerichteten Text, %trackcount% für Titel und %childcount% für untergeordnete Knoten.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
@@ -5985,7 +5985,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="108"/>
         <source>Summary title</source>
-        <translation type="unfinished"></translation>
+        <translation>Zusammenfassungstitel</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="116"/>
@@ -6097,12 +6097,12 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze &lt;code&gt;||&lt;/code&gt; zum Aufteilen in Baumebenen.Die &lt;b&gt;Sortierungs-Gruppierung&lt;/b&gt; muss dieselbe &lt;code&gt;||&lt;/code&gt; Ebenenstruktur wie die &lt;b&gt;Anzeige-Gruppierung&lt;/b&gt; aufweisen; jede Sortierungs-Ebene wird auf die entsprechende Anzeige-Ebene angewandt, wobei eine Sortierungsebene leer sein darf (z.B. &lt;code&gt;||%year%||&lt;/code&gt;).</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in einer Anzeige-Ebene, um den Text rechtsbündig ausgerichtet anzuzeigen. Nutze &lt;code&gt;%trackcount%&lt;/code&gt; für Titel und &lt;code&gt;%childcount%&lt;/code&gt; für untergeordnete Knoten.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
@@ -6130,7 +6130,7 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="165"/>
         <source>Sort Grouping</source>
-        <translation>Sortierung-Gruppierung</translation>
+        <translation>Sortierungs-Gruppierung</translation>
     </message>
 </context>
 <context>
@@ -6322,12 +6322,12 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="54"/>
         <source>Centre first synced line</source>
-        <translation type="unfinished"></translation>
+        <translation>Zentriere erste synchronisierte Zeile</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="55"/>
         <source>Centre last synced line</source>
-        <translation type="unfinished"></translation>
+        <translation>Zentriere letzte synchronisierte Linie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="62"/>
@@ -6511,12 +6511,12 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="183"/>
         <source>Top and bottom margins apply to unsynced lyrics, and to synced lyrics when centring is disabled for that edge.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der obere und untere Rand gelten für alle unsynchronisierten Songtexte und die synchronisierten Songtexte, die Zentrierung für den entsprechenden Rand deaktiviert haben.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="193"/>
         <source>These options control whether the first and last synced lines are centred in view.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Einstellungen bestimmen, ob die erste und letzte synchronisierte Zeile in der Ansicht zentriert werden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="206"/>
@@ -6632,17 +6632,17 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="95"/>
         <source>Edit lyrics</source>
-        <translation type="unfinished">Bearbeite Songtext</translation>
+        <translation>Bearbeite Songtext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="104"/>
         <source>Quicksearch for lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Schnellsuche nach Songtext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="113"/>
         <source>Search for lyrics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche nach Songtext…</translation>
     </message>
 </context>
 <context>
@@ -6758,29 +6758,31 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="149"/>
         <source>Save Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Speicher-Optionen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="152"/>
         <source>Keep Original</source>
-        <translation type="unfinished"></translation>
+        <translation>Original beibehalten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="153"/>
         <source>Remove original</source>
-        <translation type="unfinished"></translation>
+        <translation>Original entfernen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="155"/>
         <source>Determines what happens if lyrics are saved to a different location (file ↔ tag).
 Keep original: keeps the previous version of the lyrics in its original location.
 Remove original: deletes the previous file or tag after saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestimmt was passiert, wenn Songtexte an einen anderen Ort gespeichert werden (Datei ↔ Metadaten).
+Original beibehalten: behält die vorherige Version der Songtexte am ursprünglichen Ort bei.
+Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Speichern.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="160"/>
         <source>Conflict policy</source>
-        <translation type="unfinished"></translation>
+        <translation>Richtlinie für Konflikte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="302"/>
@@ -6793,37 +6795,37 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="77"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="78"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="79"/>
         <source>Artist</source>
-        <translation type="unfinished">Künstler</translation>
+        <translation>Künstler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="80"/>
         <source>Search</source>
-        <translation type="unfinished">Suche</translation>
+        <translation>Suche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="90"/>
         <source>Search for Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche nach Songtext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="209"/>
         <source>Searching…</source>
-        <translation type="unfinished">Suchen…</translation>
+        <translation>Suche…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="242"/>
         <source>%Ln result(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln Ergebnis</numerusform>
             <numerusform>%Ln Ergebnisse</numerusform>
         </translation>
@@ -6831,12 +6833,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="245"/>
         <source>No lyrics found</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Songtexte gefunden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="313"/>
         <source>Saved lyrics from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Songtexte von %1 gespeichert</translation>
     </message>
 </context>
 <context>
@@ -6844,42 +6846,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="87"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="89"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="91"/>
         <source>Artist</source>
-        <translation type="unfinished">Künstler</translation>
+        <translation>Künstler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="93"/>
         <source>Source</source>
-        <translation type="unfinished">Quelle</translation>
+        <translation>Quelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="95"/>
         <source>Synced</source>
-        <translation type="unfinished">Synchronisiert</translation>
+        <translation>Synchronisiert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="146"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Nein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="148"/>
         <source>Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeile</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="150"/>
         <source>Word</source>
-        <translation type="unfinished"></translation>
+        <translation>Wort</translation>
     </message>
 </context>
 <context>
@@ -7009,7 +7011,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="644"/>
         <source>Auto-search for lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche automatisch nach Songtexten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="645"/>
@@ -7019,12 +7021,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="656"/>
         <source>Search for lyrics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche nach Songtexten…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="657"/>
         <source>Open the lyrics search dialog for the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne die Songtext-Suche für den aktuellen Titel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="662"/>
@@ -7074,7 +7076,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="722"/>
         <source>Lyrics settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Songtext-Einstellungen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="43"/>
@@ -7594,22 +7596,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Previous album</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vorheriges Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
         <source>&amp;Next album</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nächstes Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Random &amp;track</source>
-        <translation type="unfinished"></translation>
+        <translation>Zufälliger &amp;Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Random &amp;album</source>
-        <translation type="unfinished"></translation>
+        <translation>Zufälliges &amp;Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
@@ -7629,7 +7631,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="58"/>
         <source>&amp;Random</source>
-        <translation>&amp;Zufällig</translation>
+        <translation>Zu&amp;fällig</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="59"/>
@@ -7669,62 +7671,62 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="103"/>
         <source>Random</source>
-        <translation type="unfinished">Zufällig</translation>
+        <translation>Zufällig</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="106"/>
         <source>Ra&amp;ndom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu&amp;fällig</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="109"/>
         <source>Start playing a random track in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Spiele einen zufälligen Titel der aktuellen Wiedergabeliste ab</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="112"/>
         <source>Random Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Zufälliger Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="115"/>
         <source>Start playing the first track of a random album in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Spiele den ersten Titel eines zufälligen Albums der aktuellen Wiedergabeliste ab</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="118"/>
         <source>Random Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Zufälliges Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="122"/>
         <source>Skip to</source>
-        <translation type="unfinished"></translation>
+        <translation>Springe zu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="125"/>
         <source>Skip &amp;to</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Springe zu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="128"/>
         <source>Start playing the first track of the next album in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Spiele den ersten Titel des nächsten Albums in der aktuellen Wiedergabeliste ab</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="131"/>
         <source>Next Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächstes Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="134"/>
         <source>Start playing the first track of the previous album in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Spiele den ersten Titel des vorherigen Albums der aktuellen Wiedergabeliste ab</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="137"/>
         <source>Previous Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorheriges Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="152"/>
@@ -8001,29 +8003,29 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="53"/>
         <source>&amp;Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>B&amp;earbeite automatische Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="56"/>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="252"/>
         <source>Re&amp;name playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste Umbe&amp;nennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="58"/>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="256"/>
         <source>&amp;Remove playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste entfe&amp;rnen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="60"/>
         <source>Add &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Neue Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="63"/>
         <source>Add new &amp;autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue &amp;automatische Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="100"/>
@@ -8034,52 +8036,52 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="192"/>
         <source>Edit</source>
-        <translation type="unfinished">Bearbeiten</translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="195"/>
         <source>Edit the selected autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Die ausgewählte automatische Wiedergabeliste bearbeiten</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="199"/>
         <source>Rename the selected playlist</source>
-        <translation type="unfinished">Benenne die ausgewählte Wiedergabeliste um</translation>
+        <translation>Die ausgewählte Wiedergabeliste umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="202"/>
         <source>Rename</source>
-        <translation type="unfinished">Umbenennen</translation>
+        <translation>Umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="207"/>
         <source>Remove the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Die ausgewählte Wiedergabeliste entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="210"/>
         <source>Remove</source>
-        <translation type="unfinished">Entfernen</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="215"/>
         <source>Create a new empty playlist</source>
-        <translation type="unfinished">Neue Wiedergabeliste erstellen</translation>
+        <translation>Eine neue leere Wiedergabeliste erstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="225"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished">Erstelle eine neue automatische Wiedergabeliste</translation>
+        <translation>Eine neue automatische Wiedergabeliste erstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="252"/>
         <source>Re&amp;name autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische Wiedergabeliste umbe&amp;nennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="256"/>
         <source>&amp;Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische Wiedergabeliste entfe&amp;rnen</translation>
     </message>
 </context>
 <context>
@@ -8574,22 +8576,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="174"/>
         <source>Playlist name</source>
-        <translation type="unfinished">Wiedergabelistenname</translation>
+        <translation>Wiedergabelistenname</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="176"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="178"/>
         <source>Duration</source>
-        <translation type="unfinished">Dauer</translation>
+        <translation>Dauer</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="180"/>
         <source>Total size</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamtgröße</translation>
     </message>
 </context>
 <context>
@@ -8597,116 +8599,116 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="98"/>
         <source>Activate</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="99"/>
         <source>&amp;Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische Wiedergabeliste b&amp;earbeiten</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="102"/>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="359"/>
         <source>Re&amp;name playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste umbe&amp;nennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="104"/>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="366"/>
         <source>&amp;Remove playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste entfe&amp;rnen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="106"/>
         <source>Add &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Neue Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="109"/>
         <source>Add new &amp;autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue &amp;automatische Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="179"/>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="283"/>
         <source>Playlist Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabelisten-Verwaltung</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="270"/>
         <source>%1 contents</source>
         <extracomment>%1 refers to the name of a playlist.</extracomment>
-        <translation type="unfinished">Inhalte von &quot;%1&quot;</translation>
+        <translation>Inhalte von &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="282"/>
         <source>Edit</source>
-        <translation type="unfinished">Bearbeiten</translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="285"/>
         <source>Activate the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Die ausgewählte Wiedergabeliste aktivieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="292"/>
         <source>Edit the selected autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Die ausgewählte automatische Wiedergabeliste bearbeiten</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="297"/>
         <source>Rename the selected playlist</source>
-        <translation type="unfinished">Benenne die ausgewählte Wiedergabeliste um</translation>
+        <translation>Die ausgewählte Wiedergabeliste umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="300"/>
         <source>Rename</source>
-        <translation type="unfinished">Umbenennen</translation>
+        <translation>Umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="305"/>
         <source>Remove the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Die ausgewählte Wiedergabeliste entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="308"/>
         <source>Remove</source>
-        <translation type="unfinished">Entfernen</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="313"/>
         <source>Create a new empty playlist</source>
-        <translation type="unfinished">Neue Wiedergabeliste erstellen</translation>
+        <translation>Eine neue leere Wiedergabeliste erstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="321"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished">Erstelle eine neue automatische Wiedergabeliste</translation>
+        <translation>Eine neue automatische Wiedergabeliste erstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="359"/>
         <source>Re&amp;name autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische Wiedergabeliste umbe&amp;nennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="366"/>
         <source>&amp;Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische Wiedergabeliste entfe&amp;rnen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="466"/>
         <source>Options</source>
-        <translation type="unfinished">Optionen</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="468"/>
         <source>Activate on single click</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit einfachem Klick aktivieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="497"/>
         <source>Restore playlist order</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabelisten-Reihenfolge wiederherstellen</translation>
     </message>
 </context>
 <context>
@@ -9030,7 +9032,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="351"/>
         <source>Save playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste speichern…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="360"/>
@@ -9553,7 +9555,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="82"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished">&amp;Entfernen</translation>
+        <translation>Entfe&amp;rnen</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="84"/>
@@ -10174,12 +10176,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="124"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopieren</translation>
+        <translation>&amp;Kopieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="133"/>
         <source>Edit</source>
-        <translation type="unfinished">Bearbeiten</translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="177"/>
@@ -10671,17 +10673,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="96"/>
         <source>Enable scrobbling</source>
-        <translation type="unfinished">Aktiviere Scrobbling</translation>
+        <translation>Aktiviere Scrobbling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="105"/>
         <source>Scrobbling settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrobbling-Einstellungen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="113"/>
         <source>Scrobbling services…</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrobbling-Dienste…</translation>
     </message>
 </context>
 <context>
@@ -11353,17 +11355,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="603"/>
         <source>Show selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Informationen der Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="610"/>
         <source>Show current playlist info</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Informationen der aktuellen Wiedergabelsite</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="629"/>
         <source>Status bar settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Statusleisten-Einstellungen…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="617"/>
@@ -11399,7 +11401,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="83"/>
         <source>Shown in the status bar when no tracks are selected, or when selection info is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wird in der Statusleiste angezeigt, wenn keine Titel ausgewählt oder die Informationen zur Auswahl deaktiviert sind.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="86"/>
@@ -11414,7 +11416,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
         <source>Current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="71"/>
@@ -11424,12 +11426,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="64"/>
         <source>Show selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Informationen der Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
         <source>Show current playlist info</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Informationen der aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="79"/>
@@ -11635,22 +11637,22 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="60"/>
         <source>Auto &amp;track number</source>
-        <translation type="unfinished">&amp;Titelnummer automatisch erstellen</translation>
+        <translation>&amp;Titelnummer automatisch erstellen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="61"/>
         <source>Automatically &amp;fill values…</source>
-        <translation type="unfinished">Werte &amp;automatisch eintragen…</translation>
+        <translation>Werte &amp;automatisch eintragen…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="62"/>
         <source>&amp;Change default fields…</source>
-        <translation type="unfinished">Ändere &amp;Standardfelder…</translation>
+        <translation>Ändere &amp;Standardfelder…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="76"/>
         <source>Tools</source>
-        <translation type="unfinished">Werkzeuge</translation>
+        <translation>Werkzeuge</translation>
     </message>
 </context>
 <context>
@@ -11791,17 +11793,17 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="137"/>
         <source>Are you sure?</source>
-        <translation type="unfinished">Sicher?</translation>
+        <translation>Sicher?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="138"/>
         <source>Metadata in the associated files will be overwritten.</source>
-        <translation type="unfinished">Metadaten in den zugehörigen Dateien werden überschrieben.</translation>
+        <translation>Metadaten in den zugehörigen Dateien werden überschrieben.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="140"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Nicht erneut fragen</translation>
+        <translation>Nicht erneut fragen</translation>
     </message>
 </context>
 <context>
@@ -12091,7 +12093,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="42"/>
         <source>Quick &amp;setup</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Schnelleinrichtung</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="44"/>
@@ -12121,22 +12123,22 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="66"/>
         <source>&amp;Playlist Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wiedergabelisten-Verwaltung</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="67"/>
         <source>Open the playlist manager window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnet das Fenster der Wiedergabelisten-Verwaltung</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="74"/>
         <source>Playback &amp;Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Wieder&amp;gabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
         <source>Open the playback queue window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnet das Fenster der Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
@@ -12394,12 +12396,12 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="88"/>
         <source>Colours</source>
-        <translation type="unfinished">Farben</translation>
+        <translation>Farben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="89"/>
         <source>Global</source>
-        <translation type="unfinished"></translation>
+        <translation>Global</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="98"/>
@@ -12753,7 +12755,7 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/widgets.cpp" line="175"/>
         <source>Playlist Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabelisten-Verwaltung</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="204"/>
@@ -12867,37 +12869,37 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="115"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Füge zur aktuellen Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="119"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Füge zur aktiven Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="123"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Ersetze aktuelle Wiedergabeliste</translation>
+        <translation>Ersetze aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="127"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Erstelle neue Wiedergabeliste</translation>
+        <translation>Erstelle neue Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="132"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Füge zur Wiedergabewarteschlange hinzu</translation>
+        <translation>Füge zur Wiedergabewarteschlange hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Gebe als nächstes wieder</translation>
+        <translation>Gebe als nächstes wieder</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="140"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Entferne aus Wiedergabewarteschlange</translation>
+        <translation>Entferne aus Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="144"/>
@@ -12917,7 +12919,7 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="154"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel-Menü</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="309"/>
@@ -12970,22 +12972,22 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="79"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Füge zur Wiedergabewarteschlange hinzu</translation>
+        <translation>Füge zur Wiedergabewarteschlange hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Gebe als nächstes wieder</translation>
+        <translation>Gebe als nächstes wieder</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="86"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Entferne aus Wiedergabewarteschlange</translation>
+        <translation>Entferne aus Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="89"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel-Menü</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="320"/>
