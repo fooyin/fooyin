@@ -19,11 +19,16 @@
 
 #include "testutils.h"
 
+#include <core/coresettings.h>
+#include <core/engine/input/ratingtagpolicy.h>
 #include <core/engine/input/taglibparser.h>
 #include <core/track.h>
 
 #include <taglib/flacfile.h>
+#include <taglib/id3v2tag.h>
 #include <taglib/mp4file.h>
+#include <taglib/mpegfile.h>
+#include <taglib/popularimeterframe.h>
 #include <taglib/vorbisfile.h>
 
 #include <gtest/gtest.h>
@@ -76,6 +81,19 @@ void setXiphRatingFields(TagLib::Ogg::XiphComment* tag, const QString& rating, c
 
     tag->addField("RATING", TagLib::String{rating.toUtf8().constData(), TagLib::String::UTF8}, true);
     tag->addField("FMPS_RATING", TagLib::String{fmpsRating.toUtf8().constData(), TagLib::String::UTF8}, true);
+}
+
+void setRatingReadPolicy(const QString& tag, const QString& scale)
+{
+    FySettings settings;
+    settings.setValue(RatingSettings::ReadTag, tag);
+    settings.setValue(RatingSettings::ReadScale, scale);
+    settings.sync();
+}
+
+void resetTagReaderRatingSettings()
+{
+    resetRatingSettings("/tmp/fooyin-tagreader-test-config");
 }
 } // namespace
 
@@ -159,6 +177,8 @@ TEST_F(TagReaderTest, FlacReadPrefersFmpsRatingOverRating)
     ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
     EXPECT_FLOAT_EQ(track.rating(), 0.8F);
+    EXPECT_EQ(track.rawRatingTag(u"RATING"_s), u"1"_s);
+    EXPECT_EQ(track.rawRatingTag(u"FMPS_RATING"_s), u"0.8"_s);
 }
 
 TEST_F(TagReaderTest, M4aRead)
@@ -296,6 +316,60 @@ TEST_F(TagReaderTest, Mp3Read)
     EXPECT_EQ(testTag.front(), u"A custom tag"_s);
 }
 
+TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
+{
+    resetTagReaderRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    const QByteArray localPath = file.fileName().toLocal8Bit();
+    {
+        TagLib::MPEG::File mp3File(localPath.constData());
+        ASSERT_TRUE(mp3File.isValid());
+        ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
+
+        mp3File.ID3v2Tag()->removeFrames("FMPS_Rating");
+        mp3File.ID3v2Tag()->removeFrames("POPM");
+
+        auto* frame = new TagLib::ID3v2::PopularimeterFrame();
+        frame->setEmail("owner@example.com");
+        frame->setRating(196);
+        frame->setCounter(12);
+        mp3File.ID3v2Tag()->addFrame(frame);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::PopmOwner, u"owner@example.com"_s);
+        settings.setValue(RatingSettings::PopmMapping, u"CommonFiveStar"_s);
+        settings.sync();
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+        EXPECT_FLOAT_EQ(track.rating(), 0.8F);
+        EXPECT_EQ(track.playCount(), 12);
+        EXPECT_EQ(track.rawRatingTag(u"POPM"_s), u"owner@example.com|196|12"_s);
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::ReadId3Popm, false);
+        settings.sync();
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+        EXPECT_LE(track.rating(), 0.0F);
+        EXPECT_EQ(track.rawRatingTag(u"POPM"_s), QString{});
+    }
+
+    resetTagReaderRatingSettings();
+}
+
 TEST_F(TagReaderTest, OggRead)
 {
     const QString filepath = u":/audio/audiotest.ogg"_s;
@@ -346,6 +420,53 @@ TEST_F(TagReaderTest, OggReadPrefersFmpsRatingOverRating)
     ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
     EXPECT_FLOAT_EQ(track.rating(), 0.8F);
+    EXPECT_EQ(track.rawRatingTag(u"RATING"_s), u"1"_s);
+    EXPECT_EQ(track.rawRatingTag(u"FMPS_RATING"_s), u"0.8"_s);
+}
+
+TEST_F(TagReaderTest, OggReadConfiguredRatingScales)
+{
+    struct Case
+    {
+        QString rawRating;
+        QString scale;
+        float expectedRating;
+    };
+
+    const std::vector<Case> cases{
+        {.rawRating = u"3"_s, .scale = u"OneToFive"_s, .expectedRating = 0.6F},
+        {.rawRating = u"7"_s, .scale = u"OneToTen"_s, .expectedRating = 0.7F},
+        {.rawRating = u"70"_s, .scale = u"OneToHundred"_s, .expectedRating = 0.7F},
+    };
+
+    for(const auto& testCase : cases) {
+        resetTagReaderRatingSettings();
+
+        const QString filepath = u":/audio/audiotest.ogg"_s;
+        TempResource file{filepath};
+        file.checkValid();
+
+        {
+            const QByteArray localPath = file.fileName().toLocal8Bit();
+            TagLib::Ogg::Vorbis::File oggFile{localPath.constData()};
+            ASSERT_TRUE(oggFile.isValid());
+            ASSERT_NE(oggFile.tag(), nullptr);
+
+            setXiphRatingFields(oggFile.tag(), testCase.rawRating, u"0.2"_s);
+            ASSERT_TRUE(oggFile.save());
+        }
+
+        setRatingReadPolicy(u"RATING"_s, testCase.scale);
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+        EXPECT_FLOAT_EQ(track.rating(), testCase.expectedRating);
+        EXPECT_EQ(track.rawRatingTag(u"RATING"_s), testCase.rawRating);
+        EXPECT_EQ(track.rawRatingTag(u"FMPS_RATING"_s), u"0.2"_s);
+    }
+
+    resetTagReaderRatingSettings();
 }
 
 TEST_F(TagReaderTest, OpusRead)

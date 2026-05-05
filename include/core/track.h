@@ -265,6 +265,10 @@ public:
 
     void setCuePath(const QString& path);
 
+    [[nodiscard]] QString rawRatingTag(const QString& tag) const;
+    void setRawRatingTag(const QString& tag, const QString& value);
+    void removeRawRatingTag(const QString& tag);
+
     void addExtraTag(const QString& tag, const QString& value);
     void addExtraTag(const QString& tag, const QStringList& value);
     void removeExtraTag(const QString& tag);

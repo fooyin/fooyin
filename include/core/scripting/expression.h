@@ -112,6 +112,8 @@ enum class VariableKind : uint8_t
     FirstPlayed,
     LastPlayed,
     Rating,
+    RatingNormalized,
+    Stars,
     RatingStars,
     RatingStarsPadded,
     RatingEditor,

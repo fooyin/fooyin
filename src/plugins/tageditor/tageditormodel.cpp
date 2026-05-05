@@ -389,7 +389,7 @@ void TagEditorModel::autoNumberTracks()
         }
     };
 
-    static const auto trackTag      = QString::fromLatin1(Constants::MetaData::Track);
+    static const auto trackTag      = QString::fromLatin1(Constants::MetaData::TrackNumber);
     static const auto trackTotalTag = QString::fromLatin1(Constants::MetaData::TrackTotal);
 
     addMissingTag(trackTag);
@@ -465,6 +465,8 @@ bool TagEditorModel::haveOnlyStatChanges()
         const QString scriptField = item.field().scriptField;
         return scriptField.compare(QLatin1String{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0
             || scriptField.compare(QLatin1String{Constants::MetaData::Rating}, Qt::CaseInsensitive) == 0
+            || scriptField.compare(QLatin1String{Constants::MetaData::RatingNormalized}, Qt::CaseInsensitive) == 0
+            || scriptField.compare(QLatin1String{Constants::MetaData::Stars}, Qt::CaseInsensitive) == 0
             || scriptField.compare(QLatin1String{Constants::MetaData::RatingStars}, Qt::CaseInsensitive) == 0;
     };
 

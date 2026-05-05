@@ -23,9 +23,10 @@ namespace Fooyin::Constants {
 constexpr auto RecordSeparator = "\036";
 constexpr auto UnitSeparator   = "\037";
 
-constexpr auto InvalidGain       = -1000;
-constexpr auto InvalidPeak       = -1;
-constexpr auto OpusHeaderGainQ78 = "_OPUS_HEADER_GAIN_Q78";
+constexpr auto InvalidGain        = -1000;
+constexpr auto InvalidPeak        = -1;
+constexpr auto OpusHeaderGainQ78  = "_OPUS_HEADER_GAIN_Q78";
+constexpr auto RawRatingTagPrefix = "_FY_RATING_RAW_";
 
 namespace MetaData {
 constexpr auto Title             = "TITLE";
@@ -33,7 +34,7 @@ constexpr auto Artist            = "ARTIST";
 constexpr auto UniqueArtist      = "UNIQUEARTIST";
 constexpr auto Album             = "ALBUM";
 constexpr auto AlbumArtist       = "ALBUMARTIST";
-constexpr auto Track             = "TRACK";
+constexpr auto TrackNumber       = "TRACK";
 constexpr auto TrackTotal        = "TRACKTOTAL";
 constexpr auto Disc              = "DISC";
 constexpr auto DiscTotal         = "DISCTOTAL";
@@ -55,6 +56,8 @@ constexpr auto FirstPlayed       = "FIRSTPLAYED";
 constexpr auto LastPlayed        = "LASTPLAYED";
 constexpr auto PlayCount         = "PLAYCOUNT";
 constexpr auto Rating            = "RATING";
+constexpr auto RatingNormalized  = "RATING_NORMALIZED";
+constexpr auto Stars             = "STARS";
 constexpr auto RatingStars       = "RATING_STARS";
 constexpr auto RatingStarsPadded = "RATING_STARS_PADDED";
 constexpr auto RatingEditor      = "RATING_EDITOR";

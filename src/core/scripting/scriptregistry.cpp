@@ -318,7 +318,11 @@ std::optional<ScriptRegistry::FuncRet> trackMetadataValue(const VariableKind kin
         case VariableKind::LastPlayed:
             return formatDateTime(track.lastPlayed());
         case VariableKind::Rating:
+            return track.rating() > 0 ? track.rating() * 5.0F : -1.0F;
+        case VariableKind::RatingNormalized:
             return track.rating();
+        case VariableKind::Stars:
+            return track.rating() > 0 ? track.rating() * 5.0F : -1.0F;
         case VariableKind::RatingStars:
             return formattedRatingStars(track, context, false);
         case VariableKind::RatingStarsPadded:

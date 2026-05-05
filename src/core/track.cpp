@@ -73,6 +73,11 @@ QString ratingStarsText(int rating)
     return text;
 }
 
+QString rawRatingTagProperty(const QString& tag)
+{
+    return QString::fromLatin1(Fooyin::Constants::RawRatingTagPrefix) + tag.toUpper();
+}
+
 using MetaMap = std::unordered_map<QString, std::function<QString(const Fooyin::Track& track)>>;
 const MetaMap& metaMap()
 {
@@ -83,7 +88,7 @@ const MetaMap& metaMap()
         {QString::fromLatin1(Artist),       [](const Fooyin::Track& track) { return track.artist(); }},
         {QString::fromLatin1(Album),        [](const Fooyin::Track& track) { return track.album(); }},
         {QString::fromLatin1(AlbumArtist),  [](const Fooyin::Track& track) { return track.albumArtist(); }},
-        {QString::fromLatin1(Track),        [](const Fooyin::Track& track) { return track.trackNumber(); }},
+        {QString::fromLatin1(TrackNumber),  [](const Fooyin::Track& track) { return track.trackNumber(); }},
         {QString::fromLatin1(TrackTotal),   [](const Fooyin::Track& track) { return track.trackTotal(); }},
         {QString::fromLatin1(Disc),         [](const Fooyin::Track& track) { return track.discNumber(); }},
         {QString::fromLatin1(DiscTotal),    [](const Fooyin::Track& track) { return track.discTotal(); }},
@@ -93,7 +98,9 @@ const MetaMap& metaMap()
         {QString::fromLatin1(Comment),      [](const Fooyin::Track& track) { return track.comment(); }},
         {QString::fromLatin1(Date),         [](const Fooyin::Track& track) { return track.date(); }},
         {QString::fromLatin1(Year),         [](const Fooyin::Track& track) { return validNum(track.year()); }},
-        {QString::fromLatin1(Rating),       [](const Fooyin::Track& track) { return validNum(track.rating()); }},
+        {QString::fromLatin1(Rating),       [](const Fooyin::Track& track) { return validNum(track.rating() * 5.0F); }},
+        {QString::fromLatin1(RatingNormalized), [](const Fooyin::Track& track) { return validNum(track.rating()); }},
+        {QString::fromLatin1(Stars),        [](const Fooyin::Track& track) { return validNum(track.rating() * 5.0F); }},
         {QString::fromLatin1(RatingEditor), [](const Fooyin::Track& track) { return validNum(track.rating()); }}
     };
     // clang-format on
@@ -1143,7 +1150,7 @@ QMap<QString, QString> Track::metadata() const
     static const QString ArtistKey      = QString::fromLatin1(MetaData::Artist);
     static const QString AlbumKey       = QString::fromLatin1(MetaData::Album);
     static const QString AlbumArtistKey = QString::fromLatin1(MetaData::AlbumArtist);
-    static const QString TrackKey       = QString::fromLatin1(MetaData::Track);
+    static const QString TrackKey       = QString::fromLatin1(MetaData::TrackNumber);
     static const QString TrackTotalKey  = QString::fromLatin1(MetaData::TrackTotal);
     static const QString DiscKey        = QString::fromLatin1(MetaData::Disc);
     static const QString DiscTotalKey   = QString::fromLatin1(MetaData::DiscTotal);
@@ -1693,12 +1700,37 @@ QString Track::metaValue(const QString& name) const
 {
     const QString tag = name.toUpper();
 
+    if(const QString rawRating = rawRatingTag(tag); !rawRating.isEmpty()) {
+        return rawRating;
+    }
+
     const auto& map = metaMap();
     if(map.contains(tag)) {
         return map.at(tag)(*this);
     }
 
     return extraTag(tag).join(QLatin1String{Constants::UnitSeparator});
+}
+
+QString Track::rawRatingTag(const QString& tag) const
+{
+    const QString* value = p->extraProps.find(rawRatingTagProperty(tag));
+    return value ? *value : QString{};
+}
+
+void Track::setRawRatingTag(const QString& tag, const QString& value)
+{
+    const QString property = rawRatingTagProperty(tag);
+    if(value.isEmpty()) {
+        p->extraProps.erase(property);
+        return;
+    }
+    p->extraProps.insertOrAssign(property, value);
+}
+
+void Track::removeRawRatingTag(const QString& tag)
+{
+    p->extraProps.erase(rawRatingTagProperty(tag));
 }
 
 QString Track::techInfo(const QString& name) const

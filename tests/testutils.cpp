@@ -19,9 +19,14 @@
 
 #include "testutils.h"
 
+#include <core/corepaths.h>
+#include <core/coresettings.h>
+#include <core/engine/input/ratingtagpolicy.h>
 #include <core/playlist/playlist.h>
 
 #include <QDir>
+#include <QFileInfo>
+#include <QStandardPaths>
 
 #include <gtest/gtest.h>
 
@@ -31,6 +36,26 @@ QString testFilePath(const QString& relativePath)
     const QFileInfo thisFile{QString::fromUtf8(__FILE__)};
     const QDir testsDir{thisFile.absolutePath()};
     return testsDir.absoluteFilePath(relativePath);
+}
+
+void resetRatingSettings(const QByteArray& configHome)
+{
+    QStandardPaths::setTestModeEnabled(false);
+    qputenv("XDG_CONFIG_HOME", configHome);
+    if(const QFileInfo info{Core::settingsPath()}; info.isDir()) {
+        QDir{Core::settingsPath()}.removeRecursively();
+    }
+    ASSERT_TRUE(QDir{}.mkpath(QFileInfo{Core::settingsPath()}.absolutePath()));
+    FySettings settings;
+    settings.remove(RatingSettings::ReadTag);
+    settings.remove(RatingSettings::ReadScale);
+    settings.remove(RatingSettings::WriteTag);
+    settings.remove(RatingSettings::WriteScale);
+    settings.remove(RatingSettings::ReadId3Popm);
+    settings.remove(RatingSettings::WriteId3Popm);
+    settings.remove(RatingSettings::PopmOwner);
+    settings.remove(RatingSettings::PopmMapping);
+    settings.sync();
 }
 
 TempResource::TempResource(const QString& filename, QObject* parent)

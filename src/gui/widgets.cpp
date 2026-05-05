@@ -64,6 +64,7 @@
 #include "settings/guithemespage.h"
 #include "settings/guitrackdisplaypage.h"
 #include "settings/library/librarygeneralpage.h"
+#include "settings/library/librarymetadatapage.h"
 #include "settings/library/librarysortingpage.h"
 #include "settings/networkpage.h"
 #include "settings/playback/decoderpage.h"
@@ -340,6 +341,7 @@ void Widgets::registerPages()
     new ArtworkSourcesPage(m_artworkFinder, m_settings, this);
     new ArtworkDownloadPage(m_settings, this);
     new LibraryGeneralPage(m_core->libraryManager(), m_core->library(), m_settings, this);
+    new LibraryMetadataPage(m_settings, this);
     new LibrarySortingPage(m_core->sortingRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);
     new DspManagerPage(m_core->dspChainStore(), m_dspPresetRegistry, m_dspSettingsRegistry.get(), m_settings, this);

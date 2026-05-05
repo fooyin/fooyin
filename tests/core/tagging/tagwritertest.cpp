@@ -20,11 +20,19 @@
 #include "testutils.h"
 
 #include <core/constants.h>
+#include <core/coresettings.h>
+#include <core/engine/input/ratingtagpolicy.h>
 #include <core/engine/input/taglibparser.h>
+#include <core/engine/tagdefs.h>
 #include <core/track.h>
 
+#include <taglib/id3v2tag.h>
 #include <taglib/mp4file.h>
+#include <taglib/mpegfile.h>
 #include <taglib/opusfile.h>
+#include <taglib/popularimeterframe.h>
+#include <taglib/textidentificationframe.h>
+#include <taglib/vorbisfile.h>
 
 #include <QBuffer>
 #include <QImage>
@@ -82,6 +90,45 @@ QString mp4StringItem(const TagLib::MP4::ItemMap& items, const char* key)
 
     const auto value = items[key].toStringList().toString("\n");
     return QString::fromUtf8(value.toCString(true));
+}
+
+QString xiphStringItem(const TagLib::Ogg::FieldListMap& fields, const char* key)
+{
+    if(!fields.contains(key) || fields[key].isEmpty()) {
+        return {};
+    }
+
+    return QString::fromUtf8(fields[key].front().toCString(true));
+}
+
+void resetTagWriterRatingSettings()
+{
+    resetRatingSettings("/tmp/fooyin-tagwriter-test-config");
+}
+
+TagLib::ID3v2::PopularimeterFrame* popmFrameByOwner(TagLib::ID3v2::Tag* tag, const QString& owner)
+{
+    if(!tag || !tag->frameListMap().contains("POPM")) {
+        return nullptr;
+    }
+
+    const TagLib::String ownerString{owner.toUtf8().constData(), TagLib::String::UTF8};
+    for(auto* frame : tag->frameListMap()["POPM"]) {
+        auto* popmFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(frame);
+        if(popmFrame && popmFrame->email() == ownerString) {
+            return popmFrame;
+        }
+    }
+    return nullptr;
+}
+
+QString id3UserTextFrameValue(TagLib::ID3v2::Tag* tag, const char* description)
+{
+    auto* frame = TagLib::ID3v2::UserTextIdentificationFrame::find(tag, description);
+    if(!frame || frame->fieldList().isEmpty()) {
+        return {};
+    }
+    return QString::fromUtf8(frame->fieldList().back().toCString(true));
 }
 } // namespace
 
@@ -336,6 +383,45 @@ TEST_F(TagWriterTest, M4aWriteReplayGain)
     }
 }
 
+TEST_F(TagWriterTest, M4aWriteHonoursTextRatingTagSettings)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.m4a"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::WriteTag, u"RATING"_s);
+        settings.setValue(RatingSettings::WriteScale, u"OneToTen"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setId(0);
+    track.setRating(0.7F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(mp4File.isValid());
+        ASSERT_NE(mp4File.tag(), nullptr);
+
+        const auto items = mp4File.tag()->itemMap();
+        EXPECT_EQ(mp4StringItem(items, Fooyin::Mp4::RatingAlt2), u"7"_s);
+        EXPECT_FALSE(items.contains(Fooyin::Mp4::RatingAlt));
+    }
+
+    resetTagWriterRatingSettings();
+}
+
 TEST_F(TagWriterTest, Mp3Write)
 {
     const QString filepath = u":/audio/audiotest.mp3"_s;
@@ -395,6 +481,341 @@ TEST_F(TagWriterTest, Mp3Write)
         ASSERT_TRUE(!writeTag.isEmpty());
         EXPECT_EQ(writeTag.front(), u"Success"_s);
     }
+}
+
+TEST_F(TagWriterTest, Mp3WriteHonoursPopmSettings)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::WriteId3Popm, true);
+        settings.setValue(RatingSettings::PopmOwner, u"owner@example.com"_s);
+        settings.setValue(RatingSettings::PopmMapping, u"CommonFiveStar"_s);
+        settings.sync();
+        EXPECT_EQ(settings.status(), QSettings::NoError);
+    }
+    EXPECT_EQ(ratingTagPolicy().popmOwner, u"owner@example.com"_s);
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setId(0);
+    track.setRating(0.8F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(mp3File.isValid());
+        ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
+
+        auto* frame = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
+        ASSERT_NE(frame, nullptr);
+        EXPECT_EQ(QString::fromUtf8(frame->email().toCString(true)), u"owner@example.com"_s);
+        EXPECT_EQ(frame->rating(), 196);
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, Mp3WriteCanSkipPopm)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(mp3File.isValid());
+        ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
+        mp3File.ID3v2Tag()->removeFrames("POPM");
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::WriteId3Popm, false);
+        settings.setValue(RatingSettings::PopmOwner, u"owner@example.com"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setId(0);
+    track.setRating(0.8F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(mp3File.isValid());
+        ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
+        EXPECT_EQ(popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s), nullptr);
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, Mp3RemoveRatingClearsTextRatingAndPopm)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::WriteId3Popm, true);
+        settings.setValue(RatingSettings::PopmOwner, u"owner@example.com"_s);
+        settings.setValue(RatingSettings::WriteTag, u"RATING"_s);
+        settings.setValue(RatingSettings::WriteScale, u"OneToTen"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setId(0);
+    track.setRating(0.7F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    track.setRating(0.0F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(mp3File.isValid());
+        ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
+
+        EXPECT_TRUE(id3UserTextFrameValue(mp3File.ID3v2Tag(), "RATING").isEmpty());
+        EXPECT_FALSE(mp3File.ID3v2Tag()->frameListMap().contains("FMPS_Rating"));
+        EXPECT_EQ(popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s), nullptr);
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, Mp3WriteHonoursTextRatingTagSettings)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.mp3"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::WriteId3Popm, false);
+        settings.setValue(RatingSettings::WriteTag, u"RATING"_s);
+        settings.setValue(RatingSettings::WriteScale, u"OneToTen"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setId(0);
+    track.setRating(0.7F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(mp3File.isValid());
+        ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
+
+        EXPECT_EQ(id3UserTextFrameValue(mp3File.ID3v2Tag(), "RATING"), u"7"_s);
+        EXPECT_FALSE(mp3File.ID3v2Tag()->frameListMap().contains("FMPS_Rating"));
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, OggWriteHonoursTextRatingTagSettings)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.ogg"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::WriteId3Popm, true);
+        settings.setValue(RatingSettings::WriteTag, u"RATING"_s);
+        settings.setValue(RatingSettings::WriteScale, u"OneToTen"_s);
+        settings.sync();
+        EXPECT_EQ(settings.status(), QSettings::NoError);
+    }
+    EXPECT_EQ(ratingTagPolicy().effectiveWriteTag(), u"RATING"_s);
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setId(0);
+    track.setRating(0.7F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::Ogg::Vorbis::File oggFile(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(oggFile.isValid());
+        ASSERT_NE(oggFile.tag(), nullptr);
+
+        const auto fields = oggFile.tag()->fieldListMap();
+        ASSERT_TRUE(fields.contains("RATING"));
+        EXPECT_EQ(QString::fromUtf8(fields["RATING"].front().toCString(true)), u"7"_s);
+        EXPECT_FALSE(fields.contains("FMPS_RATING"));
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, OggWriteConfiguredRatingScales)
+{
+    struct Case
+    {
+        QString tag;
+        QString scale;
+        QString expectedValue;
+        float expectedRating;
+    };
+
+    const std::vector<Case> cases{
+        {.tag = u"FMPS_RATING"_s, .scale = u"Normalized01"_s, .expectedValue = u"0.7"_s, .expectedRating = 0.7F},
+        {.tag = u"RATING"_s, .scale = u"OneToFive"_s, .expectedValue = u"4"_s, .expectedRating = 0.8F},
+        {.tag = u"RATING"_s, .scale = u"OneToTen"_s, .expectedValue = u"7"_s, .expectedRating = 0.7F},
+        {.tag = u"RATING"_s, .scale = u"OneToHundred"_s, .expectedValue = u"70"_s, .expectedRating = 0.7F},
+        {.tag = u"MY_RATING"_s, .scale = u"OneToTen"_s, .expectedValue = u"7"_s, .expectedRating = 0.7F},
+    };
+
+    for(const auto& testCase : cases) {
+        resetTagWriterRatingSettings();
+
+        const QString filepath = u":/audio/audiotest.ogg"_s;
+        TempResource file{filepath};
+        file.checkValid();
+
+        AudioSource source;
+        source.filepath = file.fileName();
+        source.device   = &file;
+
+        {
+            FySettings settings;
+            settings.setValue(RatingSettings::WriteId3Popm, false);
+            settings.setValue(RatingSettings::WriteTag, testCase.tag);
+            settings.setValue(RatingSettings::WriteScale, testCase.scale);
+            settings.sync();
+        }
+
+        Track track{file.fileName()};
+        ASSERT_TRUE(m_parser.readTrack(source, track));
+        track.setId(0);
+        track.setRating(0.7F);
+        ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+        ASSERT_TRUE(file.flush());
+
+        {
+            TagLib::Ogg::Vorbis::File oggFile(file.fileName().toLocal8Bit().constData());
+            ASSERT_TRUE(oggFile.isValid());
+            ASSERT_NE(oggFile.tag(), nullptr);
+
+            const auto fields = oggFile.tag()->fieldListMap();
+            EXPECT_EQ(xiphStringItem(fields, testCase.tag.toLatin1().constData()), testCase.expectedValue);
+        }
+
+        {
+            FySettings settings;
+            settings.setValue(RatingSettings::ReadTag, testCase.tag);
+            settings.setValue(RatingSettings::ReadScale, testCase.scale);
+            settings.sync();
+
+            Track rereadTrack{file.fileName()};
+            ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+            EXPECT_FLOAT_EQ(rereadTrack.rating(), testCase.expectedRating);
+            EXPECT_EQ(rereadTrack.rawRatingTag(testCase.tag), testCase.expectedValue);
+        }
+    }
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, OggRemoveRatingClearsWrittenRawRatingOnReread)
+{
+    resetTagWriterRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.ogg"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::WriteId3Popm, false);
+        settings.setValue(RatingSettings::WriteTag, u"MY_RATING"_s);
+        settings.setValue(RatingSettings::WriteScale, u"OneToTen"_s);
+        settings.setValue(RatingSettings::ReadTag, u"MY_RATING"_s);
+        settings.setValue(RatingSettings::ReadScale, u"OneToTen"_s);
+        settings.sync();
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    track.setId(0);
+    track.setRating(0.7F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    Track rereadTrack{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+    ASSERT_EQ(rereadTrack.rawRatingTag(u"MY_RATING"_s), u"7"_s);
+
+    rereadTrack.setRating(0.0F);
+    ASSERT_TRUE(m_parser.writeTrack(source, rereadTrack, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    Track clearedTrack{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, clearedTrack));
+    EXPECT_LE(clearedTrack.rating(), 0.0F);
+    EXPECT_EQ(clearedTrack.rawRatingTag(u"MY_RATING"_s), QString{});
+
+    {
+        TagLib::Ogg::Vorbis::File oggFile(file.fileName().toLocal8Bit().constData());
+        ASSERT_TRUE(oggFile.isValid());
+        ASSERT_NE(oggFile.tag(), nullptr);
+        EXPECT_FALSE(oggFile.tag()->fieldListMap().contains("MY_RATING"));
+    }
+
+    resetTagWriterRatingSettings();
 }
 
 TEST_F(TagWriterTest, OggWrite)

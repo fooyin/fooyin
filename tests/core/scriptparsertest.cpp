@@ -21,6 +21,7 @@
 #include <core/ratingsymbols.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptproviders.h>
+#include <core/scripting/scripttrackwriter.h>
 #include <core/track.h>
 
 #include <gtest/gtest.h>
@@ -501,6 +502,7 @@ TEST_F(ScriptParserTest, MetadataTest)
     const QString paddedStars  = compactStars + defaultSymbols.emptyStarSymbol;
     EXPECT_EQ(compactStars, m_parser.evaluate(u"%rating_stars%"_s, track));
     EXPECT_EQ(paddedStars, m_parser.evaluate(u"%rating_stars_padded%"_s, track));
+    EXPECT_EQ(u"3.5", m_parser.evaluate(u"%stars%"_s, track));
     EXPECT_EQ(u"7", m_parser.evaluate(u"%rating_editor%"_s, track));
 
     EXPECT_EQ(u"", m_parser.evaluate(u"%replaygain_track_gain%"_s, track));
@@ -540,6 +542,29 @@ TEST_F(ScriptParserTest, RatingStarsFormattingTest)
     EXPECT_EQ(u"***+.", parser.evaluate(u"%rating_stars_padded%"_s, track, context));
 }
 
+TEST_F(ScriptParserTest, RatingScriptWritesUseExpectedScales)
+{
+    Track track;
+
+    setTrackScriptValue(u"rating"_s, 3.5F, track);
+    EXPECT_FLOAT_EQ(track.rating(), 0.7F);
+
+    setTrackScriptValue(u"stars"_s, u"4"_s, track);
+    EXPECT_FLOAT_EQ(track.rating(), 0.8F);
+
+    setTrackScriptValue(u"rating_normalized"_s, 0.6F, track);
+    EXPECT_FLOAT_EQ(track.rating(), 0.6F);
+
+    setTrackScriptValue(u"rating_normalized"_s, u"0.4"_s, track);
+    EXPECT_FLOAT_EQ(track.rating(), 0.4F);
+
+    setTrackScriptValue(u"rating_editor"_s, 0.5F, track);
+    EXPECT_FLOAT_EQ(track.rating(), 0.5F);
+
+    setTrackScriptValue(u"rating_stars"_s, u"7"_s, track);
+    EXPECT_FLOAT_EQ(track.rating(), 0.7F);
+}
+
 TEST_F(ScriptParserTest, TrackListTest)
 {
     TrackList tracks;
@@ -577,10 +602,15 @@ TEST_F(ScriptParserTest, MetaTest)
 {
     Track track;
     track.setArtists({u"The Verve"_s});
+    track.setRating(0.7F);
+    track.setRawRatingTag(u"RATING"_s, u"7"_s);
 
     EXPECT_EQ(u"The Verve", m_parser.evaluate(u"%albumartist%"_s, track));
     EXPECT_EQ(u"", m_parser.evaluate(u"$meta(albumartist)"_s, track));
     EXPECT_EQ(u"The Verve", m_parser.evaluate(u"$meta(artist)"_s, track));
+    EXPECT_EQ(u"3.5", m_parser.evaluate(u"%rating%"_s, track));
+    EXPECT_EQ(u"0.7", m_parser.evaluate(u"%rating_normalized%"_s, track));
+    EXPECT_EQ(u"7", m_parser.evaluate(u"$meta(RATING)"_s, track));
 }
 
 TEST_F(ScriptParserTest, InfoTest)
@@ -866,6 +896,7 @@ TEST_F(ScriptParserTest, QueryTest)
     track1.setFirstPlayed(QDateTime::currentDateTime().addMonths(-2).toMSecsSinceEpoch());
     track1.setLastPlayed(QDateTime::currentDateTime().addDays(-6).toMSecsSinceEpoch());
     track1.setPlayCount(1);
+    track1.setRating(0.6F);
     tracks.push_back(track1);
 
     Track track2;
@@ -888,6 +919,7 @@ TEST_F(ScriptParserTest, QueryTest)
     track2.setFirstPlayed(QDateTime(QDate(2021, 1, 1), QTime(0, 0, 0)).toMSecsSinceEpoch());
     track2.setLastPlayed(QDateTime::currentDateTime().addDays(-3).toMSecsSinceEpoch());
     track2.setPlayCount(8);
+    track2.setRating(0.4F);
     tracks.push_back(track2);
 
     // Basic operator tests
@@ -897,6 +929,10 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(0, m_parser.filter(u"playcount LESS 1"_s, tracks).size());
     EXPECT_EQ(2, m_parser.filter(u"playcount>=1"_s, tracks).size());
     EXPECT_EQ(0, m_parser.filter(u"playcount>=A"_s, tracks).size());
+    EXPECT_EQ(1, m_parser.filter(u"stars>=3"_s, tracks).size());
+    EXPECT_EQ(1, m_parser.filter(u"rating>=3"_s, tracks).size());
+    EXPECT_EQ(2, m_parser.filter(u"rating>1"_s, tracks).size());
+    EXPECT_EQ(1, m_parser.filter(u"rating_normalized>=0.6"_s, tracks).size());
 
     // Logical operator tests
     EXPECT_EQ(1, m_parser.filter(u"title=Wandering Horizon AND genre MISSING"_s, tracks).size());

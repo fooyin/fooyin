@@ -53,6 +53,8 @@ bool isWritableBuiltInField(const VariableKind kind)
         case VariableKind::Comment:
         case VariableKind::Date:
         case VariableKind::Rating:
+        case VariableKind::RatingNormalized:
+        case VariableKind::Stars:
             return true;
         default:
             return false;

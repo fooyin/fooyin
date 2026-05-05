@@ -77,7 +77,7 @@ VariableKind resolveBuiltInVariableKind(const QString& var)
 {
     using namespace Fooyin::Constants;
 
-    if(var == QLatin1String{MetaData::Track}) {
+    if(var == QLatin1String{MetaData::TrackNumber}) {
         return VariableKind::Track;
     }
     if(var == QLatin1String{MetaData::TrackTotal}) {
@@ -160,6 +160,12 @@ VariableKind resolveBuiltInVariableKind(const QString& var)
     }
     if(var == QLatin1String{MetaData::Rating}) {
         return VariableKind::Rating;
+    }
+    if(var == QLatin1String{MetaData::RatingNormalized}) {
+        return VariableKind::RatingNormalized;
+    }
+    if(var == QLatin1String{MetaData::Stars}) {
+        return VariableKind::Stars;
     }
     if(var == QLatin1String{MetaData::RatingStars}) {
         return VariableKind::RatingStars;

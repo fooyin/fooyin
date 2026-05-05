@@ -356,6 +356,8 @@ set(SOURCES
     settings/guithemespage.h
     settings/library/librarygeneralpage.cpp
     settings/library/librarygeneralpage.h
+    settings/library/librarymetadatapage.cpp
+    settings/library/librarymetadatapage.h
     settings/library/librarymodel.cpp
     settings/library/librarymodel.h
     settings/library/librarysortingpage.cpp

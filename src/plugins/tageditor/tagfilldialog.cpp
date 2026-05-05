@@ -326,7 +326,7 @@ QString FillValuesDialog::fillFieldColumnTitle(const QString& field)
     if(upperField == QLatin1StringView{Fooyin::Constants::MetaData::AlbumArtist}) {
         return tr("Album Artist");
     }
-    if(upperField == QLatin1StringView{Fooyin::Constants::MetaData::Track}) {
+    if(upperField == QLatin1StringView{Fooyin::Constants::MetaData::TrackNumber}) {
         return tr("Track Number");
     }
     if(upperField == QLatin1StringView{Fooyin::Constants::MetaData::TrackTotal}) {

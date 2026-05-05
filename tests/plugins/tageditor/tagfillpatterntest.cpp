@@ -72,6 +72,13 @@ TEST(FillPatternTest, RejectsNonWritableBuiltInFields)
     ASSERT_FALSE(pattern.errors().empty());
 }
 
+TEST(FillPatternTest, AcceptsWritableRatingAliases)
+{
+    EXPECT_TRUE(TagEditor::FillPattern::parse(u"%RATING%"_s).isValid());
+    EXPECT_TRUE(TagEditor::FillPattern::parse(u"%STARS%"_s).isValid());
+    EXPECT_TRUE(TagEditor::FillPattern::parse(u"%RATING_NORMALIZED%"_s).isValid());
+}
+
 TEST(FillPatternTest, ConvertsKnownListFieldsToStringLists)
 {
     const auto fieldValue = TagEditor::fillFieldValue(QString::fromLatin1(Constants::MetaData::Artist), u"A; B ; C"_s);

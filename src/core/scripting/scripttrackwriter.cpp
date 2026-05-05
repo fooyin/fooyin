@@ -38,6 +38,48 @@ void invokeTrackSetter(Track& track, const ScriptFieldValue& arg)
         arg);
 }
 
+void setNormalizedRating(Track& track, const ScriptFieldValue& value)
+{
+    std::visit(
+        [&track](const auto& val) {
+            if constexpr(std::is_arithmetic_v<std::decay_t<decltype(val)>>) {
+                track.setRating(static_cast<float>(val));
+            }
+            else if constexpr(std::is_same_v<std::decay_t<decltype(val)>, QString>) {
+                track.setRating(val.toFloat());
+            }
+        },
+        value);
+}
+
+void setStarRating(Track& track, const ScriptFieldValue& value)
+{
+    std::visit(
+        [&track](const auto& val) {
+            if constexpr(std::is_arithmetic_v<std::decay_t<decltype(val)>>) {
+                track.setRating(static_cast<float>(val) / 5.0F);
+            }
+            else if constexpr(std::is_same_v<std::decay_t<decltype(val)>, QString>) {
+                track.setRating(val.toFloat() / 5.0F);
+            }
+        },
+        value);
+}
+
+void setEditorRating(Track& track, const ScriptFieldValue& value)
+{
+    std::visit(
+        [&track](const auto& val) {
+            if constexpr(std::is_arithmetic_v<std::decay_t<decltype(val)>>) {
+                track.setRatingStars(static_cast<int>(val));
+            }
+            else if constexpr(std::is_same_v<std::decay_t<decltype(val)>, QString>) {
+                track.setRatingStars(val.toInt());
+            }
+        },
+        value);
+}
+
 bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value, Track& track)
 {
     switch(kind) {
@@ -84,11 +126,19 @@ bool setBuiltInTrackValue(const VariableKind kind, const ScriptFieldValue& value
         case VariableKind::Date:
             invokeTrackSetter<&Track::setDate>(track, value);
             return true;
-        case VariableKind::Rating:
+        case VariableKind::RatingNormalized:
+            setNormalizedRating(track, value);
+            return true;
+        case VariableKind::RatingEditor:
+            setNormalizedRating(track, value);
+            return true;
         case VariableKind::RatingStars:
         case VariableKind::RatingStarsPadded:
-        case VariableKind::RatingEditor:
-            invokeTrackSetter<&Track::setRating>(track, value);
+            setEditorRating(track, value);
+            return true;
+        case VariableKind::Rating:
+        case VariableKind::Stars:
+            setStarRating(track, value);
             return true;
         case VariableKind::PlayCount:
             invokeTrackSetter<&Track::setPlayCount>(track, value);

@@ -99,7 +99,8 @@ QString normaliseWriteField(QString field)
 bool isRatingWriteField(const QString& field)
 {
     return field.compare(QLatin1String{Fooyin::Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0
-        || field.compare(QLatin1String{Fooyin::Constants::MetaData::Rating}, Qt::CaseInsensitive) == 0;
+        || field.compare(QLatin1String{Fooyin::Constants::MetaData::Rating}, Qt::CaseInsensitive) == 0
+        || field.compare(QLatin1String{Fooyin::Constants::MetaData::Stars}, Qt::CaseInsensitive) == 0;
 }
 
 QList<int> playlistTrackChangedRoles()
@@ -167,7 +168,12 @@ Fooyin::ScriptFieldValue trackValueForEdit(const QString& writeField, const QVar
 
     if(isRatingWriteField(normalisedField)) {
         if(value.canConvert<Fooyin::StarRating>()) {
-            return value.value<Fooyin::StarRating>().rating();
+            const float rating = value.value<Fooyin::StarRating>().rating();
+            return normalisedField.compare(QLatin1String{Fooyin::Constants::MetaData::RatingEditor},
+                                           Qt::CaseInsensitive)
+                        == 0
+                     ? rating
+                     : rating * 5.0F;
         }
 
         bool ok{false};
