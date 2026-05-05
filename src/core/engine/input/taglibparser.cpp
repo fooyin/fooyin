@@ -21,6 +21,7 @@
 
 #include "ratingtagpolicy.h"
 #include "tagdefs.h"
+#include "tagpolicy.h"
 
 #include <core/constants.h>
 #include <core/track.h>
@@ -808,7 +809,7 @@ TextRatingWrite textRatingWrite(const Track& track, const RatingTagPolicy& polic
 }
 
 void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool skipEmptyValues, bool clearExtraTags,
-                           const RatingTagPolicy& policy)
+                           const TagPolicy& policy)
 {
     if(clearExtraTags) {
         track.clearExtraTags();
@@ -866,12 +867,12 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
         else if(field == Rating && !value.isEmpty()) {
             const QString rawRating = convertString(value.front());
             const QString tag       = QString::fromLatin1(Rating);
-            readTextRatingTag(track, policy, tag, rawRating, true);
+            readTextRatingTag(track, policy.rating, tag, rawRating, true);
         }
         else if(field == RatingAlt) {
             const QString rawRating = convertString(value.toString());
             const QString tag       = QString::fromLatin1(RatingAlt);
-            readTextRatingTag(track, policy, tag, rawRating, false);
+            readTextRatingTag(track, policy.rating, tag, rawRating, false);
         }
         else if(field == PlayCount) {
             const int count = convertString(value.toString()).toInt();
@@ -895,8 +896,9 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
         }
         else {
             const auto tagEntry = convertString(field);
-            if(!policy.automaticRead() && tagEntry == policy.readTag && !value.isEmpty()) {
-                readTextRatingTag(track, policy, policy.readTag, tagEntry, convertString(value.front()), false);
+            if(!policy.rating.automaticRead() && tagEntry == policy.rating.readTag && !value.isEmpty()) {
+                readTextRatingTag(track, policy.rating, policy.rating.readTag, tagEntry, convertString(value.front()),
+                                  false);
             }
             else {
                 for(const auto& tagValue : value) {
@@ -1107,7 +1109,7 @@ void removePopmFrame(TagLib::ID3v2::Tag* id3Tags, const TagLib::String& owner)
     }
 }
 
-void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Track& track, const RatingTagPolicy& policy, bool id3PopmSupported)
+void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Track& track, const TagPolicy& policy, bool id3PopmSupported)
 {
     if(id3Tags->isEmpty()) {
         return;
@@ -1161,7 +1163,7 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Track& track, const RatingTa
         const TagLib::ID3v2::FrameList& ratingFrame = frames["FMPS_Rating"];
         if(!ratingFrame.isEmpty()) {
             const QString rawRating = convertString(ratingFrame.front()->toString());
-            readTextRatingTag(track, policy, u"FMPS_RATING"_s, u"FMPS_Rating"_s, rawRating, false);
+            readTextRatingTag(track, policy.rating, u"FMPS_RATING"_s, u"FMPS_Rating"_s, rawRating, false);
             track.setRawRatingTag(u"FMPS_RATING"_s, rawRating);
         }
     }
@@ -1176,13 +1178,13 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Track& track, const RatingTa
         }
     }
 
-    if(id3PopmSupported && policy.readId3Popm && frames.contains("POPM")) {
+    if(id3PopmSupported && policy.rating.readId3Popm && frames.contains("POPM")) {
         // Use only first rating
         const TagLib::ID3v2::FrameList& popmFrames = frames["POPM"];
         if(!popmFrames.isEmpty()) {
             auto* ratingFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(popmFrames.front());
-            if(!policy.popmOwner.isEmpty()) {
-                const TagLib::String owner = convertString(policy.popmOwner);
+            if(!policy.rating.popmOwner.isEmpty()) {
+                const TagLib::String owner = convertString(policy.rating.popmOwner);
                 const auto frameIt         = std::ranges::find_if(popmFrames, [&owner](auto* frame) {
                     const auto* popmFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(frame);
                     return popmFrame && popmFrame->email() == owner;
@@ -1201,7 +1203,7 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Track& track, const RatingTa
                     track.setPlayCount(static_cast<int>(ratingFrame->counter()));
                 }
                 if(track.rating() <= 0 && ratingFrame->rating() > 0) {
-                    track.setRating(popmToRating(ratingFrame->rating(), policy.popmMapping));
+                    track.setRating(popmToRating(ratingFrame->rating(), policy.rating.popmMapping));
                 }
             }
         }
@@ -1239,7 +1241,7 @@ QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags, Track::Cover cover)
 }
 
 void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Track& track, AudioReader::WriteOptions options,
-                    const RatingTagPolicy& policy, bool id3PopmSupported)
+                    const TagPolicy& policy, bool id3PopmSupported)
 {
     if(options & AudioReader::Metadata) {
         id3Tags->removeFrames("TRCK");
@@ -1262,10 +1264,10 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Track& track, AudioReader
     }
 
     if(options & AudioReader::Rating) {
-        writeId3TextRating(id3Tags, textRatingWrite(track, policy));
+        writeId3TextRating(id3Tags, textRatingWrite(track, policy.rating));
 
-        if(id3PopmSupported && policy.writeId3Popm) {
-            const TagLib::String owner = convertString(policy.popmOwner);
+        if(id3PopmSupported && policy.rating.writeId3Popm) {
+            const TagLib::String owner = convertString(policy.rating.popmOwner);
             if(track.rating() <= 0.0F) {
                 removePopmFrame(id3Tags, owner);
                 return;
@@ -1292,7 +1294,7 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Track& track, AudioReader
             else {
                 frame->setEmail(owner);
             }
-            frame->setRating(ratingToPopm(track.rating(), policy.popmMapping));
+            frame->setRating(ratingToPopm(track.rating(), policy.rating.popmMapping));
         }
     }
 
@@ -1375,7 +1377,7 @@ bool writeId3Cover(TagLib::ID3v2::Tag* id3Tags, const TrackCovers& covers)
     return modified;
 }
 
-void readApeTags(const TagLib::APE::Tag* apeTags, Track& track, const RatingTagPolicy& policy)
+void readApeTags(const TagLib::APE::Tag* apeTags, Track& track, const TagPolicy& policy)
 {
     if(apeTags->isEmpty()) {
         return;
@@ -1401,7 +1403,7 @@ void readApeTags(const TagLib::APE::Tag* apeTags, Track& track, const RatingTagP
 
     if(items.contains("FMPS_RATING")) {
         const QString rawRating = convertString(items["FMPS_RATING"].toString());
-        readTextRatingTag(track, policy, u"FMPS_RATING"_s, rawRating, false);
+        readTextRatingTag(track, policy.rating, u"FMPS_RATING"_s, rawRating, false);
     }
 
     if(items.contains("FMPS_PLAYCOUNT")) {
@@ -1438,7 +1440,7 @@ QByteArray readApeCover(const TagLib::APE::Tag* apeTags, Track::Cover cover)
 }
 
 void writeApeTags(TagLib::APE::Tag* apeTags, const Track& track, AudioReader::WriteOptions options,
-                  const RatingTagPolicy& policy)
+                  const TagPolicy& policy)
 {
     if(options & AudioReader::Metadata) {
         const QString trackNumber = getTrackNumber(track);
@@ -1462,7 +1464,7 @@ void writeApeTags(TagLib::APE::Tag* apeTags, const Track& track, AudioReader::Wr
         apeTags->removeItem("FMPS_RATING");
         apeTags->removeItem("RATING");
 
-        const auto rating = textRatingWrite(track, policy);
+        const auto rating = textRatingWrite(track, policy.rating);
         if(!rating.tag.isEmpty()) {
             const TagLib::String tag = convertString(rating.tag);
             apeTags->removeItem(tag);
@@ -1540,7 +1542,7 @@ QString stripMp4FreeFormName(const TagLib::String& name)
     return freeFormName;
 }
 
-void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const RatingTagPolicy& policy, bool skipExtra = false)
+void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy& policy, bool skipExtra = false)
 {
     if(mp4Tags->isEmpty()) {
         return;
@@ -1639,14 +1641,15 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const RatingTagP
 
     if(items.contains(Fooyin::Mp4::RatingAlt)) {
         const QString rawRating = convertString(items[Fooyin::Mp4::RatingAlt].toStringList().toString("\n"));
-        readTextRatingTag(track, policy, u"FMPS_RATING"_s, QString::fromLatin1(Fooyin::Mp4::RatingAlt), rawRating,
-                          false);
+        readTextRatingTag(track, policy.rating, u"FMPS_RATING"_s, QString::fromLatin1(Fooyin::Mp4::RatingAlt),
+                          rawRating, false);
         track.setRawRatingTag(u"FMPS_RATING"_s, rawRating);
     }
 
     if(items.contains(Fooyin::Mp4::RatingAlt2)) {
         const QString rawRating = convertString(items[Fooyin::Mp4::RatingAlt2].toStringList().toString("\n"));
-        readTextRatingTag(track, policy, u"RATING"_s, QString::fromLatin1(Fooyin::Mp4::RatingAlt2), rawRating, true);
+        readTextRatingTag(track, policy.rating, u"RATING"_s, QString::fromLatin1(Fooyin::Mp4::RatingAlt2), rawRating,
+                          true);
         track.setRawRatingTag(u"RATING"_s, rawRating);
     }
 
@@ -1737,8 +1740,8 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const RatingTagP
                     tagName = stripMp4FreeFormName(key);
                 }
                 const auto values = convertStringList(item.toStringList());
-                if(!policy.automaticRead() && tagName == policy.readTag && !values.isEmpty()) {
-                    readTextRatingTag(track, policy, policy.readTag, tagName, values.front(), false);
+                if(!policy.rating.automaticRead() && tagName == policy.rating.readTag && !values.isEmpty()) {
+                    readTextRatingTag(track, policy.rating, policy.rating.readTag, tagName, values.front(), false);
                 }
                 else {
                     for(const auto& value : values) {
@@ -1802,7 +1805,7 @@ TagLib::String prefixMp4FreeFormName(const QString& name, const TagLib::MP4::Ite
 }
 
 void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Track& track, AudioReader::WriteOptions options,
-                  const RatingTagPolicy& policy)
+                  const TagPolicy& policy)
 {
     if(options & Fooyin::AudioReader::Metadata) {
         const QString trackNumber = track.trackNumber();
@@ -1866,7 +1869,7 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Track& track, AudioReader::Wr
         mp4Tags->removeItem(Mp4::RatingAlt);
         mp4Tags->removeItem(Mp4::RatingAlt2);
 
-        const auto rating = textRatingWrite(track, policy);
+        const auto rating = textRatingWrite(track, policy.rating);
         if(!rating.tag.isEmpty()) {
             if(rating.tag == "FMPS_RATING"_L1) {
                 if(!rating.value.isEmpty()) {
@@ -2032,7 +2035,7 @@ bool writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const Fooyin::TrackCovers& covers)
     return modified;
 }
 
-void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& track, const RatingTagPolicy& policy)
+void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& track, const TagPolicy& policy)
 {
     if(xiphTags->isEmpty()) {
         return;
@@ -2074,7 +2077,7 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
         const TagLib::StringList& ratings = fields["FMPS_RATING"];
         if(!ratings.isEmpty()) {
             const QString rawRating = convertString(ratings.front());
-            readTextRatingTag(track, policy, u"FMPS_RATING"_s, rawRating, false);
+            readTextRatingTag(track, policy.rating, u"FMPS_RATING"_s, rawRating, false);
         }
     }
 
@@ -2147,7 +2150,7 @@ QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, F
 }
 
 void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& track,
-                      Fooyin::AudioReader::WriteOptions options, const RatingTagPolicy& policy)
+                      Fooyin::AudioReader::WriteOptions options, const TagPolicy& policy)
 {
     using namespace Fooyin::Tag;
 
@@ -2185,7 +2188,7 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
         xiphTags->removeFields("FMPS_RATING");
         xiphTags->removeFields("RATING");
 
-        if(const auto rating = textRatingWrite(track, policy); !rating.tag.isEmpty()) {
+        if(const auto rating = textRatingWrite(track, policy.rating); !rating.tag.isEmpty()) {
             const TagLib::String tag = convertString(rating.tag);
             xiphTags->removeFields(tag);
             if(!rating.value.isEmpty()) {
@@ -2331,7 +2334,12 @@ bool saveModifiedFile(auto& file, bool modified, QStringView operation, const QS
     return false;
 }
 
-void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track, const RatingTagPolicy& policy)
+bool isHandledAsfRatingTag(const QString& tag)
+{
+    return tag == "FMPS_RATING"_L1 || tag == "RATING"_L1 || tag == "WM/SHAREDUSERRATING"_L1;
+}
+
+void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track, const TagPolicy& policy)
 {
     if(asfTags->isEmpty()) {
         return;
@@ -2363,7 +2371,7 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track, const Ra
         const TagLib::ASF::AttributeList& ratings = map["FMPS/Rating"];
         if(!ratings.isEmpty()) {
             const QString rawRating = convertString(ratings.front().toString());
-            readTextRatingTag(track, policy, u"FMPS_RATING"_s, u"FMPS/Rating"_s, rawRating, false);
+            readTextRatingTag(track, policy.rating, u"FMPS_RATING"_s, u"FMPS/Rating"_s, rawRating, false);
             track.setRawRatingTag(u"FMPS_RATING"_s, rawRating);
         }
     }
@@ -2372,16 +2380,16 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track, const Ra
         const TagLib::ASF::AttributeList& ratings = map["RATING"];
         if(!ratings.isEmpty()) {
             const QString rawRating = convertString(ratings.front().toString());
-            readTextRatingTag(track, policy, u"RATING"_s, rawRating, true);
+            readTextRatingTag(track, policy.rating, u"RATING"_s, rawRating, true);
         }
     }
 
-    if(!policy.automaticRead() && policy.readTag != "FMPS_RATING"_L1 && policy.readTag != "RATING"_L1
-       && map.contains(convertString(policy.readTag))) {
-        const TagLib::ASF::AttributeList& ratings = map[convertString(policy.readTag)];
-        if(!ratings.isEmpty()) {
-            const QString rawRating = convertString(ratings.front().toString());
-            readTextRatingTag(track, policy, policy.readTag, rawRating, false);
+    if(!policy.rating.automaticRead() && !isHandledAsfRatingTag(policy.rating.readTag)) {
+        const TagLib::String tag = convertString(policy.rating.readTag);
+        const auto ratingIt      = map.find(tag);
+        if(ratingIt != map.end() && !ratingIt->second.isEmpty()) {
+            const QString rawRating = convertString(ratingIt->second.front().toString());
+            readTextRatingTag(track, policy.rating, policy.rating.readTag, rawRating, false);
         }
     }
 
@@ -2395,33 +2403,13 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track, const Ra
         }
     }
 
-    auto convertRating = [](int rating) -> float {
-        if(rating == 0) {
-            return 0.0;
-        }
-        if(rating < 25) {
-            return 0.2;
-        }
-        if(rating < 50) {
-            return 0.4;
-        }
-        if(rating < 75) {
-            return 0.6;
-        }
-        if(rating < 99) {
-            return 0.8;
-        }
-
-        return 1.0;
-    };
-
-    if(map.contains("WM/SharedUserRating") && track.rating() <= 0) {
+    if(policy.rating.readAsfSharedRating && map.contains("WM/SharedUserRating") && track.rating() <= 0) {
         const TagLib::ASF::AttributeList& ratings = map["WM/SharedUserRating"];
         if(!ratings.isEmpty()) {
             const auto rating = static_cast<int>(ratings.front().toUInt());
             track.setRawRatingTag(u"WM/SharedUserRating"_s, QString::number(rating));
             if(rating > 0 && rating <= 100) {
-                track.setRating(convertRating(rating));
+                track.setRating(asfSharedUserRatingToRating(rating));
             }
         }
     }
@@ -2457,7 +2445,7 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover co
 }
 
 void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin::AudioReader::WriteOptions options,
-                  const RatingTagPolicy& policy)
+                  const TagPolicy& policy)
 {
     if(options & Fooyin::AudioReader::Metadata) {
         asfTags->setAttribute("WM/TrackNumber", convertString(track.trackNumber()));
@@ -2468,7 +2456,7 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin:
         asfTags->removeItem("FMPS/Rating");
         asfTags->removeItem("RATING");
 
-        const auto rating = textRatingWrite(track, policy);
+        const auto rating = textRatingWrite(track, policy.rating);
         if(!rating.tag.isEmpty()) {
             if(rating.tag == "FMPS_RATING"_L1) {
                 if(!rating.value.isEmpty()) {
@@ -2480,12 +2468,23 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin:
                     asfTags->setAttribute("RATING", convertString(rating.value));
                 }
             }
+            else if(rating.tag == "WM/SHAREDUSERRATING"_L1) {
+                // Handled below as a native ASF rating attribute
+            }
             else {
                 const TagLib::String tag = convertString(rating.tag);
                 asfTags->removeItem(tag);
                 if(!rating.value.isEmpty()) {
                     asfTags->setAttribute(tag, convertString(rating.value));
                 }
+            }
+        }
+
+        if(policy.rating.writeAsfSharedRating) {
+            asfTags->removeItem("WM/SharedUserRating");
+            if(track.rating() > 0.0F) {
+                asfTags->setAttribute("WM/SharedUserRating", TagLib::ASF::Attribute{static_cast<unsigned int>(
+                                                                 ratingToAsfSharedUserRating(track.rating()))});
             }
         }
     }
@@ -2806,9 +2805,9 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
     }
 
     const QMimeDatabase mimeDb;
-    QString mimeType             = mimeDb.mimeTypeForFile(source.filepath).name();
-    const auto style             = TagLib::AudioProperties::Average;
-    const RatingTagPolicy policy = ratingTagPolicy();
+    QString mimeType       = mimeDb.mimeTypeForFile(source.filepath).name();
+    const auto style       = TagLib::AudioProperties::Average;
+    const TagPolicy policy = tagPolicy();
 
     const auto readProperties = [&track, &policy](const TagLib::File& file) {
         readAudioProperties(file, track);
@@ -3282,9 +3281,9 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
     };
 
     const QMimeDatabase mimeDb;
-    QString mimeType             = mimeDb.mimeTypeForFile(source.filepath).name();
-    const auto style             = TagLib::AudioProperties::Average;
-    const RatingTagPolicy policy = ratingTagPolicy();
+    QString mimeType       = mimeDb.mimeTypeForFile(source.filepath).name();
+    const auto style       = TagLib::AudioProperties::Average;
+    const TagPolicy policy = tagPolicy();
     bool success{false};
     bool failureLogged{false};
 

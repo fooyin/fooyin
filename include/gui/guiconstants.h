@@ -244,6 +244,7 @@ constexpr auto ArtworkSearching                   = "Fooyin.Page.Interface.Artwo
 constexpr auto ArtworkSources                     = "Fooyin.Page.Interface.Artwork.Sources";
 constexpr auto LibraryGeneral                     = "Fooyin.Page.Library.General";
 constexpr auto LibraryMetadata                    = "Fooyin.Page.Library.Metadata";
+constexpr auto LibraryRatings                     = "Fooyin.Page.Library.Metadata.Ratings";
 constexpr auto LibrarySearching                   = "Fooyin.Page.Library.Searching";
 constexpr auto LibrarySorting                     = "Fooyin.Page.Library.Sorting";
 constexpr auto PlaylistGeneral                    = "Fooyin.Page.Playlist.General";

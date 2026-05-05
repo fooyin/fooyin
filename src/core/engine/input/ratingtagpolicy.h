@@ -21,7 +21,6 @@
 
 #include "fycore_export.h"
 
-#include <QObject>
 #include <QString>
 
 #include <cstdint>
@@ -29,17 +28,17 @@
 #include <span>
 
 namespace Fooyin {
-Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
-
 namespace RatingSettings {
-constexpr auto ReadTag      = "Rating/ReadTag";
-constexpr auto ReadScale    = "Rating/ReadScale";
-constexpr auto WriteTag     = "Rating/WriteTag";
-constexpr auto WriteScale   = "Rating/WriteScale";
-constexpr auto ReadId3Popm  = "Rating/ReadId3Popm";
-constexpr auto WriteId3Popm = "Rating/WriteId3Popm";
-constexpr auto PopmOwner    = "Rating/PopmOwner";
-constexpr auto PopmMapping  = "Rating/PopmMapping";
+constexpr auto ReadTag              = "Rating/ReadTag";
+constexpr auto ReadScale            = "Rating/ReadScale";
+constexpr auto WriteTag             = "Rating/WriteTag";
+constexpr auto WriteScale           = "Rating/WriteScale";
+constexpr auto ReadId3Popm          = "Rating/ReadId3Popm";
+constexpr auto WriteId3Popm         = "Rating/WriteId3Popm";
+constexpr auto PopmOwner            = "Rating/PopmOwner";
+constexpr auto PopmMapping          = "Rating/PopmMapping";
+constexpr auto ReadAsfSharedRating  = "Rating/ReadAsfSharedRating";
+constexpr auto WriteAsfSharedRating = "Rating/WriteAsfSharedRating";
 
 constexpr auto DefaultAutomatic             = "Automatic";
 constexpr auto DefaultFmpsRatingTag         = "FMPS_RATING";
@@ -47,6 +46,8 @@ constexpr auto DefaultNormalizedRatingScale = "Normalized01";
 constexpr auto DefaultPopmMapping           = "Default";
 constexpr auto DefaultReadId3Popm           = true;
 constexpr auto DefaultWriteId3Popm          = true;
+constexpr auto DefaultReadAsfSharedRating   = true;
+constexpr auto DefaultWriteAsfSharedRating  = true;
 } // namespace RatingSettings
 
 enum class RatingScale : uint8_t
@@ -57,7 +58,6 @@ enum class RatingScale : uint8_t
     OneToTen,
     OneToHundred,
 };
-Q_ENUM_NS(RatingScale)
 
 enum class PopmMapping : uint8_t
 {
@@ -65,7 +65,6 @@ enum class PopmMapping : uint8_t
     CommonFiveStar,
     LinearByte,
 };
-Q_ENUM_NS(PopmMapping)
 
 struct RatingScaleDescriptor
 {
@@ -91,6 +90,8 @@ struct FYCORE_EXPORT RatingTagPolicy
     bool writeId3Popm{true};
     QString popmOwner;
     PopmMapping popmMapping{PopmMapping::Default};
+    bool readAsfSharedRating{true};
+    bool writeAsfSharedRating{true};
 
     [[nodiscard]] bool automaticRead() const;
     [[nodiscard]] bool shouldReadTextTag(const QString& tag, bool currentRatingSet) const;
@@ -108,6 +109,8 @@ struct FYCORE_EXPORT RatingTagPolicy
 [[nodiscard]] FYCORE_EXPORT std::optional<float> normalisedTextRating(const QString& rawRating, RatingScale scale,
                                                                       bool ratingTagFallback);
 [[nodiscard]] FYCORE_EXPORT QString formatTextRating(float rating, RatingScale scale);
+[[nodiscard]] FYCORE_EXPORT float asfSharedUserRatingToRating(int rating);
+[[nodiscard]] FYCORE_EXPORT int ratingToAsfSharedUserRating(float rating);
 [[nodiscard]] FYCORE_EXPORT float popmToRating(int popm, PopmMapping mapping);
 [[nodiscard]] FYCORE_EXPORT int ratingToPopm(float rating, PopmMapping mapping);
 } // namespace Fooyin

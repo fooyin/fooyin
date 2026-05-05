@@ -55,6 +55,8 @@ void resetRatingSettings(const QByteArray& configHome)
     settings.remove(RatingSettings::WriteId3Popm);
     settings.remove(RatingSettings::PopmOwner);
     settings.remove(RatingSettings::PopmMapping);
+    settings.remove(RatingSettings::ReadAsfSharedRating);
+    settings.remove(RatingSettings::WriteAsfSharedRating);
     settings.sync();
 }
 

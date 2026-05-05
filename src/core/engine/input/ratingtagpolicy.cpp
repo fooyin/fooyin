@@ -20,7 +20,6 @@
 #include "ratingtagpolicy.h"
 
 #include <core/coresettings.h>
-#include <utils/enum.h>
 
 #include <algorithm>
 #include <array>
@@ -103,14 +102,34 @@ std::span<const PopmMappingDescriptor> popmMappingDescriptors()
 
 QString ratingScaleKey(RatingScale scale)
 {
-    const QString key = Utils::Enum::toString(scale);
-    return key.isEmpty() ? QString::fromLatin1(RatingSettings::DefaultAutomatic) : key;
+    switch(scale) {
+        case RatingScale::Automatic:
+            return QString::fromLatin1(RatingSettings::DefaultAutomatic);
+        case RatingScale::Normalized01:
+            return u"Normalized01"_s;
+        case RatingScale::OneToFive:
+            return u"OneToFive"_s;
+        case RatingScale::OneToTen:
+            return u"OneToTen"_s;
+        case RatingScale::OneToHundred:
+            return u"OneToHundred"_s;
+    }
+
+    return QString::fromLatin1(RatingSettings::DefaultAutomatic);
 }
 
 QString popmMappingKey(PopmMapping mapping)
 {
-    const QString key = Utils::Enum::toString(mapping);
-    return key.isEmpty() ? QString::fromLatin1(RatingSettings::DefaultPopmMapping) : key;
+    switch(mapping) {
+        case PopmMapping::Default:
+            return QString::fromLatin1(RatingSettings::DefaultPopmMapping);
+        case PopmMapping::CommonFiveStar:
+            return u"CommonFiveStar"_s;
+        case PopmMapping::LinearByte:
+            return u"LinearByte"_s;
+    }
+
+    return QString::fromLatin1(RatingSettings::DefaultPopmMapping);
 }
 
 RatingScale ratingScaleFromString(QString scale)
@@ -178,6 +197,10 @@ RatingTagPolicy ratingTagPolicy()
         .popmMapping  = popmMappingFromString(
             settings.value(RatingSettings::PopmMapping, QLatin1StringView{RatingSettings::DefaultPopmMapping})
                 .toString()),
+        .readAsfSharedRating
+        = settings.value(RatingSettings::ReadAsfSharedRating, RatingSettings::DefaultReadAsfSharedRating).toBool(),
+        .writeAsfSharedRating
+        = settings.value(RatingSettings::WriteAsfSharedRating, RatingSettings::DefaultWriteAsfSharedRating).toBool(),
     };
 }
 
@@ -206,15 +229,17 @@ std::optional<float> normalisedTextRating(const QString& rawRating, RatingScale 
         return rating > 0.0F && rating <= 1.0F ? std::optional{rating} : std::nullopt;
     }
 
-    if(rating > 0.0F && rating <= 100.0F) {
-        float adjustedRating = rating / 10.0F;
-        if(adjustedRating > 1.0F) {
-            adjustedRating /= 10.0F;
-        }
-        else {
-            adjustedRating *= 2.0F;
-        }
-        return adjustedRating;
+    if(rating > 0.0F && rating <= 1.0F) {
+        return rating;
+    }
+    if(rating > 1.0F && rating <= 5.0F) {
+        return rating / 5.0F;
+    }
+    if(rating > 5.0F && rating <= 10.0F) {
+        return rating / 10.0F;
+    }
+    if(rating > 10.0F && rating <= 100.0F) {
+        return rating / 100.0F;
     }
 
     return {};
@@ -239,6 +264,49 @@ QString formatTextRating(float rating, RatingScale scale)
     }
 
     return QString::number(rating);
+}
+
+float asfSharedUserRatingToRating(int rating)
+{
+    rating = std::clamp(rating, 0, 100);
+    if(rating == 0) {
+        return 0.0F;
+    }
+    if(rating < 25) {
+        return 0.2F;
+    }
+    if(rating < 50) {
+        return 0.4F;
+    }
+    if(rating < 75) {
+        return 0.6F;
+    }
+    if(rating < 99) {
+        return 0.8F;
+    }
+    return 1.0F;
+}
+
+int ratingToAsfSharedUserRating(float rating)
+{
+    rating = std::clamp(rating, 0.0F, 1.0F);
+    if(rating <= 0.0F) {
+        return 0;
+    }
+
+    const int stars = std::clamp(static_cast<int>(std::lround(rating * 5.0F)), 1, 5);
+    switch(stars) {
+        case 1:
+            return 1;
+        case 2:
+            return 25;
+        case 3:
+            return 50;
+        case 4:
+            return 75;
+        default:
+            return 99;
+    }
 }
 
 float popmToRating(int popm, PopmMapping mapping)

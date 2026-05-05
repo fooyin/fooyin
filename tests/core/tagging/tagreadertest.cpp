@@ -424,6 +424,33 @@ TEST_F(TagReaderTest, OggReadPrefersFmpsRatingOverRating)
     EXPECT_EQ(track.rawRatingTag(u"FMPS_RATING"_s), u"0.8"_s);
 }
 
+TEST_F(TagReaderTest, OggAutomaticRatingReadDetectsTenPointRating)
+{
+    resetTagReaderRatingSettings();
+
+    const QString filepath = u":/audio/audiotest.ogg"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::Ogg::Vorbis::File oggFile{localPath.constData()};
+        ASSERT_TRUE(oggFile.isValid());
+        ASSERT_NE(oggFile.tag(), nullptr);
+
+        setXiphRatingFields(oggFile.tag(), u"7"_s, {});
+        ASSERT_TRUE(oggFile.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_FLOAT_EQ(track.rating(), 0.7F);
+    EXPECT_EQ(track.rawRatingTag(u"RATING"_s), u"7"_s);
+
+    resetTagReaderRatingSettings();
+}
+
 TEST_F(TagReaderTest, OggReadConfiguredRatingScales)
 {
     struct Case

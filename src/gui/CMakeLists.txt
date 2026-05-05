@@ -358,6 +358,8 @@ set(SOURCES
     settings/library/librarygeneralpage.h
     settings/library/librarymetadatapage.cpp
     settings/library/librarymetadatapage.h
+    settings/library/libraryratingspage.cpp
+    settings/library/libraryratingspage.h
     settings/library/librarymodel.cpp
     settings/library/librarymodel.h
     settings/library/librarysortingpage.cpp

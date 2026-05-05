@@ -144,6 +144,8 @@ set(SOURCES
     engine/input/ffmpeg/ffmpegutils.h
     engine/input/ratingtagpolicy.cpp
     engine/input/ratingtagpolicy.h
+    engine/input/tagpolicy.cpp
+    engine/input/tagpolicy.h
     engine/input/taglibparser.cpp
     engine/input/taglibparser.h
     engine/output/fadecontroller.cpp

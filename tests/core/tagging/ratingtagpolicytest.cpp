@@ -53,8 +53,13 @@ TEST(RatingTagPolicyTest, NormalisesConfiguredTextScales)
 TEST(RatingTagPolicyTest, PreservesAutomaticFallbacks)
 {
     EXPECT_FLOAT_EQ(*normalisedTextRating(u"0.7"_s, RatingScale::Automatic, false), 0.7F);
+    EXPECT_FLOAT_EQ(*normalisedTextRating(u"0.7"_s, RatingScale::Automatic, true), 0.7F);
+    EXPECT_FLOAT_EQ(*normalisedTextRating(u"3"_s, RatingScale::Automatic, true), 0.6F);
+    EXPECT_FLOAT_EQ(*normalisedTextRating(u"7"_s, RatingScale::Automatic, true), 0.7F);
     EXPECT_FLOAT_EQ(*normalisedTextRating(u"70"_s, RatingScale::Automatic, true), 0.7F);
     EXPECT_FALSE(normalisedTextRating(u"7"_s, RatingScale::Automatic, false).has_value());
+    EXPECT_FALSE(normalisedTextRating(u"0"_s, RatingScale::Automatic, true).has_value());
+    EXPECT_FALSE(normalisedTextRating(u"101"_s, RatingScale::Automatic, true).has_value());
 }
 
 TEST(RatingTagPolicyTest, FormatsConfiguredTextScales)
@@ -88,6 +93,24 @@ TEST(RatingTagPolicyTest, ConvertsConfiguredPopmMappings)
 
     EXPECT_FLOAT_EQ(popmToRating(128, PopmMapping::LinearByte), 128.0F / 255.0F);
     EXPECT_EQ(ratingToPopm(0.5F, PopmMapping::LinearByte), 128);
+}
+
+TEST(RatingTagPolicyTest, ConvertsAsfSharedUserRatings)
+{
+    EXPECT_FLOAT_EQ(asfSharedUserRatingToRating(0), 0.0F);
+    EXPECT_FLOAT_EQ(asfSharedUserRatingToRating(1), 0.2F);
+    EXPECT_FLOAT_EQ(asfSharedUserRatingToRating(25), 0.4F);
+    EXPECT_FLOAT_EQ(asfSharedUserRatingToRating(50), 0.6F);
+    EXPECT_FLOAT_EQ(asfSharedUserRatingToRating(75), 0.8F);
+    EXPECT_FLOAT_EQ(asfSharedUserRatingToRating(99), 1.0F);
+    EXPECT_FLOAT_EQ(asfSharedUserRatingToRating(100), 1.0F);
+
+    EXPECT_EQ(ratingToAsfSharedUserRating(0.0F), 0);
+    EXPECT_EQ(ratingToAsfSharedUserRating(0.2F), 1);
+    EXPECT_EQ(ratingToAsfSharedUserRating(0.4F), 25);
+    EXPECT_EQ(ratingToAsfSharedUserRating(0.6F), 50);
+    EXPECT_EQ(ratingToAsfSharedUserRating(0.8F), 75);
+    EXPECT_EQ(ratingToAsfSharedUserRating(1.0F), 99);
 }
 
 TEST(RatingTagPolicyTest, SelectsConfiguredWriteTags)
