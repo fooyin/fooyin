@@ -12958,7 +12958,7 @@ Higher supersampling values work best with higher sample counts.</translation>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">佇列排至播放下一首</translation>
+        <translation>佇列排至播放下一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="86"/>
