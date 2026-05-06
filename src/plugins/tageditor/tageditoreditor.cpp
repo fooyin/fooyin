@@ -27,6 +27,7 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
+#include <gui/widgets/autoheaderview.h>
 #include <gui/widgets/multilinedelegate.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
@@ -36,13 +37,10 @@
 
 #include <QHeaderView>
 #include <QMenu>
+#include <QTimer>
 #include <QVBoxLayout>
 
-#include <ranges>
-
 using namespace Qt::StringLiterals;
-
-constexpr auto NameColumnWidth = "TagEditor/NameColumnWidth";
 
 namespace Fooyin::TagEditor {
 TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldRegistry* registry,
@@ -51,8 +49,10 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
     , m_registry{registry}
     , m_settings{settings}
     , m_readOnly{false}
+    , m_firstReset{true}
     , m_view{new TagEditorView(actionManager, this)}
     , m_model{new TagEditorModel(settings, this)}
+    , m_header{new AutoHeaderView(Qt::Horizontal, this)}
     , m_autocompleteDelegate{new TagEditorAutocompleteDelegate(this)}
     , m_multilineDelegate{nullptr}
     , m_starDelegate{nullptr}
@@ -67,9 +67,10 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
     layout->setContentsMargins({});
     layout->addWidget(m_view);
 
+    m_header->setStretchEnabled(true);
+    m_header->setStretchLastSection(true);
+    m_view->setHorizontalHeader(m_header);
     m_view->setExtendableModel(m_model);
-    m_view->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
-    m_view->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     m_view->setItemDelegateForColumn(1, m_autocompleteDelegate);
     m_view->setupActions();
 
@@ -83,18 +84,22 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
     m_toolsButton->setMenu(toolsMenu);
     m_view->addCustomTool(m_toolsButton);
 
+    QObject::connect(m_header, &AutoHeaderView::stateRestored, this, [this]() { m_firstReset = false; });
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, m_view, &QTableView::resizeRowsToContents);
     QObject::connect(
         m_model, &QAbstractItemModel::modelReset, this,
         [this]() {
-            m_view->resizeColumnsForContents();
             m_view->resizeRowsToContents();
-            restoreState();
+
+            if(m_firstReset) {
+                m_firstReset = false;
+                QTimer::singleShot(0, this, [this]() { m_header->resizeColumnToContents(0); });
+            }
         },
         Qt::QueuedConnection);
-    QObject::connect(m_model, &QAbstractItemModel::dataChanged, this, [this]() { updatePendingScopeState(); });
-    QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, [this]() { updatePendingScopeState(); });
-    QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, [this]() { updatePendingScopeState(); });
+    QObject::connect(m_model, &QAbstractItemModel::dataChanged, this, &TagEditorEditor::updatePendingScopeState);
+    QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &TagEditorEditor::updatePendingScopeState);
+    QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, &TagEditorEditor::updatePendingScopeState);
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
         const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
         m_view->removeRowAction()->setEnabled(!m_readOnly && !selected.empty());
@@ -103,11 +108,6 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
     QObject::connect(m_autoFillValuesAction, &QAction::triggered, this, &TagEditorEditor::autoFillValuesRequested);
     QObject::connect(m_changeFields, &QAction::triggered, this,
                      [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::TagEditorFields); });
-}
-
-TagEditorEditor::~TagEditorEditor()
-{
-    saveState();
 }
 
 void TagEditorEditor::setTracks(const TrackList& tracks)
@@ -209,28 +209,19 @@ TrackList TagEditorEditor::applyChanges()
     return m_model->tracks();
 }
 
+void TagEditorEditor::addTool(QWidget* widget)
+{
+    m_view->addCustomTool(widget);
+}
+
+AutoHeaderView* TagEditorEditor::header() const
+{
+    return m_header;
+}
+
 void TagEditorEditor::updatePendingScopeState()
 {
     Q_EMIT pendingChangesStateChanged();
-}
-
-void TagEditorEditor::saveState() const
-{
-    FyStateSettings stateSettings;
-    stateSettings.setValue(NameColumnWidth, m_view->horizontalHeader()->sectionSize(0));
-}
-
-void TagEditorEditor::restoreState() const
-{
-    const FyStateSettings stateSettings;
-    const int nameColumnWidth        = stateSettings.value(NameColumnWidth).toInt();
-    const int minimumRestorableWidth = m_view->horizontalHeader()->sectionSizeHint(0);
-
-    if(nameColumnWidth > minimumRestorableWidth) {
-        m_view->horizontalHeader()->resizeSection(0, nameColumnWidth);
-    }
-
-    m_view->normaliseColumnWidths();
 }
 } // namespace Fooyin::TagEditor
 

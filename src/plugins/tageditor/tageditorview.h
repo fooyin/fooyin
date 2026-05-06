@@ -37,14 +37,11 @@ public:
     void setTagEditTriggers(EditTriggers triggers);
     void setupActions();
     void setRatingRow(int row);
-    void resizeColumnsForContents();
-    void normaliseColumnWidths();
-
-    [[nodiscard]] int sizeHintForRow(int row) const override;
 
 protected:
+    [[nodiscard]] int sizeHintForRow(int row) const override;
+
     void setupContextActions(QMenu* menu, const QPoint& pos) override;
-    void resizeEvent(QResizeEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;

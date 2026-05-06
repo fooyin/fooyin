@@ -33,6 +33,4 @@ create_fooyin_plugin_internal(
             tageditorpropertiestab.h
             tageditorview.cpp
             tageditorview.h
-            tageditorwidget.cpp
-            tageditorwidget.h
 )

@@ -66,6 +66,9 @@ private:
     [[nodiscard]] TrackList activeTracks() const;
     static void mergeTracks(TrackList& destination, const TrackList& source);
 
+    void saveState() const;
+    void restoreState() const;
+
     SettingsManager* m_settings;
     PropertiesDialogSession* m_session;
     TrackList m_tracks;

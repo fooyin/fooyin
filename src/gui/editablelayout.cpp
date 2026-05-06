@@ -65,19 +65,7 @@ Fooyin::FyWidget* findSplitterChild(QWidget* widget)
             return {};
         }
     }
-
-    // Walk up past any FyWidget that is embedded inside a non-container FyWidget parent.
-    // A true layout widget has a WidgetContainer (or no FyWidget) as its nearest FyWidget ancestor.
-    auto* fyChild = qobject_cast<Fooyin::FyWidget*>(child);
-    while(fyChild) {
-        auto* fyParent = fyChild->findParent();
-        if(!fyParent || qobject_cast<Fooyin::WidgetContainer*>(fyParent)) {
-            return fyChild;
-        }
-        fyChild = fyParent;
-    }
-
-    return {};
+    return qobject_cast<Fooyin::FyWidget*>(child);
 }
 } // namespace
 

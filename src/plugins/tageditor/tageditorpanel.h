@@ -24,6 +24,9 @@
 
 #include <memory>
 
+class QJsonObject;
+class QPushButton;
+
 namespace Fooyin {
 class ActionManager;
 class AudioLoader;
@@ -33,29 +36,33 @@ class TrackSelectionController;
 
 namespace TagEditor {
 class TagEditorFieldRegistry;
-class TagEditorWidget;
+class TagEditorEditor;
 
 class TagEditorPanel : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit TagEditorPanel(ActionManager* actionManager, TagEditorFieldRegistry* registry,
-                            MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader,
-                            TrackSelectionController* selectionController,
+    explicit TagEditorPanel(ActionManager* actionManager, TagEditorFieldRegistry* registry, MusicLibrary* library,
+                            std::shared_ptr<AudioLoader> audioLoader, TrackSelectionController* selectionController,
                             SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
 
 private:
+    bool apply();
     void selectionChanged();
     void updateForTracks(const TrackList& tracks);
 
     MusicLibrary* m_library;
     std::shared_ptr<AudioLoader> m_audioLoader;
     TrackSelectionController* m_selectionController;
-    TagEditorWidget* m_editor;
+    SettingsManager* m_settings;
+    TagEditorEditor* m_editor;
+    QPushButton* m_applyButton;
     TrackList m_currentTracks;
 };
 } // namespace TagEditor

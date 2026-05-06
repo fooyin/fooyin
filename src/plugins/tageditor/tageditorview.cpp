@@ -41,8 +41,6 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto MinimumValueColumnWidth = 150;
-
 namespace Fooyin::TagEditor {
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{parent}
@@ -110,38 +108,6 @@ void TagEditorView::setRatingRow(int row)
     }
 }
 
-void TagEditorView::resizeColumnsForContents()
-{
-    if(!model() || model()->columnCount() < 2) {
-        return;
-    }
-
-    resizeColumnToContents(0);
-    normaliseColumnWidths();
-}
-
-void TagEditorView::normaliseColumnWidths()
-{
-    if(!model() || model()->columnCount() < 2) {
-        return;
-    }
-
-    const int viewportWidth = viewport()->width();
-    if(viewportWidth <= 0) {
-        return;
-    }
-
-    auto* header             = horizontalHeader();
-    const int minWidth       = header->minimumSectionSize();
-    const int minValueCol    = std::max(minWidth, MinimumValueColumnWidth);
-    const int maxFieldCol    = std::max(minWidth, viewportWidth - minValueCol);
-    const int targetFieldCol = std::clamp(columnWidth(0), minWidth, maxFieldCol);
-
-    if(columnWidth(0) != targetFieldCol) {
-        header->resizeSection(0, targetFieldCol);
-    }
-}
-
 int TagEditorView::sizeHintForRow(int row) const
 {
     if(!model()->hasIndex(row, 0, {})) {
@@ -160,12 +126,6 @@ void TagEditorView::setupContextActions(QMenu* menu, const QPoint& /*pos*/)
     menu->addSeparator();
     m_capitaliseAction->setEnabled(canCapitaliseSelection());
     menu->addAction(m_capitaliseAction);
-}
-
-void TagEditorView::resizeEvent(QResizeEvent* event)
-{
-    ExtendableTableView::resizeEvent(event);
-    normaliseColumnWidths();
 }
 
 void TagEditorView::mouseMoveEvent(QMouseEvent* event)

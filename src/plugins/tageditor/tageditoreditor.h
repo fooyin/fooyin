@@ -23,10 +23,12 @@
 
 #include <core/track.h>
 
+#include <QString>
 #include <QWidget>
 
 namespace Fooyin {
 class ActionManager;
+class AutoHeaderView;
 class MultiLineEditDelegate;
 class SettingsManager;
 class StarDelegate;
@@ -46,7 +48,6 @@ class TagEditorEditor : public QWidget
 public:
     explicit TagEditorEditor(ActionManager* actionManager, TagEditorFieldRegistry* registry, SettingsManager* settings,
                              QWidget* parent = nullptr);
-    ~TagEditorEditor() override;
 
     void setTracks(const TrackList& tracks);
     void setReadOnly(bool readOnly);
@@ -54,6 +55,10 @@ public:
     [[nodiscard]] bool hasOnlyStatChanges() const;
     [[nodiscard]] TrackList tracks() const;
     TrackList applyChanges();
+
+    void addTool(QWidget* widget);
+
+    [[nodiscard]] AutoHeaderView* header() const;
 
 Q_SIGNALS:
     void pendingChangesStateChanged();
@@ -64,15 +69,14 @@ private:
     void refreshModel();
     void updatePendingScopeState();
 
-    void saveState() const;
-    void restoreState() const;
-
     TagEditorFieldRegistry* m_registry;
     SettingsManager* m_settings;
 
     bool m_readOnly;
+    bool m_firstReset;
     TagEditorView* m_view;
     TagEditorModel* m_model;
+    AutoHeaderView* m_header;
 
     TrackList m_tracks;
 

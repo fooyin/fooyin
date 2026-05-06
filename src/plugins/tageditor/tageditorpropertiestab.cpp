@@ -19,9 +19,11 @@
 
 #include "tageditorpropertiestab.h"
 
+#include "core/coresettings.h"
 #include "tageditoreditor.h"
 #include "tagfilldialog.h"
 
+#include <gui/widgets/autoheaderview.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -31,9 +33,10 @@
 
 using namespace Qt::StringLiterals;
 
-namespace Fooyin::TagEditor {
 constexpr auto DontAskAgain = "TagEditor/DontAskAgain";
+constexpr auto HeaderState  = "TagEditor/HeaderState";
 
+namespace Fooyin::TagEditor {
 TagEditorPropertiesTab::TagEditorPropertiesTab(ActionManager* actionManager, TagEditorFieldRegistry* registry,
                                                SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
@@ -55,9 +58,14 @@ TagEditorPropertiesTab::TagEditorPropertiesTab(ActionManager* actionManager, Tag
                      &TagEditorPropertiesTab::pendingChangesStateChanged);
     QObject::connect(m_editor, &TagEditorEditor::autoFillValuesRequested, this,
                      &TagEditorPropertiesTab::autoFillValues);
+
+    restoreState();
 }
 
-TagEditorPropertiesTab::~TagEditorPropertiesTab() = default;
+TagEditorPropertiesTab::~TagEditorPropertiesTab()
+{
+    saveState();
+}
 
 void TagEditorPropertiesTab::setTracks(const TrackList& tracks)
 {
@@ -271,6 +279,30 @@ void TagEditorPropertiesTab::mergeTracks(TrackList& destination, const TrackList
         }
 
         destination.emplace_back(updatedTrack);
+    }
+}
+
+void TagEditorPropertiesTab::saveState() const
+{
+    FyStateSettings settings;
+    QByteArray state = m_editor->header()->saveHeaderState();
+    state            = qCompress(state, 9);
+    settings.setValue(HeaderState, state.toBase64());
+}
+
+void TagEditorPropertiesTab::restoreState() const
+{
+    const FyStateSettings settings;
+
+    if(settings.contains(HeaderState)) {
+        const auto headerState = settings.value(HeaderState).toString().toUtf8();
+
+        if(!headerState.isEmpty() && headerState.isValidUtf8()) {
+            auto state = QByteArray::fromBase64(headerState);
+            state      = qUncompress(state);
+            m_editor->header()->restoreHeaderState(state);
+            return;
+        }
     }
 }
 } // namespace Fooyin::TagEditor
