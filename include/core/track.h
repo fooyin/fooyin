@@ -72,6 +72,13 @@ public:
         Other
     };
 
+    enum class SegmentType : uint8_t
+    {
+        None = 0,
+        Cue,
+        Chapter
+    };
+
     using ExtraTags       = FlatStringMap<QStringList>;
     using ExtraProperties = FlatStringMap<QString>;
 
@@ -130,7 +137,7 @@ public:
     //! Returns a grouping key for album-oriented views; this is not persisted like the track identity hash.
     [[nodiscard]] QString albumHash() const;
     [[nodiscard]] QString filepath() const;
-    //! Returns filepath plus cue offset for cue tracks, so multiple cue entries in one file can be distinguished.
+    //! Returns filepath plus logical segment identity, so multiple entries in one file can be distinguished.
     [[nodiscard]] QString uniqueFilepath() const;
     //! Returns a display path; archive entries are shown as "archive/path/entry" instead of their unpack URL.
     [[nodiscard]] QString prettyFilepath() const;
@@ -219,6 +226,12 @@ public:
     [[nodiscard]] bool hasEmbeddedCue() const;
     //! External cue file path, or "Embedded" for tracks generated from an embedded CUESHEET tag.
     [[nodiscard]] QString cuePath() const;
+    //! Logical segment type for tracks that represent a bounded region of a continuous file.
+    [[nodiscard]] SegmentType segmentType() const;
+    //! True for CUE tracks and chapter tracks that are bounded by offset + duration.
+    [[nodiscard]] bool isBoundedSegment() const;
+    //! True for segments that can be played by continuing the same decoded stream.
+    [[nodiscard]] bool isSameStreamSegment() const;
 
     //! Archive paths use fooyin's unpack:// URL format.
     static bool isArchivePath(const QString& path);
@@ -332,6 +345,8 @@ public:
 
     //! Sets the cue source path; use "Embedded" for tracks generated from an embedded cue sheet.
     void setCuePath(const QString& path);
+    //! Marks this track as a chapter segment; cue segments are driven by setCuePath().
+    void setIsChapter(bool isChapter);
 
     //! Raw rating tag values are stored as internal extra properties so the configured rating tag can be round-tripped.
     [[nodiscard]] QString rawRatingTag(const QString& tag) const;

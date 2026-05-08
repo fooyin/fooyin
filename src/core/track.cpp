@@ -38,10 +38,12 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto MaxStarCount   = 10;
-constexpr auto YearRegex      = R"lit(\b\d{4}\b)lit";
-constexpr auto YearMonthRegex = R"lit(\b(\d{4})-(\d{2})\b)lit";
-constexpr auto FullDateRegex  = R"lit(\b(\d{4})-(\d{2})-(\d{2})\b)lit";
+constexpr auto MaxStarCount    = 10;
+constexpr auto YearRegex       = R"lit(\b\d{4}\b)lit";
+constexpr auto YearMonthRegex  = R"lit(\b(\d{4})-(\d{2})\b)lit";
+constexpr auto FullDateRegex   = R"lit(\b(\d{4})-(\d{2})-(\d{2})\b)lit";
+constexpr auto ChapterProperty = "_CHAPTER"_L1;
+constexpr auto ChapterValue    = "1"_L1;
 
 namespace {
 QString validNum(auto num)
@@ -188,14 +190,17 @@ float opusHeaderLinearGain(const Fooyin::Track& track)
 
 void normaliseExtraProperties(Fooyin::Track::ExtraProperties& props)
 {
-    const QString* opusHeader = props.find(QString::fromLatin1(Fooyin::Constants::OpusHeaderGainQ78));
-    if(!opusHeader) {
-        return;
+    if(const QString* opusHeader = props.find(QString::fromLatin1(Fooyin::Constants::OpusHeaderGainQ78))) {
+        bool ok{false};
+        if(const int gain = opusHeader->toInt(&ok); ok && gain == 0) {
+            props.erase(QString::fromLatin1(Fooyin::Constants::OpusHeaderGainQ78));
+        }
     }
 
-    bool ok{false};
-    if(const int gain = opusHeader->toInt(&ok); ok && gain == 0) {
-        props.erase(QString::fromLatin1(Fooyin::Constants::OpusHeaderGainQ78));
+    if(const QString* chapter = props.find(ChapterProperty)) {
+        if(*chapter != ChapterValue) {
+            props.erase(ChapterProperty);
+        }
     }
 }
 
@@ -661,7 +666,13 @@ QString Track::uniqueFilepath() const
 {
     QString path{p->filepath};
 
-    if(hasCue() || p->offset > 0) {
+    if(hasCue()) {
+        path.append(QString::number(p->offset));
+    }
+    else if(segmentType() == SegmentType::Chapter) {
+        path.append(u"#chapter="_s);
+        path.append(QString::number(p->subsong));
+        path.append(u':');
         path.append(QString::number(p->offset));
     }
 
@@ -1084,6 +1095,37 @@ bool Track::hasEmbeddedCue() const
 QString Track::cuePath() const
 {
     return p->cuePath;
+}
+
+Track::SegmentType Track::segmentType() const
+{
+    if(hasCue()) {
+        return SegmentType::Cue;
+    }
+
+    if(p->extraProps.contains(ChapterProperty)) {
+        return SegmentType::Chapter;
+    }
+
+    return SegmentType::None;
+}
+
+bool Track::isBoundedSegment() const
+{
+    return segmentType() != SegmentType::None;
+}
+
+bool Track::isSameStreamSegment() const
+{
+    switch(segmentType()) {
+        case SegmentType::Cue:
+        case SegmentType::Chapter:
+            return true;
+        case SegmentType::None:
+            return false;
+    }
+
+    return false;
 }
 
 bool Track::isArchivePath(const QString& path)
@@ -1840,6 +1882,16 @@ std::optional<int64_t> Track::dateValue(const QString& name) const
 void Track::setCuePath(const QString& path)
 {
     p->cuePath = path;
+}
+
+void Track::setIsChapter(bool isChapter)
+{
+    if(isChapter) {
+        setExtraProperty(ChapterProperty, ChapterValue);
+    }
+    else {
+        removeExtraProperty(ChapterProperty);
+    }
 }
 
 void Track::addExtraTag(const QString& tag, const QString& value)

@@ -43,7 +43,8 @@ bool isContiguousSameFileSegment(const Track& currentTrack, const Track& nextTra
         return false;
     }
 
-    return nextTrack.filepath() == currentTrack.filepath()
+    return currentTrack.isSameStreamSegment() && nextTrack.isSameStreamSegment()
+        && currentTrack.segmentType() == nextTrack.segmentType() && nextTrack.filepath() == currentTrack.filepath()
         && nextTrack.offset() == currentTrack.offset() + currentTrack.duration();
 }
 

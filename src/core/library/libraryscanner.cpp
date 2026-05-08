@@ -236,7 +236,7 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
             }
         }
 
-        Track updatedTrack{track.filepath(), track.metadataStore()};
+        Track updatedTrack{track.filepath(), track.subsong(), track.metadataStore()};
 
         if(m_audioLoader->readTrackMetadata(updatedTrack)) {
             updatedTrack.setId(track.id());

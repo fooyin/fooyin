@@ -244,16 +244,20 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
             // Partial overlap – trim the leading portion.
             const uint64_t trimMs = trackOffsetMs - buffer.startTime();
             const int trimFrames  = m_requiredFormat.framesForDuration(trimMs);
-            const auto trimBytes  = static_cast<size_t>(trimFrames * m_requiredFormat.bytesPerFrame());
+            const auto trimBytes  = static_cast<size_t>(trimFrames) * m_requiredFormat.bytesPerFrame();
             const auto totalBytes = static_cast<size_t>(buffer.byteCount());
 
             if(trimBytes > 0 && trimBytes < totalBytes) {
+                const uint64_t trimmedStartMs = buffer.startTime() + m_requiredFormat.durationForFrames(trimFrames);
                 buffer = AudioBuffer{buffer.constData().subspan(trimBytes, totalBytes - trimBytes), m_requiredFormat,
-                                     trackOffsetMs};
+                                     trimmedStartMs};
+            }
+            else if(trimBytes >= totalBytes) {
+                continue;
             }
         }
 
-        const uint64_t decodedBytes = static_cast<uint64_t>(buffer.byteCount());
+        const auto decodedBytes = static_cast<uint64_t>(buffer.byteCount());
         if(decodedBytes > std::numeric_limits<uint64_t>::max() - processedBytes) {
             processedBytes = std::numeric_limits<uint64_t>::max();
         }
@@ -351,7 +355,7 @@ void WaveformGenerator::processBuffer(const AudioBuffer& buffer)
 
         const int frameOffset = i * channels;
         for(int ch{0}; ch < channels; ++ch) {
-            const float sample                  = samples[static_cast<size_t>(frameOffset + ch)];
+            const float sample                  = samples[static_cast<size_t>(frameOffset) + ch];
             channelMax[static_cast<size_t>(ch)] = std::max(channelMax[static_cast<size_t>(ch)], sample);
             channelMin[static_cast<size_t>(ch)] = std::min(channelMin[static_cast<size_t>(ch)], sample);
             channelRms[static_cast<size_t>(ch)] += sample * sample;

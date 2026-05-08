@@ -18,6 +18,7 @@
  */
 
 #include <core/constants.h>
+#include <core/engine/enginehelpers.h>
 #include <core/track.h>
 #include <core/trackmetadatastore.h>
 
@@ -199,6 +200,51 @@ TEST(TrackTest, SameIdentityAsUsesIdThenSegmentIdentity)
 
     Track invalidTrack;
     EXPECT_FALSE(segmentTrackA.sameIdentityAs(invalidTrack));
+}
+
+TEST(TrackTest, ChapterSegmentsHaveExplicitIdentityAtOffsetZero)
+{
+    Track wholeFile{u"/music/book.m4b"_s, 0};
+    wholeFile.setDuration(10000);
+
+    Track chapter{u"/music/book.m4b"_s, 0};
+    chapter.setIsChapter(true);
+    chapter.setOffset(0);
+    chapter.setDuration(5000);
+
+    EXPECT_EQ(chapter.segmentType(), Track::SegmentType::Chapter);
+    EXPECT_TRUE(chapter.isBoundedSegment());
+    EXPECT_TRUE(chapter.isSameStreamSegment());
+    EXPECT_NE(chapter.uniqueFilepath(), wholeFile.uniqueFilepath());
+    EXPECT_EQ(chapter.uniqueFilepath(), u"/music/book.m4b#chapter=0:0"_s);
+}
+
+TEST(TrackTest, ContiguousSameFileSegmentRequiresSameStreamSegmentType)
+{
+    Track chapterOne{u"/music/book.m4b"_s, 0};
+    chapterOne.setIsChapter(true);
+    chapterOne.setOffset(0);
+    chapterOne.setDuration(5000);
+
+    Track chapterTwo{u"/music/book.m4b"_s, 1};
+    chapterTwo.setIsChapter(true);
+    chapterTwo.setOffset(5000);
+    chapterTwo.setDuration(4000);
+
+    EXPECT_TRUE(isContiguousSameFileSegment(chapterOne, chapterTwo));
+
+    Track plainSubsong{u"/music/book.m4b"_s, 1};
+    plainSubsong.setOffset(5000);
+    plainSubsong.setDuration(4000);
+
+    EXPECT_FALSE(isContiguousSameFileSegment(chapterOne, plainSubsong));
+
+    Track cueTrack{u"/music/book.m4b"_s, 1};
+    cueTrack.setCuePath(u"/music/book.cue"_s);
+    cueTrack.setOffset(5000);
+    cueTrack.setDuration(4000);
+
+    EXPECT_FALSE(isContiguousSameFileSegment(chapterOne, cueTrack));
 }
 
 TEST(TrackTest, MigratesPooledMetadataToExplicitStore)

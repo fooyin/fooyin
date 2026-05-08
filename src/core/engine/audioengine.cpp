@@ -62,7 +62,7 @@ Q_LOGGING_CATEGORY(ENGINE, "fy.engine")
 namespace {
 bool isBoundedSegmentTrack(const Fooyin::Track& track)
 {
-    return track.hasCue() || track.hasExtraProperty(QStringLiteral("CHAPTER"));
+    return track.isBoundedSegment();
 }
 
 constexpr auto BasePrefillDecodeFrames      = 4096;
@@ -2006,11 +2006,14 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
     const bool pendingBoundaryRenderedGaplessReached
         = m_autoAdvanceState.boundaryPendingUntilAudible && preparedGaplessActive && preparedGaplessReleaseReady;
     const bool cueBoundaryMode        = isBoundedSegmentTrack(m_currentTrack);
+    const bool hasDistinctUpcomingCandidate
+        = m_upcomingTrackCandidate.isValid() && !samePlaybackItem(upcomingTrackCandidateItem(), currentPlaybackItem());
+    const bool boundedSegmentHandoffPending = cueBoundaryMode && hasDistinctUpcomingCandidate;
     const bool audibleBoundaryReached = m_currentTrack.duration() == 0
                                      || boundaryAudiblePosMs >= m_currentTrack.duration()
                                      || pendingBoundaryRenderedGaplessReached;
 
-    const bool deferBoundaryUntilAudible = preparedGaplessActive || cueBoundaryMode;
+    const bool deferBoundaryUntilAudible = preparedGaplessActive || boundedSegmentHandoffPending;
     const bool boundaryWasPending        = m_autoAdvanceState.boundaryPendingUntilAudible;
     if(result.boundaryReached && !audibleBoundaryReached && deferBoundaryUntilAudible) {
         m_autoAdvanceState.boundaryPendingUntilAudible = true;
@@ -2111,7 +2114,7 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
         }
 
         const bool deferTrackEndStatusForPendingGaplessBoundary
-            = ((gaplessBoundaryMode && preparedGaplessActive) || cueBoundaryMode)
+            = ((gaplessBoundaryMode && preparedGaplessActive) || boundedSegmentHandoffPending)
            && (!m_autoAdvanceState.boundaryAnchorSeen || m_autoAdvanceState.boundaryPendingUntilAudible);
         if(deferTrackEndStatusForPendingGaplessBoundary) {
             qCDebug(ENGINE) << "Deferring track-end status until pending boundary resolves:"
