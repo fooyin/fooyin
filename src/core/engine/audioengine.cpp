@@ -724,6 +724,8 @@ void AudioEngine::startSeekCrossfade(uint64_t positionMs, int fadeOutDurationMs,
         return;
     }
 
+    setStreamToTrackOriginForTrack(m_currentTrack);
+
     const int requestedPrefillMs = std::max(fadeInDurationMs, m_playbackBufferLengthMs / 4);
     const int prefillTargetMs    = adjustedCrossfadePrefillMs(requestedPrefillMs);
     prefillActiveStream(prefillTargetMs);
@@ -842,6 +844,7 @@ void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId, int
 
     m_decoder.seek(seekPosMs);
     m_decoder.syncStreamPosition();
+    setStreamToTrackOriginForTrack(m_currentTrack);
 
     if(!m_decoder.isDecoding()) {
         m_decoder.start();

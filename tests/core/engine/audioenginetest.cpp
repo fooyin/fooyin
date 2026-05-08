@@ -716,7 +716,8 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, ContiguousSegmentSwitchDoesNo
     ensureCoreApplication();
     EngineHarness harness{false};
 
-    const Track firstTrack = harness.createTrack(u"segments.fyt"_s, 0, 100000);
+    Track firstTrack = harness.createTrack(u"segments.fyt"_s, 0, 100000);
+    firstTrack.setIsChapter(true);
     harness.engine.loadTrack(makePlaybackItem(firstTrack, 1), false);
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
 
@@ -728,6 +729,7 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, ContiguousSegmentSwitchDoesNo
     const int outputUninitBefore = harness.outputStats->uninitCalls.load();
 
     Track nextSegment = firstTrack;
+    nextSegment.setIsChapter(true);
     nextSegment.setOffset(firstTrack.offset() + firstTrack.duration());
     nextSegment.setDuration(firstTrack.duration());
 
@@ -739,6 +741,44 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, ContiguousSegmentSwitchDoesNo
     EXPECT_EQ(harness.outputStats->uninitCalls.load(), outputUninitBefore);
     EXPECT_EQ(harness.engine.playbackState(), Engine::PlaybackState::Playing);
     EXPECT_NE(harness.engine.trackStatus(), Engine::TrackStatus::Invalid);
+}
+
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SeekAfterContiguousSegmentSwitchPublishesTargetPosition)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+
+    Track firstTrack = harness.createTrack(u"segments-seek.fyt"_s, 0, 10000);
+    firstTrack.setIsChapter(true);
+    harness.engine.loadTrack(makePlaybackItem(firstTrack, 1), false);
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::Loaded; }));
+
+    harness.engine.play();
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+
+    Track nextSegment = firstTrack;
+    nextSegment.setIsChapter(true);
+    nextSegment.setOffset(firstTrack.offset() + firstTrack.duration());
+    nextSegment.setDuration(12000);
+
+    harness.engine.loadTrack(makePlaybackItem(nextSegment, 2), false);
+    ASSERT_TRUE(pumpUntil([&harness]() { return AudioEngineTestAccessor::currentTrackItemId(harness.engine) == 2; }));
+
+    static constexpr uint64_t seekPositionMs = 5000;
+    harness.engine.seek(seekPositionMs);
+
+    ASSERT_TRUE(pumpUntil([&harness]() { return harness.decoderStats->seekCalls.load() >= 1; }, 2000ms));
+    ASSERT_TRUE(pumpUntil(
+        [&harness]() {
+            const uint64_t positionMs = harness.engine.position();
+            return positionMs >= (seekPositionMs > 1000 ? seekPositionMs - 1000 : 0)
+                && positionMs <= seekPositionMs + 1800;
+        },
+        700ms));
+
+    const uint64_t postSeekPositionMs = harness.engine.position();
+    EXPECT_GE(postSeekPositionMs, seekPositionMs > 1000 ? seekPositionMs - 1000 : 0);
+    EXPECT_LE(postSeekPositionMs, seekPositionMs + 1800);
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, PlayPauseStopWithFadeCompletesStateTransitions)
