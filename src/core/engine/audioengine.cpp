@@ -2005,13 +2005,13 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
 
     const bool pendingBoundaryRenderedGaplessReached
         = m_autoAdvanceState.boundaryPendingUntilAudible && preparedGaplessActive && preparedGaplessReleaseReady;
-    const bool cueBoundaryMode        = isBoundedSegmentTrack(m_currentTrack);
+    const bool cueBoundaryMode = isBoundedSegmentTrack(m_currentTrack);
     const bool hasDistinctUpcomingCandidate
         = m_upcomingTrackCandidate.isValid() && !samePlaybackItem(upcomingTrackCandidateItem(), currentPlaybackItem());
     const bool boundedSegmentHandoffPending = cueBoundaryMode && hasDistinctUpcomingCandidate;
-    const bool audibleBoundaryReached = m_currentTrack.duration() == 0
-                                     || boundaryAudiblePosMs >= m_currentTrack.duration()
-                                     || pendingBoundaryRenderedGaplessReached;
+    const bool audibleBoundaryReached       = m_currentTrack.duration() == 0
+                                           || boundaryAudiblePosMs >= m_currentTrack.duration()
+                                           || pendingBoundaryRenderedGaplessReached;
 
     const bool deferBoundaryUntilAudible = preparedGaplessActive || boundedSegmentHandoffPending;
     const bool boundaryWasPending        = m_autoAdvanceState.boundaryPendingUntilAudible;
