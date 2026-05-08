@@ -31,7 +31,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="59"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>排队到下一个播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="63"/>
@@ -51,7 +51,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="74"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目菜单</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="54"/>
@@ -1258,17 +1258,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="103"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>缩略图</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="106"/>
         <source>Grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>分组脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="107"/>
         <source>Groups artwork thumbnails that should share the same cached image</source>
-        <translation type="unfinished"></translation>
+        <translation>把应该共享同一张缓存图的专辑封面缩略图进行分组</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="115"/>
@@ -1953,7 +1953,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="507"/>
         <source>Artwork settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>插图设置…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="518"/>
@@ -2524,7 +2524,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="63"/>
         <source>Clear on pause</source>
-        <translation type="unfinished"></translation>
+        <translation>暂停时清除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="69"/>
@@ -2554,7 +2554,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="83"/>
         <source>Clear status when paused</source>
-        <translation type="unfinished"></translation>
+        <translation>暂停时清除状态</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
@@ -3455,7 +3455,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="128"/>
         <source>Extract</source>
-        <translation type="unfinished"></translation>
+        <translation>提取</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="132"/>
@@ -3465,7 +3465,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="133"/>
         <source>Delete archive after extraction</source>
-        <translation type="unfinished"></translation>
+        <translation>解压后删除压缩文件</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="135"/>
@@ -3552,7 +3552,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="271"/>
         <source>Extract entire source archive contents</source>
-        <translation type="unfinished"></translation>
+        <translation>提取整个源存档内容</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="320"/>
@@ -3567,12 +3567,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="439"/>
         <source>Delete source archive after extraction?</source>
-        <translation type="unfinished"></translation>
+        <translation>解压后删除源压缩包？</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="440"/>
         <source>Source archive files will be moved to the trash after every file from each archive has been extracted. Continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>每个压缩包中的所有文件提取完毕后，源压缩包文件将被移至回收站。是否继续？</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="448"/>
@@ -3631,7 +3631,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="183"/>
         <source>Extract</source>
-        <translation type="unfinished"></translation>
+        <translation>提取</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="187"/>
@@ -3664,7 +3664,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="160"/>
         <source>&amp;Extract to…</source>
-        <translation type="unfinished"></translation>
+        <translation>提取到(&amp;E)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="162"/>
@@ -4488,7 +4488,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="738"/>
         <source>Remove Current Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="899"/>
@@ -5116,7 +5116,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="474"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>重放增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="482"/>
@@ -5848,7 +5848,7 @@ and last played uses the later value.</source>
         <location filename="../../src/gui/librarytree/librarytreescriptenvironment.cpp" line="94"/>
         <source>All Music (%trackcount%)</source>
         <extracomment>Default Library Tree summary node title. Keep %trackcount% unchanged; it is a script variable.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>所有音乐 (%trackcount%)</translation>
     </message>
 </context>
 <context>
@@ -5886,7 +5886,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Show summary node</source>
-        <translation type="unfinished"></translation>
+        <translation>显示摘要节点</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="54"/>
@@ -5926,7 +5926,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
         <source>Supports &lt;right&gt; for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes.</source>
-        <translation type="unfinished"></translation>
+        <translation>支持 &lt;right&gt; 表示右对齐文本，%trackcount% 表示轨道数，%childcount% 表示子节点数。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
@@ -5973,7 +5973,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="108"/>
         <source>Summary title</source>
-        <translation type="unfinished"></translation>
+        <translation>摘要标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="116"/>
@@ -6085,12 +6085,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;||&lt;/code&gt; 来划分树层级。&lt;b&gt;排序分组&lt;/b&gt; 必须与 &lt;b&gt;显示分组&lt;/b&gt; 使用相同的 &lt;code&gt;||&lt;/code&gt; 层级结构；每个排序层级都对应于匹配的显示层级，并且一个排序层级可以为空（例如 &lt;code&gt;||%year%||&lt;/code&gt;）。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</source>
-        <translation type="unfinished"></translation>
+        <translation>在显示级别中使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 可以使文本实现右对齐。使用 &lt;code&gt;%trackcount%&lt;/code&gt; 来表示曲目数量，使用 &lt;code&gt;%childcount%&lt;/code&gt; 来表示子节点数量。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
@@ -6310,12 +6310,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="54"/>
         <source>Centre first synced line</source>
-        <translation type="unfinished"></translation>
+        <translation>居中第一同步线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="55"/>
         <source>Centre last synced line</source>
-        <translation type="unfinished"></translation>
+        <translation>居中最后同步线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="62"/>
@@ -6499,12 +6499,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="183"/>
         <source>Top and bottom margins apply to unsynced lyrics, and to synced lyrics when centring is disabled for that edge.</source>
-        <translation type="unfinished"></translation>
+        <translation>顶部和底部边距适用于未同步的歌词，也适用于已同步但该边缘居中功能被禁用的歌词。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="193"/>
         <source>These options control whether the first and last synced lines are centred in view.</source>
-        <translation type="unfinished"></translation>
+        <translation>这些选项控制是否将第一行和最后一行同步显示在视图中心。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="206"/>
@@ -6625,12 +6625,12 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="104"/>
         <source>Quicksearch for lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>快速搜索歌词</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="113"/>
         <source>Search for lyrics…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索歌词…</translation>
     </message>
 </context>
 <context>
@@ -6746,29 +6746,31 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="149"/>
         <source>Save Options</source>
-        <translation type="unfinished"></translation>
+        <translation>保存选项</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="152"/>
         <source>Keep Original</source>
-        <translation type="unfinished"></translation>
+        <translation>保持原始</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="153"/>
         <source>Remove original</source>
-        <translation type="unfinished"></translation>
+        <translation>移除原始</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="155"/>
         <source>Determines what happens if lyrics are saved to a different location (file ↔ tag).
 Keep original: keeps the previous version of the lyrics in its original location.
 Remove original: deletes the previous file or tag after saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>决定当将歌词保存至其他位置（文件 ↔ 标签）时会发生什么情况。
+保留原始：将歌词的先前版本保留在其原始位置。
+删除原始：保存后会删除先前的文件或标签。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="160"/>
         <source>Conflict policy</source>
-        <translation type="unfinished"></translation>
+        <translation>冲突策略</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="302"/>
@@ -6801,7 +6803,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="90"/>
         <source>Search for Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索歌词</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="209"/>
@@ -6818,12 +6820,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="245"/>
         <source>No lyrics found</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到歌词</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="313"/>
         <source>Saved lyrics from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存的歌词来自 %1</translation>
     </message>
 </context>
 <context>
@@ -6846,7 +6848,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="93"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>来源</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="95"/>
@@ -6856,17 +6858,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="146"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>编号</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="148"/>
         <source>Line</source>
-        <translation type="unfinished"></translation>
+        <translation>行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="150"/>
         <source>Word</source>
-        <translation type="unfinished"></translation>
+        <translation>字</translation>
     </message>
 </context>
 <context>
@@ -6996,7 +6998,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="644"/>
         <source>Auto-search for lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>自动搜索歌词</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="645"/>
@@ -7006,12 +7008,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="656"/>
         <source>Search for lyrics…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索歌词…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="657"/>
         <source>Open the lyrics search dialog for the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>打开当前歌曲的歌词搜索对话框</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="662"/>
@@ -7061,7 +7063,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="722"/>
         <source>Lyrics settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>歌词设置…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="43"/>
@@ -7579,22 +7581,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Previous album</source>
-        <translation type="unfinished"></translation>
+        <translation>上一张专辑(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
         <source>&amp;Next album</source>
-        <translation type="unfinished"></translation>
+        <translation>下一张专辑(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Random &amp;track</source>
-        <translation type="unfinished"></translation>
+        <translation>随机曲目(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Random &amp;album</source>
-        <translation type="unfinished"></translation>
+        <translation>随机专辑(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
@@ -7659,57 +7661,57 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="106"/>
         <source>Ra&amp;ndom</source>
-        <translation type="unfinished"></translation>
+        <translation>随机(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="109"/>
         <source>Start playing a random track in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>开始播放当前播放列表中的随机曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="112"/>
         <source>Random Track</source>
-        <translation type="unfinished"></translation>
+        <translation>随机曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="115"/>
         <source>Start playing the first track of a random album in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>开始播放当前播放列表中随机专辑的第一首曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="118"/>
         <source>Random Album</source>
-        <translation type="unfinished"></translation>
+        <translation>随机专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="122"/>
         <source>Skip to</source>
-        <translation type="unfinished"></translation>
+        <translation>跳至</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="125"/>
         <source>Skip &amp;to</source>
-        <translation type="unfinished"></translation>
+        <translation>跳至(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="128"/>
         <source>Start playing the first track of the next album in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>开始播放当前播放列表中下一张专辑的第一首曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="131"/>
         <source>Next Album</source>
-        <translation type="unfinished"></translation>
+        <translation>下一张专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="134"/>
         <source>Start playing the first track of the previous album in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>开始播放当前播放列表中上一张专辑的第一首曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="137"/>
         <source>Previous Album</source>
-        <translation type="unfinished"></translation>
+        <translation>上一张专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="152"/>
@@ -7986,29 +7988,29 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="53"/>
         <source>&amp;Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑自动播放列表(&amp;E)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="56"/>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="252"/>
         <source>Re&amp;name playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名播放列表(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="58"/>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="256"/>
         <source>&amp;Remove playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除播放列表(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="60"/>
         <source>Add &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加新的播放列表(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="63"/>
         <source>Add new &amp;autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加新的自动播放列表(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="100"/>
@@ -8019,52 +8021,52 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="192"/>
         <source>Edit</source>
-        <translation type="unfinished">编辑</translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="195"/>
         <source>Edit the selected autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑所选自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="199"/>
         <source>Rename the selected playlist</source>
-        <translation type="unfinished">重命名选中的播放列表</translation>
+        <translation>重命名所选播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="202"/>
         <source>Rename</source>
-        <translation type="unfinished">重命名</translation>
+        <translation>重命名</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="207"/>
         <source>Remove the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除所选播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="210"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="215"/>
         <source>Create a new empty playlist</source>
-        <translation type="unfinished">新建空播放列表</translation>
+        <translation>创建一个新的空播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="225"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished">创建一个新的自动播放列表</translation>
+        <translation>创建一个新的自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="252"/>
         <source>Re&amp;name autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名自动播放列表(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="256"/>
         <source>&amp;Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除自动播放列表(&amp;R)</translation>
     </message>
 </context>
 <context>
@@ -8541,7 +8543,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="55"/>
         <source>Abort</source>
-        <translation>放弃</translation>
+        <translation>中止</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="101"/>
@@ -8559,22 +8561,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="174"/>
         <source>Playlist name</source>
-        <translation type="unfinished">播放列表名称</translation>
+        <translation>播放列表名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="176"/>
         <source>Tracks</source>
-        <translation type="unfinished">音轨</translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="178"/>
         <source>Duration</source>
-        <translation type="unfinished">时长</translation>
+        <translation>时长</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="180"/>
         <source>Total size</source>
-        <translation type="unfinished"></translation>
+        <translation>总大小</translation>
     </message>
 </context>
 <context>
@@ -8582,116 +8584,116 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="98"/>
         <source>Activate</source>
-        <translation type="unfinished"></translation>
+        <translation>激活</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="99"/>
         <source>&amp;Edit autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑自动播放列表(&amp;E)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="102"/>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="359"/>
         <source>Re&amp;name playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名播放列表(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="104"/>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="366"/>
         <source>&amp;Remove playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除播放列表(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="106"/>
         <source>Add &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加新的播放列表(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="109"/>
         <source>Add new &amp;autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加新的自动播放列表(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="179"/>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="283"/>
         <source>Playlist Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表管理器</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="270"/>
         <source>%1 contents</source>
         <extracomment>%1 refers to the name of a playlist.</extracomment>
-        <translation type="unfinished">%1 的内容</translation>
+        <translation>%1 的内容</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="282"/>
         <source>Edit</source>
-        <translation type="unfinished">编辑</translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="285"/>
         <source>Activate the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>激活所选播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="292"/>
         <source>Edit the selected autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑所选自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="297"/>
         <source>Rename the selected playlist</source>
-        <translation type="unfinished">重命名选中的播放列表</translation>
+        <translation>重命名所选播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="300"/>
         <source>Rename</source>
-        <translation type="unfinished">重命名</translation>
+        <translation>重命名</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="305"/>
         <source>Remove the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除所选播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="308"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="313"/>
         <source>Create a new empty playlist</source>
-        <translation type="unfinished">新建空播放列表</translation>
+        <translation>创建一个新的空播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="321"/>
         <source>Create a new autoplaylist</source>
-        <translation type="unfinished">创建一个新的自动播放列表</translation>
+        <translation>创建一个新的自动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="359"/>
         <source>Re&amp;name autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名自动播放列表(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="366"/>
         <source>&amp;Remove autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除自动播放列表(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="466"/>
         <source>Options</source>
-        <translation type="unfinished">选项</translation>
+        <translation>选项</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="468"/>
         <source>Activate on single click</source>
-        <translation type="unfinished"></translation>
+        <translation>单击即可激活</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="497"/>
         <source>Restore playlist order</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复播放列表顺序</translation>
     </message>
 </context>
 <context>
@@ -9014,7 +9016,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="351"/>
         <source>Save playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>保存播放列表…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="360"/>
@@ -9535,7 +9537,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="82"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished">移除(&amp;R)</translation>
+        <translation>移除(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="84"/>
@@ -10156,12 +10158,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="124"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">复制(&amp;C)</translation>
+        <translation>复制(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="133"/>
         <source>Edit</source>
-        <translation type="unfinished">编辑</translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="177"/>
@@ -10653,17 +10655,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="96"/>
         <source>Enable scrobbling</source>
-        <translation type="unfinished">启用歌曲记录</translation>
+        <translation>启用歌曲记录</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="105"/>
         <source>Scrobbling settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>记录设置…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="113"/>
         <source>Scrobbling services…</source>
-        <translation type="unfinished"></translation>
+        <translation>记录服务…</translation>
     </message>
 </context>
 <context>
@@ -11334,17 +11336,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="603"/>
         <source>Show selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>显示选择信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="610"/>
         <source>Show current playlist info</source>
-        <translation type="unfinished"></translation>
+        <translation>显示当前播放列表信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="629"/>
         <source>Status bar settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>状态栏设置…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="617"/>
@@ -11380,7 +11382,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="83"/>
         <source>Shown in the status bar when no tracks are selected, or when selection info is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>当未选择任何曲目或禁用选择信息时，会在状态栏中显示。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="86"/>
@@ -11395,7 +11397,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
         <source>Current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="71"/>
@@ -11405,12 +11407,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="64"/>
         <source>Show selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>显示选择信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
         <source>Show current playlist info</source>
-        <translation type="unfinished"></translation>
+        <translation>显示当前播放列表信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="79"/>
@@ -11616,22 +11618,22 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="60"/>
         <source>Auto &amp;track number</source>
-        <translation type="unfinished">自动编号(&amp;T)</translation>
+        <translation>自动曲目编号(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="61"/>
         <source>Automatically &amp;fill values…</source>
-        <translation type="unfinished">自动填充值(&amp;F)…</translation>
+        <translation>自动填充值(&amp;F)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="62"/>
         <source>&amp;Change default fields…</source>
-        <translation type="unfinished">更改默认字段(&amp;C)…</translation>
+        <translation>更改默认字段(&amp;C)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="76"/>
         <source>Tools</source>
-        <translation type="unfinished">工具</translation>
+        <translation>工具</translation>
     </message>
 </context>
 <context>
@@ -11772,17 +11774,17 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="137"/>
         <source>Are you sure?</source>
-        <translation type="unfinished">你确定吗？</translation>
+        <translation>你确定吗？</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="138"/>
         <source>Metadata in the associated files will be overwritten.</source>
-        <translation type="unfinished">关联文件中的元数据标签将被覆盖。</translation>
+        <translation>关联文件中的元数据标签将被覆盖。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="140"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">不再显示此消息</translation>
+        <translation>不再显示此消息</translation>
     </message>
 </context>
 <context>
@@ -12072,7 +12074,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="42"/>
         <source>Quick &amp;setup</source>
-        <translation type="unfinished"></translation>
+        <translation>快速设置(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="44"/>
@@ -12102,22 +12104,22 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="66"/>
         <source>&amp;Playlist Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表管理器(P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="67"/>
         <source>Open the playlist manager window</source>
-        <translation type="unfinished"></translation>
+        <translation>打开播放列表管理器窗口</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="74"/>
         <source>Playback &amp;Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>播放队列(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
         <source>Open the playback queue window</source>
-        <translation type="unfinished"></translation>
+        <translation>打开播放队列窗口</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
@@ -12375,12 +12377,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="88"/>
         <source>Colours</source>
-        <translation type="unfinished">颜色</translation>
+        <translation>颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="89"/>
         <source>Global</source>
-        <translation type="unfinished"></translation>
+        <translation>全局</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="98"/>
@@ -12734,7 +12736,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="175"/>
         <source>Playlist Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表管理器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="204"/>
@@ -12848,37 +12850,37 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="115"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">添加到当前播放列表</translation>
+        <translation>添加到当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="119"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">添加到活动播放列表</translation>
+        <translation>添加到活动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="123"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">替换当前播放列表</translation>
+        <translation>替换当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="127"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">创建新的播放列表</translation>
+        <translation>创建新的播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="132"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">添加到播放队列</translation>
+        <translation>添加到播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>下一首播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="140"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">从播放队列中删除</translation>
+        <translation>从播放队列中删除</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="144"/>
@@ -12898,7 +12900,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="154"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>歌曲菜单</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="309"/>
@@ -12956,7 +12958,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>上一首播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="86"/>
@@ -12966,7 +12968,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="89"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目菜单</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="320"/>
