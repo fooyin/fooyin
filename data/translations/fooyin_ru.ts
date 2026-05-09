@@ -6,67 +6,67 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="171"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Играть</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="175"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Добавить в текущий плейлист</translation>
+        <translation>Добавить в текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="178"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Добавить в активный плейлист</translation>
+        <translation>Добавить в активный плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="181"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Заменить текущий плейлист</translation>
+        <translation>Заменить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Создать новый плейлист</translation>
+        <translation>Создать новый плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="188"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Добавить в очередь воспроизведения</translation>
+        <translation>Добавить в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="191"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Поставить следующим в очереди</translation>
+        <translation>Поставить следующим в очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="194"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished">Заменить очередь воспроизведения</translation>
+        <translation>Заменить очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="198"/>
         <source>Set as root</source>
-        <translation type="unfinished">Выбрать корневой папкой</translation>
+        <translation>Выбрать корневой папкой</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="201"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим просмотра</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="204"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Настроить</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="336"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Обозреватель каталога</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="338"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключённые элементы будут спрятаны из контекстного меню обозревателя каталога.</translation>
     </message>
 </context>
 <context>
@@ -512,12 +512,12 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Numeric rating in stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Числовая оценка в звездах</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalized rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализованная оценка</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="163"/>
@@ -1038,7 +1038,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="427"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with &quot;, &quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выполняет поиск необработанного поля тега по имени. Несколько значений объединяются «, ».</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
@@ -1084,7 +1084,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="431"/>
         <source>Looks up a raw tag field by name and returns the zero-based indexed value.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выполняет поиск необработанного поля тега по имени и возвращает индексированное значение, основанное на нуле.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="433"/>
@@ -1830,7 +1830,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="468"/>
         <source>Built-in icon missing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Встроенный значок отсутствует.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="472"/>
@@ -1894,7 +1894,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="122"/>
         <source>Use command icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать значок команды</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="128"/>
@@ -1934,17 +1934,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="149"/>
         <source>Choose a built-in icon or custom image. If none is set, the button uses the command&apos;s default icon.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите встроенный значок или пользовательское изображение. Если не указано, для кнопки используется значок команды по умолчанию.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="156"/>
         <source>Built-in</source>
-        <translation type="unfinished"></translation>
+        <translation>Встроенный</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="158"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательский</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="172"/>
@@ -2261,17 +2261,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="191"/>
         <source>Semicolon-separated extensions where FFmpeg is tried before other decoders and tag readers.</source>
-        <translation type="unfinished"></translation>
+        <translation>Расширения, разделённые точкой с запятой, в которых FFmpeg используется раньше других декодеров и считывателей тегов.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="195"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпочитать FFmpeg для расширений</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="197"/>
         <source>e.g. &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>например, «%1»</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="203"/>
@@ -2431,17 +2431,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="579"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим просмотра</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="582"/>
         <source>List</source>
-        <translation type="unfinished">Список</translation>
+        <translation>Список</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="591"/>
         <source>Tree</source>
-        <translation type="unfinished">Дерево</translation>
+        <translation>Дерево</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="193"/>
@@ -2914,85 +2914,85 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/editablelayout.cpp" line="417"/>
         <location filename="../../src/gui/editablelayout.cpp" line="534"/>
         <source>&amp;Before</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;До</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="407"/>
         <location filename="../../src/gui/editablelayout.cpp" line="422"/>
         <location filename="../../src/gui/editablelayout.cpp" line="541"/>
         <source>&amp;After</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;После</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="429"/>
         <location filename="../../src/gui/editablelayout.cpp" line="552"/>
         <source>&amp;Inside</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Внутри</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="462"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">&amp;Слева</translation>
+        <translation>&amp;Слева</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="462"/>
         <source>&amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Сверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="469"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">&amp;Справа</translation>
+        <translation>&amp;Справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="469"/>
         <source>&amp;Down</source>
-        <translation type="unfinished"></translation>
+        <translation>С&amp;низу</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>Far Lef&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>На отдал&amp;ении слева</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>&amp;Top</source>
-        <translation type="unfinished"></translation>
+        <translation>С&amp;верху</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
         <source>Far Rig&amp;ht</source>
-        <translation type="unfinished"></translation>
+        <translation>На отдалении сп&amp;рава</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
         <source>&amp;Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Сни&amp;зу</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="506"/>
         <source>Remove spli&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать разд&amp;еление</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="520"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished">&amp;Вставить</translation>
+        <translation>&amp;Вставить</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="523"/>
         <source>Rep&amp;lace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Заменить</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="580"/>
         <source>Parent: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Родитель: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="595"/>
         <source>R&amp;eplace</source>
-        <translation type="unfinished"></translation>
+        <translation>За&amp;менить</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="600"/>
@@ -3002,7 +3002,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="608"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Копировать</translation>
+        <translation>&amp;Копировать</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="621"/>
@@ -3012,7 +3012,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="630"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Убрать</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="697"/>
@@ -4186,17 +4186,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="811"/>
         <source>Use embedded covers</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать встроенные обложки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="812"/>
         <source>Use directory covers</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать обложки каталогов</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="813"/>
         <source>Use default source</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать источник по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="892"/>
@@ -4501,12 +4501,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="686"/>
         <source>Clear Current Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="687"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">Удалить все дорожки из текущего плейлиста</translation>
+        <translation>Удалить все дорожки из текущего плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="712"/>
@@ -5735,7 +5735,7 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="161"/>
         <source>e.g. &quot;%1&quot;</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>например, «%1»</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="164"/>
@@ -5934,17 +5934,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="122"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Основные</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="123"/>
         <source>Library</source>
-        <translation type="unfinished">Фонотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="123"/>
         <source>Metadata</source>
-        <translation type="unfinished">Метаданные</translation>
+        <translation>Метаданные</translation>
     </message>
 </context>
 <context>
@@ -5952,43 +5952,43 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="54"/>
         <source>Use &apos;Various Artists&apos; for compilations</source>
-        <translation type="unfinished">Использовать «Various Artists» для сборников</translation>
+        <translation>Использовать «Various Artists» для сборников</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="55"/>
         <source>Save ratings to file tags when possible</source>
-        <translation type="unfinished">Сохранять оценки в теги файлов по возможности</translation>
+        <translation>Сохранять оценки в теги файлов по возможности</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="56"/>
         <source>Save playcounts to file tags when possible</source>
-        <translation type="unfinished">Сохранять число прослушиваний в теги файлов по возможности</translation>
+        <translation>Сохранять число прослушиваний в теги файлов по возможности</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="57"/>
         <source>Overwrite rating in database when songs are re-read</source>
-        <translation type="unfinished">Перезаписывать оценку в БД при повторном чтении песен</translation>
+        <translation>Перезаписывать оценку в БД при повторном чтении песен</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="58"/>
         <source>Overwrite playcount in database when files are re-read</source>
-        <translation type="unfinished">Перезаписывать число прослушиваний в БД при повторном чтении файлов</translation>
+        <translation>Перезаписывать число прослушиваний в БД при повторном чтении файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="60"/>
         <source>Metadata</source>
-        <translation type="unfinished">Метаданные</translation>
+        <translation>Метаданные</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="66"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Статистика воспроизведения</translation>
+        <translation>Статистика воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="69"/>
         <source>When enabled, a rating found in file tags replaces the database rating.
 When disabled, the database rating is kept and file tags are only used when the database rating is empty.</source>
-        <translation type="unfinished">При включении оценка, найденная в тегах файла, заменяет оценку в базе данных.
+        <translation>При включении оценка, найденная в тегах файла, заменяет оценку в базе данных.
 При отключении сохраняется оценка из БД, а теги файлов используются, только когда оценка в БД пуста.</translation>
     </message>
     <message>
@@ -5997,7 +5997,7 @@ When disabled, the database rating is kept and file tags are only used when the 
 Missing values still fall back to the database.
 When disabled, playcount uses the higher value, first played uses the earlier non-empty value,
 and last played uses the later value.</source>
-        <translation type="unfinished">При включении число прослушиваний и временные метки из тегов файлов заменяют значения в БД.
+        <translation>При включении число прослушиваний и временные метки из тегов файлов заменяют значения в БД.
 Отсутствующие значения по-прежнему берутся из базы данных.
 При отключении для числа прослушиваний используется большее значение, для первого
 прослушивания — более раннее непустое значение, а для последнего — более позднее значение.</translation>
@@ -6031,17 +6031,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="281"/>
         <source>Ratings</source>
-        <translation type="unfinished">Оценки</translation>
+        <translation>Оценки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="282"/>
         <source>Library</source>
-        <translation type="unfinished">Фонотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="282"/>
         <source>Metadata</source>
-        <translation type="unfinished">Метаданные</translation>
+        <translation>Метаданные</translation>
     </message>
 </context>
 <context>
@@ -6049,118 +6049,119 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="140"/>
         <source>Read ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Читать ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="141"/>
         <source>Write ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Записать ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="144"/>
         <source>Read WM/SharedUserRating</source>
-        <translation type="unfinished"></translation>
+        <translation>Читать WM/SharedUserRating</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="145"/>
         <source>Write WM/SharedUserRating</source>
-        <translation type="unfinished"></translation>
+        <translation>Записать WM/SharedUserRating</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="154"/>
         <source>Tag field to read rating values from. Automatic detection prefers FMPS_RATING, then RATING.</source>
-        <translation type="unfinished"></translation>
+        <translation>Поле с тегом, из которого считывается значение оценки. При автоопределении предпочитается FMPS_RATING, а затем RATING.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="155"/>
         <source>How text rating values are interpreted. Automatic detection handles common rating formats; other choices use the selected scale exactly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Как интерпретируются текстовые значения оценок. Автоопределение обрабатывает распространённые форматы; остальные варианты используют выбранную шкалу напрямую.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="159"/>
         <source>Tag field used when saving ratings as text metadata. Unrated tracks remove this tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>Поле тега, используемое при сохранении оценок в виде текстовых метаданных. Для дорожек без оценок этот тег удаляется.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="160"/>
         <source>Value range used when saving rated values as text metadata. Unrated tracks remove the rating tag instead of writing zero.</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон значений при сохранении оценок в виде текстовых метаданных. Для дорожек без оценок тег оценки удаляется вместо записи нуля.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="163"/>
         <source>Read ratings from ID3 POPM frames in MP3 files before text rating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Читать оценки из фреймов ID3 POPM в MP3-файлах перед текстовыми тегами оценок.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="165"/>
         <source>Additionally save ratings to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Дополнительно сохранять оценки во фреймы ID3 POPM при записи MP3-файлов. Другие форматы не затрагиваются.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="167"/>
         <source>Owner identifier for POPM frames. Leave empty to read the first POPM frame and write an empty owner.</source>
-        <translation type="unfinished"></translation>
+        <translation>Идентификатор владельца для фреймов POPM. Оставьте пустым, чтобы читать первый фрейм POPM и записывать пустого владельца.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="168"/>
         <source>Conversion table used between fooyin ratings and POPM byte values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Таблица преобразования между оценками fooyin и байтовыми значениями POPM.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="170"/>
         <source>Read ratings from WM/SharedUserRating attributes in ASF/WMA files after text rating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Читать оценки из атрибутов WM/SharedUserRating во фреймах ASF/WMA после текстовых тегов оценок.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="172"/>
         <source>Additionally save ratings to WM/SharedUserRating attributes when writing ASF/WMA files.
 This improves compatibility with other players, but stores whole-star values only.</source>
-        <translation type="unfinished"></translation>
+        <translation>Дополнительно сохранять оценки в атрибуты WM/SharedUserRating при записи файлов ASF/WMA.
+Это улучшает совместимость с другими проигрывателями, но сохраняет только целые значения звёзд.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="175"/>
         <source>Rating Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Теги оценок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
         <source>ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="179"/>
         <source>ASF/WMA</source>
-        <translation type="unfinished"></translation>
+        <translation>ASF/WMA</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="183"/>
         <source>Read text rating from</source>
-        <translation type="unfinished"></translation>
+        <translation>Читать текстовую оценку из</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="185"/>
         <source>Read value scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Шкала читаемых значений</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="187"/>
         <source>Write text rating to</source>
-        <translation type="unfinished"></translation>
+        <translation>Записывать текстовую оценку в</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="189"/>
         <source>Write value scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Шкала записываемых значений</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="198"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Владелец</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="200"/>
         <source>Mapping</source>
-        <translation type="unfinished"></translation>
+        <translation>Сопоставление</translation>
     </message>
 </context>
 <context>
@@ -8370,37 +8371,37 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="59"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Показывать полосу прокрутки</translation>
+        <translation>Показывать полосу прокрутки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="60"/>
         <source>Show header</source>
-        <translation type="unfinished">Показывать заголовок</translation>
+        <translation>Показывать заголовок</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="61"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Чередование цветов строк</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="73"/>
         <source>Image Padding</source>
-        <translation type="unfinished">Отступы у изображения</translation>
+        <translation>Отступы у изображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="77"/>
         <source>Left/Right</source>
-        <translation type="unfinished">Слева/справа</translation>
+        <translation>Слева/справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="79"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="83"/>
         <source>Appearance</source>
-        <translation type="unfinished">Внешний вид</translation>
+        <translation>Внешний вид</translation>
     </message>
 </context>
 <context>
@@ -8823,12 +8824,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="129"/>
         <source>Appearance</source>
-        <translation type="unfinished">Внешний вид</translation>
+        <translation>Внешний вид</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="130"/>
         <source>Playlist</source>
-        <translation type="unfinished">Плейлист</translation>
+        <translation>Плейлист</translation>
     </message>
 </context>
 <context>
@@ -9291,12 +9292,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="183"/>
         <source>Saving</source>
-        <translation type="unfinished">Сохранение</translation>
+        <translation>Сохранение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="184"/>
         <source>Playlist</source>
-        <translation type="unfinished">Плейлист</translation>
+        <translation>Плейлист</translation>
     </message>
 </context>
 <context>
@@ -9304,72 +9305,72 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="72"/>
         <source>Write metadata</source>
-        <translation type="unfinished">Записывать метаданные</translation>
+        <translation>Записывать метаданные</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="73"/>
         <source>Auto-export</source>
-        <translation type="unfinished">Автоматический экспорт</translation>
+        <translation>Автоматический экспорт</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="76"/>
         <source>Move deleted or empty playlists to trash</source>
-        <translation type="unfinished">Перемещать удалённые или пустые плейлисты в корзину</translation>
+        <translation>Перемещать удалённые или пустые плейлисты в корзину</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="77"/>
         <source>Save last state of deleted playlists</source>
-        <translation type="unfinished">Сохранять последнее состояние удалённых плейлистов</translation>
+        <translation>Сохранять последнее состояние удалённых плейлистов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="79"/>
         <source>Save any changes made to a playlist before it was deleted</source>
-        <translation type="unfinished">Сохранять любые изменения, внесённые в плейлист до его удаления</translation>
+        <translation>Сохранять любые изменения, внесённые в плейлист до его удаления</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="84"/>
         <source>Saving</source>
-        <translation type="unfinished">Сохранение</translation>
+        <translation>Сохранение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="88"/>
         <source>Path type</source>
-        <translation type="unfinished">Тип пути</translation>
+        <translation>Тип пути</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="93"/>
         <source>Export and synchronise playlists in the specified format and location</source>
-        <translation type="unfinished">Экспорт и синхронизация плейлистов в отдельном месте в собственном формате</translation>
+        <translation>Экспорт и синхронизация плейлистов в отдельном месте в собственном формате</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="104"/>
         <source>Format</source>
-        <translation type="unfinished">Формат</translation>
+        <translation>Формат</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="106"/>
         <source>Location</source>
-        <translation type="unfinished">Расположение</translation>
+        <translation>Расположение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="119"/>
         <source>Auto</source>
-        <translation type="unfinished">Автоматически</translation>
+        <translation>Автоматически</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="120"/>
         <source>Absolute</source>
-        <translation type="unfinished">Абсолютный</translation>
+        <translation>Абсолютный</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="121"/>
         <source>Relative</source>
-        <translation type="unfinished">Относительный</translation>
+        <translation>Относительный</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="172"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Выбор каталога</translation>
+        <translation>Выбор каталога</translation>
     </message>
 </context>
 <context>
@@ -9451,12 +9452,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="107"/>
         <source>Tabs</source>
-        <translation type="unfinished">Вкладки</translation>
+        <translation>Вкладки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="108"/>
         <source>Playlist</source>
-        <translation type="unfinished">Плейлист</translation>
+        <translation>Плейлист</translation>
     </message>
 </context>
 <context>
@@ -9464,32 +9465,32 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="55"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished">Расширить вкладки на всё доступное пространство</translation>
+        <translation>Расширить вкладки на всё доступное пространство</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="56"/>
         <source>Show add button</source>
-        <translation type="unfinished">Показывать кнопку для добавления</translation>
+        <translation>Показывать кнопку для добавления</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="57"/>
         <source>Show clear button</source>
-        <translation type="unfinished">Показывать кнопку для очистки</translation>
+        <translation>Показывать кнопку для очистки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="58"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished">Показывать кнопку удаления на вкладках</translation>
+        <translation>Показывать кнопку удаления на вкладках</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="59"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished">Удалять плейлисты щелчком средней кнопки</translation>
+        <translation>Удалять плейлисты щелчком средней кнопки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="61"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">Лента плейлистов</translation>
+        <translation>Вкладки плейлистов</translation>
     </message>
 </context>
 <context>
@@ -11485,7 +11486,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="75"/>
         <source>e.g. &quot;%1&quot;</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>например, «%1»</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="78"/>
@@ -11551,17 +11552,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="170"/>
         <source>Reset to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Сброс к значению по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="171"/>
         <source>Add shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить сочетание клавиш</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="175"/>
         <source>Filter shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтр сочетаний клавиш</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="197"/>
@@ -11571,7 +11572,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="306"/>
         <source>Remove shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить сочетание клавиш</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="173"/>
@@ -12226,32 +12227,32 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="51"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Применить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="114"/>
         <source>Unsaved Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Несохранённые изменения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="115"/>
         <source>There are unsaved tag changes. Save before switching tracks?</source>
-        <translation type="unfinished"></translation>
+        <translation>Есть несохранённые изменения тегов. Сохранить перед переключением дорожек?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="136"/>
         <source>Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="137"/>
         <source>Metadata in the associated files will be overwritten.</source>
-        <translation type="unfinished">Метаданные в связанных файлах будут перезаписаны.</translation>
+        <translation>Метаданные в связанных файлах будут перезаписаны.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="139"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Не спрашивать снова</translation>
+        <translation>Не спрашивать снова</translation>
     </message>
 </context>
 <context>
@@ -12259,7 +12260,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="74"/>
         <source>Tag Editor</source>
-        <translation type="unfinished">Редактор тегов</translation>
+        <translation>Редактор тегов</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="78"/>
@@ -13755,24 +13756,26 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="46"/>
         <source>Automatic detection</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматическое определение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="73"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0-255 scale.</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать стандартное преобразование байтов POPM в fooyin при чтении и записи оценок MP3.
+Это поддерживает промежуточные значения оценки, но не рассматривает байт POPM как полностью линейную шкалу 0–255.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="79"/>
         <source>Use common POPM byte values for whole-star ratings only.
 Intermediate ratings are rounded to one, two, three, four, or five stars.</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать стандартные байтовые значения POPM только для целых звёзд.
+Промежуточные оценки округляются до одной, двух, трёх, четырёх или пяти звёзд.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="83"/>
         <source>Map fooyin ratings directly onto the full POPM byte range.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сопоставлять оценки fooyin напрямую со всем диапазоном байтов POPM.</translation>
     </message>
 </context>
 <context>
