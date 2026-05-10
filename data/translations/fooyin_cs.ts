@@ -326,12 +326,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
         <source>Rating shown as stars</source>
-        <translation>Hodnocení (★ – ★★★★★)</translation>
+        <translation>Hodnocení - hvězdy (★ – ★★★★★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="165"/>
         <source>Rating editor representation</source>
-        <translation>Hodnocení (1 – 10; 2 == ★)</translation>
+        <translation>Hodnocení - celé číslo (1 – 10; 2 == ★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
@@ -512,17 +512,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Numeric rating in stars</source>
-        <translation>Hodnocení (0.1 – 5; 1 == ★)</translation>
+        <translation>Hodnocení - s plovoucí des. čárkou (0.1 – 5; 1 == ★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalized rating</source>
-        <translation>Hodnocení (0.1 – 1; 0.2 == ★)</translation>
+        <translation>Hodnocení - normalizované s plovoucí des. čárkou (0.1 – 1; 0.2 == ★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="163"/>
         <source>Rating shown as stars with trailing empty stars</source>
-        <translation>Hodnocení (☆☆☆☆☆ – ★★★★★)</translation>
+        <translation>Hodnocení - hvězdy (☆☆☆☆☆ – ★★★★★)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="179"/>
