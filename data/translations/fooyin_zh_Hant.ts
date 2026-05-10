@@ -12877,10 +12877,10 @@ This does not support full scripting.</source>
 Higher values can improve detail, but may increase CPU usage.
 For best results at higher values, increase Number of samples as well.
 Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can produce artifacts.</source>
-        <translation type="unfinished">Internal horizontal render scale for the waveform.
-Higher values can improve detail, but may increase CPU usage.
-For best results at higher values, increase Number of samples as well.
-Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can produce artifacts.</translation>
+        <translation>波形的內部水平渲染比例。
+較高的數值可以提升細節，但可能會增加 CPU 使用率。
+為了在較高數值下獲得最佳結果，請同時提高樣本數。
+超級採樣適用於間距為 0 px 的 1 px 條列；其他條列大小則可能會產生人工瑕疵。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
@@ -12992,9 +12992,9 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
         <source>Number of samples (per channel) to use for waveform data.
 Higher values produce a more accurate and detailed waveform, but use more disk space in the cache.
 Higher supersampling values work best with higher sample counts.</source>
-        <translation type="unfinished">Number of samples (per channel) to use for waveform data.
-Higher values produce a more accurate and detailed waveform, but use more disk space in the cache.
-Higher supersampling values work best with higher sample counts.</translation>
+        <translation>用於波形資料的樣本數量 (各個通道)。 
+較高的數值會產生更為準確詳細的波形，但會在快取中使用更多的磁碟空間。 
+較高的超級採樣數值與較高的採樣計數，配合效果最佳。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="217"/>
