@@ -6,67 +6,67 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="171"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="175"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">添加至目前播放清單</translation>
+        <translation>添加至目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="178"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">添加至現行播放清單</translation>
+        <translation>添加至作用播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="181"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">取代目前播放清單</translation>
+        <translation>取代目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">建立新的播放清單</translation>
+        <translation>建立新的播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="188"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">添加至播放佇列</translation>
+        <translation>添加至播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="191"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>佇列排至播放下一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="194"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished">取代播放佇列</translation>
+        <translation>取代播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="198"/>
         <source>Set as root</source>
-        <translation type="unfinished">設為根目錄</translation>
+        <translation>設定作為根目錄</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="201"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>檢視模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="204"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>調整設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="336"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">目錄瀏覽器</translation>
+        <translation>目錄瀏覽器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="338"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>未勾選的項目將從目錄瀏覽器彈出選單中隱藏。</translation>
     </message>
 </context>
 <context>
@@ -491,7 +491,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="316"/>
         <source>Returns one split segment (1-based index)</source>
-        <translation type="unfinished">Returns one split segment (1-based index)</translation>
+        <translation>回傳一個分割的區段 (1-based index)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="423"/>
@@ -512,12 +512,12 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Numeric rating in stars</source>
-        <translation type="unfinished"></translation>
+        <translation>星等評分</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalized rating</source>
-        <translation type="unfinished"></translation>
+        <translation>正常化評分</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="163"/>
@@ -692,27 +692,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Divides the first value by the second</source>
-        <translation type="unfinished">Divides the first value by the second</translation>
+        <translation>將第一個數值除以第二個數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Returns the smallest numeric value</source>
-        <translation type="unfinished">Returns the smallest numeric value</translation>
+        <translation>回傳最小的數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Returns the largest numeric value</source>
-        <translation type="unfinished">Returns the largest numeric value</translation>
+        <translation>回傳最大的數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
         <source>Returns the remainder of a division</source>
-        <translation type="unfinished">Returns the remainder of a division</translation>
+        <translation>回傳除法計算的餘數</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="280"/>
         <source>Returns a random number in range</source>
-        <translation type="unfinished">Returns a random number in range</translation>
+        <translation>回傳範圍內的隨機數字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
@@ -775,7 +775,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
         <source>Returns a slice of text</source>
-        <translation type="unfinished">Returns a slice of text</translation>
+        <translation>回傳一段文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="293"/>
@@ -785,12 +785,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="295"/>
         <source>Returns characters from the left</source>
-        <translation type="unfinished">Returns characters from the left</translation>
+        <translation>回傳左側的字元</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="298"/>
         <source>Returns characters from the right</source>
-        <translation type="unfinished">Returns characters from the right</translation>
+        <translation>回傳右側的字元</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="301"/>
@@ -800,37 +800,37 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="302"/>
         <source>Returns a substring</source>
-        <translation type="unfinished">Returns a substring</translation>
+        <translation>回傳擷取字串</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="304"/>
         <source>Finds a substring position</source>
-        <translation type="unfinished">Finds a substring position</translation>
+        <translation>尋找擷取字串位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="307"/>
         <source>Finds a substring position ignoring case</source>
-        <translation type="unfinished">Finds a substring position ignoring case</translation>
+        <translation>尋找擷取字串位置 忽略大小寫</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="310"/>
         <source>Finds the last substring position</source>
-        <translation type="unfinished">Finds the last substring position</translation>
+        <translation>尋找最後一個擷取字串位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="313"/>
         <source>Finds the last substring position ignoring case</source>
-        <translation type="unfinished">Finds the last substring position ignoring case</translation>
+        <translation>尋找最後一個擷取字串位置 忽略大小寫</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="318"/>
         <source>Returns the text length</source>
-        <translation type="unfinished">Returns the text length</translation>
+        <translation>回傳文字長度</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="320"/>
         <source>Returns the longest string</source>
-        <translation type="unfinished">Returns the longest string</translation>
+        <translation>回傳最長的字串</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="322"/>
@@ -850,17 +850,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="328"/>
         <source>Returns the unit separator character</source>
-        <translation type="unfinished">Returns the unit separator character</translation>
+        <translation>回傳單位分隔字元</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="330"/>
         <source>Returns a newline</source>
-        <translation type="unfinished">Returns a newline</translation>
+        <translation>回傳新換行列</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="332"/>
         <source>Returns a tab character</source>
-        <translation type="unfinished">Returns a tab character</translation>
+        <translation>回傳一個定位字元</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="335"/>
@@ -915,7 +915,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
         <source>Returns a directory name from a path</source>
-        <translation type="unfinished">Returns a directory name from a path</translation>
+        <translation>回傳目錄名稱來自路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="357"/>
@@ -928,7 +928,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="359"/>
         <source>Returns a parent directory path</source>
-        <translation type="unfinished">Returns a parent directory path</translation>
+        <translation>回傳上層目錄路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="361"/>
@@ -991,7 +991,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
         <source>Returns the value stored in a script variable</source>
-        <translation type="unfinished">Returns the value stored in a script variable</translation>
+        <translation>回傳儲存於腳本變數中的值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="389"/>
@@ -1003,42 +1003,42 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="391"/>
         <source>Stores a script variable and returns the value</source>
-        <translation type="unfinished">Stores a script variable and returns the value</translation>
+        <translation>儲存腳本變數並回傳該值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
         <source>Stores a script variable and returns nothing</source>
-        <translation type="unfinished">Stores a script variable and returns nothing</translation>
+        <translation>儲存腳本變數且不作回傳</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="397"/>
         <source>Returns true when all expressions are true</source>
-        <translation type="unfinished">Returns true when all expressions are true</translation>
+        <translation>回傳真值 當全部表述均為真值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="399"/>
         <source>Returns the opposite truth value</source>
-        <translation type="unfinished">Returns the opposite truth value</translation>
+        <translation>回傳相反的真假值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="402"/>
         <source>Returns true when at least one expression is true</source>
-        <translation type="unfinished">Returns true when at least one expression is true</translation>
+        <translation>回傳真值 當最後一個表述為真值時</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="405"/>
         <source>Returns true when an odd number of expressions are true</source>
-        <translation type="unfinished">Returns true when an odd number of expressions are true</translation>
+        <translation>回傳真值 當表述式為真值的數目為奇數時</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="408"/>
         <source>Returns then when condition is true</source>
-        <translation type="unfinished">Returns then when condition is true</translation>
+        <translation>回傳 then 當條件為 true 時</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="427"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with &quot;, &quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>依照名稱尋找原始標籤欄位。多個數值則以 &quot;,&quot; 間隔。</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
@@ -1057,12 +1057,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="411"/>
         <source>Returns the first non-empty value</source>
-        <translation type="unfinished">Returns the first non-empty value</translation>
+        <translation>回傳第一個非空白值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="414"/>
         <source>Returns the first true value from a list, or else when none match</source>
-        <translation type="unfinished">Returns the first true value from a list, or else when none match</translation>
+        <translation>回傳來自清單中第一個真值，或是其他值 當無所符合時</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="417"/>
@@ -1084,7 +1084,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="431"/>
         <source>Looks up a raw tag field by name and returns the zero-based indexed value.</source>
-        <translation type="unfinished"></translation>
+        <translation>依照名稱尋找原始標籤欄位，並傳回基於零的索引值。</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="433"/>
@@ -1822,7 +1822,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="468"/>
         <source>Built-in icon missing.</source>
-        <translation type="unfinished"></translation>
+        <translation>內建圖示遺失。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="472"/>
@@ -1886,7 +1886,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="122"/>
         <source>Use command icon</source>
-        <translation type="unfinished"></translation>
+        <translation>使用指令的圖示</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="128"/>
@@ -1926,17 +1926,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="149"/>
         <source>Choose a built-in icon or custom image. If none is set, the button uses the command&apos;s default icon.</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇內建圖示或自訂圖片。若無設定，則按鈕使用指令的預設圖示。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="156"/>
         <source>Built-in</source>
-        <translation type="unfinished"></translation>
+        <translation>內建</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="158"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>自訂</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="172"/>
@@ -2253,17 +2253,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="191"/>
         <source>Semicolon-separated extensions where FFmpeg is tried before other decoders and tag readers.</source>
-        <translation type="unfinished"></translation>
+        <translation>以分號分隔的擴充程式，其中 FFmpeg 會在其他解碼器和標籤讀取器之前被嘗試使用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="195"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>偏好 FFmpeg 用於擴充程式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="197"/>
         <source>e.g. &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>例如 &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="203"/>
@@ -2423,17 +2423,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="579"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>檢視模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="582"/>
         <source>List</source>
-        <translation type="unfinished">清單</translation>
+        <translation>清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="591"/>
         <source>Tree</source>
-        <translation type="unfinished">樹階</translation>
+        <translation>樹階</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="193"/>
@@ -2751,15 +2751,15 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="237"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed.
 During crossfades, each track is processed independently.</source>
-        <translation type="unfinished">Per-track DSPs are applied to each stream separately before tracks are mixed.
-During crossfades, each track is processed independently.</translation>
+        <translation>在混音之前，各個曲目音軌 DSP 即會分別地套用至每個串流。
+在交叉淡入淡出期間，每個曲目音軌都是獨立處理的。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="239"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal.
 Effects here process the final combined output.</source>
-        <translation type="unfinished">Master DSPs are applied after all active tracks are mixed into one signal.
-Effects here process the final combined output.</translation>
+        <translation>主控 DSPs 即為套用，在全部作用中的曲目均混合為單一訊號之後。
+音效在此處理最終的合併輸出。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="242"/>
@@ -2906,85 +2906,85 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/gui/editablelayout.cpp" line="417"/>
         <location filename="../../src/gui/editablelayout.cpp" line="534"/>
         <source>&amp;Before</source>
-        <translation type="unfinished"></translation>
+        <translation>之前(&amp;B)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="407"/>
         <location filename="../../src/gui/editablelayout.cpp" line="422"/>
         <location filename="../../src/gui/editablelayout.cpp" line="541"/>
         <source>&amp;After</source>
-        <translation type="unfinished"></translation>
+        <translation>之後(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="429"/>
         <location filename="../../src/gui/editablelayout.cpp" line="552"/>
         <source>&amp;Inside</source>
-        <translation type="unfinished"></translation>
+        <translation>內部(&amp;I)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="462"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">齊左(&amp;L)</translation>
+        <translation>齊左(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="462"/>
         <source>&amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>往上(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="469"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">齊右(&amp;R)</translation>
+        <translation>齊右(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="469"/>
         <source>&amp;Down</source>
-        <translation type="unfinished"></translation>
+        <translation>往下(&amp;D)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>Far Lef&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>最左方(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>&amp;Top</source>
-        <translation type="unfinished"></translation>
+        <translation>頂部(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
         <source>Far Rig&amp;ht</source>
-        <translation type="unfinished"></translation>
+        <translation>最右方(&amp;H)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
         <source>&amp;Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>底部(&amp;B)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="506"/>
         <source>Remove spli&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>移除分割(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="520"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished">貼上(&amp;P)</translation>
+        <translation>貼上(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="523"/>
         <source>Rep&amp;lace</source>
-        <translation type="unfinished"></translation>
+        <translation>取代(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="580"/>
         <source>Parent: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>上層： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="595"/>
         <source>R&amp;eplace</source>
-        <translation type="unfinished"></translation>
+        <translation>取代(&amp;E)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="600"/>
@@ -2994,7 +2994,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="608"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">複製(&amp;C)</translation>
+        <translation>複製(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="621"/>
@@ -3004,7 +3004,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="630"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished">移除(&amp;R)</translation>
+        <translation>移除(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="697"/>
@@ -3428,7 +3428,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="234"/>
         <source>Overlapping fades for seek and track changes. Auto track change uses overlap; use Between tracks above for non-overlapping fades.</source>
-        <translation type="unfinished">Overlapping fades for seek and track changes. Auto track change uses overlap; use Between tracks above for non-overlapping fades.</translation>
+        <translation>重疊淡入淡出效果，用於尋找和曲目變更。自動曲目變更會使用重疊；使用上方的 曲目之間 ，則用於非重疊淡入淡出。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="188"/>
@@ -4168,17 +4168,17 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="811"/>
         <source>Use embedded covers</source>
-        <translation type="unfinished"></translation>
+        <translation>使用內嵌的封面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="812"/>
         <source>Use directory covers</source>
-        <translation type="unfinished"></translation>
+        <translation>使用目錄的封面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="813"/>
         <source>Use default source</source>
-        <translation type="unfinished"></translation>
+        <translation>使用預設來源</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="892"/>
@@ -4483,12 +4483,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="686"/>
         <source>Clear Current Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>清除目前的播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="687"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">移除全部曲目 從目前播放清單</translation>
+        <translation>移除全部曲目 從目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="712"/>
@@ -5141,8 +5141,8 @@ Effects here process the final combined output.</translation>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="110"/>
         <source>Used for the half-step portion of %rating_stars% and %rating_stars_padded%.
 If the default half-star does not render correctly with your system font, choose a different symbol here.</source>
-        <translation type="unfinished">Used for the half-step portion of %rating_stars% and %rating_stars_padded%.
-If the default half-star does not render correctly with your system font, choose a different symbol here.</translation>
+        <translation>用於 %rating_stars% 和 %rating_stars_padded% 中的半顆星部分。 
+如果預設的半顆星符號無法依照您的系統字型正確呈現，請在此處選擇其他符號。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="113"/>
@@ -5717,7 +5717,7 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="161"/>
         <source>e.g. &quot;%1&quot;</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>例如 &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="164"/>
@@ -5910,17 +5910,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="122"/>
         <source>General</source>
-        <translation type="unfinished">通則</translation>
+        <translation>通則</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="123"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="123"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料</translation>
     </message>
 </context>
 <context>
@@ -5928,44 +5928,44 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="54"/>
         <source>Use &apos;Various Artists&apos; for compilations</source>
-        <translation type="unfinished">使用 &quot;Various Artists&quot; 作為合輯藝人</translation>
+        <translation>使用 &quot;Various Artists&quot; 作為合輯藝人</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="55"/>
         <source>Save ratings to file tags when possible</source>
-        <translation type="unfinished">盡可能將評分儲存至檔案標籤</translation>
+        <translation>盡可能將評分儲存至檔案標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="56"/>
         <source>Save playcounts to file tags when possible</source>
-        <translation type="unfinished">盡可能將播放次數儲存至檔案標籤</translation>
+        <translation>盡可能將播放次數儲存至檔案標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="57"/>
         <source>Overwrite rating in database when songs are re-read</source>
-        <translation type="unfinished">重新讀取歌曲時 覆蓋資料庫中的評分</translation>
+        <translation>重新讀取歌曲時 覆蓋資料庫中的評分</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="58"/>
         <source>Overwrite playcount in database when files are re-read</source>
-        <translation type="unfinished">重新讀取檔案時 覆蓋資料庫中的播放計數</translation>
+        <translation>當檔案重新讀取時 覆蓋資料庫中的播放計數</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="60"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="66"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">播放統計</translation>
+        <translation>播放統計</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="69"/>
         <source>When enabled, a rating found in file tags replaces the database rating.
 When disabled, the database rating is kept and file tags are only used when the database rating is empty.</source>
-        <translation type="unfinished">當設作啟用後，檔案標籤中的評分將取代資料庫的評分。 
-當設為停用後，將保留資料庫評分，僅當資料庫評分為空白時才使用檔案標籤。</translation>
+        <translation>當設為啟用，檔案標籤中的評分將取代資料庫的評分。 
+當設為停用，將保留資料庫評分，僅當資料庫評分為空白時才使用檔案標籤。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="73"/>
@@ -5973,8 +5973,8 @@ When disabled, the database rating is kept and file tags are only used when the 
 Missing values still fall back to the database.
 When disabled, playcount uses the higher value, first played uses the earlier non-empty value,
 and last played uses the later value.</source>
-        <translation type="unfinished">當設為啟用後，檔案標籤中的播放計數和播放時間戳記會取代資料庫中的數值。 
-遺失數值時仍會退回至資料庫。 
+        <translation>當設為啟用時，檔案標籤中的播放計數和播放時間戳記會取代資料庫中的數值。 
+遺失數值時仍會回歸返回至資料庫。 
 當設為停用時，播放計數使用較高的數值，首次播放使用較早的非空白數值， 
 最後播放的內容使用較後期的數值。</translation>
     </message>
@@ -6007,17 +6007,17 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="281"/>
         <source>Ratings</source>
-        <translation type="unfinished">評分</translation>
+        <translation>評分</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="282"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="282"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料</translation>
     </message>
 </context>
 <context>
@@ -6025,118 +6025,119 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="140"/>
         <source>Read ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取 ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="141"/>
         <source>Write ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入 ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="144"/>
         <source>Read WM/SharedUserRating</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取 WM/SharedUserRating</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="145"/>
         <source>Write WM/SharedUserRating</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入 WM/SharedUserRating</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="154"/>
         <source>Tag field to read rating values from. Automatic detection prefers FMPS_RATING, then RATING.</source>
-        <translation type="unfinished"></translation>
+        <translation>用於讀取評分數值的標籤欄位。自動偵測優先選用 FMPS_RATING，其次是 RATING。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="155"/>
         <source>How text rating values are interpreted. Automatic detection handles common rating formats; other choices use the selected scale exactly.</source>
-        <translation type="unfinished"></translation>
+        <translation>如何解讀文字評分數值。自動偵測處理常見的評分格式；其他選擇則完全使用所選的大小比例。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="159"/>
         <source>Tag field used when saving ratings as text metadata. Unrated tracks remove this tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>將評分儲存為文字詮釋資料時所使用的標籤欄位。尚未評分的曲目則會移此標籤。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="160"/>
         <source>Value range used when saving rated values as text metadata. Unrated tracks remove the rating tag instead of writing zero.</source>
-        <translation type="unfinished"></translation>
+        <translation>當將評分數值儲存為文字詮釋資料時所使用數值的範圍。尚未評分的曲目則移除評分標籤，而非寫入零值。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="163"/>
         <source>Read ratings from ID3 POPM frames in MP3 files before text rating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>在文字評分標籤之前，從 MP3 檔案中的 ID3 POPM 框架來讀取評分。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="165"/>
         <source>Additionally save ratings to ID3 POPM frames when writing MP3 files. Other formats are unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>此外，在寫入 MP3 檔案時，將評分儲存到 ID3 POPM 框架。其他格式則不受影響。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="167"/>
         <source>Owner identifier for POPM frames. Leave empty to read the first POPM frame and write an empty owner.</source>
-        <translation type="unfinished"></translation>
+        <translation>擁有者識別碼 用於 POPM 框架。留下空白以讀取第一個 POPM 框架，並寫入空白擁有者。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="168"/>
         <source>Conversion table used between fooyin ratings and POPM byte values.</source>
-        <translation type="unfinished"></translation>
+        <translation>轉換表已經使用於 fooyin 評分和 POPM 位元組數值之間。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="170"/>
         <source>Read ratings from WM/SharedUserRating attributes in ASF/WMA files after text rating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取評分來自 ASF/WMA 檔案，在文字評分標籤之後的，其中的 WM/SharedUserRating 屬性。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="172"/>
         <source>Additionally save ratings to WM/SharedUserRating attributes when writing ASF/WMA files.
 This improves compatibility with other players, but stores whole-star values only.</source>
-        <translation type="unfinished"></translation>
+        <translation>此外，當寫入 ASF/WMA 檔案時，將評分儲存至 WM/SharedUserRating 屬性。
+這將提高與其他播放器的兼容性，但僅會儲存整個星星數值。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="175"/>
         <source>Rating Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>評分標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
         <source>ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="179"/>
         <source>ASF/WMA</source>
-        <translation type="unfinished"></translation>
+        <translation>ASF/WMA</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="183"/>
         <source>Read text rating from</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取文字評分來自</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="185"/>
         <source>Read value scale</source>
-        <translation type="unfinished"></translation>
+        <translation>讀取數值大小比例</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="187"/>
         <source>Write text rating to</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入文字評分至</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="189"/>
         <source>Write value scale</source>
-        <translation type="unfinished"></translation>
+        <translation>寫入數值大小比例</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="198"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>擁有者</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="200"/>
         <source>Mapping</source>
-        <translation type="unfinished"></translation>
+        <translation>對映</translation>
     </message>
 </context>
 <context>
@@ -8340,37 +8341,37 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="59"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">顯示捲軸</translation>
+        <translation>顯示捲軸</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="60"/>
         <source>Show header</source>
-        <translation type="unfinished">顯示標題</translation>
+        <translation>顯示標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="61"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">替用行列顏色</translation>
+        <translation>替用行列顏色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="73"/>
         <source>Image Padding</source>
-        <translation type="unfinished">圖片充填</translation>
+        <translation>圖片充填</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="77"/>
         <source>Left/Right</source>
-        <translation type="unfinished">左/右</translation>
+        <translation>左/右</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="79"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="83"/>
         <source>Appearance</source>
-        <translation type="unfinished">外觀</translation>
+        <translation>外觀</translation>
     </message>
 </context>
 <context>
@@ -8793,12 +8794,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="129"/>
         <source>Appearance</source>
-        <translation type="unfinished">外觀</translation>
+        <translation>外觀</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="130"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放清單</translation>
+        <translation>播放清單</translation>
     </message>
 </context>
 <context>
@@ -9195,7 +9196,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
         <source>Align subheaders to edge of image columns</source>
-        <translation type="unfinished">Align subheaders to edge of image columns</translation>
+        <translation>將擷取標題對齊至圖片欄位邊緣</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="229"/>
@@ -9259,12 +9260,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="183"/>
         <source>Saving</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存中</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="184"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放清單</translation>
+        <translation>播放清單</translation>
     </message>
 </context>
 <context>
@@ -9272,72 +9273,72 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="72"/>
         <source>Write metadata</source>
-        <translation type="unfinished">寫入資料</translation>
+        <translation>寫入詮釋資料</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="73"/>
         <source>Auto-export</source>
-        <translation type="unfinished">自動匯出</translation>
+        <translation>自動匯出</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="76"/>
         <source>Move deleted or empty playlists to trash</source>
-        <translation type="unfinished">將已經刪除的或空白的播放清單移至垃圾箱</translation>
+        <translation>將已經刪除的或空白的播放清單移至垃圾箱</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="77"/>
         <source>Save last state of deleted playlists</source>
-        <translation type="unfinished">儲存已經刪除的播放清單的最後狀態</translation>
+        <translation>儲存已經刪除的播放清單的最後狀態</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="79"/>
         <source>Save any changes made to a playlist before it was deleted</source>
-        <translation type="unfinished">儲存所做任何變更至播放清單 在它被刪除之前</translation>
+        <translation>儲存所做任何變更至播放清單 在它被刪除之前</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="84"/>
         <source>Saving</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存中</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="88"/>
         <source>Path type</source>
-        <translation type="unfinished">路徑型式</translation>
+        <translation>路徑類型</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="93"/>
         <source>Export and synchronise playlists in the specified format and location</source>
-        <translation type="unfinished">依指定格式及位置，匯出且同步播放清單</translation>
+        <translation>匯出並同步播放清單，依所指定的格式及位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="104"/>
         <source>Format</source>
-        <translation type="unfinished">格式</translation>
+        <translation>格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="106"/>
         <source>Location</source>
-        <translation type="unfinished">位置</translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="119"/>
         <source>Auto</source>
-        <translation type="unfinished">自動</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="120"/>
         <source>Absolute</source>
-        <translation type="unfinished">絕對的</translation>
+        <translation>絕對的</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="121"/>
         <source>Relative</source>
-        <translation type="unfinished">相對的</translation>
+        <translation>相對的</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="172"/>
         <source>Select Directory</source>
-        <translation type="unfinished">選擇目錄</translation>
+        <translation>選擇目錄</translation>
     </message>
 </context>
 <context>
@@ -9419,12 +9420,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="107"/>
         <source>Tabs</source>
-        <translation type="unfinished">選項卡</translation>
+        <translation>選項頁</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="108"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放清單</translation>
+        <translation>播放清單</translation>
     </message>
 </context>
 <context>
@@ -9432,32 +9433,32 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="55"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished">展開選項卡填寫空白處</translation>
+        <translation>展開選項頁以填寫空位</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="56"/>
         <source>Show add button</source>
-        <translation type="unfinished">顯示添加按鈕</translation>
+        <translation>顯示添加按鈕</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="57"/>
         <source>Show clear button</source>
-        <translation type="unfinished">顯示清空按鈕</translation>
+        <translation>顯示清除按鈕</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="58"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished">在選項卡上顯示刪除按鈕</translation>
+        <translation>顯示刪除按鈕在選項頁上</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="59"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished">用中鍵點選時刪除播放清單</translation>
+        <translation>用中鍵點選時刪除播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="61"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">播放清單選項卡</translation>
+        <translation>播放清單選項頁</translation>
     </message>
 </context>
 <context>
@@ -11447,7 +11448,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="75"/>
         <source>e.g. &quot;%1&quot;</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>以分號分隔檔案副檔名範例 (例如 mp3;m4a)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="78"/>
@@ -11513,17 +11514,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="170"/>
         <source>Reset to default</source>
-        <translation type="unfinished"></translation>
+        <translation>重新設定至預設</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="171"/>
         <source>Add shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>添加快速鍵</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="175"/>
         <source>Filter shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>篩選快速鍵</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="197"/>
@@ -11533,7 +11534,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="306"/>
         <source>Remove shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>移除快速鍵</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="173"/>
@@ -12188,32 +12189,32 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="51"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>套用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="114"/>
         <source>Unsaved Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>尚未儲存變更</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="115"/>
         <source>There are unsaved tag changes. Save before switching tracks?</source>
-        <translation type="unfinished"></translation>
+        <translation>有尚未儲存的標籤變更。切換曲目之前進行儲存？</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="136"/>
         <source>Are you sure?</source>
-        <translation type="unfinished">您確定嗎？</translation>
+        <translation>您確定嗎？</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="137"/>
         <source>Metadata in the associated files will be overwritten.</source>
-        <translation type="unfinished">關聯檔案中的詮釋資料將會被覆蓋。</translation>
+        <translation>關聯檔案中的詮釋資料將會被覆蓋。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="139"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">不再顯示此訊息</translation>
+        <translation>不再顯示此訊息</translation>
     </message>
 </context>
 <context>
@@ -12221,7 +12222,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="74"/>
         <source>Tag Editor</source>
-        <translation type="unfinished">標籤編輯器</translation>
+        <translation>標籤編輯器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="78"/>
@@ -13713,24 +13714,26 @@ Higher supersampling values work best with higher sample counts.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="46"/>
         <source>Automatic detection</source>
-        <translation type="unfinished"></translation>
+        <translation>自動偵測</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="73"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0-255 scale.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 fooyin 預設的 POPM 位元組轉換，當讀寫 MP3 評分級時。
+這項支援中間的評分步驟，但不會將 POPM 位元組視為完全線性的 0-255 範圍。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="79"/>
         <source>Use common POPM byte values for whole-star ratings only.
 Intermediate ratings are rounded to one, two, three, four, or five stars.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用通用 POPM 位元組數值，僅用於整個星星評分。
+中間評分採取四捨五入成為一星、二星、三星、四星、五星。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="83"/>
         <source>Map fooyin ratings directly onto the full POPM byte range.</source>
-        <translation type="unfinished"></translation>
+        <translation>將 fooyin 評分直接對映至完整的 POPM 位元組範圍。</translation>
     </message>
 </context>
 <context>
