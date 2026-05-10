@@ -6438,12 +6438,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="86"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</source>
-        <translation type="unfinished">Use &lt;code&gt;||&lt;/code&gt; to split tree levels. &lt;b&gt;Sort Grouping&lt;/b&gt; must use the same &lt;code&gt;||&lt;/code&gt; level structure as &lt;b&gt;Display Grouping&lt;/b&gt;; each sort level applies to the matching display level, and a sort level may be empty (for example &lt;code&gt;||%year%||&lt;/code&gt;).</translation>
+        <translation>使用 &lt;code&gt;||&lt;/code&gt; 來切分樹階層級。 &lt;b&gt;排序群組&lt;/b&gt; 必須使用相同的 &lt;code&gt;||&lt;/code&gt; 層級結構作為 &lt;b&gt;顯示群組&lt;/b&gt;；每個排序層級套用至相符的顯示層級，且排序層級可以是空白的(例如 &lt;code&gt;||%year%||&lt;/code&gt;)。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</source>
-        <translation type="unfinished">Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</translation>
+        <translation>在顯示層級中使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 以顯示文字靠右對齊。使用 &lt;code&gt;%trackcount%&lt;/code&gt; 來表示曲目數量；使用 &lt;code&gt;%childcount%&lt;/code&gt; 來表示下層節點數量。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
@@ -7808,12 +7808,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="116"/>
         <source>Decode starts/resumes when buffered audio drops below this watermark</source>
-        <translation type="unfinished">Decode starts/resumes when buffered audio drops below this watermark</translation>
+        <translation>開始/繼續解碼，當緩衝的音訊低於此水位印記之時</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="117"/>
         <source>Decode pauses when buffered audio reaches this watermark</source>
-        <translation type="unfinished">Decode pauses when buffered audio reaches this watermark</translation>
+        <translation>解碼暫停，當緩衝的音訊到達此水位印記之時</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="121"/>
@@ -7868,15 +7868,15 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="171"/>
         <source>Resume decoding below %Ln ms</source>
-        <translation type="unfinished">
-            <numerusform>Resume decoding below %Ln ms</numerusform>
+        <translation>
+            <numerusform>恢復繼續解碼，低於 %Ln ms</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="172"/>
         <source>Pause decoding at %Ln ms</source>
-        <translation type="unfinished">
-            <numerusform>Pause decoding at %Ln ms</numerusform>
+        <translation>
+            <numerusform>暫停解碼 在 %Ln ms</numerusform>
         </translation>
     </message>
     <message>
@@ -10173,7 +10173,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="84"/>
         <source>Used with the &quot;Calculate as albums (by tags)&quot; action</source>
-        <translation type="unfinished">Used with the &quot;Calculate as albums (by tags)&quot; action</translation>
+        <translation>使用上連同 &quot;計算專輯 (依照標籤)&quot; 動作</translation>
     </message>
 </context>
 <context>
@@ -11940,8 +11940,8 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="156"/>
         <source>Patterns use literal text and %field% captures.
 This does not support full scripting.</source>
-        <translation type="unfinished">Patterns use literal text and %field% captures.
-This does not support full scripting.</translation>
+        <translation>型式使用 純文字 和 %field% 進行捉取。
+這不支援完整的腳本編寫。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="162"/>
