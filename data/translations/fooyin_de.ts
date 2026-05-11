@@ -2923,7 +2923,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/editablelayout.cpp" line="429"/>
         <location filename="../../src/gui/editablelayout.cpp" line="552"/>
         <source>&amp;Inside</source>
-        <translation>Nach &amp;innen</translation>
+        <translation>H&amp;inein</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="462"/>
@@ -2948,12 +2948,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>Far Lef&amp;t</source>
-        <translation>Nach ganz lin&amp;ks</translation>
+        <translation>Nach ganz l&amp;inks</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>&amp;Top</source>
-        <translation>Nach ganz &amp;oben</translation>
+        <translation>Nach ganz o&amp;ben</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
@@ -2963,7 +2963,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
         <source>&amp;Bottom</source>
-        <translation>Nach ganz &amp;unten</translation>
+        <translation>Nach ganz u&amp;nten</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="506"/>
@@ -2978,7 +2978,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="523"/>
         <source>Rep&amp;lace</source>
-        <translation>Erset&amp;zen</translation>
+        <translation>&amp;Ersetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="580"/>
