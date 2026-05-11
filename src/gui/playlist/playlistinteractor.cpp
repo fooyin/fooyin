@@ -41,6 +41,24 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
+int indexOfFile(const TrackList& tracks, const QUrl& file)
+{
+    const QString filepath = file.toLocalFile();
+    if(filepath.isEmpty()) {
+        return -1;
+    }
+
+    for(int index{0}; const auto& track : tracks) {
+        if(Utils::File::isSamePath(track.filepath(), filepath)
+           || (track.hasCue() && Utils::File::isSamePath(track.cuePath(), filepath))) {
+            return index;
+        }
+        ++index;
+    }
+
+    return -1;
+}
+
 class TrackScanController : public QObject
 {
     Q_OBJECT
@@ -269,6 +287,18 @@ void PlaylistInteractor::filesToNewPlaylist(const QString& playlistName, const Q
     });
 }
 
+void PlaylistInteractor::filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls,
+                                            const QUrl& fileToPlay, bool replace, bool play)
+{
+    if(urls.empty()) {
+        return;
+    }
+
+    scanFiles(urls, [this, playlistName, fileToPlay, replace, play](const TrackList& scannedTracks) {
+        tracksToNewPlaylist(playlistName, scannedTracks, indexOfFile(scannedTracks, fileToPlay), replace, play);
+    });
+}
+
 void PlaylistInteractor::filesToNewPlaylistReplace(const QString& playlistName, const QList<QUrl>& urls, bool play)
 {
     if(urls.empty()) {
@@ -363,6 +393,30 @@ void PlaylistInteractor::tracksToNewPlaylistReplace(const QString& playlistName,
     }
 
     activatePlaylist(m_handler->createPlaylist(playlistName, tracks), play);
+}
+
+void PlaylistInteractor::tracksToNewPlaylist(const QString& playlistName, const TrackList& tracks, int indexToPlay,
+                                             bool replace, bool play)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    indexToPlay = std::max(indexToPlay, 0);
+
+    if(replace) {
+        activatePlaylist(m_handler->createPlaylist(playlistName, tracks), indexToPlay, play);
+        return;
+    }
+
+    if(auto* playlist = m_handler->playlistByName(playlistName)) {
+        const int firstAddedIndex = playlist->trackCount();
+        appendToPlaylist(playlist, tracks);
+        activatePlaylist(playlist, firstAddedIndex + indexToPlay, play);
+        return;
+    }
+
+    activatePlaylist(m_handler->createPlaylist(playlistName, tracks), indexToPlay, play);
 }
 
 void PlaylistInteractor::tracksToActivePlaylist(const TrackList& tracks)

@@ -53,6 +53,8 @@ public:
     void filesToCurrentPlaylist(const QList<QUrl>& urls);
     void filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play = false);
     void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play = false);
+    void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, const QUrl& fileToPlay, bool replace,
+                            bool play = false);
     void filesToNewPlaylistReplace(const QString& playlistName, const QList<QUrl>& urls, bool play = false);
     void filesToActivePlaylist(const QList<QUrl>& urls);
     void loadPlaylist(const QList<QPair<QString, QUrl>>& playlistData, bool play = false);
@@ -95,6 +97,8 @@ private:
     void activatePlaylist(Playlist* playlist, int indexToPlay, bool play = false) const;
     void appendToPlaylist(Playlist* playlist, const TrackList& tracks) const;
     [[nodiscard]] Playlist* appendOrCreateNamedPlaylist(const QString& playlistName, const TrackList& tracks) const;
+    void tracksToNewPlaylist(const QString& playlistName, const TrackList& tracks, int indexToPlay, bool replace,
+                             bool play = false);
 
     template <typename Func>
     void scanFiles(const QList<QUrl>& urls, Func&& func)

@@ -52,6 +52,7 @@ private:
     QLineEdit* m_excludeTypes;
     ScriptLineEdit* m_externalSortScript;
     QCheckBox* m_alwaysSend;
+    QCheckBox* m_openFileAddDirectory;
     QLineEdit* m_externalPlaylist;
 };
 
@@ -61,6 +62,7 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
     , m_excludeTypes{new QLineEdit(this)}
     , m_externalSortScript{new ScriptLineEdit(this)}
     , m_alwaysSend{new QCheckBox(tr("Always replace playlist"), this)}
+    , m_openFileAddDirectory{new QCheckBox(tr("Load files from the same folder when opening one file"), this)}
     , m_externalPlaylist{new QLineEdit(this)}
 {
     auto* fileTypesGroup  = new QGroupBox(tr("File Types"), this);
@@ -80,9 +82,13 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
 
     m_externalPlaylist->setToolTip(
         tr("When opening files, always replace the playlist contents with the incoming tracks"));
+    m_openFileAddDirectory->setToolTip(
+        tr("When opening one file from the file manager, add all supported files from the same folder and play the "
+           "opened file"));
 
     row = 0;
     playlistGroupLayout->addWidget(m_alwaysSend, row++, 0, 1, 2);
+    playlistGroupLayout->addWidget(m_openFileAddDirectory, row++, 0, 1, 2);
     playlistGroupLayout->addWidget(new QLabel(tr("Playlist name") + ":"_L1, this), row, 0);
     playlistGroupLayout->addWidget(m_externalPlaylist, row++, 1);
     playlistGroupLayout->addWidget(new QLabel(tr("Sort incoming tracks by") + ":"_L1, this), row, 0);
@@ -109,6 +115,7 @@ void ShellIntegrationPageWidget::load()
     m_excludeTypes->setText(excludeExtensions.join(u';'));
 
     m_alwaysSend->setChecked(m_settings->value<Settings::Core::OpenFilesSendTo>());
+    m_openFileAddDirectory->setChecked(m_settings->value<Settings::Core::OpenFileAddDirectory>());
     m_externalPlaylist->setText(m_settings->value<Settings::Core::OpenFilesPlaylist>());
     m_externalSortScript->setText(m_settings->value<Settings::Core::ExternalSortScript>());
 }
@@ -121,6 +128,7 @@ void ShellIntegrationPageWidget::apply()
                         m_excludeTypes->text().split(u';', Qt::SkipEmptyParts));
 
     m_settings->set<Settings::Core::OpenFilesSendTo>(m_alwaysSend->isChecked());
+    m_settings->set<Settings::Core::OpenFileAddDirectory>(m_openFileAddDirectory->isChecked());
     m_settings->set<Settings::Core::OpenFilesPlaylist>(m_externalPlaylist->text());
     m_settings->set<Settings::Core::ExternalSortScript>(m_externalSortScript->text());
 }
@@ -131,6 +139,7 @@ void ShellIntegrationPageWidget::reset()
     m_settings->fileRemove(Settings::Core::Internal::ExternalExcludeTypes);
 
     m_settings->reset<Settings::Core::OpenFilesSendTo>();
+    m_settings->reset<Settings::Core::OpenFileAddDirectory>();
     m_settings->reset<Settings::Core::OpenFilesPlaylist>();
     m_settings->reset<Settings::Core::ExternalSortScript>();
 }

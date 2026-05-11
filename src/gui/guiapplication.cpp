@@ -1331,52 +1331,34 @@ void GuiApplicationPrivate::addFolders()
 
 void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls)
 {
-    const bool addDirectory = m_settings->value<Settings::Core::OpenFileAddDirectory>();
+    QList<QUrl> files{urls};
+    QUrl fileToPlay;
 
-    // If the setting is enabled and we're opening a single file
-    if(addDirectory && urls.size() == 1) {
-        const QUrl& url = urls.first();
-        const QFileInfo fileInfo{url.toLocalFile()};
-        const QString directory = fileInfo.absolutePath();
+    if(m_settings->value<Settings::Core::OpenFileAddDirectory>() && urls.size() == 1 && urls.front().isLocalFile()) {
+        const QFileInfo fileInfo{urls.front().toLocalFile()};
+        if(fileInfo.isFile()) {
+            QStringList supportedExtensions
+                = Utils::extensionsToWildcards(m_core->audioLoader()->supportedFileExtensions());
+            supportedExtensions.append(u"*.cue"_s);
 
-        // Get all supported audio files from the directory
-        const QStringList supportedExtensions
-            = Utils::extensionsToWildcards(m_core->audioLoader()->supportedFileExtensions());
-        const QList<QUrl> allFiles = Utils::File::getUrlsInDir(QDir{directory}, supportedExtensions);
-
-        // Find the index of the opened file in the directory's file list
-        int playIndex = -1;
-        for(int i = 0; i < allFiles.size(); ++i) {
-            if(allFiles.at(i).path() == url.path()) {
-                playIndex = i;
-                break;
+            const QList<QUrl> dirFiles = Utils::File::getUrlsInDir(QDir{fileInfo.absolutePath()}, supportedExtensions);
+            if(!dirFiles.empty()) {
+                files      = dirFiles;
+                fileToPlay = urls.front();
             }
         }
-
-        // Scan the files and create/replace playlist
-        const QString playlistName = m_settings->value<Settings::Core::OpenFilesPlaylist>();
-        m_playlistInteractor.filesToTracks(allFiles, [this, playlistName, playIndex](const TrackList& scannedTracks) {
-            // Replace existing playlist with new tracks
-            if(auto* playlist = m_playlistHandler->createPlaylist(playlistName, scannedTracks)) {
-                if(playIndex >= 0) {
-                    playlist->changeCurrentIndex(playIndex);
-                    m_playlistHandler->startPlayback(playlist);
-                    // Show the currently playing track in the playlist
-                    // Wait for the playlist to be loaded before showing the track
-                    QTimer::singleShot(500, m_self, [this]() { m_playlistController->showNowPlaying(); });
-                }
-            }
-        });
     }
-    // Default behavior
+
+    const QString playlistName = m_settings->value<Settings::Core::OpenFilesPlaylist>();
+    const bool replacePlaylist = m_settings->value<Settings::Core::OpenFilesSendTo>();
+    if(!fileToPlay.isEmpty()) {
+        m_playlistInteractor.filesToNewPlaylist(playlistName, files, fileToPlay, replacePlaylist, true);
+    }
+    else if(replacePlaylist) {
+        m_playlistInteractor.filesToNewPlaylistReplace(playlistName, files, true);
+    }
     else {
-        const QString playlistName = m_settings->value<Settings::Core::OpenFilesPlaylist>();
-        if(m_settings->value<Settings::Core::OpenFilesSendTo>()) {
-            m_playlistInteractor.filesToNewPlaylistReplace(playlistName, urls, true);
-        }
-        else {
-            m_playlistInteractor.filesToNewPlaylist(playlistName, urls, true);
-        }
+        m_playlistInteractor.filesToNewPlaylist(playlistName, files, true);
     }
 }
 
