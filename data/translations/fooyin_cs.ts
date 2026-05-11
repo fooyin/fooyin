@@ -12356,7 +12356,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="83"/>
         <source>Whitespace-separated list of separators used when editing multivalue tag fields.</source>
-        <translation>Mezerou oddělený seznam oddělovačů používaných při úpravě vícehodnotových tagů.</translation>
+        <translation>Mezerou rozdělený seznam oddělovačů používaných při úpravě vícehodnotových tagů.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="94"/>
@@ -12371,7 +12371,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="96"/>
         <source>Whitespace-separated list of separators used when auto-filling multivalue tag fields.</source>
-        <translation>Mezerou oddělený seznam oddělovačů používaných při automatickém vyplnění vícehodnotových tagů.</translation>
+        <translation>Mezerou rozdělený seznam oddělovačů používaných při automatickém vyplnění vícehodnotových tagů.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="113"/>
