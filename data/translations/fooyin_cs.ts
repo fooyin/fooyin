@@ -1185,12 +1185,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="448"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep.</source>
-        <translation>Vyhledá tag podle názvu. Vícenásobné hodnoty použijí zadaný oddělovač.</translation>
+        <translation>Vyhledá tag podle názvu. Vícenásobné hodnoty použijí zadaný oddělovač (sep).</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep, using lastsep between the final two values.</source>
-        <translation>Vyhledá tag podle názvu. Vícenásobné hodnoty použijí zadaný oddělovač, poslední dvě hodnoty pak znak koncového oddělovače.</translation>
+        <translation>Vyhledá tag podle názvu. Vícenásobné hodnoty použijí zadaný oddělovač (sep), poslední dvě hodnoty pak znak koncového oddělovače (lastsep).</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="457"/>
