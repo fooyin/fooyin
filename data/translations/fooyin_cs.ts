@@ -74,57 +74,57 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="54"/>
         <source>Widget actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Akce widgetu</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="58"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="61"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdělit</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="64"/>
         <source>Remove split</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit rozdělení</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="68"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopírovat</translation>
+        <translation>Kopírovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
         <source>Paste</source>
-        <translation type="unfinished">Vložit</translation>
+        <translation>Vložit</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
         <source>Move</source>
-        <translation type="unfinished">Přesunout</translation>
+        <translation>Přesunout</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="368"/>
         <source>Layout Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Úprava vzhledu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="370"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nezaškrtnuté položky se nebudou zobrazovat v místní nabídce úpravy vzhledu.</translation>
     </message>
 </context>
 <context>
@@ -1049,7 +1049,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="387"/>
         <source>Returns the four-digit year from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí čtyřmístné číslo roku</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
@@ -1058,27 +1058,27 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="396"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="399"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Čas</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
         <source>Returns the two-digit month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí dvoumístné číslo měsíce</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
         <source>Returns the two-digit day of month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí dvoumístné číslo dne měsíce</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="395"/>
         <source>Returns the date formatted as YYYY-MM-DD</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí datum ve formátu RRRR-MM-DD</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
         <source>Returns the time formatted as HH:MM or HH:MM:SS</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí čas ve formátu hh:mm nebo hh:mm:ss</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
@@ -1130,7 +1130,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="440"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with &quot;, &quot;.</source>
-        <translation>Vyhledá tag podle názvu. Vícenásobné hodnoty budou odděleny prostřednictvím &quot;, &quot;.</translation>
+        <translation>Vyhledá tag podle názvu. Vícehodnotové použijí oddělovač &quot;, &quot;.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="411"/>
@@ -1185,22 +1185,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="448"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledá tag podle názvu. Vícenásobné hodnoty použijí zadaný oddělovač.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep, using lastsep between the final two values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledá tag podle názvu. Vícenásobné hodnoty použijí zadaný oddělovač, poslední dvě hodnoty pak znak koncového oddělovače.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="457"/>
         <source>Returns 1 when all named tag fields exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí 1 pokud všechny zadané tagy existují.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="460"/>
         <source>Returns the number of values in a raw tag field.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí počet hodnot tagu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="462"/>
@@ -1260,7 +1260,7 @@
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="189"/>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="190"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokročilé</translation>
     </message>
 </context>
 <context>
@@ -1268,7 +1268,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="75"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtr</translation>
+        <translation>Filtr</translation>
     </message>
 </context>
 <context>
@@ -2744,7 +2744,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="133"/>
         <source>Plugins</source>
-        <translation type="unfinished">Pluginy</translation>
+        <translation>Pluginy</translation>
     </message>
 </context>
 <context>
@@ -4852,7 +4852,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="411"/>
         <source>Display</source>
-        <translation type="unfinished">Zobrazení</translation>
+        <translation>Zobrazení</translation>
     </message>
 </context>
 <context>
@@ -7113,7 +7113,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="314"/>
         <source>Plugins</source>
-        <translation type="unfinished">Pluginy</translation>
+        <translation>Pluginy</translation>
     </message>
 </context>
 <context>
@@ -7358,7 +7358,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="137"/>
         <source>Plugins</source>
-        <translation type="unfinished">Pluginy</translation>
+        <translation>Pluginy</translation>
     </message>
 </context>
 <context>
@@ -7424,7 +7424,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="141"/>
         <source>Plugins</source>
-        <translation type="unfinished">Pluginy</translation>
+        <translation>Pluginy</translation>
     </message>
 </context>
 <context>
@@ -7642,7 +7642,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Plugins</source>
-        <translation type="unfinished">Pluginy</translation>
+        <translation>Pluginy</translation>
     </message>
 </context>
 <context>
@@ -12282,7 +12282,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="144"/>
         <source>Plugins</source>
-        <translation type="unfinished">Pluginy</translation>
+        <translation>Pluginy</translation>
     </message>
 </context>
 <context>
@@ -12290,7 +12290,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="136"/>
         <source>Use any of &quot;%1&quot; in the editor to enter multiple values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro vložení více hodnot použijte v editoru některý ze znaků „%1“.</translation>
     </message>
 </context>
 <context>
@@ -12346,32 +12346,32 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="81"/>
         <source>Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Úpravy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="82"/>
         <source>Split manually edited multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>Oddělovače pro ruční úpravy vícehodnotových tagů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="83"/>
         <source>Whitespace-separated list of separators used when editing multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezerou oddělený seznam oddělovačů používaných při úpravě vícehodnotových tagů.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="94"/>
         <source>Auto Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky vyplnit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="95"/>
         <source>Split auto-filled multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>Oddělovače pro automatické vyplnění vícehodnotových tagů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="96"/>
         <source>Whitespace-separated list of separators used when auto-filling multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezerou oddělený seznam oddělovačů používaných při automatickém vyplnění vícehodnotových tagů.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="113"/>
@@ -13417,17 +13417,17 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/widgets.cpp" line="411"/>
         <source>Interface</source>
-        <translation type="unfinished">Rozhraní</translation>
+        <translation>Rozhraní</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="412"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished">Limit alokace pro obrázky</translation>
+        <translation>Limit alokace pro obrázky</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="413"/>
         <source>Maximum image allocation size in MB. Set to 0 to disable the limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximální velikost alokace pro obrázky v MB. 0 znamená bez limitu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="418"/>
@@ -13435,69 +13435,69 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <location filename="../../src/gui/widgets.cpp" line="466"/>
         <source>Playback</source>
-        <translation type="unfinished">Přehrávání</translation>
+        <translation>Přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="418"/>
         <location filename="../../src/gui/widgets.cpp" line="426"/>
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <source>Decoding</source>
-        <translation type="unfinished">Dekódování</translation>
+        <translation>Dekódování</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="419"/>
         <source>VBR update interval</source>
-        <translation type="unfinished">Interval aktualizace VBR</translation>
+        <translation>Interval aktualizace VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="420"/>
         <source>Interval used to refresh VBR playback information. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Interval aktualizace hodnot VBR při přehrávání. Nastav 0 pro zakázání.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="427"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished">Povolit všechny podporované přípony</translation>
+        <translation>Povolit všechny podporované přípony</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="428"/>
         <source>Enabled all extensions supported by the FFmpeg input.</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit všechny přípony podporované FFmpeg.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="445"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished">Pro tyto přípony preferovat FFmpeg</translation>
+        <translation>Pro tyto přípony preferovat FFmpeg</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="446"/>
         <source>Semicolon-separated extensions where FFmpeg is tried first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Středníkem rozdělený seznam přípon pro které bude FFmpeg použit jako první.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="467"/>
         <source>Opus header gain</source>
-        <translation type="unfinished">Zesílení v Opus hlavičce</translation>
+        <translation>Zesílení v Opus hlavičce</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="468"/>
         <source>ReplayGain value written to the Opus header when updating metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain hodnota zapisovaná do Opus hlavičky při aktualizaci metadat.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="470"/>
         <source>Use Track Gain</source>
-        <translation type="unfinished">Použít zisk skladby</translation>
+        <translation>Použít zisk skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="472"/>
         <source>Use Album Gain</source>
-        <translation type="unfinished">Použít zisk alba</translation>
+        <translation>Použít zisk alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="474"/>
         <source>Leave null</source>
-        <translation type="unfinished">Ponechat null</translation>
+        <translation>Ponechat null</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="487"/>
