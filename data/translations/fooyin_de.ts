@@ -6,67 +6,67 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="171"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="175"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Füge zur aktuellen Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="178"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Füge zur aktiven Wiedergabeliste hinzu</translation>
+        <translation>Füge zur aktiven Wiedergabeliste hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="181"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Ersetze aktuelle Wiedergabeliste</translation>
+        <translation>Ersetze aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Erstelle neue Wiedergabeliste</translation>
+        <translation>Erstelle neue Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="188"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Füge zur Wiedergabewarteschlange hinzu</translation>
+        <translation>Füge zur Wiedergabewarteschlange hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="191"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Gebe als nächstes wieder</translation>
+        <translation>Gebe als nächstes wieder</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="194"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished">Ersetze Wiedergabewarteschlange</translation>
+        <translation>Ersetze Wiedergabewarteschlange</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="198"/>
         <source>Set as root</source>
-        <translation type="unfinished">Als Hauptordner einstellen</translation>
+        <translation>Als Hauptordner einstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="201"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansichtsmodus</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="204"/>
         <source>Configure</source>
-        <translation type="unfinished">Konfigurieren</translation>
+        <translation>Konfigurieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="336"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichnis-Browser</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="338"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unausgewählte Einträge werden im Kontextmenü des Verzeichnis-Browsers ausgeblendet.</translation>
     </message>
 </context>
 <context>
@@ -512,12 +512,12 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Numeric rating in stars</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zahlenbewertung in Sternen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalized rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisierte Bewertung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="163"/>
@@ -1826,7 +1826,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="468"/>
         <source>Built-in icon missing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingebautes Symbol fehlt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="472"/>
@@ -1890,7 +1890,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="122"/>
         <source>Use command icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende Befehlssymbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="128"/>
@@ -1930,17 +1930,17 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="149"/>
         <source>Choose a built-in icon or custom image. If none is set, the button uses the command&apos;s default icon.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein eingebautes Symbol oder benutzerdefiniertes Bild auswählen. Ist nichts eingestellt, zeigt der Knopf das Standardsymbol des Befehls.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="156"/>
         <source>Built-in</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingebaut</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="158"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefiniert</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="172"/>
@@ -2262,12 +2262,12 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="195"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Bevorzuge FFmpeg für Erweiterungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="197"/>
         <source>e.g. &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>z.B.&quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="203"/>
@@ -2427,17 +2427,17 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="579"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansichtsmodus</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="582"/>
         <source>List</source>
-        <translation type="unfinished">Listenansicht</translation>
+        <translation>Listenansicht</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="591"/>
         <source>Tree</source>
-        <translation type="unfinished">Baumansicht</translation>
+        <translation>Baumansicht</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="193"/>
@@ -2910,85 +2910,85 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/editablelayout.cpp" line="417"/>
         <location filename="../../src/gui/editablelayout.cpp" line="534"/>
         <source>&amp;Before</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Davor</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="407"/>
         <location filename="../../src/gui/editablelayout.cpp" line="422"/>
         <location filename="../../src/gui/editablelayout.cpp" line="541"/>
         <source>&amp;After</source>
-        <translation type="unfinished"></translation>
+        <translation>D&amp;anach</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="429"/>
         <location filename="../../src/gui/editablelayout.cpp" line="552"/>
         <source>&amp;Inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach &amp;innen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="462"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">&amp;Links</translation>
+        <translation>Nach &amp;links</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="462"/>
         <source>&amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach &amp;oben</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="469"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">&amp;Rechts</translation>
+        <translation>Nach &amp;rechts</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="469"/>
         <source>&amp;Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach &amp;unten</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>Far Lef&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach ganz lin&amp;ks</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>&amp;Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach ganz &amp;oben</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
         <source>Far Rig&amp;ht</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach ganz R&amp;echts</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="484"/>
         <source>&amp;Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach ganz &amp;unten</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="506"/>
         <source>Remove spli&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Trenner entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="520"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished">E&amp;infügen</translation>
+        <translation>E&amp;infügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="523"/>
         <source>Rep&amp;lace</source>
-        <translation type="unfinished"></translation>
+        <translation>Erset&amp;zen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="580"/>
         <source>Parent: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Übergeordnet: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="595"/>
         <source>R&amp;eplace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ersetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="600"/>
@@ -2998,7 +2998,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="608"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopieren</translation>
+        <translation>&amp;Kopieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="621"/>
@@ -3008,7 +3008,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="630"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfe&amp;rnen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="697"/>
@@ -3039,7 +3039,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/editablelayout.cpp" line="396"/>
         <location filename="../../src/gui/editablelayout.cpp" line="446"/>
         <source>&amp;Insert</source>
-        <translation>&amp;Einfügen</translation>
+        <translation>&amp;Einsetzen</translation>
     </message>
 </context>
 <context>
