@@ -74,57 +74,57 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="54"/>
         <source>Widget actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Действия с виджетами</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="58"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="61"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделить</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="64"/>
         <source>Remove split</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать разделение</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="68"/>
         <source>Copy</source>
-        <translation type="unfinished">Копировать</translation>
+        <translation>Копировать</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
         <source>Paste</source>
-        <translation type="unfinished">Вставить</translation>
+        <translation>Вставить</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
         <source>Move</source>
-        <translation type="unfinished">Переместить</translation>
+        <translation>Переместить</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="368"/>
         <source>Layout Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактирование макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="370"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неотмеченные пункты будут скрыты из контекстного меню редактирования макета.</translation>
     </message>
 </context>
 <context>
@@ -1049,7 +1049,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="387"/>
         <source>Returns the four-digit year from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает год из даты в виде четырёх цифр</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
@@ -1058,27 +1058,27 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="396"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="399"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Время</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
         <source>Returns the two-digit month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает месяц из даты в виде двух цифр</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
         <source>Returns the two-digit day of month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает день месяца из даты в виде двух цифр</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="395"/>
         <source>Returns the date formatted as YYYY-MM-DD</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает дату в формате ГГГГ-ММ-ДД</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
         <source>Returns the time formatted as HH:MM or HH:MM:SS</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает время в формате ЧЧ:ММ или ЧЧ:ММ:СС</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
@@ -1185,22 +1185,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="448"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ищет поле сырого тега по имени. Несколько значений объединяются с помощью sep.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep, using lastsep between the final two values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ищет поле сырого тега по имени. Несколько значений объединяются с помощью sep, используя lastsep между последними двумя значениями.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="457"/>
         <source>Returns 1 when all named tag fields exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает 1, когда существуют все указанные поля тегов.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="460"/>
         <source>Returns the number of values in a raw tag field.</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает количество значений в поле сырого тега.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="462"/>
@@ -1260,7 +1260,7 @@
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="189"/>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="190"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Дополнительно</translation>
     </message>
 </context>
 <context>
@@ -1268,7 +1268,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="75"/>
         <source>Filter</source>
-        <translation type="unfinished">Фильтр</translation>
+        <translation>Фильтр</translation>
     </message>
 </context>
 <context>
@@ -2744,7 +2744,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="133"/>
         <source>Plugins</source>
-        <translation type="unfinished">Модули</translation>
+        <translation>Модули</translation>
     </message>
 </context>
 <context>
@@ -4852,7 +4852,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="411"/>
         <source>Display</source>
-        <translation type="unfinished">Отображение</translation>
+        <translation>Отображение</translation>
     </message>
 </context>
 <context>
@@ -7113,7 +7113,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="314"/>
         <source>Plugins</source>
-        <translation type="unfinished">Модули</translation>
+        <translation>Модули</translation>
     </message>
 </context>
 <context>
@@ -7358,7 +7358,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="137"/>
         <source>Plugins</source>
-        <translation type="unfinished">Модули</translation>
+        <translation>Модули</translation>
     </message>
 </context>
 <context>
@@ -7424,7 +7424,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="141"/>
         <source>Plugins</source>
-        <translation type="unfinished">Модули</translation>
+        <translation>Модули</translation>
     </message>
 </context>
 <context>
@@ -7642,7 +7642,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Plugins</source>
-        <translation type="unfinished">Модули</translation>
+        <translation>Модули</translation>
     </message>
 </context>
 <context>
@@ -12282,7 +12282,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="144"/>
         <source>Plugins</source>
-        <translation type="unfinished">Модули</translation>
+        <translation>Модули</translation>
     </message>
 </context>
 <context>
@@ -12290,7 +12290,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="136"/>
         <source>Use any of &quot;%1&quot; in the editor to enter multiple values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте любой из символов «%1» в редакторе для ввода нескольких значений.</translation>
     </message>
 </context>
 <context>
@@ -12346,32 +12346,32 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="81"/>
         <source>Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактирование</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="82"/>
         <source>Split manually edited multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделять вручную редактируемые многозначные теги по</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="83"/>
         <source>Whitespace-separated list of separators used when editing multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделённый пробелами список разделителей, используемых при редактировании многозначных полей тегов.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="94"/>
         <source>Auto Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Автозаполнение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="95"/>
         <source>Split auto-filled multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделять автоматически заполняемые многозначные теги по</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="96"/>
         <source>Whitespace-separated list of separators used when auto-filling multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделённый пробелами список разделителей, используемых при автозаполнении многозначных полей тегов.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="113"/>
@@ -13417,17 +13417,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="411"/>
         <source>Interface</source>
-        <translation type="unfinished">Интерфейс</translation>
+        <translation>Интерфейс</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="412"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished">Предел места для изображений</translation>
+        <translation>Предел места для изображений</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="413"/>
         <source>Maximum image allocation size in MB. Set to 0 to disable the limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальный размер выделения памяти под изображения в МБ. Установите 0, чтобы отключить предел.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="418"/>
@@ -13435,69 +13435,69 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <location filename="../../src/gui/widgets.cpp" line="466"/>
         <source>Playback</source>
-        <translation type="unfinished">Воспроизведение</translation>
+        <translation>Воспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="418"/>
         <location filename="../../src/gui/widgets.cpp" line="426"/>
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <source>Decoding</source>
-        <translation type="unfinished">Декодирование</translation>
+        <translation>Декодирование</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="419"/>
         <source>VBR update interval</source>
-        <translation type="unfinished">Период обновления VBR</translation>
+        <translation>Период обновления VBR</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="420"/>
         <source>Interval used to refresh VBR playback information. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Период обновления информации о воспроизведении VBR. Установите 0 для отключения.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="427"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished">Включить все поддерживаемые расширения</translation>
+        <translation>Включить все поддерживаемые расширения</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="428"/>
         <source>Enabled all extensions supported by the FFmpeg input.</source>
-        <translation type="unfinished"></translation>
+        <translation>Включает все расширения, поддерживаемые модулем ввода FFmpeg.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="445"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished">Предпочитать FFmpeg для расширений</translation>
+        <translation>Предпочитать FFmpeg для расширений</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="446"/>
         <source>Semicolon-separated extensions where FFmpeg is tried first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Расширения, разделённые точкой с запятой, для которых FFmpeg используется в первую очередь.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="467"/>
         <source>Opus header gain</source>
-        <translation type="unfinished">Усиление заголовка Opus</translation>
+        <translation>Усиление заголовка Opus</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="468"/>
         <source>ReplayGain value written to the Opus header when updating metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Значение ReplayGain, записываемое в заголовок Opus при обновлении метаданных.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="470"/>
         <source>Use Track Gain</source>
-        <translation type="unfinished">Использовать усиление дорожки</translation>
+        <translation>Использовать усиление дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="472"/>
         <source>Use Album Gain</source>
-        <translation type="unfinished">Использовать усиление альбома</translation>
+        <translation>Использовать усиление альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="474"/>
         <source>Leave null</source>
-        <translation type="unfinished">Оставить пустым</translation>
+        <translation>Оставить пустым</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="487"/>
