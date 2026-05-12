@@ -74,57 +74,57 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="54"/>
         <source>Widget actions</source>
-        <translation type="unfinished"></translation>
+        <translation>小工具動作</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="58"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>取代</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="61"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>分割</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="64"/>
         <source>Remove split</source>
-        <translation type="unfinished"></translation>
+        <translation>移除分割</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="68"/>
         <source>Copy</source>
-        <translation type="unfinished">複製</translation>
+        <translation>複製</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
         <source>Paste</source>
-        <translation type="unfinished">貼上</translation>
+        <translation>貼上</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>插入</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
         <source>Move</source>
-        <translation type="unfinished">移動</translation>
+        <translation>移動</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="368"/>
         <source>Layout Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>配置編輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="370"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>未勾選取的項目將從配置編輯彈出選單中隱藏。</translation>
     </message>
 </context>
 <context>
@@ -1049,7 +1049,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="387"/>
         <source>Returns the four-digit year from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳來自日期的四位數年份</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
@@ -1058,27 +1058,27 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="396"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="399"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>時間</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
         <source>Returns the two-digit month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳來自日期中的兩位數月份</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
         <source>Returns the two-digit day of month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳來自日期的月份的兩位數的第幾日</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="395"/>
         <source>Returns the date formatted as YYYY-MM-DD</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳日期 格式為 YYYY-MM-DD</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
         <source>Returns the time formatted as HH:MM or HH:MM:SS</source>
-        <translation type="unfinished"></translation>
+        <translation>傳回時間 格式為 HH:MM 或 HH:MM:SS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
@@ -1185,22 +1185,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="448"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep.</source>
-        <translation type="unfinished"></translation>
+        <translation>依照名稱尋找原始標籤欄位。多個數值以 sep 接連。</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep, using lastsep between the final two values.</source>
-        <translation type="unfinished"></translation>
+        <translation>依照名稱尋找原始標籤欄位。多個數值以 sep 接連，在最後兩個值之間使用 lastsep。</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="457"/>
         <source>Returns 1 when all named tag fields exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳 1 當全部已經命名的標籤欄位存在時。</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="460"/>
         <source>Returns the number of values in a raw tag field.</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳原始標籤欄位中的值的數量。</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="462"/>
@@ -1260,7 +1260,7 @@
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="189"/>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="190"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>連階</translation>
     </message>
 </context>
 <context>
@@ -1268,7 +1268,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="75"/>
         <source>Filter</source>
-        <translation type="unfinished">篩選器</translation>
+        <translation>篩選器</translation>
     </message>
 </context>
 <context>
@@ -2736,7 +2736,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="133"/>
         <source>Plugins</source>
-        <translation type="unfinished">外掛</translation>
+        <translation>外掛</translation>
     </message>
 </context>
 <context>
@@ -4834,7 +4834,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="411"/>
         <source>Display</source>
-        <translation type="unfinished">顯示</translation>
+        <translation>顯示</translation>
     </message>
 </context>
 <context>
@@ -7089,7 +7089,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="314"/>
         <source>Plugins</source>
-        <translation type="unfinished">外掛</translation>
+        <translation>外掛</translation>
     </message>
 </context>
 <context>
@@ -7332,7 +7332,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="137"/>
         <source>Plugins</source>
-        <translation type="unfinished">外掛</translation>
+        <translation>外掛</translation>
     </message>
 </context>
 <context>
@@ -7398,7 +7398,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="141"/>
         <source>Plugins</source>
-        <translation type="unfinished">外掛</translation>
+        <translation>外掛</translation>
     </message>
 </context>
 <context>
@@ -7616,7 +7616,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Plugins</source>
-        <translation type="unfinished">外掛</translation>
+        <translation>外掛</translation>
     </message>
 </context>
 <context>
@@ -12244,7 +12244,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="144"/>
         <source>Plugins</source>
-        <translation type="unfinished">外掛</translation>
+        <translation>外掛</translation>
     </message>
 </context>
 <context>
@@ -12252,7 +12252,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="136"/>
         <source>Use any of &quot;%1&quot; in the editor to enter multiple values.</source>
-        <translation type="unfinished"></translation>
+        <translation>在編輯器中使用 &quot;%1&quot; 中的任何一個來輸入多個值。</translation>
     </message>
 </context>
 <context>
@@ -12308,32 +12308,32 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="81"/>
         <source>Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>編輯</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="82"/>
         <source>Split manually edited multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>分割手動已經編輯的多重數值標籤於</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="83"/>
         <source>Whitespace-separated list of separators used when editing multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>空格分隔的分隔符號清單加以使用，當編輯多重數值標籤欄位時。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="94"/>
         <source>Auto Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>自動填入</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="95"/>
         <source>Split auto-filled multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>分割自動填入的多重數值標籤於</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="96"/>
         <source>Whitespace-separated list of separators used when auto-filling multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>空格分隔的分隔符號清單加以使用，當自動填入多重數值標籤欄位時。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="113"/>
@@ -13379,17 +13379,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="411"/>
         <source>Interface</source>
-        <translation type="unfinished">介面</translation>
+        <translation>介面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="412"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished">圖片分配限制</translation>
+        <translation>圖片分配限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="413"/>
         <source>Maximum image allocation size in MB. Set to 0 to disable the limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>最大影像分配大小 MB單位。設定為 0 則停用限制。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="418"/>
@@ -13397,69 +13397,69 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <location filename="../../src/gui/widgets.cpp" line="466"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="418"/>
         <location filename="../../src/gui/widgets.cpp" line="426"/>
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <source>Decoding</source>
-        <translation type="unfinished">解碼</translation>
+        <translation>解碼</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="419"/>
         <source>VBR update interval</source>
-        <translation type="unfinished">VBR (可變位元率)更新間隔</translation>
+        <translation>VBR 更新間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="420"/>
         <source>Interval used to refresh VBR playback information. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>用於重新整理 VBR 播放資訊的時間間隔。設定為 0 則停用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="427"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished">啟用全部支援擴充套件</translation>
+        <translation>啟用全部支援的擴充功能</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="428"/>
         <source>Enabled all extensions supported by the FFmpeg input.</source>
-        <translation type="unfinished"></translation>
+        <translation>啟用由 FFmpeg 輸入有支援的全部擴充功能。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="445"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished">偏好 FFmpeg 用於擴充程式</translation>
+        <translation>偏好 FFmpeg 用於擴充功能</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="446"/>
         <source>Semicolon-separated extensions where FFmpeg is tried first.</source>
-        <translation type="unfinished"></translation>
+        <translation>分號分隔的擴充功能，在此 FFmpeg 會首先嘗試。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="467"/>
         <source>Opus header gain</source>
-        <translation type="unfinished">Opus 標頭增益</translation>
+        <translation>Opus 標頭增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="468"/>
         <source>ReplayGain value written to the Opus header when updating metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain 值寫入 Opus 標頭，當在更新詮釋資料時。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="470"/>
         <source>Use Track Gain</source>
-        <translation type="unfinished">使用曲目增益</translation>
+        <translation>使用曲目增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="472"/>
         <source>Use Album Gain</source>
-        <translation type="unfinished">使用專輯增益</translation>
+        <translation>使用專輯增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="474"/>
         <source>Leave null</source>
-        <translation type="unfinished">留下空白</translation>
+        <translation>留下空白</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="487"/>
