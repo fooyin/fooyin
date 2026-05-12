@@ -74,7 +74,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="54"/>
         <source>Widget actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Widget-Aktionen</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="58"/>
@@ -6175,63 +6175,64 @@ frühesten nicht-leeren Wert und der Zeitpunkt des letzten Abspielens auf den sp
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="167"/>
         <source>Owner identifier for POPM frames. Leave empty to read the first POPM frame and write an empty owner.</source>
-        <translation type="unfinished"></translation>
+        <translation>Besitzer-Identifizierung für POPM-Frames. Leer lassen um das erste POPM-Frame zu lesen und einen leeren Besitzer einzutragen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="168"/>
         <source>Conversion table used between fooyin ratings and POPM byte values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Umrechnungstabelle für die Umwandlung von fooyin-Bewertungen in POPM-Byte-Werte und umgekehrt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="170"/>
         <source>Read ratings from WM/SharedUserRating attributes in ASF/WMA files after text rating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese Bewertungen aus WM/SharedUserRating-Attributen in ASF/WMA-Dateien nach Text-Bewertungs-Tags.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="172"/>
         <source>Additionally save ratings to WM/SharedUserRating attributes when writing ASF/WMA files.
 This improves compatibility with other players, but stores whole-star values only.</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere Bewertungen beim Schreiben von ASF/WMA-Dateien zusätzlich in WM/SharedUserRating-Attribute.
+Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, speichert aber nur ganz-sternige Werte.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="175"/>
         <source>Rating Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewertungs-Tags</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="177"/>
         <source>ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="179"/>
         <source>ASF/WMA</source>
-        <translation type="unfinished"></translation>
+        <translation>ASF/WMA</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="183"/>
         <source>Read text rating from</source>
-        <translation type="unfinished"></translation>
+        <translation>Lies Bewertung in Textform aus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="185"/>
         <source>Read value scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese-Werteskala</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="187"/>
         <source>Write text rating to</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe Bewertung in Textform nach</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="189"/>
         <source>Write value scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe-Werteskala</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="198"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigentümer</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="200"/>
