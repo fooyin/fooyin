@@ -10343,7 +10343,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="124"/>
         <source>Calculate ReplayGain values as albums (by tags)</source>
-        <translation>Berechne ReplayGain-Werte nach Album (nach Tags)</translation>
+        <translation>Berechne ReplayGain-Werte als Album (nach Tags)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="125"/>
@@ -10368,7 +10368,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="131"/>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation>Berechne ReplayGain-Werte für ausgewählte Dateien, wobei sie nach Tags in Alben gruppiert werden</translation>
+        <translation>Berechne ReplayGain-Werte für ausgewählte Dateien, wobei sie entsprechend ihrer Tags in Alben gruppiert werden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="132"/>
