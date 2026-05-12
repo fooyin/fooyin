@@ -16,6 +16,7 @@ set(
     nowplaying
     openmpt
     pipewire
+    quicktagger
     rawaudio
     rgscanner
     scrobbler
@@ -40,6 +41,7 @@ set(
     lyrics
     openmpt
     pipewire
+    quicktagger
     rawaudio
     rgscanner
     scrobbler
@@ -102,6 +104,7 @@ fooyin_add_selected_plugin(libarchive)
 fooyin_add_selected_plugin(lyrics)
 fooyin_add_selected_plugin(openmpt)
 fooyin_add_selected_plugin(pipewire)
+fooyin_add_selected_plugin(quicktagger)
 fooyin_add_selected_plugin(rawaudio)
 fooyin_add_selected_plugin(rgscanner)
 fooyin_add_selected_plugin(sdl)

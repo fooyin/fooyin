@@ -874,60 +874,6 @@ void GuiApplicationPrivate::setupRatingMenu()
                                                       Constants::Menus::Context::TrackSelection,
                                                       Constants::Menus::Context::Tagging, GuiApplication::tr("Tagging"),
                                                       Constants::Menus::Context::TrackFinalSeparator);
-    m_selectionController.registerTrackContextSubmenu(
-        m_self, TrackContextMenuArea::Track, Constants::Menus::Context::Tagging,
-        Constants::Menus::Context::TaggingRating, GuiApplication::tr("Rating"));
-
-    auto* rate0 = new QAction(GuiApplication::tr("Rate 0"), m_mainWindow.get());
-    auto* rate1 = new QAction(GuiApplication::tr("Rate 1"), m_mainWindow.get());
-    auto* rate2 = new QAction(GuiApplication::tr("Rate 2"), m_mainWindow.get());
-    auto* rate3 = new QAction(GuiApplication::tr("Rate 3"), m_mainWindow.get());
-    auto* rate4 = new QAction(GuiApplication::tr("Rate 4"), m_mainWindow.get());
-    auto* rate5 = new QAction(GuiApplication::tr("Rate 5"), m_mainWindow.get());
-
-    const QStringList rateCategory = {GuiApplication::tr("Rating")};
-
-    m_actionManager->registerAction(rate0, Constants::Actions::Rate0)->setCategories(rateCategory);
-    m_actionManager->registerAction(rate1, Constants::Actions::Rate1)->setCategories(rateCategory);
-    m_actionManager->registerAction(rate2, Constants::Actions::Rate2)->setCategories(rateCategory);
-    m_actionManager->registerAction(rate3, Constants::Actions::Rate3)->setCategories(rateCategory);
-    m_actionManager->registerAction(rate4, Constants::Actions::Rate4)->setCategories(rateCategory);
-    m_actionManager->registerAction(rate5, Constants::Actions::Rate5)->setCategories(rateCategory);
-
-    auto setRating = [this](const int rating) {
-        if(m_selectionController.selectedTrackCount() == 1) {
-            const auto tracks = m_selectionController.selectedTracks();
-            Track track       = tracks.front();
-            const int stars   = rating * 2;
-            if(track.ratingStars() != stars) {
-                track.setRatingStars(stars);
-                m_core->library()->updateTrackStats(track);
-            }
-        }
-    };
-
-    QObject::connect(rate0, &QAction::triggered, m_mainWindow.get(), [setRating]() { setRating(0); });
-    QObject::connect(rate1, &QAction::triggered, m_mainWindow.get(), [setRating]() { setRating(1); });
-    QObject::connect(rate2, &QAction::triggered, m_mainWindow.get(), [setRating]() { setRating(2); });
-    QObject::connect(rate3, &QAction::triggered, m_mainWindow.get(), [setRating]() { setRating(3); });
-    QObject::connect(rate4, &QAction::triggered, m_mainWindow.get(), [setRating]() { setRating(4); });
-    QObject::connect(rate5, &QAction::triggered, m_mainWindow.get(), [setRating]() { setRating(5); });
-
-    const auto addRateAction = [this](QAction* action, const Id& id) {
-        m_selectionController.registerTrackContextAction(
-            m_self, TrackContextMenuArea::Track, Constants::Menus::Context::TaggingRating, id, action->text(),
-            [this, action](QMenu* menu, const TrackSelection&) {
-                action->setEnabled(m_selectionController.selectedTrackCount() == 1);
-                menu->addAction(action);
-            });
-    };
-
-    addRateAction(rate0, Constants::Actions::Rate0);
-    addRateAction(rate1, Constants::Actions::Rate1);
-    addRateAction(rate2, Constants::Actions::Rate2);
-    addRateAction(rate3, Constants::Actions::Rate3);
-    addRateAction(rate4, Constants::Actions::Rate4);
-    addRateAction(rate5, Constants::Actions::Rate5);
 }
 
 void GuiApplicationPrivate::setupUtilitiesMenu()

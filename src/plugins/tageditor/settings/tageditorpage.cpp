@@ -142,7 +142,7 @@ TagEditorFieldsPage::TagEditorFieldsPage(TagEditorFieldRegistry* registry, Setti
 {
     setId(Constants::Page::TagEditorFields);
     setName(tr("Fields"));
-    setCategory({tr("Plugins"), tr("Tag Editor")});
+    setCategory({tr("Tagging"), tr("Tag Editor")});
     setWidgetCreator([registry, settings] { return new TagEditorFieldsPageWidget(registry, settings); });
 }
 } // namespace Fooyin::TagEditor

@@ -126,16 +126,14 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
 
     m_trackSelection->registerTrackContextAction(
         this, TrackContextMenuArea::Track, Constants::Menus::Context::Tagging, "TagEditor.AutoFillValues",
-        autoFillValuesAction->text(),
-        [this, autoFillValuesAction](QMenu* menu, const TrackSelection& selection) {
+        autoFillValuesAction->text(), [this, autoFillValuesAction](QMenu* menu, const TrackSelection& selection) {
             if(selection.tracks.empty()) {
                 return;
             }
 
             autoFillValuesAction->setEnabled(canWriteTracks(selection.tracks, m_audioLoader));
             menu->addAction(autoFillValuesAction);
-        },
-        Constants::Menus::Context::TaggingRating);
+        });
 }
 
 TagEditorPropertiesTab* TagEditorPlugin::createEditor(const TrackList& tracks)
