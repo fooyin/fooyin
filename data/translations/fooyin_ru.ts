@@ -61,7 +61,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="357"/>
         <source>Directory Browser</source>
-        <translation>Обозреватель каталога</translation>
+        <translation>Обзор каталогов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="359"/>
@@ -119,12 +119,12 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="368"/>
         <source>Layout Editing</source>
-        <translation>Редактирование макета</translation>
+        <translation>Редактор макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="370"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation>Неотмеченные пункты будут скрыты из контекстного меню редактирования макета.</translation>
+        <translation>Неотмеченные пункты будут скрыты из контекстного меню редактора макета.</translation>
     </message>
 </context>
 <context>
@@ -607,7 +607,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="229"/>
         <source>Total amount of tracks in the playback queue for queued items</source>
-        <translation>Общее количество дорожек в очереди воспроизведения для элементов в очереди</translation>
+        <translation>Всего дорожек в очереди воспроизведения для элементов из очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
@@ -2575,7 +2575,7 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="240"/>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="346"/>
         <source>Directory Browser</source>
-        <translation>Обозреватель папок</translation>
+        <translation>Обзор каталогов</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="571"/>
@@ -2974,7 +2974,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="105"/>
         <source>Enter layout editing mode to edit</source>
-        <translation>Войдите в режим редактирования макета для правки</translation>
+        <translation>Войдите в режим редактора макета для правки</translation>
     </message>
 </context>
 <context>
@@ -5231,7 +5231,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
         <source>Sidebar track display</source>
-        <translation>Отображение дорожек в боковой панели</translation>
+        <translation>Вывод дорожек в боковой панели</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
@@ -5678,12 +5678,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="60"/>
         <source>&amp;Editing mode</source>
-        <translation>&amp;Режим редактирования</translation>
+        <translation>&amp;Режим редактора</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="61"/>
         <source>Toggle layout editing mode</source>
-        <translation>Переключить в режим редактирования макета</translation>
+        <translation>Переключить в режим редактора макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="72"/>
@@ -5693,7 +5693,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
         <source>Prevent manual resizing of splitters when not in layout editing mode</source>
-        <translation>Предотвратить ручное перемещение разделителей, если не включён режим редактирования макета</translation>
+        <translation>Предотвратить ручное перемещение разделителей, если не включён режим редактора макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
@@ -7558,7 +7558,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/mainwindow.cpp" line="171"/>
         <source>Layout Editing Mode</source>
-        <translation>Режим редактирования макета</translation>
+        <translation>Режим редактора макета</translation>
     </message>
 </context>
 <context>
@@ -11965,7 +11965,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="350"/>
         <source>Layout Editing Mode</source>
-        <translation>Режим редактирования макета</translation>
+        <translation>Режим редактора макета</translation>
     </message>
 </context>
 <context>
