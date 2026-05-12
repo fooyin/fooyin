@@ -6237,7 +6237,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="200"/>
         <source>Mapping</source>
-        <translation type="unfinished"></translation>
+        <translation>Umrechnung</translation>
     </message>
 </context>
 <context>
@@ -7101,7 +7101,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="314"/>
         <source>Plugins</source>
-        <translation type="unfinished">Erweiterungen</translation>
+        <translation>Erweiterungen</translation>
     </message>
 </context>
 <context>
@@ -7345,7 +7345,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="137"/>
         <source>Plugins</source>
-        <translation type="unfinished">Erweiterungen</translation>
+        <translation>Erweiterungen</translation>
     </message>
 </context>
 <context>
@@ -7411,7 +7411,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="141"/>
         <source>Plugins</source>
-        <translation type="unfinished">Erweiterungen</translation>
+        <translation>Erweiterungen</translation>
     </message>
 </context>
 <context>
@@ -7629,7 +7629,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Plugins</source>
-        <translation type="unfinished">Erweiterungen</translation>
+        <translation>Erweiterungen</translation>
     </message>
 </context>
 <context>
@@ -8464,37 +8464,37 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="59"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zeige Bildlaufleiste</translation>
+        <translation>Zeige Bildlaufleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="60"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Spalten-Überschriften</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="61"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Abwechselnde Zeilenfarben</translation>
+        <translation>Abwechselnde Zeilenfarben</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="73"/>
         <source>Image Padding</source>
-        <translation type="unfinished">Bildauffüllung</translation>
+        <translation>Bildauffüllung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="77"/>
         <source>Left/Right</source>
-        <translation type="unfinished">Links/Rechts</translation>
+        <translation>Links/Rechts</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="79"/>
         <source>Top</source>
-        <translation type="unfinished">Oben</translation>
+        <translation>Oben</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="83"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aussehen</translation>
+        <translation>Aussehen</translation>
     </message>
 </context>
 <context>
@@ -8917,12 +8917,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="129"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aussehen</translation>
+        <translation>Aussehen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="130"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste</translation>
     </message>
 </context>
 <context>
@@ -9384,12 +9384,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="183"/>
         <source>Saving</source>
-        <translation type="unfinished">Speichern</translation>
+        <translation>Abspeichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="184"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste</translation>
     </message>
 </context>
 <context>
@@ -9397,37 +9397,37 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="72"/>
         <source>Write metadata</source>
-        <translation type="unfinished">Schreibe Metadaten</translation>
+        <translation>Schreibe Metadaten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="73"/>
         <source>Auto-export</source>
-        <translation type="unfinished">Automatischer Export</translation>
+        <translation>Automatischer Export</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="76"/>
         <source>Move deleted or empty playlists to trash</source>
-        <translation type="unfinished">Bewege gelöschte oder leere Wiedergabelisten in den Papierkorb</translation>
+        <translation>Bewege gelöschte oder leere Wiedergabelisten in den Papierkorb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="77"/>
         <source>Save last state of deleted playlists</source>
-        <translation type="unfinished">Speichere letzten Status von gelöschten Wiedergabelisten</translation>
+        <translation>Speichere letzten Status von gelöschten Wiedergabelisten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="79"/>
         <source>Save any changes made to a playlist before it was deleted</source>
-        <translation type="unfinished">Speichere alle Änderungen, die an einer Wiedergabeliste vorgenommen wurden, bevor sie gelöscht wurde</translation>
+        <translation>Speichere alle Änderungen, die an einer Wiedergabeliste vorgenommen wurden, bevor sie gelöscht wurde</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="84"/>
         <source>Saving</source>
-        <translation type="unfinished">Speichern</translation>
+        <translation>Abspeichern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="88"/>
         <source>Path type</source>
-        <translation type="unfinished">Pfadtyp</translation>
+        <translation>Pfadtyp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="93"/>
@@ -13949,7 +13949,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="83"/>
         <source>Map fooyin ratings directly onto the full POPM byte range.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordne fooyin-Bewertungen direkt dem ganzen POPM Byte-Bereich zu.</translation>
     </message>
 </context>
 <context>
