@@ -948,7 +948,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="345"/>
         <source>Trims surrounding whitespace</source>
-        <translation>Entfernt umgebende Leerzeichen</translation>
+        <translation>Entfernt umgebenden Leerraum</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="347"/>
@@ -1260,7 +1260,7 @@
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="189"/>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="190"/>
         <source>Advanced</source>
-        <translation type="unfinished">Fortgeschritten</translation>
+        <translation>Zusatzeinstellungen</translation>
     </message>
 </context>
 <context>
@@ -1897,7 +1897,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="177"/>
         <source>A query named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation>Eine Abfrage namens &quot;%1&quot; existiert bereits. Überschreiben?</translation>
+        <translation>Eine Abfrage namens „%1“ existiert bereits. Überschreiben?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="300"/>
@@ -2033,7 +2033,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="131"/>
         <source>Select a command, or enter a raw `$cmdlink` id or alias.</source>
-        <translation>Befehl auswählen oder rohe &quot;$cmdlink&quot; ID oder Alias eingeben.</translation>
+        <translation>Befehl auswählen oder rohe „$cmdlink“ ID oder Alias eingeben.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="135"/>
@@ -2639,7 +2639,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="51"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation>Bei &quot;Aktuelle Wiedergabeliste ersetzen&quot; und &quot;Neue Wiedergabeliste erstellen&quot; die Wiedergabe sofort starten.</translation>
+        <translation>Bei „Aktuelle Wiedergabeliste ersetzen“ und „Neue Wiedergabeliste erstellen“ die Wiedergabe sofort starten.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
@@ -2887,7 +2887,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="491"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation>Einstellungen für DSP &quot;%1&quot; können nicht geöffnet werden.</translation>
+        <translation>Einstellungen für DSP „%1“ konnten nicht geöffnet werden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="614"/>
@@ -2937,7 +2937,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="792"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation>Vorlage &quot;%1&quot; existiert bereits. Überschreiben?</translation>
+        <translation>Vorlage „%1“ existiert bereits. Überschreiben?</translation>
     </message>
 </context>
 <context>
@@ -3258,7 +3258,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="604"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation>Voreinstellung &quot;%1&quot; existiert bereits. Überschreiben?</translation>
+        <translation>Voreinstellung „%1“ existiert bereits. Überschreiben?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="649"/>
@@ -3277,7 +3277,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="658"/>
         <source>Unable to open &quot;%1&quot; for reading.</source>
-        <translation>&quot;%1&quot; kann nicht gelesen werden.</translation>
+        <translation>Konnte „%1“ nicht zum Lesen öffnen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="680"/>
@@ -3318,12 +3318,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="738"/>
         <source>Unable to open &quot;%1&quot; for writing.</source>
-        <translation>&quot;%1&quot; kann nicht geschrieben werden.</translation>
+        <translation>Konnte „%1“ nicht zum Schreiben öffnen.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="750"/>
         <source>An error occurred while writing &quot;%1&quot;.</source>
-        <translation>Ein Fehler ist aufgetreten beim Schreiben von &quot;%1&quot;.</translation>
+        <translation>Ein Fehler ist beim Schreiben von „%1“ aufgetreten.</translation>
     </message>
 </context>
 <context>
@@ -3533,7 +3533,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="234"/>
         <source>Overlapping fades for seek and track changes. Auto track change uses overlap; use Between tracks above for non-overlapping fades.</source>
-        <translation>Überlappende Überblendungen für Spulen und Titelwechsel. Automatische Titelwechsel nutzen Überlappung; für nicht überlappende Überblendungen oben die Option &quot;Zwischen Titeln&quot; auswählen.</translation>
+        <translation>Überlappende Überblendungen für Spulen und Titelwechsel. Automatische Titelwechsel nutzen Überlappung; für nicht überlappende Überblendungen oben die Option „Zwischen Titeln“ auswählen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="188"/>
@@ -3684,7 +3684,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="45"/>
         <source>Are you sure you want to delete &quot;%1&quot;?</source>
-        <translation>Soll &quot;%1&quot; wirklich gelöscht werden?</translation>
+        <translation>Soll „%1“ wirklich gelöscht werden?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="46"/>
@@ -3830,7 +3830,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="321"/>
         <source>A preset named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation>Eine Voreinstellung &quot;%1&quot; gibt es bereits. Überschreiben?</translation>
+        <translation>Eine Voreinstellung mit dem Namen „%1“ gibt es bereits. Überschreiben?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="439"/>
@@ -4052,7 +4052,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="58"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation>Bei &quot;Aktuelle Wiedergabeliste ersetzen&quot; und &quot;Neue Wiedergabeliste erstellen&quot; die Wiedergabe sofort starten.</translation>
+        <translation>Bei „Aktuelle Wiedergabeliste ersetzen“ und „Neue Wiedergabeliste erstellen“ wird die Wiedergabe sofort gestartet.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="60"/>
@@ -5021,7 +5021,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="315"/>
         <source>A theme named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation>Ein Thema namens &quot;%1&quot; existiert bereits. Überschreiben?</translation>
+        <translation>Ein Thema namens „%1“ existiert bereits. Überschreiben?</translation>
     </message>
 </context>
 <context>
@@ -5342,7 +5342,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="76"/>
         <source>Open the about dialog</source>
-        <translation>Öffne den &quot;Über&quot;-Dialog</translation>
+        <translation>Öffne den „Über fooyin“-Dialog</translation>
     </message>
 </context>
 <context>
@@ -5579,7 +5579,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="257"/>
         <source>Opus header gain</source>
-        <translation>Opus-Header &quot;Verstärkung&quot;</translation>
+        <translation>Opus-Header „Verstärkung“</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="262"/>
@@ -5814,7 +5814,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="161"/>
         <source>e.g. &quot;%1&quot;</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
-        <translation>z.B.&quot;%1&quot;</translation>
+        <translation>z.B. „%1“</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="164"/>
@@ -5922,7 +5922,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="99"/>
         <source>Open the library page in the settings dialog</source>
-        <translation>Öffne die Seite &quot;Bibliothek&quot; im Einstellungs-Dialog</translation>
+        <translation>Öffne die Seite „Bibliothek“ im Einstellungs-Dialog</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="106"/>
@@ -6028,7 +6028,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="54"/>
         <source>Use &apos;Various Artists&apos; for compilations</source>
-        <translation>Verwende &quot;Verschiedene Künstler&quot; für Kompilationen</translation>
+        <translation>Verwende „Verschiedene Künstler“ für Kompilationen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="55"/>
@@ -6374,7 +6374,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="65"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation>Bei &quot;Aktuelle Wiedergabeliste ersetzen&quot; und &quot;Neue Wiedergabeliste erstellen&quot; die Wiedergabe sofort starten.</translation>
+        <translation>Bei „Aktuelle Wiedergabeliste ersetzen“ und „Neue Wiedergabeliste erstellen“ die Wiedergabe sofort starten.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
@@ -7647,17 +7647,17 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="76"/>
         <source>Show Previous</source>
-        <translation>Zeige &quot;Vorheriger Titel&quot;</translation>
+        <translation>Zeige „Vorheriger Titel“</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="77"/>
         <source>Show Play/Pause</source>
-        <translation>Zeige &quot;Abspielen/Pause&quot;</translation>
+        <translation>Zeige „Abspielen/Pause“</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="78"/>
         <source>Show Next</source>
-        <translation>Zeige &quot;Nächster Titel&quot;</translation>
+        <translation>Zeige „Nächster Titel“</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="79"/>
@@ -8252,7 +8252,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="231"/>
         <source>Reset &apos;Stop after current&apos; after stopping</source>
-        <translation>Setze &quot;Stoppe nach diesem Titel&quot; nach dem Stoppen zurück</translation>
+        <translation>Setze „Stoppe nach diesem Titel“ nach dem Stoppen zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="278"/>
@@ -8282,7 +8282,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="224"/>
         <source>Start playback of the currently selected track on next</source>
-        <translation>Starte die Wiedergabe des derzeit ausgewählten Titels bei &quot;Weiter&quot;</translation>
+        <translation>Starte die Wiedergabe des derzeit ausgewählten Titels bei „Weiter“</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="226"/>
@@ -8323,7 +8323,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="94"/>
         <source>Rewind track on previous</source>
-        <translation>Spule Titel bei &quot;Zurück&quot; zurück</translation>
+        <translation>Spule Titel bei „Zurück“ zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="91"/>
@@ -8448,7 +8448,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="122"/>
         <source>The percentage of a track that must be listened to before it is counted as &apos;played&apos;</source>
-        <translation>Wie viel Prozent eines Titels gehört werden müssen, damit dieser als &quot;Gespielt&quot; gilt</translation>
+        <translation>Wie viel Prozent eines Titels gehört werden müssen, damit dieser als „gespielt“ gilt</translation>
     </message>
 </context>
 <context>
@@ -9015,7 +9015,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="270"/>
         <source>%1 contents</source>
         <extracomment>%1 refers to the name of a playlist.</extracomment>
-        <translation>Inhalte von &quot;%1&quot;</translation>
+        <translation>Inhalte von „%1“</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="282"/>
@@ -9531,7 +9531,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="386"/>
         <source>%1 contents</source>
         <extracomment>%1 refers to the name of a playlist.</extracomment>
-        <translation>Inhalte von &quot;%1&quot;</translation>
+        <translation>Inhalte von „%1“</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="149"/>
@@ -9577,12 +9577,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="59"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished">Lösche Wiedergabeliste bei Mittelklick</translation>
+        <translation>Lösche Wiedergabelisten bei Mittelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="61"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">Wiedergabelisten-Reiter</translation>
+        <translation>Wiedergabelisten-Reiter</translation>
     </message>
 </context>
 <context>
@@ -9613,7 +9613,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="682"/>
         <source>Writing Metadata</source>
-        <translation>Schreibe Metadaten</translation>
+        <translation>Metadaten werden geschrieben</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="683"/>
@@ -9989,7 +9989,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
         <source>Simple Artist/Album/Year</source>
-        <translation>Einfaches &quot;Künstler/Album/Jahr&quot;</translation>
+        <translation>Einfaches „Künstler/Album/Jahr“</translation>
     </message>
 </context>
 <context>
@@ -10299,7 +10299,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="84"/>
         <source>Used with the &quot;Calculate as albums (by tags)&quot; action</source>
-        <translation>Für die Verwendung der &quot;Berechne ReplayGain-Werte nach Alben (nach Tags)&quot;-Aktion</translation>
+        <translation>Wird von der „Berechne ReplayGain-Werte als Alben (nach Tags)&quot;-Aktion verwendet</translation>
     </message>
 </context>
 <context>
@@ -10373,7 +10373,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="132"/>
         <source>Manipulate the Opus header gain field</source>
-        <translation>Das &quot;Verstärkung&quot;-Feld im Opus-Header bearbeiten</translation>
+        <translation>Das „Verstärkung“-Feld im Opus-Header bearbeiten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="133"/>
@@ -11541,7 +11541,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="75"/>
         <source>e.g. &quot;%1&quot;</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
-        <translation type="unfinished">z.B.&quot;%1&quot;</translation>
+        <translation>z.B.„%1“</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="78"/>
@@ -11607,17 +11607,17 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="170"/>
         <source>Reset to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf Standard zurücksetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="171"/>
         <source>Add shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastenkürzel hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="175"/>
         <source>Filter shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastenkürzel filtern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="197"/>
@@ -11627,7 +11627,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="306"/>
         <source>Remove shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastenkürzel entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="173"/>
@@ -12263,7 +12263,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="144"/>
         <source>Plugins</source>
-        <translation type="unfinished">Erweiterungen</translation>
+        <translation>Erweiterungen</translation>
     </message>
 </context>
 <context>
@@ -12271,7 +12271,7 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="136"/>
         <source>Use any of &quot;%1&quot; in the editor to enter multiple values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze eines der folgenden Zeichen um mehrere Werte einzugeben: „%1“</translation>
     </message>
 </context>
 <context>
@@ -12287,32 +12287,32 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="51"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="114"/>
         <source>Unsaved Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungespeicherte Änderungen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="115"/>
         <source>There are unsaved tag changes. Save before switching tracks?</source>
-        <translation type="unfinished"></translation>
+        <translation>Es gibt ungespeicherte Änderungen an Tags. Vor dem Titelwechsel speichern?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="136"/>
         <source>Are you sure?</source>
-        <translation type="unfinished">Sicher?</translation>
+        <translation>Sicher?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="137"/>
         <source>Metadata in the associated files will be overwritten.</source>
-        <translation type="unfinished">Metadaten in den zugehörigen Dateien werden überschrieben.</translation>
+        <translation>Metadaten in den zugehörigen Dateien werden überschrieben.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="139"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Nicht erneut fragen</translation>
+        <translation>Nicht erneut fragen</translation>
     </message>
 </context>
 <context>
@@ -12322,37 +12322,37 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="94"/>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="109"/>
         <source>Tag Editor</source>
-        <translation type="unfinished">Tag-Editor</translation>
+        <translation>Tag-Editor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="81"/>
         <source>Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeitung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="82"/>
         <source>Split manually edited multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>Trenne manuell bearbeitete Mehrfachwert-Tags: an</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="83"/>
         <source>Whitespace-separated list of separators used when editing multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leerraum-getrennte Liste der Trenner, die beim Bearbeiten von Mehrfachwert-Tag-Feldern verwendet werden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="94"/>
         <source>Auto Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch füllen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="95"/>
         <source>Split auto-filled multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>Trenne automatisch gefüllte Mehrfachwert-Tags: an</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="96"/>
         <source>Whitespace-separated list of separators used when auto-filling multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leerraum-getrennte Liste der Trenner, die beim automatischen Füllen von Mehrfachwert-Tag-Feldern verwendet werden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="113"/>
@@ -13398,17 +13398,17 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/widgets.cpp" line="411"/>
         <source>Interface</source>
-        <translation type="unfinished">Benutzeroberfläche</translation>
+        <translation>Benutzeroberfläche</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="412"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished">Limit für Bildergröße</translation>
+        <translation>Bildspeicher-Limit</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="413"/>
         <source>Maximum image allocation size in MB. Set to 0 to disable the limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Speicherzuweisung für Bilder in MB. Auf 0 stellen um das Limit zu deaktivieren.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="418"/>
@@ -13416,69 +13416,69 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <location filename="../../src/gui/widgets.cpp" line="466"/>
         <source>Playback</source>
-        <translation type="unfinished">Wiedergabe</translation>
+        <translation>Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="418"/>
         <location filename="../../src/gui/widgets.cpp" line="426"/>
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <source>Decoding</source>
-        <translation type="unfinished">Dekodierung</translation>
+        <translation>Dekodierung</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="419"/>
         <source>VBR update interval</source>
-        <translation type="unfinished">VBR Updateintervall</translation>
+        <translation>VBR-Updateintervall</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="420"/>
         <source>Interval used to refresh VBR playback information. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervall in dem die VBR-Wiedergabeinformationen aktualisiert werden. Auf 0 setzen um die Aktualisierung zu deaktivieren.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="427"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished">Alle unterstützten Erweiterungen aktivieren</translation>
+        <translation>Alle unterstützten Erweiterungen aktivieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="428"/>
         <source>Enabled all extensions supported by the FFmpeg input.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle von FFmpeg unterstützten Erweiterungen aktiviert.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="445"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished">Bevorzuge FFmpeg für Erweiterungen</translation>
+        <translation>Bevorzuge FFmpeg für die Dateitypen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="446"/>
         <source>Semicolon-separated extensions where FFmpeg is tried first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Durch Semikola getrennte Liste von Dateitypen, für die FFmpeg zuerst probiert wird.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="467"/>
         <source>Opus header gain</source>
-        <translation type="unfinished">Opus-Header &quot;Verstärkung&quot;</translation>
+        <translation>Opus-Header „Verstärkung“</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="468"/>
         <source>ReplayGain value written to the Opus header when updating metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der ReplayGain-Wert, der beim Aktualisieren von Metadaten in den Opus-Header geschrieben wird.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="470"/>
         <source>Use Track Gain</source>
-        <translation type="unfinished">Nutze Titel-Verstärkung</translation>
+        <translation>Nutze Titel-Verstärkung</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="472"/>
         <source>Use Album Gain</source>
-        <translation type="unfinished">Nutze Album-Verstärkung</translation>
+        <translation>Nutze Album-Verstärkung</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="474"/>
         <source>Leave null</source>
-        <translation type="unfinished">Leer lassen</translation>
+        <translation>Leer lassen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="487"/>
@@ -13932,19 +13932,21 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="46"/>
         <source>Automatic detection</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische Erkennung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="73"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0-255 scale.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze beim Lesen und Schreiben von MP3-Bewertungen die Standard-POPM-Byte-Konvertierung von fooyin.
+Dadurch werden Bewertungen mit Zwischenwerten unterstützt, aber die POPM-Bytes werden nicht als vollständig lineare Skala von 0-255 behandelt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="79"/>
         <source>Use common POPM byte values for whole-star ratings only.
 Intermediate ratings are rounded to one, two, three, four, or five stars.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze gängige POPM-Byte-Werte nur für ganz-sternige Bewertungen.
+Zwischenwert-Bewertungen werden auf eins, zwei, drei, vier oder fünf Sterne gerundet.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="83"/>
