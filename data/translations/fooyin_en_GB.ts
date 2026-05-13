@@ -42,7 +42,7 @@
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="681"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="682"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
             <numerusform>The first %Ln non-empty line must contain integer values.</numerusform>
@@ -50,7 +50,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="692"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="693"/>
         <source>The preset file contains %Ln band value(s).</source>
         <translation>
             <numerusform>The preset file contains %Ln band value.</numerusform>
@@ -58,7 +58,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="693"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="694"/>
         <source>Expected %Ln band value(s).</source>
         <translation>
             <numerusform>Expected %Ln band value.</numerusform>
@@ -159,7 +159,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="683"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="686"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -175,6 +175,18 @@
         <translation>
             <numerusform>%Ln track</numerusform>
             <numerusform>%Ln tracks</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::QuickTagger::QuickTaggerPlugin</name>
+    <message numerus="yes">
+        <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="295"/>
+        <source>Set &quot;%1&quot; on %Ln track(s)?</source>
+        <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
