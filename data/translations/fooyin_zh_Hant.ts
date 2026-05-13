@@ -9736,7 +9736,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="233"/>
         <source>Remove dead tracks</source>
-        <translation>移除喪失曲目</translation>
+        <translation>移除佚失曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
@@ -9821,7 +9821,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="455"/>
         <source>Remove dead (non-existant) tracks from the playlist</source>
-        <translation>移除喪失(不存在的)曲目 從播放清單</translation>
+        <translation>移除佚失(不存在的)曲目 從播放清單</translation>
     </message>
 </context>
 <context>
