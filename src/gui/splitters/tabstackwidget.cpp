@@ -286,10 +286,10 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* positionGroup = new QActionGroup(menu);
 
-    auto* north = new QAction(tr("&North"), posMenu);
-    auto* east  = new QAction(tr("&East"), posMenu);
-    auto* south = new QAction(tr("&South"), posMenu);
-    auto* west  = new QAction(tr("&West"), posMenu);
+    auto* north = new QAction(tr("&Above"), posMenu);
+    auto* east  = new QAction(tr("&Right"), posMenu);
+    auto* south = new QAction(tr("&Below"), posMenu);
+    auto* west  = new QAction(tr("&Left"), posMenu);
 
     north->setCheckable(true);
     east->setCheckable(true);
