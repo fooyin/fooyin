@@ -52,8 +52,7 @@ SleepInhibitorSettings::SleepInhibitorSettings(QWidget* parent)
 
     m_enabled->setChecked(m_settings.value(Settings::Enabled, true).toBool());
     m_onlyDuringPlayback->setChecked(m_settings.value(Settings::OnlyDuringPlayback, true).toBool());
-
-    m_onlyDuringPlayback->setEnabled(m_settings.value(Settings::Enabled).toBool());
+    m_onlyDuringPlayback->setEnabled(m_settings.value(Settings::Enabled, true).toBool());
 
     QObject::connect(m_enabled, &QCheckBox::clicked, m_onlyDuringPlayback, &QCheckBox::setEnabled);
 }

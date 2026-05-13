@@ -52,7 +52,7 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
     m_busInterface = new QDBusInterface(GnomeSessionManagerService, GnomeSessionManagerPath,
                                         GnomeSessionManagerInterface, QDBusConnection::sessionBus(), this);
     if(m_busInterface->isValid()) {
-        qCInfo(SLEEPINHIBITOR) << "Using" << GnomeSessionManagerInterface;
+        qCDebug(SLEEPINHIBITOR) << "Using" << GnomeSessionManagerInterface;
         m_usingFreedesktopInterface = false;
         return;
     }
@@ -61,7 +61,7 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
     m_busInterface = new QDBusInterface(FreedesktopPowerMgmtService, FreedesktopPowerMgmtPath,
                                         FreedesktopPowerMgmtInterface, QDBusConnection::sessionBus(), this);
     if(m_busInterface->isValid()) {
-        qCInfo(SLEEPINHIBITOR) << "Using" << FreedesktopPowerMgmtInterface;
+        qCDebug(SLEEPINHIBITOR) << "Using" << FreedesktopPowerMgmtInterface;
         m_usingFreedesktopInterface = true;
         return;
     }
@@ -77,7 +77,7 @@ void InhibitorDbus::inhibitSleep()
         return;
     }
 
-    qCInfo(SLEEPINHIBITOR) << "Inhibiting sleep";
+    qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
 
     QList<QVariant> args;
     if(m_usingFreedesktopInterface) {
@@ -100,7 +100,7 @@ void InhibitorDbus::uninhibitSleep()
         return;
     }
 
-    qCInfo(SLEEPINHIBITOR) << "Uninhibiting sleep";
+    qCDebug(SLEEPINHIBITOR) << "Uninhibiting sleep";
 
     if(m_inhibitCookie == 0) [[unlikely]] {
         qCWarning(SLEEPINHIBITOR) << "Cookie is 0?";

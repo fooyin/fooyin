@@ -19,6 +19,7 @@
  */
 
 #include "inhibitormacos.h"
+#include "../sleepinhibitorplugin.h"
 
 namespace Fooyin::SleepInhibitor {
 InhibitorMacOs::InhibitorMacOs(QObject* parent)
@@ -31,11 +32,19 @@ void InhibitorMacOs::inhibitSleep()
         return;
     }
 
+    qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
+
     const auto assertionName = tr("fooyin is running").toCFString();
     const auto status = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, assertionName,
                                                     &m_assertionId);
     CFRelease(assertionName);
-    setState(status == kIOReturnSuccess ? State::Inhibited : State::Error);
+    if(status == kIOReturnSuccess) {
+        setState(State::Inhibited);
+    }
+    else {
+        qCWarning(SLEEPINHIBITOR) << "Inhibit call error, status:" << status;
+        setState(State::Error);
+    }
 }
 
 void InhibitorMacOs::uninhibitSleep()
@@ -44,7 +53,15 @@ void InhibitorMacOs::uninhibitSleep()
         return;
     }
 
+    qCDebug(SLEEPINHIBITOR) << "Uninhibiting sleep";
+
     const auto status = IOPMAssertionRelease(m_assertionId);
-    setState(status == kIOReturnSuccess ? State::Inhibited : State::Error);
+    if(status == kIOReturnSuccess) {
+        setState(State::Uninhibited);
+    }
+    else {
+        qCWarning(SLEEPINHIBITOR) << "Uninhibit call error, status:" << status;
+        setState(State::Error);
+    }
 }
 } // namespace Fooyin::SleepInhibitor

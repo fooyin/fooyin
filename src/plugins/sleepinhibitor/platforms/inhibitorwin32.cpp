@@ -19,6 +19,7 @@
  */
 
 #include "inhibitorwin32.h"
+#include "../sleepinhibitorplugin.h"
 
 #include <Windows.h>
 
@@ -33,8 +34,16 @@ void InhibitorWin32::inhibitSleep()
         return;
     }
 
+    qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
+
     const auto prevState = SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
-    setState(prevState != 0 ? State::Inhibited : State::Error);
+    if(prevState != 0) {
+        setState(State::Inhibited);
+    }
+    else {
+        qCWarning(SLEEPINHIBITOR) << "Inhibit call error";
+        setState(State::Error);
+    }
 }
 
 void InhibitorWin32::uninhibitSleep()
@@ -43,7 +52,15 @@ void InhibitorWin32::uninhibitSleep()
         return;
     }
 
+    qCDebug(SLEEPINHIBITOR) << "Uninhibiting sleep";
+
     const auto prevState = SetThreadExecutionState(ES_CONTINUOUS);
-    setState(prevState != 0 ? State::Inhibited : State::Error);
+    if(prevState != 0) {
+        setState(State::Uninhibited);
+    }
+    else {
+        qCWarning(SLEEPINHIBITOR) << "Uninhibit call error";
+        setState(State::Error);
+    }
 }
 } // namespace Fooyin::SleepInhibitor
