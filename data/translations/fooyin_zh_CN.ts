@@ -4456,7 +4456,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Tagging</source>
-        <translation>标记</translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
@@ -4652,7 +4652,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="836"/>
         <location filename="../../src/gui/guiapplication.cpp" line="874"/>
         <source>Tagging</source>
-        <translation>标记</translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="839"/>
