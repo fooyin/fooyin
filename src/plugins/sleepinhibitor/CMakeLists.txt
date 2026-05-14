@@ -1,8 +1,16 @@
-find_package(Qt6 COMPONENTS DBus QUIET)
+set(DEPENDS
+    Fooyin::Core
+    Fooyin::Gui
+)
 
-if(NOT Qt6DBus_FOUND)
-    message(STATUS "Qt6::DBus not found; skipping sleepinhibitor plugin.")
-    return()
+if(UNIX AND NOT APPLE)
+    find_package(Qt6 COMPONENTS DBus QUIET)
+    if(NOT Qt6DBus_FOUND)
+        message(STATUS "Qt6::DBus not found; skipping sleepinhibitor plugin.")
+        return()
+    else()
+        list(APPEND DEPENDS Qt6::DBus)
+    endif()
 endif()
 
 set(SOURCES
@@ -28,8 +36,6 @@ endif()
 
 create_fooyin_plugin_internal(
     sleepinhibitor
-    DEPENDS Fooyin::Core
-            Fooyin::Gui
-            Qt6::DBus
+    DEPENDS ${DEPENDS}
     SOURCES ${SOURCES}
 )
