@@ -11759,7 +11759,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="86"/>
         <source>When opening one file from the file manager, add all supported files from the same folder and play the opened file</source>
-        <translation>Při otevření jednoho souboru z průzkumníka souborů přidat i další podporované soubory ze stejné složky a přehrát otevřený soubor</translation>
+        <translation>Při otevření jednoho souboru z průzkumníka souborů přidat i další podporované soubory ze stejné složky a přehrát otevíraný soubor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="92"/>
