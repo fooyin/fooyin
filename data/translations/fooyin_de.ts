@@ -8919,7 +8919,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="112"/>
         <source>Skip playlist entries that are already present in the target playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Überspringe Wiedergabelisten-Einträge, die bereits in der Zielwiedergabeliste vorhanden sind</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
@@ -10245,12 +10245,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="74"/>
         <source>Tagging</source>
-        <translation type="unfinished">Tagging</translation>
+        <translation>Tagging</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="74"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished"></translation>
+        <translation>Schnell-Tagger</translation>
     </message>
 </context>
 <context>
@@ -10258,32 +10258,32 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="57"/>
         <source>Enter field</source>
-        <translation type="unfinished"></translation>
+        <translation>Feld eingeben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="62"/>
         <source>Enter values</source>
-        <translation type="unfinished"></translation>
+        <translation>Werte eingeben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="127"/>
         <source>Row %1: Field is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeile %1: Feld wird benötigt.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="130"/>
         <source>Row %1: At least one value is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeile %1: Es wird mindestens ein Wert benötigt.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="155"/>
         <source>Display name shown in menus and shortcut actions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzeigename, der in Menü- und Tastenkürzel-Aktionen angezeigt wird.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="157"/>
         <source>Metadata field to write.</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadatenfeld in das geschrieben werden soll.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="159"/>
