@@ -67,4 +67,7 @@ QString progress2(const QStringList& vec);
 QString doclink(const QStringList& vec);
 QString cmdlink(const QStringList& vec);
 QString urlencode(const QStringList& vec);
+ScriptResult isalpha(const QStringList& vec);
+ScriptResult isalnum(const QStringList& vec);
+ScriptResult isdigit(const QStringList& vec);
 } // namespace Fooyin::Scripting

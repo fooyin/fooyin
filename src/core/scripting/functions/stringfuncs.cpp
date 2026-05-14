@@ -787,4 +787,52 @@ QString urlencode(const QStringList& vec)
 
     return QString::fromUtf8(QUrl::toPercentEncoding(vec.front()));
 }
+
+ScriptResult isalpha(const QStringList& vec)
+{
+    if(vec.size() != 1 || vec.front().isEmpty()) {
+        return {};
+    }
+
+    const QString& str = vec.front();
+    for(const QChar& ch : str) {
+        if(!ch.isLetter()) {
+            return {.value = {}, .cond = false};
+        }
+    }
+
+    return {.value = u"1"_s, .cond = true};
+}
+
+ScriptResult isalnum(const QStringList& vec)
+{
+    if(vec.size() != 1 || vec.front().isEmpty()) {
+        return {};
+    }
+
+    const QString& str = vec.front();
+    for(const QChar& ch : str) {
+        if(!ch.isLetterOrNumber()) {
+            return {.value = {}, .cond = false};
+        }
+    }
+
+    return {.value = u"1"_s, .cond = true};
+}
+
+ScriptResult isdigit(const QStringList& vec)
+{
+    if(vec.size() != 1 || vec.front().isEmpty()) {
+        return {};
+    }
+
+    const QString& str = vec.front();
+    for(const QChar& ch : str) {
+        if(!ch.isNumber()) {
+            return {.value = {}, .cond = false};
+        }
+    }
+
+    return {.value = u"1"_s, .cond = true};
+}
 } // namespace Fooyin::Scripting
