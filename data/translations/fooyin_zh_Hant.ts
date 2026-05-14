@@ -124,7 +124,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="375"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation>未勾選取的項目將從配置編輯彈出選單中隱藏。</translation>
+        <translation>未勾選取的項目將自配置編輯彈出選單中隱藏。</translation>
     </message>
 </context>
 <context>
@@ -1417,7 +1417,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="179"/>
         <source>Cover type</source>
-        <translation type="unfinished">封面類型</translation>
+        <translation>封面類型</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="240"/>
@@ -2741,7 +2741,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="133"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>整合</translation>
     </message>
 </context>
 <context>
@@ -2956,43 +2956,43 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="46"/>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="37"/>
         <source>Enabled</source>
-        <translation type="unfinished">已經啟用</translation>
+        <translation>已經啟用</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="63"/>
         <source>Master</source>
-        <translation type="unfinished"></translation>
+        <translation>主控</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="64"/>
         <source>Per-track</source>
-        <translation type="unfinished"></translation>
+        <translation>個別曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="304"/>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="311"/>
         <source>DSP Settings</source>
-        <translation type="unfinished">DSP 設定</translation>
+        <translation>DSP 設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="304"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished">無法進行開啟設定用於 DSP &quot;%1&quot;。</translation>
+        <translation>無法開啟設定用於 DSP &quot;%1&quot;。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="311"/>
         <source>Unable to find DSP &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>無法找到 DSP &quot;%1&quot;。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="353"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="354"/>
         <source>%1: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -3072,7 +3072,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="454"/>
         <source>&amp;Left</source>
-        <translation>齊左(&amp;L)</translation>
+        <translation>往左(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="454"/>
@@ -3082,7 +3082,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="461"/>
         <source>&amp;Right</source>
-        <translation>齊右(&amp;R)</translation>
+        <translation>往右(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="461"/>
@@ -3229,12 +3229,12 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="903"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="908"/>
         <source>Equaliser</source>
-        <translation type="unfinished"></translation>
+        <translation>等化器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="913"/>
         <source>Open Equaliser settings</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟等化器設定</translation>
     </message>
 </context>
 <context>
@@ -5891,7 +5891,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="67"/>
         <source>Remove unavailable tracks from the database and libraries</source>
-        <translation>移除無法可用的曲目 從資料庫及音樂庫</translation>
+        <translation>移除無法可用的曲目 來自資料庫及音樂庫</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
@@ -6089,9 +6089,9 @@ When disabled, the database rating is kept and file tags are only used when the 
 Missing values still fall back to the database.
 When disabled, playcount uses the higher value, first played uses the earlier non-empty value,
 and last played uses the later value.</source>
-        <translation>當設為啟用時，檔案標籤中的播放計數和播放時間戳記會取代資料庫中的數值。 
+        <translation>當設定為啟用時，檔案標籤中的播放計數和播放時間戳記會取代資料庫中的數值。 
 遺失數值時仍會回歸返回至資料庫。 
-當設為停用時，播放計數使用較高的數值，首次播放使用較早的非空白數值， 
+當設定為停用時，播放計數使用較高的數值，首次播放使用較早的非空白數值， 
 最後播放的內容使用較後期的數值。</translation>
     </message>
 </context>
@@ -6973,7 +6973,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="193"/>
         <source>These options control whether the first and last synced lines are centred in view.</source>
-        <translation>這些選項控制不論其首先的及上次的已經同步的行列是否位置中央於檢視中。</translation>
+        <translation>這些選項控制不論其第一的及最後的已經同步的行列是否於檢視的中央位置。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="206"/>
@@ -7379,7 +7379,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="73"/>
         <source>Behaviour</source>
-        <translation type="unfinished">行為</translation>
+        <translation>行為</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="81"/>
@@ -7636,7 +7636,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>整合</translation>
     </message>
 </context>
 <context>
@@ -8854,12 +8854,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
         <source>Ignore playlist files when adding folders</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略播放清單 當添加資料夾時</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
         <source>Prevent duplicate tracks when loading playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>防止重複曲目 當載入播放清單時</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="81"/>
@@ -8899,12 +8899,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
         <source>Only add media files from folders, without loading playlist files found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>僅添加資料夾中的媒體檔案，而不載入其中找到的播放清單檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="112"/>
         <source>Skip playlist entries that are already present in the target playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>跳過目標播放清單中已經存在的播放清單條目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
@@ -9560,7 +9560,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="149"/>
         <source>Playlist Tabs</source>
-        <translation>播放清單選項卡</translation>
+        <translation>播放清單分頁</translation>
     </message>
 </context>
 <context>
@@ -9568,7 +9568,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="107"/>
         <source>Tabs</source>
-        <translation>選項頁</translation>
+        <translation>分頁</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="108"/>
@@ -9581,7 +9581,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="55"/>
         <source>Expand tabs to fill empty space</source>
-        <translation>展開選項頁以填寫空位</translation>
+        <translation>展開分頁以填寫空位</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="56"/>
@@ -9596,7 +9596,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="58"/>
         <source>Show delete button on tabs</source>
-        <translation>顯示刪除按鈕在選項頁上</translation>
+        <translation>顯示刪除按鈕在分頁上</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="59"/>
@@ -9606,7 +9606,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="61"/>
         <source>Playlist Tabs</source>
-        <translation>播放清單選項頁</translation>
+        <translation>播放清單分頁</translation>
     </message>
 </context>
 <context>
@@ -10074,7 +10074,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="929"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
-        <translation>在切換曲目或分頁卡之前，套用或清除目前分頁的待處理變更。</translation>
+        <translation>在切換曲目或分頁之前，套用或清除目前分頁的待處理變更。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="946"/>
@@ -10227,12 +10227,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="74"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>標籤進行中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="74"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished"></translation>
+        <translation>快速標籤器</translation>
     </message>
 </context>
 <context>
@@ -10240,52 +10240,52 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="57"/>
         <source>Enter field</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入欄位</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="62"/>
         <source>Enter values</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入數值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="127"/>
         <source>Row %1: Field is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>行列 %1：欄位是必填項目。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="130"/>
         <source>Row %1: At least one value is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>行列 %1：至少需要一個數值。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="155"/>
         <source>Display name shown in menus and shortcut actions.</source>
-        <translation type="unfinished"></translation>
+        <translation>在選單和快速鍵操作中顯示名稱。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="157"/>
         <source>Metadata field to write.</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料欄位進行寫入。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="159"/>
         <source>Literal values separated by semicolons.</source>
-        <translation type="unfinished"></translation>
+        <translation>用分號分隔的文字數值。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="170"/>
         <source>Name</source>
-        <translation type="unfinished">名稱</translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="172"/>
         <source>Field</source>
-        <translation type="unfinished">欄位</translation>
+        <translation>欄位</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="174"/>
         <source>Values</source>
-        <translation type="unfinished"></translation>
+        <translation>數值</translation>
     </message>
 </context>
 <context>
@@ -10293,17 +10293,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="62"/>
         <source>Separate multiple values with semicolons.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用分號分隔多個數值。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="66"/>
         <source>Confirmation threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>確認閾值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="67"/>
         <source>Ask for confirmation when changing more than this many tracks. Set to 0 to disable confirmation.</source>
-        <translation type="unfinished"></translation>
+        <translation>當變更的曲目超過如此多數時，詢問要求確認。設定為 0 則停用確認。</translation>
     </message>
 </context>
 <context>
@@ -10311,40 +10311,40 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="103"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>標籤進行中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="108"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="293"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished"></translation>
+        <translation>快速標籤器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="127"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="137"/>
         <source>Set %1 to %2</source>
         <extracomment>%1 is a tag field name, %2 is the new tag value.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>設定 %1 至 %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="148"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="155"/>
         <source>Remove %1</source>
         <extracomment>%1 is a tag field name.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>移除 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="187"/>
         <source>Set %1 to</source>
         <extracomment>%1 represents the name or field e.g. Set Rating to</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>設定 %1 至</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="295"/>
         <source>Set &quot;%1&quot; on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>設定 &quot;%1&quot; 於 %Ln 曲目？</numerusform>
         </translation>
     </message>
 </context>
@@ -11094,7 +11094,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="184"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>整合</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="184"/>
@@ -11217,7 +11217,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="366"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>整合</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="366"/>
@@ -11645,7 +11645,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="387"/>
         <source>Select a page from this category.</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇一個頁面 由此類別。</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="182"/>
@@ -11665,12 +11665,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="151"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>整合</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="151"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>系統</translation>
     </message>
 </context>
 <context>
@@ -11683,7 +11683,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="65"/>
         <source>Load files from the same folder when opening one file</source>
-        <translation type="unfinished"></translation>
+        <translation>載入同一資料夾中的檔案 當要開啟一個檔案時</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="68"/>
@@ -11719,7 +11719,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="86"/>
         <source>When opening one file from the file manager, add all supported files from the same folder and play the opened file</source>
-        <translation type="unfinished"></translation>
+        <translation>當從檔案管理員中開啟一個檔案時，自同一資料夾中加入全部支援的檔案，並播放已經開啟的檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="92"/>
@@ -12053,7 +12053,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="140"/>
         <source>Interface</source>
-        <translation type="unfinished">介面</translation>
+        <translation>介面</translation>
     </message>
 </context>
 <context>
@@ -12132,7 +12132,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="72"/>
         <source>Tab Stack</source>
-        <translation>選項卡堆疊</translation>
+        <translation>分頁堆疊</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="285"/>
@@ -12142,22 +12142,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="289"/>
         <source>&amp;Above</source>
-        <translation type="unfinished"></translation>
+        <translation>在此之上(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="290"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">齊右(&amp;R)</translation>
+        <translation>右方(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="291"/>
         <source>&amp;Below</source>
-        <translation type="unfinished"></translation>
+        <translation>在此之下(&amp;B)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="292"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">齊左(&amp;L)</translation>
+        <translation>左方(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="331"/>
@@ -12408,7 +12408,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="204"/>
         <source>Enabled</source>
-        <translation type="unfinished">已經啟用</translation>
+        <translation>已經啟用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="206"/>
@@ -12423,12 +12423,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="210"/>
         <source>Multi-line</source>
-        <translation type="unfinished"></translation>
+        <translation>多條行列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="212"/>
         <source>Multi-value</source>
-        <translation type="unfinished"></translation>
+        <translation>多個數值</translation>
     </message>
 </context>
 <context>
@@ -12446,7 +12446,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>進行標籤中</translation>
     </message>
 </context>
 <context>
@@ -12553,7 +12553,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="146"/>
         <source>Metadata in the associated files will be overwritten.</source>
-        <translation>關聯檔案中的詮釋資料將會被覆蓋。</translation>
+        <translation>關聯檔案中的詮釋資料將會被覆寫。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="148"/>
@@ -12919,7 +12919,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="118"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
 </context>
 <context>
@@ -13475,7 +13475,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="192"/>
         <source>Playlist Tabs</source>
-        <translation>播放清單選項卡</translation>
+        <translation>播放清單分頁</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="198"/>
@@ -13490,7 +13490,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="218"/>
         <source>Tab Stack</source>
-        <translation>選項卡堆疊</translation>
+        <translation>分頁堆疊</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="227"/>
@@ -13603,17 +13603,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="423"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">配置編輯</translation>
+        <translation>配置編輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="424"/>
         <source>Menu levels</source>
-        <translation type="unfinished"></translation>
+        <translation>選單階層</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="425"/>
         <source>Number of widget levels shown in the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>小工具階層數字 顯示於版面配置編輯中的彈出選單。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="430"/>
@@ -13688,7 +13688,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="516"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="523"/>
@@ -13714,7 +13714,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="550"/>
         <source>Tabs</source>
-        <translation>選項卡</translation>
+        <translation>分頁</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="546"/>
@@ -14165,12 +14165,12 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="112"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished"></translation>
+        <translation>快速標籤器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>進行標籤中</translation>
     </message>
 </context>
 <context>
@@ -14178,7 +14178,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/quicktagger/quicktagger.cpp" line="135"/>
         <source>Rating</source>
-        <translation type="unfinished">評分</translation>
+        <translation>評分</translation>
     </message>
 </context>
 <context>
