@@ -21,6 +21,7 @@
 #include "../inhibitor.h"
 
 #include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusObjectPath>
 
 namespace Fooyin::SleepInhibitor {
 class InhibitorDbus : public InhibitorPrivate
@@ -34,11 +35,20 @@ public:
     void uninhibitSleep() override;
 
 private:
+    enum class Interface : uint8_t
+    {
+        None,
+        GnomeSessionManager,
+        FreedesktopPower,
+        FreedesktopPortal,
+    };
+
     void onInhibitCallFinished(QDBusPendingCallWatcher* watcher);
     void onUninhibitCallFinished(QDBusPendingCallWatcher* watcher);
 
     QDBusInterface* m_busInterface{nullptr};
-    bool m_usingFreedesktopInterface{false};
-    uint32_t m_inhibitCookie{0};
+    Interface m_interface{Interface::None};
+    uint32_t m_inhibitCookie{0};     // Used by GnomeSessionManager and FreedesktopPower
+    QDBusObjectPath m_inhibitHandle; // Used by FreedesktopPortal
 };
 } // namespace Fooyin::SleepInhibitor

@@ -36,6 +36,10 @@ static const auto GnomeSessionManagerInterface = "org.gnome.SessionManager"_L1;
 static const auto FreedesktopPowerMgmtService   = "org.freedesktop.PowerManagement"_L1;
 static const auto FreedesktopPowerMgmtPath      = "/org/freedesktop/PowerManagement/Inhibit"_L1;
 static const auto FreedesktopPowerMgmtInterface = "org.freedesktop.PowerManagement.Inhibit"_L1;
+
+static const auto FreedesktopPortalService   = "org.freedesktop.portal.Desktop"_L1;
+static const auto FreedesktopPortalPath      = "/org/freedesktop/portal/desktop"_L1;
+static const auto FreedesktopPortalInterface = "org.freedesktop.portal.Inhibit"_L1;
 } // namespace DbusConstants
 
 namespace Fooyin::SleepInhibitor {
@@ -53,7 +57,7 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
                                         GnomeSessionManagerInterface, QDBusConnection::sessionBus(), this);
     if(m_busInterface->isValid()) {
         qCDebug(SLEEPINHIBITOR) << "Using" << GnomeSessionManagerInterface;
-        m_usingFreedesktopInterface = false;
+        m_interface = Interface::GnomeSessionManager;
         return;
     }
 
@@ -62,7 +66,16 @@ InhibitorDbus::InhibitorDbus(QObject* parent)
                                         FreedesktopPowerMgmtInterface, QDBusConnection::sessionBus(), this);
     if(m_busInterface->isValid()) {
         qCDebug(SLEEPINHIBITOR) << "Using" << FreedesktopPowerMgmtInterface;
-        m_usingFreedesktopInterface = true;
+        m_interface = Interface::FreedesktopPower;
+        return;
+    }
+
+    invalidateBusInterface();
+    m_busInterface = new QDBusInterface(FreedesktopPortalService, FreedesktopPortalPath, FreedesktopPortalInterface,
+                                        QDBusConnection::sessionBus(), this);
+    if(m_busInterface->isValid()) {
+        qCDebug(SLEEPINHIBITOR) << "Using" << FreedesktopPortalInterface;
+        m_interface = Interface::FreedesktopPortal;
         return;
     }
 
@@ -79,14 +92,25 @@ void InhibitorDbus::inhibitSleep()
 
     qCDebug(SLEEPINHIBITOR) << "Inhibiting sleep";
 
+    constexpr auto BlockSuspendFlag = 4U;
+    static const auto Reason        = QStringLiteral("fooyin is running");
+
     QList<QVariant> args;
-    if(m_usingFreedesktopInterface) {
-        args = {"fooyin"_L1, "fooyin is running"_L1};
-    }
-    else {
-        constexpr auto XWindowId        = 0U;
-        constexpr auto BlockSuspendFlag = 4U;
-        args                            = {"fooyin"_L1, XWindowId, "fooyin is running"_L1, BlockSuspendFlag};
+    switch(m_interface) {
+        case Interface::None:
+            break;
+        case Interface::GnomeSessionManager: {
+            constexpr auto XWindowId = 0U;
+            args                     = {"fooyin"_L1, XWindowId, Reason, BlockSuspendFlag};
+        }
+        case Interface::FreedesktopPower:
+            args = {"fooyin"_L1, Reason};
+            break;
+        case Interface::FreedesktopPortal: {
+            QMap<QString, QVariant> options;
+            options["reason"_L1] = Reason;
+            args                 = {"fooyin"_L1, BlockSuspendFlag, options};
+        } break;
     }
     const QDBusPendingCall pendingCall = m_busInterface->asyncCallWithArgumentList("Inhibit"_L1, args);
 
@@ -102,30 +126,58 @@ void InhibitorDbus::uninhibitSleep()
 
     qCDebug(SLEEPINHIBITOR) << "Uninhibiting sleep";
 
-    if(m_inhibitCookie == 0) [[unlikely]] {
-        qCWarning(SLEEPINHIBITOR) << "Cookie is 0?";
-        return;
+    if(m_interface == Interface::FreedesktopPortal) {
+        auto* inhibitObjectInterface
+            = new QDBusInterface(DbusConstants::FreedesktopPortalService, m_inhibitHandle.path(),
+                                 "org.freedesktop.portal.Request"_L1, QDBusConnection::sessionBus());
+        if(!inhibitObjectInterface->isValid()) [[unlikely]] {
+            qCWarning(SLEEPINHIBITOR) << "Bad inhibit handle? Object path:" << m_inhibitHandle.path();
+            setState(State::Error);
+            return;
+        }
+
+        const auto pendingCall = inhibitObjectInterface->asyncCall("Close"_L1);
+        auto* watcher          = new QDBusPendingCallWatcher(pendingCall, this);
+        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &InhibitorDbus::onUninhibitCallFinished);
+
+        delete inhibitObjectInterface;
     }
+    else {
+        if(m_inhibitCookie == 0) [[unlikely]] {
+            qCWarning(SLEEPINHIBITOR) << "Cookie is 0?";
+            setState(State::Error);
+            return;
+        }
 
-    const QDBusPendingCall pendingCall
-        = m_busInterface->asyncCall(m_usingFreedesktopInterface ? "UnInhibit"_L1 : "Uninhibit"_L1, m_inhibitCookie);
-
-    auto* watcher = new QDBusPendingCallWatcher(pendingCall, this);
-    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &InhibitorDbus::onUninhibitCallFinished);
+        const auto pendingCall = m_busInterface->asyncCall(
+            m_interface == Interface::FreedesktopPower ? "UnInhibit"_L1 : "Uninhibit"_L1, m_inhibitCookie);
+        auto* watcher = new QDBusPendingCallWatcher(pendingCall, this);
+        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &InhibitorDbus::onUninhibitCallFinished);
+    }
 }
 
 void InhibitorDbus::onInhibitCallFinished(QDBusPendingCallWatcher* watcher)
 {
-    const QDBusPendingReply<uint> reply = *watcher;
     watcher->deleteLater();
 
-    if(!reply.isError()) {
-        m_inhibitCookie = reply.value();
-        setState(State::Inhibited);
+    const auto handleReply = [this]<typename T>(const QDBusPendingReply<T>& reply, auto&& onSuccess) {
+        if(reply.isValid()) {
+            onSuccess();
+            setState(State::Inhibited);
+        }
+        else {
+            qCWarning(SLEEPINHIBITOR) << "Inhibit call error:" << reply.error().message();
+            setState(State::Error);
+        }
+    };
+
+    if(m_interface == Interface::FreedesktopPortal) {
+        const QDBusPendingReply<QDBusObjectPath> reply = *watcher;
+        handleReply(reply, [this, &reply] { m_inhibitHandle = reply.value(); });
     }
     else {
-        qCWarning(SLEEPINHIBITOR) << "Inhibit call error:" << reply.error().message();
-        setState(State::Error);
+        const QDBusPendingReply<uint> reply = *watcher;
+        handleReply(reply, [this, &reply] { m_inhibitCookie = reply.value(); });
     }
 }
 
@@ -134,7 +186,7 @@ void InhibitorDbus::onUninhibitCallFinished(QDBusPendingCallWatcher* watcher)
     const QDBusPendingReply<> reply = *watcher;
     watcher->deleteLater();
 
-    if(!reply.isError()) {
+    if(reply.isValid()) {
         setState(State::Uninhibited);
     }
     else {
