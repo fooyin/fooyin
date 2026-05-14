@@ -1417,7 +1417,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="179"/>
         <source>Cover type</source>
-        <translation type="unfinished">Albumcover-Typ</translation>
+        <translation>Albumcover-Typ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="240"/>
@@ -2745,7 +2745,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="133"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>Integrationen</translation>
     </message>
 </context>
 <context>
@@ -2960,7 +2960,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="46"/>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="37"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="63"/>
@@ -2981,22 +2981,22 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="304"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished">Einstellungen für DSP „%1“ konnten nicht geöffnet werden.</translation>
+        <translation>Einstellungen für DSP „%1“ konnten nicht geöffnet werden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="311"/>
         <source>Unable to find DSP &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP „%1“ konnte nicht gefunden werden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="353"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="354"/>
         <source>%1: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -3233,12 +3233,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="903"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="908"/>
         <source>Equaliser</source>
-        <translation type="unfinished"></translation>
+        <translation>Equalizer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="913"/>
         <source>Open Equaliser settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Equalizer-Einstellungen öffnen</translation>
     </message>
 </context>
 <context>
@@ -7392,7 +7392,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="73"/>
         <source>Behaviour</source>
-        <translation type="unfinished">Verhalten</translation>
+        <translation>Verhalten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="81"/>
@@ -7649,7 +7649,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>Integrationen</translation>
     </message>
 </context>
 <context>
@@ -8869,12 +8869,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
         <source>Ignore playlist files when adding folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignoriere Wiedergabelisten-Dateien beim Hinzufügen von Ordnern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
         <source>Prevent duplicate tracks when loading playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Verhindere doppelte Titel beim Laden von Wiedergabelisten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="81"/>
@@ -8914,7 +8914,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
         <source>Only add media files from folders, without loading playlist files found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge nur Mediendateien aus Ordnern hinzu, ohne Wiedergabelisten-Dateien zu laden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="112"/>
