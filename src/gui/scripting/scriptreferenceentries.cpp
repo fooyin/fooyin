@@ -388,7 +388,7 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
         functionEntry("isalnum", u"$isalnum(text)"_s,
                       QT_TRANSLATE_NOOP("Fooyin", "Checks if text contains only alphanumeric characters"),
                       QT_TRANSLATE_NOOP("Fooyin", "String")),
-        functionEntry("isdigit", u"$isdigit(text)"_s,
+        functionEntry("isnum", u"$isnum(text)"_s,
                       QT_TRANSLATE_NOOP("Fooyin", "Checks if text contains only numeric characters"),
                       QT_TRANSLATE_NOOP("Fooyin", "String")),
         functionEntry("timems", u"$timems(milliseconds)"_s, QT_TRANSLATE_NOOP("Fooyin", "Formats milliseconds as time"),

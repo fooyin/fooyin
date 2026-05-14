@@ -69,5 +69,5 @@ QString cmdlink(const QStringList& vec);
 QString urlencode(const QStringList& vec);
 ScriptResult isalpha(const QStringList& vec);
 ScriptResult isalnum(const QStringList& vec);
-ScriptResult isdigit(const QStringList& vec);
+ScriptResult isnum(const QStringList& vec);
 } // namespace Fooyin::Scripting

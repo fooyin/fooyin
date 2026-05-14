@@ -694,7 +694,7 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"urlencode"_s, makeScriptFunctionInvoker<Scripting::urlencode>());
     registerFunction(u"isalpha"_s, makeScriptFunctionInvoker<Scripting::isalpha>());
     registerFunction(u"isalnum"_s, makeScriptFunctionInvoker<Scripting::isalnum>());
-    registerFunction(u"isdigit"_s, makeScriptFunctionInvoker<Scripting::isdigit>());
+    registerFunction(u"isnum"_s, makeScriptFunctionInvoker<Scripting::isnum>());
 
     registerFunction(u"timems"_s, makeScriptFunctionInvoker<Scripting::msToString>());
     registerFunction(u"year"_s, makeScriptFunctionInvoker<Scripting::year>());

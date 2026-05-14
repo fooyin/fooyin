@@ -820,7 +820,7 @@ ScriptResult isalnum(const QStringList& vec)
     return {.value = u"1"_s, .cond = true};
 }
 
-ScriptResult isdigit(const QStringList& vec)
+ScriptResult isnum(const QStringList& vec)
 {
     if(vec.size() != 1 || vec.front().isEmpty()) {
         return {};
