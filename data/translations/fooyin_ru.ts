@@ -1417,7 +1417,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="179"/>
         <source>Cover type</source>
-        <translation type="unfinished">Тип обложки</translation>
+        <translation>Тип обложки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="240"/>
@@ -2749,7 +2749,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="133"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>Интеграции</translation>
     </message>
 </context>
 <context>
@@ -2995,12 +2995,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="353"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="354"/>
         <source>%1: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -3237,12 +3237,12 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="903"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="908"/>
         <source>Equaliser</source>
-        <translation type="unfinished"></translation>
+        <translation>Эквалайзер</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="913"/>
         <source>Open Equaliser settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть настройки эквалайзера</translation>
     </message>
 </context>
 <context>
@@ -7662,7 +7662,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="208"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>Интеграции</translation>
     </message>
 </context>
 <context>
@@ -8884,12 +8884,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
         <source>Ignore playlist files when adding folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Игнорировать файлы плейлиста при добавлении папки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
         <source>Prevent duplicate tracks when loading playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Предотвратить дубликацию треков во время загрузки плейлистов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="81"/>
@@ -8929,7 +8929,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
         <source>Only add media files from folders, without loading playlist files found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавлять только медиа-файлы из папок, без загрузки плейлист-файлов найденных внутри.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="112"/>
@@ -10268,7 +10268,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="74"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрое Тегирование</translation>
     </message>
 </context>
 <context>
@@ -10281,7 +10281,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="62"/>
         <source>Enter values</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите значения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="127"/>
