@@ -102,7 +102,7 @@ void InhibitorDbus::inhibitSleep()
         case Interface::GnomeSessionManager: {
             constexpr auto XWindowId = 0U;
             args                     = {"fooyin"_L1, XWindowId, Reason, BlockSuspendFlag};
-        }
+        } break;
         case Interface::FreedesktopPower:
             args = {"fooyin"_L1, Reason};
             break;
