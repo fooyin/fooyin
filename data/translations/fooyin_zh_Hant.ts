@@ -31,7 +31,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
@@ -157,7 +157,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放清單</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
@@ -1057,17 +1057,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="386"/>
         <source>Checks if text contains only alphabetic characters</source>
-        <translation type="unfinished"></translation>
+        <translation>檢查是否文字僅包含字母字元</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="389"/>
         <source>Checks if text contains only alphanumeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>檢查是否文字僅包含字母數字字元</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="392"/>
         <source>Checks if text contains only numeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>檢查是否文字僅包含數字字元</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
@@ -1516,7 +1516,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="107"/>
         <source>Groups artwork thumbnails that should share the same cached image</source>
-        <translation>對應共享相同快取影像的圖面縮圖進行分組</translation>
+        <translation>對應共享相同快取影像的圖面縮圖進行群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="115"/>
@@ -1565,7 +1565,7 @@
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="320"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation>
-            <numerusform>匯出圖面至 %Ln 檔案</numerusform>
+            <numerusform>已經匯出圖面至 %Ln 檔案</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -1614,7 +1614,7 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="121"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="209"/>
         <source>No artwork present</source>
-        <translation>無圖面展示</translation>
+        <translation>無圖面呈現</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="95"/>
@@ -1739,7 +1739,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="91"/>
         <source>Size of thumbnails in Artwork Finder when searching for artwork</source>
-        <translation>當搜尋圖面時，於尋找圖面器中的縮圖大小</translation>
+        <translation>於圖面尋找器中縮圖的大小 當搜尋圖面時</translation>
     </message>
 </context>
 <context>
@@ -1790,7 +1790,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="95"/>
         <source>Artwork will be searched for in the above order.</source>
-        <translation>圖面將會進行搜尋 基於以上的順序。</translation>
+        <translation>圖面將會進行搜尋，按以上的順序。</translation>
     </message>
 </context>
 <context>
@@ -2271,7 +2271,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="544"/>
         <source>Choose where to extract this embedded artwork</source>
-        <translation>選擇提取此嵌入圖面的位置</translation>
+        <translation>選擇此嵌入圖面的提取位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="545"/>
@@ -2281,7 +2281,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="579"/>
         <source>Extracted artwork to %1</source>
-        <translation>已經將圖面提取至 %1</translation>
+        <translation>已經提取圖面至 %1</translation>
     </message>
 </context>
 <context>
@@ -2564,7 +2564,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="720"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="193"/>
@@ -3106,18 +3106,18 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/editablelayout.cpp" line="392"/>
         <location filename="../../src/gui/editablelayout.cpp" line="407"/>
         <source>Insert &amp;before</source>
-        <translation type="unfinished"></translation>
+        <translation>插入在此之前(&amp;B)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="397"/>
         <location filename="../../src/gui/editablelayout.cpp" line="412"/>
         <source>Insert &amp;after</source>
-        <translation type="unfinished"></translation>
+        <translation>插入在此之後(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="419"/>
         <source>Insert &amp;inside</source>
-        <translation type="unfinished"></translation>
+        <translation>插入內部(&amp;I)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
@@ -3999,12 +3999,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="82"/>
         <source>File Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案操作</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
         <source>Confirm before deleting tracks</source>
-        <translation type="unfinished">刪除曲目之前進行確認</translation>
+        <translation>刪除曲目之前進行確認</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="100"/>
@@ -4441,7 +4441,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="295"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放清單</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="333"/>
@@ -6720,7 +6720,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="787"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="922"/>
@@ -9680,7 +9680,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="523"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至其他播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="692"/>
@@ -12853,7 +12853,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="397"/>
         <source>Search for artwork for the selected tracks</source>
-        <translation>搜尋圖面用於所選曲目</translation>
+        <translation>搜尋圖面用於所選的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="413"/>
@@ -12883,7 +12883,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="470"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
-        <translation>已經成功移除全部圖面，其關聯於所選的曲目(內嵌的、目錄中的)</translation>
+        <translation>移除全部圖面，其為關聯於所選的曲目(內嵌的、目錄中的)</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="484"/>
@@ -13194,12 +13194,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="59"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>正規化波形</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="60"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>dB 大小比例</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="63"/>
@@ -13297,47 +13297,47 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="129"/>
         <source>Amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>振幅</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="138"/>
         <source>Scale the displayed waveform so the loudest peak reaches full height</source>
-        <translation type="unfinished"></translation>
+        <translation>縮放顯示的波形，使最響亮的峰值達到全滿高度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="139"/>
         <source>Use a decibel scale to make quieter waveform details more visible</source>
-        <translation type="unfinished"></translation>
+        <translation>使用分貝大小以使較為安靜的波形細節更加顯現</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="152"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="153"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>平均</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="154"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>平滑平均</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="155"/>
         <source>How peaks are combined when waveform data is scaled to the current width</source>
-        <translation type="unfinished"></translation>
+        <translation>當波形資料縮放至目前寬度時是如何混合峰值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="159"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值顯示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="173"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>渲染</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="184"/>
@@ -13507,32 +13507,32 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="573"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>正規化波形</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="582"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>dB 大小比例</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="591"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值顯示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="594"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="595"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>平均</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="596"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>平滑平均</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="630"/>
@@ -13752,17 +13752,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="431"/>
         <source>Seeking</source>
-        <translation type="unfinished">查尋中</translation>
+        <translation>查尋中</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="432"/>
         <source>Focus seekbars when clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>當點按時聚焦查尋欄</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="433"/>
         <source>Give seekbars keyboard focus after clicking them.</source>
-        <translation type="unfinished"></translation>
+        <translation>點按查尋欄之後，為它們提供鍵盤焦點。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="438"/>
@@ -13906,7 +13906,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="189"/>
@@ -13994,7 +13994,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="130"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至其他播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="133"/>
