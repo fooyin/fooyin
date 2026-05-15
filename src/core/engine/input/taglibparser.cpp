@@ -897,8 +897,9 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
         else {
             const auto tagEntry = convertString(field);
             if(!policy.rating.automaticRead() && tagEntry == policy.rating.readTag && !value.isEmpty()) {
+                const bool ratingTagFallback = policy.rating.readScale == RatingScale::Automatic;
                 readTextRatingTag(track, policy.rating, policy.rating.readTag, tagEntry, convertString(value.front()),
-                                  false);
+                                  ratingTagFallback);
             }
             else {
                 for(const auto& tagValue : value) {
