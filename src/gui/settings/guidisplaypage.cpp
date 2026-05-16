@@ -85,13 +85,13 @@ GuiDisplayPageWidget::GuiDisplayPageWidget(SettingsManager* settings)
     row = 0;
     themeGroupLayout->addWidget(new QLabel(tr("Style") + ":"_L1, this), row, 0);
     themeGroupLayout->addWidget(m_styles, row++, 1);
-    themeGroupLayout->addWidget(iconThemeBox, row++, 0, 1, 2);
     themeGroupLayout->setColumnStretch(1, 1);
 
     auto* mainLayout = new QGridLayout(this);
 
     row = 0;
     mainLayout->addWidget(themeGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(iconThemeBox, row++, 0, 1, 2);
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 }

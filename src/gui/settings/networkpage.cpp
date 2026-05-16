@@ -59,14 +59,15 @@ private:
     QRadioButton* m_useSystemProxy;
     QRadioButton* m_manualProxy;
     QLabel* m_typeLabel;
-    QLabel* m_type;
     QComboBox* m_proxyType;
     QLabel* m_hostLabel;
     QLineEdit* m_host;
     QLabel* m_portLabel;
     QSpinBox* m_port;
-    QGroupBox* m_auth;
+    QCheckBox* m_auth;
+    QLabel* m_usernameLabel;
     QLineEdit* m_username;
+    QLabel* m_passwordLabel;
     QLineEdit* m_password;
 };
 
@@ -82,8 +83,10 @@ NetworkPageWidget::NetworkPageWidget(SettingsManager* settings)
     , m_host{new QLineEdit(this)}
     , m_portLabel{new QLabel(tr("Port") + ":"_L1, this)}
     , m_port{new QSpinBox(this)}
-    , m_auth{new QGroupBox(tr("Authentication"), this)}
+    , m_auth{new QCheckBox(tr("Authentication"), this)}
+    , m_usernameLabel{new QLabel(tr("Username") + ":"_L1, this)}
     , m_username{new QLineEdit(this)}
+    , m_passwordLabel{new QLabel(tr("Password") + ":"_L1, this)}
     , m_password{new QLineEdit(this)}
 {
     m_password->setEchoMode(QLineEdit::Password);
@@ -98,36 +101,50 @@ NetworkPageWidget::NetworkPageWidget(SettingsManager* settings)
     m_proxyType->addItem(u"HTTP"_s);
     m_proxyType->addItem(u"SOCKS5"_s);
 
-    m_auth->setCheckable(true);
-    auto* authLayout = new QGridLayout(m_auth);
+    m_port->setRange(0, 65535);
+    m_port->setMaximumWidth(120);
+
+    auto* manualLayout = new QGridLayout();
+    manualLayout->setContentsMargins(22, 6, 0, 0);
+    manualLayout->setHorizontalSpacing(proxyLayout->horizontalSpacing());
+    manualLayout->setVerticalSpacing(proxyLayout->verticalSpacing());
+
+    auto* authSettingsLayout = new QGridLayout();
+    authSettingsLayout->setContentsMargins(22, 0, 0, 0);
+    authSettingsLayout->setHorizontalSpacing(proxyLayout->horizontalSpacing());
+    authSettingsLayout->setVerticalSpacing(proxyLayout->verticalSpacing());
 
     int row{0};
-    authLayout->addWidget(new QLabel(tr("Username") + ":"_L1, this), row, 0);
-    authLayout->addWidget(m_username, row++, 1);
-    authLayout->addWidget(new QLabel(tr("Password") + ":"_L1, this), row, 0);
-    authLayout->addWidget(m_password, row++, 1);
-    proxyLayout->setColumnStretch(1, 1);
-
-    m_port->setRange(0, 65535);
-
-    row = 0;
     proxyLayout->addWidget(m_noProxy, row++, 0, 1, 3);
     proxyLayout->addWidget(m_useSystemProxy, row++, 0, 1, 3);
     proxyLayout->addWidget(m_manualProxy, row++, 0, 1, 3);
-    proxyLayout->addWidget(m_typeLabel, row, 0);
-    proxyLayout->addWidget(m_proxyType, row++, 1);
-    proxyLayout->addWidget(m_hostLabel, row, 0);
-    proxyLayout->addWidget(m_host, row, 1, 1, 2);
-    proxyLayout->addWidget(m_portLabel, row, 3);
-    proxyLayout->addWidget(m_port, row++, 4);
-    proxyLayout->addWidget(m_auth, row++, 0, 1, 5);
+    proxyLayout->addLayout(manualLayout, row++, 0, 1, 3);
     proxyLayout->setColumnStretch(2, 1);
+
+    row = 0;
+    manualLayout->addWidget(m_typeLabel, row, 0);
+    manualLayout->addWidget(m_proxyType, row++, 1);
+    manualLayout->addWidget(m_hostLabel, row, 0);
+    manualLayout->addWidget(m_host, row++, 1);
+    manualLayout->addWidget(m_portLabel, row, 0);
+    manualLayout->addWidget(m_port, row++, 1, Qt::AlignLeft);
+    manualLayout->addWidget(m_auth, row++, 0, 1, 2);
+    manualLayout->addLayout(authSettingsLayout, row++, 0, 1, 2);
+    manualLayout->setColumnStretch(1, 1);
+
+    row = 0;
+    authSettingsLayout->addWidget(m_usernameLabel, row, 0);
+    authSettingsLayout->addWidget(m_username, row++, 1);
+    authSettingsLayout->addWidget(m_passwordLabel, row, 0);
+    authSettingsLayout->addWidget(m_password, row++, 1);
+    authSettingsLayout->setColumnStretch(1, 1);
 
     auto* layout = new QGridLayout(this);
     layout->addWidget(proxyGroup);
     layout->setRowStretch(layout->rowCount(), 1);
 
     QObject::connect(m_proxyActionGroup, &QButtonGroup::buttonToggled, this, &NetworkPageWidget::updateWidgetState);
+    QObject::connect(m_auth, &QCheckBox::toggled, this, &NetworkPageWidget::updateWidgetState);
 }
 
 void NetworkPageWidget::load()
@@ -177,19 +194,19 @@ void NetworkPageWidget::updateWidgetState()
 {
     const bool manualProxy = m_manualProxy->isChecked();
 
-    m_typeLabel->setVisible(manualProxy);
-    m_proxyType->setVisible(manualProxy);
-    m_hostLabel->setVisible(manualProxy);
-    m_host->setVisible(manualProxy);
-    m_portLabel->setVisible(manualProxy);
-    m_port->setVisible(manualProxy);
-    m_auth->setVisible(manualProxy);
-    m_username->setVisible(manualProxy);
-    m_password->setVisible(manualProxy);
+    m_typeLabel->setEnabled(manualProxy);
+    m_proxyType->setEnabled(manualProxy);
+    m_hostLabel->setEnabled(manualProxy);
+    m_host->setEnabled(manualProxy);
+    m_portLabel->setEnabled(manualProxy);
+    m_port->setEnabled(manualProxy);
+    m_auth->setEnabled(manualProxy);
 
-    const bool useAuth = m_auth->isChecked();
+    const bool useAuth = manualProxy && m_auth->isChecked();
 
+    m_usernameLabel->setEnabled(useAuth);
     m_username->setEnabled(useAuth);
+    m_passwordLabel->setEnabled(useAuth);
     m_password->setEnabled(useAuth);
 }
 

@@ -49,6 +49,7 @@ public:
 
 private:
     void updateAvailability();
+    void updateWidgetState();
     [[nodiscard]] PlaybackControls playbackControls() const;
     void setPlaybackControls(PlaybackControls controls);
 
@@ -56,7 +57,9 @@ private:
     NotifyPlugin* m_plugin;
 
     QCheckBox* m_enable;
+    QLabel* m_titleLabel;
     ScriptLineEdit* m_titleField;
+    QLabel* m_bodyLabel;
     ScriptLineEdit* m_bodyField;
     QCheckBox* m_showAlbumArt;
     QCheckBox* m_showPrevious;
@@ -69,19 +72,23 @@ private:
 NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plugin)
     : m_settings{settings}
     , m_plugin{plugin}
-    , m_enable{new QCheckBox(tr("Enabled"), this)}
+    , m_enable{new QCheckBox(tr("Enable notifications"), this)}
+    , m_titleLabel{new QLabel(tr("Title") + ":"_L1, this)}
     , m_titleField{new ScriptLineEdit(this)}
+    , m_bodyLabel{new QLabel(tr("Body") + ":"_L1, this)}
     , m_bodyField{new ScriptLineEdit(this)}
     , m_showAlbumArt{new QCheckBox(tr("Show album art"), this)}
-    , m_showPrevious{new QCheckBox(tr("Show Previous"), this)}
-    , m_showPlayPause{new QCheckBox(tr("Show Play/Pause"), this)}
-    , m_showNext{new QCheckBox(tr("Show Next"), this)}
+    , m_showPrevious{new QCheckBox(tr("Show previous"), this)}
+    , m_showPlayPause{new QCheckBox(tr("Show play/pause"), this)}
+    , m_showNext{new QCheckBox(tr("Show next"), this)}
     , m_timeoutLabel{new QLabel(tr("Timeout") + ":"_L1, this)}
     , m_timeout{new QSpinBox(this)}
 {
-    auto* fieldsGroup    = new QGroupBox(tr("Notification Content"), this);
+    auto* generalGroup   = new QGroupBox(tr("General"), this);
+    auto* generalLayout  = new QGridLayout(generalGroup);
+    auto* fieldsGroup    = new QGroupBox(tr("Content"), this);
     auto* fieldsLayout   = new QGridLayout(fieldsGroup);
-    auto* controlsGroup  = new QGroupBox(tr("Playback controls"), fieldsGroup);
+    auto* controlsGroup  = new QGroupBox(tr("Playback Controls"), this);
     auto* controlsLayout = new QVBoxLayout(controlsGroup);
 
     controlsLayout->addWidget(m_showPrevious);
@@ -89,12 +96,12 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
     controlsLayout->addWidget(m_showNext);
 
     int row{0};
-    fieldsLayout->addWidget(new QLabel(tr("Title") + ":"_L1, this), row, 0);
+    fieldsLayout->addWidget(m_titleLabel, row, 0);
     fieldsLayout->addWidget(m_titleField, row++, 1);
-    fieldsLayout->addWidget(new QLabel(tr("Body") + ":"_L1, this), row, 0);
+    fieldsLayout->addWidget(m_bodyLabel, row, 0);
     fieldsLayout->addWidget(m_bodyField, row++, 1);
     fieldsLayout->addWidget(m_showAlbumArt, row++, 0, 1, 2);
-    fieldsLayout->addWidget(controlsGroup, row++, 0, 1, 2);
+    fieldsLayout->setColumnStretch(1, 1);
 
     m_timeout->setRange(-1, 60000);
     m_timeout->setSuffix(u" ms"_s);
@@ -110,11 +117,18 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
     timeoutLayout->addStretch();
 
     row = 0;
-    layout->addWidget(m_enable, row++, 0, 1, 2);
-    layout->addWidget(m_timeoutLabel, row, 0);
-    layout->addLayout(timeoutLayout, row++, 1);
+    generalLayout->addWidget(m_enable, row++, 0, 1, 2);
+    generalLayout->addWidget(m_timeoutLabel, row, 0);
+    generalLayout->addLayout(timeoutLayout, row++, 1);
+    generalLayout->setColumnStretch(1, 1);
+
+    row = 0;
+    layout->addWidget(generalGroup, row++, 0, 1, 2);
     layout->addWidget(fieldsGroup, row++, 0, 1, 2);
+    layout->addWidget(controlsGroup, row++, 0, 1, 2);
     layout->setRowStretch(row, 1);
+
+    QObject::connect(m_enable, &QCheckBox::toggled, this, &NotifyPageWidget::updateWidgetState);
 }
 
 PlaybackControls NotifyPageWidget::playbackControls() const
@@ -141,9 +155,15 @@ void NotifyPageWidget::setPlaybackControls(PlaybackControls controls)
 
 void NotifyPageWidget::updateAvailability()
 {
+    updateWidgetState();
+}
+
+void NotifyPageWidget::updateWidgetState()
+{
     const bool albumArtSupported = m_plugin && m_plugin->supportsAlbumArt();
     const bool controlsSupported = m_plugin && m_plugin->supportsPlaybackControls();
     const bool timeoutSupported  = m_plugin && m_plugin->supportsTimeout();
+    const bool enabled           = m_enable->isChecked();
 
     const QString albumArtTooltip
         = albumArtSupported ? QString{} : tr("Album art is not available for the active notification backend");
@@ -153,19 +173,24 @@ void NotifyPageWidget::updateAvailability()
                                      ? tr("Notification display time in milliseconds")
                                      : tr("Notification timeout is not available for the active notification backend");
 
-    m_showAlbumArt->setEnabled(albumArtSupported);
+    m_titleLabel->setEnabled(enabled);
+    m_titleField->setEnabled(enabled);
+    m_bodyLabel->setEnabled(enabled);
+    m_bodyField->setEnabled(enabled);
+
+    m_showAlbumArt->setEnabled(enabled && albumArtSupported);
     m_showAlbumArt->setToolTip(albumArtTooltip);
 
-    m_showPrevious->setEnabled(controlsSupported);
+    m_showPrevious->setEnabled(enabled && controlsSupported);
     m_showPrevious->setToolTip(controlsTooltip);
-    m_showPlayPause->setEnabled(controlsSupported);
+    m_showPlayPause->setEnabled(enabled && controlsSupported);
     m_showPlayPause->setToolTip(controlsTooltip);
-    m_showNext->setEnabled(controlsSupported);
+    m_showNext->setEnabled(enabled && controlsSupported);
     m_showNext->setToolTip(controlsTooltip);
 
-    m_timeoutLabel->setEnabled(timeoutSupported);
+    m_timeoutLabel->setEnabled(enabled && timeoutSupported);
     m_timeoutLabel->setToolTip(timeoutTooltip);
-    m_timeout->setEnabled(timeoutSupported);
+    m_timeout->setEnabled(enabled && timeoutSupported);
     m_timeout->setToolTip(timeoutTooltip);
 }
 

@@ -19,8 +19,6 @@
 
 #include "playbackpage.h"
 
-#include "widgets/spacer.h"
-
 #include <core/coresettings.h>
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
@@ -36,6 +34,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QSlider>
+#include <QSpacerItem>
 
 using namespace Qt::StringLiterals;
 
@@ -52,6 +51,8 @@ public:
     void reset() override;
 
 private:
+    void updateWidgetState();
+
     SettingsManager* m_settings;
 
     QCheckBox* m_restoreActivePlaylistState;
@@ -113,7 +114,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     m_skipUnavailable->setToolTip(
         tr("If the current track in a playlist is unavailable, silently continue to the next track"));
 
-    QObject::connect(m_restoreActivePlaylistState, &QCheckBox::clicked, m_restorePlaybackState, &QWidget::setEnabled);
+    QObject::connect(m_restoreActivePlaylistState, &QCheckBox::toggled, this, &PlaybackPageWidget::updateWidgetState);
+    QObject::connect(m_stopAfterCurrent, &QCheckBox::toggled, this, &PlaybackPageWidget::updateWidgetState);
 
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
@@ -127,23 +129,20 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     m_playedSlider->setSuffix(u" %"_s);
 
     int row{0};
-    generalGroupLayout->addWidget(m_restoreActivePlaylistState, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(this), row, 0, 1, 1);
-    generalGroupLayout->addWidget(m_restorePlaybackState, row++, 1, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
-    generalGroupLayout->addWidget(m_cursorFollowsPlayback, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(m_playbackFollowsCursor, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(m_stopAfterCurrent, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(this), row, 0, 1, 1);
-    generalGroupLayout->addWidget(m_resetStopAfterCurrent, row++, 1, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
-    generalGroupLayout->addWidget(m_rewindPrevious, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
-    generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 2);
-    generalGroupLayout->addWidget(new Spacer(this), row++, 0, 1, 2);
-    generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_restoreActivePlaylistState, row, 0, 1, 2);
+    generalGroupLayout->addWidget(m_stopAfterCurrent, row++, 2, 1, 2);
+    generalGroupLayout->addItem(new QSpacerItem(10, 0), row, 0);
+    generalGroupLayout->addWidget(m_restorePlaybackState, row, 1);
+    generalGroupLayout->addItem(new QSpacerItem(10, 0), row, 2);
+    generalGroupLayout->addWidget(m_resetStopAfterCurrent, row++, 3);
+    generalGroupLayout->addWidget(m_cursorFollowsPlayback, row, 0, 1, 2);
+    generalGroupLayout->addWidget(m_rewindPrevious, row++, 2, 1, 2);
+    generalGroupLayout->addWidget(m_playbackFollowsCursor, row, 0, 1, 2);
+    generalGroupLayout->addWidget(m_skipUnavailable, row++, 2, 1, 2);
+    generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 4);
+    generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 4);
     generalGroupLayout->setColumnStretch(1, 1);
+    generalGroupLayout->setColumnStretch(3, 1);
 
     auto* queueGroup       = new QGroupBox(tr("Queue"), this);
     auto* queueGroupLayout = new QGridLayout(queueGroup);
@@ -185,10 +184,12 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     shuffleGroupLayout->setColumnStretch(1, 1);
 
     row = 0;
-    layout->addWidget(generalGroup, row++, 0);
-    layout->addWidget(queueGroup, row++, 0);
-    layout->addWidget(controlsGroup, row++, 0);
-    layout->addWidget(shuffleGroup, row++, 0);
+    layout->addWidget(generalGroup, row++, 0, 1, 2);
+    layout->addWidget(queueGroup, row, 0);
+    layout->addWidget(controlsGroup, row++, 1);
+    layout->addWidget(shuffleGroup, row++, 0, 1, 2);
+    layout->setColumnStretch(0, 1);
+    layout->setColumnStretch(1, 1);
     layout->setRowStretch(row, 1);
 }
 
@@ -198,8 +199,6 @@ void PlaybackPageWidget::load()
         m_settings->fileValue(Settings::Core::Internal::SaveActivePlaylistState, false).toBool());
     m_restorePlaybackState->setChecked(
         m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool());
-    m_restorePlaybackState->setEnabled(m_restoreActivePlaylistState->isChecked());
-
     m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
     m_followPlaybackQueue->setChecked(m_settings->value<Settings::Core::FollowPlaybackQueue>());
@@ -222,6 +221,8 @@ void PlaybackPageWidget::load()
 
     m_shuffleAlbumsGroup->setText(m_settings->value<Settings::Core::ShuffleAlbumsGroupScript>());
     m_shuffleAlbumsSort->setText(m_settings->value<Settings::Core::ShuffleAlbumsSortScript>());
+
+    updateWidgetState();
 }
 
 void PlaybackPageWidget::apply()
@@ -271,6 +272,12 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::PlayedThreshold>();
     m_settings->reset<Settings::Core::ShuffleAlbumsGroupScript>();
     m_settings->reset<Settings::Core::ShuffleAlbumsSortScript>();
+}
+
+void PlaybackPageWidget::updateWidgetState()
+{
+    m_restorePlaybackState->setEnabled(m_restoreActivePlaylistState->isChecked());
+    m_resetStopAfterCurrent->setEnabled(m_stopAfterCurrent->isChecked());
 }
 
 PlaybackPage::PlaybackPage(SettingsManager* settings, QObject* parent)

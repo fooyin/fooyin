@@ -31,6 +31,7 @@
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QSizePolicy>
 #include <QSpinBox>
@@ -86,6 +87,8 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     , m_decodeHighWatermarkHint{new QLabel(this)}
     , m_bitDepthBox{new ExpandingComboBox(this)}
 {
+    auto* deviceBox     = new QGroupBox(tr("Device"), this);
+    auto* deviceLayout  = new QGridLayout(deviceBox);
     auto* generalBox    = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalBox);
     auto* bufferBox     = new QGroupBox(tr("Buffer"), this);
@@ -93,8 +96,6 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
 
     m_gaplessPlayback->setToolTip(
         tr("Try to play consecutive tracks with no silence or disruption at the point of file change"));
-
-    generalLayout->addWidget(m_gaplessPlayback, 0, 0, 1, 2);
 
     m_bufferSize->setSuffix(u" ms"_s);
     m_bufferSize->setSingleStep(100);
@@ -128,6 +129,13 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     m_bitDepthBox->setToolTip(tr("Override the output sample format. Devices may choose a compatible format."));
     m_bitDepthBox->resizeDropDown();
 
+    deviceLayout->addWidget(new QLabel(tr("Output") + u":"_s, this), 0, 0);
+    deviceLayout->addWidget(m_outputBox, 0, 1);
+    deviceLayout->addWidget(new QLabel(tr("Device") + u":"_s, this), 1, 0);
+    deviceLayout->addWidget(m_deviceBox, 1, 1);
+    deviceLayout->setColumnStretch(1, 1);
+
+    generalLayout->addWidget(m_gaplessPlayback, 0, 0, 1, 2);
     generalLayout->addWidget(new QLabel(tr("Bit depth") + u":"_s, this), 1, 0);
     generalLayout->addWidget(m_bitDepthBox, 1, 1);
     generalLayout->setColumnStretch(2, 1);
@@ -145,10 +153,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     auto* mainLayout = new QGridLayout(this);
 
     int row{0};
-    mainLayout->addWidget(new QLabel(tr("Output") + u":"_s, this), row, 0);
-    mainLayout->addWidget(m_outputBox, row++, 1);
-    mainLayout->addWidget(new QLabel(tr("Device") + u":"_s, this), row, 0);
-    mainLayout->addWidget(m_deviceBox, row++, 1);
+    mainLayout->addWidget(deviceBox, row++, 0, 1, 2);
     mainLayout->addWidget(generalBox, row++, 0, 1, 2);
     mainLayout->addWidget(bufferBox, row++, 0, 1, 2);
     mainLayout->setColumnStretch(1, 1);
