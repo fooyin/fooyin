@@ -24,6 +24,8 @@
 #include <QString>
 
 namespace Fooyin {
+class DspLayoutEditor;
+
 class DspSettingsProvider
 {
 public:
@@ -54,6 +56,11 @@ public:
     [[nodiscard]] virtual bool showAsLayoutWidget() const
     {
         return false;
+    }
+
+    [[nodiscard]] virtual DspLayoutEditor* createLayoutEditor(QWidget* /*parent*/)
+    {
+        return nullptr;
     }
 
     [[nodiscard]] virtual DspSettingsDialog* createSettingsWidget(QWidget* parent) = 0;

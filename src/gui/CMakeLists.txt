@@ -2,6 +2,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/coverprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/configdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/contextmenuutils.h
+    ${CMAKE_SOURCE_DIR}/include/gui/dsp/dsplayouteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/editablelayout.h
@@ -136,6 +137,7 @@ set(SOURCES
     dsp/dsppreset.h
     dsp/dsppresetregistry.cpp
     dsp/dsppresetregistry.h
+    dsp/dsplayouteditor.cpp
     dsp/dspsettingscontroller.cpp
     dsp/dspsettingscontroller.h
     dsp/dspsettingsdialog.cpp

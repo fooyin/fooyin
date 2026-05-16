@@ -28,6 +28,7 @@
 
 namespace Fooyin {
 class DspChainStore;
+class DspLayoutEditor;
 class DspSettingsDialog;
 class DspSettingsProvider;
 class DspSettingsRegistry;
@@ -43,6 +44,7 @@ public:
     [[nodiscard]] QString displayName(const QString& dspId) const;
     [[nodiscard]] bool hasDsp(const QString& dspId) const;
     [[nodiscard]] FyWidget* createLayoutWidget(const QString& dspId, QWidget* parent = nullptr);
+    [[nodiscard]] DspLayoutEditor* createLayoutEditor(const QString& dspId, QWidget* parent = nullptr) const;
     [[nodiscard]] DspSettingsDialog* createEditor(const QString& dspId, QWidget* parent) const;
     void showDialog(const QString& dspId, QWidget* parent = nullptr);
 

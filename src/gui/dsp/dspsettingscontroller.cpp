@@ -294,7 +294,13 @@ bool DspSettingsController::hasDsp(const QString& dspId) const
 
 FyWidget* DspSettingsController::createLayoutWidget(const QString& dspId, QWidget* parent)
 {
-    return new DspSettingsLayoutWidget(this, dspId, displayName(dspId), parent);
+    return createDspSettingsLayoutWidget(this, dspId, displayName(dspId), parent);
+}
+
+DspLayoutEditor* DspSettingsController::createLayoutEditor(const QString& dspId, QWidget* parent) const
+{
+    auto* provider = providerFor(dspId);
+    return provider ? provider->createLayoutEditor(parent) : nullptr;
 }
 
 void DspSettingsController::showDialog(const QString& dspId, QWidget* parent)
