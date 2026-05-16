@@ -23,6 +23,7 @@
 #include "lyricssettings.h"
 
 #include <gui/guiconstants.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -30,8 +31,6 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QLineEdit>
-#include <QPlainTextEdit>
 
 using namespace Qt::StringLiterals;
 
@@ -54,9 +53,9 @@ private:
     QCheckBox* m_skipRemaining;
     QCheckBox* m_skipExternal;
 
-    QLineEdit* m_titleParam;
-    QLineEdit* m_artistParam;
-    QLineEdit* m_albumParam;
+    ScriptLineEdit* m_titleParam;
+    ScriptLineEdit* m_artistParam;
+    ScriptLineEdit* m_albumParam;
     SliderEditor* m_matchThreshold;
 };
 
@@ -65,9 +64,9 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
     , m_autoSearch{new QCheckBox(tr("Automatically search for lyrics on starting playback"), this)}
     , m_skipRemaining{new QCheckBox(tr("Skip remaining sources when lyrics are found"), this)}
     , m_skipExternal{new QCheckBox(tr("Skip external sources if local lyrics are found"), this)}
-    , m_titleParam{new QLineEdit(this)}
-    , m_artistParam{new QLineEdit(this)}
-    , m_albumParam{new QLineEdit(this)}
+    , m_titleParam{new ScriptLineEdit(this)}
+    , m_artistParam{new ScriptLineEdit(this)}
+    , m_albumParam{new ScriptLineEdit(this)}
     , m_matchThreshold{new SliderEditor(tr("Minimum match threshold"), this)}
 {
     auto* behaviourGroup  = new QGroupBox(tr("Behaviour"), this);
