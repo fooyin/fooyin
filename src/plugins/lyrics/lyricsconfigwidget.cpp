@@ -21,6 +21,7 @@
 
 #include "lyricscolours.h"
 
+#include <gui/guiutils.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -39,17 +40,6 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Lyrics {
-namespace {
-QLabel* sectionLabel(const QString& text, QWidget* parent)
-{
-    auto* label = new QLabel(text, parent);
-    QFont font{label->font()};
-    font.setBold(true);
-    label->setFont(font);
-    return label;
-}
-} // namespace
-
 LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, QWidget* parent)
     : WidgetConfigDialog{lyricsWidget, LyricsWidget::tr("Lyrics Settings"), parent}
     , m_tabs{new QTabWidget(this)}
@@ -218,13 +208,13 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, QWidget* pare
     auto* fontsGroupLayout = new QGridLayout(fontsGroup);
 
     row = 0;
-    fontsGroupLayout->addWidget(sectionLabel(tr("General"), stylePage), row++, 0, 1, 2);
+    fontsGroupLayout->addWidget(Gui::createSectionHeader(tr("General"), stylePage), row++, 0, 1, 2);
     fontsGroupLayout->addWidget(m_baseFont, row, 0);
     fontsGroupLayout->addWidget(m_baseFontBtn, row++, 1);
-    fontsGroupLayout->addWidget(sectionLabel(tr("Synced"), stylePage), row++, 0, 1, 2);
+    fontsGroupLayout->addWidget(Gui::createSectionHeader(tr("Synced"), stylePage), row++, 0, 1, 2);
     fontsGroupLayout->addWidget(m_lineFont, row, 0);
     fontsGroupLayout->addWidget(m_lineFontBtn, row++, 1);
-    fontsGroupLayout->addWidget(sectionLabel(tr("Synced Words"), stylePage), row++, 0, 1, 2);
+    fontsGroupLayout->addWidget(Gui::createSectionHeader(tr("Synced Words"), stylePage), row++, 0, 1, 2);
     fontsGroupLayout->addWidget(m_wordLineFont, row, 0);
     fontsGroupLayout->addWidget(m_wordLineFontBtn, row++, 1);
     fontsGroupLayout->addWidget(m_wordFont, row, 0);
@@ -234,19 +224,19 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, QWidget* pare
     auto* coloursLayout = new QGridLayout(m_coloursGroup);
 
     row = 0;
-    coloursLayout->addWidget(sectionLabel(tr("General"), stylePage), row++, 0, 1, 2);
+    coloursLayout->addWidget(Gui::createSectionHeader(tr("General"), stylePage), row++, 0, 1, 2);
     coloursLayout->addWidget(m_bgColour, row, 0);
     coloursLayout->addWidget(m_bgColourBtn, row++, 1);
     coloursLayout->addWidget(m_lineColour, row, 0);
     coloursLayout->addWidget(m_lineColourBtn, row++, 1);
-    coloursLayout->addWidget(sectionLabel(tr("Synced"), stylePage), row++, 0, 1, 2);
+    coloursLayout->addWidget(Gui::createSectionHeader(tr("Synced"), stylePage), row++, 0, 1, 2);
     coloursLayout->addWidget(m_unplayedColour, row, 0);
     coloursLayout->addWidget(m_unplayedColourBtn, row++, 1);
     coloursLayout->addWidget(m_playedColour, row, 0);
     coloursLayout->addWidget(m_playedColourBtn, row++, 1);
     coloursLayout->addWidget(m_syncedLineColour, row, 0);
     coloursLayout->addWidget(m_syncedLineColourBtn, row++, 1);
-    coloursLayout->addWidget(sectionLabel(tr("Synced Words"), stylePage), row++, 0, 1, 2);
+    coloursLayout->addWidget(Gui::createSectionHeader(tr("Synced Words"), stylePage), row++, 0, 1, 2);
     coloursLayout->addWidget(m_wordLineColour, row, 0);
     coloursLayout->addWidget(m_wordLineColourBtn, row++, 1);
     coloursLayout->addWidget(m_wordColour, row, 0);

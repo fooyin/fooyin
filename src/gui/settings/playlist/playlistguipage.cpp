@@ -23,6 +23,7 @@
 #include "widgets/pixmapfadecontroller.h"
 
 #include <gui/guiconstants.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
@@ -43,15 +44,6 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
-QLabel* sectionHeader(const QString& text, QWidget* parent)
-{
-    auto* label = new QLabel(text, parent);
-    QFont font{label->font()};
-    font.setBold(true);
-    label->setFont(font);
-    return label;
-}
-
 void addComboItem(QComboBox* combo, const QString& text, int data, const QString& tooltip = {})
 {
     combo->addItem(text, data);
@@ -201,7 +193,7 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     appearanceLayout->addWidget(m_scrollBars, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_header, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_altColours, row++, 0, 1, 2);
-    appearanceLayout->addWidget(sectionHeader(tr("Image padding"), this), row++, 0, 1, 3);
+    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Image padding"), this), row++, 0, 1, 3);
     appearanceLayout->addWidget(new QLabel(tr("Left/Right") + u":"_s, this), row, 0);
     appearanceLayout->addWidget(m_imagePadding, row++, 1);
     appearanceLayout->addWidget(new QLabel(tr("Top") + u":"_s, this), row, 0);
@@ -212,21 +204,21 @@ PlaylistAppearancePageWidget::PlaylistAppearancePageWidget(SettingsManager* sett
     auto* backgroundLayout = new QGridLayout(background);
 
     row = 0;
-    backgroundLayout->addWidget(sectionHeader(tr("Image source"), this), row++, 0, 1, 2);
+    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Image source"), this), row++, 0, 1, 2);
     backgroundLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(m_backgroundImage, row++, 1);
     backgroundLayout->addWidget(m_backgroundCoverTypeLabel, row, 0);
     backgroundLayout->addWidget(m_backgroundCoverType, row, 1);
     backgroundLayout->addWidget(m_customImageLabel, row, 0);
     backgroundLayout->addWidget(m_customImage, row++, 1);
-    backgroundLayout->addWidget(sectionHeader(tr("Layout"), this), row++, 0, 1, 2);
+    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Layout"), this), row++, 0, 1, 2);
     backgroundLayout->addWidget(new QLabel(tr("Scale mode") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(m_backgroundScaling, row++, 1);
     backgroundLayout->addWidget(new QLabel(tr("Alignment") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(m_backgroundPosition, row++, 1);
     backgroundLayout->addWidget(new QLabel(tr("Maximum size") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(m_maxCoverSize, row++, 1);
-    backgroundLayout->addWidget(sectionHeader(tr("Effects"), this), row++, 0, 1, 2);
+    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Effects"), this), row++, 0, 1, 2);
     backgroundLayout->addWidget(m_blur, row++, 0, 1, 2);
     backgroundLayout->addWidget(m_opacity, row++, 0, 1, 2);
     backgroundLayout->addWidget(m_fadeDuration, row++, 0, 1, 2);

@@ -30,6 +30,7 @@
 #include <QModelIndexList>
 
 class QMimeData;
+class QLabel;
 
 namespace Fooyin {
 class MusicLibrary;
@@ -48,5 +49,7 @@ FYGUI_EXPORT RatingStarSymbols ratingStarSymbols(const SettingsManager& settings
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromStylePalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette);
+
+FYGUI_EXPORT QLabel* createSectionHeader(const QString& text, QWidget* parent = nullptr);
 } // namespace Gui
 } // namespace Fooyin

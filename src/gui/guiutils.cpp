@@ -30,6 +30,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QIODevice>
+#include <QLabel>
 #include <QMimeData>
 #include <QSet>
 #include <QStyle>
@@ -161,9 +162,9 @@ QueueTracks queueTracksFromMimeData(MusicLibrary* library, QByteArray data)
 RatingStarSymbols ratingStarSymbols(const SettingsManager& settings)
 {
     return {
-        settings.value<Settings::Gui::RatingFullStarSymbol>(),
-        settings.value<Settings::Gui::RatingHalfStarSymbol>(),
-        settings.value<Settings::Gui::RatingEmptyStarSymbol>(),
+        .fullStarSymbol  = settings.value<Settings::Gui::RatingFullStarSymbol>(),
+        .halfStarSymbol  = settings.value<Settings::Gui::RatingHalfStarSymbol>(),
+        .emptyStarSymbol = settings.value<Settings::Gui::RatingEmptyStarSymbol>(),
     };
 }
 
@@ -211,4 +212,16 @@ QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette)
 
     return colours;
 }
+
+QLabel* createSectionHeader(const QString& text, QWidget* parent)
+{
+    auto* label = new QLabel(text, parent);
+
+    QFont font{label->font()};
+    font.setBold(true);
+    label->setFont(font);
+
+    return label;
+}
+
 } // namespace Fooyin::Gui
