@@ -153,7 +153,7 @@ QString ascii(const QStringList& vec)
         }
         else if(ch.category() != QChar::Mark_NonSpacing) {
             const char asciiChar = ch.toLatin1();
-            if(asciiChar != 0) {
+            if(asciiChar != 0 && static_cast<unsigned char>(asciiChar) < 128) {
                 result.append(QChar::fromLatin1(asciiChar));
             }
         }
