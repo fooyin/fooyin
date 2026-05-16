@@ -9799,7 +9799,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="210"/>
         <source>&amp;Stop after this</source>
-        <translation>在此曲目之後停止(&amp;S)</translation>
+        <translation>此曲之後停止(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="214"/>
@@ -12504,7 +12504,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
         <source>Tagging</source>
-        <translation>進行標籤中</translation>
+        <translation>訂標籤</translation>
     </message>
 </context>
 <context>
@@ -14329,7 +14329,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Tagging</source>
-        <translation>進行標籤中</translation>
+        <translation>訂標籤</translation>
     </message>
 </context>
 <context>
