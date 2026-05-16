@@ -102,7 +102,8 @@ void InhibitorDbus::inhibitSleep()
         case Interface::GnomeSessionManager: {
             constexpr auto XWindowId = 0U;
             args                     = {"fooyin"_L1, XWindowId, Reason, BlockSuspendFlag};
-        } break;
+            break;
+        }
         case Interface::FreedesktopPower:
             args = {"fooyin"_L1, Reason};
             break;
@@ -110,7 +111,8 @@ void InhibitorDbus::inhibitSleep()
             QMap<QString, QVariant> options;
             options["reason"_L1] = Reason;
             args                 = {"fooyin"_L1, BlockSuspendFlag, options};
-        } break;
+            break;
+        }
     }
     const QDBusPendingCall pendingCall = m_busInterface->asyncCallWithArgumentList("Inhibit"_L1, args);
 
@@ -127,20 +129,20 @@ void InhibitorDbus::uninhibitSleep()
     qCDebug(SLEEPINHIBITOR) << "Uninhibiting sleep";
 
     if(m_interface == Interface::FreedesktopPortal) {
-        auto* inhibitObjectInterface
+        auto* inhibitRequestInterface
             = new QDBusInterface(DbusConstants::FreedesktopPortalService, m_inhibitHandle.path(),
                                  "org.freedesktop.portal.Request"_L1, QDBusConnection::sessionBus());
-        if(!inhibitObjectInterface->isValid()) [[unlikely]] {
+        if(!inhibitRequestInterface->isValid()) [[unlikely]] {
             qCWarning(SLEEPINHIBITOR) << "Bad inhibit handle? Object path:" << m_inhibitHandle.path();
             setState(State::Error);
             return;
         }
 
-        const auto pendingCall = inhibitObjectInterface->asyncCall("Close"_L1);
+        const auto pendingCall = inhibitRequestInterface->asyncCall("Close"_L1);
         auto* watcher          = new QDBusPendingCallWatcher(pendingCall, this);
         QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &InhibitorDbus::onUninhibitCallFinished);
 
-        delete inhibitObjectInterface;
+        delete inhibitRequestInterface;
     }
     else {
         if(m_inhibitCookie == 0) [[unlikely]] {
@@ -160,9 +162,9 @@ void InhibitorDbus::onInhibitCallFinished(QDBusPendingCallWatcher* watcher)
 {
     watcher->deleteLater();
 
-    const auto handleReply = [this]<typename T>(const QDBusPendingReply<T>& reply, auto&& onSuccess) {
+    const auto handleReply = [this]<typename T>(const QDBusPendingReply<T>& reply, T& replyValueOut) {
         if(reply.isValid()) {
-            onSuccess();
+            replyValueOut = reply.value();
             setState(State::Inhibited);
         }
         else {
@@ -173,11 +175,11 @@ void InhibitorDbus::onInhibitCallFinished(QDBusPendingCallWatcher* watcher)
 
     if(m_interface == Interface::FreedesktopPortal) {
         const QDBusPendingReply<QDBusObjectPath> reply = *watcher;
-        handleReply(reply, [this, &reply] { m_inhibitHandle = reply.value(); });
+        handleReply(reply, m_inhibitHandle);
     }
     else {
         const QDBusPendingReply<uint> reply = *watcher;
-        handleReply(reply, [this, &reply] { m_inhibitCookie = reply.value(); });
+        handleReply(reply, m_inhibitCookie);
     }
 }
 

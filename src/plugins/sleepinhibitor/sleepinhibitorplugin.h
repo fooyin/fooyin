@@ -31,9 +31,9 @@
 #include <QObject>
 #include <QTimerEvent>
 
-inline Q_LOGGING_CATEGORY(SLEEPINHIBITOR, "fy.sleepinhibitor");
-
 namespace Fooyin::SleepInhibitor {
+Q_DECLARE_LOGGING_CATEGORY(SLEEPINHIBITOR)
+
 class Inhibitor;
 
 class SleepInhibitorPlugin : public QObject,

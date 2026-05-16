@@ -27,6 +27,8 @@
 #include <utils/enum.h>
 
 namespace Fooyin::SleepInhibitor {
+Q_LOGGING_CATEGORY(SLEEPINHIBITOR, "fy.sleepinhibitor")
+
 namespace {
 constexpr auto SleepInhibitIntervalMs = 30000;
 
@@ -63,8 +65,7 @@ void SleepInhibitorPlugin::timerEvent(QTimerEvent* event)
     if(event->timerId() == m_inhibitTimer.timerId()) {
         const auto enabled            = m_settings.value(Settings::Enabled, true).toBool();
         const auto onlyDuringPlayback = m_settings.value(Settings::OnlyDuringPlayback, true).toBool();
-        const auto playState          = m_playerController->playState();
-        if(enabled && (!onlyDuringPlayback || playState == Player::PlayState::Playing)) {
+        if(enabled && (!onlyDuringPlayback || m_playerController->playState() == Player::PlayState::Playing)) {
             m_inhibitor->inhibitSleep();
         }
         else {
