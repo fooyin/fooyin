@@ -957,11 +957,15 @@ void TrackSelectionControllerPrivate::sendToCurrentPlaylist(PlaylistAction::Acti
     }
 
     const auto& selection = m_contextSelection.at(m_activeContext);
-    if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
-        m_playlistHandler->createPlaylist(currentPlaylist->name(), selection.tracks);
-        handleActions(options, currentPlaylist);
-        Q_EMIT m_self->actionExecuted(TrackAction::SendCurrentPlaylist);
+    auto* playlist        = m_playlistController->currentPlaylist();
+
+    if(!playlist || playlist->isAutoPlaylist()) {
+        return;
     }
+
+    m_playlistHandler->createPlaylist(playlist->name(), selection.tracks);
+    handleActions(options, playlist);
+    Q_EMIT m_self->actionExecuted(TrackAction::SendCurrentPlaylist);
 }
 
 void TrackSelectionControllerPrivate::addToCurrentPlaylist() const
@@ -1299,6 +1303,8 @@ void TrackSelectionControllerPrivate::updateActionState()
 {
     const auto* selection         = currentSelection();
     const bool haveTracks         = selection && !selection->tracks.empty();
+    const auto* currentPlaylist   = m_playlistController->currentPlaylist();
+    const bool canEditCurrent     = currentPlaylist && !currentPlaylist->isAutoPlaylist();
     const bool sameFolder         = haveTracks && allTracksInSameFolder(*selection);
     const bool writable           = haveTracks && canWrite(*selection);
     const bool writableCover      = haveTracks
@@ -1310,9 +1316,9 @@ void TrackSelectionControllerPrivate::updateActionState()
                                             == ArtworkSaveMethod::Directory);
     const bool canRemoveFromQueue = haveTracks && canDequeue(*selection);
 
-    m_addCurrent->setEnabled(haveTracks);
+    m_addCurrent->setEnabled(haveTracks && canEditCurrent);
     m_addActive->setEnabled(haveTracks && m_playlistHandler->activePlaylist());
-    m_sendCurrent->setEnabled(haveTracks);
+    m_sendCurrent->setEnabled(haveTracks && canEditCurrent);
     m_sendNew->setEnabled(haveTracks);
     m_openFolder->setEnabled(sameFolder);
     m_copyLocation->setEnabled(haveTracks);
