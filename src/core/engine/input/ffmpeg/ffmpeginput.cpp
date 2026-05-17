@@ -217,14 +217,14 @@ float parseReplayGain(const QString& gainStr)
 
     bool ok{false};
     const float gain = string.toFloat(&ok);
-    return ok ? gain : Fooyin::Constants::InvalidGain;
+    return (ok && std::isfinite(gain)) ? gain : Fooyin::Constants::InvalidGain;
 }
 
 float parseReplayPeak(const QString& peakStr)
 {
     bool ok{false};
     const float peak = peakStr.toFloat(&ok);
-    return ok ? peak : Fooyin::Constants::InvalidPeak;
+    return (ok && std::isfinite(peak)) ? peak : Fooyin::Constants::InvalidPeak;
 }
 
 enum class TagScope : uint8_t

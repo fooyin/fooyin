@@ -953,22 +953,22 @@ bool Track::hasRGInfo() const
 
 bool Track::hasTrackGain() const
 {
-    return p->rgTrackGain != Constants::InvalidGain;
+    return std::isfinite(p->rgTrackGain) && p->rgTrackGain != Constants::InvalidGain;
 }
 
 bool Track::hasAlbumGain() const
 {
-    return p->rgAlbumGain != Constants::InvalidGain;
+    return std::isfinite(p->rgAlbumGain) && p->rgAlbumGain != Constants::InvalidGain;
 }
 
 bool Track::hasTrackPeak() const
 {
-    return p->rgTrackPeak != Constants::InvalidPeak;
+    return std::isfinite(p->rgTrackPeak) && p->rgTrackPeak != Constants::InvalidPeak;
 }
 
 bool Track::hasAlbumPeak() const
 {
-    return p->rgAlbumPeak != Constants::InvalidPeak;
+    return std::isfinite(p->rgAlbumPeak) && p->rgAlbumPeak != Constants::InvalidPeak;
 }
 
 float Track::rgTrackGain() const

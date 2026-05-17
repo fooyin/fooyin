@@ -564,7 +564,7 @@ float gainStringToFloat(const TagLib::String& gainString)
 
     bool ok{false};
     const float gain = string.toFloat(&ok);
-    return ok ? gain : Constants::InvalidGain;
+    return (ok && std::isfinite(gain)) ? gain : Constants::InvalidGain;
 };
 
 QString gainToString(const float gain)
@@ -578,7 +578,7 @@ float peakStringToFloat(const TagLib::String& peakString)
 
     bool ok{false};
     const float peak = string.toFloat(&ok);
-    return ok ? peak : Constants::InvalidPeak;
+    return (ok && std::isfinite(peak)) ? peak : Constants::InvalidPeak;
 };
 
 std::optional<float> opusR128ToReplayGain(const TagLib::String& gainString)
