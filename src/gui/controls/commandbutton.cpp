@@ -38,6 +38,7 @@
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
+#include <QPointer>
 
 using namespace Qt::StringLiterals;
 
@@ -131,8 +132,11 @@ CommandButton::CommandButton(ActionManager* actionManager, PlayerController* pla
 
     QObject::connect(m_button, &QAbstractButton::clicked, this, [this]() {
         if(m_commandHandler->canExecute(m_config.commandId)) {
+            const QPointer self{this};
             m_commandHandler->execute(m_config.commandId);
-            QMetaObject::invokeMethod(this, &CommandButton::updateButton, Qt::QueuedConnection);
+            if(self) {
+                QMetaObject::invokeMethod(self, &CommandButton::updateButton, Qt::QueuedConnection);
+            }
         }
     });
     QObject::connect(m_button, &QWidget::customContextMenuRequested, this,
