@@ -142,6 +142,8 @@ set(SOURCES
     engine/input/ffmpeg/ffmpegstream.h
     engine/input/ffmpeg/ffmpegutils.cpp
     engine/input/ffmpeg/ffmpegutils.h
+    engine/input/id3utils.cpp
+    engine/input/id3utils.h
     engine/input/ratingtagpolicy.cpp
     engine/input/ratingtagpolicy.h
     engine/input/tagpolicy.cpp

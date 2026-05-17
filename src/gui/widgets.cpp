@@ -448,6 +448,14 @@ void Widgets::registerAdvancedSettings()
          .normalise   = {},
          .validate    = {}});
     advancedSettingsRegistry->add(
+        Settings::Core::Internal::SplitId3v23SemicolonSeparatedTags, true,
+        {.category    = {tr("Tagging"), u"ID3"_s},
+         .label       = tr("Split ID3v2.3 semicolon-separated tags"),
+         .description = tr("Split ID3v2.3 values with non-standard \";\" separators when reading tags."),
+         .editor      = AdvancedSettingCheckBox{},
+         .normalise   = {},
+         .validate    = {}});
+    advancedSettingsRegistry->add(
         {.id           = QString::fromLatin1(Settings::Core::Internal::FFmpegAllExtensions),
          .category     = {tr("Playback"), tr("Decoding"), u"FFmpeg"_s},
          .label        = tr("Enable all supported extensions"),

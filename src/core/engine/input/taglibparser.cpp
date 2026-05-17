@@ -19,6 +19,7 @@
 
 #include "taglibparser.h"
 
+#include "id3utils.h"
 #include "ratingtagpolicy.h"
 #include "tagdefs.h"
 #include "tagpolicy.h"
@@ -814,7 +815,7 @@ TextRatingWrite textRatingWrite(const Track& track, const RatingTagPolicy& polic
 }
 
 void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool skipEmptyValues, bool clearExtraTags,
-                           const TagPolicy& policy)
+                           const TagPolicy& policy, bool isId3v23 = false)
 {
     if(clearExtraTags) {
         track.clearExtraTags();
@@ -831,22 +832,47 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
             track.setTitle(convertString(value.toString()));
         }
         else if(field == Artist) {
-            track.setArtists(convertStringList(value));
+            QStringList values = convertStringList(value);
+            if(isId3v23) {
+                values = Id3Utils::splitStandardField(convertString(field), values,
+                                                      policy.splitId3v23SemicolonSeparatedTags);
+            }
+            track.setArtists(values);
         }
         else if(field == Album) {
             track.setAlbum(convertString(value.toString()));
         }
         else if(field == AlbumArtist) {
-            track.setAlbumArtists(convertStringList(value));
+            QStringList values = convertStringList(value);
+            if(isId3v23) {
+                values = Id3Utils::splitStandardField(convertString(field), values,
+                                                      policy.splitId3v23SemicolonSeparatedTags);
+            }
+            track.setAlbumArtists(values);
         }
         else if(field == Genre) {
-            track.setGenres(convertStringList(value));
+            QStringList values = convertStringList(value);
+            if(isId3v23) {
+                values = Id3Utils::splitStandardField(convertString(field), values,
+                                                      policy.splitId3v23SemicolonSeparatedTags);
+            }
+            track.setGenres(values);
         }
         else if(field == Composer) {
-            track.setComposers(convertStringList(value));
+            QStringList values = convertStringList(value);
+            if(isId3v23) {
+                values = Id3Utils::splitStandardField(convertString(field), values,
+                                                      policy.splitId3v23SemicolonSeparatedTags);
+            }
+            track.setComposers(values);
         }
         else if(field == Performer) {
-            track.setPerformers(convertStringList(value));
+            QStringList values = convertStringList(value);
+            if(isId3v23) {
+                values = Id3Utils::splitStandardField(convertString(field), values,
+                                                      policy.splitId3v23SemicolonSeparatedTags);
+            }
+            track.setPerformers(values);
         }
         else if(field == Comment) {
             track.setComment(convertString(value.toString()));
@@ -906,8 +932,12 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
                                   useRatingTagFallback(policy.rating));
             }
             else {
-                for(const auto& tagValue : value) {
-                    track.addExtraTag(tagEntry, convertString(tagValue));
+                QStringList values = convertStringList(value);
+                if(isId3v23) {
+                    values = Id3Utils::splitExtraField(tagEntry, values, policy.splitId3v23SemicolonSeparatedTags);
+                }
+                for(const QString& tagValue : values) {
+                    track.addExtraTag(tagEntry, tagValue);
                 }
             }
         }
@@ -1137,11 +1167,9 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Track& track, const TagPolic
         if(frames.contains("TPE1")) {
             const TagLib::ID3v2::FrameList& artistsFrame = frames["TPE1"];
             if(!artistsFrame.isEmpty()) {
-                const QString artist = convertString(artistsFrame.front()->toString());
-                // Ignore common artist names
-                if(artist.contains("/"_L1) && !artist.contains("AC/DC"_L1) && !artist.contains("AC / DC"_L1)) {
-                    QStringList artists = artist.split(u'/', Qt::SkipEmptyParts);
-                    std::ranges::transform(artists, artists.begin(), [](QString& entry) { return entry.trimmed(); });
+                const QStringList artists = Id3Utils::splitStandardField(
+                    QString::fromLatin1(Tag::Artist), {convertString(artistsFrame.front()->toString())}, false);
+                if(artists.size() > 1) {
                     track.setArtists(artists);
                 }
             }
@@ -2847,7 +2875,8 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
             if(file.hasID3v2Tag()) {
                 const auto* id3Tag = file.ID3v2Tag();
-                readGeneralProperties(id3Tag->properties(), track, readTags, !readTags, policy);
+                readGeneralProperties(id3Tag->properties(), track, readTags, !readTags, policy,
+                                      id3Tag->header()->majorVersion() == 3);
                 readId3Tags(id3Tag, track, policy, true);
                 readTags = true;
             }
@@ -2875,7 +2904,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
     else if(mimeType == "audio/x-aiff"_L1 || mimeType == "audio/x-aifc"_L1) {
         const TagLib::RIFF::AIFF::File file(&stream, true, style);
         if(file.isValid()) {
-            readProperties(file);
+            readAudioProperties(file, track);
             track.setEncoding(u"Lossless"_s);
 
             if(const auto* props = file.audioProperties()) {
@@ -2885,15 +2914,20 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
             if(file.hasID3v2Tag()) {
                 const auto* id3Tag = file.tag();
+                readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                                      id3Tag->header()->majorVersion() == 3);
                 readId3Tags(id3Tag, track, policy, false);
                 track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
+            }
+            else {
+                readGeneralProperties(file.properties(), track, false, true, policy);
             }
         }
     }
     else if(mimeType == "audio/vnd.wave"_L1 || mimeType == "audio/wav"_L1 || mimeType == "audio/x-wav"_L1) {
         const TagLib::RIFF::WAV::File file(&stream, true, style);
         if(file.isValid()) {
-            readProperties(file);
+            readAudioProperties(file, track);
             track.setEncoding(u"Lossless"_s);
 
             if(const auto* props = file.audioProperties()) {
@@ -2903,8 +2937,13 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
             if(file.hasID3v2Tag()) {
                 const auto* id3Tag = file.ID3v2Tag();
+                readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                                      id3Tag->header()->majorVersion() == 3);
                 readId3Tags(id3Tag, track, policy, false);
                 track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
+            }
+            else {
+                readGeneralProperties(file.properties(), track, false, true, policy);
             }
         }
     }
@@ -3103,7 +3142,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
     else if(mimeType == "audio/x-dsf"_L1) {
         const TagLib::DSF::File file(&stream, true, style);
         if(file.isValid()) {
-            readProperties(file);
+            readAudioProperties(file, track);
             track.setEncoding(u"Lossless"_s);
 
             if(const auto* props = file.audioProperties()) {
@@ -3113,15 +3152,21 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
 
             if(file.tag()) {
-                readId3Tags(file.tag(), track, policy, false);
-                track.setTagTypes({u"ID3v2.%1"_s.arg(file.tag()->header()->majorVersion())});
+                const auto* id3Tag = file.tag();
+                readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                                      id3Tag->header()->majorVersion() == 3);
+                readId3Tags(id3Tag, track, policy, false);
+                track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
+            }
+            else {
+                readGeneralProperties(file.properties(), track, false, true, policy);
             }
         }
     }
     else if(mimeType == "audio/x-dff"_L1) {
         const TagLib::DSDIFF::File file(&stream, true, style);
         if(file.isValid()) {
-            readProperties(file);
+            readAudioProperties(file, track);
             track.setEncoding(u"Lossless"_s);
 
             if(const auto* props = file.audioProperties()) {
@@ -3130,8 +3175,14 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                 }
             }
             if(file.hasID3v2Tag()) {
-                readId3Tags(file.ID3v2Tag(), track, policy, false);
-                track.setTagTypes({u"ID3v2.%1"_s.arg(file.ID3v2Tag()->header()->majorVersion())});
+                const auto* id3Tag = file.ID3v2Tag();
+                readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                                      id3Tag->header()->majorVersion() == 3);
+                readId3Tags(id3Tag, track, policy, false);
+                track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
+            }
+            else {
+                readGeneralProperties(file.properties(), track, false, true, policy);
             }
         }
     }

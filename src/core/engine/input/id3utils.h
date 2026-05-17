@@ -17,21 +17,13 @@
  *
  */
 
-#include "tagpolicy.h"
+#pragma once
 
-#include "internalcoresettings.h"
+#include <QStringList>
 
-#include <core/coresettings.h>
-
-namespace Fooyin {
-TagPolicy tagPolicy()
-{
-    const FySettings settings;
-
-    return {
-        .rating = ratingTagPolicy(),
-        .splitId3v23SemicolonSeparatedTags
-        = settings.value(Settings::Core::Internal::SplitId3v23SemicolonSeparatedTags, true).toBool(),
-    };
-}
-} // namespace Fooyin
+namespace Fooyin::Id3Utils {
+[[nodiscard]] QStringList splitStandardField(const QString& field, const QStringList& values,
+                                             bool splitSemicolonSeparated);
+[[nodiscard]] QStringList splitExtraField(const QString& field, const QStringList& values,
+                                          bool splitSemicolonSeparated);
+} // namespace Fooyin::Id3Utils

@@ -39,24 +39,25 @@ enum class ReplayGainType : uint8_t
 namespace Settings::Core::Internal {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
-constexpr auto PlaylistSkipUnavailable        = "Playlist/SkipUnavailable";
-constexpr auto PlaylistSaveMetadata           = "Playlist/SaveMetadata";
-constexpr auto PlaylistSavePathType           = "Playlist/SavePathType";
-constexpr auto AutoExportPlaylists            = "Playlist/AutoExport";
-constexpr auto AutoExportPlaylistsType        = "Playlist/AutoExportType";
-constexpr auto AutoExportPlaylistsPath        = "Playlist/AutoExportPath";
-constexpr auto AutoExportPlaylistsRemove      = "Playlist/AutoExportRemove";
-constexpr auto AutoExportPlaylistsSaveRemoved = "Playlist/AutoExportSaveRemoved";
-constexpr auto MarkUnavailable                = "Library/MarkUnavailable";
-constexpr auto MarkUnavailableStartup         = "Library/MarkUnavailableOnStartup";
-constexpr auto SaveActivePlaylistState        = "Playlist/SaveActivePlaylistState";
-constexpr auto SavePlaybackState              = "Player/SavePlaybackState";
-constexpr auto LibraryRestrictTypes           = "Library/RestrictTypes";
-constexpr auto LibraryExcludeTypes            = "Library/ExcludeTypes";
-constexpr auto ExternalRestrictTypes          = "Library/ExternalRestrictTypes";
-constexpr auto ExternalExcludeTypes           = "Library/ExternalExcludeTypes";
-constexpr auto FFmpegAllExtensions            = "Engine/FFmpegAllExtensions";
-constexpr auto FFmpegPriorityExtensions       = "Engine/FFmpegPriorityExtensions";
+constexpr auto PlaylistSkipUnavailable           = "Playlist/SkipUnavailable";
+constexpr auto PlaylistSaveMetadata              = "Playlist/SaveMetadata";
+constexpr auto PlaylistSavePathType              = "Playlist/SavePathType";
+constexpr auto AutoExportPlaylists               = "Playlist/AutoExport";
+constexpr auto AutoExportPlaylistsType           = "Playlist/AutoExportType";
+constexpr auto AutoExportPlaylistsPath           = "Playlist/AutoExportPath";
+constexpr auto AutoExportPlaylistsRemove         = "Playlist/AutoExportRemove";
+constexpr auto AutoExportPlaylistsSaveRemoved    = "Playlist/AutoExportSaveRemoved";
+constexpr auto MarkUnavailable                   = "Library/MarkUnavailable";
+constexpr auto MarkUnavailableStartup            = "Library/MarkUnavailableOnStartup";
+constexpr auto SaveActivePlaylistState           = "Playlist/SaveActivePlaylistState";
+constexpr auto SavePlaybackState                 = "Player/SavePlaybackState";
+constexpr auto LibraryRestrictTypes              = "Library/RestrictTypes";
+constexpr auto LibraryExcludeTypes               = "Library/ExcludeTypes";
+constexpr auto ExternalRestrictTypes             = "Library/ExternalRestrictTypes";
+constexpr auto ExternalExcludeTypes              = "Library/ExternalExcludeTypes";
+constexpr auto FFmpegAllExtensions               = "Engine/FFmpegAllExtensions";
+constexpr auto FFmpegPriorityExtensions          = "Engine/FFmpegPriorityExtensions";
+constexpr auto SplitId3v23SemicolonSeparatedTags = "Tagging/SplitId3v23SemicolonSeparatedTags";
 
 [[nodiscard]] FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
 

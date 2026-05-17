@@ -27,6 +27,7 @@ namespace Fooyin {
 struct FYCORE_EXPORT TagPolicy
 {
     RatingTagPolicy rating;
+    bool splitId3v23SemicolonSeparatedTags{false};
 };
 
 [[nodiscard]] FYCORE_EXPORT TagPolicy tagPolicy();
