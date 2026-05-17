@@ -417,6 +417,60 @@ private:
     int m_completionEnd{-1};
 };
 
+class ScriptEditorEnvironment : public ScriptEnvironment
+{
+public:
+    explicit ScriptEditorEnvironment(LibraryManager* libraryManager)
+        : m_libraryEnvironment{libraryManager}
+    { }
+
+    void updatePlaybackState(PlayerController* playerController)
+    {
+        m_playbackEnvironment.setPlaylistData(nullptr, playerController ? &playerController->playbackQueue() : nullptr,
+                                              nullptr, playerController ? playerController->queuedTracksCount() : 0);
+
+        int currentPlayingTrackIndex{-1};
+        int currentPlayingTrackId{-1};
+
+        if(playerController) {
+            const PlaylistTrack currentTrack = playerController->currentPlaylistTrack();
+            currentPlayingTrackIndex         = currentTrack.indexInPlaylist;
+            currentPlayingTrackId            = playerController->currentTrackId();
+        }
+
+        m_playbackEnvironment.setTrackState(-1, currentPlayingTrackIndex, currentPlayingTrackId, 0);
+        m_playbackEnvironment.setPlaybackState(playerController ? playerController->currentPosition() : 0,
+                                               playerController ? playerController->currentTrack().duration() : 0,
+                                               playerController ? playerController->bitrate() : 0,
+                                               playerController ? playerController->playState()
+                                                                : Player::PlayState::Stopped);
+    }
+
+    [[nodiscard]] const ScriptPlaybackEnvironment* playbackEnvironment() const override
+    {
+        return m_playbackEnvironment.playbackEnvironment();
+    }
+
+    [[nodiscard]] const ScriptPlaylistEnvironment* playlistEnvironment() const override
+    {
+        return m_playbackEnvironment.playlistEnvironment();
+    }
+
+    [[nodiscard]] const ScriptLibraryEnvironment* libraryEnvironment() const override
+    {
+        return m_libraryEnvironment.libraryEnvironment();
+    }
+
+    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
+    {
+        return m_libraryEnvironment.evaluationEnvironment();
+    }
+
+private:
+    LibraryScriptEnvironment m_libraryEnvironment;
+    PlaylistScriptEnvironment m_playbackEnvironment;
+};
+
 class ScriptEditorPrivate : public QObject
 {
     Q_OBJECT
@@ -483,7 +537,7 @@ public:
 
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
-    LibraryScriptEnvironment m_libraryEnvironment;
+    ScriptEditorEnvironment m_environment;
     ScriptContext m_scriptContext;
 
     ParsedScript m_currentScript;
@@ -519,9 +573,10 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     , m_formattingReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_commandReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_model{new ExpressionTreeModel(m_self)}
-    , m_libraryEnvironment{libraryManager}
+    , m_environment{libraryManager}
 {
-    m_scriptContext.environment = &m_libraryEnvironment;
+    m_scriptContext.environment = &m_environment;
+    m_environment.updatePlaybackState(m_playerController);
 
     auto* mainLayout = new QGridLayout(m_self);
     mainLayout->setContentsMargins({});
@@ -612,6 +667,10 @@ void ScriptEditorPrivate::setupConnections()
                          &ScriptEditorPrivate::trackContextChanged);
         QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this,
                          &ScriptEditorPrivate::trackContextChanged);
+        QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
+                         qOverload<>(&ScriptEditorPrivate::updateResults));
+        QObject::connect(m_playerController, &PlayerController::bitrateChanged, this,
+                         qOverload<>(&ScriptEditorPrivate::updateResults));
     }
 }
 
@@ -764,6 +823,8 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
     script.expressions = {expression};
 
     m_formatter.setBaseFont(m_results->font());
+
+    m_environment.updatePlaybackState(m_playerController);
 
     const Track track      = m_track.isValid() ? m_track : m_placeholderTrack;
     const auto result      = m_parser.evaluate(script, track, m_scriptContext);
