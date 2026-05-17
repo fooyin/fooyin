@@ -523,8 +523,7 @@ std::optional<QString> playbackVariableValue(const VariableKind kind, const Scri
             return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isPaused()}
                                                                   : std::optional<QString>{};
         case VariableKind::IsStopped:
-            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isStopped()}
-                                                                  : std::optional<QString>{};
+            return registry.isStopped();
         default:
             return {};
     }
@@ -624,9 +623,6 @@ QString ScriptRegistry::isPaused() const
 
 QString ScriptRegistry::isStopped() const
 {
-    if(!playbackValueAvailableForTrack()) {
-        return {};
-    }
     if(const auto* environment = playbackEnvironment(m_context);
        environment != nullptr && environment->playState() == Player::PlayState::Stopped) {
         return u"1"_s;
