@@ -92,8 +92,8 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
         box->addItem(text, static_cast<int>(action));
     };
 
-    addTrackAction(m_doubleClick, tr("None"), TrackAction::None);
-    addTrackAction(m_doubleClick, tr("Expand/Collapse/Play"), TrackAction::Play);
+    addTrackAction(m_doubleClick, tr("Expand/collapse"), TrackAction::None);
+    addTrackAction(m_doubleClick, tr("Expand/collapse or play"), TrackAction::Play);
     addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
     addTrackAction(m_doubleClick, tr("Add to current playlist and play if stopped"),
                    TrackAction::AddCurrentPlaylistAndPlayIfStopped);
