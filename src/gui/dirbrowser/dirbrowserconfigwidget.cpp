@@ -95,6 +95,8 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     addTrackAction(m_doubleClick, tr("None"), TrackAction::None);
     addTrackAction(m_doubleClick, tr("Expand/Collapse/Play"), TrackAction::Play);
     addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
+    addTrackAction(m_doubleClick, tr("Add to current playlist and play if stopped"),
+                   TrackAction::AddCurrentPlaylistAndPlayIfStopped);
     addTrackAction(m_doubleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
     addTrackAction(m_doubleClick, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
     addTrackAction(m_doubleClick, tr("Create new playlist"), TrackAction::SendNewPlaylist);
@@ -104,6 +106,8 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
 
     addTrackAction(m_middleClick, tr("None"), TrackAction::None);
     addTrackAction(m_middleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist);
+    addTrackAction(m_middleClick, tr("Add to current playlist and play if stopped"),
+                   TrackAction::AddCurrentPlaylistAndPlayIfStopped);
     addTrackAction(m_middleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist);
     addTrackAction(m_middleClick, tr("Replace current playlist"), TrackAction::SendCurrentPlaylist);
     addTrackAction(m_middleClick, tr("Create new playlist"), TrackAction::SendNewPlaylist);

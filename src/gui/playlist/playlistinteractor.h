@@ -52,6 +52,7 @@ public:
 
     void filesToPlaylist(const QList<QUrl>& urls, const UId& id);
     void filesToCurrentPlaylist(const QList<QUrl>& urls);
+    void filesToCurrentPlaylistAndPlayIfStopped(const QList<QUrl>& urls);
     void filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play = false);
     void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play = false);
     void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, const QUrl& fileToPlay, bool replace,
@@ -62,6 +63,7 @@ public:
 
     void tracksToPlaylist(const TrackList& tracks, const UId& id);
     void tracksToCurrentPlaylist(const TrackList& tracks);
+    void tracksToCurrentPlaylistAndPlayIfStopped(const TrackList& tracks);
     void tracksToCurrentPlaylistReplace(const TrackList& tracks, bool play = false);
     void tracksToNewPlaylist(const QString& playlistName, const TrackList& tracks, bool play = false);
     void tracksToNewPlaylistReplace(const QString& playlistName, const TrackList& tracks, bool play = false);

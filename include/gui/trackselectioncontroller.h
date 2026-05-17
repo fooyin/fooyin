@@ -63,7 +63,8 @@ enum class TrackAction
     Play,
     AddToQueue,
     SendToQueue,
-    QueueNext
+    QueueNext,
+    AddCurrentPlaylistAndPlayIfStopped
 };
 
 enum class TrackContextMenuArea : uint8_t

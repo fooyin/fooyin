@@ -795,6 +795,9 @@ void DirBrowser::handleAction(TrackAction action, bool onlySelection)
         case(TrackAction::AddCurrentPlaylist):
             m_playlistInteractor->filesToCurrentPlaylist(files);
             break;
+        case(TrackAction::AddCurrentPlaylistAndPlayIfStopped):
+            m_playlistInteractor->filesToCurrentPlaylistAndPlayIfStopped(files);
+            break;
         case(TrackAction::SendCurrentPlaylist):
             m_playlistInteractor->filesToCurrentPlaylistReplace(files, startPlayback);
             break;

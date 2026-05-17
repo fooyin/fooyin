@@ -305,6 +305,15 @@ void PlaylistInteractor::filesToCurrentPlaylist(const QList<QUrl>& urls)
     scanFiles(urls, [this](const TrackList& scannedTracks) { tracksToCurrentPlaylist(scannedTracks); });
 }
 
+void PlaylistInteractor::filesToCurrentPlaylistAndPlayIfStopped(const QList<QUrl>& urls)
+{
+    if(urls.empty()) {
+        return;
+    }
+
+    scanFiles(urls, [this](const TrackList& scannedTracks) { tracksToCurrentPlaylistAndPlayIfStopped(scannedTracks); });
+}
+
 void PlaylistInteractor::filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play)
 {
     if(urls.empty()) {
@@ -402,6 +411,25 @@ void PlaylistInteractor::tracksToCurrentPlaylist(const TrackList& tracks)
     }
 
     appendToPlaylist(m_controller->currentPlaylist(), tracks);
+}
+
+void PlaylistInteractor::tracksToCurrentPlaylistAndPlayIfStopped(const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    auto* playlist = m_controller->currentPlaylist();
+    if(!playlist || playlist->isAutoPlaylist()) {
+        return;
+    }
+
+    const int firstAddedIndex = playlist->trackCount();
+    appendToPlaylist(playlist, tracks);
+
+    if(playerController()->playState() == Player::PlayState::Stopped) {
+        activatePlaylist(playlist, firstAddedIndex, true);
+    }
 }
 
 void PlaylistInteractor::tracksToCurrentPlaylistReplace(const TrackList& tracks, bool play)

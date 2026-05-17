@@ -138,7 +138,7 @@ public:
     void handleActions(PlaylistAction::ActionOptions options, Playlist* playlist = nullptr) const;
     void sendToNewPlaylist(PlaylistAction::ActionOptions options, const QString& playlistName) const;
     void sendToCurrentPlaylist(PlaylistAction::ActionOptions options) const;
-    void addToCurrentPlaylist() const;
+    void addToCurrentPlaylist(bool startPlaybackIfStopped = false) const;
     void addToActivePlaylist() const;
     void addToPlaylist(const UId& playlistId, const TrackList& tracks) const;
     void addPlaylistTargets(QMenu* menu, const TrackSelection& selection,
@@ -968,17 +968,28 @@ void TrackSelectionControllerPrivate::sendToCurrentPlaylist(PlaylistAction::Acti
     Q_EMIT m_self->actionExecuted(TrackAction::SendCurrentPlaylist);
 }
 
-void TrackSelectionControllerPrivate::addToCurrentPlaylist() const
+void TrackSelectionControllerPrivate::addToCurrentPlaylist(bool startPlaybackIfStopped) const
 {
     if(!hasTracks()) {
         return;
     }
 
     const auto& selection = m_contextSelection.at(m_activeContext);
-    if(const auto* playlist = m_playlistController->currentPlaylist()) {
-        m_playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
-        Q_EMIT m_self->actionExecuted(TrackAction::AddCurrentPlaylist);
+    auto* playlist        = m_playlistController->currentPlaylist();
+    if(!playlist || playlist->isAutoPlaylist()) {
+        return;
     }
+
+    const int firstAddedIndex = playlist->trackCount();
+    m_playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
+
+    if(startPlaybackIfStopped && m_playlistController->playerController()->playState() == Player::PlayState::Stopped) {
+        playlist->changeCurrentIndex(firstAddedIndex);
+        m_playlistController->playerController()->startPlayback(playlist);
+    }
+
+    Q_EMIT m_self->actionExecuted(startPlaybackIfStopped ? TrackAction::AddCurrentPlaylistAndPlayIfStopped
+                                                         : TrackAction::AddCurrentPlaylist);
 }
 
 void TrackSelectionControllerPrivate::addToActivePlaylist() const
@@ -1541,6 +1552,9 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
             break;
         case TrackAction::AddCurrentPlaylist:
             p->addToCurrentPlaylist();
+            break;
+        case TrackAction::AddCurrentPlaylistAndPlayIfStopped:
+            p->addToCurrentPlaylist(true);
             break;
         case TrackAction::AddActivePlaylist:
             p->addToActivePlaylist();
