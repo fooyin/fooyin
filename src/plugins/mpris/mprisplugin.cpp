@@ -103,6 +103,27 @@ QString formatContentCreated(const Fooyin::Track& track)
 
     return {};
 }
+
+QString lyricsText(const Fooyin::Track& track)
+{
+    static const QStringList tags{
+        u"LYRICS"_s,
+        u"SYNCEDLYRICS"_s,
+        u"UNSYNCEDLYRICS"_s,
+        u"UNSYNCED LYRICS"_s,
+    };
+
+    for(const QString& tag : tags) {
+        const QStringList values = track.extraTag(tag);
+        for(const QString& value : values) {
+            if(!value.isEmpty()) {
+                return value;
+            }
+        }
+    }
+
+    return {};
+}
 } // namespace
 
 namespace Fooyin::Mpris {
@@ -508,6 +529,9 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
         }
         if(track.bitrate() > 0) {
             m_currentMetaData[u"xesam:audioBitrate"_s] = track.bitrate();
+        }
+        if(const QString text = lyricsText(track); !text.isEmpty()) {
+            m_currentMetaData[u"xesam:asText"_s] = text;
         }
     }
 
