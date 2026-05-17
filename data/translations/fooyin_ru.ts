@@ -31,7 +31,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
@@ -157,7 +157,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
@@ -1057,17 +1057,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="386"/>
         <source>Checks if text contains only alphabetic characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверяет, содержит ли текст только буквенные символы</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="389"/>
         <source>Checks if text contains only alphanumeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверяет, содержит ли текст только буквенно-цифровые символы</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="392"/>
         <source>Checks if text contains only numeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверяет, содержит ли текст только цифровые символы</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
@@ -2572,7 +2572,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="720"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="193"/>
@@ -2997,33 +2997,33 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="46"/>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="37"/>
         <source>Enabled</source>
-        <translation type="unfinished">Включено</translation>
+        <translation>Включено</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="63"/>
         <source>Master</source>
-        <translation type="unfinished"></translation>
+        <translation>Общий</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="64"/>
         <source>Per-track</source>
-        <translation type="unfinished"></translation>
+        <translation>На дорожку</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="304"/>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="311"/>
         <source>DSP Settings</source>
-        <translation type="unfinished">Параметры DSP</translation>
+        <translation>Параметры DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="304"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished">Не удалось открыть параметры для модуля DSP «%1».</translation>
+        <translation>Не удалось открыть параметры для модуля DSP «%1».</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="311"/>
         <source>Unable to find DSP &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось найти модуль DSP «%1».</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="353"/>
@@ -3114,18 +3114,18 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/editablelayout.cpp" line="392"/>
         <location filename="../../src/gui/editablelayout.cpp" line="407"/>
         <source>Insert &amp;before</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить &amp;до</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="397"/>
         <location filename="../../src/gui/editablelayout.cpp" line="412"/>
         <source>Insert &amp;after</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить &amp;после</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="419"/>
         <source>Insert &amp;inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить &amp;внутрь</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
@@ -4015,12 +4015,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="82"/>
         <source>File Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Операции с файлами</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
         <source>Confirm before deleting tracks</source>
-        <translation type="unfinished">Подтверждать перед удалением дорожек</translation>
+        <translation>Подтверждать перед удалением дорожек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="100"/>
@@ -4459,7 +4459,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="295"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в плейлист</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="333"/>
@@ -6744,7 +6744,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="787"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="922"/>
@@ -7458,7 +7458,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="73"/>
         <source>Behaviour</source>
-        <translation type="unfinished">Поведение</translation>
+        <translation>Поведение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="81"/>
@@ -8987,7 +8987,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="112"/>
         <source>Skip playlist entries that are already present in the target playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропускать записи плейлиста, которые уже существуют в целевом плейлисте</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
@@ -9712,7 +9712,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="523"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в другой плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="692"/>
@@ -10321,7 +10321,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="74"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Тегирование</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="74"/>
@@ -10334,7 +10334,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="57"/>
         <source>Enter field</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите поле</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="62"/>
@@ -10344,42 +10344,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="127"/>
         <source>Row %1: Field is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка %1: поле обязательно.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="130"/>
         <source>Row %1: At least one value is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка %1: требуется хотя бы одно значение.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="155"/>
         <source>Display name shown in menus and shortcut actions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображаемое имя, показываемое в меню и действиях быстрых клавиш.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="157"/>
         <source>Metadata field to write.</source>
-        <translation type="unfinished"></translation>
+        <translation>Поле метаданных для записи.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="159"/>
         <source>Literal values separated by semicolons.</source>
-        <translation type="unfinished"></translation>
+        <translation>Литеральные значения, разделённые точками с запятой.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="170"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="172"/>
         <source>Field</source>
-        <translation type="unfinished">Поле</translation>
+        <translation>Поле</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="174"/>
         <source>Values</source>
-        <translation type="unfinished"></translation>
+        <translation>Значения</translation>
     </message>
 </context>
 <context>
@@ -10387,17 +10387,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="62"/>
         <source>Separate multiple values with semicolons.</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделяйте несколько значений точками с запятой.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="66"/>
         <source>Confirmation threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Порог подтверждения</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="67"/>
         <source>Ask for confirmation when changing more than this many tracks. Set to 0 to disable confirmation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Запрашивать подтверждение при изменении более чем указанного числа дорожек. Установите 0, чтобы отключить подтверждение.</translation>
     </message>
 </context>
 <context>
@@ -10405,42 +10405,42 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="103"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Тегирование</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="108"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="293"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished">Быстрое Тегирование</translation>
+        <translation>Быстрое тегирование</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="127"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="137"/>
         <source>Set %1 to %2</source>
         <extracomment>%1 is a tag field name, %2 is the new tag value.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Установить %1 в %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="148"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="155"/>
         <source>Remove %1</source>
         <extracomment>%1 is a tag field name.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Удалить %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="187"/>
         <source>Set %1 to</source>
         <extracomment>%1 represents the name or field e.g. Set Rating to</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Установить %1 в</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="295"/>
         <source>Set &quot;%1&quot; on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Установить «%1» на %Ld дорожку?</numerusform>
+            <numerusform>Установить «%1» на %Ld дорожки?</numerusform>
+            <numerusform>Установить «%1» на %Ld дорожек?</numerusform>
         </translation>
     </message>
 </context>
@@ -11190,7 +11190,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="184"/>
         <source>Integrations</source>
-        <translation type="unfinished">Интеграции</translation>
+        <translation>Интеграции</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="184"/>
@@ -11313,7 +11313,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="366"/>
         <source>Integrations</source>
-        <translation type="unfinished">Интеграции</translation>
+        <translation>Интеграции</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="366"/>
@@ -11743,7 +11743,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="387"/>
         <source>Select a page from this category.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите страницу из этой категории.</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="182"/>
@@ -11763,12 +11763,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="151"/>
         <source>Integrations</source>
-        <translation type="unfinished">Интеграции</translation>
+        <translation>Интеграции</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="151"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Система</translation>
     </message>
 </context>
 <context>
@@ -11781,7 +11781,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="65"/>
         <source>Load files from the same folder when opening one file</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружать файлы из той же папки при открытии одного файла</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="68"/>
@@ -11817,7 +11817,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="86"/>
         <source>When opening one file from the file manager, add all supported files from the same folder and play the opened file</source>
-        <translation type="unfinished"></translation>
+        <translation>При открытии одного файла из файлового менеджера добавлять все поддерживаемые файлы из той же папки и воспроизводить открытый файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="92"/>
@@ -12151,7 +12151,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="140"/>
         <source>Interface</source>
-        <translation type="unfinished">Интерфейс</translation>
+        <translation>Интерфейс</translation>
     </message>
 </context>
 <context>
@@ -12240,22 +12240,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="289"/>
         <source>&amp;Above</source>
-        <translation type="unfinished"></translation>
+        <translation>С&amp;верху</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="290"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">&amp;Справа</translation>
+        <translation>С&amp;права</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="291"/>
         <source>&amp;Below</source>
-        <translation type="unfinished"></translation>
+        <translation>С&amp;низу</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="292"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">&amp;Слева</translation>
+        <translation>С&amp;лева</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="331"/>
@@ -12506,7 +12506,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="204"/>
         <source>Enabled</source>
-        <translation type="unfinished">Включено</translation>
+        <translation>Включено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="206"/>
@@ -12521,12 +12521,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="210"/>
         <source>Multi-line</source>
-        <translation type="unfinished"></translation>
+        <translation>Многострочный</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="212"/>
         <source>Multi-value</source>
-        <translation type="unfinished"></translation>
+        <translation>Многозначный</translation>
     </message>
 </context>
 <context>
@@ -12544,7 +12544,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Тегирование</translation>
     </message>
 </context>
 <context>
@@ -13017,7 +13017,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="118"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
 </context>
 <context>
@@ -13234,12 +13234,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="59"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализовать волноформу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="60"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Шкала дБ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="63"/>
@@ -13337,47 +13337,47 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="129"/>
         <source>Amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Амплитуда</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="138"/>
         <source>Scale the displayed waveform so the loudest peak reaches full height</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштабировать отображаемую форму волны так, чтобы самый громкий пик достигал полной высоты</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="139"/>
         <source>Use a decibel scale to make quieter waveform details more visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать децибельную шкалу, чтобы сделать более тихие детали формы волны более заметными</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="152"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимум</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="153"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>Среднее</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="154"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>Сглаженное среднее</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="155"/>
         <source>How peaks are combined when waveform data is scaled to the current width</source>
-        <translation type="unfinished"></translation>
+        <translation>Как пики объединяются при масштабировании данных формы волны до текущей ширины</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="159"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображение пиков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="173"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>Отрисовка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="184"/>
@@ -13547,32 +13547,32 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="573"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>Нормализовать волноформу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="582"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Шкала дБ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="591"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображение пиков</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="594"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимум</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="595"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>Среднее</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="596"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>Сглаженное среднее</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="630"/>
@@ -13777,32 +13777,32 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="424"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">Редактор макета</translation>
+        <translation>Редактор макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="425"/>
         <source>Menu levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровни меню</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="426"/>
         <source>Number of widget levels shown in the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Количество уровней виджетов, отображаемых в контекстном меню редактора макета.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="431"/>
         <source>Seeking</source>
-        <translation type="unfinished">Перемотка</translation>
+        <translation>Перемотка</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="432"/>
         <source>Focus seekbars when clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Передавать фокус полосам поиска при щелчке</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="433"/>
         <source>Give seekbars keyboard focus after clicking them.</source>
-        <translation type="unfinished"></translation>
+        <translation>Передавать полосам перемотки клавиатурный фокус после их нажатия.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="438"/>
@@ -13877,7 +13877,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="524"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="531"/>
@@ -13946,7 +13946,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="189"/>
@@ -14034,7 +14034,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="130"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в другой плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="133"/>
@@ -14368,12 +14368,12 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="112"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished">Быстрое Тегирование</translation>
+        <translation>Быстрое тегирование</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Тегирование</translation>
     </message>
 </context>
 <context>
@@ -14381,7 +14381,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/quicktagger/quicktagger.cpp" line="135"/>
         <source>Rating</source>
-        <translation type="unfinished">Оценка</translation>
+        <translation>Оценка</translation>
     </message>
 </context>
 <context>
