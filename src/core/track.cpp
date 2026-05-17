@@ -1719,22 +1719,22 @@ void Track::setRatingStars(int rating)
 
 void Track::setRGTrackGain(float gain)
 {
-    p->rgTrackGain = gain;
+    p->rgTrackGain = std::isfinite(gain) ? gain : Constants::InvalidGain;
 }
 
 void Track::setRGAlbumGain(float gain)
 {
-    p->rgAlbumGain = gain;
+    p->rgAlbumGain = std::isfinite(gain) ? gain : Constants::InvalidGain;
 }
 
 void Track::setRGTrackPeak(float peak)
 {
-    p->rgTrackPeak = peak;
+    p->rgTrackPeak = std::isfinite(peak) ? peak : Constants::InvalidPeak;
 }
 
 void Track::setRGAlbumPeak(float peak)
 {
-    p->rgAlbumPeak = peak;
+    p->rgAlbumPeak = std::isfinite(peak) ? peak : Constants::InvalidPeak;
 }
 
 void Track::setOpusHeaderGainQ78(int16_t gainQ78)

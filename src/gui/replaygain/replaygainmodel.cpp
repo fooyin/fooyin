@@ -22,6 +22,7 @@
 #include <core/constants.h>
 #include <core/library/libraryutils.h>
 
+#include <cmath>
 #include <ranges>
 
 using namespace Qt::StringLiterals;
@@ -339,7 +340,7 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
     bool ok{false};
     const float setValue = textValue.toFloat(&ok);
 
-    if(!ok && !textValue.isEmpty()) {
+    if((!ok && !textValue.isEmpty()) || (ok && !std::isfinite(setValue))) {
         return false;
     }
 
