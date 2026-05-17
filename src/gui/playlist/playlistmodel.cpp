@@ -626,6 +626,7 @@ Fooyin::PlaylistModel::PlaybackDependency dependencyForVariable(const QString& v
     }
     if(variable.compare(u"ISPLAYING"_s, Qt::CaseInsensitive) == 0
        || variable.compare(u"ISPAUSED"_s, Qt::CaseInsensitive) == 0
+       || variable.compare(u"ISSTOPPED"_s, Qt::CaseInsensitive) == 0
        || variable.compare(u"PLAYINGICON"_s, Qt::CaseInsensitive) == 0) {
         return Dependency::PlaybackState;
     }
