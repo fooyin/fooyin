@@ -225,6 +225,7 @@ constexpr auto OutputDevices                      = "Fooyin.Page.Playback.Output
 constexpr auto Decoding                           = "Fooyin.Page.Playback.Decoding";
 constexpr auto ReplayGain                         = "Fooyin.Page.Playback.ReplayGain";
 constexpr auto DspManager                         = "Fooyin.Page.Playback.DspManager";
+constexpr auto NowPlaying                         = "Fooyin.Page.Playback.NowPlaying";
 constexpr auto InterfaceGeneral                   = "Fooyin.Page.Interface.General";
 constexpr auto InterfaceDisplay                   = "Fooyin.Page.Interface.Display";
 constexpr auto InterfaceTrackDisplay              = "Fooyin.Page.Interface.TrackDisplay";

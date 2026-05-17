@@ -38,6 +38,7 @@ class FyWidget;
 class GuiApplication;
 class LibraryTreeController;
 class MainWindow;
+class NowPlayingOutputService;
 class OutputProfileManager;
 class PlaylistController;
 class PlaylistInteractor;
@@ -87,6 +88,7 @@ private:
     LibraryTreeController* m_libraryTreeController;
     DspPresetRegistry* m_dspPresetRegistry;
     OutputProfileManager* m_outputProfileManager;
+    NowPlayingOutputService* m_nowPlayingOutputService;
     std::unique_ptr<DspSettingsRegistry> m_dspSettingsRegistry;
     std::unique_ptr<DspSettingsController> m_dspSettingsController;
     std::unique_ptr<PluginSettingsRegistry> m_pluginSettingsRegistry;

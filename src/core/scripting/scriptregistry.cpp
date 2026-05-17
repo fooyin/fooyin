@@ -34,6 +34,7 @@
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
+#include <QDateTime>
 #include <QDir>
 #include <QRegularExpression>
 
@@ -203,6 +204,12 @@ int bitDepthMetadata(const Fooyin::Track& track)
     return track.bitDepth() > 0 ? track.bitDepth() : -1;
 }
 
+Fooyin::ScriptResult dateTimeVariable()
+{
+    const QString value = QDateTime::currentDateTime().toString(u"yyyy-MM-dd hh:mm:ss"_s);
+    return {.value = value, .cond = !value.isEmpty()};
+}
+
 Fooyin::ScriptContext makeContext(const Fooyin::ScriptContext& base, const Fooyin::Track* track,
                                   const Fooyin::TrackList* tracks, const Fooyin::Playlist* playlist)
 {
@@ -307,7 +314,6 @@ const Fooyin::ScriptLibraryEnvironment* libraryEnvironment(const Fooyin::ScriptC
 {
     return context.environment ? context.environment->libraryEnvironment() : nullptr;
 }
-
 } // namespace
 
 namespace Fooyin {
@@ -516,6 +522,9 @@ std::optional<QString> playbackVariableValue(const VariableKind kind, const Scri
         case VariableKind::IsPaused:
             return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isPaused()}
                                                                   : std::optional<QString>{};
+        case VariableKind::IsStopped:
+            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isStopped()}
+                                                                  : std::optional<QString>{};
         default:
             return {};
     }
@@ -608,6 +617,18 @@ QString ScriptRegistry::isPaused() const
     }
     if(const auto* environment = playbackEnvironment(m_context);
        environment != nullptr && environment->playState() == Player::PlayState::Paused) {
+        return u"1"_s;
+    }
+    return {};
+}
+
+QString ScriptRegistry::isStopped() const
+{
+    if(!playbackValueAvailableForTrack()) {
+        return {};
+    }
+    if(const auto* environment = playbackEnvironment(m_context);
+       environment != nullptr && environment->playState() == Player::PlayState::Stopped) {
         return u"1"_s;
     }
     return {};
@@ -979,11 +1000,14 @@ const ScriptRegistry::TrackListAggregateCache& ScriptRegistry::cachedTrackListVa
 ScriptRegistry::ScriptRegistry()
 {
     addDefaultFunctions();
+
     registerFunction(u"info"_s, makeScriptFunctionInvoker<trackInfo>());
     registerFunction(u"meta"_s, makeScriptFunctionInvoker<trackMeta>());
     registerFunction(u"meta_sep"_s, makeScriptFunctionInvoker<trackMetaSep>());
     registerFunction(u"meta_test"_s, makeScriptFunctionInvoker<trackMetaTest>());
     registerFunction(u"meta_num"_s, makeScriptFunctionInvoker<trackMetaNum>());
+
+    registerVariable(VariableKind::Generic, u"datetime"_s, makeScriptVariableInvoker<dateTimeVariable>());
 }
 
 ScriptRegistry::~ScriptRegistry() = default;

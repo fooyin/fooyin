@@ -205,6 +205,10 @@ set(SOURCES
     menubar/playbackmenu.h
     menubar/viewmenu.cpp
     menubar/viewmenu.h
+    nowplayingoutput/nowplayingoutputservice.cpp
+    nowplayingoutput/nowplayingoutputservice.h
+    nowplayingoutput/nowplayingoutputpage.cpp
+    nowplayingoutput/nowplayingoutputpage.h
     playlist/manager/playlistmanagermodel.cpp
     playlist/manager/playlistmanagermodel.h
     playlist/manager/playlistmanagerwidget.cpp

@@ -213,6 +213,13 @@ enum GuiInternalSettings : uint32_t
     PlaylistBackgroundOpacity                = 61 | Type::Int,
     PlaylistBackgroundFadeDuration           = 62 | Type::Int,
     PlaylistBackgroundCoverType              = 63 | Type::Int,
+    NowPlayingOutputEnabled                  = 64 | Type::Bool,
+    NowPlayingOutputScript                   = 65 | Type::String,
+    NowPlayingOutputUpdateEvents             = 66 | Type::Int,
+    NowPlayingOutputTargets                  = 67 | Type::Int,
+    NowPlayingOutputFilePath                 = 68 | Type::String,
+    NowPlayingOutputOptions                  = 69 | Type::Int,
+    NowPlayingOutputAppendLineLimit          = 70 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

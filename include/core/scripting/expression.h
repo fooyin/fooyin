@@ -150,6 +150,7 @@ enum class VariableKind : uint8_t
     PlaybackTimeRemainingSeconds,
     IsPlaying,
     IsPaused,
+    IsStopped,
     LibraryName,
     LibraryPath,
     RelativePath,
