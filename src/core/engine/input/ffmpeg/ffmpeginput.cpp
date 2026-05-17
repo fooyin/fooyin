@@ -298,16 +298,23 @@ TagType getTagType(QIODevice* device)
     return tagType;
 }
 
+bool supportsSlashSeparatedTextFields(TagType tagType)
+{
+    using enum TagType;
+    return tagType == ID3v1_1 || tagType == ID3v1_2 || tagType == ID3v2_2 || tagType == ID3v2_3;
+}
+
 void parseTag(Fooyin::Track& track, TagType tagType, const AVDictionaryEntry* tag, TagScope scope, int chapterCount,
               const Fooyin::TagPolicy& policy)
 {
     using enum TagType;
 
     const auto splitStandardField = [tagType, &policy](const QString& field, const QString& value) {
-        if(tagType != ID3v2_3) {
+        if(!supportsSlashSeparatedTextFields(tagType)) {
             return QStringList{value};
         }
-        return Fooyin::Id3Utils::splitStandardField(field, {value}, policy.splitId3v23SemicolonSeparatedTags);
+        return Fooyin::Id3Utils::splitStandardField(field, {value},
+                                                    tagType == ID3v2_3 && policy.splitId3v23SemicolonSeparatedTags);
     };
 
     if(strcasecmp(tag->key, "album") == 0) {
