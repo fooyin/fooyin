@@ -33,6 +33,7 @@ public:
     explicit LibraryTreeView(QWidget* parent = nullptr);
 
     void setLoading(bool isLoading);
+    void setExpandsOnSingleClick(bool enabled);
 
 Q_SIGNALS:
     void middleClicked(const QModelIndex& index);
@@ -48,5 +49,7 @@ protected:
 
 private:
     bool m_isLoading;
+    bool m_expandsOnSingleClick;
+    QModelIndex m_singleClickToggleIndex;
 };
 } // namespace Fooyin

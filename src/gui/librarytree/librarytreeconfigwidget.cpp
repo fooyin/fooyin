@@ -49,6 +49,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_keepAlive{new QCheckBox(tr("Keep alive"), this)}
     , m_playlistName{new QLineEdit(this)}
     , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
+    , m_expandOnSingleClick{new QCheckBox(tr("Single-click expands/collapses nodes"), this)}
     , m_showSummaryNode{new QCheckBox(tr("Show summary node"), this)}
     , m_summaryNodeTitle{new QLineEdit(this)}
     , m_animated{new QCheckBox(tr("Expand/collapse animation"), this)}
@@ -84,6 +85,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, this), row, 0);
     clickBehaviourLayout->addWidget(m_middleClick, row++, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, row++, 0, 1, 2);
+    clickBehaviourLayout->addWidget(m_expandOnSingleClick, row++, 0, 1, 2);
     clickBehaviourLayout->setColumnStretch(clickBehaviourLayout->columnCount(), 1);
 
     auto* selectionPlaylist       = new QGroupBox(tr("Library Selection Playlist"), generalTab);
@@ -211,22 +213,23 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
 LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
 {
     return {
-        .doubleClickAction = m_doubleClick->currentData().toInt(),
-        .middleClickAction = m_middleClick->currentData().toInt(),
-        .sendPlayback      = m_playbackOnSend->isChecked(),
-        .playlistEnabled   = m_playlistEnabled->isChecked(),
-        .autoSwitch        = m_autoSwitch->isChecked(),
-        .keepAlive         = m_keepAlive->isChecked(),
-        .playlistName      = m_playlistName->text(),
-        .restoreState      = m_restoreState->isChecked(),
-        .animated          = m_animated->isChecked(),
-        .showHeader        = m_header->isChecked(),
-        .showScrollbar     = m_showScrollbar->isChecked(),
-        .alternatingRows   = m_altColours->isChecked(),
-        .showSummaryNode   = m_showSummaryNode->isChecked(),
-        .summaryNodeTitle  = m_summaryNodeTitle->text(),
-        .rowHeight         = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
-        .iconSize          = {m_iconWidth->value(), m_iconHeight->value()},
+        .doubleClickAction   = m_doubleClick->currentData().toInt(),
+        .middleClickAction   = m_middleClick->currentData().toInt(),
+        .sendPlayback        = m_playbackOnSend->isChecked(),
+        .playlistEnabled     = m_playlistEnabled->isChecked(),
+        .autoSwitch          = m_autoSwitch->isChecked(),
+        .keepAlive           = m_keepAlive->isChecked(),
+        .playlistName        = m_playlistName->text(),
+        .restoreState        = m_restoreState->isChecked(),
+        .expandOnSingleClick = m_expandOnSingleClick->isChecked(),
+        .animated            = m_animated->isChecked(),
+        .showHeader          = m_header->isChecked(),
+        .showScrollbar       = m_showScrollbar->isChecked(),
+        .alternatingRows     = m_altColours->isChecked(),
+        .showSummaryNode     = m_showSummaryNode->isChecked(),
+        .summaryNodeTitle    = m_summaryNodeTitle->text(),
+        .rowHeight           = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
+        .iconSize            = {m_iconWidth->value(), m_iconHeight->value()},
     };
 }
 
@@ -246,6 +249,7 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_keepAlive->setChecked(config.keepAlive);
     m_playlistName->setText(config.playlistName);
     m_restoreState->setChecked(config.restoreState);
+    m_expandOnSingleClick->setChecked(config.expandOnSingleClick);
     m_animated->setChecked(config.animated);
     m_header->setChecked(config.showHeader);
     m_showScrollbar->setChecked(config.showScrollbar);

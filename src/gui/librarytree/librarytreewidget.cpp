@@ -75,21 +75,22 @@ using namespace Qt::StringLiterals;
 constexpr auto LibTreePlaylist = "␟LibTreePlaylist␟";
 
 // Settings
-constexpr auto LibTreeDoubleClickKey      = u"LibraryTree/DoubleClickBehaviour";
-constexpr auto LibTreeMiddleClickKey      = u"LibraryTree/MiddleClickBehaviour";
-constexpr auto LibTreePlaylistEnabledKey  = u"LibraryTree/SelectionPlaylistEnabled";
-constexpr auto LibTreeAutoSwitchKey       = u"LibraryTree/SelectionPlaylistAutoSwitch";
-constexpr auto LibTreeAutoPlaylistKey     = u"LibraryTree/SelectionPlaylistName";
-constexpr auto LibTreeScrollBarKey        = u"LibraryTree/Scrollbar";
-constexpr auto LibTreeAltColoursKey       = u"LibraryTree/AlternatingColours";
-constexpr auto LibTreeRowHeightKey        = u"LibraryTree/RowHeight";
-constexpr auto LibTreeSendPlaybackKey     = u"LibraryTree/StartPlaybackOnSend";
-constexpr auto LibTreeRestoreStateKey     = u"LibraryTree/RestoreState";
-constexpr auto LibTreeKeepAliveKey        = u"LibraryTree/KeepAlive";
-constexpr auto LibTreeAnimatedKey         = u"LibraryTree/Animated";
-constexpr auto LibTreeHeaderKey           = u"LibraryTree/Header";
-constexpr auto LibTreeShowSummaryNodeKey  = u"LibraryTree/ShowSummaryNode";
-constexpr auto LibTreeSummaryNodeTitleKey = u"LibraryTree/SummaryNodeTitle";
+constexpr auto LibTreeDoubleClickKey       = u"LibraryTree/DoubleClickBehaviour";
+constexpr auto LibTreeMiddleClickKey       = u"LibraryTree/MiddleClickBehaviour";
+constexpr auto LibTreePlaylistEnabledKey   = u"LibraryTree/SelectionPlaylistEnabled";
+constexpr auto LibTreeAutoSwitchKey        = u"LibraryTree/SelectionPlaylistAutoSwitch";
+constexpr auto LibTreeAutoPlaylistKey      = u"LibraryTree/SelectionPlaylistName";
+constexpr auto LibTreeScrollBarKey         = u"LibraryTree/Scrollbar";
+constexpr auto LibTreeAltColoursKey        = u"LibraryTree/AlternatingColours";
+constexpr auto LibTreeRowHeightKey         = u"LibraryTree/RowHeight";
+constexpr auto LibTreeSendPlaybackKey      = u"LibraryTree/StartPlaybackOnSend";
+constexpr auto LibTreeRestoreStateKey      = u"LibraryTree/RestoreState";
+constexpr auto LibTreeExpandSingleClickKey = u"LibraryTree/ExpandOnSingleClick";
+constexpr auto LibTreeKeepAliveKey         = u"LibraryTree/KeepAlive";
+constexpr auto LibTreeAnimatedKey          = u"LibraryTree/Animated";
+constexpr auto LibTreeHeaderKey            = u"LibraryTree/Header";
+constexpr auto LibTreeShowSummaryNodeKey   = u"LibraryTree/ShowSummaryNode";
+constexpr auto LibTreeSummaryNodeTitleKey  = u"LibraryTree/SummaryNodeTitle";
 
 namespace {
 QModelIndexList filterAncestors(const QModelIndexList& indexes)
@@ -310,22 +311,23 @@ void LibraryTreeWidget::searchEvent(const SearchRequest& request)
 LibraryTreeWidget::ConfigData LibraryTreeWidget::factoryConfig() const
 {
     return {
-        .doubleClickAction = 0,
-        .middleClickAction = 0,
-        .sendPlayback      = true,
-        .playlistEnabled   = false,
-        .autoSwitch        = true,
-        .keepAlive         = false,
-        .playlistName      = LibraryTreeController::defaultPlaylistName(),
-        .restoreState      = true,
-        .animated          = true,
-        .showHeader        = true,
-        .showScrollbar     = true,
-        .alternatingRows   = false,
-        .showSummaryNode   = true,
-        .summaryNodeTitle  = defaultLibraryTreeSummaryTitle(),
-        .rowHeight         = 0,
-        .iconSize          = QSize{36, 36},
+        .doubleClickAction   = 0,
+        .middleClickAction   = 0,
+        .sendPlayback        = true,
+        .playlistEnabled     = false,
+        .autoSwitch          = true,
+        .keepAlive           = false,
+        .playlistName        = LibraryTreeController::defaultPlaylistName(),
+        .restoreState        = true,
+        .expandOnSingleClick = false,
+        .animated            = true,
+        .showHeader          = true,
+        .showScrollbar       = true,
+        .alternatingRows     = false,
+        .showSummaryNode     = true,
+        .summaryNodeTitle    = defaultLibraryTreeSummaryTitle(),
+        .rowHeight           = 0,
+        .iconSize            = QSize{36, 36},
     };
 }
 
@@ -341,14 +343,16 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
     config.keepAlive         = m_settings->fileValue(LibTreeKeepAliveKey, config.keepAlive).toBool();
     config.playlistName      = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
     config.restoreState      = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
-    config.animated          = m_settings->fileValue(LibTreeAnimatedKey, config.animated).toBool();
-    config.showHeader        = m_settings->fileValue(LibTreeHeaderKey, config.showHeader).toBool();
-    config.showScrollbar     = m_settings->fileValue(LibTreeScrollBarKey, config.showScrollbar).toBool();
-    config.alternatingRows   = m_settings->fileValue(LibTreeAltColoursKey, config.alternatingRows).toBool();
-    config.showSummaryNode   = m_settings->fileValue(LibTreeShowSummaryNodeKey, config.showSummaryNode).toBool();
-    config.summaryNodeTitle  = m_settings->fileValue(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle).toString();
-    config.rowHeight         = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
-    config.iconSize          = m_settings->value<LibTreeIconSize>().toSize();
+    config.expandOnSingleClick
+        = m_settings->fileValue(LibTreeExpandSingleClickKey, config.expandOnSingleClick).toBool();
+    config.animated         = m_settings->fileValue(LibTreeAnimatedKey, config.animated).toBool();
+    config.showHeader       = m_settings->fileValue(LibTreeHeaderKey, config.showHeader).toBool();
+    config.showScrollbar    = m_settings->fileValue(LibTreeScrollBarKey, config.showScrollbar).toBool();
+    config.alternatingRows  = m_settings->fileValue(LibTreeAltColoursKey, config.alternatingRows).toBool();
+    config.showSummaryNode  = m_settings->fileValue(LibTreeShowSummaryNodeKey, config.showSummaryNode).toBool();
+    config.summaryNodeTitle = m_settings->fileValue(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle).toString();
+    config.rowHeight        = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
+    config.iconSize         = m_settings->value<LibTreeIconSize>().toSize();
 
     return config;
 }
@@ -368,6 +372,7 @@ void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(LibTreeKeepAliveKey, config.keepAlive);
     m_settings->fileSet(LibTreeAutoPlaylistKey, config.playlistName);
     m_settings->fileSet(LibTreeRestoreStateKey, config.restoreState);
+    m_settings->fileSet(LibTreeExpandSingleClickKey, config.expandOnSingleClick);
     m_settings->fileSet(LibTreeAnimatedKey, config.animated);
     m_settings->fileSet(LibTreeHeaderKey, config.showHeader);
     m_settings->fileSet(LibTreeScrollBarKey, config.showScrollbar);
@@ -388,6 +393,7 @@ void LibraryTreeWidget::clearSavedDefaults() const
     m_settings->fileRemove(LibTreeKeepAliveKey);
     m_settings->fileRemove(LibTreeAutoPlaylistKey);
     m_settings->fileRemove(LibTreeRestoreStateKey);
+    m_settings->fileRemove(LibTreeExpandSingleClickKey);
     m_settings->fileRemove(LibTreeAnimatedKey);
     m_settings->fileRemove(LibTreeHeaderKey);
     m_settings->fileRemove(LibTreeScrollBarKey);
@@ -416,6 +422,7 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
 
     m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::None
                                            || m_doubleClickAction == TrackAction::Play);
+    m_libraryTree->setExpandsOnSingleClick(m_config.expandOnSingleClick);
     m_trackSelection->changePlaybackOnSend(m_widgetContext, m_config.sendPlayback);
     m_libraryTree->setAnimated(m_config.animated);
     m_libraryTree->setHeaderHidden(!m_config.showHeader);
@@ -475,6 +482,9 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
     if(layout.contains("RestoreState"_L1)) {
         config.restoreState = layout.value("RestoreState"_L1).toBool();
     }
+    if(layout.contains("ExpandOnSingleClick"_L1)) {
+        config.expandOnSingleClick = layout.value("ExpandOnSingleClick"_L1).toBool();
+    }
     if(layout.contains("Animated"_L1)) {
         config.animated = layout.value("Animated"_L1).toBool();
     }
@@ -514,23 +524,24 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
 
 void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
 {
-    layout["DoubleClickAction"_L1] = config.doubleClickAction;
-    layout["MiddleClickAction"_L1] = config.middleClickAction;
-    layout["SendPlayback"_L1]      = config.sendPlayback;
-    layout["PlaylistEnabled"_L1]   = config.playlistEnabled;
-    layout["AutoSwitch"_L1]        = config.autoSwitch;
-    layout["KeepAlive"_L1]         = config.keepAlive;
-    layout["PlaylistName"_L1]      = config.playlistName;
-    layout["RestoreState"_L1]      = config.restoreState;
-    layout["Animated"_L1]          = config.animated;
-    layout["ShowHeader"_L1]        = config.showHeader;
-    layout["ShowScrollbar"_L1]     = config.showScrollbar;
-    layout["AlternatingRows"_L1]   = config.alternatingRows;
-    layout["ShowSummaryNode"_L1]   = config.showSummaryNode;
-    layout["SummaryNodeTitle"_L1]  = config.summaryNodeTitle;
-    layout["RowHeight"_L1]         = config.rowHeight;
-    layout["IconWidth"_L1]         = config.iconSize.width();
-    layout["IconHeight"_L1]        = config.iconSize.height();
+    layout["DoubleClickAction"_L1]   = config.doubleClickAction;
+    layout["MiddleClickAction"_L1]   = config.middleClickAction;
+    layout["SendPlayback"_L1]        = config.sendPlayback;
+    layout["PlaylistEnabled"_L1]     = config.playlistEnabled;
+    layout["AutoSwitch"_L1]          = config.autoSwitch;
+    layout["KeepAlive"_L1]           = config.keepAlive;
+    layout["PlaylistName"_L1]        = config.playlistName;
+    layout["RestoreState"_L1]        = config.restoreState;
+    layout["ExpandOnSingleClick"_L1] = config.expandOnSingleClick;
+    layout["Animated"_L1]            = config.animated;
+    layout["ShowHeader"_L1]          = config.showHeader;
+    layout["ShowScrollbar"_L1]       = config.showScrollbar;
+    layout["AlternatingRows"_L1]     = config.alternatingRows;
+    layout["ShowSummaryNode"_L1]     = config.showSummaryNode;
+    layout["SummaryNodeTitle"_L1]    = config.summaryNodeTitle;
+    layout["RowHeight"_L1]           = config.rowHeight;
+    layout["IconWidth"_L1]           = config.iconSize.width();
+    layout["IconHeight"_L1]          = config.iconSize.height();
 }
 
 void LibraryTreeWidget::openConfigDialog()

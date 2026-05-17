@@ -87,6 +87,7 @@ public:
         bool keepAlive{false};
         QString playlistName;
         bool restoreState{true};
+        bool expandOnSingleClick{false};
         bool animated{true};
         bool showHeader{true};
         bool showScrollbar{true};

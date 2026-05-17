@@ -29,6 +29,7 @@ namespace Fooyin {
 LibraryTreeView::LibraryTreeView(QWidget* parent)
     : QTreeView{parent}
     , m_isLoading{false}
+    , m_expandsOnSingleClick{false}
 {
     setUniformRowHeights(false);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -42,12 +43,24 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
     header()->setSortIndicator(0, Qt::AscendingOrder);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
     setTextElideMode(Qt::ElideRight);
+
+    QObject::connect(this, &QTreeView::clicked, this, [this](const QModelIndex& index) {
+        if(m_expandsOnSingleClick && index.isValid() && index == m_singleClickToggleIndex) {
+            setExpanded(index, !isExpanded(index));
+        }
+        m_singleClickToggleIndex = {};
+    });
 }
 
 void LibraryTreeView::setLoading(bool isLoading)
 {
     m_isLoading = isLoading;
     viewport()->update();
+}
+
+void LibraryTreeView::setExpandsOnSingleClick(bool enabled)
+{
+    m_expandsOnSingleClick = enabled;
 }
 
 void LibraryTreeView::changeEvent(QEvent* event)
@@ -72,7 +85,8 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
         return;
     }
 
-    const QModelIndex index = indexAt(event->position().toPoint());
+    const QModelIndex index  = indexAt(event->position().toPoint());
+    m_singleClickToggleIndex = {};
 
     if(!index.isValid()) {
         clearSelection();
@@ -81,6 +95,14 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
     if(event->button() == Qt::MiddleButton) {
         Q_EMIT middleClicked(index);
         return;
+    }
+
+    if(m_expandsOnSingleClick && event->button() == Qt::LeftButton && index.isValid() && model()->hasChildren(index)
+       && event->modifiers() == Qt::NoModifier) {
+        const QRect indexRect = visualRect(index);
+        if(event->position().toPoint().x() >= indexRect.left()) {
+            m_singleClickToggleIndex = index;
+        }
     }
 
     QTreeView::mousePressEvent(event);
