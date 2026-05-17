@@ -114,20 +114,14 @@
 using namespace Qt::StringLiterals;
 
 namespace {
-QStringList extensionListFromText(const QString& text)
+QStringList normaliseExtensionList(QStringList extensions)
 {
-    QStringList extensions = text.split(';'_L1, Qt::SkipEmptyParts);
     for(QString& extension : extensions) {
         extension = extension.trimmed().toLower();
     }
     extensions.removeAll(QString{});
     extensions.removeDuplicates();
     return extensions;
-}
-
-QString extensionTextFromList(const QStringList& extensions)
-{
-    return extensions.join(';'_L1);
 }
 } // namespace
 
@@ -472,28 +466,13 @@ void Widgets::registerAdvancedSettings()
          .normalise = {},
          .validate  = {}});
     advancedSettingsRegistry->add(
-        {.id           = QString::fromLatin1(Settings::Core::Internal::FFmpegPriorityExtensions),
-         .category     = {tr("Playback"), tr("Decoding"), u"FFmpeg"_s},
-         .label        = tr("Prefer FFmpeg for extensions"),
-         .description  = tr("Semicolon-separated extensions where FFmpeg is tried first."),
-         .defaultValue = extensionTextFromList(Settings::Core::Internal::defaultFFmpegPriorityExtensions()),
-         .editor       = AdvancedSettingLineEdit{},
-         .read =
-             [this] {
-                 return extensionTextFromList(
-                     m_settings
-                         ->fileValue(Settings::Core::Internal::FFmpegPriorityExtensions,
-                                     Settings::Core::Internal::defaultFFmpegPriorityExtensions())
-                         .toStringList());
-             },
-         .write =
-             [this](const QVariant& value) {
-                 return m_settings->fileSet(Settings::Core::Internal::FFmpegPriorityExtensions,
-                                            extensionListFromText(value.toString()));
-             },
-         .normalise
-         = [](const QVariant& value) { return extensionTextFromList(extensionListFromText(value.toString())); },
-         .validate = {}});
+        Settings::Core::Internal::FFmpegPriorityExtensions, Settings::Core::Internal::defaultFFmpegPriorityExtensions(),
+        {.category    = {tr("Playback"), tr("Decoding"), u"FFmpeg"_s},
+         .label       = tr("Prefer FFmpeg for extensions"),
+         .description = tr("Semicolon-separated extensions where FFmpeg is tried first."),
+         .editor      = AdvancedSettingStringListLineEdit{.separator = u';'},
+         .normalise   = [](const QVariant& value) { return normaliseExtensionList(value.toStringList()); },
+         .validate    = {}});
     advancedSettingsRegistry->add<Settings::Core::Internal::OpusHeaderWriteMode>(
         {.category    = {tr("Playback"), tr("ReplayGain")},
          .label       = tr("Opus header gain"),

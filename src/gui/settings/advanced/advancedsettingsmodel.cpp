@@ -34,9 +34,47 @@ template <typename T>
     return std::get_if<AdvancedSettingSpinBox>(&descriptor.editor);
 }
 
+[[nodiscard]] const AdvancedSettingStringListLineEdit*
+stringListLineEditEditor(const AdvancedSettingDescriptor& descriptor)
+{
+    return std::get_if<AdvancedSettingStringListLineEdit>(&descriptor.editor);
+}
+
 [[nodiscard]] const AdvancedSettingRadioButtons* radioButtonsEditor(const AdvancedSettingDescriptor& descriptor)
 {
     return std::get_if<AdvancedSettingRadioButtons>(&descriptor.editor);
+}
+
+[[nodiscard]] bool isInlineTextEditor(const AdvancedSettingDescriptor& descriptor)
+{
+    return isEditor<AdvancedSettingLineEdit>(descriptor) || stringListLineEditEditor(descriptor)
+        || spinBoxEditor(descriptor);
+}
+
+[[nodiscard]] QString stringListText(const QStringList& values, QChar separator)
+{
+    return values.join(QString{separator});
+}
+
+[[nodiscard]] QStringList stringListFromText(const QString& text, QChar separator)
+{
+    QStringList values = text.split(separator, Qt::SkipEmptyParts);
+    for(QString& value : values) {
+        value = value.trimmed();
+    }
+    values.removeAll(QString{});
+    return values;
+}
+
+[[nodiscard]] QString displayText(const AdvancedSettingDescriptor& descriptor, const QVariant& value)
+{
+    if(const auto* spinBox = spinBoxEditor(descriptor)) {
+        return QString::number(value.toInt()) + spinBox->suffix;
+    }
+    if(const auto* stringList = stringListLineEditEditor(descriptor)) {
+        return stringListText(value.toStringList(), stringList->separator);
+    }
+    return value.toString();
 }
 } // namespace
 
@@ -92,19 +130,15 @@ QVariant AdvancedSettingsModel::data(const QModelIndex& index, int role) const
 
     switch(role) {
         case Qt::DisplayRole:
-            if(isSetting
-               && (isEditor<AdvancedSettingLineEdit>(node->descriptor)
-                   || isEditor<AdvancedSettingSpinBox>(node->descriptor))) {
-                const auto* spinBox = spinBoxEditor(node->descriptor);
-                const QString value
-                    = spinBox ? QString::number(node->value.toInt()) + spinBox->suffix : node->value.toString();
-                return u"%1: %2"_s.arg(node->label, value);
+            if(isSetting && isInlineTextEditor(node->descriptor)) {
+                return u"%1: %2"_s.arg(node->label, displayText(node->descriptor, node->value));
             }
             return node->label;
         case Qt::EditRole:
-            if(isSetting
-               && (isEditor<AdvancedSettingLineEdit>(node->descriptor)
-                   || isEditor<AdvancedSettingSpinBox>(node->descriptor))) {
+            if(isSetting && isEditor<AdvancedSettingStringListLineEdit>(node->descriptor)) {
+                return displayText(node->descriptor, node->value);
+            }
+            if(isSetting && (isEditor<AdvancedSettingLineEdit>(node->descriptor) || spinBoxEditor(node->descriptor))) {
                 return node->value;
             }
             return {};
@@ -172,8 +206,7 @@ Qt::ItemFlags AdvancedSettingsModel::flags(const QModelIndex& index) const
         if(isEditor<AdvancedSettingCheckBox>(node->descriptor)) {
             defaultFlags |= Qt::ItemIsUserCheckable;
         }
-        else if(isEditor<AdvancedSettingLineEdit>(node->descriptor)
-                || isEditor<AdvancedSettingSpinBox>(node->descriptor)) {
+        else if(isInlineTextEditor(node->descriptor)) {
             defaultFlags |= Qt::ItemIsEditable;
         }
     }
@@ -194,9 +227,13 @@ bool AdvancedSettingsModel::setData(const QModelIndex& index, const QVariant& va
 
     const bool isSetting = node->type == AdvancedItemType::Setting;
 
-    if(role == Qt::EditRole && isSetting
-       && (isEditor<AdvancedSettingLineEdit>(node->descriptor) || isEditor<AdvancedSettingSpinBox>(node->descriptor))) {
-        node->value = normaliseValue(node->descriptor, value);
+    if(role == Qt::EditRole && isSetting && isInlineTextEditor(node->descriptor)) {
+        if(const auto* stringList = stringListLineEditEditor(node->descriptor)) {
+            node->value = normaliseValue(node->descriptor, stringListFromText(value.toString(), stringList->separator));
+        }
+        else {
+            node->value = normaliseValue(node->descriptor, value);
+        }
         Q_EMIT dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
         return true;
     }

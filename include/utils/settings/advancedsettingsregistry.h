@@ -23,6 +23,8 @@
 
 #include <utils/settings/settingsmanager.h>
 
+#include <QChar>
+#include <QStringList>
 #include <QVariant>
 
 #include <functional>
@@ -60,6 +62,15 @@ struct AdvancedSettingRadioButtons
 struct AdvancedSettingLineEdit
 { };
 /*!
+ * String-list line edit editor configuration.
+ *
+ * The setting is stored as a QStringList and edited as a separator-delimited string.
+ */
+struct AdvancedSettingStringListLineEdit
+{
+    QChar separator{u';'};
+};
+/*!
  * Integer spin box editor configuration.
  *
  * The setting is displayed as "Label: value"; a spin box is created only while the row is being edited.
@@ -72,8 +83,9 @@ struct AdvancedSettingSpinBox
     QString suffix;
 };
 
-using AdvancedSettingEditor = std::variant<AdvancedSettingCheckBox, AdvancedSettingRadioButtons,
-                                           AdvancedSettingLineEdit, AdvancedSettingSpinBox>;
+using AdvancedSettingEditor
+    = std::variant<AdvancedSettingCheckBox, AdvancedSettingRadioButtons, AdvancedSettingLineEdit,
+                   AdvancedSettingStringListLineEdit, AdvancedSettingSpinBox>;
 
 /*!
  * Runtime descriptor for a single advanced setting.
@@ -186,6 +198,26 @@ public:
                  },
              .normalise = std::move(descriptor.normalise),
              .validate  = std::move(descriptor.validate)});
+    }
+    /*!
+     * Add or replace a descriptor backed by a setting key.
+     *
+     * The descriptor id, read callback, and write callback are inferred from the setting key.
+     */
+    void add(const char* settingKey, const QVariant& defaultValue, AdvancedRegisteredSettingDescriptor descriptor)
+    {
+        const QString key = QString::fromLatin1(settingKey);
+
+        add({.id           = key,
+             .category     = std::move(descriptor.category),
+             .label        = std::move(descriptor.label),
+             .description  = std::move(descriptor.description),
+             .defaultValue = defaultValue,
+             .editor       = std::move(descriptor.editor),
+             .read         = [this, key, defaultValue] { return m_settings->fileValue(key, defaultValue); },
+             .write        = [this, key](const QVariant& value) { return m_settings->fileSet(key, value); },
+             .normalise    = std::move(descriptor.normalise),
+             .validate     = std::move(descriptor.validate)});
     }
 
     //! Return a snapshot of all registered descriptors.
