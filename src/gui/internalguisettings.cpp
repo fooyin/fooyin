@@ -19,6 +19,7 @@
 
 #include "internalguisettings.h"
 
+#include "nowplayingoutput/nowplayingoutputservice.h"
 #include "search/searchwidget.h"
 #include "widgets/statuswidget.h"
 
@@ -204,5 +205,18 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                                         u"Interface/ContextMenuLayoutEditingLayout"_s);
     m_settings->createSetting<Internal::PropertiesSidebarTrackScript>(u"[%track%. ]%title%"_s,
                                                                       u"Interface/PropertiesSidebarTrackScript "_s);
+    m_settings->createSetting<Internal::NowPlayingOutputEnabled>(false, u"NowPlayingOutput/Enabled"_s);
+    m_settings->createSetting<Internal::NowPlayingOutputScript>(uR"($if($or(%isplaying%,%ispaused%),
+%datetime% $if(%ispaused%,⏸,►) %artist% [\(%album%\)] - %title% [%playback_time%]
+ [$progress(%playback_time_s%,%duration_s%,30,█,─)] [%duration%],))"_s,
+                                                                u"NowPlayingOutput/Script"_s);
+    m_settings->createSetting<Internal::NowPlayingOutputUpdateEvents>(
+        static_cast<int>(NowPlayingOutputService::DefaultEvents), u"NowPlayingOutput/UpdateEvents"_s);
+    m_settings->createSetting<Internal::NowPlayingOutputTargets>(static_cast<int>(NowPlayingOutputService::NoOutput),
+                                                                 u"NowPlayingOutput/Targets"_s);
+    m_settings->createSetting<Internal::NowPlayingOutputFilePath>(u""_s, u"NowPlayingOutput/OutputFilePath"_s);
+    m_settings->createSetting<Internal::NowPlayingOutputOptions>(
+        static_cast<int>(NowPlayingOutputService::OutputDefaultOptions), u"NowPlayingOutput/Options"_s);
+    m_settings->createSetting<Internal::NowPlayingOutputAppendLineLimit>(0, u"NowPlayingOutput/AppendLineLimit"_s);
 }
 } // namespace Fooyin

@@ -275,6 +275,9 @@ VariableKind resolveBuiltInVariableKind(const QString& var)
     if(var == "ISPAUSED"_L1) {
         return VariableKind::IsPaused;
     }
+    if(var == "ISSTOPPED"_L1) {
+        return VariableKind::IsStopped;
+    }
     if(var == "LIBRARYNAME"_L1) {
         return VariableKind::LibraryName;
     }

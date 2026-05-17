@@ -41,6 +41,8 @@
 #include "librarytree/librarytreecontroller.h"
 #include "librarytree/librarytreewidget.h"
 #include "mainwindow.h"
+#include "nowplayingoutput/nowplayingoutputpage.h"
+#include "nowplayingoutput/nowplayingoutputservice.h"
 #include "output/outputprofilemanager.h"
 #include "playlist/manager/playlistmanagerwidget.h"
 #include "playlist/organiser/playlistorganiser.h"
@@ -145,6 +147,7 @@ Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, Pla
     , m_dspPresetRegistry{new DspPresetRegistry(m_settings, this)}
     , m_outputProfileManager{new OutputProfileManager(m_core->engine(), m_core->dspChainStore(), m_dspPresetRegistry,
                                                       m_settings, this)}
+    , m_nowPlayingOutputService{new NowPlayingOutputService(m_core->playerController(), m_settings, this)}
     , m_dspSettingsRegistry{std::make_unique<DspSettingsRegistry>()}
     , m_dspSettingsController{std::make_unique<DspSettingsController>(m_core->dspChainStore(),
                                                                       m_dspSettingsRegistry.get(), this)}
@@ -388,6 +391,7 @@ void Widgets::registerPages()
     new LibraryRatingsPage(m_settings, this);
     new LibrarySortingPage(m_core->sortingRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);
+    new NowPlayingOutputPage(m_core->playerController(), m_settings, this);
     new DspManagerPage(m_core->dspChainStore(), m_dspPresetRegistry, m_dspSettingsRegistry.get(), m_settings, this);
     new FadingPage(m_settings, this);
     new PlaylistGeneralPage(m_settings, this);

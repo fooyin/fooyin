@@ -133,6 +133,7 @@ public:
     [[nodiscard]] QString playbackTimeRemainingSeconds() const;
     [[nodiscard]] QString isPlaying() const;
     [[nodiscard]] QString isPaused() const;
+    [[nodiscard]] QString isStopped() const;
     [[nodiscard]] QString libraryNameVariable(const Track& track) const;
     [[nodiscard]] QString libraryPathVariable(const Track& track) const;
     [[nodiscard]] QString relativePathVariable(const Track& track) const;
