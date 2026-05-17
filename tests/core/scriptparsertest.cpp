@@ -392,6 +392,11 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"01", m_parser.evaluate(u"[$num(1,2)]"_s));
     EXPECT_EQ(u"A replace cesc", m_parser.evaluate(u"$replace(A replace test,t,c)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$replace()"_s));
+    EXPECT_EQ(u"abc", m_parser.evaluate(u"$replace(abc,,x)"_s));
+    EXPECT_EQ(u"A replace cesc", m_parser.evaluate(u"$replace(A replace test,A,A,t,c)"_s));
+    EXPECT_EQ(u"aXXcdYY", m_parser.evaluate(u"$replace(abcde,b,XX,e,YY)"_s));
+    EXPECT_EQ(u"ace", m_parser.evaluate(u"$replace(abcde,b,,d,)"_s));
+    EXPECT_EQ(u"ayc", m_parser.evaluate(u"$replace(abc,,x,b,y)"_s));
     EXPECT_EQ(u"test", m_parser.evaluate(u"$slice(A slice test,8)"_s));
     EXPECT_EQ(u"slice", m_parser.evaluate(u"$slice(A slice test,2,5)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$slice()"_s));
@@ -551,6 +556,22 @@ TEST_F(ScriptParserTest, MetadataTest)
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if(%replaygain_album_gain%,true,false)"_s, track));
 
     EXPECT_EQ(u"", m_parser.evaluate(u"[%disc% - %track%]"_s, track));
+}
+
+TEST_F(ScriptParserTest, ReplaceCanSanitiseUserFilenameExpression)
+{
+    Track track;
+    track.setDiscNumber(u"2"_s);
+    track.setTrackNumber(u"13"_s);
+    track.setTitle(u"What? A \"Title\": Part | Two"_s);
+
+    static auto nestedReplaceScript
+        = uR"($trim($replace($replace($replace($replace($iflonger(%disc%,1,%disc%.,)$iflonger(%track%,1,%track%.,) %title%,?, ),\",),:, ),|,)))"_s;
+    static auto variadicReplaceScript
+        = uR"($trim($replace($iflonger(%disc%,1,%disc%.,)$iflonger(%track%,1,%track%.,) %title%,?, ,\",,:, ,|,)))"_s;
+
+    EXPECT_EQ(u"2.13. What  A Title  Part  Two", m_parser.evaluate(nestedReplaceScript, track));
+    EXPECT_EQ(u"2.13. What  A Title  Part  Two", m_parser.evaluate(variadicReplaceScript, track));
 }
 
 TEST_F(ScriptParserTest, RatingStarsFormattingTest)

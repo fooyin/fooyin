@@ -96,6 +96,10 @@ QString replace(const QStringList& vec)
 
     if(count == 3) {
         // Single replace call
+        if(vec.at(1).isEmpty()) {
+            return vec.front();
+        }
+
         QString origStr{vec.front()};
         return origStr.replace(vec.at(1), vec.at(2));
     }
@@ -103,12 +107,22 @@ QString replace(const QStringList& vec)
     // Arbitrary replacements
     // Much slower as we need to match all and then rebuild
 
+    struct Replacement
+    {
+        qsizetype length{0};
+        QString text;
+    };
+
     const QString& origStr = vec.front();
-    std::map<qsizetype, QString, std::greater<>> replacements;
+    std::map<qsizetype, Replacement> replacements;
 
     for(qsizetype i{1}; i < count - 1; i += 2) {
         const QString& search  = vec[i];
         const QString& replace = vec[i + 1];
+        if(search.isEmpty()) {
+            continue;
+        }
+
         const QRegularExpression regex{QRegularExpression::escape(search),
                                        QRegularExpression::UseUnicodePropertiesOption};
         QRegularExpressionMatchIterator matches = regex.globalMatch(origStr);
@@ -116,24 +130,22 @@ QString replace(const QStringList& vec)
         while(matches.hasNext()) {
             const QRegularExpressionMatch match = matches.next();
             const qsizetype start               = match.capturedStart();
-            replacements[start]                 = replace;
+            replacements[start]                 = {.length = match.capturedLength(), .text = replace};
         }
     }
 
     QString result;
-    qsizetype lastIndex = origStr.size();
-    for(const auto& [pos, replace] : replacements) {
-        if(pos >= lastIndex) {
+    qsizetype cursor{0};
+    for(const auto& [pos, replacement] : replacements) {
+        if(pos < cursor) {
             continue;
         }
 
-        const QString& replacement = replacements.at(pos);
-        const QRegularExpression regex{QRegularExpression::escape(origStr.mid(pos, replacement.length())),
-                                       QRegularExpression::UseUnicodePropertiesOption};
-        result.prepend(origStr.mid(pos, lastIndex - pos).replace(regex, replacement));
-        lastIndex = pos;
+        result.append(origStr.sliced(cursor, pos - cursor));
+        result.append(replacement.text);
+        cursor = pos + replacement.length;
     }
-    result.prepend(origStr.left(lastIndex));
+    result.append(origStr.sliced(cursor));
 
     return result;
 }
