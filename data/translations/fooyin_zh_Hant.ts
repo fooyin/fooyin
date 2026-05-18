@@ -1846,7 +1846,7 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="564"/>
         <source>&amp;Left</source>
-        <translation>齊左(&amp;L)</translation>
+        <translation>靠左(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="565"/>
@@ -1856,7 +1856,7 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="566"/>
         <source>&amp;Right</source>
-        <translation>齊右(&amp;R)</translation>
+        <translation>靠右(&amp;R)</translation>
     </message>
 </context>
 <context>
@@ -6441,7 +6441,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
         <source>Supports &lt;right&gt; for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes.</source>
-        <translation>支援 &lt;right&gt; 用於靠右對齊文字 、 %trackcount% 用於曲目、%childcount% 用於子節點。</translation>
+        <translation>支援 &lt;right&gt; 用於靠右對齊文字 、 %trackcount% 用於曲目、%childcount% 用於下層節點。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
