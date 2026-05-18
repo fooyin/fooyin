@@ -753,7 +753,7 @@ void CoverRepositoryPrivate::cancelPendingPixmapRequest(const CoverRequestKey& r
     }
 
     for(auto& promise : pendingIt->second.promises) {
-        promise.addResult({});
+        promise.addResult(QPixmap{});
         promise.finish();
     }
 
@@ -766,7 +766,7 @@ void CoverRepositoryPrivate::finishAndClearPendingPixmapRequests()
 
     for(auto& request : m_pendingPixmapRequests | std::views::values) {
         for(auto& promise : request.promises) {
-            promise.addResult({});
+            promise.addResult(QPixmap{});
             promise.finish();
         }
     }
