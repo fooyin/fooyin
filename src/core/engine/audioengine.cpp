@@ -3829,7 +3829,7 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Engine::PlaybackItem& ite
     const bool hasEarlyAutoTailFade = m_autoCrossfadeTailFadeActive && m_autoCrossfadeTailFadeGeneration == generation
                                    && m_autoCrossfadeTailFadeStreamId == activeStreamId
                                    && activeStreamId != InvalidStreamId;
-    const bool skipFadeOutStart = hasEarlyAutoTailFade && overlapDurationMs <= 0;
+    const bool skipFadeOutStart     = hasEarlyAutoTailFade && overlapDurationMs <= 0;
 
     const uint64_t overlapWindowMs = static_cast<uint64_t>(std::max(0, overlapDurationMs));
     const uint64_t requiredBufferedMs
