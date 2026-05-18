@@ -66,18 +66,11 @@ private:
     bool initStream();
     void uninitCore();
     static void process(void* userData);
-    static void handleControlInfo(void* userdata, uint32_t id, const pw_stream_control* control);
-    static void handleParamChanged(void* userdata, uint32_t id, const spa_pod* param);
     static void handleStateChanged(void* userdata, pw_stream_state old, pw_stream_state state, const char* error);
     static void drained(void* userdata);
 
-    void applyExternalVolume(float volume, bool updateUnmutedVolume = true);
-
     QString m_device;
     float m_volume;
-    float m_unmutedVolume;
-    bool m_ignoreInitialVolume;
-    bool m_muted;
     AudioFormat m_format;
 
     std::unique_ptr<LockFreeRingBuffer<std::byte>> m_buffer;

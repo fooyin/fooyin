@@ -28,10 +28,7 @@
 
 #include <pipewire/pipewire.h>
 #include <spa/param/audio/format-utils.h>
-#include <spa/param/param.h>
-#include <spa/param/props.h>
 #include <spa/pod/builder.h>
-#include <spa/pod/iter.h>
 #include <spa/utils/result.h>
 
 #include <QDebug>
@@ -43,7 +40,6 @@
 #include <ctime>
 #include <limits>
 #include <mutex>
-#include <optional>
 
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
@@ -83,11 +79,6 @@ int64_t framesToMs(const uint64_t frames, const int sampleRate)
     }
 
     return static_cast<int64_t>(frames) * 1000LL / static_cast<int64_t>(sampleRate);
-}
-
-bool isFullVolume(float volume)
-{
-    return qFuzzyCompare(volume + 1.0F, 2.0F);
 }
 
 void ensurePipeWireInitialised()
@@ -313,9 +304,6 @@ bool supportsPipewireLayout(const Fooyin::AudioFormat& format)
 namespace Fooyin::Pipewire {
 PipeWireOutput::PipeWireOutput()
     : m_volume{1.0}
-    , m_unmutedVolume{1.0}
-    , m_ignoreInitialVolume{false}
-    , m_muted{false}
     , m_lastPwWriteBytes{0}
     , m_targetBufferFrames{0}
     , m_loopStarted{false}
@@ -547,13 +535,6 @@ void PipeWireOutput::setPaused(bool pause)
 void PipeWireOutput::setVolume(double volume)
 {
     m_volume = static_cast<float>(volume);
-    m_muted  = (m_volume == 0.0F);
-    if(m_volume > 0.0F) {
-        m_unmutedVolume = m_volume;
-    }
-    if(isFullVolume(m_volume)) {
-        m_ignoreInitialVolume = false;
-    }
 
     if(!initialised()) {
         return;
@@ -655,8 +636,6 @@ bool PipeWireOutput::initStream()
     static constexpr pw_stream_events streamEvents = {
         .version       = PW_VERSION_STREAM_EVENTS,
         .state_changed = handleStateChanged,
-        .control_info  = handleControlInfo,
-        .param_changed = handleParamChanged,
         .process       = process,
         .drained       = drained,
     };
@@ -667,7 +646,6 @@ bool PipeWireOutput::initStream()
 
     m_stream = std::make_unique<PipewireStream>(m_core.get(), m_format, m_targetBufferFrames, dev);
     m_stream->addListener(streamEvents, this);
-    m_ignoreInitialVolume = !isFullVolume(m_volume);
 
     qCDebug(PIPEWIRE) << "Requesting stream latency:" << m_targetBufferFrames << "/" << m_format.sampleRate()
                       << "frames/rate";
@@ -833,76 +811,6 @@ void PipeWireOutput::process(void* userData)
     self->m_loop->signal(false);
 }
 
-void PipeWireOutput::handleControlInfo(void* userdata, uint32_t id, const pw_stream_control* control)
-{
-    auto* self = static_cast<PipeWireOutput*>(userdata);
-
-    if(id != SPA_PROP_volume || !control || !control->values || control->n_values == 0) {
-        return;
-    }
-
-    self->m_muted = false;
-    self->applyExternalVolume(control->values[0]);
-}
-
-void PipeWireOutput::handleParamChanged(void* userdata, uint32_t id, const spa_pod* param)
-{
-    auto* self = static_cast<PipeWireOutput*>(userdata);
-
-    if(id != SPA_PARAM_Props || !param) {
-        return;
-    }
-
-    std::optional<float> volume;
-    if(const spa_pod_prop* channelsProp = spa_pod_find_prop(param, nullptr, SPA_PROP_channelVolumes)) {
-        uint32_t nValues{0};
-        const auto* values = static_cast<const float*>(spa_pod_get_array(&channelsProp->value, &nValues));
-        if(values && nValues > 0) {
-            const auto [first, last] = std::ranges::minmax_element(values, values + nValues);
-            if(first != values + nValues && last != values + nValues && qFuzzyCompare(*first + 1.0F, *last + 1.0F)) {
-                volume = std::clamp(*first, 0.0F, 1.0F);
-            }
-        }
-    }
-    else if(const spa_pod_prop* volprop = spa_pod_find_prop(param, nullptr, SPA_PROP_volume)) {
-        float value{0.0F};
-        if(spa_pod_get_float(&volprop->value, &value) == 0) {
-            volume = std::clamp(value, 0.0F, 1.0F);
-        }
-    }
-
-    std::optional<bool> muted;
-    if(const spa_pod_prop* prop = spa_pod_find_prop(param, nullptr, SPA_PROP_mute)) {
-        bool value{false};
-        if(spa_pod_get_bool(&prop->value, &value) == 0) {
-            muted = value;
-        }
-    }
-
-    if(!volume && !muted) {
-        return;
-    }
-
-    if(volume && *volume > 0.0F) {
-        self->m_unmutedVolume = *volume;
-    }
-
-    if(!muted) {
-        self->applyExternalVolume(*volume);
-        return;
-    }
-
-    if(*muted) {
-        self->m_muted = true;
-        self->applyExternalVolume(0.0F, false);
-    }
-    else {
-        const bool restorePrevVolume = !volume || (*volume == 0.0F && self->m_muted);
-        self->m_muted                = false;
-        self->applyExternalVolume(restorePrevVolume ? self->m_unmutedVolume : *volume);
-    }
-}
-
 void PipeWireOutput::handleStateChanged(void* userdata, pw_stream_state old, pw_stream_state state, const char* error)
 {
     auto* self = static_cast<PipeWireOutput*>(userdata);
@@ -927,30 +835,5 @@ void PipeWireOutput::drained(void* userdata)
 {
     auto* self = static_cast<PipeWireOutput*>(userdata);
     self->m_loop->signal(false);
-}
-
-void PipeWireOutput::applyExternalVolume(float volume, bool updateUnmutedVolume)
-{
-    volume = std::clamp(volume, 0.0F, 1.0F);
-
-    if(m_ignoreInitialVolume) {
-        const bool isInitialDefault       = isFullVolume(volume);
-        const bool hasLowerInternalVolume = !isFullVolume(m_volume);
-        m_ignoreInitialVolume             = false;
-        if(isInitialDefault && hasLowerInternalVolume) {
-            return;
-        }
-    }
-
-    if(updateUnmutedVolume && volume > 0.0F) {
-        m_unmutedVolume = volume;
-    }
-
-    if(qFuzzyCompare(m_volume + 1.0F, volume + 1.0F)) {
-        return;
-    }
-
-    m_volume = volume;
-    Q_EMIT volumeChanged(volume);
 }
 } // namespace Fooyin::Pipewire
