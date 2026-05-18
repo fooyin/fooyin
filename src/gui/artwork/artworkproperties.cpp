@@ -25,7 +25,7 @@
 #include "statusevent.h"
 
 #include <core/engine/audioloader.h>
-#include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 
 #include <QDir>
 #include <QFutureWatcher>
@@ -53,11 +53,12 @@ struct ArtworkLoadResult
     bool cancelled{false};
 };
 
-ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library, SettingsManager* settings,
-                                     TrackList tracks, bool readOnly, QWidget* parent)
+ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library, CoverRepository* coverRepository,
+                                     SettingsManager* settings, TrackList tracks, bool readOnly, QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_audioLoader{loader}
     , m_library{library}
+    , m_coverRepository{coverRepository}
     , m_settings{settings}
     , m_tracks{std::move(tracks)}
     , m_watcher{new QFutureWatcher<std::shared_ptr<ArtworkLoadResult>>(this)}
@@ -235,7 +236,7 @@ void ArtworkProperties::apply()
     m_writeRequest->finished.then(this, [this, tracks = m_tracks](const WriteResult& result) {
         if(result.succeeded > 0) {
             for(const Track& track : tracks) {
-                CoverProvider::removeFromCache(track, *m_settings);
+                m_coverRepository->removeFromCache(track, *m_settings);
             }
         }
 

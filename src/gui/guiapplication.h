@@ -31,6 +31,7 @@ namespace Fooyin {
 class ActionManager;
 class AdvancedSettingsRegistry;
 class Application;
+class CoverRepository;
 class EditableLayout;
 class GuiApplicationPrivate;
 class LayoutProvider;
@@ -74,6 +75,7 @@ public:
     [[nodiscard]] WidgetProvider* widgetProvider() const;
     [[nodiscard]] ThemeRegistry* themeRegistry() const;
     [[nodiscard]] AdvancedSettingsRegistry* advancedSettingsRegistry() const;
+    [[nodiscard]] CoverRepository* coverRepository() const;
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 

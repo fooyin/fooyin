@@ -64,6 +64,7 @@ public:
     [[nodiscard]] bool showSummary() const;
     [[nodiscard]] Track::Cover coverType() const;
     [[nodiscard]] std::optional<ArtworkSourcePreference> coverSource() const;
+    [[nodiscard]] CoverProvider* coverProvider() const;
 
     void setRowHeight(int height);
     void setIconSize(const QSize& size);

@@ -155,7 +155,7 @@ public:
 
     FilterColumnList m_columns;
     bool m_showDecoration{false};
-    CoverProvider::ThumbnailSize m_decorationSize;
+    ThumbnailSize m_decorationSize;
     bool m_showLabels{true};
     Track::Cover m_coverType{Track::Cover::Front};
     std::optional<ArtworkSourcePreference> m_coverSource{std::nullopt};
@@ -211,7 +211,7 @@ void FilterModelPrivate::updateSummary()
     std::vector<std::set<QString>> uniqueColumns(columnCount);
     std::vector<const std::vector<RichTextBlock>*> richTemplates(columnCount, nullptr);
 
-    for(FilterItem* item : children) {
+    for(const auto* item : children) {
         if(!item || item->isSummary()) {
             continue;
         }
@@ -329,6 +329,11 @@ Track::Cover FilterModel::coverType() const
 std::optional<ArtworkSourcePreference> FilterModel::coverSource() const
 {
     return p->m_coverSource;
+}
+
+CoverProvider* FilterModel::coverProvider() const
+{
+    return p->m_coverProvider;
 }
 
 void FilterModel::setRowHeight(int height)
@@ -505,6 +510,14 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
                                                                    p->m_coverType);
                 }
                 return p->m_coverProvider->trackCoverThumbnail({}, p->m_decorationSize, p->m_coverType);
+            }
+            break;
+        case FilterItem::CoverKey:
+            if(p->m_showDecoration) {
+                if(const int trackId = item->firstTrackId(); trackId >= 0) {
+                    return p->m_coverProvider->thumbnailCacheKey(p->trackForId(trackId), p->m_decorationSize,
+                                                                 p->m_coverType);
+                }
             }
             break;
         case Qt::SizeHintRole:

@@ -26,11 +26,16 @@
 #include <gui/fywidget.h>
 #include <gui/widgets/expandedtreeview.h>
 
+#include <QBasicTimer>
+
+class QTimerEvent;
+
 namespace Fooyin {
 class AudioLoader;
 class AutoHeaderView;
 class ActionManager;
 class CoverProvider;
+class CoverRepository;
 class LibraryManager;
 class MusicLibrary;
 class SettingsManager;
@@ -55,10 +60,8 @@ public:
         QString searchText;
     };
 
-    explicit FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
-                          LibraryManager* libraryManager, MusicLibrary* library,
-                          std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
-                          QWidget* parent = nullptr);
+    explicit FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry, MusicLibrary* library,
+                          CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     [[nodiscard]] Id group() const;
@@ -131,6 +134,7 @@ Q_SIGNALS:
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
+    void timerEvent(QTimerEvent* event) override;
 
 private:
     void setupConnections();
@@ -139,6 +143,8 @@ private:
     void updateViewMode(ExpandedTreeView::ViewMode mode);
     void updateCaptions(ExpandedTreeView::CaptionDisplay captions);
     void updateAppearance();
+    void scheduleVisibleCoverPinUpdate(int delay = 0);
+    void updateVisibleCoverPins();
 
     void addDisplayMenu(QMenu* menu);
     void filterHeaderMenu(const QPoint& pos);
@@ -175,6 +181,7 @@ private:
     bool m_showScrollbar;
     bool m_alternatingColours;
     ConfigData m_config;
+    QBasicTimer m_visibleCoverPinUpdateTimer;
 };
 } // namespace Filters
 } // namespace Fooyin

@@ -82,7 +82,7 @@ void MediaControlPlugin::initialise(const CorePluginContext& context)
 
 void MediaControlPlugin::initialise(const GuiPluginContext& context)
 {
-    m_coverProvider = new CoverProvider(m_audioLoader, m_settings, this);
+    m_coverProvider = new CoverProvider(context.coverRepository, this);
     m_coverProvider->setUsePlaceholder(false);
 
     m_windowController = context.windowController;

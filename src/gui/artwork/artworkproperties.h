@@ -33,6 +33,7 @@ class QPushButton;
 namespace Fooyin {
 class ArtworkRow;
 class AudioLoader;
+class CoverRepository;
 struct ArtworkLoadResult;
 class MusicLibrary;
 class SettingsManager;
@@ -42,8 +43,8 @@ class ArtworkProperties : public PropertiesTabWidget
     Q_OBJECT
 
 public:
-    ArtworkProperties(AudioLoader* loader, MusicLibrary* library, SettingsManager* settings, TrackList tracks,
-                      bool readOnly, QWidget* parent = nullptr);
+    ArtworkProperties(AudioLoader* loader, MusicLibrary* library, CoverRepository* coverRepository,
+                      SettingsManager* settings, TrackList tracks, bool readOnly, QWidget* parent = nullptr);
     ~ArtworkProperties() override;
 
     void loadTrackArtwork();
@@ -65,6 +66,7 @@ private:
 
     AudioLoader* m_audioLoader;
     MusicLibrary* m_library;
+    CoverRepository* m_coverRepository;
     SettingsManager* m_settings;
 
     TrackList m_tracks;

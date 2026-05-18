@@ -1,5 +1,7 @@
 set(SOURCES
+    ${CMAKE_SOURCE_DIR}/include/gui/coverartworktypes.h
     ${CMAKE_SOURCE_DIR}/include/gui/coverprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/coverrepository.h
     ${CMAKE_SOURCE_DIR}/include/gui/configdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/contextmenuutils.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dsplayouteditor.h
@@ -111,6 +113,7 @@ set(SOURCES
     controls/volumecontrol.cpp
     controls/volumecontrol.h
     coverprovider.cpp
+    coverrepository.cpp
     dialog/aboutdialog.cpp
     dialog/aboutdialog.h
     dialog/autoplaylistdialog.cpp

@@ -30,6 +30,7 @@
 namespace Fooyin {
 class AudioLoader;
 class CoverProvider;
+class CoverRepository;
 class PixmapFadeController;
 class PlaylistHandler;
 class PlayerController;
@@ -52,7 +53,7 @@ public:
 
     explicit CoverWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
                          TrackSelectionController* trackSelection, std::shared_ptr<AudioLoader> audioLoader,
-                         SettingsManager* settings, QWidget* parent = nullptr);
+                         CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;

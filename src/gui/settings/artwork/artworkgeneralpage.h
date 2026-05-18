@@ -22,6 +22,7 @@
 #include <utils/settings/settingspage.h>
 
 namespace Fooyin {
+class CoverRepository;
 class SettingsManager;
 
 class ArtworkGeneralPage : public SettingsPage
@@ -29,6 +30,6 @@ class ArtworkGeneralPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit ArtworkGeneralPage(SettingsManager* settings, QObject* parent = nullptr);
+    explicit ArtworkGeneralPage(SettingsManager* settings, CoverRepository* coverRepository, QObject* parent = nullptr);
 };
 } // namespace Fooyin

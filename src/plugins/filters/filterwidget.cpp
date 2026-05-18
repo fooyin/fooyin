@@ -28,6 +28,7 @@
 #include "filtermodel.h"
 
 #include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
@@ -43,9 +44,12 @@
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QMenu>
+#include <QScrollBar>
 #include <QSignalBlocker>
+#include <QTimerEvent>
 
 #include <algorithm>
+#include <set>
 #include <utility>
 
 using namespace Qt::StringLiterals;
@@ -61,6 +65,7 @@ constexpr auto FilterKeepAliveKey         = u"Filters/KeepAlive";
 constexpr auto FilterIconSizeKey          = u"Filters/IconSize";
 constexpr auto FilterIconHorizontalGapKey = u"Filters/IconHorizontalGap";
 constexpr auto FilterIconVerticalGapKey   = u"Filters/IconVerticalGap";
+constexpr int FilterModelPinUpdateDelay   = 50;
 
 namespace Fooyin::Filters {
 class FilterView : public ExpandedTreeView
@@ -89,16 +94,15 @@ protected:
     }
 };
 
-FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
-                           LibraryManager* /*libraryManager*/, MusicLibrary* library,
-                           std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, QWidget* parent)
+FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry, MusicLibrary* library,
+                           CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_columnRegistry{columnRegistry}
     , m_settings{settings}
     , m_view{new FilterView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
-    , m_model{new FilterModel(library, new CoverProvider(std::move(audioLoader), settings, this), m_settings, this)}
+    , m_model{new FilterModel(library, new CoverProvider(coverRepository, this), m_settings, this)}
     , m_sortProxy{new FilterSortModel(this)}
     , m_index{-1}
     , m_multipleColumns{false}
@@ -123,6 +127,7 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     m_view->setItemDelegate(new FilterDelegate(this));
     m_view->viewport()->installEventFilter(new ToolTipFilter(this));
     QObject::connect(m_view, &FilterView::displayChanged, this, &FilterWidget::filterUpdated);
+    QObject::connect(m_view, &FilterView::displayChanged, this, [this]() { scheduleVisibleCoverPinUpdate(); });
 
     m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -154,6 +159,7 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
 
 FilterWidget::~FilterWidget()
 {
+    m_model->coverProvider()->clearVisibleThumbnailKeys(this);
     Q_EMIT filterDeleted();
 }
 
@@ -724,6 +730,17 @@ void FilterWidget::keyPressEvent(QKeyEvent* event)
     FyWidget::keyPressEvent(event);
 }
 
+void FilterWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_visibleCoverPinUpdateTimer.timerId()) {
+        m_visibleCoverPinUpdateTimer.stop();
+        updateVisibleCoverPins();
+        return;
+    }
+
+    FyWidget::timerEvent(event);
+}
+
 void FilterWidget::setupConnections()
 {
     const auto syncIconColumnOrder = [this]() {
@@ -744,13 +761,23 @@ void FilterWidget::setupConnections()
                      &FilterWidget::handleSelectionChanged);
     QObject::connect(m_view, &ExpandedTreeView::viewModeChanged, this, [this](ExpandedTreeView::ViewMode mode) {
         m_model->setShowDecoration(mode == ExpandedTreeView::ViewMode::Icon);
+        scheduleVisibleCoverPinUpdate();
     });
     QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, this, [this](const QSize& size) {
         if(size.isValid() && m_config.iconSize != size) {
             m_config.iconSize = size;
             m_model->setIconSize(size);
+            scheduleVisibleCoverPinUpdate();
         }
     });
+    QObject::connect(m_view->verticalScrollBar(), &QScrollBar::valueChanged, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(); });
+    QObject::connect(m_sortProxy, &QAbstractItemModel::modelReset, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(FilterModelPinUpdateDelay); });
+    QObject::connect(m_sortProxy, &QAbstractItemModel::rowsInserted, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(FilterModelPinUpdateDelay); });
+    QObject::connect(m_sortProxy, &QAbstractItemModel::rowsRemoved, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(FilterModelPinUpdateDelay); });
     QObject::connect(m_view, &ExpandedTreeView::doubleClicked, this, &FilterWidget::doubleClicked);
     QObject::connect(m_view, &ExpandedTreeView::middleClicked, this, &FilterWidget::middleClicked);
 }
@@ -778,12 +805,46 @@ void FilterWidget::updateViewMode(ExpandedTreeView::ViewMode mode)
     else {
         m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
     }
+
+    scheduleVisibleCoverPinUpdate();
 }
 
 void FilterWidget::updateCaptions(ExpandedTreeView::CaptionDisplay captions)
 {
     m_model->setShowLabels(captions != ExpandedTreeView::CaptionDisplay::None);
     m_view->setCaptionDisplay(captions);
+}
+
+void FilterWidget::scheduleVisibleCoverPinUpdate(int delay)
+{
+    if(delay <= 0 || !m_visibleCoverPinUpdateTimer.isActive()) {
+        m_visibleCoverPinUpdateTimer.start(delay, this);
+    }
+}
+
+void FilterWidget::updateVisibleCoverPins()
+{
+    auto* coverProvider = m_model->coverProvider();
+    if(m_view->viewMode() != ExpandedTreeView::ViewMode::Icon) {
+        coverProvider->clearVisibleThumbnailKeys(this);
+        return;
+    }
+
+    std::set<QString> keys;
+
+    const int pinMargin       = std::max(m_config.iconSize.width(), m_config.iconSize.height());
+    const auto visibleIndexes = m_view->visibleIndexes(pinMargin);
+
+    for(const QModelIndex& index : visibleIndexes) {
+        if(index.isValid()) {
+            const QString key = index.data(FilterItem::CoverKey).toString();
+            if(!key.isEmpty()) {
+                keys.emplace(key);
+            }
+        }
+    }
+
+    coverProvider->setVisibleThumbnailKeys(this, keys);
 }
 
 void FilterWidget::updateAppearance()

@@ -64,6 +64,7 @@
 #include <core/plugins/pluginmanager.h>
 #include <core/scripting/scriptenvironmenthelpers.h>
 #include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -266,6 +267,7 @@ public:
     WindowController* m_windowController;
     ThemeRegistry* m_themeRegistry;
     std::unique_ptr<AdvancedSettingsRegistry> m_advancedSettingsRegistry;
+    CoverRepository* m_coverRepository;
 
     GuiPluginContext m_guiPluginContext;
 
@@ -318,6 +320,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_windowController{new WindowController(m_mainWindow.get())}
     , m_themeRegistry{new ThemeRegistry(m_settings, m_self)}
     , m_advancedSettingsRegistry{std::make_unique<AdvancedSettingsRegistry>(m_settings)}
+    , m_coverRepository{new CoverRepository(m_core->audioLoader(), m_settings, m_self)}
     , m_guiPluginContext{m_actionManager,
                          &m_layoutProvider,
                          &m_selectionController,
@@ -328,11 +331,11 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          m_editableLayout.get(),
                          m_windowController,
                          m_themeRegistry,
-                         m_advancedSettingsRegistry.get()}
+                         m_advancedSettingsRegistry.get(),
+                         m_coverRepository}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
-    , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_self, &m_playlistInteractor, m_scriptCommandHandler.get(),
-                            m_self)}
-    , m_coverProvider{m_core->audioLoader(), m_settings}
+    , m_widgets{new Widgets(m_core, m_self, m_guiPluginContext, m_mainWindow.get(), &m_playlistInteractor, m_self)}
+    , m_coverProvider{m_coverRepository}
 {
     m_scriptParser.addProvider(playlistVariableProvider());
 }
@@ -657,7 +660,7 @@ void GuiApplicationPrivate::removeExpiredCovers(const TrackList& tracks)
 {
     for(const Track& track : tracks) {
         if(track.metadataWasModified()) {
-            CoverProvider::removeFromCache(track, *m_settings);
+            m_coverRepository->removeFromCache(track, *m_settings);
         }
     }
 }
@@ -1078,7 +1081,7 @@ void GuiApplicationPrivate::showScriptEditor()
 
 void GuiApplicationPrivate::showSearchPlaylistDialog()
 {
-    auto* coverProvider = new CoverProvider(m_core->audioLoader(), m_settings, m_self);
+    auto* coverProvider = new CoverProvider(m_coverRepository, m_self);
     auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core,
                                            SearchDialog::Target::Playlist);
     search->setAttribute(Qt::WA_DeleteOnClose);
@@ -1089,7 +1092,7 @@ void GuiApplicationPrivate::showSearchPlaylistDialog()
 
 void GuiApplicationPrivate::showSearchLibraryDialog()
 {
-    auto* coverProvider = new CoverProvider(m_core->audioLoader(), m_settings, m_self);
+    auto* coverProvider = new CoverProvider(m_coverRepository, m_self);
     auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core,
                                            SearchDialog::Target::Library);
     search->setAttribute(Qt::WA_DeleteOnClose);
@@ -1124,7 +1127,7 @@ void GuiApplicationPrivate::showPlaybackQueue()
         return;
     }
 
-    m_playbackQueueWidget = new QueueViewer(m_actionManager, &m_playlistInteractor, m_core->audioLoader(), m_settings);
+    m_playbackQueueWidget = new QueueViewer(m_actionManager, &m_playlistInteractor, m_coverRepository, m_settings);
     m_playbackQueueWidget->setAttribute(Qt::WA_DeleteOnClose);
     m_playbackQueueWidget->finalise();
 
@@ -1532,8 +1535,8 @@ void GuiApplication::openFiles(const QList<QUrl>& files)
 void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick)
 {
     if(!quick) {
-        auto* search = new ArtworkDialog(p->m_core->networkManager(), p->m_core->library(), p->m_settings, tracks, type,
-                                         p->m_mainWindow.get());
+        auto* search = new ArtworkDialog(p->m_core->networkManager(), p->m_core->library(), p->m_settings,
+                                         p->m_coverRepository, tracks, type, p->m_mainWindow.get());
         search->setAttribute(Qt::WA_DeleteOnClose);
         search->show();
         return;
@@ -1574,7 +1577,7 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                 p->m_library->writeTrackCovers(coverData).finished.then(
                     this, [this, tracks](const WriteResult& /*result*/) {
                         for(const Track& updatedTrack : tracks) {
-                            CoverProvider::removeFromCache(updatedTrack, *p->m_settings);
+                            p->m_coverRepository->removeFromCache(updatedTrack, *p->m_settings);
                         }
                     });
             }
@@ -1587,7 +1590,7 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                 QFile file{cleanPath};
                 if(file.open(QIODevice::WriteOnly) && file.write(saveResult.image) == saveResult.image.size()) {
                     for(const Track& updatedTrack : tracks) {
-                        CoverProvider::removeFromCache(updatedTrack, *p->m_settings);
+                        p->m_coverRepository->removeFromCache(updatedTrack, *p->m_settings);
                     }
                     p->m_widgets->refreshCoverWidgets();
                 }
@@ -1610,7 +1613,7 @@ void GuiApplication::removeArtwork(const TrackList& tracks, const std::set<Track
 
     p->m_library->writeTrackCovers(coverData).finished.then(this, [this, tracks](const WriteResult& /*result*/) {
         for(const Track& track : tracks) {
-            CoverProvider::removeFromCache(track, *p->m_settings);
+            p->m_coverRepository->removeFromCache(track, *p->m_settings);
         }
     });
 }
@@ -1641,7 +1644,7 @@ void GuiApplication::attachArtwork(const TrackList& tracks, Track::Cover type, c
 
     p->m_library->writeTrackCovers(coverData).finished.then(this, [this, tracks](const WriteResult& /*result*/) {
         for(const Track& track : tracks) {
-            CoverProvider::removeFromCache(track, *p->m_settings);
+            p->m_coverRepository->removeFromCache(track, *p->m_settings);
         }
     });
 }
@@ -1704,6 +1707,11 @@ ThemeRegistry* GuiApplication::themeRegistry() const
 AdvancedSettingsRegistry* GuiApplication::advancedSettingsRegistry() const
 {
     return p->m_advancedSettingsRegistry.get();
+}
+
+CoverRepository* GuiApplication::coverRepository() const
+{
+    return p->m_coverRepository;
 }
 } // namespace Fooyin
 

@@ -30,12 +30,14 @@
 namespace Fooyin {
 class Application;
 class ArtworkFinder;
+class CoverRepository;
 class CoverProvider;
 class CoverWidget;
 class DspPresetRegistry;
 class DspSettingsController;
 class FyWidget;
 class GuiApplication;
+struct GuiPluginContext;
 class LibraryTreeController;
 class MainWindow;
 class NowPlayingOutputService;
@@ -53,8 +55,8 @@ class Widgets : public QObject
     Q_OBJECT
 
 public:
-    Widgets(Application* core, MainWindow* window, GuiApplication* gui, PlaylistInteractor* playlistInteractor,
-            ScriptCommandHandler* scriptCommandHandler, QObject* parent = nullptr);
+    Widgets(Application* core, GuiApplication* gui, const GuiPluginContext& guiPluginContext, MainWindow* mainWindow,
+            PlaylistInteractor* playlistInteractor, QObject* parent = nullptr);
     ~Widgets() override;
 
     void registerWidgets();
@@ -80,6 +82,7 @@ private:
 
     MainWindow* m_window;
     SettingsManager* m_settings;
+    CoverRepository* m_coverRepository;
 
     ArtworkFinder* m_artworkFinder;
     CoverProvider* m_coverProvider;

@@ -31,6 +31,7 @@
 #include <core/plugins/coreplugincontext.h>
 #include <gui/contextmenuutils.h>
 #include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -144,7 +145,8 @@ public:
 
     explicit FilterControllerPrivate(FilterController* self, ActionManager* actionManager,
                                      const CorePluginContext& core, TrackSelectionController* trackSelection,
-                                     EditableLayout* editableLayout, SettingsManager* settings);
+                                     EditableLayout* editableLayout, CoverRepository* coverRepository,
+                                     SettingsManager* settings);
 
     void handleAction(FilterWidget* filter, const TrackAction& action) const;
     void filterContextMenu(FilterWidget* widget, const QPoint& pos) const;
@@ -189,6 +191,7 @@ public:
     LibraryManager* m_libraryManager;
     TrackSelectionController* m_trackSelection;
     std::shared_ptr<AudioLoader> m_audioLoader;
+    CoverRepository* m_coverRepository;
     EditableLayout* m_editableLayout;
     SettingsManager* m_settings;
 
@@ -204,13 +207,15 @@ public:
 FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionManager* actionManager,
                                                  const CorePluginContext& core,
                                                  TrackSelectionController* trackSelection,
-                                                 EditableLayout* editableLayout, SettingsManager* settings)
+                                                 EditableLayout* editableLayout, CoverRepository* coverRepository,
+                                                 SettingsManager* settings)
     : m_self{self}
     , m_actionManager{actionManager}
     , m_library{core.library}
     , m_libraryManager{core.libraryManager}
     , m_trackSelection{trackSelection}
     , m_audioLoader{core.audioLoader}
+    , m_coverRepository{coverRepository}
     , m_editableLayout{editableLayout}
     , m_settings{settings}
     , m_manager{new FilterManager(m_self, m_editableLayout, m_self)}
@@ -979,9 +984,10 @@ std::optional<FilterGroup> FilterControllerPrivate::publicGroup(const Id& id) co
 
 FilterController::FilterController(ActionManager* actionManager, const CorePluginContext& core,
                                    TrackSelectionController* trackSelection, EditableLayout* editableLayout,
-                                   SettingsManager* settings, QObject* parent)
+                                   CoverRepository* coverRepository, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<FilterControllerPrivate>(this, actionManager, core, trackSelection, editableLayout, settings)}
+    , p{std::make_unique<FilterControllerPrivate>(this, actionManager, core, trackSelection, editableLayout,
+                                                  coverRepository, settings)}
 {
     QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this,
                      [this](const TrackList& tracks) { p->handleLibraryTracksPatched(tracks); });
@@ -1010,8 +1016,8 @@ QString FilterController::defaultPlaylistName()
 
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_libraryManager, p->m_library,
-                                    p->m_audioLoader, p->m_settings);
+    auto* widget
+        = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_library, p->m_coverRepository, p->m_settings);
 
     widget->setGroup(p->m_defaultId);
     p->attachWidget(widget, p->m_defaultId);

@@ -149,8 +149,7 @@ void NowPlayingPlugin::initialise(const CorePluginContext& context)
 
 void NowPlayingPlugin::initialise(const GuiPluginContext& context)
 {
-    Q_UNUSED(context);
-    m_coverProvider = new CoverProvider(m_audioLoader, m_settings, this);
+    m_coverProvider = new CoverProvider(context.coverRepository, this);
     m_coverProvider->setUsePlaceholder(false);
 
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {

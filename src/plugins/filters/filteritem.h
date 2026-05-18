@@ -58,7 +58,8 @@ public:
         IsSummary,
         IconLabel,
         IconCaptionLines,
-        RichColumn
+        RichColumn,
+        CoverKey
     };
 
     FilterItem() = default;

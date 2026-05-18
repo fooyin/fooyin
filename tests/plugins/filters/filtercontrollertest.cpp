@@ -18,19 +18,20 @@
  */
 
 #include "plugins/filters/filtercontroller.h"
-#include "core/internalcoresettings.h"
-#include "gui/internalguisettings.h"
 #include "plugins/filters/filtermodel.h"
 #include "plugins/filters/filterwidget.h"
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/internalcoresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/plugins/coreplugincontext.h>
 #include <core/ratingsymbols.h>
 #include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 #include <gui/editablelayout.h>
 #include <gui/guisettings.h>
+#include <gui/internalguisettings.h>
 #include <gui/layoutprovider.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>
@@ -231,14 +232,16 @@ protected:
         m_editableLayout = std::make_unique<EditableLayout>(m_actionManager.get(), &m_widgetProvider, &m_layoutProvider,
                                                             m_settings.get());
 
-        m_audioLoader = std::make_shared<AudioLoader>();
+        m_audioLoader     = std::make_shared<AudioLoader>();
+        m_coverRepository = std::make_unique<CoverRepository>(m_audioLoader, m_settings.get());
 
         const CorePluginContext coreContext{
             nullptr, nullptr, nullptr, &m_library, nullptr, m_settings.get(), m_audioLoader, nullptr, {},
         };
 
         m_controller = std::make_unique<Filters::FilterController>(m_actionManager.get(), coreContext, nullptr,
-                                                                   m_editableLayout.get(), m_settings.get());
+                                                                   m_editableLayout.get(), m_coverRepository.get(),
+                                                                   m_settings.get());
     }
 
     Filters::FilterGroup defaultGroup() const
@@ -259,6 +262,7 @@ protected:
     std::unique_ptr<ActionManager> m_actionManager;
     std::unique_ptr<EditableLayout> m_editableLayout;
     std::shared_ptr<AudioLoader> m_audioLoader;
+    std::unique_ptr<CoverRepository> m_coverRepository;
     std::unique_ptr<Filters::FilterController> m_controller;
 };
 

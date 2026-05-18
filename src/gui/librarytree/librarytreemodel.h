@@ -30,6 +30,7 @@
 #include <QSortFilterProxyModel>
 
 namespace Fooyin {
+class CoverRepository;
 class LibraryManager;
 class LibraryTreeModelPrivate;
 class SettingsManager;
@@ -59,7 +60,7 @@ class LibraryTreeModel : public TreeModel<LibraryTreeItem>
 
 public:
     explicit LibraryTreeModel(LibraryManager* libraryManager, const std::shared_ptr<AudioLoader>& audioLoader,
-                              SettingsManager* settings, QObject* parent = nullptr);
+                              CoverRepository* coverRepository, SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryTreeModel() override;
 
     void resetPalette();

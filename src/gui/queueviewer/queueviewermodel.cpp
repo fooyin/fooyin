@@ -126,12 +126,12 @@ PlaybackScriptContext makeQueueScriptContext(PlayerController* playerController,
 }
 } // namespace
 
-QueueViewerModel::QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, PlayerController* playerController,
+QueueViewerModel::QueueViewerModel(CoverRepository* coverRepository, PlayerController* playerController,
                                    SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
     , m_playerController{playerController}
     , m_settings{settings}
-    , m_coverProvider{std::move(audioLoader), settings}
+    , m_coverProvider{coverRepository}
     , m_showCurrent{false}
     , m_showIcon{true}
     , m_iconSize{CoverProvider::findThumbnailSize({36, 36})}

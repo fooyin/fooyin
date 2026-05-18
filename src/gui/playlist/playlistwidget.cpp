@@ -70,6 +70,7 @@
 #include <QSortFilterProxyModel>
 #include <QStringList>
 
+#include <set>
 #include <utility>
 
 using namespace std::chrono_literals;
@@ -632,15 +633,22 @@ void PlaylistWidget::setupConnections()
     QObject::connect(m_header, &QHeaderView::customContextMenuRequested, this, &PlaylistWidget::showHeaderMenu);
     QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() { m_session->selectionChanged(sessionHost()); });
     QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library, qOverload<const TrackList&>(&MusicLibrary::updateTrackStats));
+    QObject::connect(m_playlistView, &PlaylistView::displayChanged, this, &PlaylistWidget::updateVisibleCoverPins);
+    QObject::connect(m_playlistView->verticalScrollBar(), &QScrollBar::valueChanged, this, &PlaylistWidget::updateVisibleCoverPins);
+    QObject::connect(m_playlistView->horizontalScrollBar(), &QScrollBar::valueChanged, this, &PlaylistWidget::updateVisibleCoverPins);
     QObject::connect(m_playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidget::doubleClicked);
     QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlistView, &PlaylistView::playlistAboutToBeReset);
+    QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, this, [this]() { m_coverProvider->clearVisibleThumbnailKeys(this); });
     QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, this, [this]() { m_session->handleAboutToBeReset(sessionHost()); });
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistWidget::updateVisibleCoverPins);
     QObject::connect(m_model, &PlaylistModel::loadingStateChanged, m_playlistView->viewport(), qOverload<>(&QWidget::update));
     QObject::connect(m_model, &PlaylistModel::loadingStateChanged, m_header->viewport(), qOverload<>(&QWidget::update));
     QObject::connect(m_model, &PlaylistModel::playlistLoaded, m_playlistView->viewport(), [this]() {
         m_playlistView->viewport()->update();
+        updateVisibleCoverPins();
         m_session->handleDeferredFollowTrack(sessionHost());
     }, Qt::QueuedConnection);
+    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &PlaylistWidget::updateVisibleCoverPins);
     QObject::connect(m_model, &PlaylistModel::metadataWriteRequested, this, &PlaylistWidget::handleMetadataWriteRequested);
     QObject::connect(m_playlistView, &PlaylistView::bulkWriteRequested, this, &PlaylistWidget::handleBulkWriteRequested);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksUpdated, m_model, [this](const std::vector<int>& indexes) { m_model->refreshTracks(indexes); });
@@ -1051,6 +1059,38 @@ void PlaylistWidget::reloadBackgroundCover(const Track& track)
             m_playlistView->setBackgroundPixmap(cover);
         }
     });
+}
+
+void PlaylistWidget::updateVisibleCoverPins()
+{
+    if(!m_playlistView->playlistLoaded()) {
+        m_coverProvider->clearVisibleThumbnailKeys(this);
+        return;
+    }
+
+    std::set<QString> keys;
+    const int columnCount     = m_model->columnCount({});
+    const auto visibleIndexes = m_playlistView->visibleIndexes();
+
+    for(const QModelIndex& rowIndex : visibleIndexes) {
+        if(!rowIndex.isValid()) {
+            continue;
+        }
+
+        for(int column{0}; column < columnCount; ++column) {
+            const QModelIndex index = rowIndex.siblingAtColumn(column);
+            if(!index.isValid()) {
+                continue;
+            }
+
+            const QString key = index.data(PlaylistItem::Role::CoverKey).toString();
+            if(!key.isEmpty()) {
+                keys.emplace(key);
+            }
+        }
+    }
+
+    m_coverProvider->setVisibleThumbnailKeys(this, keys);
 }
 
 void PlaylistWidget::applyInitialViewSettings()

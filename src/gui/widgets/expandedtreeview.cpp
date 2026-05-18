@@ -111,6 +111,7 @@ public:
     [[nodiscard]] virtual QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const = 0;
     [[nodiscard]] virtual ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const                 = 0;
     [[nodiscard]] virtual QModelIndex findIndexAt(const QPoint& point, bool incSpans, bool incPadding) const   = 0;
+    [[nodiscard]] virtual QModelIndexList visibleIndexes(int margin) const                                     = 0;
     virtual void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)                       = 0;
     [[nodiscard]] virtual int sizeHintForColumn(int column) const                                              = 0;
 
@@ -449,6 +450,7 @@ public:
     [[nodiscard]] QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
     [[nodiscard]] ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
     [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding) const override;
+    [[nodiscard]] QModelIndexList visibleIndexes(int margin) const override;
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight) override;
     [[nodiscard]] int sizeHintForColumn(int column) const override;
 
@@ -642,6 +644,26 @@ QModelIndex TreeView::findIndexAt(const QPoint& point, bool includeSpans, bool i
     }
 
     return index.sibling(index.row(), column);
+}
+
+QModelIndexList TreeView::visibleIndexes(int margin) const
+{
+    QModelIndexList indexes;
+
+    int offset{0};
+    const int firstVisible = firstVisibleItem(&offset);
+    if(firstVisible < 0) {
+        return indexes;
+    }
+
+    const int marginRows  = margin <= 0 ? 0 : std::max(1, margin / std::max(1, itemHeight(firstVisible)));
+    const int lastVisible = lastVisibleItem(firstVisible, offset - margin);
+    const int firstItem   = std::max(0, firstVisible - marginRows);
+    for(int item = firstItem; item <= lastVisible && item < itemCount(); ++item) {
+        indexes.push_back(viewItem(item).index);
+    }
+
+    return indexes;
 }
 
 void TreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
@@ -1670,6 +1692,7 @@ public:
     [[nodiscard]] QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
     [[nodiscard]] ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
     [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding) const override;
+    [[nodiscard]] QModelIndexList visibleIndexes(int margin) const override;
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight) override;
     [[nodiscard]] int sizeHintForColumn(int column) const override;
 
@@ -1922,6 +1945,41 @@ QModelIndex IconView::findIndexAt(const QPoint& point, bool /*includeSpans*/, bo
     }
 
     return {};
+}
+
+QModelIndexList IconView::visibleIndexes(int margin) const
+{
+    QModelIndexList indexes;
+
+    if(empty() || m_segmentSize <= 0) {
+        return indexes;
+    }
+
+    int firstVisibleOffset{0};
+    const int firstVisible = firstVisibleItem(&firstVisibleOffset);
+    if(firstVisible < 0) {
+        return indexes;
+    }
+
+    const QRect viewportRect = viewport()->rect().adjusted(-margin, -margin, margin, margin);
+
+    const int count         = itemCount();
+    const int firstRowStart = std::max(0, firstVisible - m_segmentSize);
+    for(int rowStart = firstRowStart; rowStart < count; rowStart += m_segmentSize) {
+        if(mapToViewport(viewItem(rowStart).rect()).top() > viewportRect.bottom()) {
+            break;
+        }
+
+        const int rowEnd = std::min(rowStart + m_segmentSize, count);
+        for(int item = rowStart; item < rowEnd; ++item) {
+            const auto& viewItem = this->viewItem(item);
+            if(mapToViewport(viewItem.rect()).intersects(viewportRect)) {
+                indexes.push_back(viewItem.index);
+            }
+        }
+    }
+
+    return indexes;
 }
 
 void IconView::dataChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/) { }
@@ -3395,6 +3453,13 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
 QModelIndex ExpandedTreeView::indexAt(const QPoint& point) const
 {
     return findIndexAt(point, false, true);
+}
+
+QModelIndexList ExpandedTreeView::visibleIndexes(int margin) const
+{
+    p->layoutItems();
+
+    return p->m_view->visibleIndexes(margin);
 }
 
 QModelIndex ExpandedTreeView::findIndexAt(const QPoint& point, bool includeSpans, bool includePadding) const

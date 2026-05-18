@@ -26,7 +26,7 @@
 #include "internalguisettings.h"
 
 #include <core/library/musiclibrary.h>
-#include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/expandedtreeview.h>
 #include <utils/fileutils.h>
@@ -46,11 +46,13 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManager, MusicLibrary* library,
-                             SettingsManager* settings, TrackList tracks, Track::Cover type, QWidget* parent)
+                             SettingsManager* settings, CoverRepository* coverRepository, TrackList tracks,
+                             Track::Cover type, QWidget* parent)
     : QDialog{parent}
     , m_networkManager{std::move(networkManager)}
     , m_library{library}
     , m_settings{settings}
+    , m_coverRepository{coverRepository}
     , m_tracks{std::move(tracks)}
     , m_type{type}
     , m_artworkFinder{new ArtworkFinder(m_networkManager, m_settings, this)}
@@ -160,12 +162,12 @@ void ArtworkDialog::accept()
         TrackCoverData coverData;
         coverData.tracks = m_tracks;
         coverData.coverData.emplace(m_type, CoverImage{.mimeType = saveResult.mimeType, .data = saveResult.image});
-        m_library->writeTrackCovers(coverData).finished.then(this,
-                                                             [this, tracks = m_tracks](const WriteResult& /*result*/) {
-                                                                 for(const Track& track : tracks) {
-                                                                     CoverProvider::removeFromCache(track, *m_settings);
-                                                                 }
-                                                             });
+        m_library->writeTrackCovers(coverData).finished.then(
+            this, [this, tracks = m_tracks](const WriteResult& /*result*/) {
+                for(const Track& track : tracks) {
+                    m_coverRepository->removeFromCache(track, *m_settings);
+                }
+            });
     }
     else {
         const QString path
@@ -175,7 +177,7 @@ void ArtworkDialog::accept()
         QFile file{cleanPath};
         if(file.open(QIODevice::WriteOnly) && file.write(saveResult.image) == saveResult.image.size()) {
             for(const Track& track : m_tracks) {
-                CoverProvider::removeFromCache(track, *m_settings);
+                m_coverRepository->removeFromCache(track, *m_settings);
             }
         }
     }

@@ -168,7 +168,7 @@ void MprisPlugin::initialise(const CorePluginContext& context)
 void MprisPlugin::initialise(const GuiPluginContext& context)
 {
     m_windowController = context.windowController;
-    m_coverProvider    = new CoverProvider(m_audioLoader, m_settings, this);
+    m_coverProvider    = new CoverProvider(context.coverRepository, this);
 
     m_coverProvider->setUsePlaceholder(false);
 

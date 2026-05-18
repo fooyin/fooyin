@@ -144,6 +144,7 @@ private:
     void updateSpans();
     void applyBackgroundSettings();
     void reloadBackgroundCover(const Track& track = {});
+    void updateVisibleCoverPins();
 
     void handleMetadataWriteRequested(const TrackList& tracks);
     void handleBulkWriteRequested(const TrackList& tracks);

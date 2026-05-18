@@ -36,6 +36,8 @@
 #include "dsp/resamplersettingswidget.h"
 #include "dsp/skipsilencesettingswidget.h"
 #include "gui/editablelayout.h"
+#include "gui/plugins/guiplugincontext.h"
+#include "gui/windowcontroller.h"
 #include "guiapplication.h"
 #include "internalguisettings.h"
 #include "librarytree/librarytreecontroller.h"
@@ -104,6 +106,7 @@
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/settings/context/staticcontextmenupage.h>
@@ -126,15 +129,16 @@ QStringList normaliseExtensionList(QStringList extensions)
 } // namespace
 
 namespace Fooyin {
-Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, PlaylistInteractor* playlistInteractor,
-                 ScriptCommandHandler* scriptCommandHandler, QObject* parent)
+Widgets::Widgets(Application* core, GuiApplication* gui, const GuiPluginContext& guiPluginContext,
+                 MainWindow* mainWindow, PlaylistInteractor* playlistInteractor, QObject* parent)
     : QObject{parent}
     , m_core{core}
     , m_gui{gui}
-    , m_window{window}
+    , m_window{mainWindow}
     , m_settings{m_core->settingsManager()}
+    , m_coverRepository{guiPluginContext.coverRepository}
     , m_artworkFinder{new ArtworkFinder(m_core->networkManager(), m_settings, this)}
-    , m_coverProvider{new CoverProvider(m_core->audioLoader(), m_settings, this)}
+    , m_coverProvider{new CoverProvider(m_coverRepository, this)}
     , m_playlistInteractor{playlistInteractor}
     , m_playlistController{playlistInteractor->playlistController()}
     , m_libraryTreeController{new LibraryTreeController(m_settings, this)}
@@ -146,7 +150,7 @@ Widgets::Widgets(Application* core, MainWindow* window, GuiApplication* gui, Pla
     , m_dspSettingsController{std::make_unique<DspSettingsController>(m_core->dspChainStore(),
                                                                       m_dspSettingsRegistry.get(), this)}
     , m_pluginSettingsRegistry{std::make_unique<PluginSettingsRegistry>()}
-    , m_scriptCommandHandler{scriptCommandHandler}
+    , m_scriptCommandHandler{guiPluginContext.scriptCommandHandler}
 {
     m_outputProfileManager->reapplyCurrentProfile();
 }
@@ -207,7 +211,7 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"PlaybackQueue"_s,
         [this]() {
-            return new QueueViewer(m_gui->actionManager(), m_playlistInteractor, m_core->audioLoader(), m_settings,
+            return new QueueViewer(m_gui->actionManager(), m_playlistInteractor, m_coverRepository, m_settings,
                                    m_window);
         },
         tr("Playback Queue"));
@@ -221,7 +225,7 @@ void Widgets::registerWidgets()
         u"LibraryTree"_s,
         [this]() {
             return new LibraryTreeWidget(m_gui->actionManager(), m_playlistController, m_libraryTreeController, m_core,
-                                         m_window);
+                                         m_coverRepository, m_window);
         },
         tr("Library Tree"));
 
@@ -271,8 +275,9 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"ArtworkPanel"_s,
         [this]() {
-            auto* coverWidget = new CoverWidget(m_core->playerController(), m_core->playlistHandler(),
-                                                m_gui->trackSelection(), m_core->audioLoader(), m_settings, m_window);
+            auto* coverWidget
+                = new CoverWidget(m_core->playerController(), m_core->playlistHandler(), m_gui->trackSelection(),
+                                  m_core->audioLoader(), m_coverRepository, m_settings, m_window);
             QObject::connect(m_core->library(), &MusicLibrary::tracksMetadataChanged, coverWidget,
                              &CoverWidget::reloadCover);
             QObject::connect(coverWidget, &CoverWidget::requestArtworkSearch, this, &Widgets::showArtworkDialog);
@@ -376,7 +381,7 @@ void Widgets::registerPages()
             ContextMenuIds::LayoutEditing::DefaultItems, m_settings),
         this);
 
-    new ArtworkGeneralPage(m_settings, this);
+    new ArtworkGeneralPage(m_settings, m_coverRepository, this);
     new ArtworkSearchingPage(m_settings, this);
     new ArtworkSourcesPage(m_artworkFinder, m_settings, this);
     new ArtworkDownloadPage(m_settings, this);
@@ -540,8 +545,8 @@ void Widgets::registerPropertiesTabs()
         const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {
             return !track.hasCue() && !track.isInArchive() && m_core->audioLoader()->canWriteMetadata(track);
         });
-        return new ArtworkProperties(m_core->audioLoader().get(), m_core->library(), m_settings, tracks, !canWrite,
-                                     m_window);
+        return new ArtworkProperties(m_core->audioLoader().get(), m_core->library(), m_coverRepository, m_settings,
+                                     tracks, !canWrite, m_window);
     });
 }
 

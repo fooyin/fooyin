@@ -55,9 +55,9 @@ void NotifyPlugin::initialise(const CorePluginContext& context)
     m_settings         = context.settingsManager;
 }
 
-void NotifyPlugin::initialise(const GuiPluginContext& /*context*/)
+void NotifyPlugin::initialise(const GuiPluginContext& context)
 {
-    m_coverProvider = new CoverProvider(m_audioLoader, m_settings, this);
+    m_coverProvider = new CoverProvider(context.coverRepository, this);
     m_coverProvider->setUsePlaceholder(false);
 
     m_notifySettings = std::make_unique<NotifySettings>(m_settings);

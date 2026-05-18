@@ -257,7 +257,8 @@ class LibraryTreeModelPrivate
 {
 public:
     explicit LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager,
-                                     std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings);
+                                     std::shared_ptr<AudioLoader> audioLoader, CoverRepository* coverRepository,
+                                     SettingsManager* settings);
 
     void updateSummary();
     void ensureSummaryNodeVisible();
@@ -315,15 +316,16 @@ public:
     QString m_playingPath;
     int m_rowHeight{0};
     QColor m_playingColour{QApplication::palette().highlight().color()};
-    CoverProvider::ThumbnailSize m_iconSize;
+    ThumbnailSize m_iconSize;
 };
 
 LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager,
-                                                 std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings)
+                                                 std::shared_ptr<AudioLoader> audioLoader,
+                                                 CoverRepository* coverRepository, SettingsManager* settings)
     : m_self{self}
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
-    , m_coverProvider{m_audioLoader, m_settings}
+    , m_coverProvider{coverRepository}
     , m_populator{libraryManager, settings}
     , m_iconSize{
           CoverProvider::findThumbnailSize(m_settings->value<Settings::Gui::Internal::LibTreeIconSize>().toSize())}
@@ -845,9 +847,9 @@ void LibraryTreeModelPrivate::beginReset()
 }
 
 LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::shared_ptr<AudioLoader>& audioLoader,
-                                   SettingsManager* settings, QObject* parent)
+                                   CoverRepository* coverRepository, SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager, audioLoader, settings)}
+    , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager, audioLoader, coverRepository, settings)}
 {
     qRegisterMetaType<PendingTreeDataPtr>("Fooyin::PendingTreeDataPtr");
 

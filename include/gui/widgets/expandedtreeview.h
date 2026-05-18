@@ -107,6 +107,7 @@ public:
     void scrollTo(const QModelIndex& index, ScrollHint hint) override;
     [[nodiscard]] QModelIndex indexAt(const QPoint& point) const override;
 
+    [[nodiscard]] QModelIndexList visibleIndexes(int margin = 0) const;
     [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding = false) const;
     [[nodiscard]] QModelIndex indexAbove(const QModelIndex& index) const;
     [[nodiscard]] QModelIndex indexBelow(const QModelIndex& index) const;

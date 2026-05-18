@@ -32,6 +32,7 @@
 class QMimeData;
 
 namespace Fooyin {
+class CoverRepository;
 class PlayerController;
 class SettingsManager;
 
@@ -40,7 +41,7 @@ class QueueViewerModel : public TreeModel<QueueViewerItem>
     Q_OBJECT
 
 public:
-    explicit QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, PlayerController* playerController,
+    explicit QueueViewerModel(CoverRepository* coverRepository, PlayerController* playerController,
                               SettingsManager* settings, QObject* parent = nullptr);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -93,7 +94,7 @@ private:
 
     bool m_showCurrent;
     bool m_showIcon;
-    CoverProvider::ThumbnailSize m_iconSize;
+    ThumbnailSize m_iconSize;
 
     std::unique_ptr<QueueViewerItem> m_currentTrackItem;
 };

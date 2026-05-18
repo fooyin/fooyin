@@ -34,6 +34,7 @@ class QListView;
 namespace Fooyin {
 class ArtworkFinder;
 class ArtworkModel;
+class CoverRepository;
 class ExpandedTreeView;
 class MusicLibrary;
 class NetworkAccessManager;
@@ -45,7 +46,8 @@ class ArtworkDialog : public QDialog
 
 public:
     ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManager, MusicLibrary* library,
-                  SettingsManager* settings, TrackList tracks, Track::Cover type, QWidget* parent = nullptr);
+                  SettingsManager* settings, CoverRepository* coverRepository, TrackList tracks, Track::Cover type,
+                  QWidget* parent = nullptr);
 
     void accept() override;
 
@@ -61,6 +63,7 @@ private:
     std::shared_ptr<NetworkAccessManager> m_networkManager;
     MusicLibrary* m_library;
     SettingsManager* m_settings;
+    CoverRepository* m_coverRepository;
 
     TrackList m_tracks;
     Track::Cover m_type;

@@ -30,6 +30,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
@@ -66,14 +67,14 @@ constexpr auto ResizeInterval = 5;
 namespace Fooyin {
 CoverWidget::CoverWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
                          TrackSelectionController* trackSelection, std::shared_ptr<AudioLoader> audioLoader,
-                         SettingsManager* settings, QWidget* parent)
+                         CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_playlistHandler{playlistHandler}
     , m_trackSelection{trackSelection}
-    , m_audioLoader{audioLoader}
+    , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
-    , m_coverProvider{new CoverProvider(audioLoader, settings, this)}
+    , m_coverProvider{new CoverProvider(coverRepository, this)}
     , m_displayOption{static_cast<SelectionDisplay>(
           m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>())}
     , m_coverType{Track::Cover::Front}

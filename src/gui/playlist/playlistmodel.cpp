@@ -2141,24 +2141,47 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
     const bool singleColumnMode = m_columns.empty();
     const bool isPlaying        = trackIsPlaying(playlistTrack, item->index());
 
-    auto getCover = [this, &index, column](const Track::Cover type) -> QVariant {
+    const auto getCoverData = [this, &index, column]() -> std::optional<std::pair<const Track*, QSize>> {
         if(std::cmp_greater_equal(column, m_columnSizes.size())) {
             return {};
         }
 
-        const int size          = m_columnSizes.at(column);
         const QModelIndex first = firstImageColumnTrackIndex(index);
         if(!first.isValid()) {
             return {};
         }
+
         if(index.row() != first.row() || index.parent() != first.parent()) {
             return {};
         }
-        if(const auto* firstSibling = itemForIndex(first)) {
-            const auto& firstTrack = std::get<PlaylistTrackItem>(firstSibling->data());
-            return m_coverProvider->trackCoverThumbnail(firstTrack.track().track, {size, size}, type);
+
+        const auto* firstSibling = itemForIndex(first);
+        if(!firstSibling) {
+            return {};
         }
-        return {};
+
+        const int size         = m_columnSizes.at(column);
+        const auto& firstTrack = std::get<PlaylistTrackItem>(firstSibling->data());
+
+        return std::pair{&firstTrack.track().track, QSize{size, size}};
+    };
+
+    const auto getCover = [this, &getCoverData](const Track::Cover type) -> QVariant {
+        auto data = getCoverData();
+        if(!data) {
+            return {};
+        }
+        const auto& [trk, sz] = *data;
+        return m_coverProvider->trackCoverThumbnail(*trk, sz, type);
+    };
+
+    const auto getCoverKey = [this, &getCoverData](const Track::Cover type) -> QVariant {
+        auto data = getCoverData();
+        if(!data) {
+            return {};
+        }
+        const auto& [trk, sz] = *data;
+        return m_coverProvider->thumbnailCacheKey(*trk, sz, type);
     };
 
     if(role == Qt::EditRole && !singleColumnMode && column >= 0 && std::cmp_less(column, m_columns.size())) {
@@ -2257,6 +2280,23 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
             break;
         }
+        case PlaylistItem::Role::CoverKey: {
+            if(singleColumnMode) {
+                break;
+            }
+
+            const QString field = m_columns.at(column).field;
+            if(field == QLatin1StringView{Constants::FrontCover}) {
+                return getCoverKey(Track::Cover::Front);
+            }
+            if(field == QLatin1StringView{Constants::BackCover}) {
+                return getCoverKey(Track::Cover::Back);
+            }
+            if(field == QLatin1StringView{Constants::ArtistPicture}) {
+                return getCoverKey(Track::Cover::Artist);
+            }
+            break;
+        }
         case Qt::SizeHintRole: {
             if(m_columns.empty()) {
                 return trackItem.size();
@@ -2326,6 +2366,11 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
             }
             return {};
         }
+        case PlaylistItem::Role::CoverKey:
+            if(!m_currentPreset.header.simple && m_currentPreset.header.showCover && header.coverTrack().has_value()) {
+                return m_coverProvider->thumbnailCacheKey(*header.coverTrack(), header.size(), Track::Cover::Front);
+            }
+            break;
         default:
             break;
     }

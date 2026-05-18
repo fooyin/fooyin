@@ -35,6 +35,7 @@ class Command;
 class AudioLoader;
 class PlayerController;
 class PlaylistInteractor;
+class CoverRepository;
 class QueueViewerModel;
 class QueueViewerView;
 class SettingsManager;
@@ -47,8 +48,7 @@ class QueueViewer : public FyWidget
 
 public:
     explicit QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                         std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
-                         QWidget* parent = nullptr);
+                         CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

@@ -21,7 +21,7 @@
 
 #include "internalguisettings.h"
 
-#include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guipaths.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -49,7 +49,7 @@ class ArtworkPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit ArtworkPageWidget(SettingsManager* settings);
+    explicit ArtworkPageWidget(SettingsManager* settings, CoverRepository* coverRepository);
 
     void load() override;
     void apply() override;
@@ -59,6 +59,7 @@ private:
     void updateCacheSize();
 
     SettingsManager* m_settings;
+    CoverRepository* m_coverRepository;
 
     QRadioButton* m_preferPlaying;
     QRadioButton* m_preferSelection;
@@ -70,8 +71,9 @@ private:
     QLabel* m_cacheSizeLabel;
 };
 
-ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings)
+ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings, CoverRepository* coverRepository)
     : m_settings{settings}
+    , m_coverRepository{coverRepository}
     , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
     , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
     , m_preferDirectory{new QRadioButton(tr("Prefer directory artwork"), this)}
@@ -123,7 +125,7 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings)
 
     auto* clearCacheButton = new QPushButton(tr("Clear Cache"), this);
     QObject::connect(clearCacheButton, &QPushButton::clicked, this, [this]() {
-        CoverProvider::clearCache();
+        m_coverRepository->clearCache();
         updateCacheSize();
     });
 
@@ -195,13 +197,13 @@ void ArtworkPageWidget::updateCacheSize()
     m_cacheSizeLabel->setText(tr("Disk cache usage") + u": %1"_s.arg(cacheSize));
 }
 
-ArtworkGeneralPage::ArtworkGeneralPage(SettingsManager* settings, QObject* parent)
+ArtworkGeneralPage::ArtworkGeneralPage(SettingsManager* settings, CoverRepository* coverRepository, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::ArtworkGeneral);
     setName(tr("General"));
     setCategory({tr("Interface"), tr("Artwork")});
-    setWidgetCreator([settings] { return new ArtworkPageWidget(settings); });
+    setWidgetCreator([settings, coverRepository] { return new ArtworkPageWidget(settings, coverRepository); });
 }
 } // namespace Fooyin
 

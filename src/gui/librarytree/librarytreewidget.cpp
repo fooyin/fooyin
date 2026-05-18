@@ -184,7 +184,8 @@ Fooyin::TrackList tracksForIndexes(Fooyin::LibraryTreeSortModel* model, const QM
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
 LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
-                                     LibraryTreeController* controller, Application* core, QWidget* parent)
+                                     LibraryTreeController* controller, Application* core,
+                                     CoverRepository* coverRepository, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_library{core->library()}
@@ -197,7 +198,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     , m_resetThrottler{new SignalThrottler(this)}
     , m_layout{new QVBoxLayout(this)}
     , m_libraryTree{new LibraryTreeView(this)}
-    , m_model{new LibraryTreeModel(core->libraryManager(), core->audioLoader(), m_settings, this)}
+    , m_model{new LibraryTreeModel(core->libraryManager(), core->audioLoader(), coverRepository, m_settings, this)}
     , m_sortProxy{new LibraryTreeSortModel(this)}
     , m_widgetContext{new WidgetContext(
           this,

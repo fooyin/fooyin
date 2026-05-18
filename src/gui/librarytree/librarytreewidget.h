@@ -43,6 +43,7 @@ class QVBoxLayout;
 namespace Fooyin {
 class ActionManager;
 class Application;
+class CoverRepository;
 class LibraryTreeController;
 class LibraryTreeGroupRegistry;
 class LibraryTreeModel;
@@ -66,7 +67,8 @@ class LibraryTreeWidget : public FyWidget
 
 public:
     LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
-                      LibraryTreeController* controller, Application* core, QWidget* parent = nullptr);
+                      LibraryTreeController* controller, Application* core, CoverRepository* coverRepository,
+                      QWidget* parent = nullptr);
     ~LibraryTreeWidget() override;
 
     [[nodiscard]] QString name() const override;
