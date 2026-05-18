@@ -29,6 +29,7 @@
 #include <QPointer>
 #include <QPushButton>
 
+#include <ranges>
 #include <set>
 
 namespace Fooyin {
