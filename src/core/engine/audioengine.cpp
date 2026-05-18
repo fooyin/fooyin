@@ -150,7 +150,7 @@ int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnap
         }
 
         const auto scaledMs = std::llround((static_cast<long double>(safeFrames) * 1000.0L)
-                                                / static_cast<long double>(outputSampleRate));
+                                           / static_cast<long double>(outputSampleRate));
         return static_cast<int>(std::clamp<long double>(scaledMs, 0.0L, std::numeric_limits<int>::max()));
     };
 
@@ -1101,7 +1101,7 @@ void AudioEngine::maybeCompletePendingAudiblePause(const uint64_t serial)
     const bool drainComplete  = audiblePauseDrainComplete(outputSnapshot, outputFormat);
     const auto elapsedMs      = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()
                                                                                       - m_pendingAudiblePause.startedAt)
-                               .count();
+                                    .count();
     const bool watchdogExpired = m_pendingAudiblePause.watchdogMs > 0 && elapsedMs >= m_pendingAudiblePause.watchdogMs;
 
     updatePosition();
@@ -2012,8 +2012,8 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
         = m_upcomingTrackCandidate.isValid() && !samePlaybackItem(upcomingTrackCandidateItem(), currentPlaybackItem());
     const bool boundedSegmentHandoffPending = cueBoundaryMode && hasDistinctUpcomingCandidate;
     const bool audibleBoundaryReached       = m_currentTrack.duration() == 0
-                                     || boundaryAudiblePosMs >= m_currentTrack.duration()
-                                     || pendingBoundaryRenderedGaplessReached;
+                                           || boundaryAudiblePosMs >= m_currentTrack.duration()
+                                           || pendingBoundaryRenderedGaplessReached;
 
     const bool deferBoundaryUntilAudible = preparedGaplessActive || boundedSegmentHandoffPending;
     const bool boundaryWasPending        = m_autoAdvanceState.boundaryPendingUntilAudible;
