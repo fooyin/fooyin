@@ -150,7 +150,7 @@ int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnap
         }
 
         const auto scaledMs = std::llround((static_cast<long double>(safeFrames) * 1000.0L)
-                                           / static_cast<long double>(outputSampleRate));
+                                                / static_cast<long double>(outputSampleRate));
         return static_cast<int>(std::clamp<long double>(scaledMs, 0.0L, std::numeric_limits<int>::max()));
     };
 
@@ -1101,7 +1101,7 @@ void AudioEngine::maybeCompletePendingAudiblePause(const uint64_t serial)
     const bool drainComplete  = audiblePauseDrainComplete(outputSnapshot, outputFormat);
     const auto elapsedMs      = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()
                                                                                       - m_pendingAudiblePause.startedAt)
-                                    .count();
+                               .count();
     const bool watchdogExpired = m_pendingAudiblePause.watchdogMs > 0 && elapsedMs >= m_pendingAudiblePause.watchdogMs;
 
     updatePosition();
@@ -2012,8 +2012,8 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
         = m_upcomingTrackCandidate.isValid() && !samePlaybackItem(upcomingTrackCandidateItem(), currentPlaybackItem());
     const bool boundedSegmentHandoffPending = cueBoundaryMode && hasDistinctUpcomingCandidate;
     const bool audibleBoundaryReached       = m_currentTrack.duration() == 0
-                                           || boundaryAudiblePosMs >= m_currentTrack.duration()
-                                           || pendingBoundaryRenderedGaplessReached;
+                                     || boundaryAudiblePosMs >= m_currentTrack.duration()
+                                     || pendingBoundaryRenderedGaplessReached;
 
     const bool deferBoundaryUntilAudible = preparedGaplessActive || boundedSegmentHandoffPending;
     const bool boundaryWasPending        = m_autoAdvanceState.boundaryPendingUntilAudible;
@@ -2068,6 +2068,13 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
 
         m_preparedCrossfadeTransition.boundarySignalled = true;
         noteBoundaryAnchor();
+
+        // Publish final position update before boundary signal to ensure played-threshold check
+        // is triggered before track advances. This prevents scrobbles being missed when the
+        // controller advances to the next track before the final position update is processed.
+        publishPosition(boundaryAudiblePosMs, m_pipeline.playbackDelayMs(), m_pipeline.playbackDelayToTrackScale(),
+                        AudioClock::UpdateMode::Continuous, true);
+
         qCDebug(ENGINE) << "Track boundary emitted:" << "trackId=" << boundaryTrack.id()
                         << "generation=" << boundaryGeneration << "remainingOutputMs=" << boundaryRemainingOutputMs
                         << "engineOwnsTransition=" << boundaryEngineOwnsTransition
@@ -3822,7 +3829,7 @@ bool AudioEngine::armPreparedCrossfadeTransition(const Engine::PlaybackItem& ite
     const bool hasEarlyAutoTailFade = m_autoCrossfadeTailFadeActive && m_autoCrossfadeTailFadeGeneration == generation
                                    && m_autoCrossfadeTailFadeStreamId == activeStreamId
                                    && activeStreamId != InvalidStreamId;
-    const bool skipFadeOutStart     = hasEarlyAutoTailFade && overlapDurationMs <= 0;
+    const bool skipFadeOutStart = hasEarlyAutoTailFade && overlapDurationMs <= 0;
 
     const uint64_t overlapWindowMs = static_cast<uint64_t>(std::max(0, overlapDurationMs));
     const uint64_t requiredBufferedMs
