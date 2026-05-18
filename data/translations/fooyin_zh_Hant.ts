@@ -2489,7 +2489,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
         <source>Queue to play next</source>
-        <translation>佇列播放下一首</translation>
+        <translation>佇列排至播放下一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="242"/>
@@ -6690,7 +6690,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="206"/>
         <source>&amp;Queue to play next</source>
-        <translation>佇列播放下一首(&amp;Q)</translation>
+        <translation>佇列排至播放下一首(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="207"/>
@@ -9844,7 +9844,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="240"/>
         <source>&amp;Queue to play next</source>
-        <translation>佇列播放下一首(&amp;Q)</translation>
+        <translation>佇列排至播放下一首(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="244"/>
@@ -12723,7 +12723,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="246"/>
         <source>Queue to play next</source>
-        <translation>佇列播放下一首</translation>
+        <translation>佇列排至播放下一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="247"/>
