@@ -375,6 +375,76 @@ TEST(PlayerControllerTest, TrackPlayedEmitsOnceAfterCrossingThreshold)
     EXPECT_EQ(playedArgs.front().value<Track>(), makeTrack(u"/tmp/played.flac"_s, 13, 1000));
 }
 
+TEST(PlayerControllerTest, RestartingCurrentTrackAfterStoppedCountsListenedTime)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stopped_restart_progress_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    const QSignalSpy playedSpy{&controller, &PlayerController::trackPlayed};
+
+    controller.commitCurrentTrack(makeTrack(u"/tmp/stopped-restart.flac"_s, 19, 1000));
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.setCurrentPosition(100);
+
+    controller.syncPlayStateFromEngine(Player::PlayState::Stopped);
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.setCurrentPosition(100);
+    controller.setCurrentPosition(500);
+
+    EXPECT_EQ(playedSpy.count(), 1);
+}
+
+TEST(PlayerControllerTest, RestartingCurrentTrackWithPendingRequestCountsListenedTime)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_pending_restart_progress_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    const QSignalSpy playedSpy{&controller, &PlayerController::trackPlayed};
+    const Track track = makeTrack(u"/tmp/pending-restart.flac"_s, 22, 1000);
+
+    controller.commitCurrentTrack(track);
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.setCurrentPosition(100);
+    controller.syncPlayStateFromEngine(Player::PlayState::Stopped);
+
+    const QSignalSpy currentTrackChangedSpy{&controller, &PlayerController::currentTrackChanged};
+
+    controller.changeCurrentTrack(track);
+    controller.play();
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.setCurrentPosition(100);
+    controller.setCurrentPosition(500);
+
+    EXPECT_EQ(currentTrackChangedSpy.count(), 0);
+    EXPECT_EQ(playedSpy.count(), 1);
+}
+
+TEST(PlayerControllerTest, PendingTrackChangeDoesNotRestartPreviousTrackProgress)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_pending_change_progress_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    const QSignalSpy playedSpy{&controller, &PlayerController::trackPlayed};
+
+    controller.commitCurrentTrack(makeTrack(u"/tmp/previous-current.flac"_s, 20, 1000));
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.setCurrentPosition(100);
+    controller.syncPlayStateFromEngine(Player::PlayState::Stopped);
+
+    controller.changeCurrentTrack(makeTrack(u"/tmp/pending-current.flac"_s, 21, 1000));
+    controller.play();
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.setCurrentPosition(500);
+
+    EXPECT_EQ(playedSpy.count(), 0);
+}
+
 TEST(PlayerControllerTest, RestoringPastThresholdDoesNotEmitTrackPlayed)
 {
     ensureCoreApplication();

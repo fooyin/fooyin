@@ -48,6 +48,7 @@ public:
     [[nodiscard]] Player::TrackChangeContext& pendingChangeContext();
     [[nodiscard]] const Player::TrackChangeContext& lastChangeContext() const;
     [[nodiscard]] bool hasPendingRequest() const;
+    [[nodiscard]] bool pendingRequestMatchesCurrentTrack() const;
     [[nodiscard]] bool canAcceptRequest() const;
 
     [[nodiscard]] Player::TrackChangeRequest withPlaybackItemId(Player::TrackChangeRequest request,

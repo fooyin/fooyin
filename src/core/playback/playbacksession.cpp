@@ -102,6 +102,12 @@ bool PlaybackSession::hasPendingRequest() const
     return m_pendingRequest.has_value();
 }
 
+bool PlaybackSession::pendingRequestMatchesCurrentTrack() const
+{
+    return m_pendingRequest.has_value() && m_currentTrack.isValid()
+        && m_pendingRequest->track.track.sameIdentityAs(m_currentTrack.track);
+}
+
 bool PlaybackSession::canAcceptRequest() const
 {
     return !hasPendingRequest();

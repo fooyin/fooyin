@@ -63,6 +63,20 @@ void PlaybackProgressTracker::onTrackCommitted(uint64_t totalDurationMs, double 
     }
 }
 
+bool PlaybackProgressTracker::restartTracking()
+{
+    if(m_totalDuration == 0 || m_trackingActive) {
+        return false;
+    }
+
+    m_position       = 0;
+    m_timeListened   = 0;
+    m_trackingActive = true;
+    m_seeking        = false;
+    m_counted        = false;
+    return true;
+}
+
 PlaybackProgressTracker::PositionUpdate PlaybackProgressTracker::restorePosition(uint64_t posMs)
 {
     m_position = posMs;

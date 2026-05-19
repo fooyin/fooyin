@@ -39,6 +39,7 @@ public:
 
     void reset();
     void onTrackCommitted(uint64_t totalDurationMs, double playedThresholdFraction);
+    bool restartTracking();
 
     [[nodiscard]] PositionUpdate restorePosition(uint64_t posMs);
     [[nodiscard]] PositionUpdate restoreProgress(uint64_t posMs, uint64_t timeListenedMs);

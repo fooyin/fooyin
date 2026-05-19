@@ -115,6 +115,7 @@ public:
 
     void requestTrackChange(const Player::TrackChangeRequest& request);
     bool updatePlaystate(Player::PlayState state);
+    void restartCurrentTrackProgressIfNeeded();
     bool enterStoppedState(bool requestTransportStop);
     void emitPositionSignals(const PlaybackProgressTracker::PositionUpdate& update);
     void syncCommittedPlaylistTrack() const;
@@ -390,6 +391,19 @@ bool PlayerControllerPrivate::updatePlaystate(Player::PlayState state)
     }
 
     return false;
+}
+
+void PlayerControllerPrivate::restartCurrentTrackProgressIfNeeded()
+{
+    if(!m_session.currentTrack().isValid()) {
+        return;
+    }
+
+    if(m_session.hasPendingRequest() && !m_session.pendingRequestMatchesCurrentTrack()) {
+        return;
+    }
+
+    m_progressTracker.restartTracking();
 }
 
 bool PlayerControllerPrivate::enterStoppedState(bool requestTransportStop)
@@ -1017,9 +1031,14 @@ void PlayerController::reset()
 
 void PlayerController::play()
 {
+    const bool wasStopped = p->m_playState == Player::PlayState::Stopped;
+
     p->applyTransportAction(p->selectPlayAction());
 
     if(!p->m_session.isIdle()) {
+        if(wasStopped) {
+            p->restartCurrentTrackProgressIfNeeded();
+        }
         if(p->updatePlaystate(Player::PlayState::Playing)) {
             Q_EMIT transportPlayRequested();
         }
@@ -1224,6 +1243,9 @@ void PlayerController::syncPlayStateFromEngine(Player::PlayState state)
 {
     switch(state) {
         case Player::PlayState::Playing:
+            if(p->m_playState == Player::PlayState::Stopped) {
+                p->restartCurrentTrackProgressIfNeeded();
+            }
             p->updatePlaystate(Player::PlayState::Playing);
             break;
         case Player::PlayState::Paused:
