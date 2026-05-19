@@ -2,30 +2,67 @@
 
 ## Unreleased
 
+### New Features
+
+* Interface
+  - Add `Now Playing` output functionality ([#1084](https://github.com/fooyin/fooyin/issues/1084), [#1194](https://github.com/fooyin/fooyin/pull/1194))
+  - Add playlist background image options
+
 ### Improvements
 
 * Interface
   - Move the Preserve timestamps option to Advanced settings
   - Command Button: Highlight toggleable actions and add checkable states for mute and menu bar actions
   - Playlist: Select the next track after removing or cutting a track ([#1177](https://github.com/fooyin/fooyin/issues/1177))
+  - Add support for custom placeholder artwork
+  - Add an option to expand or collapse Library Tree nodes with a single click ([#1195](https://github.com/fooyin/fooyin/issues/1195))
+  - Add `Add to current playlist and play if stopped` actions for filters, the Library Tree, and the Directory Browser ([#1195](https://github.com/fooyin/fooyin/issues/1195))
+  - Add a playlist context menu action for opening playlist settings
+  - Add configuration for the Selection Info properties tab and ReplayGain widget
+  - Improve settings page layouts, section headers, and script input fields
+  - Add support for compact DSP layout widgets and SoundTouch layout editors
+* Library/Metadata
+  - Centralise artwork loading, request ordering, and thumbnail caching in a shared cover repository ([#784](https://github.com/fooyin/fooyin/issues/784))
+  - Improve ID3v2.3 multivalue tag compatibility, including optional semicolon splitting for compatible fields ([#739](https://github.com/fooyin/fooyin/issues/739), [#1109](https://github.com/fooyin/fooyin/issues/1109), [#1129](https://github.com/fooyin/fooyin/issues/1129))
+* Media Controls
+  - Send embedded track lyrics over MPRIS with `xesam:asText` ([#1192](https://github.com/fooyin/fooyin/issues/1192))
+* Scripting
+  - Add `%_fooyin_version%`, `%isstopped%` and `%datetime%`
 
 ### Fixes
 
 * Audio/Playback
   - Fix DSP manager re-adding removed pending DSPs when applying changes ([#1176](https://github.com/fooyin/fooyin/issues/1176))
+  - Fix playback engine shutdown ordering
+  - Fix fade-pause timing ([#1183](https://github.com/fooyin/fooyin/issues/1183))
+  - Fix progress/time listened not being counted when replaying the current track from a stopped state ([#1202](https://github.com/fooyin/fooyin/issues/1202))
 * Interface
+  - Save shortcut changes on Apply/OK instead of shutdown ([#1186](https://github.com/fooyin/fooyin/issues/1186))
   - Fix themed playback icons after restart ([#1174](https://github.com/fooyin/fooyin/issues/1174))
   - Refresh playlist controls and highlight icons after palette changes
   - Fix scrobbler toggle icon colours after theme refresh
+  - Fix stale Search Controller widget connections after layout edits ([#1199](https://github.com/fooyin/fooyin/issues/1199))
+  - Prevent track selection actions on auto playlists
+  - Show Selection Info tooltips when text is elided ([#1206](https://github.com/fooyin/fooyin/pull/1206))
 * Library/Metadata
   - Improve artist slash detection when reading metadata ([#1181](https://github.com/fooyin/fooyin/pull/1181))
   - Fix automatic rating scale detection for custom tags ([#1175](https://github.com/fooyin/fooyin/pull/1175))
+  - Reject non-finite ReplayGain values ([#1196](https://github.com/fooyin/fooyin/pull/1196))
 * Playlist
   - Fix `Stop after this` when playback is stopped ([#1182](https://github.com/fooyin/fooyin/pull/1182))
   - Fix unique playlist name generation after playlists have been removed ([#1180](https://github.com/fooyin/fooyin/issues/1180))
   - Fix a potential crash when switching layouts from throttled signal emission during teardown
 * PipeWire
   - Preserve PipeWire volume when recreating streams after sample rate changes ([#1178](https://github.com/fooyin/fooyin/issues/1178))
+  - Stop syncing PipeWire stream volume and mute changes back to fooyin's player volume ([#1197](https://github.com/fooyin/fooyin/issues/1197))
+* Scripting
+  - Fix `$ascii` accepting Latin1 Supplement characters ([#1185](https://github.com/fooyin/fooyin/issues/1185), [#1188](https://github.com/fooyin/fooyin/pull/1188))
+  - Fix `$replace` variadic arguments and empty string handling ([#1162](https://github.com/fooyin/fooyin/issues/1162))
+
+### Build/System
+
+* CI
+  - Drop the Arch Linux CI job now that fooyin is available in Arch Linux extra
 
 
 ## [0.10.7](https://github.com/fooyin/fooyin/releases/tag/v0.10.7) (2026-05-15)
