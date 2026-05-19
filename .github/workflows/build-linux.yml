@@ -7,43 +7,6 @@ env:
   BUILD_TESTS: ON
 
 jobs:
-  archlinux:
-    name: Arch Linux
-    runs-on: ubuntu-latest
-    container:
-      image: archlinux:latest
-
-    steps:
-      - name: Install git
-        run: |
-          pacman -Syy --noconfirm
-          pacman -S git --noconfirm
-
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          submodules: recursive
-
-      - name: Dependencies
-        run: |
-          ./ci/archlinux-depends.sh
-
-      - name: Build
-        run: |
-          ./ci/archlinux-build.sh
-
-      - name: Run tests
-        if: env.BUILD_TESTS == 'ON'
-        run: |
-          ./ci/tests.sh
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v6
-        with:
-          name: archlinux-x86_64
-          path: arch/*.tar.zst
-
   fedora:
     name: Fedora (${{matrix.fedora_version}}, ${{ matrix.runner.arch }})
     runs-on: ${{ matrix.runner.os }}
