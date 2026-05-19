@@ -37,19 +37,16 @@ QStringList splitValues(const QStringList& values, QChar separator)
     return result;
 }
 
-bool containsSlashSeparatedValue(const QStringList& values)
-{
-    return std::ranges::any_of(values, [](const QString& value) {
-        return value.contains('/'_L1) && !value.contains("AC/DC"_L1) && !value.contains("AC / DC"_L1);
-    });
-}
-
 QStringList splitSlashSeparatedValues(const QStringList& values)
 {
-    if(containsSlashSeparatedValue(values)) {
-        return splitValues(values, u'/');
+    QStringList result;
+    for(const QString& value : values) {
+        const QStringList parts = value.split(" / "_L1, Qt::SkipEmptyParts);
+        for(const QString& part : parts) {
+            result.append(part.trimmed());
+        }
     }
-    return values;
+    return result;
 }
 
 bool isSlashSeparatedField(const QString& field)
@@ -62,6 +59,13 @@ bool isSlashSeparatedExtraField(const QString& field)
 {
     return field == "LYRICIST"_L1 || field == "ORIGINALLYRICIST"_L1 || field == "ORIGINALARTIST"_L1
         || field == "TEXT"_L1 || field == "TOLY"_L1 || field == "TOPE"_L1;
+}
+
+bool isLyricsField(const QString& field)
+{
+    return field == "LYRICS"_L1 || field == "SYNCEDLYRICS"_L1 || field == "SYNCED LYRICS"_L1
+        || field == "UNSYNCEDLYRICS"_L1 || field == "UNSYNCED LYRICS"_L1 || field == "UNSYNCHRONIZEDLYRICS"_L1
+        || field == "UNSYNCHRONIZED LYRICS"_L1 || field == "USLT"_L1 || field == "SYLT"_L1;
 }
 } // namespace
 
@@ -86,6 +90,10 @@ QStringList splitExtraField(const QString& field, const QStringList& values, boo
 
     if(isSlashSeparatedExtraField(upperField)) {
         return splitSlashSeparatedValues(values);
+    }
+
+    if(isLyricsField(upperField)) {
+        return values;
     }
 
     return splitSemicolonSeparated ? splitValues(values, u';') : values;
