@@ -206,9 +206,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PropertiesSidebarTrackScript>(u"[%track%. ]%title%"_s,
                                                                       u"Interface/PropertiesSidebarTrackScript "_s);
     m_settings->createSetting<Internal::NowPlayingOutputEnabled>(false, u"NowPlayingOutput/Enabled"_s);
-    m_settings->createSetting<Internal::NowPlayingOutputScript>(uR"($if($or(%isplaying%,%ispaused%),
-%datetime% $if(%ispaused%,⏸,►) %artist% [\(%album%\)] - %title% [%playback_time%]
- [$progress(%playback_time_s%,%duration_s%,30,█,─)] [%duration%],))"_s,
+    m_settings->createSetting<Internal::NowPlayingOutputScript>(u"[%artist% - ]%title%"_s,
                                                                 u"NowPlayingOutput/Script"_s);
     m_settings->createSetting<Internal::NowPlayingOutputUpdateEvents>(
         static_cast<int>(NowPlayingOutputService::DefaultEvents), u"NowPlayingOutput/UpdateEvents"_s);

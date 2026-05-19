@@ -40,7 +40,7 @@ public:
         UpdatePlayPause = 1 << 1,
         UpdateStop      = 1 << 2,
         UpdateSecond    = 1 << 3,
-        DefaultEvents   = UpdateTrack | UpdatePlayPause | UpdateStop
+        DefaultEvents   = UpdateTrack
     };
     Q_DECLARE_FLAGS(UpdateEvents, UpdateEvent)
     Q_FLAG(UpdateEvents)
