@@ -961,7 +961,7 @@ void replaceOrErase(TagLib::PropertyMap& props, const TagLib::String& key, const
 }
 
 void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Track& track, AudioReader::WriteOptions options,
-                            bool skipExtra = false)
+                            bool skipExtra = false, bool useId3PairedTotals = false)
 {
     if(!track.isValid() || !(options & AudioReader::Metadata)) {
         return;
@@ -995,9 +995,18 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Track& tra
     };
 
     handleAltProp(track.trackNumber(), TrackNumber, TrackAlt);
-    handleAltProp(track.trackTotal(), TrackTotal, TrackTotalAlt);
     handleAltProp(track.discNumber(), Disc, DiscAlt);
-    handleAltProp(track.discTotal(), DiscTotal, DiscTotalAlt);
+
+    if(useId3PairedTotals) {
+        replaceOrErase(oldProperties, TrackTotal, QString{});
+        replaceOrErase(oldProperties, TrackTotalAlt, QString{});
+        replaceOrErase(oldProperties, DiscTotal, QString{});
+        replaceOrErase(oldProperties, DiscTotalAlt, QString{});
+    }
+    else {
+        handleAltProp(track.trackTotal(), TrackTotal, TrackTotalAlt);
+        handleAltProp(track.discTotal(), DiscTotal, DiscTotalAlt);
+    }
 
     const auto handleRGProperty
         = [&oldProperties](bool hasProperty, float property, auto tag, auto tagAlt, bool isGain = true) {
@@ -3332,11 +3341,12 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
         mtime = info.lastModified();
     }
 
-    const auto writeProperties = [&track, options](TagLib::File& file, bool skipExtra = false) {
-        auto savedProperties = file.properties();
-        writeGenericProperties(savedProperties, track, options, skipExtra);
-        file.setProperties(savedProperties);
-    };
+    const auto writeProperties
+        = [&track, options](TagLib::File& file, bool skipExtra = false, bool useId3PairedTotals = false) {
+              auto savedProperties = file.properties();
+              writeGenericProperties(savedProperties, track, options, skipExtra, useId3PairedTotals);
+              file.setProperties(savedProperties);
+          };
 
     const QMimeDatabase mimeDb;
     QString mimeType       = mimeDb.mimeTypeForFile(source.filepath).name();
@@ -3356,7 +3366,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
         TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
 #endif
         if(file.isValid()) {
-            writeProperties(file);
+            writeProperties(file, false, true);
             if(auto* tag = file.ID3v2Tag(true)) {
                 writeID3v2Tags(tag, track, options, policy, true);
             }
@@ -3366,7 +3376,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
     else if(mimeType == "audio/x-aiff"_L1 || mimeType == "audio/x-aifc"_L1) {
         TagLib::RIFF::AIFF::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file);
+            writeProperties(file, false, true);
             if(file.hasID3v2Tag()) {
                 writeID3v2Tags(file.tag(), track, options, policy, false);
             }
@@ -3383,7 +3393,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
     else if(mimeType == "audio/vnd.wave"_L1 || mimeType == "audio/wav"_L1 || mimeType == "audio/x-wav"_L1) {
         TagLib::RIFF::WAV::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file);
+            writeProperties(file, false, true);
             if(file.hasID3v2Tag()) {
                 writeID3v2Tags(file.ID3v2Tag(), track, options, policy, false);
             }
@@ -3516,7 +3526,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
     else if(mimeType == "audio/x-dsf"_L1) {
         TagLib::DSF::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file);
+            writeProperties(file, false, true);
             if(file.tag()) {
                 writeID3v2Tags(file.tag(), track, options, policy, false);
             }
@@ -3533,7 +3543,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
     else if(mimeType == "audio/x-dff"_L1) {
         TagLib::DSDIFF::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file);
+            writeProperties(file, false, true);
             if(auto* tag = file.ID3v2Tag(true)) {
                 writeID3v2Tags(tag, track, options, policy, false);
             }
