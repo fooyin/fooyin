@@ -25,6 +25,7 @@
 #include "internalguisettings.h"
 
 #include <core/application.h>
+#include <core/coresettings.h>
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
@@ -42,13 +43,17 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QItemSelectionModel>
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QKeySequence>
 #include <QMenu>
 #include <QScrollBar>
 #include <QSortFilterProxyModel>
+#include <utility>
 
 using namespace Qt::StringLiterals;
+
+constexpr auto PropertiesInfoState = "PropertiesDialog/SelectionInfo"_L1;
 
 namespace Fooyin {
 class InfoFilterModel : public QSortFilterProxyModel
@@ -76,10 +81,11 @@ class InfoPanel : public QWidget
     Q_OBJECT
 
 public:
-    InfoPanel(const TrackList& tracks, LibraryManager* libraryManager, ActionManager* actionManager,
-              QWidget* parent = nullptr);
+    InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionManager* actionManager,
+              bool persistSettings = false, QWidget* parent = nullptr);
     InfoPanel(Application* app, ActionManager* actionManager, TrackSelectionController* selectionController,
               QWidget* parent = nullptr);
+    ~InfoPanel() override;
 
     void saveLayoutData(QJsonObject& layout) const;
     void loadLayoutData(const QJsonObject& layout);
@@ -98,6 +104,9 @@ private:
 
     void copySelection() const;
     [[nodiscard]] QString selectionText() const;
+    [[nodiscard]] bool persistSettings() const;
+    void loadPersistentSettings();
+    void savePersistentSettings() const;
     void queueViewReset();
     void resetModel();
     void resetView();
@@ -106,6 +115,7 @@ private:
     TrackSelectionController* m_selectionController;
     PlayerController* m_playerController;
     SettingsManager* m_settings;
+    bool m_persistSettings;
 
     InfoView* m_view;
     InfoFilterModel* m_proxyModel;
@@ -115,6 +125,7 @@ private:
     Command* m_copyCmd;
     QBasicTimer m_resetTimer;
     SelectionDisplay m_displayOption;
+    TrackList m_tracks;
     int m_scrollPos;
 
     bool m_showHeader;
@@ -131,13 +142,14 @@ void setupInfoHost(QWidget* host, QWidget* panel)
     layout->addWidget(panel);
 }
 
-InfoPanel::InfoPanel(const TrackList& tracks, LibraryManager* libraryManager, ActionManager* actionManager,
-                     QWidget* parent)
+InfoPanel::InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionManager* actionManager,
+                     bool persistSettings, QWidget* parent)
     : QWidget{parent}
     , m_actionManager{actionManager}
     , m_selectionController{nullptr}
     , m_playerController{nullptr}
     , m_settings{nullptr}
+    , m_persistSettings{persistSettings}
     , m_view{new InfoView(this)}
     , m_proxyModel{new InfoFilterModel(this)}
     , m_model{new InfoModel(libraryManager, this)}
@@ -146,6 +158,7 @@ InfoPanel::InfoPanel(const TrackList& tracks, LibraryManager* libraryManager, Ac
     , m_copyAction{new QAction(tr("&Copy"), this)}
     , m_copyCmd{m_actionManager->registerAction(m_copyAction, Constants::Actions::Copy, m_context->context())}
     , m_displayOption{SelectionDisplay::PreferSelection}
+    , m_tracks{std::move(tracks)}
     , m_scrollPos{-1}
     , m_showHeader{true}
     , m_showVerticalScrollbar{true}
@@ -166,7 +179,9 @@ InfoPanel::InfoPanel(const TrackList& tracks, LibraryManager* libraryManager, Ac
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { queueViewReset(); });
 
     setupActions();
-    m_model->resetModel(tracks);
+    loadPersistentSettings();
+    finalise();
+    resetModel();
 }
 
 InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelectionController* selectionController,
@@ -176,6 +191,7 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
     , m_selectionController{selectionController}
     , m_playerController{app->playerController()}
     , m_settings{app->settingsManager()}
+    , m_persistSettings{false}
     , m_view{new InfoView(this)}
     , m_proxyModel{new InfoFilterModel(this)}
     , m_model{new InfoModel(app->libraryManager(), this)}
@@ -212,7 +228,7 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
 
     using namespace Settings::Gui::Internal;
 
-    m_settings->subscribe<Settings::Gui::Internal::InfoDisplayPrefer>(this, [this](const int option) {
+    m_settings->subscribe<InfoDisplayPrefer>(this, [this](const int option) {
         m_displayOption = static_cast<SelectionDisplay>(option);
         resetModel();
     });
@@ -220,10 +236,15 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
     resetModel();
 }
 
+InfoPanel::~InfoPanel()
+{
+    savePersistentSettings();
+}
+
 InfoWidget::InfoWidget(const TrackList& tracks, LibraryManager* libraryManager, ActionManager* actionManager,
                        QWidget* parent)
     : FyWidget{parent}
-    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, this)}
+    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, false, this)}
 {
     setObjectName(InfoWidget::name());
     setupInfoHost(this, m_panel);
@@ -268,7 +289,7 @@ void InfoWidget::finalise()
 InfoPropertiesTab::InfoPropertiesTab(const TrackList& tracks, LibraryManager* libraryManager,
                                      ActionManager* actionManager, QWidget* parent)
     : PropertiesTabWidget{parent}
-    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, this)}
+    , m_panel{new InfoPanel(tracks, libraryManager, actionManager, true, this)}
 {
     setupInfoHost(this, m_panel);
 }
@@ -334,7 +355,44 @@ void InfoPanel::updateTracks(const TrackList& tracks)
         return;
     }
 
-    m_model->resetModel(tracks);
+    m_tracks = tracks;
+    resetModel();
+}
+
+bool InfoPanel::persistSettings() const
+{
+    // Only persist separately for prop tab
+    return m_persistSettings && !m_selectionController;
+}
+
+void InfoPanel::loadPersistentSettings()
+{
+    if(!persistSettings()) {
+        return;
+    }
+
+    const FyStateSettings settings;
+    const QByteArray layoutData = QByteArray::fromBase64(settings.value(PropertiesInfoState).toByteArray());
+    if(layoutData.isEmpty()) {
+        return;
+    }
+
+    const QJsonObject layout = QJsonDocument::fromJson(layoutData).object();
+    loadLayoutData(layout);
+}
+
+void InfoPanel::savePersistentSettings() const
+{
+    if(!persistSettings()) {
+        return;
+    }
+
+    QJsonObject layout;
+    saveLayoutData(layout);
+
+    const QByteArray layoutData = QJsonDocument{layout}.toJson(QJsonDocument::Compact).toBase64();
+    FyStateSettings settings;
+    settings.setValue(PropertiesInfoState, layoutData);
 }
 
 void InfoPanel::hideEvent(QHideEvent* event)
@@ -391,11 +449,6 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     updateActions();
     menu->addAction(m_copyCmd->action());
 
-    if(!m_settings) {
-        menu->popup(event->globalPos());
-        return;
-    }
-
     menu->addSeparator();
 
     auto* showHeaders = new QAction(tr("Show header"), menu);
@@ -404,6 +457,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
         m_showHeader = checked;
         finalise();
+        savePersistentSettings();
     });
 
     auto* showVerticalScrollBar = new QAction(tr("Show scrollbar (vertical)"), menu);
@@ -412,8 +466,8 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     QAction::connect(showVerticalScrollBar, &QAction::triggered, this, [this](bool checked) {
         m_showVerticalScrollbar = checked;
         finalise();
+        savePersistentSettings();
     });
-    menu->addAction(showVerticalScrollBar);
 
     auto* showHorizontalScrollBar = new QAction(tr("Show scrollbar (horizontal)"), menu);
     showHorizontalScrollBar->setCheckable(true);
@@ -421,8 +475,8 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     QAction::connect(showHorizontalScrollBar, &QAction::triggered, this, [this](bool checked) {
         m_showHorizontalScrollbar = checked;
         finalise();
+        savePersistentSettings();
     });
-    menu->addAction(showHorizontalScrollBar);
 
     auto* altColours = new QAction(tr("Alternating row colours"), menu);
     altColours->setCheckable(true);
@@ -430,6 +484,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
         m_alternatingColours = checked;
         finalise();
+        savePersistentSettings();
     });
 
     const auto options = m_model->options();
@@ -439,6 +494,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     showMetadata->setChecked(options & InfoItem::Metadata);
     QAction::connect(showMetadata, &QAction::triggered, this, [this](bool checked) {
         m_model->setOption(InfoItem::Metadata, checked);
+        savePersistentSettings();
         resetModel();
     });
 
@@ -447,6 +503,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     showExtendedMetadata->setChecked(options & InfoItem::ExtendedMetadata);
     QAction::connect(showExtendedMetadata, &QAction::triggered, this, [this](bool checked) {
         m_model->setOption(InfoItem::ExtendedMetadata, checked);
+        savePersistentSettings();
         resetModel();
     });
 
@@ -455,6 +512,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     showLocation->setChecked(options & InfoItem::Location);
     QAction::connect(showLocation, &QAction::triggered, this, [this](bool checked) {
         m_model->setOption(InfoItem::Location, checked);
+        savePersistentSettings();
         resetModel();
     });
 
@@ -463,6 +521,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     showGeneral->setChecked(options & InfoItem::General);
     QAction::connect(showGeneral, &QAction::triggered, this, [this](bool checked) {
         m_model->setOption(InfoItem::General, checked);
+        savePersistentSettings();
         resetModel();
     });
 
@@ -471,6 +530,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     showPlayStats->setChecked(options & InfoItem::PlayStats);
     QAction::connect(showPlayStats, &QAction::triggered, this, [this](bool checked) {
         m_model->setOption(InfoItem::PlayStats, checked);
+        savePersistentSettings();
         resetModel();
     });
 
@@ -479,6 +539,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     showReplayGain->setChecked(options & InfoItem::ReplayGain);
     QAction::connect(showReplayGain, &QAction::triggered, this, [this](bool checked) {
         m_model->setOption(InfoItem::ReplayGain, checked);
+        savePersistentSettings();
         resetModel();
     });
 
@@ -487,6 +548,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     showOther->setChecked(options & InfoItem::Other);
     QAction::connect(showOther, &QAction::triggered, this, [this](bool checked) {
         m_model->setOption(InfoItem::Other, checked);
+        savePersistentSettings();
         resetModel();
     });
 
@@ -557,6 +619,7 @@ void InfoPanel::timerEvent(QTimerEvent* event)
 void InfoPanel::resetModel()
 {
     if(!m_playerController || !m_selectionController) {
+        m_model->resetModel(m_tracks);
         return;
     }
 
