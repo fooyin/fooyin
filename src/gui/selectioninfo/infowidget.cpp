@@ -33,6 +33,7 @@
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/tooltipfilter.h>
 
 #include <QBasicTimer>
 #include <QClipboard>
@@ -157,6 +158,7 @@ InfoPanel::InfoPanel(const TrackList& tracks, LibraryManager* libraryManager, Ac
     layout->addWidget(m_view);
 
     m_view->setItemDelegate(new ItemDelegate(this));
+    m_view->viewport()->installEventFilter(new ToolTipFilter(this));
     m_proxyModel->setSourceModel(m_model);
     m_view->setModel(m_proxyModel);
     m_view->header()->setSectionResizeMode(0, QHeaderView::Interactive);
@@ -194,6 +196,7 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
     layout->addWidget(m_view);
 
     m_view->setItemDelegate(new ItemDelegate(this));
+    m_view->viewport()->installEventFilter(new ToolTipFilter(this));
     m_proxyModel->setSourceModel(m_model);
     m_view->setModel(m_proxyModel);
     m_view->header()->setSectionResizeMode(0, QHeaderView::Interactive);
