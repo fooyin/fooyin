@@ -974,8 +974,8 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Track& tra
     replaceOrErase(oldProperties, Album, track.album());
     replaceOrErase(oldProperties, AlbumArtist, track.albumArtists());
     replaceOrErase(oldProperties, Genre, track.genres());
-    replaceOrErase(oldProperties, Composer, track.composer());
-    replaceOrErase(oldProperties, Performer, track.performer());
+    replaceOrErase(oldProperties, Composer, track.composers());
+    replaceOrErase(oldProperties, Performer, track.performers());
     replaceOrErase(oldProperties, Comment, track.comment());
     replaceOrErase(oldProperties, Date, track.date());
 
