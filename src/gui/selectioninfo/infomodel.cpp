@@ -118,7 +118,7 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    if(role != Qt::DisplayRole) {
+    if(role != Qt::DisplayRole && role != Qt::ToolTipRole) {
         return {};
     }
 
