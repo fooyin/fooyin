@@ -21,6 +21,10 @@
 
 #include <gui/propertiesdialog.h>
 
+#include <QByteArray>
+
+class QContextMenuEvent;
+
 namespace Fooyin {
 class MusicLibrary;
 class ReplayGainModel;
@@ -33,13 +37,20 @@ class ReplayGainWidget : public PropertiesTabWidget
 public:
     ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, bool readOnly, SettingsManager* settings,
                      QWidget* parent = nullptr);
+    ~ReplayGainWidget() override;
 
     void apply() override;
     void updateTracks(const TrackList& tracks) override;
     void setTrackScope(const TrackList& tracks) override;
     bool commitPendingChanges() override;
 
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
+
 private:
+    void finalise();
+    void saveLayoutData() const;
+    void loadLayoutData();
     void updateHeaderModes() const;
 
     MusicLibrary* m_library;
@@ -50,5 +61,7 @@ private:
     OpusRGWriteMode m_opusWriteMode;
 
     TrackList m_pendingTracks;
+    bool m_showHeader;
+    bool m_alternatingColours;
 };
 } // namespace Fooyin

@@ -23,16 +23,23 @@
 #include "replaygainmodel.h"
 #include "replaygainview.h"
 
+#include <core/coresettings.h>
 #include <core/internalcoresettings.h>
 #include <core/library/libraryutils.h>
 #include <core/library/musiclibrary.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QContextMenuEvent>
 #include <QHeaderView>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QMenu>
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
+
+constexpr auto ReplayGainKey = "PropertiesDialog/ReplayGain"_L1;
 
 namespace {
 void mergeTracks(Fooyin::TrackList& destination, const Fooyin::TrackList& source)
@@ -68,6 +75,8 @@ ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& track
     , m_view{new ReplayGainView(this)}
     , m_model{new ReplayGainModel(readOnly, this)}
     , m_opusWriteMode{static_cast<OpusRGWriteMode>(m_settings->value<Settings::Core::Internal::OpusHeaderWriteMode>())}
+    , m_showHeader{true}
+    , m_alternatingColours{true}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});
@@ -76,11 +85,24 @@ ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& track
     m_view->setItemDelegate(new ReplayGainDelegate(this));
     m_view->setModel(m_model);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
-        QMetaObject::invokeMethod(this, [this]() { updateHeaderModes(); }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(
+            this,
+            [this]() {
+                updateHeaderModes();
+                finalise();
+            },
+            Qt::QueuedConnection);
     });
+    loadLayoutData();
     m_model->resetModel(tracks);
 
     updateHeaderModes();
+    finalise();
+}
+
+ReplayGainWidget::~ReplayGainWidget()
+{
+    saveLayoutData();
 }
 
 void ReplayGainWidget::apply()
@@ -104,6 +126,7 @@ void ReplayGainWidget::setTrackScope(const TrackList& tracks)
 {
     m_model->resetModel(tracks);
     updateHeaderModes();
+    finalise();
 }
 
 bool ReplayGainWidget::commitPendingChanges()
@@ -122,6 +145,65 @@ void ReplayGainWidget::updateTracks(const TrackList& tracks)
 {
     m_model->updateTracks(tracks);
     updateHeaderModes();
+    finalise();
+}
+
+void ReplayGainWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* showHeaders = new QAction(tr("Show header"), menu);
+    showHeaders->setCheckable(true);
+    showHeaders->setChecked(!m_view->isHeaderHidden());
+    QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
+        m_showHeader = checked;
+        finalise();
+        saveLayoutData();
+    });
+
+    auto* altColours = new QAction(tr("Alternating row colours"), menu);
+    altColours->setCheckable(true);
+    altColours->setChecked(m_view->alternatingRowColors());
+    QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
+        m_alternatingColours = checked;
+        finalise();
+        saveLayoutData();
+    });
+
+    menu->addAction(showHeaders);
+    menu->addAction(altColours);
+    menu->popup(event->globalPos());
+}
+
+void ReplayGainWidget::finalise()
+{
+    m_view->setHeaderHidden(!m_showHeader);
+    m_view->setAlternatingRowColors(m_alternatingColours);
+}
+
+void ReplayGainWidget::loadLayoutData()
+{
+    const FyStateSettings settings;
+    const QByteArray layoutData = QByteArray::fromBase64(settings.value(ReplayGainKey).toByteArray());
+    if(layoutData.isEmpty()) {
+        return;
+    }
+
+    const QJsonObject layout = QJsonDocument::fromJson(layoutData).object();
+    m_showHeader             = layout.value("ShowHeader"_L1).toBool(m_showHeader);
+    m_alternatingColours     = layout.value("AlternatingRows"_L1).toBool(m_alternatingColours);
+}
+
+void ReplayGainWidget::saveLayoutData() const
+{
+    QJsonObject layout;
+    layout["ShowHeader"_L1]      = m_showHeader;
+    layout["AlternatingRows"_L1] = m_alternatingColours;
+
+    const QByteArray layoutData = QJsonDocument{layout}.toJson(QJsonDocument::Compact).toBase64();
+    FyStateSettings settings;
+    settings.setValue(ReplayGainKey, layoutData);
 }
 
 void ReplayGainWidget::updateHeaderModes() const
