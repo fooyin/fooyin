@@ -4,7 +4,7 @@
 <context>
     <name>Fooyin::ArtworkProperties</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="320"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="321"/>
         <source>Exported artwork to %Ln file(s)</source>
         <translation>
             <numerusform>Exported artwork to %Ln file</numerusform>
@@ -12,7 +12,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="328"/>
+        <location filename="../../src/gui/artwork/artworkproperties.cpp" line="329"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
         <translation>
             <numerusform>Exported artwork to %Ln file; some exports failed</numerusform>
@@ -129,7 +129,7 @@
 <context>
     <name>Fooyin::OutputPageWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="171"/>
+        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="176"/>
         <source>Resume decoding below %Ln ms</source>
         <translation>
             <numerusform>Resume decoding below %Ln ms</numerusform>
@@ -137,7 +137,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="172"/>
+        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="177"/>
         <source>Pause decoding at %Ln ms</source>
         <translation>
             <numerusform>Pause decoding at %Ln ms</numerusform>
@@ -148,7 +148,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1513"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1514"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -159,7 +159,7 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="699"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="732"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
