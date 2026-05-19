@@ -82,7 +82,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, PlaylistHandler* pl
     , m_fadeCoverChanges{false}
     , m_fadeController{new PixmapFadeController(this)}
     , m_coverRequestId{0}
-    , m_noCover{m_coverProvider->placeholderCover()}
+    , m_noCover{m_coverProvider->placeholderCover(m_coverType)}
 {
     setObjectName(CoverWidget::name());
 
@@ -98,6 +98,10 @@ CoverWidget::CoverWidget(PlayerController* playerController, PlaylistHandler* pl
                      &CoverWidget::handleSelectionChanged);
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &CoverWidget::reloadCover,
                      Qt::QueuedConnection);
+    QObject::connect(m_coverProvider, &CoverProvider::placeholderChanged, this, [this]() {
+        m_noCover = m_coverProvider->placeholderCover(m_coverType);
+        reloadCover();
+    });
 
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverDisplayOption>(this, [this](const int option) {
         m_displayOption = static_cast<SelectionDisplay>(option);
@@ -168,6 +172,7 @@ void CoverWidget::applyConfig(const ConfigData& config)
     }
 
     if(coverTypeChanged) {
+        m_noCover = m_coverProvider->placeholderCover(m_coverType);
         reloadCover();
         return;
     }

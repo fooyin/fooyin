@@ -30,15 +30,12 @@
 #include <utils/stringutils.h>
 
 #include <QButtonGroup>
-#include <QDir>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSpinBox>
-#include <QTabWidget>
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;

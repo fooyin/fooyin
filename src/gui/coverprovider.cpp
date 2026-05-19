@@ -45,6 +45,7 @@ CoverProvider::CoverProvider(std::shared_ptr<AudioLoader> audioLoader, SettingsM
     p->m_repository      = p->m_ownedRepository.get();
 
     QObject::connect(p->m_repository, &CoverRepository::coverAdded, this, &CoverProvider::coverAdded);
+    QObject::connect(p->m_repository, &CoverRepository::placeholderChanged, this, &CoverProvider::placeholderChanged);
 }
 
 CoverProvider::CoverProvider(CoverRepository* repository, QObject* parent)
@@ -52,6 +53,7 @@ CoverProvider::CoverProvider(CoverRepository* repository, QObject* parent)
     , p{std::make_unique<CoverProviderPrivate>(repository)}
 {
     QObject::connect(p->m_repository, &CoverRepository::coverAdded, this, &CoverProvider::coverAdded);
+    QObject::connect(p->m_repository, &CoverRepository::placeholderChanged, this, &CoverProvider::placeholderChanged);
 }
 
 CoverProvider::~CoverProvider() = default;
@@ -78,7 +80,7 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
         return cover;
     }
 
-    return p->m_usePlaceholder ? p->m_repository->placeholderCover() : QPixmap{};
+    return p->m_usePlaceholder ? p->m_repository->placeholderCover(type) : QPixmap{};
 }
 
 QFuture<QPixmap> CoverProvider::trackCoverFull(const Track& track, Track::Cover type) const
@@ -109,7 +111,7 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, ThumbnailSize siz
         return cover;
     }
 
-    return p->m_usePlaceholder ? p->m_repository->placeholderCover(size) : QPixmap{};
+    return p->m_usePlaceholder ? p->m_repository->placeholderCover(type, size) : QPixmap{};
 }
 
 QPixmap CoverProvider::trackCoverThumbnail(const Track& track, const QSize& size, Track::Cover type) const
@@ -117,9 +119,9 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, const QSize& size
     return trackCoverThumbnail(track, findThumbnailSize(size), type);
 }
 
-QPixmap CoverProvider::placeholderCover() const
+QPixmap CoverProvider::placeholderCover(Track::Cover type) const
 {
-    return p->m_repository->placeholderCover();
+    return p->m_repository->placeholderCover(type);
 }
 
 CoverRepository* CoverProvider::repository() const

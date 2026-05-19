@@ -90,8 +90,9 @@ public:
                                               Track::Cover type                             = Track::Cover::Front,
                                               std::optional<ArtworkSourcePreference> source = {}) const;
 
-    /** Returns the placeholder cover pixmap for @p size. */
-    [[nodiscard]] QPixmap placeholderCover(ThumbnailSize size = ThumbnailSize::None) const;
+    /** Returns the placeholder cover pixmap for @p type and @p size. */
+    [[nodiscard]] QPixmap placeholderCover(Track::Cover type  = Track::Cover::Front,
+                                           ThumbnailSize size = ThumbnailSize::None) const;
 
     /*!
      * Returns the grouped artwork key used for thumbnails of @p track.
@@ -133,6 +134,8 @@ public:
 Q_SIGNALS:
     /** Emitted after an asynchronous load adds artwork for @p track to the cache. */
     void coverAdded(const Fooyin::Track& track);
+    /** Emitted when the configured placeholder artwork changes. */
+    void placeholderChanged();
 
 private:
     std::unique_ptr<CoverRepositoryPrivate> p;

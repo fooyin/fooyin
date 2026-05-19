@@ -66,6 +66,13 @@ constexpr auto MaxActivePixmapRequests = 3;
 
 namespace Fooyin {
 namespace {
+std::vector<ThumbnailSize> placeholderSizes()
+{
+    return {ThumbnailSize::None,    ThumbnailSize::Tiny,  ThumbnailSize::Small,     ThumbnailSize::MediumSmall,
+            ThumbnailSize::Medium,  ThumbnailSize::Large, ThumbnailSize::VeryLarge, ThumbnailSize::ExtraLarge,
+            ThumbnailSize::XxLarge, ThumbnailSize::Huge,  ThumbnailSize::Full};
+}
+
 QString generateGroupedCoverKey(const QString& group, Track::Cover type, ArtworkSourcePreference sourcePreference)
 {
     return Utils::generateHash(u"FyCover|%1|%2"_s.arg(static_cast<int>(type)).arg(static_cast<int>(sourcePreference)),
@@ -98,14 +105,10 @@ QString coverThumbnailPath(const QString& key)
     return Gui::coverPath() + key + u".jpg"_s;
 }
 
-QString noCoverCacheKey(int size)
+QString noCoverCacheKey(Track::Cover type, int size)
 {
-    return size > 0 ? u"|NoCover|%1"_s.arg(size) : u"|NoCover|"_s;
-}
-
-QString noCoverCacheKey(ThumbnailSize size)
-{
-    return noCoverCacheKey(coverThumbnailPixelSize(size));
+    return size > 0 ? u"|NoCover|%1|%2"_s.arg(static_cast<int>(type)).arg(size)
+                    : u"|NoCover|%1|"_s.arg(static_cast<int>(type));
 }
 
 template <typename T>
@@ -457,7 +460,7 @@ public:
     explicit CoverRepositoryPrivate(CoverRepository* self, std::shared_ptr<AudioLoader> audioLoader,
                                     SettingsManager* settings);
 
-    QPixmap loadNoCover(ThumbnailSize size = ThumbnailSize::None);
+    QPixmap loadNoCover(Track::Cover type = Track::Cover::Front, ThumbnailSize size = ThumbnailSize::None);
     [[nodiscard]] ArtworkSourcePreference sourcePreference(std::optional<ArtworkSourcePreference> source) const;
     QPixmap processLoadResult(const CoverLoader& loader);
     static QPixmap processOriginalLoadResult(const CoverLoader& loader);
@@ -484,6 +487,7 @@ public:
                                             ArtworkSourcePreference sourcePreference) const;
     bool shouldRetryNoCover(const QString& key);
     void clearNoCoverRetry(const QString& key);
+    void clearPlaceholderCache();
     void pinLoadedThumbnail(const QString& key, const QPixmap& cover);
     void touchPinnedThumbnail(std::map<QString, PinnedThumbnail>::iterator thumbnail);
     void evictLeastRecentlyUsedPinnedThumbnail();
@@ -502,7 +506,6 @@ public:
     CoverPaths m_paths;
     ArtworkSourcePreference m_sourcePreference;
     QString m_thumbnailGroupScript;
-
     QCache<QString, QPixmap> m_coverCache;
     std::set<QString> m_noCoverKeys;
     std::unordered_map<QObject*, std::set<QString>> m_visibleThumbnailKeys;
@@ -527,8 +530,11 @@ CoverRepositoryPrivate::CoverRepositoryPrivate(CoverRepository* self, std::share
     updateCache(m_settings->value<Settings::Gui::Internal::PixmapCacheSize>());
     m_settings->subscribe<Settings::Gui::Internal::PixmapCacheSize>(m_self, updateCache);
 
-    m_settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
-        m_self, [this](const QVariant& var) { m_paths = var.value<CoverPaths>(); });
+    m_settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(m_self, [this](const QVariant& var) {
+        m_paths = var.value<CoverPaths>();
+        clearPlaceholderCache();
+        Q_EMIT m_self->placeholderChanged();
+    });
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverSourcePreference>(
         m_self, [this](int preference) { m_sourcePreference = static_cast<ArtworkSourcePreference>(preference); });
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>(m_self, [this](QString script) {
@@ -536,12 +542,8 @@ CoverRepositoryPrivate::CoverRepositoryPrivate(CoverRepository* self, std::share
         m_noCoverKeys.clear();
     });
     m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() {
-        for(const auto size :
-            {ThumbnailSize::None, ThumbnailSize::Tiny, ThumbnailSize::Small, ThumbnailSize::MediumSmall,
-             ThumbnailSize::Medium, ThumbnailSize::Large, ThumbnailSize::VeryLarge, ThumbnailSize::ExtraLarge,
-             ThumbnailSize::XxLarge, ThumbnailSize::Huge, ThumbnailSize::Full}) {
-            m_coverCache.remove(noCoverCacheKey(size));
-        }
+        clearPlaceholderCache();
+        Q_EMIT m_self->placeholderChanged();
     });
 }
 
@@ -561,15 +563,35 @@ QString CoverRepositoryPrivate::thumbnailCoverKey(const Track& track, Track::Cov
     return generateGroupedCoverKey(group, type, sourcePreference);
 }
 
-QPixmap CoverRepositoryPrivate::loadNoCover(const ThumbnailSize size)
+QPixmap CoverRepositoryPrivate::loadNoCover(Track::Cover type, const ThumbnailSize size)
 {
     const int coverSize    = size == ThumbnailSize::None ? MaxSize : coverThumbnailPixelSize(size);
-    const QString cacheKey = noCoverCacheKey(coverSize);
+    const QString cacheKey = noCoverCacheKey(type, coverSize);
     if(auto* cover = m_coverCache.object(cacheKey)) {
         return *cover;
     }
 
-    const QIcon icon = Fooyin::Gui::iconFromTheme(Fooyin::Constants::Icons::NoCover);
+    QString placeholder;
+    if(type == Track::Cover::Back) {
+        placeholder = m_paths.backPlaceholder;
+    }
+    else if(type == Track::Cover::Artist) {
+        placeholder = m_paths.artistPlaceholder;
+    }
+    else {
+        placeholder = m_paths.frontPlaceholder;
+    }
+
+    if(!placeholder.isEmpty()) {
+        if(const QImage image = readImage(placeholder, coverSize, u"placeholder"_s); !image.isNull()) {
+            QPixmap cover = QPixmap::fromImage(image);
+            cover.setDevicePixelRatio(Utils::windowDpr());
+            cachePixmap(cacheKey, cover);
+            return cover;
+        }
+    }
+
+    const QIcon icon = Gui::iconFromTheme(Constants::Icons::NoCover);
     const QSize requestedSize{coverSize, coverSize};
 
     auto* cover    = new QPixmap(icon.pixmap(requestedSize, Utils::windowDpr()));
@@ -580,6 +602,16 @@ QPixmap CoverRepositoryPrivate::loadNoCover(const ThumbnailSize size)
     }
 
     return {};
+}
+
+void CoverRepositoryPrivate::clearPlaceholderCache()
+{
+    for(const auto type : {Track::Cover::Front, Track::Cover::Back, Track::Cover::Artist}) {
+        for(const auto size : placeholderSizes()) {
+            const int coverSize = size == ThumbnailSize::None ? MaxSize : coverThumbnailPixelSize(size);
+            m_coverCache.remove(noCoverCacheKey(type, coverSize));
+        }
+    }
 }
 
 QPixmap CoverRepositoryPrivate::processLoadResult(const CoverLoader& loader)
@@ -1106,9 +1138,9 @@ QPixmap CoverRepository::trackCoverThumbnail(const Track& track, const QSize& si
     return trackCoverThumbnail(track, coverThumbnailSizeFor(size), type, source);
 }
 
-QPixmap CoverRepository::placeholderCover(ThumbnailSize size) const
+QPixmap CoverRepository::placeholderCover(Track::Cover type, ThumbnailSize size) const
 {
-    return p->loadNoCover(size);
+    return p->loadNoCover(type, size);
 }
 
 QString CoverRepository::thumbnailCoverKey(const Track& track, Track::Cover type,

@@ -44,23 +44,57 @@ enum class SelectionDisplay : uint8_t
 
 struct CoverPaths
 {
+    static constexpr qint32 Magic   = -0x434F5650;
+    static constexpr qint32 Version = 1;
+
     QStringList frontCoverPaths;
     QStringList backCoverPaths;
     QStringList artistPaths;
+    QString frontPlaceholder;
+    QString backPlaceholder;
+    QString artistPlaceholder;
 
     friend QDataStream& operator<<(QDataStream& stream, const CoverPaths& paths)
     {
+        stream << Magic;
+        stream << Version;
         stream << paths.frontCoverPaths;
         stream << paths.backCoverPaths;
         stream << paths.artistPaths;
+        stream << paths.frontPlaceholder;
+        stream << paths.backPlaceholder;
+        stream << paths.artistPlaceholder;
         return stream;
     }
 
     friend QDataStream& operator>>(QDataStream& stream, CoverPaths& paths)
     {
+        qint32 magic{0};
+        qint32 version{0};
+
+        stream.startTransaction();
+        stream >> magic;
+        stream >> version;
+
+        if(magic == Magic && version == Version) {
+            stream >> paths.frontCoverPaths;
+            stream >> paths.backCoverPaths;
+            stream >> paths.artistPaths;
+            stream >> paths.frontPlaceholder;
+            stream >> paths.backPlaceholder;
+            stream >> paths.artistPlaceholder;
+
+            if(stream.commitTransaction()) {
+                return stream;
+            }
+        }
+
+        stream.rollbackTransaction();
+
         stream >> paths.frontCoverPaths;
         stream >> paths.backCoverPaths;
         stream >> paths.artistPaths;
+
         return stream;
     }
 };

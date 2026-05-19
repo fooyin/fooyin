@@ -121,7 +121,7 @@ public:
                                               Track::Cover type = Track::Cover::Front) const;
 
     // Returns the placeholder cover used if a track doesn't have any artwork
-    [[nodiscard]] QPixmap placeholderCover() const;
+    [[nodiscard]] QPixmap placeholderCover(Track::Cover type = Track::Cover::Front) const;
     /** Returns the shared repository used by this provider. */
     [[nodiscard]] CoverRepository* repository() const;
 
@@ -165,6 +165,8 @@ Q_SIGNALS:
     /** Emitted after a @fn trackCover or @fn trackCoverThumbnail call if and when the cover is added to the cache. */
 
     void coverAdded(const Fooyin::Track& track);
+    /** Emitted when the configured placeholder artwork changes. */
+    void placeholderChanged();
 
 private:
     std::unique_ptr<CoverProviderPrivate> p;
