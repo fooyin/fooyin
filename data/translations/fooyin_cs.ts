@@ -31,7 +31,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat do seznamu stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
@@ -157,7 +157,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat do seznamu stop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
@@ -1057,17 +1057,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="386"/>
         <source>Checks if text contains only alphabetic characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkontroluje, zda text obsahuje pouze abecední znaky</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="389"/>
         <source>Checks if text contains only alphanumeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkontroluje, zda text obsahuje pouze alfanumerické znaky</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="392"/>
         <source>Checks if text contains only numeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkontroluje, zda text obsahuje pouze číselné znaky</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
@@ -2572,7 +2572,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="720"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat do seznamu stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="193"/>
@@ -3114,18 +3114,18 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/gui/editablelayout.cpp" line="392"/>
         <location filename="../../src/gui/editablelayout.cpp" line="407"/>
         <source>Insert &amp;before</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit &amp;před</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="397"/>
         <location filename="../../src/gui/editablelayout.cpp" line="412"/>
         <source>Insert &amp;after</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit &amp;za</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="419"/>
         <source>Insert &amp;inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit &amp;do</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
@@ -4015,12 +4015,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="82"/>
         <source>File Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Operace se soubory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
         <source>Confirm before deleting tracks</source>
-        <translation type="unfinished">Potvrdit smazání skladeb</translation>
+        <translation>Potvrdit smazání skladeb</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="100"/>
@@ -4459,7 +4459,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="295"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat do seznamu stop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="333"/>
@@ -6744,7 +6744,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="787"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat do seznamu stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="922"/>
@@ -9712,7 +9712,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="523"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat do jiného seznamu stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="692"/>
@@ -13234,12 +13234,12 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="59"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalizovat křivku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="60"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Měřítko v dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="63"/>
@@ -13337,47 +13337,47 @@ Supersampling je určen pro pruhy s šířkou 1px a mezerou 0px; jiné hodnoty m
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="129"/>
         <source>Amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Amplituda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="138"/>
         <source>Scale the displayed waveform so the loudest peak reaches full height</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformovat zobrazenou křivku tak, aby nejhlasitější špička dosahovala plné výšky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="139"/>
         <source>Use a decibel scale to make quieter waveform details more visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít měřítko v dB tak, aby byly tišší části křivky lépe viditelné</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="152"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="153"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>Průměr</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="154"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyrovnaný průměr</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="155"/>
         <source>How peaks are combined when waveform data is scaled to the current width</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak kombinovat špičky při škálování křivky na aktuální šířku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="159"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazení špiček</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="173"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>Vykreslování</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="184"/>
@@ -13547,32 +13547,32 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="573"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalizovat křivku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="582"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Měřítko v dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="591"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazení špiček</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="594"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="595"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>Průměr</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="596"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyrovnaný průměr</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="630"/>
@@ -13792,17 +13792,17 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/widgets.cpp" line="431"/>
         <source>Seeking</source>
-        <translation type="unfinished">Přetáčení</translation>
+        <translation>Přetáčení</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="432"/>
         <source>Focus seekbars when clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Po kliknutí aktivovat časové lišty</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="433"/>
         <source>Give seekbars keyboard focus after clicking them.</source>
-        <translation type="unfinished"></translation>
+        <translation>Po kliknutí na časové lišty pro ně aktivovat ovládání klávesnicí.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="438"/>
@@ -13946,7 +13946,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat do seznamu stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="189"/>
@@ -14034,7 +14034,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="130"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat do jiného seznamu stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="133"/>

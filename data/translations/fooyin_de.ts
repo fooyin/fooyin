@@ -31,7 +31,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
@@ -157,7 +157,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
@@ -489,12 +489,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="203"/>
         <source>ReplayGain track peak</source>
-        <translation>ReplayGain Titelmaximum</translation>
+        <translation>ReplayGain Titelspitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
         <source>ReplayGain track peak in dB</source>
-        <translation>ReplayGain Titelmaximum in dB</translation>
+        <translation>ReplayGain Titelspitzenwert in dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
@@ -504,12 +504,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>ReplayGain album peak</source>
-        <translation>ReplayGain Albummaximum</translation>
+        <translation>ReplayGain Albumspitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
         <source>ReplayGain album peak in dB</source>
-        <translation>ReplayGain Albummaximum in dB</translation>
+        <translation>ReplayGain Albumspitzenwert in dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="212"/>
@@ -1057,17 +1057,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="386"/>
         <source>Checks if text contains only alphabetic characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüft, ob der Text nur Buchstaben enthält</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="389"/>
         <source>Checks if text contains only alphanumeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüft, ob der Text nur Buchstaben und Zahlen enthält</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="392"/>
         <source>Checks if text contains only numeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüft, ob der Text nur Zahlen enthält</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
@@ -2568,7 +2568,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="720"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="193"/>
@@ -3110,18 +3110,18 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/editablelayout.cpp" line="392"/>
         <location filename="../../src/gui/editablelayout.cpp" line="407"/>
         <source>Insert &amp;before</source>
-        <translation type="unfinished"></translation>
+        <translation>%Davor einsetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="397"/>
         <location filename="../../src/gui/editablelayout.cpp" line="412"/>
         <source>Insert &amp;after</source>
-        <translation type="unfinished"></translation>
+        <translation>D&amp;anach einsetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="419"/>
         <source>Insert &amp;inside</source>
-        <translation type="unfinished"></translation>
+        <translation>H&amp;inein einsetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
@@ -4007,12 +4007,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="82"/>
         <source>File Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateioperationen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
         <source>Confirm before deleting tracks</source>
-        <translation type="unfinished">Löschen von Titeln bestätigen</translation>
+        <translation>Löschen von Titeln bestätigen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="100"/>
@@ -4450,7 +4450,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="295"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="333"/>
@@ -6732,7 +6732,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="787"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="922"/>
@@ -9696,7 +9696,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="523"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu einer anderen Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="692"/>
@@ -10468,12 +10468,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="52"/>
         <source>Track Peak</source>
-        <translation>Titel-Spitzenwert</translation>
+        <translation>Titelspitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="54"/>
         <source>Album Peak</source>
-        <translation>Album-Spitzenwert</translation>
+        <translation>Albumspitzenwert</translation>
     </message>
 </context>
 <context>
@@ -10636,7 +10636,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="161"/>
         <source>Track Peak</source>
-        <translation>Titel-Spitzenwert</translation>
+        <translation>Titelspitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="163"/>
@@ -10646,7 +10646,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="165"/>
         <source>Album Peak</source>
-        <translation>Album-Spitzenwert</translation>
+        <translation>Albumspitzenwert</translation>
     </message>
 </context>
 <context>
@@ -10776,7 +10776,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="126"/>
         <source>Track Peak</source>
-        <translation>Titel-Spitzenwert</translation>
+        <translation>Titelspitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="129"/>
@@ -10787,7 +10787,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="132"/>
         <source>Album Peak</source>
-        <translation>Album-Spitzenwert</translation>
+        <translation>Albumspitzenwert</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="171"/>
@@ -13214,12 +13214,12 @@ Hier wird kein vollständiges Skripten unterstützt.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="59"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>Wellenform normalisieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="60"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>dB-Skala</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="63"/>
@@ -13317,47 +13317,47 @@ Supersampling ist auf Balkendicke 1 px und Balkenlücke 0 px ausgelegt; andere E
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="129"/>
         <source>Amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Amplitude</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="138"/>
         <source>Scale the displayed waveform so the loudest peak reaches full height</source>
-        <translation type="unfinished"></translation>
+        <translation>Skaliere die angezeigte Wellenform so, dass der lauteste Spitzenwert die maximale Skalierung erreicht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="139"/>
         <source>Use a decibel scale to make quieter waveform details more visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende eine Dezibel-Skala, um leise Details der Wellenform sichtbarer zu machen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="152"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="153"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>Mittelwert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="154"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>Geglätteter Mittelwert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="155"/>
         <source>How peaks are combined when waveform data is scaled to the current width</source>
-        <translation type="unfinished"></translation>
+        <translation>Wie Spitzenwerte kombiniert werden, wenn Wellenform-Daten auf die aktuelle Breite skaliert werden</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="159"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>Spitzenwert-Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="173"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>Rendering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="184"/>
@@ -13527,32 +13527,32 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="573"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>Wellenform normalisieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="582"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>dB-Skala</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="591"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>Spitzenwert-Anzeige</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="594"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="595"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>Mittelwert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="596"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>Geglätteter Mittelwert</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="630"/>
@@ -13772,17 +13772,17 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/widgets.cpp" line="431"/>
         <source>Seeking</source>
-        <translation type="unfinished">Spulen</translation>
+        <translation>Spulen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="432"/>
         <source>Focus seekbars when clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Fokussiere Fortschrittsleiste beim Klicken</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="433"/>
         <source>Give seekbars keyboard focus after clicking them.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gib Fortschrittsleisten den Tastaturfokus, nachdem sie geklickt wurden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="438"/>
@@ -13926,7 +13926,7 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="189"/>
@@ -14014,7 +14014,7 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="130"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu einer anderen Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="133"/>

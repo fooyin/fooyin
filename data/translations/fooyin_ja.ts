@@ -31,7 +31,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
@@ -71,7 +71,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="365"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>チェックを外したものはディレクトリブラウザのコンテクストメニューから隠されます。</translation>
     </message>
 </context>
 <context>
@@ -129,7 +129,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="376"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>チェックを外したものはレイアウト編集のコンテクストメニューから隠されます。</translation>
     </message>
 </context>
 <context>
@@ -157,7 +157,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
@@ -197,7 +197,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="56"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>チェックを外したものはライブラリフィルターのコンテクストメニューから隠されます。</translation>
     </message>
 </context>
 <context>
@@ -2563,7 +2563,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="720"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="193"/>
@@ -4438,7 +4438,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="295"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="333"/>
@@ -6709,7 +6709,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="787"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="922"/>
@@ -9626,7 +9626,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="56"/>
         <source>Show add button</source>
-        <translation type="unfinished"></translation>
+        <translation>追加ボタンを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="57"/>
@@ -9667,7 +9667,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="523"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>他のプレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="692"/>
@@ -13887,7 +13887,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="189"/>
@@ -13975,7 +13975,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="130"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>他のプレイリストに追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="133"/>
