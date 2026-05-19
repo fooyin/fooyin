@@ -25,6 +25,7 @@
 #include "functions/timefuncs.h"
 #include "functions/tracklistfuncs.h"
 #include "scriptbinder.h"
+#include "version.h"
 
 #include <core/constants.h>
 #include <core/playlist/playlist.h>
@@ -208,6 +209,11 @@ Fooyin::ScriptResult dateTimeVariable()
 {
     const QString value = QDateTime::currentDateTime().toString(u"yyyy-MM-dd hh:mm:ss"_s);
     return {.value = value, .cond = !value.isEmpty()};
+}
+
+QString fooyinVersionVariable()
+{
+    return QString::fromLatin1(VERSION);
 }
 
 Fooyin::ScriptContext makeContext(const Fooyin::ScriptContext& base, const Fooyin::Track* track,
@@ -1004,6 +1010,7 @@ ScriptRegistry::ScriptRegistry()
     registerFunction(u"meta_num"_s, makeScriptFunctionInvoker<trackMetaNum>());
 
     registerVariable(VariableKind::Generic, u"datetime"_s, makeScriptVariableInvoker<dateTimeVariable>());
+    registerVariable(VariableKind::Generic, u"_fooyin_version"_s, makeScriptVariableInvoker<fooyinVersionVariable>());
 }
 
 ScriptRegistry::~ScriptRegistry() = default;
