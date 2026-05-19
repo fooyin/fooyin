@@ -254,7 +254,9 @@ bool TagEditorItem::setValue(const QString& newValue, const QStringList& separat
                                             : (normaliseSingleValue(currentValue) == normaliseSingleValue(newValue));
 
     if(sameValue) {
-        if(status() == None
+        const bool appliesPreviewToMixedTracks = status() == None && m_trackCount > 1 && m_multipleValues;
+
+        if(status() == None && !appliesPreviewToMixedTracks
            && (!isMultiValueEdit || m_values == values
                || (m_values.size() == 1 && m_values.front().isEmpty() && values.empty()))) {
             return false;

@@ -670,7 +670,13 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         }
 
         if(role == Qt::EditRole) {
-            return item->valueChanged() ? item->changedValue() : item->value();
+            if(item->valueChanged()) {
+                return item->changedValue();
+            }
+            if(item->trackCount() > 1 && item->multipleValues()) {
+                return item->displayValue();
+            }
+            return item->value();
         }
 
         return item->valueChanged() ? item->changedDisplayValue() : item->displayValue();
@@ -723,6 +729,9 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
             if(index.row() == p->m_ratingRow) {
                 const auto rating = value.value<StarRating>();
                 setValue          = rating.rating() == 0 ? QString{} : QString::number(rating.rating());
+            }
+            else if(setValue.startsWith(QLatin1StringView{MultipleValuesPrefix})) {
+                return false;
             }
 
             if(!item->setValue(setValue, p->multiValueSeparators())) {
