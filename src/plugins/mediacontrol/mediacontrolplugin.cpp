@@ -237,7 +237,7 @@ void MediaControlPlugin::updateDisplay()
             genres.Append(track.genreAt(index).toStdWString());
         }
 
-        m_coverProvider->trackCoverThumbnailAsync(track, CoverProvider::Medium, Track::Cover::Front)
+        m_coverProvider->trackCoverThumbnailAsync(track, ThumbnailSize::Medium, Track::Cover::Front)
             .then([this, updater](const QPixmap& cover) {
                 if(!ensureSmtc()) {
                     return;

@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include "coverartworktypes.h"
 #include "fygui_export.h"
 
 #include <core/track.h>
+#include <gui/coverartworktypes.h>
 
 #include <QFuture>
 #include <QObject>
