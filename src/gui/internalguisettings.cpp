@@ -37,7 +37,7 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr int PixmapCacheSize = 64;
+constexpr int PixmapCacheSize = 128;
 
 namespace {
 Fooyin::CoverPaths defaultCoverPaths()
@@ -61,9 +61,21 @@ Fooyin::ArtworkSaveMethods defaultArtworkSaveMethods()
 {
     Fooyin::ArtworkSaveMethods methods;
 
-    methods[Fooyin::Track::Cover::Front]  = {Fooyin::ArtworkSaveMethod::Directory, u"%path%"_s, u"cover"_s, {}, 90};
-    methods[Fooyin::Track::Cover::Back]   = {Fooyin::ArtworkSaveMethod::Directory, u"%path%"_s, u"back"_s, {}, 90};
-    methods[Fooyin::Track::Cover::Artist] = {Fooyin::ArtworkSaveMethod::Directory, u"%path%"_s, u"artist"_s, {}, 90};
+    methods[Fooyin::Track::Cover::Front]  = {.method   = Fooyin::ArtworkSaveMethod::Directory,
+                                             .dir      = u"%path%"_s,
+                                             .filename = u"cover"_s,
+                                             .format   = {},
+                                             .quality  = 90};
+    methods[Fooyin::Track::Cover::Back]   = {.method   = Fooyin::ArtworkSaveMethod::Directory,
+                                             .dir      = u"%path%"_s,
+                                             .filename = u"back"_s,
+                                             .format   = {},
+                                             .quality  = 90};
+    methods[Fooyin::Track::Cover::Artist] = {.method   = Fooyin::ArtworkSaveMethod::Directory,
+                                             .dir      = u"%path%"_s,
+                                             .filename = u"artist"_s,
+                                             .format   = {},
+                                             .quality  = 90};
 
     return methods;
 }
@@ -151,8 +163,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistBackgroundFadeDuration>(0, u"PlaylistWidget/BackgroundFadeDuration"_s);
     m_settings->createSetting<Internal::PlaylistBackgroundCoverType>(static_cast<int>(Track::Cover::Front),
                                                                      u"PlaylistWidget/BackgroundCoverType"_s);
-    m_settings->createSetting<Internal::PixmapCacheSize>(
-        static_cast<int>(PixmapCacheSize * std::pow(qApp->devicePixelRatio(), 2)), u"Interface/PixmapCacheSize"_s);
+    m_settings->createSetting<Internal::PixmapCacheSize>(PixmapCacheSize, u"Interface/PixmapCacheSize"_s);
     m_settings->createSetting<Internal::EditableLayoutMargin>(-1, u"Interface/EditableLayoutMargin"_s);
     m_settings->createSetting<Internal::PlaylistTabsAddButton>(false, u"PlaylistTabs/ShowAddButton"_s);
     m_settings->createSetting<Internal::ShowTrayIcon>(false, u"Interface/ShowTrayIcon"_s);
