@@ -35,6 +35,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QIODevice>
+#include <QtEndian>
 
 #include <cstring>
 
@@ -56,9 +57,11 @@ using namespace Qt::StringLiterals;
 constexpr AVRational TimeBaseAv           = {.num = 1, .den = AV_TIME_BASE};
 constexpr AVRational TimeBaseMs           = {.num = 1, .den = 1000};
 constexpr auto MaxConsecutiveDecodeErrors = 8;
+constexpr auto ApeTagFooterSize           = 32;
 
 using namespace std::chrono_literals;
 
+namespace Fooyin {
 namespace {
 enum class TagType : uint8_t
 {
@@ -80,7 +83,7 @@ QStringList fileExtensions(bool allSupported)
 {
     QStringList extensions{u"mp3"_s,  u"ogg"_s,  u"opus"_s, u"oga"_s, u"m4a"_s, u"m4b"_s,  u"wav"_s,
                            u"wv"_s,   u"flac"_s, u"wma"_s,  u"asf"_s, u"mpc"_s, u"aiff"_s, u"ape"_s,
-                           u"webm"_s, u"mp4"_s,  u"mka"_s,  u"dsf"_s, u"dff"_s, u"wv"_s};
+                           u"webm"_s, u"mp4"_s,  u"mka"_s,  u"dsf"_s, u"dff"_s, u"tak"_s};
 
     if(!allSupported) {
         return extensions;
@@ -115,10 +118,10 @@ QStringList fileExtensions(bool allSupported)
 
 QStringList ffmpegPreferredExtensions()
 {
-    const Fooyin::FySettings settings;
+    const FySettings settings;
     return settings
-        .value(Fooyin::Settings::Core::Internal::FFmpegPriorityExtensions,
-               Fooyin::Settings::Core::Internal::defaultFFmpegPriorityExtensions())
+        .value(Settings::Core::Internal::FFmpegPriorityExtensions,
+               Settings::Core::Internal::defaultFFmpegPriorityExtensions())
         .toStringList();
 }
 
@@ -137,6 +140,8 @@ QString getCodec(AVCodecID codec)
             return u"WavPack"_s;
         case AV_CODEC_ID_FLAC:
             return u"FLAC"_s;
+        case AV_CODEC_ID_TAK:
+            return u"TAK"_s;
         case AV_CODEC_ID_OPUS:
             return u"Opus"_s;
         case AV_CODEC_ID_VORBIS:
@@ -156,13 +161,14 @@ bool isLossless(AVCodecID codec)
         case AV_CODEC_ID_ALAC:
         case AV_CODEC_ID_WAVPACK:
         case AV_CODEC_ID_FLAC:
+        case AV_CODEC_ID_TAK:
             return true;
         default:
             return false;
     }
 }
 
-bool canBeVBR(const Fooyin::Track& track, AVCodecID codec)
+bool canBeVBR(const Track& track, AVCodecID codec)
 {
     if(track.codecProfile().contains("VBR"_L1) || track.codecProfile().contains("ABR"_L1)) {
         return true;
@@ -181,7 +187,7 @@ bool canBeVBR(const Fooyin::Track& track, AVCodecID codec)
     }
 }
 
-void readTrackTotalPair(const QString& trackNumbers, Fooyin::Track& track)
+void readTrackTotalPair(const QString& trackNumbers, Track& track)
 {
     const qsizetype splitIdx = trackNumbers.indexOf(u'/');
     if(splitIdx >= 0) {
@@ -193,7 +199,7 @@ void readTrackTotalPair(const QString& trackNumbers, Fooyin::Track& track)
     }
 }
 
-void readDiscTotalPair(const QString& discNumbers, Fooyin::Track& track)
+void readDiscTotalPair(const QString& discNumbers, Track& track)
 {
     const qsizetype splitIdx = discNumbers.indexOf(u'/');
     if(splitIdx >= 0) {
@@ -220,14 +226,14 @@ float parseReplayGain(const QString& gainStr)
 
     bool ok{false};
     const float gain = string.toFloat(&ok);
-    return (ok && std::isfinite(gain)) ? gain : Fooyin::Constants::InvalidGain;
+    return (ok && std::isfinite(gain)) ? gain : Constants::InvalidGain;
 }
 
 float parseReplayPeak(const QString& peakStr)
 {
     bool ok{false};
     const float peak = peakStr.toFloat(&ok);
-    return (ok && std::isfinite(peak)) ? peak : Fooyin::Constants::InvalidPeak;
+    return (ok && std::isfinite(peak)) ? peak : Constants::InvalidPeak;
 }
 
 enum class TagScope : uint8_t
@@ -235,6 +241,42 @@ enum class TagScope : uint8_t
     Global,
     Track
 };
+
+struct ApeTextItem
+{
+    QString key;
+    QStringList values;
+};
+
+struct ApeItem
+{
+    QString key;
+    uint32_t flags{0};
+    QByteArray value;
+};
+
+uint32_t readLe32(const QByteArray& data, qsizetype offset)
+{
+    return qFromLittleEndian<uint32_t>(data.constData() + offset);
+}
+
+bool isApeBinaryItem(uint32_t flags)
+{
+    const uint32_t itemType = (flags >> 1) & 0x3;
+    return itemType == 1 || itemType == 2;
+}
+
+QString normaliseTagKey(const QString& key)
+{
+    QString normalised = key.toUpper();
+    normalised.replace(u' ', u'_');
+    return normalised;
+}
+
+bool isAnyTag(const QString& key, std::initializer_list<QLatin1StringView> tags)
+{
+    return std::ranges::any_of(tags, [&key](QLatin1StringView tag) { return key == tag; });
+}
 
 TagType getTagType(QIODevice* device)
 {
@@ -304,148 +346,392 @@ bool supportsSlashSeparatedTextFields(TagType tagType)
     return tagType == ID3v1_1 || tagType == ID3v1_2 || tagType == ID3v2_2 || tagType == ID3v2_3;
 }
 
-void parseTag(Fooyin::Track& track, TagType tagType, const AVDictionaryEntry* tag, TagScope scope, int chapterCount,
-              const Fooyin::TagPolicy& policy)
+std::optional<std::vector<ApeItem>> readApeItems(QIODevice* device)
 {
-    using enum TagType;
+    if(device->size() < ApeTagFooterSize) {
+        return {};
+    }
 
-    const auto splitStandardField = [tagType, &policy](const QString& field, const QString& value) {
-        if(!supportsSlashSeparatedTextFields(tagType)) {
-            return QStringList{value};
+    auto apeOffset = device->size();
+
+    if(device->size() >= 128 && device->seek(device->size() - 128)) {
+        const auto footer = device->read(8);
+
+        if(footer.startsWith("TAG")) {
+            apeOffset = device->size() - 128;
+
+            if(device->size() >= 256 && device->seek(device->size() - 256)) {
+                const auto extFooter = device->read(8);
+
+                if(extFooter.startsWith("EXT")) {
+                    apeOffset = device->size() - 256;
+                }
+            }
         }
-        return Fooyin::Id3Utils::splitStandardField(field, {value},
-                                                    tagType == ID3v2_3 && policy.splitId3v23SemicolonSeparatedTags);
-    };
+    }
 
-    if(strcasecmp(tag->key, "album") == 0) {
-        track.setAlbum(convertString(tag->value));
+    if(apeOffset < ApeTagFooterSize || !device->seek(apeOffset - ApeTagFooterSize)) {
+        return {};
     }
-    else if(strcasecmp(tag->key, "artist") == 0) {
-        const QString artist = convertString(tag->value);
-        track.setArtists(splitStandardField(QString::fromLatin1(Fooyin::Tag::Artist), artist));
+
+    const QByteArray footer = device->read(ApeTagFooterSize);
+    if(footer.size() != ApeTagFooterSize || !footer.startsWith("APETAGEX"_L1)) {
+        return {};
     }
-    else if(strcasecmp(tag->key, "album_artist") == 0 || strcasecmp(tag->key, "album artist") == 0) {
-        const QString albumArtist = convertString(tag->value);
-        track.setAlbumArtists(splitStandardField(QString::fromLatin1(Fooyin::Tag::AlbumArtist), albumArtist));
+
+    static constexpr uint32_t ApeTagFlagIsHeader = 1 << 29;
+    static constexpr uint32_t ApeTagMaxSize      = 1024 * 1024 * 16;
+    static constexpr uint32_t ApeTagMaxFields    = 65536;
+
+    const uint32_t tagBytes = readLe32(footer, 12);
+    const uint32_t fields   = readLe32(footer, 16);
+    const uint32_t flags    = readLe32(footer, 20);
+    if((flags & ApeTagFlagIsHeader) != 0 || tagBytes < ApeTagFooterSize || tagBytes > ApeTagMaxSize
+       || fields > ApeTagMaxFields || std::cmp_greater(tagBytes, apeOffset)) {
+        return {};
     }
-    else if(strcasecmp(tag->key, "title") == 0) {
+
+    const qint64 itemPos = apeOffset - tagBytes;
+    const qint64 itemEnd = apeOffset - ApeTagFooterSize;
+    if(itemPos < 0 || itemPos > itemEnd || !device->seek(itemPos)) {
+        return {};
+    }
+
+    std::vector<ApeItem> items;
+    for(uint32_t i{0}; i < fields && device->pos() < itemEnd; ++i) {
+        const QByteArray header = device->read(8);
+        if(header.size() != 8) {
+            return {};
+        }
+
+        const uint32_t valueSize = readLe32(header, 0);
+        const uint32_t itemFlags = readLe32(header, 4);
+
+        QByteArray key;
+        while(device->pos() < itemEnd) {
+            char c{'\0'};
+            if(device->read(&c, 1) != 1) {
+                return {};
+            }
+            if(c == '\0'_L1) {
+                break;
+            }
+            if(static_cast<unsigned char>(c) < 0x20 || static_cast<unsigned char>(c) > 0x7e || key.size() >= 1023) {
+                return {};
+            }
+            key.append(c);
+        }
+
+        if(key.isEmpty() || std::cmp_greater(valueSize, itemEnd - device->pos())) {
+            return {};
+        }
+
+        const QByteArray value = device->read(valueSize);
+        if(std::cmp_not_equal(value.size(), valueSize)) {
+            return {};
+        }
+
+        items.emplace_back(QString::fromLatin1(key), itemFlags, value);
+    }
+
+    return items;
+}
+
+std::optional<std::vector<ApeTextItem>> readApeTextItems(QIODevice* device)
+{
+    const auto items = readApeItems(device);
+    if(!items) {
+        return {};
+    }
+
+    std::vector<ApeTextItem> textItems;
+    for(const ApeItem& item : *items) {
+        if(isApeBinaryItem(item.flags)) {
+            continue;
+        }
+
+        QStringList values;
+        const auto parts = item.value.split('\0');
+        for(const QByteArray& part : parts) {
+            const QString text = QString::fromUtf8(part).trimmed();
+            if(!text.isEmpty()) {
+                values.emplace_back(text);
+            }
+        }
+
+        if(!values.empty()) {
+            textItems.emplace_back(item.key, values);
+        }
+    }
+
+    return textItems;
+}
+
+QByteArray readApeCover(QIODevice* device, Track::Cover cover)
+{
+    const auto items = readApeItems(device);
+    if(!items) {
+        return {};
+    }
+
+    QString targetKey;
+    switch(cover) {
+        case Track::Cover::Front:
+            targetKey = u"COVER ART (FRONT)"_s;
+            break;
+        case Track::Cover::Back:
+            targetKey = u"COVER ART (BACK)"_s;
+            break;
+        case Track::Cover::Artist:
+            targetKey = u"COVER ART (ARTIST)"_s;
+            break;
+        case Track::Cover::Other:
+            return {};
+    }
+
+    for(const ApeItem& item : *items) {
+        if(!isApeBinaryItem(item.flags) || item.key.compare(targetKey, Qt::CaseInsensitive) != 0) {
+            continue;
+        }
+
+        const auto separator = item.value.indexOf('\0');
+        if(separator >= 0 && separator + 1 < item.value.size()) {
+            return item.value.sliced(separator + 1);
+        }
+    }
+
+    return {};
+}
+
+QStringList splitStandardField(TagType tagType, const TagPolicy& policy, const QString& field,
+                               const QStringList& values)
+{
+    if(!supportsSlashSeparatedTextFields(tagType)) {
+        return values;
+    }
+    return Id3Utils::splitStandardField(field, values,
+                                        tagType == TagType::ID3v2_3 && policy.splitId3v23SemicolonSeparatedTags);
+}
+
+QStringList splitExtraField(TagType tagType, const TagPolicy& policy, const QString& field, const QStringList& values)
+{
+    return tagType == TagType::ID3v2_3
+             ? Id3Utils::splitExtraField(field, values, policy.splitId3v23SemicolonSeparatedTags)
+             : values;
+}
+
+bool parseStandardTag(Track& track, TagType tagType, const TagPolicy& policy, const QString& key,
+                      const QStringList& values, TagScope scope, int chapterCount)
+{
+    const QString& firstValue = values.front();
+
+    if(key == "ALBUM"_L1) {
+        track.setAlbum(firstValue);
+        return true;
+    }
+    if(key == "ARTIST"_L1) {
+        track.setArtists(splitStandardField(tagType, policy, QString::fromLatin1(Tag::Artist), values));
+        return true;
+    }
+    if(isAnyTag(key, {"ALBUM_ARTIST"_L1, "ALBUMARTIST"_L1})) {
+        track.setAlbumArtists(splitStandardField(tagType, policy, QString::fromLatin1(Tag::AlbumArtist), values));
+        return true;
+    }
+    if(key == "TITLE"_L1) {
         if(scope == TagScope::Global && chapterCount > 1 && track.album().isEmpty()) {
-            track.setAlbum(convertString(tag->value));
+            track.setAlbum(firstValue);
         }
         else {
-            track.setTitle(convertString(tag->value));
+            track.setTitle(firstValue);
         }
+        return true;
     }
-    else if(strcasecmp(tag->key, "genre") == 0) {
-        const QString genre = convertString(tag->value);
-        track.setGenres(splitStandardField(QString::fromLatin1(Fooyin::Tag::Genre), genre));
+    if(key == "GENRE"_L1) {
+        track.setGenres(splitStandardField(tagType, policy, QString::fromLatin1(Fooyin::Tag::Genre), values));
+        return true;
     }
-    else if(strcasecmp(tag->key, "part_number") == 0 || strcasecmp(tag->key, "track") == 0) {
-        readTrackTotalPair(convertString(tag->value), track);
+    if(isAnyTag(key, {"COMPOSER"_L1, "TCOM"_L1})) {
+        track.setComposers(splitStandardField(tagType, policy, QString::fromLatin1(Fooyin::Tag::Composer), values));
+        return true;
     }
-    else if(strcasecmp(tag->key, "tracktotal") == 0 || strcasecmp(tag->key, "totaltracks") == 0) {
-        track.setTrackTotal(convertString(tag->value));
+    if(key == "PERFORMER"_L1) {
+        track.setPerformers(splitStandardField(tagType, policy, QString::fromLatin1(Fooyin::Tag::Performer), values));
+        return true;
     }
-    else if(strcasecmp(tag->key, "disc") == 0 || strcasecmp(tag->key, "discnumber") == 0) {
-        readDiscTotalPair(convertString(tag->value), track);
+    if(key == "COMMENT"_L1) {
+        track.setComment(firstValue);
+        return true;
     }
-    else if(strcasecmp(tag->key, "disctotal") == 0 || strcasecmp(tag->key, "totaldiscs") == 0) {
-        track.setDiscTotal(convertString(tag->value));
+
+    return false;
+}
+
+bool parseNumberOrDateTag(Track& track, const QString& key, const QString& value)
+{
+    if(isAnyTag(key, {"PART_NUMBER"_L1, "TRACK"_L1, "TRACKNUMBER"_L1})) {
+        readTrackTotalPair(value, track);
+        return true;
     }
-    else if(strcasecmp(tag->key, "date") == 0 || strcasecmp(tag->key, "TDRC") == 0
-            || strcasecmp(tag->key, "TDRL") == 0) {
-        track.setDate(convertString(tag->value));
+    if(isAnyTag(key, {"TRACKTOTAL"_L1, "TOTALTRACKS"_L1})) {
+        track.setTrackTotal(value);
+        return true;
     }
-    else if(strcasecmp(tag->key, "year") == 0) {
-        track.setYear(convertString(tag->value).toInt());
+    if(isAnyTag(key, {"DISC"_L1, "DISCNUMBER"_L1})) {
+        readDiscTotalPair(value, track);
+        return true;
     }
-    else if(strcasecmp(tag->key, "composer") == 0) {
-        const QString composer = convertString(tag->value);
-        track.setComposers(splitStandardField(QString::fromLatin1(Fooyin::Tag::Composer), composer));
+    if(isAnyTag(key, {"DISCTOTAL"_L1, "TOTALDISCS"_L1})) {
+        track.setDiscTotal(value);
+        return true;
     }
-    else if(strcasecmp(tag->key, "performer") == 0) {
-        const QString performer = convertString(tag->value);
-        track.setPerformers(splitStandardField(QString::fromLatin1(Fooyin::Tag::Performer), performer));
+    if(isAnyTag(key, {"DATE"_L1, "TDRC"_L1, "TDRL"_L1})) {
+        track.setDate(value);
+        return true;
     }
-    else if(strcasecmp(tag->key, "comment") == 0) {
-        track.setComment(convertString(tag->value));
-    }
-    else if(strcasecmp(tag->key, "encoder") == 0) {
-        track.setTool(convertString(tag->value));
-    }
-    else if(strcasecmp(tag->key, "FMPS_Rating") == 0) {
-        track.setRating(convertString(tag->value).toFloat());
-    }
-    else if(strcasecmp(tag->key, "TFLT") == 0) {
-        track.addExtraTag(u"FILETYPE"_s, convertString(tag->value));
-    }
-    else if(strcasecmp(tag->key, "TOLY") == 0) {
-        const QString tagName    = u"ORIGINALLYRICIST"_s;
-        const QStringList values = tagType == ID3v2_3
-                                     ? Fooyin::Id3Utils::splitExtraField(tagName, {convertString(tag->value)},
-                                                                         policy.splitId3v23SemicolonSeparatedTags)
-                                     : QStringList{convertString(tag->value)};
-        for(const QString& value : values) {
-            track.addExtraTag(tagName, value);
+    if(key == "YEAR"_L1) {
+        track.setYear(value.toInt());
+        if(track.date().isEmpty()) {
+            track.setDate(value);
         }
+        return true;
     }
-    else if(strcasecmp(tag->key, "TLEN") == 0) {
-        track.addExtraTag(u"LENGTH"_s, convertString(tag->value));
-        track.setDuration(convertString(tag->value).toULongLong());
+
+    return false;
+}
+
+bool parseId3ExtraTag(Track& track, TagType tagType, const TagPolicy& policy, const QString& key,
+                      const QStringList& values)
+{
+    const QString& firstValue = values.front();
+
+    if(key == "TFLT"_L1) {
+        track.addExtraTag(u"FILETYPE"_s, firstValue);
+        return true;
     }
-    else if(strcasecmp(tag->key, "TGID") == 0) {
-        track.addExtraTag(u"PODCASTDID"_s, convertString(tag->value));
+    if(key == "TOLY"_L1) {
+        const auto splitValues = splitExtraField(tagType, policy, u"ORIGINALLYRICIST"_s, values);
+        for(const QString& value : splitValues) {
+            track.addExtraTag(u"ORIGINALLYRICIST"_s, value);
+        }
+        return true;
     }
-    else if(strcasecmp(tag->key, "TDES") == 0) {
-        track.addExtraTag(u"PODCASTDESC"_s, convertString(tag->value));
+    if(key == "TLEN"_L1) {
+        track.addExtraTag(u"LENGTH"_s, firstValue);
+        track.setDuration(firstValue.toULongLong());
+        return true;
     }
-    else if(strcasecmp(tag->key, "TCAT") == 0) {
-        track.addExtraTag(u"PODCASTCATEGORY"_s, convertString(tag->value));
+    if(key == "TGID"_L1) {
+        track.addExtraTag(u"PODCASTDID"_s, firstValue);
+        return true;
     }
-    else if(strncasecmp(tag->key, "ID3V2_PRIV", 10) == 0) { }
-    else if(strcasecmp(tag->key, "REPLAYGAIN_TRACK_GAIN") == 0) {
-        track.setRGTrackGain(parseReplayGain(convertString(tag->value)));
+    if(key == "TDES"_L1) {
+        track.addExtraTag(u"PODCASTDESC"_s, firstValue);
+        return true;
     }
-    else if(strcasecmp(tag->key, "REPLAYGAIN_TRACK_PEAK") == 0) {
-        track.setRGTrackPeak(parseReplayPeak(convertString(tag->value)));
+    if(key == "TCAT"_L1) {
+        track.addExtraTag(u"PODCASTCATEGORY"_s, firstValue);
+        return true;
     }
-    else if(strcasecmp(tag->key, "REPLAYGAIN_ALBUM_GAIN") == 0) {
-        track.setRGAlbumGain(parseReplayGain(convertString(tag->value)));
+    if(key.startsWith("ID3V2_PRIV"_L1)) {
+        return true;
     }
-    else if(strcasecmp(tag->key, "REPLAYGAIN_ALBUM_PEAK") == 0) {
-        track.setRGAlbumPeak(parseReplayPeak(convertString(tag->value)));
+
+    return false;
+}
+
+bool parseReplayGainTag(Track& track, const QString& key, const QString& value, TagScope scope)
+{
+    if(key == "REPLAYGAIN_TRACK_GAIN"_L1) {
+        track.setRGTrackGain(parseReplayGain(value));
+        return true;
     }
-    else if(strcasecmp(tag->key, "REPLAYGAIN_GAIN") == 0) {
-        const float gain = parseReplayGain(convertString(tag->value));
+    if(key == "REPLAYGAIN_TRACK_PEAK"_L1) {
+        track.setRGTrackPeak(parseReplayPeak(value));
+        return true;
+    }
+    if(key == "REPLAYGAIN_ALBUM_GAIN"_L1) {
+        track.setRGAlbumGain(parseReplayGain(value));
+        return true;
+    }
+    if(key == "REPLAYGAIN_ALBUM_PEAK"_L1) {
+        track.setRGAlbumPeak(parseReplayPeak(value));
+        return true;
+    }
+    if(key == "REPLAYGAIN_GAIN"_L1) {
+        const float gain = parseReplayGain(value);
         if(scope == TagScope::Global) {
             track.setRGAlbumGain(gain);
         }
         else {
             track.setRGTrackGain(gain);
         }
+        return true;
     }
-    else if(strcasecmp(tag->key, "REPLAYGAIN_PEAK") == 0) {
-        const float peak = parseReplayPeak(convertString(tag->value));
+    if(key == "REPLAYGAIN_PEAK"_L1) {
+        const float peak = parseReplayPeak(value);
         if(scope == TagScope::Global) {
             track.setRGAlbumPeak(peak);
         }
         else {
             track.setRGTrackPeak(peak);
         }
+        return true;
+    }
+
+    return false;
+}
+
+void addExtraTagValues(Track& track, TagType tagType, const TagPolicy& policy, const QString& key,
+                       const QStringList& values)
+{
+    const auto splitValues = splitExtraField(tagType, policy, key, values);
+    for(const QString& value : splitValues) {
+        track.addExtraTag(key, value);
+    }
+}
+
+void parseTagValues(Track& track, TagType tagType, const QString& rawKey, const QStringList& values, TagScope scope,
+                    int chapterCount, const TagPolicy& policy)
+{
+    if(rawKey.isEmpty() || values.empty()) {
+        return;
+    }
+
+    const QString key         = normaliseTagKey(rawKey);
+    const QString& firstValue = values.front();
+
+    if(parseStandardTag(track, tagType, policy, key, values, scope, chapterCount)) {
+        return;
+    }
+    if(parseNumberOrDateTag(track, key, firstValue)) {
+        return;
+    }
+    if(parseId3ExtraTag(track, tagType, policy, key, values)) {
+        return;
+    }
+    if(parseReplayGainTag(track, key, firstValue, scope)) {
+        return;
+    }
+
+    if(key == "ENCODER"_L1) {
+        track.setTool(firstValue);
+    }
+    else if(key == "FMPS_RATING"_L1) {
+        track.setRating(firstValue.toFloat());
     }
     else {
-        const QString tagName    = convertString(tag->key).toUpper();
-        const QStringList values = tagType == ID3v2_3
-                                     ? Fooyin::Id3Utils::splitExtraField(tagName, {convertString(tag->value)},
-                                                                         policy.splitId3v23SemicolonSeparatedTags)
-                                     : QStringList{convertString(tag->value)};
-        for(const QString& value : values) {
-            track.addExtraTag(tagName, value);
-        }
+        addExtraTagValues(track, tagType, policy, key, values);
     }
-};
+}
 
-bool interleaveSamples(uint8_t* const* in, Fooyin::AudioBuffer& buffer)
+void parseTag(Track& track, TagType tagType, const AVDictionaryEntry* tag, TagScope scope, int chapterCount,
+              const TagPolicy& policy)
+{
+    parseTagValues(track, tagType, QString::fromUtf8(tag->key), {convertString(tag->value)}, scope, chapterCount,
+                   policy);
+}
+
+bool interleaveSamples(uint8_t* const* in, AudioBuffer& buffer)
 {
     const auto format  = buffer.format();
     const int channels = format.channelCount();
@@ -473,7 +759,7 @@ bool interleaveSamples(uint8_t* const* in, Fooyin::AudioBuffer& buffer)
     return true;
 }
 
-bool interleave(uint8_t* const* in, Fooyin::AudioBuffer& buffer)
+bool interleave(uint8_t* const* in, AudioBuffer& buffer)
 {
     if(!in || !buffer.isValid()) {
         return false;
@@ -491,7 +777,7 @@ int ffRead(void* data, uint8_t* buffer, int size)
         return AVERROR_EOF;
     }
     if(sizeRead > 0) {
-        std::memcpy(buffer, temp.constData(), static_cast<size_t>(sizeRead));
+        std::memcpy(buffer, temp.constData(), sizeRead);
     }
     return static_cast<int>(sizeRead);
 }
@@ -524,7 +810,7 @@ int64_t ffSeek(void* data, int64_t offset, int whence)
     return device->seek(seekPos);
 }
 
-FormatContext createAVFormatContext(const Fooyin::AudioSource& source)
+FormatContext createAVFormatContext(const AudioSource& source)
 {
     FormatContext fc;
 
@@ -573,30 +859,28 @@ FormatContext createAVFormatContext(const Fooyin::AudioSource& source)
     return fc;
 }
 
-QByteArray findCover(AVFormatContext* context, Fooyin::Track::Cover type)
+QByteArray findCover(AVFormatContext* context, Track::Cover type)
 {
-    using Cover = Fooyin::Track::Cover;
-
     const auto count = static_cast<int>(context->nb_streams);
 
     for(int i{0}; i < count; ++i) {
-        AVStream* avStream = context->streams[i];
+        const AVStream* avStream = context->streams[i];
 
         if(avStream->disposition & AV_DISPOSITION_ATTACHED_PIC) {
-            AVDictionaryEntry* tag{nullptr};
             QString coverType;
-            tag = av_dict_get(avStream->metadata, "comment", tag, AV_DICT_IGNORE_SUFFIX);
-            if(tag) {
+            const AVDictionaryEntry* tag{nullptr};
+            if((tag = av_dict_get(avStream->metadata, "comment", tag, AV_DICT_IGNORE_SUFFIX))) {
                 coverType = convertString(tag->value).toLower();
             }
 
-            if((type == Cover::Front && (coverType.isEmpty() || coverType.contains("front"_L1)))
-               || (type == Cover::Back && coverType.contains("back"_L1))
-               || (type == Cover::Artist && coverType.contains("artist"_L1))) {
+            if((type == Track::Cover::Front && (coverType.isEmpty() || coverType.contains("front"_L1)))
+               || (type == Track::Cover::Back && coverType.contains("back"_L1))
+               || (type == Track::Cover::Artist && coverType.contains("artist"_L1))) {
                 const AVPacket pkt = avStream->attached_pic;
                 if(pkt.size <= 0 || !pkt.data) {
                     return {};
                 }
+
                 QByteArray cover(pkt.size, Qt::Uninitialized);
                 std::memcpy(cover.data(), pkt.data, static_cast<size_t>(pkt.size));
                 return cover;
@@ -608,7 +892,6 @@ QByteArray findCover(AVFormatContext* context, Fooyin::Track::Cover type)
 }
 } // namespace
 
-namespace Fooyin {
 class FFmpegInputPrivate
 {
 public:
@@ -1240,9 +1523,21 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     const auto tagType     = getTagType(source.device);
     const TagPolicy policy = tagPolicy();
 
-    const AVDictionaryEntry* tag{nullptr};
-    while((tag = av_dict_get(p->m_context->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-        parseTag(track, tagType, tag, TagScope::Global, p->m_chapterCount, policy);
+    bool readGlobalTagsFromContext{true};
+    if(tagType == TagType::APE) {
+        if(const auto apeItems = readApeTextItems(source.device); apeItems && !apeItems->empty()) {
+            for(const auto& item : *apeItems) {
+                parseTagValues(track, tagType, item.key, item.values, TagScope::Global, p->m_chapterCount, policy);
+            }
+            readGlobalTagsFromContext = false;
+        }
+    }
+
+    if(readGlobalTagsFromContext) {
+        const AVDictionaryEntry* tag{nullptr};
+        while((tag = av_dict_get(p->m_context->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+            parseTag(track, tagType, tag, TagScope::Global, p->m_chapterCount, policy);
+        }
     }
 
     const AVDictionaryEntry* streamTag{nullptr};
@@ -1278,15 +1573,22 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     return true;
 }
 
-QByteArray FFmpegReader::readCover(const AudioSource& /*source*/, const Track& /*track*/, Track::Cover cover)
+QByteArray FFmpegReader::readCover(const AudioSource& source, const Track& /*track*/, Track::Cover cover)
 {
+    if(source.device) {
+        const int64_t pos         = source.device->pos();
+        const QByteArray apeCover = readApeCover(source.device, cover);
+        source.device->seek(pos);
+        if(!apeCover.isEmpty()) {
+            return apeCover;
+        }
+    }
+
     if(!p->m_context) {
         return {};
     }
 
-    auto coverData = findCover(p->m_context.get(), cover);
-
-    return coverData;
+    return findCover(p->m_context.get(), cover);
 }
 
 bool FFmpegReader::writeTrack(const AudioSource& /*source*/, const Track& /*track*/, WriteOptions /*options*/)

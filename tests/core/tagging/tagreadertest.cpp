@@ -20,6 +20,7 @@
 #include "testutils.h"
 
 #include <core/coresettings.h>
+#include <core/engine/input/ffmpeg/ffmpeginput.h>
 #include <core/engine/input/ratingtagpolicy.h>
 #include <core/engine/input/taglibparser.h>
 #include <core/track.h>
@@ -31,6 +32,8 @@
 #include <taglib/popularimeterframe.h>
 #include <taglib/vorbisfile.h>
 
+#include <QFile>
+
 #include <gtest/gtest.h>
 
 // clazy:excludeall=returning-void-expression
@@ -41,6 +44,12 @@ class TagReaderTest : public ::testing::Test
 {
 protected:
     TagLibReader m_parser;
+};
+
+class FFmpegTagReaderTest : public ::testing::Test
+{
+protected:
+    FFmpegReader m_parser;
 };
 
 namespace {
@@ -95,6 +104,61 @@ void setRatingReadPolicy(const QString& tag, const QString& scale)
 void resetTagReaderRatingSettings()
 {
     resetRatingSettings();
+}
+
+quint32 readLe32(const QByteArray& data, qsizetype offset)
+{
+    const auto* bytes = reinterpret_cast<const uchar*>(data.constData() + offset);
+    return static_cast<quint32>(bytes[0]) | (static_cast<quint32>(bytes[1]) << 8)
+         | (static_cast<quint32>(bytes[2]) << 16) | (static_cast<quint32>(bytes[3]) << 24);
+}
+
+void writeLe32(QByteArray& data, qsizetype offset, quint32 value)
+{
+    data[offset]     = static_cast<char>(value & 0xFF);
+    data[offset + 1] = static_cast<char>((value >> 8) & 0xFF);
+    data[offset + 2] = static_cast<char>((value >> 16) & 0xFF);
+    data[offset + 3] = static_cast<char>((value >> 24) & 0xFF);
+}
+
+QByteArray apeCoverItem(const QByteArray& key, const QByteArray& filename, const QByteArray& image)
+{
+    const QByteArray value = filename + '\0' + image;
+
+    QByteArray item(8, '\0');
+    writeLe32(item, 0, static_cast<quint32>(value.size()));
+    writeLe32(item, 4, 1 << 1);
+    item += key;
+    item += '\0';
+    item += value;
+
+    return item;
+}
+
+void appendApeCoverItems(const QString& filename)
+{
+    QFile file{filename};
+    ASSERT_TRUE(file.open(QIODevice::ReadWrite));
+
+    QByteArray data = file.readAll();
+    ASSERT_GE(data.size(), 32);
+
+    const qsizetype footerOffset = data.size() - 32;
+    ASSERT_EQ(data.sliced(footerOffset, 8), QByteArray{"APETAGEX"});
+
+    QByteArray newItems;
+    newItems += apeCoverItem("Cover Art (Front)", "front.bin", "FRONT");
+    newItems += apeCoverItem("Cover Art (Back)", "back.bin", "BACK");
+
+    QByteArray footer = data.sliced(footerOffset, 32);
+    writeLe32(footer, 12, readLe32(footer, 12) + static_cast<quint32>(newItems.size()));
+    writeLe32(footer, 16, readLe32(footer, 16) + 2);
+
+    data = data.first(footerOffset) + newItems + footer;
+
+    ASSERT_TRUE(file.resize(0));
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_EQ(file.write(data), data.size());
 }
 } // namespace
 
@@ -614,4 +678,56 @@ TEST_F(TagReaderTest, WavRead)
     ASSERT_TRUE(!testTag.isEmpty());
     EXPECT_EQ(testTag.front(), u"A custom tag"_s);
 }
+
+TEST_F(FFmpegTagReaderTest, TakRead)
+{
+    const QString filepath = u":/audio/audiotest.tak"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    Track track{file.fileName()};
+    AudioSource source{file.fileName(), &file, nullptr};
+    ASSERT_TRUE(m_parser.init(source));
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+
+    EXPECT_EQ(track.codec(), u"TAK"_s);
+    EXPECT_EQ(track.title(), u"TAK Test"_s);
+    EXPECT_EQ(track.album(), u"Fooyin Audio Tests"_s);
+    EXPECT_EQ(track.artist(), u"Fooyin"_s);
+    EXPECT_EQ(track.date(), u"2026"_s);
+    EXPECT_EQ(track.year(), 2026);
+    EXPECT_EQ(track.trackNumber(), u"8"_s);
+    EXPECT_EQ(track.trackTotal(), u"8"_s);
+    EXPECT_EQ(track.discNumber(), u"1"_s);
+    EXPECT_EQ(track.discTotal(), u"1"_s);
+    EXPECT_EQ(track.genres(), (QStringList{u"Rock"_s, u"Pop"_s, u"Punk"_s, u"Classical Music"_s}));
+    EXPECT_GT(track.duration(), 0);
+
+    EXPECT_TRUE(track.hasTrackPeak());
+    EXPECT_TRUE(track.hasAlbumPeak());
+    EXPECT_FLOAT_EQ(track.rgTrackPeak(), 0.0F);
+    EXPECT_FLOAT_EQ(track.rgAlbumPeak(), 0.0F);
+}
+
+TEST_F(FFmpegTagReaderTest, TakReadApeCoverArt)
+{
+    const QString filepath = u":/audio/audiotest.tak"_s;
+    TempResource file{filepath};
+    file.checkValid();
+    appendApeCoverItems(file.fileName());
+    ASSERT_TRUE(file.seek(0));
+
+    Track track{file.fileName()};
+    AudioSource source{file.fileName(), &file, nullptr};
+
+    const QByteArray frontCover = m_parser.readCover(source, track, Track::Cover::Front);
+    const QByteArray backCover  = m_parser.readCover(source, track, Track::Cover::Back);
+
+    ASSERT_FALSE(frontCover.isEmpty());
+    ASSERT_FALSE(backCover.isEmpty());
+    EXPECT_NE(frontCover, backCover);
+    EXPECT_TRUE(frontCover.contains("FRONT"));
+    EXPECT_TRUE(backCover.contains("BACK"));
+}
+
 } // namespace Fooyin::Testing

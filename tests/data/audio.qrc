@@ -6,6 +6,7 @@
         <file>audio/audiotest.mp3</file>
         <file>audio/audiotest.ogg</file>
         <file>audio/audiotest.opus</file>
+        <file>audio/audiotest.tak</file>
         <file>audio/audiotest.wav</file>
     </qresource>
 </RCC>
