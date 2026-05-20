@@ -1809,7 +1809,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="120"/>
         <source>Path to an image file to use when artwork of this type is missing; leave empty to use the default icon</source>
-        <translation>Cesta k obrázku, který má být použit pokud tento typ přebalu alba chybí, ponechte prázdné pro použití výchozí ikony</translation>
+        <translation>Cesta k obrázku, který má být použit pokud tento typ přebalu alba chybí; ponechte prázdné pro použití výchozí ikony</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="124"/>
@@ -9896,7 +9896,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="454"/>
         <source>Copy of %1</source>
         <extracomment>%1 refers to the name of a playlist preset.</extracomment>
-        <translation>%1 - kopie</translation>
+        <translation>%1 (kopie)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="276"/>
@@ -10926,9 +10926,9 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <source>Set &quot;%1&quot; on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
         <translation>
-            <numerusform>Nastavit „%1“ u %Ln skladby?</numerusform>
-            <numerusform>Nastavit „%1“ u %Ln skladeb?</numerusform>
-            <numerusform>Nastavit „%1“ u %Ln skladeb?</numerusform>
+            <numerusform>Nastavit tag „%1“ u %Ln skladby?</numerusform>
+            <numerusform>Nastavit tag „%1“ u %Ln skladeb?</numerusform>
+            <numerusform>Nastavit tag „%1“ u %Ln skladeb?</numerusform>
         </translation>
     </message>
 </context>
@@ -13100,7 +13100,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="138"/>
         <source>Use any of &quot;%1&quot; in the editor to enter multiple values.</source>
-        <translation>Pro vložení více hodnot použijte v editoru některý ze znaků „%1“.</translation>
+        <translation>Pro vložení více hodnot použijte v editoru některý ze znaků „ %1 “.</translation>
     </message>
 </context>
 <context>
@@ -14731,38 +14731,38 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="479"/>
         <source>Expected %1 to close quote</source>
-        <translation>očekáváno %1 pro uzavření textu</translation>
+        <translation>očekáván znak %1 pro uzavření textu</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="503"/>
         <source>Expected %1 to close variable list</source>
-        <translation>očekáváno %1 pro uzavření seznamu proměnných</translation>
+        <translation>očekáván znak %1 pro uzavření seznamu proměnných</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="512"/>
         <source>Expected %1 to close variable</source>
-        <translation>očekáváno %1 pro uzavření proměnné</translation>
+        <translation>očekáván znak %1 pro uzavření proměnné</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="532"/>
         <source>Expected %1 after function name</source>
-        <translation>po názvu funkce očekáváno %1</translation>
+        <translation>po názvu funkce očekáván znak %1</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="542"/>
         <source>Expected %1 at end of function</source>
-        <translation>očekáváno %1 pro uzavření funkce</translation>
+        <translation>očekáván znak %1 pro uzavření funkce</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="666"/>
         <source>Expected %1 to close conditional</source>
-        <translation>očekáváno %1 pro uzavření podmínky</translation>
+        <translation>očekáván znak %1 pro uzavření podmínky</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="694"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="700"/>
         <source>Expected %1 to close group</source>
-        <translation>očekáváno %1 pro uzavření skupiny</translation>
+        <translation>očekáván znak %1 pro uzavření skupiny</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="912"/>
