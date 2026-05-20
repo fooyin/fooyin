@@ -228,6 +228,7 @@ void ArtworkRow::finalise(int trackCount)
         }
 
         if(reader.canRead()) {
+            const auto size = reader.size();
             reader.setScaledSize(m_image->size());
             m_image->setText({});
             m_image->setPixmap(QPixmap::fromImageReader(&reader));
@@ -235,7 +236,6 @@ void ArtworkRow::finalise(int trackCount)
             m_addButton->hide();
             m_removeButton->show();
 
-            const auto size          = reader.size();
             const QString format     = mimeType.comment();
             const qint64 sizeInKB    = m_imageData.size() / 1024;
             const QString resolution = u"%1x%2"_s.arg(size.width()).arg(size.height());
