@@ -24,6 +24,7 @@
 * Library/Metadata
   - Centralise artwork loading, request ordering, and thumbnail caching in a shared cover repository ([#784](https://github.com/fooyin/fooyin/issues/784))
   - Improve ID3v2.3 multivalue tag compatibility, including optional semicolon splitting for compatible fields ([#739](https://github.com/fooyin/fooyin/issues/739), [#1109](https://github.com/fooyin/fooyin/issues/1109), [#1129](https://github.com/fooyin/fooyin/issues/1129))
+  - Add FFmpeg support for TAK files and APEv2 tag and cover art reading ([#764](https://github.com/fooyin/fooyin/issues/764), [#1129](https://github.com/fooyin/fooyin/issues/1129))
 * Media Controls
   - Send embedded track lyrics over MPRIS with `xesam:asText` ([#1192](https://github.com/fooyin/fooyin/issues/1192))
 * Scripting
@@ -44,10 +45,19 @@
   - Fix stale Search Controller widget connections after layout edits ([#1199](https://github.com/fooyin/fooyin/issues/1199))
   - Prevent track selection actions on auto playlists
   - Show Selection Info tooltips when text is elided ([#1206](https://github.com/fooyin/fooyin/pull/1206))
+  - Fix file dimensions in artwork properties tab
+  - Prevent the elapsed progress dialog from opening after completion
+  - Refresh cover views after artwork cache invalidation ([#1211](https://github.com/fooyin/fooyin/issues/1211))
 * Library/Metadata
   - Improve artist slash detection when reading metadata ([#1181](https://github.com/fooyin/fooyin/pull/1181))
   - Fix automatic rating scale detection for custom tags ([#1175](https://github.com/fooyin/fooyin/pull/1175))
   - Reject non-finite ReplayGain values ([#1196](https://github.com/fooyin/fooyin/pull/1196))
+  - Fix writing of ID3 composer and performer tags ([#1207](https://github.com/fooyin/fooyin/issues/1207))
+  - Fix duplicate ID3 track and disc total fields
+  - Fix rating/playback statistics not persisting after library rescans ([#1212](https://github.com/fooyin/fooyin/issues/1212))
+* Tag Editor
+  - Fix changing mixed tags when the selected tracks share the same value
+  - Fix doubled spaces in multivalue tag edits ([#1210](https://github.com/fooyin/fooyin/issues/1210))
 * Playlist
   - Fix `Stop after this` when playback is stopped ([#1182](https://github.com/fooyin/fooyin/pull/1182))
   - Fix unique playlist name generation after playlists have been removed ([#1180](https://github.com/fooyin/fooyin/issues/1180))
@@ -63,6 +73,8 @@
 
 * CI
   - Drop the Arch Linux CI job now that fooyin is available in Arch Linux extra
+* Translations
+  - Update translations and translation sources ([#1208](https://github.com/fooyin/fooyin/pull/1208), [#1209](https://github.com/fooyin/fooyin/pull/1209))
 
 
 ## [0.10.7](https://github.com/fooyin/fooyin/releases/tag/v0.10.7) (2026-05-15)
