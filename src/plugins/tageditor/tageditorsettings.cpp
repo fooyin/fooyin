@@ -55,7 +55,7 @@ QStringList normaliseMultiValueSeparators(const QString& separators)
 
 QString multiValueSeparatorsText(const SettingsManager& settings)
 {
-    QString value = settings.value(SettingsKeys::MultiValueSeparators).toString().trimmed();
+    const QString value = settings.value(SettingsKeys::MultiValueSeparators).toString().trimmed();
     return value.isEmpty() ? defaultSeparatorsText() : value;
 }
 
@@ -66,11 +66,11 @@ QStringList multiValueSeparators(const SettingsManager& settings)
 
 QStringList autoFillMultiValueSeparators(const SettingsManager& settings)
 {
-    QString value = settings.value(SettingsKeys::AutoFillMultiValueSeparators).toString().trimmed();
+    const QString value = settings.value(SettingsKeys::AutoFillMultiValueSeparators).toString().trimmed();
     return normaliseMultiValueSeparators(value.isEmpty() ? defaultSeparatorsText() : value);
 }
 
-QStringList splitMultiValueText(const QString& value, const QStringList& separators, bool preserveWhitespace)
+QStringList splitMultiValueText(const QString& value, const QStringList& separators)
 {
     QStringList effectiveSeparators
         = separators.empty() ? defaultSeparators() : normaliseMultiValueSeparators(separators.join(' '_L1));
@@ -81,12 +81,12 @@ QStringList splitMultiValueText(const QString& value, const QStringList& separat
 
     for(qsizetype i{0}; i < value.size();) {
         bool matched{false};
-        for(const QString& separator : effectiveSeparators) {
+        for(const QString& separator : std::as_const(effectiveSeparators)) {
             if(separator.isEmpty()) {
                 continue;
             }
             if(value.sliced(i).startsWith(separator)) {
-                values.append(preserveWhitespace ? current : current.trimmed());
+                values.append(current.trimmed());
                 current.clear();
                 i += separator.size();
                 matched = true;
@@ -100,7 +100,7 @@ QStringList splitMultiValueText(const QString& value, const QStringList& separat
         }
     }
 
-    values.append(preserveWhitespace ? current : current.trimmed());
+    values.append(current.trimmed());
     values.removeAll(QString{});
     return values;
 }

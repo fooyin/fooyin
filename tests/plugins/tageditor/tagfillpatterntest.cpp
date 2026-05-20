@@ -106,11 +106,12 @@ TEST(FillPatternTest, SplitsMultiValueTextTrimmingByDefault)
     EXPECT_EQ(values, (QStringList{u"A"_s, u"B"_s}));
 }
 
-TEST(FillPatternTest, SplitsMultiValueTextPreservingWhitespaceWhenRequested)
+TEST(FillPatternTest, JoinsTrimmedMultiValueTextWithoutDuplicatingSeparatorPadding)
 {
-    const QStringList values = TagEditor::splitMultiValueText(u"A ; B"_s, QStringList{u";"_s}, true);
+    const QStringList values = TagEditor::splitMultiValueText(u"IDM; Drumfunk"_s, QStringList{u";"_s});
 
-    EXPECT_EQ(values, (QStringList{u"A "_s, u" B"_s}));
+    EXPECT_EQ(values, (QStringList{u"IDM"_s, u"Drumfunk"_s}));
+    EXPECT_EQ(TagEditor::joinMultiValueText(values, QStringList{u";"_s}), u"IDM; Drumfunk"_s);
 }
 
 TEST(FillPatternTest, LeavesExtraTagsAsStrings)

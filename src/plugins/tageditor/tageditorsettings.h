@@ -35,8 +35,7 @@ namespace TagEditor {
 [[nodiscard]] QString multiValueSeparatorsText(const SettingsManager& settings);
 [[nodiscard]] QStringList multiValueSeparators(const SettingsManager& settings);
 [[nodiscard]] QStringList autoFillMultiValueSeparators(const SettingsManager& settings);
-[[nodiscard]] QStringList splitMultiValueText(const QString& value, const QStringList& separators,
-                                              bool preserveWhitespace = false);
+[[nodiscard]] QStringList splitMultiValueText(const QString& value, const QStringList& separators);
 [[nodiscard]] QString joinMultiValueText(const QStringList& values, const QStringList& separators);
 [[nodiscard]] QString primaryMultiValueSeparator(const QStringList& separators);
 } // namespace TagEditor

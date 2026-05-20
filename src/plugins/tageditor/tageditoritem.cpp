@@ -243,7 +243,7 @@ bool TagEditorItem::setValue(const QString& newValue, const QStringList& separat
     QStringList values;
 
     if(isMultiValueEdit) {
-        values = splitMultiValueText(newValue, m_multiValueSeparators, true);
+        values = splitMultiValueText(newValue, m_multiValueSeparators);
     }
     else {
         values.append(newValue);

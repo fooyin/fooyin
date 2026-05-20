@@ -42,7 +42,7 @@ using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
 namespace {
 QStringList splitEditorValues(const QString& value, const QStringList& separators)
 {
-    return splitMultiValueText(value, separators, true);
+    return splitMultiValueText(value, separators);
 }
 
 QString joinEditorValues(const QStringList& values, const QStringList& separators)
@@ -241,7 +241,7 @@ bool TagEditorModelPrivate::updateTrackMetadata(const TagEditorField& field, con
     float floatValue{-1};
 
     if(isList) {
-        listValue = splitMultiValueText(value.toString(), multiValueSeparators(), true);
+        listValue = splitMultiValueText(value.toString(), multiValueSeparators());
     }
     else if(isRating) {
         bool validFloat{false};
