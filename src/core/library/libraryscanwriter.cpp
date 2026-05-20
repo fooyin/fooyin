@@ -67,6 +67,7 @@ void LibraryScanWriter::flush()
     }
     if(!m_tracksToUpdate.empty()) {
         m_trackDatabase->updateTracks(m_tracksToUpdate);
+        m_trackDatabase->updateTrackStats(m_tracksToUpdate);
     }
 
     ScanResult result;
