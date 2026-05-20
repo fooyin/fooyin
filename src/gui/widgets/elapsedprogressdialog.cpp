@@ -105,6 +105,13 @@ void ElapsedProgressDialog::setValue(int value)
 
     m_progressBar->setValue(value);
 
+    if(value >= m_progressBar->maximum()) {
+        m_isFinished = true;
+        m_updateTimer->stop();
+        hide();
+        return;
+    }
+
     ensureStarted();
 }
 
