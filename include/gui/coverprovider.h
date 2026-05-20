@@ -162,8 +162,7 @@ public:
     void removeFromCache(const Track& track, const SettingsManager& settings);
 
 Q_SIGNALS:
-    /** Emitted after a @fn trackCover or @fn trackCoverThumbnail call if and when the cover is added to the cache. */
-
+    /** Emitted after cached artwork for @p track has changed or been invalidated. */
     void coverAdded(const Fooyin::Track& track);
     /** Emitted when the configured placeholder artwork changes. */
     void placeholderChanged();

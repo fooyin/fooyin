@@ -1220,7 +1220,7 @@ void CoverRepository::removeFromCache(const Track& track, const SettingsManager&
     }
 
     auto removeKey = [this](const QString& key) {
-        QDir cache{Fooyin::Gui::coverPath()};
+        QDir cache{Gui::coverPath()};
         cache.remove(coverThumbnailPath(key));
         p->m_noCoverKeys.erase(key);
         p->m_noCoverRetryAfterMs.erase(key);
@@ -1247,6 +1247,8 @@ void CoverRepository::removeFromCache(const Track& track, const SettingsManager&
             removeKey(generateTrackCoverKey(track, type, sourcePreference));
         }
     }
+
+    Q_EMIT coverAdded(track);
 }
 
 void CoverRepository::removeFromCache(const Track& track)

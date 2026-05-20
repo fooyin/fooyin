@@ -132,7 +132,7 @@ public:
     void removeFromCache(const Track& track, const SettingsManager& settings);
 
 Q_SIGNALS:
-    /** Emitted after an asynchronous load adds artwork for @p track to the cache. */
+    /** Emitted after cached artwork for @p track has changed or been invalidated. */
     void coverAdded(const Fooyin::Track& track);
     /** Emitted when the configured placeholder artwork changes. */
     void placeholderChanged();
