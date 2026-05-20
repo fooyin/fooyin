@@ -198,8 +198,6 @@ LibraryRatingsPageWidget::LibraryRatingsPageWidget(SettingsManager* settings)
     ratingTagsLayout->addWidget(m_ratingWriteTag, row++, 1);
     ratingTagsLayout->addWidget(new QLabel(tr("Write value scale") + ":"_L1, this), row, 0);
     ratingTagsLayout->addWidget(m_ratingWriteScale, row++, 1);
-    ratingTagsLayout->addWidget(popmGroup, row++, 0, 1, 2);
-    ratingTagsLayout->addWidget(asfGroup, row++, 0, 1, 2);
     ratingTagsLayout->setColumnStretch(1, 1);
 
     row = 0;
@@ -218,6 +216,8 @@ LibraryRatingsPageWidget::LibraryRatingsPageWidget(SettingsManager* settings)
     auto* mainLayout = new QGridLayout(this);
     row              = 0;
     mainLayout->addWidget(ratingTagsGroup, row++, 0);
+    mainLayout->addWidget(popmGroup, row++, 0);
+    mainLayout->addWidget(asfGroup, row++, 0);
     mainLayout->setRowStretch(row, 1);
 }
 
