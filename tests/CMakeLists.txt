@@ -61,6 +61,7 @@ fooyin_add_test(test_stringpool core/stringpooltest.cpp)
 fooyin_add_test(test_track core/tracktest.cpp)
 
 fooyin_add_test(test_tagreader core/tagging/tagreadertest.cpp data/audio.qrc)
+target_include_directories(test_tagreader PRIVATE ${FFMPEG_INCLUDE_DIRS})
 fooyin_add_test(test_ratingtagpolicy core/tagging/ratingtagpolicytest.cpp)
 fooyin_add_test(test_tagwriter core/tagging/tagwritertest.cpp data/audio.qrc)
 
