@@ -8,6 +8,8 @@ $SUDO apt-get update -qq
 $SUDO apt-get install -y \
         g++ \
         git \
+        ccache \
+        zstd \
         cmake \
         pkg-config \
         ninja-build \

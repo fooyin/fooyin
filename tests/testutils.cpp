@@ -48,8 +48,7 @@ QString ratingSettingsPath()
 
 QString testFilePath(const QString& relativePath)
 {
-    const QFileInfo thisFile{QString::fromUtf8(__FILE__)};
-    const QDir testsDir{thisFile.absolutePath()};
+    const QDir testsDir{QStringLiteral(FOOYIN_TEST_SOURCE_DIR)};
     return testsDir.absoluteFilePath(relativePath);
 }
 

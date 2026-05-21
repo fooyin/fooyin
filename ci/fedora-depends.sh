@@ -8,6 +8,8 @@ dnf -y install --skip-broken \
      rpmdevtools \
      tar \
      desktop-file-utils \
+     ccache \
+     zstd \
      cmake \
      ninja-build \
      glib2-devel \

@@ -5,6 +5,11 @@ on:
 
 env:
   BUILD_TESTS: ON
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_MAXSIZE: 1G
+  CCACHE_COMPILERCHECK: content
+  CCACHE_SLOPPINESS: pch_defines,time_macros
 
 jobs:
   macOS:
@@ -12,8 +17,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: amd64
-            runs-on: macos-15-intel
+#          - arch: amd64
+#            runs-on: macos-15-intel
           - arch: aarch64
             runs-on: macos-latest
     runs-on: ${{ matrix.runs-on }}
@@ -27,6 +32,14 @@ jobs:
       - name: Dependencies
         run: |
           ./ci/macos-depends.sh
+
+      - name: Cache ccache
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-ccache-
 
       - name: Build
         run: |

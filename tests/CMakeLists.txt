@@ -6,6 +6,7 @@ function(fooyin_add_test name)
     add_executable(${name} ${ARGN} testutils.cpp)
     fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
     target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_compile_definitions(${name} PRIVATE FOOYIN_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(
             ${name}
             PRIVATE Fooyin::Core
