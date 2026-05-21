@@ -5,6 +5,7 @@ source ci/setup.sh
 export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
 brew update
 brew install \
+    ccache \
     cmake \
     ninja \
     qt \

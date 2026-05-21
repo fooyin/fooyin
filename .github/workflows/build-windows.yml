@@ -6,6 +6,8 @@ on:
 env:
   QT_VERSION: '6.8.3'
   VCPKG_DISABLE_METRICS: true
+  BUILD_CCACHE: OFF
+  BUILD_PCH: ON
 
 jobs:
   windows:

@@ -10,7 +10,9 @@ if (-not (Test-Path $ARTIFACTS_DIR)) {
 }
 
 Write-Host "Configuring CMake with preset $CMAKE_PRESET..."
-$cmakeArgs = @("--preset", $CMAKE_PRESET, "-DBUILD_TESTING=OFF")
+$BUILD_CCACHE = if ($env:BUILD_CCACHE) { $env:BUILD_CCACHE } else { "OFF" }
+$BUILD_PCH = if ($env:BUILD_PCH) { $env:BUILD_PCH } else { "ON" }
+$cmakeArgs = @("--preset", $CMAKE_PRESET, "-DBUILD_TESTING=OFF", "-DBUILD_CCACHE=$BUILD_CCACHE", "-DBUILD_PCH=$BUILD_PCH")
 
 if ($env:QT_HOST_PATH) {
     $cmakeArgs += "-DQT_HOST_PATH=$env:QT_HOST_PATH"
@@ -28,6 +30,9 @@ Write-Host "Building project in $BUILD_DIR..."
 if ($LASTEXITCODE -ne 0) {
     Write-Error "CMake build failed with exit code $LASTEXITCODE."
     exit $LASTEXITCODE
+}
+if ($BUILD_CCACHE -eq "ON" -and (Get-Command ccache -ErrorAction SilentlyContinue)) {
+    & ccache --show-stats
 }
 
 Write-Host "Packaging project..."

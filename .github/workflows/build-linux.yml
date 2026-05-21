@@ -5,6 +5,13 @@ on:
 
 env:
   BUILD_TESTS: ON
+  BUILD_CCACHE: ON
+  BUILD_PCH: ON
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_MAXSIZE: 1G
+  CCACHE_COMPILERCHECK: content
+  CCACHE_SLOPPINESS: pch_defines,time_macros
 
 jobs:
   fedora:
@@ -33,6 +40,15 @@ jobs:
       - name: Dependencies
         run: |
           ./ci/fedora-depends.sh
+
+      - name: Cache ccache
+        if: env.BUILD_CCACHE == 'ON'
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-${{ github.sha }}
+          restore-keys: |
+            linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-
 
       - name: Build
         run: |
@@ -86,6 +102,15 @@ jobs:
           ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
           ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
+      - name: Cache ccache
+        if: env.BUILD_CCACHE == 'ON'
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-${{ github.sha }}
+          restore-keys: |
+            linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-
+
       - name: Build
         run: |
           ./ci/ubuntu-build.sh
@@ -138,7 +163,19 @@ jobs:
           ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
           ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
+      - name: Cache ccache
+        if: ${{ !(matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64') && env.BUILD_CCACHE == 'ON' }}
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-${{ github.sha }}
+          restore-keys: |
+            linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-
+
       - name: Build
+        env:
+          BUILD_CCACHE: ${{ matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64' && 'OFF' || env.BUILD_CCACHE }}
+          BUILD_PCH: ${{ matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64' && 'OFF' || env.BUILD_PCH }}
         run: |
           ./ci/ubuntu-build.sh
 

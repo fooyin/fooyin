@@ -21,6 +21,10 @@ while true; do
   fi
 
   if (( attempt >= max_attempts )); then
+    if [[ "$command" == "detach" ]]; then
+      echo "hdiutil detach failed after ${max_attempts} attempts; retrying with -force" >&2
+      exec /usr/bin/hdiutil detach -force "${@:2}"
+    fi
     exit "$result"
   fi
 
