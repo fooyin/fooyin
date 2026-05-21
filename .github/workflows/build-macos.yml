@@ -17,8 +17,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: amd64
-            runs-on: macos-15-intel
+#          - arch: amd64
+#            runs-on: macos-15-intel
           - arch: aarch64
             runs-on: macos-latest
     runs-on: ${{ matrix.runs-on }}
