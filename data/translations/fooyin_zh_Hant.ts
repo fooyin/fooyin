@@ -1684,7 +1684,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="303"/>
         <source>Export this embedded artwork to a file in the track directory without prompting</source>
-        <translation>匯出此嵌入圖面至曲目目錄中的檔案 不用提示</translation>
+        <translation>匯出此嵌入圖面至曲目目錄中的檔案 無須提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="304"/>
@@ -2317,12 +2317,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="513"/>
         <source>Extract this embedded artwork to a file in the track directory without prompting</source>
-        <translation>將此嵌入的圖面提取到曲目檔案目錄中 不需提示</translation>
+        <translation>將此嵌入的圖面提取到曲目檔案目錄中 無須提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="514"/>
         <source>Choose where to extract this embedded artwork</source>
-        <translation>選擇此嵌入圖面的提取位置</translation>
+        <translation>選擇此嵌入圖面進行提取的位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="515"/>
@@ -4454,17 +4454,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="866"/>
         <source>Artwork (bottom labels)</source>
-        <translation>專輯圖面 (底部標籤)</translation>
+        <translation>專輯圖面 (底部標)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="867"/>
         <source>Artwork (right labels)</source>
-        <translation>專輯圖面 (右標籤)</translation>
+        <translation>專輯圖面 (右側標)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="868"/>
         <source>Artwork (no labels)</source>
-        <translation>專輯圖面 (無標籤)</translation>
+        <translation>專輯圖面 (無側標)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="872"/>
@@ -4905,7 +4905,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1559"/>
         <source>Artwork search finished</source>
-        <translation>圖面搜尋完成</translation>
+        <translation>圖面搜尋結束</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1629"/>
@@ -5104,12 +5104,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="132"/>
         <source>ToolTip (Background)</source>
-        <translation>提示文字 (背景)</translation>
+        <translation>工具提示框 (背景)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="133"/>
         <source>ToolTip (Foreground)</source>
-        <translation>提示文字 (前景)</translation>
+        <translation>工具提示框 (前景)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="134"/>
@@ -13286,7 +13286,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="251"/>
         <source>Search for artwork…</source>
-        <translation>搜尋圖面中…</translation>
+        <translation>搜尋圖面…</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="220"/>
@@ -13406,7 +13406,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="413"/>
         <source>Extract embedded artwork for the selected tracks to files in their directories without prompting</source>
-        <translation>將所選曲目的嵌入圖面提取至其目錄檔案 無需提示</translation>
+        <translation>將所選曲目的嵌入圖面提取至其目錄檔案 無須提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="426"/>
@@ -13548,7 +13548,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="322"/>
         <source>Tooltip</source>
-        <translation>提示</translation>
+        <translation>工具提示框</translation>
     </message>
 </context>
 <context>
