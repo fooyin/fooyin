@@ -67,6 +67,9 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
     QObject::connect(m_playerController, &PlayerController::positionChanged, this, &Scrobbler::updateScrobbleThreshold);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      [this]() { updateNowPlayingTimer(); });
+    // Reset scrobbling timestamp when replaying the current track after stop
+    QObject::connect(m_playerController, &PlayerController::currentTrackRestartedAfterStop, this,
+                     &Scrobbler::updateNowPlaying);
 }
 
 Scrobbler::~Scrobbler()

@@ -171,6 +171,11 @@ Q_SIGNALS:
     /*! Emitted when whether the current track can be seeked changes. */
     void currentTrackSeekableChanged(bool seekable);
     /*!
+     * Emitted when the current track is replayed after being stopped without changing to a different track.
+     * This is used to reset transient state like scrobbling timestamps.
+     */
+    void currentTrackRestartedAfterStop(const Fooyin::Track& track);
+    /*!
      * Emitted when the actual playback track changes and the playlist-backed reference for that new track is known.
      * Unlike playlistTrackUpdated(), this is not emitted for in-place playlist reference remaps of the same
      * playback item.
