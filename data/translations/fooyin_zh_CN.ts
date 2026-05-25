@@ -10137,12 +10137,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="59"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished">在中键点击时删除播放列表</translation>
+        <translation>在中键点击时删除播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlisttabspage.cpp" line="61"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">播放列表选项卡</translation>
+        <translation>播放列表选项卡</translation>
     </message>
 </context>
 <context>
@@ -10163,7 +10163,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="537"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到其他播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="725"/>
@@ -10220,7 +10220,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1281"/>
         <source>Playlist settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表设置…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1154"/>
@@ -10773,12 +10773,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="74"/>
         <source>Tagging</source>
-        <translation type="unfinished">标签</translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="74"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished"></translation>
+        <translation>快速标记</translation>
     </message>
 </context>
 <context>
@@ -10786,52 +10786,52 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="57"/>
         <source>Enter field</source>
-        <translation type="unfinished"></translation>
+        <translation>输入字段</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="62"/>
         <source>Enter values</source>
-        <translation type="unfinished"></translation>
+        <translation>输入数值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="127"/>
         <source>Row %1: Field is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>第 %1 行：此字段为必填项。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="130"/>
         <source>Row %1: At least one value is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>第 %1 行：至少需要一个值。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="155"/>
         <source>Display name shown in menus and shortcut actions.</source>
-        <translation type="unfinished"></translation>
+        <translation>在菜单和快捷操作中显示的显示名称。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="157"/>
         <source>Metadata field to write.</source>
-        <translation type="unfinished"></translation>
+        <translation>要写入的元数据字段。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="159"/>
         <source>Literal values separated by semicolons.</source>
-        <translation type="unfinished"></translation>
+        <translation>字面值用分号分隔。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="170"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="172"/>
         <source>Field</source>
-        <translation type="unfinished">字段</translation>
+        <translation>字段</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="174"/>
         <source>Values</source>
-        <translation type="unfinished"></translation>
+        <translation>值</translation>
     </message>
 </context>
 <context>
@@ -10839,17 +10839,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="62"/>
         <source>Separate multiple values with semicolons.</source>
-        <translation type="unfinished"></translation>
+        <translation>多个值之间用分号分隔。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="66"/>
         <source>Confirmation threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>确认阈值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="67"/>
         <source>Ask for confirmation when changing more than this many tracks. Set to 0 to disable confirmation.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改超过指定数量的曲目时，系统会要求确认。设置为 0 可禁用确认。</translation>
     </message>
 </context>
 <context>
@@ -10857,40 +10857,40 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="103"/>
         <source>Tagging</source>
-        <translation type="unfinished">标签</translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="108"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="293"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished"></translation>
+        <translation>快速标记</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="127"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="137"/>
         <source>Set %1 to %2</source>
         <extracomment>%1 is a tag field name, %2 is the new tag value.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>设置 %1 为 %2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="148"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="155"/>
         <source>Remove %1</source>
         <extracomment>%1 is a tag field name.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>移除 %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="187"/>
         <source>Set %1 to</source>
         <extracomment>%1 represents the name or field e.g. Set Rating to</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>设置 %1 为</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="295"/>
         <source>Set &quot;%1&quot; on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>在 %Ln 曲目上设置“%1”？</numerusform>
         </translation>
     </message>
 </context>
@@ -11274,12 +11274,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="156"/>
         <source>Show header</source>
-        <translation type="unfinished">显示标题</translation>
+        <translation>显示标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="165"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">交替行颜色</translation>
+        <translation>交替行颜色</translation>
     </message>
 </context>
 <context>
@@ -11653,7 +11653,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="228"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>集成</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="228"/>
@@ -11701,12 +11701,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="104"/>
         <source>General</source>
-        <translation type="unfinished">常规</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="118"/>
         <source>Filtering</source>
-        <translation type="unfinished"></translation>
+        <translation>筛选</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="127"/>
@@ -11786,7 +11786,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="366"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>集成</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="366"/>
@@ -12214,7 +12214,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="387"/>
         <source>Select a page from this category.</source>
-        <translation type="unfinished"></translation>
+        <translation>请从该类别中选择一个页面。</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="182"/>
@@ -12234,12 +12234,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="151"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>集成</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="151"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>系统</translation>
     </message>
 </context>
 <context>
@@ -12252,7 +12252,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="65"/>
         <source>Load files from the same folder when opening one file</source>
-        <translation type="unfinished"></translation>
+        <translation>打开一个文件时，从同一文件夹加载其他文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="68"/>
@@ -12273,7 +12273,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="77"/>
         <source>e.g. &quot;%1&quot;</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>例如“%1”</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="80"/>
@@ -12288,7 +12288,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="86"/>
         <source>When opening one file from the file manager, add all supported files from the same folder and play the opened file</source>
-        <translation type="unfinished"></translation>
+        <translation>从文件管理器打开一个文件时，添加同一文件夹中所有受支持的文件，然后播放打开的文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="92"/>
@@ -12344,17 +12344,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="171"/>
         <source>Reset to default</source>
-        <translation type="unfinished"></translation>
+        <translation>重置为默认</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="172"/>
         <source>Add shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>添加快捷键</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="176"/>
         <source>Filter shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>筛选快捷键</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="198"/>
@@ -12364,7 +12364,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="321"/>
         <source>Remove shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>移除快捷键</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="174"/>
@@ -12423,12 +12423,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="219"/>
         <source>Show name</source>
-        <translation type="unfinished"></translation>
+        <translation>显示名称</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="225"/>
         <source>Show value</source>
-        <translation type="unfinished"></translation>
+        <translation>显示值</translation>
     </message>
 </context>
 <context>
@@ -12436,7 +12436,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="384"/>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>音调</translation>
     </message>
 </context>
 <context>
@@ -12444,7 +12444,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="409"/>
         <source>Playback Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>播放速率</translation>
     </message>
 </context>
 <context>
@@ -12452,7 +12452,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="359"/>
         <source>Tempo</source>
-        <translation type="unfinished"></translation>
+        <translation>计时</translation>
     </message>
 </context>
 <context>
@@ -12659,7 +12659,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="140"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
 </context>
 <context>
@@ -12748,22 +12748,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="289"/>
         <source>&amp;Above</source>
-        <translation type="unfinished"></translation>
+        <translation>以上(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="290"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">右对齐(&amp;R)</translation>
+        <translation>右侧&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="291"/>
         <source>&amp;Below</source>
-        <translation type="unfinished"></translation>
+        <translation>以下(&amp;B)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="292"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">左对齐(&amp;L)</translation>
+        <translation>左侧(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="331"/>
@@ -13014,7 +13014,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="204"/>
         <source>Enabled</source>
-        <translation type="unfinished">已启用</translation>
+        <translation>已启用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="206"/>
@@ -13029,12 +13029,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="210"/>
         <source>Multi-line</source>
-        <translation type="unfinished"></translation>
+        <translation>多行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="212"/>
         <source>Multi-value</source>
-        <translation type="unfinished"></translation>
+        <translation>多值</translation>
     </message>
 </context>
 <context>
@@ -13052,7 +13052,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
         <source>Tagging</source>
-        <translation type="unfinished">标签</translation>
+        <translation>标签</translation>
     </message>
 </context>
 <context>
@@ -13060,7 +13060,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="138"/>
         <source>Use any of &quot;%1&quot; in the editor to enter multiple values.</source>
-        <translation type="unfinished"></translation>
+        <translation>在编辑器中使用“%1”输入多个值。</translation>
     </message>
 </context>
 <context>
@@ -13076,32 +13076,32 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="51"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>应用</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="114"/>
         <source>Unsaved Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>未保存的更改</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="115"/>
         <source>There are unsaved tag changes. Save before switching tracks?</source>
-        <translation type="unfinished"></translation>
+        <translation>有未保存的标签更改。切换曲目前是否需要保存？</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="136"/>
         <source>Are you sure?</source>
-        <translation type="unfinished">你确定吗？</translation>
+        <translation>你确定吗？</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="137"/>
         <source>Metadata in the associated files will be overwritten.</source>
-        <translation type="unfinished">关联文件中的元数据标签将被覆盖。</translation>
+        <translation>关联文件中的元数据标签将被覆盖。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="139"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">不再显示此消息</translation>
+        <translation>不再显示此消息</translation>
     </message>
 </context>
 <context>
@@ -13111,37 +13111,37 @@ This does not support full scripting.</source>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="94"/>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="109"/>
         <source>Tag Editor</source>
-        <translation type="unfinished">标签编辑器</translation>
+        <translation>标签编辑器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="81"/>
         <source>Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="82"/>
         <source>Split manually edited multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>拆分手动编辑的多值标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="83"/>
         <source>Whitespace-separated list of separators used when editing multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑多值标签字段时使用的分隔符列表，以空格分隔。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="94"/>
         <source>Auto Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>自动填充</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="95"/>
         <source>Split auto-filled multivalue tags on</source>
-        <translation type="unfinished"></translation>
+        <translation>拆分自动填充的多值标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="96"/>
         <source>Whitespace-separated list of separators used when auto-filling multivalue tag fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于自动填充多值标签字段的分隔符列表（以空格分隔）。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorplugin.cpp" line="113"/>
@@ -13525,7 +13525,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="118"/>
         <source>DSP</source>
-        <translation type="unfinished">数字信号处理</translation>
+        <translation>数字信号处理</translation>
     </message>
 </context>
 <context>
@@ -13742,12 +13742,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="59"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>波形归一化</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="60"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>分贝标度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="63"/>
@@ -13845,47 +13845,47 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="129"/>
         <source>Amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>振幅</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="138"/>
         <source>Scale the displayed waveform so the loudest peak reaches full height</source>
-        <translation type="unfinished"></translation>
+        <translation>调整显示的波形，使最响的峰值达到最大高度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="139"/>
         <source>Use a decibel scale to make quieter waveform details more visible</source>
-        <translation type="unfinished"></translation>
+        <translation>使用分贝标度可以更清晰地显示较弱的波形细节</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="152"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="153"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>平均</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="154"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>平滑平均</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="155"/>
         <source>How peaks are combined when waveform data is scaled to the current width</source>
-        <translation type="unfinished"></translation>
+        <translation>当波形数据按当前宽度缩放时峰值是如何组合的</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="159"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值显示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="173"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>渲染</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="184"/>
@@ -14055,32 +14055,32 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="573"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished"></translation>
+        <translation>波形归一化</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="582"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>分贝标度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="591"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值显示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="594"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="595"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>平均</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="596"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>平滑平均</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="630"/>
@@ -14270,47 +14270,47 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="428"/>
         <location filename="../../src/gui/widgets.cpp" line="435"/>
         <source>Interface</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="422"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished">图片分配限制</translation>
+        <translation>图片分配限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="423"/>
         <source>Maximum image allocation size in MB. Set to 0 to disable the limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>最大图像分配大小（单位：MB）。设置为 0 可禁用此限制。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="428"/>
         <source>Layout Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>布局编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="429"/>
         <source>Menu levels</source>
-        <translation type="unfinished"></translation>
+        <translation>菜单级别</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="430"/>
         <source>Number of widget levels shown in the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>布局编辑上下文菜单中显示的控件级别数。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="435"/>
         <source>Seeking</source>
-        <translation type="unfinished">定位中</translation>
+        <translation>定位中</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="436"/>
         <source>Focus seekbars when clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>点击时聚焦进度条</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="437"/>
         <source>Give seekbars keyboard focus after clicking them.</source>
-        <translation type="unfinished"></translation>
+        <translation>点击进度条后，请将其置于键盘焦点。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="442"/>
@@ -14318,100 +14318,100 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="483"/>
         <location filename="../../src/gui/widgets.cpp" line="490"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="442"/>
         <location filename="../../src/gui/widgets.cpp" line="465"/>
         <location filename="../../src/gui/widgets.cpp" line="483"/>
         <source>Decoding</source>
-        <translation type="unfinished">解码</translation>
+        <translation>解码</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="443"/>
         <source>VBR update interval</source>
-        <translation type="unfinished">可变码率更新间隔</translation>
+        <translation>可变码率更新间隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <source>Interval used to refresh VBR playback information. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于刷新 VBR 播放信息的间隔。设置为 0 可禁用。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="449"/>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
         <source>Tagging</source>
-        <translation type="unfinished">标签</translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="450"/>
         <source>Preserve timestamps</source>
-        <translation type="unfinished">保留时间戳</translation>
+        <translation>保留时间戳</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="451"/>
         <source>Preserve file access and modification timestamps when updating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>更新标签时保留文件访问和修改时间戳。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="458"/>
         <source>Split ID3v2.3 semicolon-separated tags</source>
-        <translation type="unfinished"></translation>
+        <translation>拆分 ID3v2.3 分号分隔标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="459"/>
         <source>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取标签时，使用非标准“;”分隔符拆分 ID3v2.3 值。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="466"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished">启用所有支持的扩展</translation>
+        <translation>启用所有支持的扩展</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="467"/>
         <source>Enabled all extensions supported by the FFmpeg input.</source>
-        <translation type="unfinished"></translation>
+        <translation>已启用 FFmpeg 输入支持的所有扩展。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="484"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>首选 FFmpeg 扩展程序</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="485"/>
         <source>Semicolon-separated extensions where FFmpeg is tried first.</source>
-        <translation type="unfinished"></translation>
+        <translation>分号分隔的扩展名，首先尝试使用 FFmpeg。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="491"/>
         <source>Opus header gain</source>
-        <translation type="unfinished">Opus 头部增益</translation>
+        <translation>Opus 头部增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="492"/>
         <source>ReplayGain value written to the Opus header when updating metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>更新元数据时，ReplayGain 值会写入 Opus 标头。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="494"/>
         <source>Use Track Gain</source>
-        <translation type="unfinished">使用音轨增益</translation>
+        <translation>使用音轨增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="496"/>
         <source>Use Album Gain</source>
-        <translation type="unfinished">使用专辑增益</translation>
+        <translation>使用专辑增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="498"/>
         <source>Leave null</source>
-        <translation type="unfinished">留空</translation>
+        <translation>留空</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="528"/>
         <source>DSP</source>
-        <translation type="unfinished">数字信号处理</translation>
+        <translation>数字信号处理</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="535"/>
@@ -14480,7 +14480,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="189"/>
@@ -14568,7 +14568,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="130"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到其他播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="133"/>
@@ -14868,17 +14868,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="112"/>
         <source>Tempo</source>
-        <translation type="unfinished"></translation>
+        <translation>计时</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="114"/>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>音调</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="116"/>
         <source>Playback rate</source>
-        <translation type="unfinished"></translation>
+        <translation>播放速率</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenumodel.cpp" line="74"/>
@@ -14888,35 +14888,37 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="46"/>
         <source>Automatic detection</source>
-        <translation type="unfinished"></translation>
+        <translation>自动检测</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="76"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0-255 scale.</source>
-        <translation type="unfinished"></translation>
+        <translation>读写 MP3 音调等级时，请使用 fooyin 的默认 POPM 字节转换。
+此转换支持中间等级，但不会将 POPM 字节视为完全线性的 0-255 刻度。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="82"/>
         <source>Use common POPM byte values for whole-star ratings only.
 Intermediate ratings are rounded to one, two, three, four, or five stars.</source>
-        <translation type="unfinished"></translation>
+        <translation>仅对整数星级评分使用通用的 POPM 字节值。
+中间星级评分将四舍五入为一星、二星、三星、四星或五星。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="86"/>
         <source>Map fooyin ratings directly onto the full POPM byte range.</source>
-        <translation type="unfinished"></translation>
+        <translation>将 fooyin 评级直接映射到完整的 POPM 字节范围。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="112"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished"></translation>
+        <translation>快速标记</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Tagging</source>
-        <translation type="unfinished">标签</translation>
+        <translation>标签</translation>
     </message>
 </context>
 <context>
@@ -14924,7 +14926,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/quicktagger/quicktagger.cpp" line="135"/>
         <source>Rating</source>
-        <translation type="unfinished">评分</translation>
+        <translation>评分</translation>
     </message>
 </context>
 <context>
