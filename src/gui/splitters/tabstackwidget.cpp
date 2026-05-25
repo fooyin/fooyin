@@ -206,6 +206,23 @@ FyWidget* TabStackWidget::widgetAtIndex(int index) const
     return m_widgets.at(index);
 }
 
+FyWidget* TabStackWidget::widgetAtPosition(const QPoint& pos) const
+{
+    const QPoint tabPoint = m_tabs->tabBar()->mapFrom(this, pos);
+    const int index       = m_tabs->tabBar()->tabAt(tabPoint);
+    return widgetAtIndex(index);
+}
+
+QRect TabStackWidget::widgetGeometry(FyWidget* widget) const
+{
+    if(indexOfWidget(widget) < 0) {
+        return {};
+    }
+
+    const QWidget* refWidget = m_tabs->currentWidget() ? m_tabs->currentWidget() : widget;
+    return {refWidget->mapTo(this, QPoint{}), refWidget->size()};
+}
+
 int TabStackWidget::widgetCount() const
 {
     return static_cast<int>(m_widgets.size());

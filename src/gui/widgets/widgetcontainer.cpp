@@ -33,6 +33,20 @@ WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, SettingsManager
     , m_settings{settings}
 { }
 
+FyWidget* WidgetContainer::widgetAtPosition(const QPoint& /*pos*/) const
+{
+    return nullptr;
+}
+
+QRect WidgetContainer::widgetGeometry(FyWidget* widget) const
+{
+    if(!widget) {
+        return {};
+    }
+
+    return {widget->mapTo(const_cast<WidgetContainer*>(this), QPoint{}), widget->size()}; // NOLINT
+}
+
 int WidgetContainer::fullWidgetCount() const
 {
     return widgetCount();

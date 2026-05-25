@@ -53,24 +53,35 @@ using namespace Qt::StringLiterals;
 
 constexpr auto LayoutVersion = 1;
 
+namespace Fooyin {
 namespace {
-Fooyin::FyWidget* findSplitterChild(QWidget* widget)
+FyWidget* findSplitterChild(QWidget* widget, const QPoint& pos)
 {
     if(!widget) {
         return {};
     }
     QWidget* child = widget;
 
-    while(!qobject_cast<Fooyin::FyWidget*>(child)) {
+    while(!qobject_cast<FyWidget*>(child)) {
         child = child->parentWidget();
         if(!child) {
             return {};
         }
     }
-    return qobject_cast<Fooyin::FyWidget*>(child);
+
+    auto* fyWidget = qobject_cast<FyWidget*>(child);
+
+    if(auto* container = qobject_cast<WidgetContainer*>(fyWidget)) {
+        const QPoint widgetPos = container->mapFromGlobal(pos);
+        if(auto* childWidget = container->widgetAtPosition(widgetPos)) {
+            return childWidget;
+        }
+    }
+
+    return fyWidget;
 }
 
-void preserveWidgetIds(QJsonObject& widgetObject, Fooyin::FyWidget* widget)
+void preserveWidgetIds(QJsonObject& widgetObject, FyWidget* widget)
 {
     if(!widget || widgetObject.empty() || !widgetObject.constBegin()->isObject()) {
         return;
@@ -80,7 +91,7 @@ void preserveWidgetIds(QJsonObject& widgetObject, Fooyin::FyWidget* widget)
     QJsonObject widgetData   = widgetObject.value(widgetName).toObject();
     widgetData["ID"_L1]      = widget->id().name();
 
-    if(auto* container = qobject_cast<Fooyin::WidgetContainer*>(widget)) {
+    if(auto* container = qobject_cast<WidgetContainer*>(widget)) {
         QJsonArray children = widgetData.value("Widgets"_L1).toArray();
         const auto widgets  = container->widgets();
 
@@ -97,10 +108,8 @@ void preserveWidgetIds(QJsonObject& widgetObject, Fooyin::FyWidget* widget)
 
     widgetObject[widgetName] = widgetData;
 }
-
 } // namespace
 
-namespace Fooyin {
 class RootContainer : public WidgetContainer
 {
     Q_OBJECT
@@ -366,7 +375,17 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
 
 void EditableLayoutPrivate::showOverlay(FyWidget* widget) const
 {
-    m_overlay->setGeometry(widget->widgetGeometry());
+    if(auto* container = qobject_cast<WidgetContainer*>(widget->findParent())) {
+        const QRect widgetGeometry = container->widgetGeometry(widget);
+        if(widgetGeometry.isValid()) {
+            m_overlay->setGeometry(QRect{container->mapTo(m_self, widgetGeometry.topLeft()), widgetGeometry.size()});
+            m_overlay->raise();
+            m_overlay->show();
+            return;
+        }
+    }
+
+    m_overlay->setGeometry(QRect{widget->mapTo(m_self, QPoint{}), widget->size()});
     m_overlay->raise();
     m_overlay->show();
 }
@@ -809,7 +828,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 
         const QPoint pos = mouseEvent->globalPosition().toPoint();
         QWidget* widget  = childAt(mapFromGlobal(pos));
-        FyWidget* child  = findSplitterChild(widget);
+        FyWidget* child  = findSplitterChild(widget, pos);
 
         if(!child) {
             return QWidget::eventFilter(watched, event);

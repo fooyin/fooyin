@@ -62,6 +62,8 @@ public:
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtIndex(int index) const override;
+    [[nodiscard]] FyWidget* widgetAtPosition(const QPoint& pos) const override;
+    [[nodiscard]] QRect widgetGeometry(FyWidget* widget) const override;
     [[nodiscard]] int widgetCount() const override;
     [[nodiscard]] WidgetList widgets() const override;
 

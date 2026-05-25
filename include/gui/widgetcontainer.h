@@ -23,6 +23,8 @@
 
 #include <gui/fywidget.h>
 
+class QPoint;
+
 namespace Fooyin {
 class SettingsManager;
 class WidgetProvider;
@@ -46,7 +48,9 @@ public:
     [[nodiscard]] virtual int widgetIndex(const Id& id) const               = 0;
     [[nodiscard]] virtual FyWidget* widgetAtId(const Id& id) const          = 0;
     [[nodiscard]] virtual FyWidget* widgetAtIndex(int index) const          = 0;
-    [[nodiscard]] virtual int widgetCount() const                           = 0;
+    [[nodiscard]] virtual FyWidget* widgetAtPosition(const QPoint& pos) const;
+    [[nodiscard]] virtual QRect widgetGeometry(FyWidget* widget) const;
+    [[nodiscard]] virtual int widgetCount() const = 0;
     [[nodiscard]] virtual int fullWidgetCount() const;
     [[nodiscard]] virtual WidgetList widgets() const = 0;
 

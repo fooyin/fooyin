@@ -219,6 +219,37 @@ FyWidget* PlaylistTabs::widgetAtIndex(int index) const
     return m_tabsWidget;
 }
 
+FyWidget* PlaylistTabs::widgetAtPosition(const QPoint& pos) const
+{
+    const QRect tabBarRect{m_tabs->tabBar()->mapTo(this, QPoint{}), m_tabs->tabBar()->size()};
+    if(tabBarRect.contains(pos)) {
+        return const_cast<PlaylistTabs*>(this); // NOLINT
+    }
+
+    if(!m_tabsWidget) {
+        return nullptr;
+    }
+
+    const QRect tabsRect{m_tabs->pos(), m_tabs->size()};
+    if(!tabsRect.contains(pos)) {
+        return nullptr;
+    }
+
+    return m_tabsWidget;
+}
+
+QRect PlaylistTabs::widgetGeometry(FyWidget* widget) const
+{
+    if(widget == this) {
+        return {QPoint{}, size()};
+    }
+    if(widget != m_tabsWidget) {
+        return {};
+    }
+
+    return {m_tabsWidget->mapTo(this, QPoint{}), m_tabsWidget->size()};
+}
+
 int PlaylistTabs::widgetCount() const
 {
     return m_tabsWidget ? 1 : 0;
