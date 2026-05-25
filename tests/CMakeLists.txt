@@ -67,6 +67,10 @@ fooyin_add_test(test_ratingtagpolicy core/tagging/ratingtagpolicytest.cpp)
 fooyin_add_test(test_tagwriter core/tagging/tagwritertest.cpp data/audio.qrc)
 
 fooyin_add_test(test_guiutils gui/guiutilstest.cpp)
+fooyin_add_test(test_playlistselectionobserver gui/playlistselectionobservertest.cpp
+                ${CMAKE_SOURCE_DIR}/src/gui/playlist/playlistselectionobserverimpl.cpp
+                ${CMAKE_SOURCE_DIR}/data/data.qrc)
+target_include_directories(test_playlistselectionobserver PRIVATE ${CMAKE_SOURCE_DIR}/src/gui)
 fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)

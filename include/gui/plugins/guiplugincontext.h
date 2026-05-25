@@ -27,6 +27,7 @@ class AdvancedSettingsRegistry;
 class CoverRepository;
 class EditableLayout;
 class LayoutProvider;
+class PlaylistSelectionObserver;
 class PropertiesDialog;
 class SearchController;
 class ScriptCommandHandler;
@@ -42,14 +43,16 @@ struct FYGUI_EXPORT GuiPluginContext
 {
     GuiPluginContext(ActionManager* actionManager_, LayoutProvider* layoutProvider_,
                      TrackSelectionController* trackSelection_, SearchController* searchController_,
-                     PropertiesDialog* propertiesDialog_, ScriptCommandHandler* scriptCommandHandler_,
-                     WidgetProvider* widgetProvider_, EditableLayout* editableLayout_,
-                     WindowController* windowController_, ThemeRegistry* themeRegistry_,
-                     AdvancedSettingsRegistry* advancedSettingsRegistry_, CoverRepository* coverRepository_)
+                     PlaylistSelectionObserver* playlistSelection_, PropertiesDialog* propertiesDialog_,
+                     ScriptCommandHandler* scriptCommandHandler_, WidgetProvider* widgetProvider_,
+                     EditableLayout* editableLayout_, WindowController* windowController_,
+                     ThemeRegistry* themeRegistry_, AdvancedSettingsRegistry* advancedSettingsRegistry_,
+                     CoverRepository* coverRepository_)
         : actionManager{actionManager_}
         , layoutProvider{layoutProvider_}
         , trackSelection{trackSelection_}
         , searchController{searchController_}
+        , playlistSelection{playlistSelection_}
         , propertiesDialog{propertiesDialog_}
         , scriptCommandHandler{scriptCommandHandler_}
         , widgetProvider{widgetProvider_}
@@ -64,6 +67,7 @@ struct FYGUI_EXPORT GuiPluginContext
     LayoutProvider* layoutProvider;
     TrackSelectionController* trackSelection;
     SearchController* searchController;
+    PlaylistSelectionObserver* playlistSelection;
     PropertiesDialog* propertiesDialog;
     ScriptCommandHandler* scriptCommandHandler;
     WidgetProvider* widgetProvider;

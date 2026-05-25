@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "playlist/playlistmodel.h"
 
 #include <core/player/playbackqueue.h>
@@ -52,7 +54,7 @@ struct PlaylistViewState
     int scrollPos{0};
 };
 
-class PlaylistController : public QObject
+class FYGUI_EXPORT PlaylistController : public QObject
 {
     Q_OBJECT
 
