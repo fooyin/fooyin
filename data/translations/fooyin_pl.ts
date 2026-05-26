@@ -1980,7 +1980,7 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="176"/>
         <source>Query already exists</source>
-        <translation>Istnieje duplikat wyszukania</translation>
+        <translation>Zapytanie już istnieje</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="177"/>
@@ -2005,7 +2005,7 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="303"/>
         <source>Has Lyrics</source>
-        <translation>Posiada tekst piosenki</translation>
+        <translation>Ma Tekst</translation>
     </message>
 </context>
 <context>
