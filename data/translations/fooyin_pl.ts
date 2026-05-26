@@ -2573,7 +2573,7 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="271"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation>Dodaj zaznaczone utwory do bieżącej listy odtwarzania</translation>
+        <translation>Dodaj wybrane utwory do bieżącej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="278"/>
