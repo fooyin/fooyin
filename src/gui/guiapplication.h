@@ -22,6 +22,7 @@
 #include "fygui_export.h"
 
 #include "internalguisettings.h"
+#include "playlist/playlistviewrefresherimpl.h"
 #include "widgets.h"
 
 #include <core/engine/enginedefs.h>
@@ -31,6 +32,7 @@
 #include <gui/layoutprovider.h>
 #include <gui/playlist/playlistinteractor.h>
 #include <gui/plugins/guiplugincontext.h>
+#include <gui/scripting/scriptvariableregistry.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 
@@ -239,6 +241,8 @@ private:
 
     PropertiesDialog* m_propertiesDialog;
     std::unique_ptr<ScriptCommandHandler> m_scriptCommandHandler;
+    PlaylistViewRefresherImpl m_playlistViewRefresher;
+    ScriptVariableRegistry m_scriptVariableRegistry;
     WindowController* m_windowController;
     ThemeRegistry* m_themeRegistry;
     GuiStyleProvider* m_styleProvider;

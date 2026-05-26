@@ -20,7 +20,7 @@
 #include "scriptreferenceentries.h"
 
 #include <core/constants.h>
-#include <gui/scripting/scriptcommandhandler.h>
+#include <core/scripting/scriptparser.h>
 
 #include <QCoreApplication>
 
@@ -46,6 +46,18 @@ Fooyin::ScriptReferenceEntry variableEntry(const QString& name, const char* cate
             .insertText   = label,
             .category     = translate(category),
             .description  = translate(description),
+            .cursorOffset = 0};
+}
+
+Fooyin::ScriptReferenceEntry variableEntry(const QString& name, QString category, QString description)
+{
+    const QString label = variableLabel(name);
+
+    return {.kind         = Fooyin::ScriptReferenceKind::Variable,
+            .label        = label,
+            .insertText   = label,
+            .category     = std::move(category),
+            .description  = std::move(description),
             .cursorOffset = 0};
 }
 
@@ -83,7 +95,7 @@ Fooyin::ScriptReferenceEntry formattingEntry(const char* name, const char* signa
 } // namespace
 
 namespace Fooyin {
-const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
+std::vector<ScriptReferenceEntry> scriptReferenceEntries()
 {
     using namespace Fooyin::Constants;
 
@@ -510,6 +522,18 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
                       QT_TRANSLATE_NOOP("Fooyin", "Lookup")),
     };
 
-    return Entries;
+    std::vector<ScriptReferenceEntry> entries;
+    const auto globalVariables = ScriptParser::globalVariables();
+
+    entries.reserve(Entries.size() + globalVariables.size());
+    entries.insert(entries.end(), Entries.cbegin(), Entries.cend());
+
+    for(const auto& variable : globalVariables) {
+        entries.emplace_back(variableEntry(
+            variable.name, variable.category.isEmpty() ? translate("Plugins") : variable.category,
+            variable.description.isEmpty() ? translate("Plugin-defined script variable") : variable.description));
+    }
+
+    return entries;
 }
 } // namespace Fooyin

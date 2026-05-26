@@ -105,6 +105,16 @@ void ScriptParser::addProvider(const ScriptVariableProvider& provider)
     p->addProvider(provider);
 }
 
+void ScriptParser::addGlobalProvider(const ScriptVariableProvider& provider)
+{
+    ScriptRegistry::addGlobalProvider(provider);
+}
+
+std::vector<ScriptVariableDescriptor> ScriptParser::globalVariables()
+{
+    return ScriptRegistry::globalVariables();
+}
+
 void ScriptParser::addProvider(const ScriptFunctionProvider& provider)
 {
     p->addProvider(provider);

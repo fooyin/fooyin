@@ -36,6 +36,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scripteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
+    ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptvariableregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/statusevent.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fytheme.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fythemefile.h
@@ -329,6 +330,9 @@ set(SOURCES
     playlist/playlistcommands.h
     playlist/playlistcontroller.cpp
     playlist/playlistcontroller.h
+    playlist/playlistviewrefresherimpl.cpp
+    playlist/playlistviewrefresherimpl.h
+    playlist/playlistviewrefreshsource.h
     playlist/playlistuicontroller.cpp
     playlist/playlistuicontroller.h
     playlist/playlistworkspace.cpp
@@ -415,6 +419,7 @@ set(SOURCES
     scripting/scriptreferenceentries.cpp
     scripting/scriptreferenceentries.h
     scripting/scriptformatterregistry.cpp
+    scripting/scriptvariableregistry.cpp
     scripting/scripthighlighter.cpp
     scripting/scripthighlighter.h
     search/searchcontroller.cpp

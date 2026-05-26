@@ -54,6 +54,8 @@ struct ScriptVariableDescriptor
     VariableKind kind;
     QString name;
     ScriptVariableInvoker invoker;
+    QString category;
+    QString description;
 };
 
 /*!
@@ -194,7 +196,22 @@ constexpr ScriptVariableInvoker makeScriptVariableInvoker()
 template <auto Func>
 [[nodiscard]] inline ScriptVariableDescriptor makeScriptVariableDescriptor(VariableKind kind, QString name)
 {
-    return {.kind = kind, .name = std::move(name), .invoker = makeScriptVariableInvoker<Func>()};
+    return {.kind        = kind,
+            .name        = std::move(name),
+            .invoker     = makeScriptVariableInvoker<Func>(),
+            .category    = {},
+            .description = {}};
+}
+
+template <auto Func>
+[[nodiscard]] inline ScriptVariableDescriptor makeScriptVariableDescriptor(VariableKind kind, QString name,
+                                                                           QString category, QString description)
+{
+    return {.kind        = kind,
+            .name        = std::move(name),
+            .invoker     = makeScriptVariableInvoker<Func>(),
+            .category    = std::move(category),
+            .description = std::move(description)};
 }
 
 template <auto Func>

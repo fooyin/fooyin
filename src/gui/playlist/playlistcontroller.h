@@ -20,6 +20,7 @@
 #pragma once
 
 #include "playlist/playlistmodel.h"
+#include "playlist/playlistviewrefreshsource.h"
 
 #include <core/player/playbackqueue.h>
 #include <core/player/playerdefs.h>
@@ -29,6 +30,8 @@
 #include <gui/playlist/playlisteditcontroller.h>
 
 #include <QObject>
+
+#include <span>
 
 #include <memory>
 #include <set>
@@ -57,7 +60,8 @@ struct PlaylistViewState
 };
 
 class PlaylistController : public CurrentPlaylistController,
-                           public PlaylistEditController
+                           public PlaylistEditController,
+                           public PlaylistViewRefreshSource
 {
     Q_OBJECT
 
@@ -121,6 +125,9 @@ public:
     [[nodiscard]] bool clipboardEmpty() const;
     [[nodiscard]] TrackList clipboard() const;
     void setClipboard(const TrackList& tracks);
+
+    void refreshPlaylist(const UId& playlistId) override;
+    void refreshEntries(const UId& playlistId, std::span<const UId> entryIds) override;
 
 Q_SIGNALS:
     void playlistsLoaded();
