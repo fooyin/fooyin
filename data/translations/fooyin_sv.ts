@@ -11,7 +11,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="232"/>
         <source>Add to current playlist</source>
-        <translation>Lägg till i nuvarande spellista</translation>
+        <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="235"/>
@@ -21,7 +21,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="238"/>
         <source>Replace current playlist</source>
-        <translation>Ersätt nuvarande spellista</translation>
+        <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="241"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>Infoga</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
@@ -137,7 +137,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="48"/>
         <source>Add to current playlist</source>
-        <translation>Lägg till i nuvarande spellista</translation>
+        <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="51"/>
@@ -147,7 +147,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="54"/>
         <source>Replace current playlist</source>
-        <translation>Ersätt nuvarande spellista</translation>
+        <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="57"/>
@@ -172,12 +172,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="71"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort från uppspelningskö</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="75"/>
         <source>Filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Filteralternativ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="78"/>
@@ -294,7 +294,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="116"/>
         <source>Total tracks on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Totalt antal spår på utsläppet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="118"/>
@@ -304,7 +304,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="120"/>
         <source>Total discs on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Totalt antal skivor på utsläppet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="121"/>
@@ -324,7 +324,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="127"/>
         <source>Track duration formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Spårlängd formaterat som tid</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
@@ -419,7 +419,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="173"/>
         <source>Tag type list</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggtypslista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="175"/>
@@ -528,7 +528,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Combined duration of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Kombinerad längd av spårlistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="219"/>
@@ -550,12 +550,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="221"/>
         <source>Elapsed time within the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Förfluten tid under den aktiva spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="223"/>
         <source>Unique genres across the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Unika genrer i spårlistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="320"/>
@@ -565,7 +565,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="449"/>
         <source>Checks whether two numeric values are equal</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollar om två numeriska värden är lika</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
@@ -618,7 +618,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="229"/>
         <source>Total amount of tracks in the playback queue for queued items</source>
-        <translation type="unfinished"></translation>
+        <translation>Totalt antal spår i uppspelningskön för köade saker</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
@@ -628,17 +628,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
         <source>Current playback position in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell uppspelningsposition i sekunder</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <source>Remaining playback time formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Återstående uppspelningstid formaterat som tid</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
         <source>Remaining playback time in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Återstående uppspelningstid i sekunder</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
@@ -674,12 +674,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Current library name</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuellt biblioteksnamn</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
         <source>Current library path</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuellt bibliotekssökväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="250"/>
@@ -726,7 +726,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
         <source>Sets the text alpha channel from 0 to 255</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätter textens alfakanal från 0 till 255</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="264"/>
@@ -746,7 +746,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Adds numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Adderar numeriska argument</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="271"/>
@@ -761,7 +761,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="290"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="399"/>
         <source>Numeric</source>
-        <translation type="unfinished"></translation>
+        <translation>Numerisk</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
@@ -771,12 +771,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Multiplies numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Multiplicerar numeriska argument</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Divides the first value by the second</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividerar det första värdet med sekunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
@@ -801,17 +801,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="286"/>
         <source>Rounds a numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Avrunda ett numeriskt värde</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Formats a number with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatera ett nummer med inledande nollor</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
         <source>Replaces text fragments</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätter textfragment</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
@@ -857,7 +857,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="293"/>
         <source>Converts text to ASCII</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterar text till ASCII</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="295"/>
@@ -882,7 +882,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
         <source>Inserts text at a position</source>
-        <translation type="unfinished"></translation>
+        <translation>Infogar text vid en position</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="306"/>
@@ -932,7 +932,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="330"/>
         <source>Tests whether one string is longer</source>
-        <translation type="unfinished"></translation>
+        <translation>Testar om en sträng är längre</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="332"/>
@@ -997,7 +997,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="357"/>
         <source>Capitalises words</source>
-        <translation type="unfinished"></translation>
+        <translation>Versaliserar ord</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="360"/>
@@ -1088,7 +1088,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
         <source>Formats milliseconds as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Formaterar millisekunder som tid</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="400"/>
@@ -1203,7 +1203,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="443"/>
         <source>Compares numeric values</source>
-        <translation type="unfinished"></translation>
+        <translation>Jämför numeriska värden</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="446"/>
@@ -1312,7 +1312,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="77"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
 </context>
 <context>
@@ -1522,7 +1522,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="102"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Minibilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="105"/>
@@ -1532,7 +1532,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="106"/>
         <source>Groups artwork thumbnails that should share the same cached image</source>
-        <translation type="unfinished"></translation>
+        <translation>Grupperar konstverksminibilder som borde dela samma cachade bild</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="114"/>
@@ -1693,7 +1693,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="304"/>
         <source>Choose where to export this embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj var detta inbäddade konstverk ska exporteras</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="312"/>
@@ -1810,7 +1810,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="124"/>
         <source>Choose a custom placeholder image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj en egen platshållarbild</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="129"/>
@@ -2042,7 +2042,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="492"/>
         <source>Built-in icon missing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inbyggd ikon saknas.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="496"/>
@@ -2071,22 +2071,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="93"/>
         <source>Icon only</source>
-        <translation type="unfinished"></translation>
+        <translation>Endast ikon</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="94"/>
         <source>Text only</source>
-        <translation type="unfinished"></translation>
+        <translation>Endast text</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="95"/>
         <source>Text beside icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Text bredvid ikon</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="96"/>
         <source>Text under icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Text under ikon</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="112"/>
@@ -2106,12 +2106,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="122"/>
         <source>Use command icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd kommandoikon</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="128"/>
         <source>Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Knapp</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="131"/>
@@ -2121,7 +2121,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="135"/>
         <source>Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommando</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="137"/>
@@ -2151,7 +2151,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="156"/>
         <source>Built-in</source>
-        <translation type="unfinished"></translation>
+        <translation>Inbyggt</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="158"/>
@@ -2199,7 +2199,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="49"/>
         <source>Restore factory defaults</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Återställ fabriksdefault</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="50"/>
@@ -2212,22 +2212,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="77"/>
         <source>Insert separator before</source>
-        <translation type="unfinished"></translation>
+        <translation>Infoga separerare innan</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="81"/>
         <source>Insert separator after</source>
-        <translation type="unfinished"></translation>
+        <translation>Infoga separerare efter</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="87"/>
         <source>Add separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till separerare</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="92"/>
         <source>Remove separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort separerare</translation>
     </message>
 </context>
 <context>
@@ -2280,7 +2280,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="488"/>
         <source>View full size</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa full storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="501"/>
@@ -2295,7 +2295,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="503"/>
         <source>Auto-extract to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Autoextrahera till fil</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="504"/>
@@ -2325,12 +2325,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="514"/>
         <source>Choose where to extract this embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj var detta inbäddade konstverk ska extraheras</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="515"/>
         <source>Remove this artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort detta konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="549"/>
@@ -2528,7 +2528,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="197"/>
         <source>Add to &amp;current playlist</source>
-        <translation>Lägg till i &amp;nuvarande spellista</translation>
+        <translation>Lägg till i a&amp;ktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="198"/>
@@ -2578,7 +2578,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="285"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation>Ersätt inehåll av nuvarande spellistan med de valda spåren</translation>
+        <translation>Ersätt inehållet av aktuell spellistan med de valda spåren</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="292"/>
@@ -2638,7 +2638,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="199"/>
         <source>&amp;Replace current playlist</source>
-        <translation>E&amp;rsätt nuvarande spellista</translation>
+        <translation>E&amp;rsätt aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
@@ -2648,7 +2648,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
         <source>Replace playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätt &amp;uppspelningskö</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="268"/>
@@ -2752,7 +2752,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="69"/>
         <source>Browser Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Bläddringsfilter</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="74"/>
@@ -2773,7 +2773,7 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="109"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation>Lägg till i nuvarande spellista och spela om stoppad</translation>
+        <translation>Lägg till i aktuell spellista och spela om stoppad</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
@@ -2784,7 +2784,7 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="97"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="108"/>
         <source>Add to current playlist</source>
-        <translation>Lägg till i nuvarande spellista</translation>
+        <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="100"/>
@@ -2796,7 +2796,7 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="101"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="112"/>
         <source>Replace current playlist</source>
-        <translation>Ersätt nuvarande spellista</translation>
+        <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
@@ -2930,7 +2930,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="207"/>
         <source>Instance</source>
-        <translation type="unfinished"></translation>
+        <translation>Instans</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="224"/>
@@ -3160,7 +3160,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="44"/>
         <source>Search the current playlist</source>
-        <translation>Sök den nuvarande spellistan</translation>
+        <translation>Sök i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="51"/>
@@ -3199,18 +3199,18 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/editablelayout.cpp" line="392"/>
         <location filename="../../src/gui/editablelayout.cpp" line="407"/>
         <source>Insert &amp;before</source>
-        <translation type="unfinished"></translation>
+        <translation>Infoga f&amp;öre</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="397"/>
         <location filename="../../src/gui/editablelayout.cpp" line="412"/>
         <source>Insert &amp;after</source>
-        <translation type="unfinished"></translation>
+        <translation>Infog&amp;a efter</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="419"/>
         <source>Insert &amp;inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Infoga &amp;inuti</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
@@ -3320,7 +3320,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="432"/>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Infoga</translation>
     </message>
 </context>
 <context>
@@ -3346,7 +3346,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="166"/>
         <source>Time elapsed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Förfluten tid: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="173"/>
@@ -3528,7 +3528,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="55"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>Överskugga höjd</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="70"/>
@@ -3586,7 +3586,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="111"/>
         <source>Failed to save the current layout</source>
-        <translation>Misslyckades att spara den nuvarande layouten</translation>
+        <translation>Misslyckades att spara den aktuella layouten</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="143"/>
@@ -3680,17 +3680,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="101"/>
         <source>Manual track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Manuellt spårbyte</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="102"/>
         <source>Auto track change</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatiskt spårbyte</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="107"/>
         <source>Auto switch policy</source>
-        <translation type="unfinished"></translation>
+        <translation>Autobytespolicy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="143"/>
@@ -3780,7 +3780,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="49"/>
         <source>Add the specified files to the current playlist</source>
-        <translation>Lägg till specifierade filer till den nuvarande spellistan</translation>
+        <translation>Lägg till specifierade filer till den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="55"/>
@@ -3790,7 +3790,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="56"/>
         <source>Add the contents of the specified directory to the current playlist</source>
-        <translation>Lägg till innehållet av den specifierade mappen till den nuvarande spellistan</translation>
+        <translation>Lägg till innehållet av den specifierade mappen till den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="64"/>
@@ -3845,7 +3845,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="88"/>
         <source>Save the current playlist to the specified file</source>
-        <translation>Spara den nuvarande spellisten till specifierade filen</translation>
+        <translation>Spara den aktuella spellistan till den specifierade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
@@ -3916,7 +3916,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="133"/>
         <source>Delete archive after extraction</source>
-        <translation type="unfinished"></translation>
+        <translation>Radera arkiv efter extrahering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="135"/>
@@ -3989,7 +3989,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="432"/>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="460"/>
         <source>&amp;Run</source>
-        <translation type="unfinished"></translation>
+        <translation>Kö&amp;r</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="265"/>
@@ -4004,7 +4004,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="271"/>
         <source>Extract entire source archive contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrahera hela källarkivinnehåll</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="320"/>
@@ -4019,12 +4019,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="439"/>
         <source>Delete source archive after extraction?</source>
-        <translation type="unfinished"></translation>
+        <translation>Radera källarkiv efter extrahering?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="440"/>
         <source>Source archive files will be moved to the trash after every file from each archive has been extracted. Continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Källarkivfiler kommer flyttas till skräpet efter att varje fil från varje arkiv har extraherats. Fortsätt?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="448"/>
@@ -4101,7 +4101,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
         <source>Confirm before deleting tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Bekräfta innan radering av spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="100"/>
@@ -4211,7 +4211,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="40"/>
         <source>Filter Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Filterinställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="44"/>
@@ -4236,7 +4236,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="49"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Överskugga radhöjd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="55"/>
@@ -4311,12 +4311,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="112"/>
         <source>Horizontal gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Horisontellt mellanrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="114"/>
         <source>Vertical gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikalt mellanrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="118"/>
@@ -4333,13 +4333,13 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="138"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="149"/>
         <source>Add to current playlist</source>
-        <translation>Lägg till i nuvarande spellista</translation>
+        <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="150"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation>Lägg till i nuvarande spellista och spela om stoppad</translation>
+        <translation>Lägg till i aktuell spellista och spela om stoppad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="141"/>
@@ -4351,7 +4351,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="142"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="153"/>
         <source>Replace current playlist</source>
-        <translation>Ersätt nuvarande spellista</translation>
+        <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="143"/>
@@ -4436,12 +4436,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="228"/>
         <source>All (%L1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Allt (%L1)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="444"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
 </context>
 <context>
@@ -4510,7 +4510,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="967"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="975"/>
@@ -4550,7 +4550,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="338"/>
         <source>Filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Filteralternativ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="346"/>
@@ -4587,7 +4587,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="71"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
 </context>
 <context>
@@ -4635,7 +4635,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="97"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Fördröj att öppna fooyin tills alla spår har laddats in</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="99"/>
@@ -4780,12 +4780,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="696"/>
         <source>Clear Current Playlist</source>
-        <translation>Rensa nuvarande spellista</translation>
+        <translation>Rensa aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="697"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation>Ta bort alla spår från den nuvarande spellistan</translation>
+        <translation>Ta bort alla spår från den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="722"/>
@@ -4845,7 +4845,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="825"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell fil</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="838"/>
@@ -4937,7 +4937,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="774"/>
         <source>Remove Current Playlist</source>
-        <translation>Ta bort nuvarande spellista</translation>
+        <translation>Ta bort aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="884"/>
@@ -5226,7 +5226,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="86"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil</translation>
     </message>
 </context>
 <context>
@@ -5234,7 +5234,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="227"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="228"/>
@@ -5351,7 +5351,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="79"/>
         <source>Prefer current selection</source>
-        <translation>Föredra nuvarande val</translation>
+        <translation>Föredra aktuellt val</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="86"/>
@@ -5361,7 +5361,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="90"/>
         <source>Window title</source>
-        <translation type="unfinished"></translation>
+        <translation>Fönstertitel</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
@@ -5514,17 +5514,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="463"/>
         <source>Show scrollbar (vertical)</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa skrollningslist (vertikal)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="472"/>
         <source>Show scrollbar (horizontal)</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa skrollningslist (horisontell)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="481"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Zebramönstrade rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="492"/>
@@ -5554,7 +5554,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="537"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="546"/>
@@ -5827,12 +5827,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="61"/>
         <source>Toggle layout editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Växla layoutredigeringsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="72"/>
         <source>Loc&amp;k splitters</source>
-        <translation type="unfinished"></translation>
+        <translation>L&amp;ås splittrare</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
@@ -5847,7 +5847,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
         <source>Add the layout from the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till layouten från den specifierade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="86"/>
@@ -5857,12 +5857,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="87"/>
         <source>Save the current layout to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara den aktuella layouten till den specifierade filen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="111"/>
         <source>Replace the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätt den aktuella layouten</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="113"/>
@@ -5875,7 +5875,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="245"/>
         <source>Open Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="245"/>
@@ -5885,12 +5885,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
         <source>Invalid Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogilltig layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="254"/>
         <source>Layout could not be imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Layout kunde inte importeras.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="260"/>
@@ -6045,7 +6045,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="80"/>
         <source>Reload metadata from files for all tracks in libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladda om metadata från alla filer för alla spår i bibliotek</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="85"/>
@@ -6065,7 +6065,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="92"/>
         <source>Show quick search popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa snabbsöks-popup</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="97"/>
@@ -6360,22 +6360,22 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="193"/>
         <source>Read text rating from</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs textbetyg från</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="195"/>
         <source>Read value scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs värdeskala</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="197"/>
         <source>Write text rating to</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv textbetyg till</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="199"/>
         <source>Write value scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv värdeskala</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="208"/>
@@ -6417,7 +6417,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="91"/>
         <source>Sort tracks in library by</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortera spår i bibliotek i</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="93"/>
@@ -6449,7 +6449,7 @@ This improves compatibility with other players, but stores whole-star values onl
         <location filename="../../src/gui/librarytree/librarytreescriptenvironment.cpp" line="94"/>
         <source>All Music (%trackcount%)</source>
         <extracomment>Default Library Tree summary node title. Keep %trackcount% unchanged; it is a script variable.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>All musik (%trackcount%)</translation>
     </message>
 </context>
 <context>
@@ -6457,7 +6457,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="42"/>
         <source>Library Tree Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Biblioteksträdinställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="46"/>
@@ -6492,7 +6492,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
         <source>Show summary node</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa sammanfattningsnod</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="55"/>
@@ -6507,7 +6507,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="57"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="58"/>
@@ -6517,7 +6517,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="59"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Överskugga radhöjd</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="63"/>
@@ -6615,7 +6615,7 @@ This improves compatibility with other players, but stores whole-star values onl
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="182"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="193"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation>Lägg till i nuvarande spellista och spela om stoppad</translation>
+        <translation>Lägg till i aktuell spellista och spela om stoppad</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="191"/>
@@ -6626,7 +6626,7 @@ This improves compatibility with other players, but stores whole-star values onl
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="181"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="192"/>
         <source>Add to current playlist</source>
-        <translation>Lägg till i nuvarande spellista</translation>
+        <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="184"/>
@@ -6670,7 +6670,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreecontroller.cpp" line="37"/>
         <source>Library Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Biblioteksselektion</translation>
     </message>
 </context>
 <context>
@@ -6760,7 +6760,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="842"/>
         <source>All Music</source>
-        <translation type="unfinished"></translation>
+        <translation>All musik</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="974"/>
@@ -6806,7 +6806,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="240"/>
         <source>Start playback of the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta uppspelning av de valda spåren</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="676"/>
@@ -6926,7 +6926,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="54"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="55"/>
@@ -6951,44 +6951,44 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="66"/>
         <source>Line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Linjefärg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="68"/>
         <source>Unplayed line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Ospelad linjefärg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="70"/>
         <source>Played line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelad linjefärg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="72"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="74"/>
         <source>Current line colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell linjefärg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="76"/>
         <source>Current word colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell ordfärg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="78"/>
         <source>Line font</source>
-        <translation type="unfinished"></translation>
+        <translation>Linjetypsnitt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="80"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="82"/>
         <source>Current line font</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuellt linjetypsnitt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="84"/>
         <source>Current word font</source>
-        <translation type="unfinished"></translation>
+        <translation>Altuellt ordttypsnitt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="88"/>
@@ -7002,7 +7002,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="91"/>
         <source>This will only function with synced lyrics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Detta kommer bara fungera med synkade låttexter.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="93"/>
@@ -7017,27 +7017,27 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="103"/>
         <source>Scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrollning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="109"/>
         <source>Scroll Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrolläge</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="111"/>
         <source>No automatic scrolling will take place</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen automatisk skrollning kommer ske</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="112"/>
         <source>Synced lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>Synkad låttext kommer skrollas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="113"/>
         <source>All lyrics will be scrolled</source>
-        <translation type="unfinished"></translation>
+        <translation>All låttext kommer skrollas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="132"/>
@@ -7082,12 +7082,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="152"/>
         <source>Scrolling lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrollande låttext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="153"/>
         <source>All lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>All låttext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="159"/>
@@ -7138,7 +7138,7 @@ This improves compatibility with other players, but stores whole-star values onl
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="217"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="239"/>
         <source>Synced Words</source>
-        <translation type="unfinished"></translation>
+        <translation>Synkade ord</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="251"/>
@@ -7161,12 +7161,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="118"/>
         <source>Reset Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Återställ ändringar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="119"/>
         <source>Insert/Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Infoga/Uppdatera</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="123"/>
@@ -7186,7 +7186,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="120"/>
         <source>Update and Next Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera och nästa linje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="121"/>
@@ -7238,7 +7238,7 @@ This improves compatibility with other players, but stores whole-star values onl
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="106"/>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="115"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Låttext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="95"/>
@@ -7267,7 +7267,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="314"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Låttext</translation>
     </message>
 </context>
 <context>
@@ -7305,12 +7305,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="91"/>
         <source>Synced only</source>
-        <translation type="unfinished"></translation>
+        <translation>Endast synkade</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="92"/>
         <source>Unsynced only</source>
-        <translation type="unfinished"></translation>
+        <translation>Endast osynkade</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="97"/>
@@ -7355,7 +7355,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="129"/>
         <source>Directory</source>
-        <translation>Mapp</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="130"/>
@@ -7443,12 +7443,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="245"/>
         <source>No lyrics found</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen låttext hittad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="313"/>
         <source>Saved lyrics from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sparade låttext från %1</translation>
     </message>
 </context>
 <context>
@@ -7471,7 +7471,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="93"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Källa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="95"/>
@@ -7481,17 +7481,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="146"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Nej</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="148"/>
         <source>Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Linje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="150"/>
         <source>Word</source>
-        <translation type="unfinished"></translation>
+        <translation>Ord</translation>
     </message>
 </context>
 <context>
@@ -7504,7 +7504,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="142"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Låttext</translation>
     </message>
 </context>
 <context>
@@ -7512,17 +7512,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="64"/>
         <source>Automatically search for lyrics on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök automatiskt efter låttext vid start av uppspelning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="65"/>
         <source>Skip remaining sources when lyrics are found</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoppa över återstående källor när låttexter är hittade</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="66"/>
         <source>Skip external sources if local lyrics are found</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoppa över externa källor om lokala låttexter är hittade</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="70"/>
@@ -7571,7 +7571,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="142"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Låttext</translation>
     </message>
 </context>
 <context>
@@ -7667,7 +7667,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="525"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="534"/>
@@ -7692,12 +7692,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="568"/>
         <source>Lyrics settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Låttextinställningar…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="44"/>
         <source>Lyrics Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Låttextinställningar</translation>
     </message>
 </context>
 <context>
@@ -8435,7 +8435,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="118"/>
         <source>Random Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Slumpmässigt album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="122"/>
@@ -8455,17 +8455,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="131"/>
         <source>Next Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Nästa album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="134"/>
         <source>Start playing the first track of the previous album in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Börja spela det första spåret från föregående album i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="137"/>
         <source>Previous Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Föregående album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="152"/>
@@ -8480,7 +8480,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="166"/>
         <source>Set playback order to default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sätt uppspelningsordning till default</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="172"/>
@@ -8490,7 +8490,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="196"/>
         <source>Set playback order to shuffle tracks in the current playlist</source>
-        <translation>Sätt uppspelningsordningen till att blanda spår i nuvarande spellista</translation>
+        <translation>Sätt uppspelningsordningen till att blanda spår i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="178"/>
@@ -8505,7 +8505,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="190"/>
         <source>Set playback order to shuffle albums in the current playlist</source>
-        <translation>Sätt uppspelningsordningen till att blanda album i nuvarande spellista</translation>
+        <translation>Sätt uppspelningsordningen till att blanda album i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="202"/>
@@ -8565,7 +8565,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="226"/>
         <source>Stop playback at the end of the current track</source>
-        <translation>Stoppa uppspelning vid slutet av det nuvarande spåret</translation>
+        <translation>Stoppa uppspelning vid slutet av det aktuella spåret</translation>
     </message>
 </context>
 <context>
@@ -8616,7 +8616,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="90"/>
         <source>Stop playback after the current track</source>
-        <translation>Stoppa uppspelning efter det nuvarande spåret</translation>
+        <translation>Stoppa uppspelning efter det aktuella spåret</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="91"/>
@@ -8631,7 +8631,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="94"/>
         <source>Clear queue on exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa kö vid avslut</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="96"/>
@@ -8656,12 +8656,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="109"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Om det aktuella spåret har spelats i mer än 5&#xa0;s starta om den istället för att flytta till föregående spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="112"/>
         <source>Once the playback queue has finished, start playback from the tracks following the last queued track</source>
-        <translation type="unfinished"></translation>
+        <translation>När uppspelningskön blivit klar, starta uppspelning från spåren som följer det senast köade spåret</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="113"/>
@@ -8671,7 +8671,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="115"/>
         <source>If the current track in a playlist is unavailable, silently continue to the next track</source>
-        <translation type="unfinished"></translation>
+        <translation>Forstätt tyst till nästa spår om det aktuella spåret i en spellista är otillgängligt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="120"/>
@@ -8681,7 +8681,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="147"/>
         <source>Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Kö</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="156"/>
@@ -8742,7 +8742,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="93"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="94"/>
@@ -8893,12 +8893,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="147"/>
         <source>Top left</source>
-        <translation type="unfinished"></translation>
+        <translation>Vänster uppe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="149"/>
         <source>Top right</source>
-        <translation type="unfinished"></translation>
+        <translation>Höger uppe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="150"/>
@@ -8908,7 +8908,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="151"/>
         <source>Middle</source>
-        <translation type="unfinished"></translation>
+        <translation>Mitten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="152"/>
@@ -8918,7 +8918,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="153"/>
         <source>Bottom left</source>
-        <translation type="unfinished"></translation>
+        <translation>Vänster nere</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="154"/>
@@ -8928,7 +8928,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="155"/>
         <source>Bottom right</source>
-        <translation type="unfinished"></translation>
+        <translation>Höger nere</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="160"/>
@@ -8944,7 +8944,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="173"/>
         <source>Select which image source to use for the playlist background</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj vilken bildkälla att använda för spellistans bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="174"/>
@@ -9394,7 +9394,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
         <source>Ignore playlist files when adding folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorera spellistsfiler när mappar läggs till</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
@@ -9880,7 +9880,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="226"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="232"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>Överskugga höjd</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
@@ -10017,12 +10017,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="120"/>
         <source>Absolute</source>
-        <translation type="unfinished"></translation>
+        <translation>Absolut</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="121"/>
         <source>Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>Relativ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="172"/>
@@ -10211,7 +10211,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="765"/>
         <source>Select all tracks in the current playlist</source>
-        <translation>Välj alla spår i den nuvarande spellistan</translation>
+        <translation>Välj alla spår i den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1125"/>
@@ -10388,7 +10388,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="412"/>
         <source>Remove the selected tracks from the current playlist</source>
-        <translation>Ta bort de valda spåren från de nuvarande spellista</translation>
+        <translation>Ta bort de valda spåren från den aktuella spellistan</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="426"/>
@@ -10502,7 +10502,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="239"/>
         <source>fooyin Plugin (*.fyl)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin-tillägg (*.fyl)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="247"/>
@@ -10513,7 +10513,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="178"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="248"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta om för att ändringar ska börja gälla. Starta om nu?</translation>
     </message>
 </context>
 <context>
@@ -10640,7 +10640,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="86"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bo&amp;rt</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="88"/>
@@ -10675,7 +10675,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="112"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppspelningskö</translation>
     </message>
 </context>
 <context>
@@ -10693,12 +10693,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="38"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="39"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Zebramönstrade rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="40"/>
@@ -10728,7 +10728,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="53"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Utseende</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="67"/>
@@ -10912,17 +10912,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="97"/>
         <source>&amp;Update File Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Uppdatera filtaggar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="114"/>
         <source>Writing to file tags…</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriver till filtaggar…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="82"/>
         <source>Time taken</source>
-        <translation type="unfinished"></translation>
+        <translation>Tid tagen</translation>
     </message>
 </context>
 <context>
@@ -11025,7 +11025,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="96"/>
         <source>Current file</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell fil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="118"/>
@@ -11055,7 +11055,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="126"/>
         <source>Remove ReplayGain information from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort ReplayGain-information från filer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="128"/>
@@ -11237,7 +11237,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="101"/>
         <source>Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>Sammanfattning</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="104"/>
@@ -11590,7 +11590,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="46"/>
         <source>Edit Scrobbling Service</source>
-        <translation type="unfinished"></translation>
+        <translation>Redigera skrobblingstjänst</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="48"/>
@@ -11625,7 +11625,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="124"/>
         <source>Add Scrobbling Service</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till skrobblingstjänst</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="166"/>
@@ -11648,7 +11648,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="131"/>
         <source>The application has successfully logged in. This window can now be closed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Applikationen har loggat in med succé. Detta fönster kan stängas nu.</translation>
     </message>
 </context>
 <context>
@@ -11666,7 +11666,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="228"/>
         <source>Scrobbling</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrobbling</translation>
     </message>
 </context>
 <context>
@@ -11679,7 +11679,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="79"/>
         <source>Filter scrobbles</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrera skrobblar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="88"/>
@@ -11689,12 +11689,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="77"/>
         <source>Scrobble delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrobblarfördröjning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="91"/>
         <source>Time to wait before submitting scrobbles</source>
-        <translation type="unfinished"></translation>
+        <translation>Tid att vänta innan skrobblar skickas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="80"/>
@@ -11714,7 +11714,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="118"/>
         <source>Filtering</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="127"/>
@@ -11747,7 +11747,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="63"/>
         <source>Scrobbler</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrobblare</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="67"/>
@@ -11799,7 +11799,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="366"/>
         <source>Scrobbling</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrobbling</translation>
     </message>
 </context>
 <context>
@@ -11880,12 +11880,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="105"/>
         <source>Scrobbling settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrobblingsinställningar…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="113"/>
         <source>Scrobbling services…</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrobblingsstjänster…</translation>
     </message>
 </context>
 <context>
@@ -11971,7 +11971,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="173"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Hjälp</translation>
     </message>
 </context>
 <context>
@@ -11997,12 +11997,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="69"/>
         <source>Clear search string when successful</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa sökning vid succé</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="70"/>
         <source>Autosearch delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Autosökfördröjning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="72"/>
@@ -12017,7 +12017,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="74"/>
         <source>Close quick search when successful</source>
-        <translation type="unfinished"></translation>
+        <translation>Stäng snabbsökning vid succé</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="75"/>
@@ -12075,7 +12075,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="63"/>
         <source>Search library…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök i bibliotek…</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="97"/>
@@ -12112,7 +12112,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="453"/>
         <source>Force search in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tvinga sökning i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="453"/>
@@ -12132,7 +12132,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="455"/>
         <source>Delete a word in the search box</source>
-        <translation type="unfinished"></translation>
+        <translation>Radera ett ord i söklådan</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="528"/>
@@ -12307,7 +12307,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="94"/>
         <source>Sort incoming tracks by</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortera inkommande spår i</translation>
     </message>
 </context>
 <context>
@@ -12331,7 +12331,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="350"/>
         <source>Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Id</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="352"/>
@@ -12445,7 +12445,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="384"/>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>Tönhöjd</translation>
     </message>
 </context>
 <context>
@@ -12461,7 +12461,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="359"/>
         <source>Tempo</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo</translation>
     </message>
 </context>
 <context>
@@ -12479,7 +12479,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="75"/>
         <source>Target sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Målsamplingsfrekvens</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="77"/>
@@ -12514,7 +12514,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="95"/>
         <source>Bandwidth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bandbredd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="99"/>
@@ -12580,12 +12580,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="369"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished"></translation>
+        <translation>Splittrare (topp/botten)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="371"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>Splittrare (vänster/höger)</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/splitterwidget.cpp" line="381"/>
@@ -12640,7 +12640,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="607"/>
         <source>Show current playlist info</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa aktuell spellistsinfo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="626"/>
@@ -12721,7 +12721,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="79"/>
         <source>Scripts</source>
-        <translation type="unfinished"></translation>
+        <translation>Skript</translation>
     </message>
 </context>
 <context>
@@ -12800,7 +12800,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="149"/>
         <source>Auto Capitalisation</source>
-        <translation type="unfinished"></translation>
+        <translation>Autoversalisering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="151"/>
@@ -13180,7 +13180,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="51"/>
         <source>Capitalise</source>
-        <translation type="unfinished"></translation>
+        <translation>Versalisera</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="52"/>
@@ -13254,7 +13254,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="241"/>
         <source>Add to current playlist</source>
-        <translation>Lägg till i nuvarande spellista</translation>
+        <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="242"/>
@@ -13264,7 +13264,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="243"/>
         <source>Replace current playlist</source>
-        <translation>Ersätt nuvarande spellista</translation>
+        <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="244"/>
@@ -13369,7 +13369,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="291"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation>Ersätt innehållet i den nuvarande spellistan med de valda spåren</translation>
+        <translation>Ersätt innehållet av den aktuella spellistan med de valda spåren</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="304"/>
@@ -13419,22 +13419,22 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="426"/>
         <source>Attach image</source>
-        <translation type="unfinished"></translation>
+        <translation>Bifoga bild</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="428"/>
         <source>Attach an image file as the front cover for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Bifoga en bildfil som framsidsomslaget för de valda spåren</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="441"/>
         <source>Attach an image file as the back cover for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Bifoga en bildfil som baksidsomslaget för de valda spåren</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="454"/>
         <source>Attach an image file as the artist picture for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Bifoga en bildfil som artistbilden för de valda spåren</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="470"/>
@@ -13629,7 +13629,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="109"/>
         <source>Background colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Bakgrundsfärg</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="111"/>
@@ -14138,7 +14138,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="170"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished"></translation>
+        <translation>Splittrare (topp/botten)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="171"/>
@@ -14146,12 +14146,12 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
         <location filename="../../src/gui/widgets.cpp" line="196"/>
         <location filename="../../src/gui/widgets.cpp" line="222"/>
         <source>Splitters</source>
-        <translation type="unfinished"></translation>
+        <translation>Splittrare</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="176"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>Splittrare (vänster/höger)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="182"/>
@@ -14268,7 +14268,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="327"/>
         <source>Script Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriptdisplay</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="421"/>
@@ -14361,7 +14361,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="458"/>
         <source>Split ID3v2.3 semicolon-separated tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitta ID3v2.3-semikolonseparerade taggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="459"/>
@@ -14465,7 +14465,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="169"/>
         <source>Add to current playlist</source>
-        <translation>Lägg till i nuvarande spellista</translation>
+        <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="173"/>
@@ -14475,7 +14475,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="177"/>
         <source>Replace current playlist</source>
-        <translation>Ersätt nuvarande spellista</translation>
+        <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="181"/>
@@ -14701,22 +14701,22 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="503"/>
         <source>Expected %1 to close variable list</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade %1 att stänga variabellista</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="512"/>
         <source>Expected %1 to close variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade %1 att stänga variabel</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="532"/>
         <source>Expected %1 after function name</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade %1 efter funktionsnamn</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="542"/>
         <source>Expected %1 at end of function</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade %1 vid slutet av funktion</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="666"/>
@@ -14727,13 +14727,13 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
         <location filename="../../src/core/scripting/scriptparser.cpp" line="694"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="700"/>
         <source>Expected %1 to close group</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade %1 att stänga grupp</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="912"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="917"/>
         <source>Expected %1 after %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade %1 efter %2</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1668"/>
@@ -14749,22 +14749,22 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="45"/>
         <source>SoXR precision</source>
-        <translation>SoXR precision</translation>
+        <translation>SoXR-precision</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="72"/>
         <source>Target sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Målsamplingsfrekvens</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="39"/>
         <source>Do not skip initial silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoppa inte över initial tystnad</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="40"/>
         <source>Skip silence in the middle of a track</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoppa över tystnad i mitten av ett spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="46"/>
@@ -14865,7 +14865,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="98"/>
         <source>Pitch shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Tonhöjdsskifte</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="100"/>
@@ -14875,12 +14875,12 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="112"/>
         <source>Tempo</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="114"/>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>Tonhöjd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="116"/>
@@ -14890,12 +14890,12 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenumodel.cpp" line="74"/>
         <source>Separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Separerare</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="46"/>
         <source>Automatic detection</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisk detektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="76"/>
@@ -14908,7 +14908,8 @@ Detta stödjer mellanliggande betygssteg men behandlar inte POPM-byten som en fu
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="82"/>
         <source>Use common POPM byte values for whole-star ratings only.
 Intermediate ratings are rounded to one, two, three, four, or five stars.</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd vanliga POPM-bytevärden endast för helstjärnsbetyg.
+Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="86"/>
