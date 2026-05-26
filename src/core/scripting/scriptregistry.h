@@ -40,6 +40,9 @@ public:
     ScriptRegistry();
     ~ScriptRegistry();
 
+    static void addGlobalProvider(const ScriptVariableProvider& provider);
+    [[nodiscard]] static std::vector<ScriptVariableDescriptor> globalVariables();
+
     void addProvider(const ScriptVariableProvider& provider);
     void addProvider(const ScriptFunctionProvider& provider);
 
@@ -106,6 +109,7 @@ public:
     };
 
     [[nodiscard]] ScriptContext currentContext() const;
+    [[nodiscard]] uint64_t generation() const;
     void setContext(const ScriptContext& context);
 
     void addDefaultFunctions();
@@ -144,6 +148,7 @@ public:
     [[nodiscard]] const TrackListAggregateCache& cachedTrackListValues(const TrackList& tracks) const;
 
 private:
+    [[nodiscard]] static uint64_t globalVariableGeneration();
     [[nodiscard]] const VariableInvoker* customVariableInvoker(VariableKind kind, const QString& var) const;
 
     ScriptContext m_context;
@@ -153,5 +158,6 @@ private:
     std::unordered_map<QString, VariableInvoker> m_genericVariableInvokers;
     std::unordered_map<VariableKind, VariableInvoker> m_customVariables;
     mutable TrackListAggregateCache m_trackListCache;
+    uint64_t m_generation{0};
 };
 } // namespace Fooyin

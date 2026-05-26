@@ -19,29 +19,25 @@
 
 #pragma once
 
-#include <QString>
+#include "fygui_export.h"
 
-#include <cstdint>
-#include <vector>
+#include <utils/id.h>
+
+#include <span>
+
+#include <QObject>
 
 namespace Fooyin {
-enum class ScriptReferenceKind : uint8_t
+/*! Refreshes playlist row rendering for plugin-owned transient state. */
+class FYGUI_EXPORT PlaylistViewRefresher : public QObject
 {
-    Variable = 0,
-    Function,
-    Formatting,
-    CommandAlias,
-};
+    Q_OBJECT
 
-struct ScriptReferenceEntry
-{
-    ScriptReferenceKind kind{ScriptReferenceKind::Variable};
-    QString label;
-    QString insertText;
-    QString category;
-    QString description;
-    int cursorOffset{0};
-};
+public:
+    explicit PlaylistViewRefresher(QObject* parent = nullptr);
+    ~PlaylistViewRefresher() override;
 
-std::vector<ScriptReferenceEntry> scriptReferenceEntries();
+    virtual void refreshPlaylist(const UId& playlistId)                               = 0;
+    virtual void refreshEntries(const UId& playlistId, std::span<const UId> entryIds) = 0;
+};
 } // namespace Fooyin

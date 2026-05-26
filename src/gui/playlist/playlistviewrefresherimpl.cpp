@@ -17,31 +17,31 @@
  *
  */
 
-#pragma once
-
-#include <QString>
-
-#include <cstdint>
-#include <vector>
+#include "playlistviewrefresherimpl.h"
 
 namespace Fooyin {
-enum class ScriptReferenceKind : uint8_t
-{
-    Variable = 0,
-    Function,
-    Formatting,
-    CommandAlias,
-};
+PlaylistViewRefresher::PlaylistViewRefresher(QObject* parent)
+    : QObject{parent}
+{ }
 
-struct ScriptReferenceEntry
-{
-    ScriptReferenceKind kind{ScriptReferenceKind::Variable};
-    QString label;
-    QString insertText;
-    QString category;
-    QString description;
-    int cursorOffset{0};
-};
+PlaylistViewRefresher::~PlaylistViewRefresher() = default;
 
-std::vector<ScriptReferenceEntry> scriptReferenceEntries();
+PlaylistViewRefresherImpl::PlaylistViewRefresherImpl(PlaylistViewRefreshSource* source, QObject* parent)
+    : PlaylistViewRefresher{parent}
+    , m_source{source}
+{ }
+
+void PlaylistViewRefresherImpl::refreshPlaylist(const UId& playlistId)
+{
+    if(m_source) {
+        m_source->refreshPlaylist(playlistId);
+    }
+}
+
+void PlaylistViewRefresherImpl::refreshEntries(const UId& playlistId, std::span<const UId> entryIds)
+{
+    if(m_source) {
+        m_source->refreshEntries(playlistId, entryIds);
+    }
+}
 } // namespace Fooyin
