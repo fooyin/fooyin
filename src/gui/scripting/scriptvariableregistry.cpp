@@ -17,31 +17,18 @@
  *
  */
 
-#pragma once
+#include <gui/scripting/scriptvariableregistry.h>
 
-#include <QString>
-
-#include <cstdint>
-#include <vector>
+#include <core/scripting/scriptparser.h>
 
 namespace Fooyin {
-enum class ScriptReferenceKind : uint8_t
+void ScriptVariableRegistry::registerProvider(const ScriptVariableProvider& provider)
 {
-    Variable = 0,
-    Function,
-    Formatting,
-    CommandAlias,
-};
+    ScriptParser::addGlobalProvider(provider);
+}
 
-struct ScriptReferenceEntry
+std::vector<ScriptVariableDescriptor> ScriptVariableRegistry::variables() const
 {
-    ScriptReferenceKind kind{ScriptReferenceKind::Variable};
-    QString label;
-    QString insertText;
-    QString category;
-    QString description;
-    int cursorOffset{0};
-};
-
-std::vector<ScriptReferenceEntry> scriptReferenceEntries();
+    return ScriptParser::globalVariables();
+}
 } // namespace Fooyin

@@ -39,6 +39,7 @@
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 #include "playlist/playlistuicontroller.h"
+#include "playlist/playlistviewrefresherimpl.h"
 #include "queueviewer/queueviewer.h"
 #include "scripting/scriptcommandhandler.h"
 #include "scripting/scriptvariableproviders.h"
@@ -78,6 +79,7 @@
 #include <gui/plugins/pluginconfigguiplugin.h>
 #include <gui/propertiesdialog.h>
 #include <gui/scripting/scripteditor.h>
+#include <gui/scripting/scriptvariableregistry.h>
 #include <gui/theme/fytheme.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/trackselectioncontroller.h>
@@ -265,6 +267,8 @@ public:
 
     PropertiesDialog* m_propertiesDialog;
     std::unique_ptr<ScriptCommandHandler> m_scriptCommandHandler;
+    PlaylistViewRefresherImpl m_playlistViewRefresher;
+    ScriptVariableRegistry m_scriptVariableRegistry;
     WindowController* m_windowController;
     ThemeRegistry* m_themeRegistry;
     std::unique_ptr<AdvancedSettingsRegistry> m_advancedSettingsRegistry;
@@ -318,6 +322,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_propertiesDialog{new PropertiesDialog(m_actionManager, m_settings, m_self)}
     , m_scriptCommandHandler{std::make_unique<ScriptCommandHandler>(m_actionManager, m_playerController,
                                                                     m_propertiesDialog)}
+    , m_playlistViewRefresher{m_playlistController.get(), m_self}
     , m_windowController{new WindowController(m_mainWindow.get())}
     , m_themeRegistry{new ThemeRegistry(m_settings, m_self)}
     , m_advancedSettingsRegistry{std::make_unique<AdvancedSettingsRegistry>(m_settings)}
@@ -327,8 +332,10 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          &m_selectionController,
                          m_searchController,
                          m_playlistController.get(),
+                         &m_playlistViewRefresher,
                          m_propertiesDialog,
                          m_scriptCommandHandler.get(),
+                         &m_scriptVariableRegistry,
                          &m_widgetProvider,
                          m_editableLayout.get(),
                          m_windowController,

@@ -75,6 +75,10 @@ static const StaticScriptVariableProvider ContextVariableProvider{
         return {.value = environment->variableValue(), .cond = true};
     }>(VariableKind::FrontCover, u"STATEFULVAR"_s)};
 
+static const StaticScriptVariableProvider GlobalVariableProvider{makeScriptVariableDescriptor<[]() -> ScriptResult {
+    return {.value = u"global-value"_s, .cond = true};
+}>(VariableKind::Generic, u"PLUGIN_GLOBAL_TEST_VARIABLE"_s)};
+
 static constexpr auto PrefixFunction = [](const ScriptFunctionCallContext& call) -> ScriptResult {
     if(call.args.empty()) {
         return {};
@@ -729,6 +733,19 @@ TEST_F(ScriptParserTest, StatefulVariableProvidersInstallIntoRegistry)
     const Track track;
 
     EXPECT_EQ(u"stateful", parser.evaluate(u"%statefulvar%"_s, track, context));
+}
+
+TEST_F(ScriptParserTest, GlobalVariableProvidersInstallIntoExistingParsers)
+{
+    const Track track;
+    const ParsedScript parsed = m_parser.parse(u"%plugin_global_test_variable%"_s);
+
+    EXPECT_EQ(u"", m_parser.evaluate(parsed, track));
+
+    ScriptParser::addGlobalProvider(GlobalVariableProvider);
+
+    EXPECT_EQ(u"global-value", m_parser.evaluate(parsed, track));
+    EXPECT_EQ(u"global-value", m_parser.evaluate(u"%plugin_global_test_variable%"_s, track));
 }
 
 TEST_F(ScriptParserTest, FunctionProvidersInstallIntoRegistry)

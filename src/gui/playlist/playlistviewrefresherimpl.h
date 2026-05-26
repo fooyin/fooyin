@@ -19,29 +19,22 @@
 
 #pragma once
 
-#include <QString>
+#include <gui/playlist/playlistviewrefresher.h>
 
-#include <cstdint>
-#include <vector>
+#include "playlistviewrefreshsource.h"
 
 namespace Fooyin {
-enum class ScriptReferenceKind : uint8_t
+class PlaylistViewRefresherImpl : public PlaylistViewRefresher
 {
-    Variable = 0,
-    Function,
-    Formatting,
-    CommandAlias,
-};
+    Q_OBJECT
 
-struct ScriptReferenceEntry
-{
-    ScriptReferenceKind kind{ScriptReferenceKind::Variable};
-    QString label;
-    QString insertText;
-    QString category;
-    QString description;
-    int cursorOffset{0};
-};
+public:
+    PlaylistViewRefresherImpl(PlaylistViewRefreshSource* source, QObject* parent = nullptr);
 
-std::vector<ScriptReferenceEntry> scriptReferenceEntries();
+    void refreshPlaylist(const UId& playlistId) override;
+    void refreshEntries(const UId& playlistId, std::span<const UId> entryIds) override;
+
+private:
+    PlaylistViewRefreshSource* m_source;
+};
 } // namespace Fooyin

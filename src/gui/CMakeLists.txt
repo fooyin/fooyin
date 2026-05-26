@@ -18,6 +18,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/guiutils.h
     ${CMAKE_SOURCE_DIR}/include/gui/layoutprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/playlist/currentplaylistcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/playlist/playlistviewrefresher.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/dspguiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h
@@ -31,6 +32,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scripteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
+    ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptvariableregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fytheme.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/themeregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackmimedata.h
@@ -168,6 +170,7 @@ set(SOURCES
     layoutcommands.h
     pluginsettingsregistry.cpp
     pluginsettingsregistry.h
+    scripting/scriptvariableregistry.cpp
     layoutprovider.cpp
     librarytree/librarytreecontroller.cpp
     librarytree/librarytreecontroller.h
@@ -239,6 +242,10 @@ set(SOURCES
     playlist/playlistcommands.h
     playlist/playlistcontroller.cpp
     playlist/playlistcontroller.h
+    playlist/currentplaylistcontroller.cpp
+    playlist/playlistviewrefresherimpl.cpp
+    playlist/playlistviewrefresherimpl.h
+    playlist/playlistviewrefreshsource.h
     playlist/playlistuicontroller.cpp
     playlist/playlistuicontroller.h
     playlist/playlistworkspace.cpp
