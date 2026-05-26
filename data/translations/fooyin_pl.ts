@@ -2953,7 +2953,7 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="850"/>
         <source>DSP Manager</source>
-        <translation>Menedżer procesorów sygnałowych (DSP)</translation>
+        <translation>Menedżer procesorów sygnałowych</translation>
     </message>
 </context>
 <context>
@@ -2976,51 +2976,51 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="233"/>
         <source>Per-Track DSPs</source>
-        <translation>DSP na utwór</translation>
+        <translation>Procesor sygnałowy na utwór</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="234"/>
         <source>Master DSPs</source>
-        <translation>Główny DSP</translation>
+        <translation>Główny procesor sygnałowy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="236"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed.
 During crossfades, each track is processed independently.</source>
-        <translation>DSP na utwór są oddzielnie aplikowane dla każdego strumienia zanim ścieżki zostaną zmiksowane.
+        <translation>Procesory sygnałowe na utwór są oddzielnie aplikowane dla każdego strumienia zanim ścieżki zostaną zmiksowane.
 Podczas przenikania, każda ścieżka jest przetwarzana oddzielnie.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="238"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal.
 Effects here process the final combined output.</source>
-        <translation>Główne DSP są stosowane po zmieszaniu wszystkich aktywnych utworów w jeden sygnał. Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
+        <translation>Główne procesory sygnałowe są stosowane po zmieszaniu wszystkich aktywnych utworów w jeden sygnał. Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="241"/>
         <source>Available DSPs</source>
-        <translation>Dostępne DSP</translation>
+        <translation>Dostępne procesory sygnałowe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="260"/>
         <source>DSP chain presets</source>
-        <translation>Predefiniowane łańcuchy DSP</translation>
+        <translation>Predefiniowane łańcuchy procesorów sygnałowych</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="490"/>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="496"/>
         <source>DSP Settings</source>
-        <translation>Ustawienia DSP</translation>
+        <translation>Ustawienia procesorów sygnałowych</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="490"/>
         <source>This DSP has no configurable settings.</source>
-        <translation>Ten DSP nie ma konfigurowalnych ustawień.</translation>
+        <translation>Ten procesor sygnałowy nie ma konfigurowalnych ustawień.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="496"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation>Nie można otworzyć ustawień dla DSP „%1”.</translation>
+        <translation>Nie można otworzyć ustawień dla procesora sygnałowego „%1”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="619"/>
@@ -3055,12 +3055,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="668"/>
         <source>Add to Per-Track</source>
-        <translation>Dodaj do DSP na utwór</translation>
+        <translation>Dodaj do procesorów sygnałowych na utwór</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="669"/>
         <source>Add to Master</source>
-        <translation>Dodaj do głównych DSP</translation>
+        <translation>Dodaj do głównych procesorów sygnałowych</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="796"/>
@@ -3104,17 +3104,17 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="310"/>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="317"/>
         <source>DSP Settings</source>
-        <translation>Ustawienia DSP</translation>
+        <translation>Ustawienia procesora sygnałowego</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="310"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation>Nie można otworzyć ustawień dla DSP „%1”.</translation>
+        <translation>Nie można otworzyć ustawień dla procesora sygnałowego „%1”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="317"/>
         <source>Unable to find DSP &quot;%1&quot;.</source>
-        <translation>Nie można znaleźć DSP „%1”.</translation>
+        <translation>Nie można znaleźć procesora sygnałowego „%1”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="359"/>
@@ -8120,7 +8120,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="58"/>
         <source>DSP</source>
         <extracomment>DSP chain set for an audio output device</extracomment>
-        <translation>Procesor sygnałowy (DSP)</translation>
+        <translation>Procesor sygnałowy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="60"/>
@@ -13460,27 +13460,27 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="441"/>
         <source>Attach an image file as the back cover for the selected tracks</source>
-        <translation type="unfinished">Dołącz plik obrazu jako okładkę tylną dla zaznaczonych utworów</translation>
+        <translation>Dołącz plik obrazu jako okładkę tylną zaznaczonych utworów</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="454"/>
         <source>Attach an image file as the artist picture for the selected tracks</source>
-        <translation type="unfinished">Dołącz plik obrazu jako zdjęcie artysty dla zaznaczonych utworów</translation>
+        <translation>Dołącz plik obrazu jako zdjęcie artysty zaznaczonych utworów</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="470"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
-        <translation type="unfinished">Usuń wszystkie okładki powiązane z zaznaczonymi utworami (osadzone, folder)</translation>
+        <translation>Usuń wszystkie okładki powiązane z zaznaczonymi utworami (osadzone i w folderze)</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="484"/>
         <source>Open the properties dialog</source>
-        <translation type="unfinished">Otwórz okno właściwości</translation>
+        <translation>Otwórz okno właściwości</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="936"/>
         <source>Playback</source>
-        <translation type="unfinished">Odtwarzanie</translation>
+        <translation>Odtwarzanie</translation>
     </message>
 </context>
 <context>
@@ -13489,37 +13489,37 @@ Nie obsługują pełnego skryptowania.</translation>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="48"/>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="118"/>
         <source>View</source>
-        <translation type="unfinished">Widok</translation>
+        <translation>Widok</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="50"/>
         <source>Quick &amp;setup</source>
-        <translation type="unfinished">Szybka konfiguracja</translation>
+        <translation>Szybka konfiguracja</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="52"/>
         <source>Open the quick setup dialog</source>
-        <translation type="unfinished">Otwórz okno szybkiej konfiguracji</translation>
+        <translation>Otwórz okno szybkiej konfiguracji</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
         <source>&amp;Log</source>
-        <translation type="unfinished">Dziennik</translation>
+        <translation>Dziennik</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="60"/>
         <source>Open the log dialog</source>
-        <translation type="unfinished">Otwórz okno dziennika</translation>
+        <translation>Otwórz okno dziennika</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="66"/>
         <source>&amp;Script editor</source>
-        <translation type="unfinished">Edytor skryptów</translation>
+        <translation>Edytor skryptów</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="68"/>
         <source>Open the script editor dialog</source>
-        <translation type="unfinished">Otwórz okno edytora skryptów</translation>
+        <translation>Otwórz okno edytora skryptów</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="74"/>
@@ -13534,37 +13534,37 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="82"/>
         <source>Playback &amp;Queue</source>
-        <translation type="unfinished">Kolejka odtwarzania</translation>
+        <translation>Kolejka odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
         <source>Open the playback queue window</source>
-        <translation type="unfinished">Otwórz okno kolejki odtwarzania</translation>
+        <translation>Otwórz okno kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="92"/>
         <source>Focus Search &amp;Bar</source>
-        <translation type="unfinished">Skup się na pasku wyszukiwania</translation>
+        <translation>Ustaw na pasku wyszukiwania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="93"/>
         <source>Focus the first Search Bar found in the current layout</source>
-        <translation type="unfinished">Ustaw na pierwszym znalezionym pasku wyszukiwania w obecnym układzie</translation>
+        <translation>Ustaw na pierwszym znalezionym pasku wyszukiwania w bieżącym układzie</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="99"/>
         <source>Show playing &amp;track</source>
-        <translation type="unfinished">Pokaż odtwarzany utwór</translation>
+        <translation>Pokaż odtwarzany utwór</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="100"/>
         <source>Show the currently playing track in the playlist</source>
-        <translation type="unfinished">Pokaż obecnie odtwarzany utwór na liście odtwarzania</translation>
+        <translation>Pokaż obecnie odtwarzany utwór na liście odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="118"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>Procesor sygnałowy</translation>
     </message>
 </context>
 <context>
@@ -13572,22 +13572,22 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="293"/>
         <source>Volume Controls</source>
-        <translation type="unfinished">Sterowanie głośnością</translation>
+        <translation>Sterowanie głośnością</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="320"/>
         <source>Icon</source>
-        <translation type="unfinished">Ikona</translation>
+        <translation>Ikona</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="321"/>
         <source>Slider</source>
-        <translation type="unfinished">Suwak</translation>
+        <translation>Suwak</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="322"/>
         <source>Tooltip</source>
-        <translation type="unfinished">Podpowiedź</translation>
+        <translation>Podpowiedź</translation>
     </message>
 </context>
 <context>
@@ -13595,87 +13595,87 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="49"/>
         <source>Custom colours</source>
-        <translation type="unfinished">Niestandardowe kolory</translation>
+        <translation>Własne kolory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="56"/>
         <source>General</source>
-        <translation type="unfinished">Ogólne</translation>
+        <translation>Ogólne</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="40"/>
         <source>VU Meter Settings</source>
-        <translation type="unfinished">Ustawienia wskaźnika VU</translation>
+        <translation>Ustawienia wskaźnika wysterowania</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
         <source>%1 fps</source>
-        <translation type="unfinished">%1 kl/s</translation>
+        <translation>%1 kl/s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="70"/>
         <source>Peak hold time</source>
-        <translation type="unfinished">Czas utrzymania wartości szczytowej</translation>
+        <translation>Czas utrzymania szczytu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="72"/>
         <source>Falloff time</source>
-        <translation type="unfinished">Czas opadania</translation>
+        <translation>Czas opadania</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="74"/>
         <source>Refresh rate</source>
-        <translation type="unfinished">Częstotliwość odświeżania</translation>
+        <translation>Częstotliwość odświeżania</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="78"/>
         <source>Dimension</source>
-        <translation type="unfinished">Wymiary</translation>
+        <translation>Wymiary</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="92"/>
         <source>Channel spacing</source>
-        <translation type="unfinished">Odstęp między kanałami</translation>
+        <translation>Odstęp pomiędzy kanałami</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="94"/>
         <source>Bar size</source>
-        <translation type="unfinished">Rozmiar paska</translation>
+        <translation>Rozmiar paska</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="96"/>
         <source>Bar spacing</source>
-        <translation type="unfinished">Odstęp między paskami</translation>
+        <translation>Odstęp pomiędzy paskami</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="99"/>
         <source>Sections</source>
-        <translation type="unfinished">Przedziały</translation>
+        <translation>Przedziały</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="101"/>
         <source>Section spacing</source>
-        <translation type="unfinished">Odstęp między przedziałami</translation>
+        <translation>Odstęp pomiędzy przedziałami</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="109"/>
         <source>Background colour</source>
-        <translation type="unfinished">Kolor tła</translation>
+        <translation>Kolor tła</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="111"/>
         <source>Peak colour</source>
-        <translation type="unfinished">Kolor szczytu</translation>
+        <translation>Kolor szczytu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="113"/>
         <source>Legend colour</source>
-        <translation type="unfinished">Kolor legendy</translation>
+        <translation>Kolor legendy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="115"/>
         <source>Bar colours</source>
-        <translation type="unfinished">Kolory pasków</translation>
+        <translation>Kolory pasków</translation>
     </message>
 </context>
 <context>
@@ -13684,7 +13684,7 @@ Nie obsługują pełnego skryptowania.</translation>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="55"/>
         <location filename="../../src/plugins/vumeter/vumeterplugin.cpp" line="65"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Wizualizacje</translation>
+        <translation>Wizualizacje</translation>
     </message>
 </context>
 <context>
@@ -13692,37 +13692,37 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="776"/>
         <source>Peak Meter</source>
-        <translation type="unfinished">Wskaźnik szczytu</translation>
+        <translation>Wskaźnik szczytu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="776"/>
         <source>VU Meter</source>
-        <translation type="unfinished">Wskaźnik VU</translation>
+        <translation>Wskaźnik wysterowania</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1202"/>
         <source>Show peaks</source>
-        <translation type="unfinished">Pokaż szczyty</translation>
+        <translation>Pokaż szczyty</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1207"/>
         <source>Show legend</source>
-        <translation type="unfinished">Pokaż legendę</translation>
+        <translation>Pokaż legendę</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1212"/>
         <source>Orientation</source>
-        <translation type="unfinished">Orientacja</translation>
+        <translation>Orientacja</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1215"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Poziomo</translation>
+        <translation>Poziomo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1216"/>
         <source>Vertical</source>
-        <translation type="unfinished">Pionowo</translation>
+        <translation>Pionowo</translation>
     </message>
 </context>
 <context>
@@ -13730,115 +13730,115 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="43"/>
         <source>WaveBar Settings</source>
-        <translation type="unfinished">Ustawienia WaveBar</translation>
+        <translation>Ustawienia paska fali dźwiękowej</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="44"/>
         <source>Show labels</source>
-        <translation type="unfinished">Pokaż etykiety</translation>
+        <translation>Pokaż etykiety</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="45"/>
         <source>Show remaining time</source>
-        <translation type="unfinished">Pokaż pozostały czas</translation>
+        <translation>Pokaż pozostały czas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="46"/>
         <source>Min/Max</source>
-        <translation type="unfinished">Min./Maks.</translation>
+        <translation>Min./Maks.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="47"/>
         <source>RMS</source>
-        <translation type="unfinished">Moc znamionowa (RMS)</translation>
+        <translation>Moc znamionowa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="48"/>
         <source>Silence</source>
-        <translation type="unfinished">Cisza</translation>
+        <translation>Cisza</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="49"/>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="146"/>
         <source>Off</source>
-        <translation type="unfinished">Wyłączone</translation>
+        <translation>Wyłączony</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="50"/>
         <source>Stereo</source>
-        <translation type="unfinished">Stereo</translation>
+        <translation>Stereo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="51"/>
         <source>Mono</source>
-        <translation type="unfinished">Mono</translation>
+        <translation>Mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="52"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished">Pokaż kursor postępu</translation>
+        <translation>Pokaż kursor postępu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="59"/>
         <source>Normalise waveform</source>
-        <translation type="unfinished">Normalizuj falę</translation>
+        <translation>Normalizuj wykres fali</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="60"/>
         <source>dB scale</source>
-        <translation type="unfinished">Skala dB</translation>
+        <translation>Skala dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="63"/>
         <source>Custom colours</source>
-        <translation type="unfinished">Własne kolory</translation>
+        <translation>Własne kolory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="82"/>
         <source>Clear Cache</source>
-        <translation type="unfinished">Wyczyść pamięć podręczną</translation>
+        <translation>Wyczyść pamięć podręczną</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="94"/>
         <source>Appearance</source>
-        <translation type="unfinished">Wygląd</translation>
+        <translation>Wygląd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="90"/>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="99"/>
         <source>Display</source>
-        <translation type="unfinished">Wyświetlanie</translation>
+        <translation>Wyświetlanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="91"/>
         <source>Colours</source>
-        <translation type="unfinished">Kolory</translation>
+        <translation>Kolory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="92"/>
         <source>Global</source>
-        <translation type="unfinished">Globalne</translation>
+        <translation>Globalne</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="101"/>
         <source>Draw a line in place of silence</source>
-        <translation type="unfinished">Rysuj linię w miejscu ciszy</translation>
+        <translation>Rysuj linię w miejscu ciszy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="107"/>
         <source>Downmix</source>
-        <translation type="unfinished">Miksowanie dźwięku</translation>
+        <translation>Redukcja liczby kanałów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="118"/>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="222"/>
         <source>Cursor</source>
-        <translation type="unfinished">Kursor</translation>
+        <translation>Kursor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="125"/>
         <source>Cursor width</source>
-        <translation type="unfinished">Szerokość kursora</translation>
+        <translation>Szerokość kursora</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
@@ -13846,147 +13846,150 @@ Nie obsługują pełnego skryptowania.</translation>
 Higher values can improve detail, but may increase CPU usage.
 For best results at higher values, increase Number of samples as well.
 Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can produce artifacts.</source>
-        <translation type="unfinished">Wewnętrzna pozioma skala renderowania fali. Wyższe wartości mogą poprawić szczegóły, ale mogą zwiększyć użycie CPU. Dla najlepszych wyników przy wyższych wartościach zwiększ także liczbę próbek. Próbkowanie nadmiarowe jest przeznaczone dla pasków 1 px z przerwą 0 px; inne rozmiary pasków mogą powodować artefakty.</translation>
+        <translation>Wewnętrzna pozioma skala renderowania wykresu fali.
+Wyższe wartości mogą poprawić szczegóły, ale mogą zwiększyć użycie procesora.
+Dla najlepszych wyników przy wyższych wartościach zwiększ także liczbę próbek.
+Próbkowanie nadmiarowe jest przeznaczone dla pasków 1 px z przerwą 0 px; inne rozmiary pasków mogą powodować artefakty.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="147"/>
         <source>2x</source>
-        <translation type="unfinished">2x</translation>
+        <translation>2x</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="148"/>
         <source>4x</source>
-        <translation type="unfinished">4x</translation>
+        <translation>4x</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="149"/>
         <source>8x</source>
-        <translation type="unfinished">8x</translation>
+        <translation>8x</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="157"/>
         <source>Supersampling</source>
-        <translation type="unfinished">Próbkowanie nadmiarowe</translation>
+        <translation>Próbkowanie nadmiarowe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="163"/>
         <source>Channel scale</source>
-        <translation type="unfinished">Skala kanałów</translation>
+        <translation>Skala kanałów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="165"/>
         <source>Max scale</source>
-        <translation type="unfinished">Maksymalna skala</translation>
+        <translation>Maksymalna skala</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="129"/>
         <source>Amplitude</source>
-        <translation type="unfinished">Amplituda</translation>
+        <translation>Amplituda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="138"/>
         <source>Scale the displayed waveform so the loudest peak reaches full height</source>
-        <translation type="unfinished">Skaluj wyświetlaną falę, aby najgłośniejszy szczyt osiągnął pełną wysokość</translation>
+        <translation>Skaluj wykres fali, aby najgłośniejsze szczyty osiągały pełną wysokość</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="139"/>
         <source>Use a decibel scale to make quieter waveform details more visible</source>
-        <translation type="unfinished">Użyj skali decybeli, aby uczynić cichsze szczegóły fali bardziej widocznymi</translation>
+        <translation>Użyj skali w decybelach, aby uczynić cichsze szczegóły wykresu fali bardziej widocznymi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="152"/>
         <source>Maximum</source>
-        <translation type="unfinished">Maksimum</translation>
+        <translation>Maksimum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="153"/>
         <source>Average</source>
-        <translation type="unfinished">Średnia</translation>
+        <translation>Średnia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="154"/>
         <source>Smoothed average</source>
-        <translation type="unfinished">Wygładzona średnia</translation>
+        <translation>Wygładzona średnia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="155"/>
         <source>How peaks are combined when waveform data is scaled to the current width</source>
-        <translation type="unfinished">Sposób łączenia szczytów podczas skalowania danych fali do bieżącej szerokości</translation>
+        <translation>Sposób łączenia szczytów podczas skalowania danych wykresu fali do bieżącej szerokości</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="159"/>
         <source>Peak display</source>
-        <translation type="unfinished">Wyświetlanie szczytów</translation>
+        <translation>Wyświetlanie szczytów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="173"/>
         <source>Rendering</source>
-        <translation type="unfinished">Renderowanie</translation>
+        <translation>Renderowanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="184"/>
         <source>Bar width</source>
-        <translation type="unfinished">Szerokość paska</translation>
+        <translation>Szerokość paska</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="186"/>
         <source>Bar gap</source>
-        <translation type="unfinished">Odstęp między paskami</translation>
+        <translation>Przerwy w pasku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="188"/>
         <source>Centre gap</source>
-        <translation type="unfinished">Odstęp centralny</translation>
+        <translation>Przerwa w środku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="198"/>
         <source>Unplayed</source>
-        <translation type="unfinished">Nieodtwarzane</translation>
+        <translation>Nieodtworzone</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="199"/>
         <source>Played</source>
-        <translation type="unfinished">Odtwarzane</translation>
+        <translation>Odtworzone</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="200"/>
         <source>Border</source>
-        <translation type="unfinished">Obramowanie</translation>
+        <translation>Obramowanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="201"/>
         <source>Background</source>
-        <translation type="unfinished">Tło</translation>
+        <translation>Tło</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="204"/>
         <source>Max</source>
-        <translation type="unfinished">Maks.</translation>
+        <translation>Maks.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="208"/>
         <source>Min</source>
-        <translation type="unfinished">Min.</translation>
+        <translation>Min.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="212"/>
         <source>RMS Max</source>
-        <translation type="unfinished">Maks. RMS</translation>
+        <translation>Maks. moc znamionowa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="216"/>
         <source>RMS Min</source>
-        <translation type="unfinished">Min. RMS</translation>
+        <translation>Min. moc znamionowa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="220"/>
         <source>Playing</source>
-        <translation type="unfinished">Odtwarzanie</translation>
+        <translation>Odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="221"/>
         <source>Seeking</source>
-        <translation type="unfinished">Przewijanie</translation>
+        <translation>Przewijanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="229"/>
@@ -13998,7 +14001,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
         <source>Number of samples (per channel) to use for waveform data.
 Higher values produce a more accurate and detailed waveform, but use more disk space in the cache.
 Higher supersampling values work best with higher sample counts.</source>
-        <translation>Liczba próbek (na kanał) do użycia dla danych fali.
+        <translation>Liczba próbek (na kanał) do użycia dla danych wykresu fali.
 Wyższe wartości dają dokładniejszą i bardziej szczegółową falę, ale zajmują więcej miejsca w pamięci podręcznej na dysku.
 Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą liczbą próbek.</translation>
     </message>
@@ -14013,7 +14016,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="86"/>
         <source>Waveform Seekbar</source>
-        <translation>Falowy pasek przewijania</translation>
+        <translation>Pasek przewijania w postaci wykresu fali</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="87"/>
@@ -14028,37 +14031,37 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="95"/>
         <source>Regenerate waveform data</source>
-        <translation>Wygeneruj ponownie dane fali</translation>
+        <translation>Wygeneruj ponownie dane wykresu fali</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="96"/>
         <source>Regenerate waveform data for the selected tracks</source>
-        <translation>Wygeneruj ponownie dane fali dla zaznaczonych utworów</translation>
+        <translation>Wygeneruj ponownie dane wykresu fali dla zaznaczonych utworów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="102"/>
         <source>Generate missing waveform data</source>
-        <translation>Wygeneruj brakujące dane fali</translation>
+        <translation>Wygeneruj brakujące dane wykresu fali</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="103"/>
         <source>Generate waveform data for the selected tracks if missing</source>
-        <translation>Wygeneruj dane fali dla zaznaczonych utworów, jeśli danych brakuje</translation>
+        <translation>Wygeneruj dane wykresu fali dla zaznaczonych utworów, jeśli danych brakuje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="110"/>
         <source>Remove waveform data</source>
-        <translation>Usuń dane fal</translation>
+        <translation>Usuń dane wykresu fali</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="111"/>
         <source>Remove any existing waveform data for the selected tracks</source>
-        <translation>Usuń istniejące dane fal dla wybranych utworów</translation>
+        <translation>Usuń istniejące dane wykresu fali dla wybranych utworów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="184"/>
         <source>Generating waveform data…</source>
-        <translation>Generowanie danych fal…</translation>
+        <translation>Generowanie danych wykresu fali…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="184"/>
@@ -14091,7 +14094,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="573"/>
         <source>Normalise waveform</source>
-        <translation>Normalizuj falę</translation>
+        <translation>Normalizuj wykres fali</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="582"/>
@@ -14192,22 +14195,22 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/widgets.cpp" line="195"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">Zakładki list odtwarzania</translation>
+        <translation>Zakładki list odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="201"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished">Organizator list odtwarzania</translation>
+        <translation>Organizator list odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="217"/>
         <source>Playback Queue</source>
-        <translation type="unfinished">Kolejka odtwarzania</translation>
+        <translation>Kolejka odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="221"/>
         <source>Tab Stack</source>
-        <translation type="unfinished">Zbiór zakładek</translation>
+        <translation>Stos zakładek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="230"/>
@@ -14218,7 +14221,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/widgets.cpp" line="246"/>
         <source>Player Controls</source>
-        <translation type="unfinished">Przyciski sterowania odtwarzaniem</translation>
+        <translation>Przyciski sterowania odtwarzaniem</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="239"/>
@@ -14228,7 +14231,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
         <location filename="../../src/gui/widgets.cpp" line="263"/>
         <location filename="../../src/gui/widgets.cpp" line="268"/>
         <source>Controls</source>
-        <translation type="unfinished">Przyciski sterowania</translation>
+        <translation>Przyciski sterowania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="209"/>
@@ -14238,27 +14241,27 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/widgets.cpp" line="238"/>
         <source>Command Button</source>
-        <translation type="unfinished">Przycisk poleceń</translation>
+        <translation>Przycisk poleceń</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="252"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished">Przyciski sterowania listą odtwarzania</translation>
+        <translation>Przyciski sterowania listą odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="257"/>
         <source>Volume Controls</source>
-        <translation type="unfinished">Sterowanie głośnością</translation>
+        <translation>Sterowanie głośnością</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="262"/>
         <source>Seekbar</source>
-        <translation type="unfinished">Pasek odtwarzania</translation>
+        <translation>Pasek odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="267"/>
         <source>Output Selector</source>
-        <translation type="unfinished">Wybór wyjścia</translation>
+        <translation>Wybór wyjścia</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="273"/>
@@ -14274,79 +14277,79 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
         <location filename="../../src/gui/widgets.cpp" line="295"/>
         <location filename="../../src/gui/widgets.cpp" line="560"/>
         <source>Playlist</source>
-        <translation type="unfinished">Lista odtwarzania</translation>
+        <translation>Lista odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="298"/>
         <source>Spacer</source>
-        <translation type="unfinished">Odstęp</translation>
+        <translation>Odstęp</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="308"/>
         <source>Status Bar</source>
-        <translation type="unfinished">Pasek stanu</translation>
+        <translation>Pasek stanu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="317"/>
         <source>Search Bar</source>
-        <translation type="unfinished">Pasek wyszukiwania</translation>
+        <translation>Pasek wyszukiwania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="319"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Przeglądarka folderów</translation>
+        <translation>Przeglądarka folderów</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="327"/>
         <source>Script Display</source>
-        <translation type="unfinished">Wyświetlanie skryptów</translation>
+        <translation>Wyświetlanie skryptów</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="421"/>
         <location filename="../../src/gui/widgets.cpp" line="428"/>
         <location filename="../../src/gui/widgets.cpp" line="435"/>
         <source>Interface</source>
-        <translation type="unfinished">Interfejs</translation>
+        <translation>Interfejs</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="422"/>
         <source>Image allocation limit</source>
-        <translation type="unfinished">Limit przydziału na obrazy</translation>
+        <translation>Limit przydziału na obrazy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="423"/>
         <source>Maximum image allocation size in MB. Set to 0 to disable the limit.</source>
-        <translation type="unfinished">Maksymalny rozmiar przydziału obrazów w MB. Ustaw 0, aby wyłączyć limit.</translation>
+        <translation>Maksymalny rozmiar przestrzeni dla obrazów w MB. Ustaw 0, aby wyłączyć limit.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="428"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">Edycja układu</translation>
+        <translation>Edycja układu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="429"/>
         <source>Menu levels</source>
-        <translation type="unfinished">Poziomy menu</translation>
+        <translation>Poziomy menu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="430"/>
         <source>Number of widget levels shown in the layout editing context menu.</source>
-        <translation type="unfinished">Liczba poziomów widżetów wyświetlanych w menu kontekstowym edycji układu.</translation>
+        <translation>Liczba poziomów widżetów wyświetlanych w menu kontekstowym edycji układu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="435"/>
         <source>Seeking</source>
-        <translation type="unfinished">Przewijanie</translation>
+        <translation>Przewijanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="436"/>
         <source>Focus seekbars when clicked</source>
-        <translation type="unfinished">Ustawianie na paskach przewijania po kliknięciu</translation>
+        <translation>Ustaw na paskach przewijania po kliknięciu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="437"/>
         <source>Give seekbars keyboard focus after clicking them.</source>
-        <translation type="unfinished">Ustaw kursor klawiatury na paskach przewijania po ich kliknięciu.</translation>
+        <translation>Ustaw kursor klawiaturę na paskach przewijania po ich kliknięciu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="442"/>
@@ -14354,14 +14357,14 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
         <location filename="../../src/gui/widgets.cpp" line="483"/>
         <location filename="../../src/gui/widgets.cpp" line="490"/>
         <source>Playback</source>
-        <translation type="unfinished">Odtwarzanie</translation>
+        <translation>Odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="442"/>
         <location filename="../../src/gui/widgets.cpp" line="465"/>
         <location filename="../../src/gui/widgets.cpp" line="483"/>
         <source>Decoding</source>
-        <translation type="unfinished">Dekodowanie</translation>
+        <translation>Dekodowanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="443"/>
@@ -14371,88 +14374,88 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/widgets.cpp" line="444"/>
         <source>Interval used to refresh VBR playback information. Set to 0 to disable.</source>
-        <translation type="unfinished">Odstęp czasowy używany do odświeżania informacji o odtwarzaniu ze zmienną przepływnością (VBR). Ustaw 0, aby wyłączyć.</translation>
+        <translation>Odstęp czasowy używany do odświeżania informacji o odtwarzaniu ze zmienną przepływnością. Ustaw 0, aby wyłączyć.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="449"/>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
         <source>Tagging</source>
-        <translation type="unfinished">Tagowanie</translation>
+        <translation>Tagowanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="450"/>
         <source>Preserve timestamps</source>
-        <translation type="unfinished">Zachowaj sygnatury czasowe</translation>
+        <translation>Zachowaj sygnatury czasowe</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="451"/>
         <source>Preserve file access and modification timestamps when updating tags.</source>
-        <translation type="unfinished">Zachowaj sygnatury czasu dostępu i modyfikacji pliku podczas aktualizacji tagów.</translation>
+        <translation>Zachowaj sygnatury czasu dostępu i modyfikacji pliku podczas aktualizacji tagów.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="458"/>
         <source>Split ID3v2.3 semicolon-separated tags</source>
-        <translation type="unfinished">Dziel tagi ID3v2.3 rozdzielone średnikami</translation>
+        <translation>Dziel tagi ID3v2.3 rozdzielone średnikami</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="459"/>
         <source>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</source>
-        <translation type="unfinished">Dziel wartości ID3v2.3 z niestandardowymi separatorami „;” podczas odczytu tagów.</translation>
+        <translation>Dziel wartości ID3v2.3 z niestandardowymi separatorami „;” podczas odczytywania tagów.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="466"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished">Włącz wszystkie wspierane wtyczki</translation>
+        <translation>Włącz wszystkie obsługiwane wtyczki</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="467"/>
         <source>Enabled all extensions supported by the FFmpeg input.</source>
-        <translation type="unfinished">Włączono wszystkie rozszerzenia obsługiwane przez wejście FFmpeg.</translation>
+        <translation>Włączono wszystkie rozszerzenia obsługiwane przez wejście FFmpeg.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="484"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished">Preferuj FFmpeg dla rozszerzeń</translation>
+        <translation>Preferuj FFmpeg dla rozszerzeń</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="485"/>
         <source>Semicolon-separated extensions where FFmpeg is tried first.</source>
-        <translation type="unfinished">Rozdzielone średnikami rozszerzenia, dla których najpierw używane jest FFmpeg.</translation>
+        <translation>Rozdzielone średnikami rozszerzenia, dla których najpierw używany jest FFmpeg.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="491"/>
         <source>Opus header gain</source>
-        <translation type="unfinished">Wzmocnienie nagłówka Opus</translation>
+        <translation>Wzmocnienie nagłówka Opus</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="492"/>
         <source>ReplayGain value written to the Opus header when updating metadata.</source>
-        <translation type="unfinished">Wartość ReplayGain zapisywana w nagłówku Opus podczas aktualizacji metadanych.</translation>
+        <translation>Wartość ReplayGain zapisywana w nagłówku Opus podczas aktualizacji metadanych.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="494"/>
         <source>Use Track Gain</source>
-        <translation type="unfinished">Użyj wzmocnienia utworu</translation>
+        <translation>Użyj wzmocnienia utworu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="496"/>
         <source>Use Album Gain</source>
-        <translation type="unfinished">Użyj wzmocnienia albumu</translation>
+        <translation>Użyj wzmocnienia albumu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="498"/>
         <source>Leave null</source>
-        <translation type="unfinished">Pozostaw puste</translation>
+        <translation>Pozostaw puste</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="528"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>Procesor sygnałowy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="535"/>
         <source>Details</source>
-        <translation type="unfinished">Szczegóły</translation>
+        <translation>Szczegóły</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="490"/>
@@ -14463,27 +14466,27 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/widgets.cpp" line="544"/>
         <source>Artwork</source>
-        <translation type="unfinished">Okładka</translation>
+        <translation>Okładka</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="557"/>
         <source>Default</source>
-        <translation type="unfinished">Domyślne</translation>
+        <translation>Domyślne</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="562"/>
         <source>Tabs</source>
-        <translation type="unfinished">Zakładki</translation>
+        <translation>Zakładki</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="558"/>
         <source>Lists</source>
-        <translation type="unfinished">Listy</translation>
+        <translation>Listy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="561"/>
         <source>Status bar</source>
-        <translation type="unfinished">Pasek stanu</translation>
+        <translation>Pasek stanu</translation>
     </message>
 </context>
 <context>
@@ -14491,77 +14494,77 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="164"/>
         <source>Play</source>
-        <translation type="unfinished">Odtwarzaj</translation>
+        <translation>Odtwarzaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="169"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Dodaj do bieżącej listy odtwarzania</translation>
+        <translation>Dodaj do bieżącej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="173"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Dodaj do aktywnej listy odtwarzania</translation>
+        <translation>Dodaj do aktywnej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="177"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished">Zastąp obecną listę odtwarzania</translation>
+        <translation>Zastąp bieżącą listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="181"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Utwórz nową listę odtwarzania</translation>
+        <translation>Utwórz nową listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Dodaj do listy odtwarzania</translation>
+        <translation>Dodaj do listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="189"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Dodaj do kolejki odtwarzania</translation>
+        <translation>Dodaj do kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="193"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Dodaj do kolejki</translation>
+        <translation>Dodaj do kolejki jako następny do odtworzenia</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="197"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Usuń z kolejki odtwarzania</translation>
+        <translation>Usuń z kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="201"/>
         <source>Grouping</source>
-        <translation type="unfinished">Grupowanie</translation>
+        <translation>Grupowanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="204"/>
         <source>Configure</source>
-        <translation type="unfinished">Konfiguruj</translation>
+        <translation>Konfiguruj</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="208"/>
         <source>Open folder</source>
-        <translation type="unfinished">Otwórz folder</translation>
+        <translation>Otwórz folder</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="211"/>
         <source>Track menu</source>
-        <translation type="unfinished">Menu utworu</translation>
+        <translation>Menu utworu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="344"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Drzewo biblioteki</translation>
+        <translation>Drzewo biblioteki</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="346"/>
         <source>Unchecked items will be hidden from the library tree context menu.</source>
-        <translation type="unfinished">Niezaznaczone elementy będą ukryte w menu kontekstowym drzewa biblioteki.</translation>
+        <translation>Niezaznaczone elementy będą ukryte w menu kontekstowym drzewa biblioteki.</translation>
     </message>
 </context>
 <context>
@@ -14569,72 +14572,72 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="104"/>
         <source>Play</source>
-        <translation type="unfinished">Odtwarzaj</translation>
+        <translation>Odtwarzaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="107"/>
         <source>Stop after this</source>
-        <translation type="unfinished">Zatrzymaj po tym</translation>
+        <translation>Zatrzymaj po tym</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="111"/>
         <source>Remove</source>
-        <translation type="unfinished">Usuń</translation>
+        <translation>Usuń</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="114"/>
         <source>Crop</source>
-        <translation type="unfinished">Przytnij</translation>
+        <translation>Przytnij</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="117"/>
         <source>Sort</source>
-        <translation type="unfinished">Sortuj</translation>
+        <translation>Sortuj</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="121"/>
         <source>Clipboard</source>
-        <translation type="unfinished">Schowek</translation>
+        <translation>Schowek</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="125"/>
         <source>Presets</source>
-        <translation type="unfinished">Szablon</translation>
+        <translation>Szablony</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="130"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished">Dodaj do innej listy odtwarzania</translation>
+        <translation>Dodaj do innej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="133"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Dodaj do kolejki odtwarzania</translation>
+        <translation>Dodaj do kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Dodaj do kolejki</translation>
+        <translation>Dodaj do kolejki</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="140"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Usuń z kolejki odtwarzania</translation>
+        <translation>Usuń z kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="143"/>
         <source>Track menu</source>
-        <translation type="unfinished">Menu utworu</translation>
+        <translation>Menu utworu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="355"/>
         <source>Playlist</source>
-        <translation type="unfinished">Lista odtwarzania</translation>
+        <translation>Lista odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="358"/>
         <source>Unchecked items will be hidden from the playlist context menu.</source>
-        <translation type="unfinished">Niezaznaczone elementy będą ukryte w menu kontekstowym listy odtwarzania.</translation>
+        <translation>Niezaznaczone elementy będą ukryte w menu kontekstowym listy odtwarzania.</translation>
     </message>
 </context>
 <context>
@@ -14642,7 +14645,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/app/commandline.cpp" line="125"/>
         <source>Usage</source>
-        <translation type="unfinished">Użycie</translation>
+        <translation>Użycie</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="125"/>
@@ -14652,7 +14655,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/app/commandline.cpp" line="125"/>
         <source>urls</source>
-        <translation type="unfinished">adresy URL</translation>
+        <translation>adresy URL</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="125"/>
@@ -14662,52 +14665,52 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/app/commandline.cpp" line="126"/>
         <source>Display help on command line options</source>
-        <translation type="unfinished">Wyświetl pomoc dotyczącą opcji wiersza poleceń</translation>
+        <translation>Wyświetl pomoc dotyczącą opcji wiersza poleceń</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="126"/>
         <source>Display version information</source>
-        <translation type="unfinished">Wyświetl informacje o wersji</translation>
+        <translation>Wyświetl informacje o wersji</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Player options</source>
-        <translation type="unfinished">Opcje odtwarzacza</translation>
+        <translation>Opcje odtwarzacza</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Toggle playback</source>
-        <translation type="unfinished">Wł./wył. odtwarzanie</translation>
+        <translation>Wł./wył. odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Start playback</source>
-        <translation type="unfinished">Rozpocznij odtwarzanie</translation>
+        <translation>Rozpocznij odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Pause playback</source>
-        <translation type="unfinished">Wstrzymaj odtwarzanie</translation>
+        <translation>Wstrzymaj odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Stop playback</source>
-        <translation type="unfinished">Zatrzymaj odtwarzanie</translation>
+        <translation>Zatrzymaj odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Skip to next track</source>
-        <translation type="unfinished">Przejdź do następnego utworu</translation>
+        <translation>Przeskocz do następnego utworu</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="129"/>
         <source>Skip to previous track</source>
-        <translation type="unfinished">Przejdź do poprzedniego utworu</translation>
+        <translation>Przeskocz do poprzedniego utworu</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="129"/>
         <source>Arguments</source>
-        <translation type="unfinished">Argumenty</translation>
+        <translation>Argumenty</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="129"/>
@@ -14717,193 +14720,193 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek forward</source>
-        <translation type="unfinished">Przewiń do przodu</translation>
+        <translation>Przewiń do przodu</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="130"/>
         <source>Seek backward</source>
-        <translation type="unfinished">Przewiń do tyłu</translation>
+        <translation>Przewiń do tyłu</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="479"/>
         <source>Expected %1 to close quote</source>
-        <translation type="unfinished">Oczekiwano, że %1 zamknie cudzysłów</translation>
+        <translation>Oczekiwano, że %1 zamknie cudzysłów</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="503"/>
         <source>Expected %1 to close variable list</source>
-        <translation type="unfinished">Oczekiwano, że %1 zamknie listę zmiennych</translation>
+        <translation>Oczekiwano, że %1 zamknie listę zmiennych</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="512"/>
         <source>Expected %1 to close variable</source>
-        <translation type="unfinished">Oczekiwano, że %1 zamknie zmienną</translation>
+        <translation>Oczekiwano, że %1 zamknie zmienną</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="532"/>
         <source>Expected %1 after function name</source>
-        <translation type="unfinished">Oczekiwano %1 po nazwie funkcji</translation>
+        <translation>Oczekiwano %1 po nazwie funkcji</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="542"/>
         <source>Expected %1 at end of function</source>
-        <translation type="unfinished">Oczekiwano %1 na końcu funkcji</translation>
+        <translation>Oczekiwano %1 na końcu funkcji</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="666"/>
         <source>Expected %1 to close conditional</source>
-        <translation type="unfinished">Oczekiwano, że %1 zamknie warunek</translation>
+        <translation>Oczekiwano, że %1 zamknie warunek</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="694"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="700"/>
         <source>Expected %1 to close group</source>
-        <translation type="unfinished">Oczekiwano, że %1 zamknie grupę</translation>
+        <translation>Oczekiwano, że %1 zamknie grupę</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="912"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="917"/>
         <source>Expected %1 after %2</source>
-        <translation type="unfinished">Oczekiwano %1 po %2</translation>
+        <translation>Oczekiwano %1 po %2</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1668"/>
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1708"/>
         <source>Expected end of script</source>
-        <translation type="unfinished">Oczekiwano końca skryptu</translation>
+        <translation>Oczekiwano końca skryptu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="44"/>
         <source>Prefer SoXR engine (if available)</source>
-        <translation type="unfinished">Preferuj silnik SoXR (jeśli dostępny)</translation>
+        <translation>Preferuj mechanizm SoXR (jeśli dostępny)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="45"/>
         <source>SoXR precision</source>
-        <translation type="unfinished">Dokładność SoXR</translation>
+        <translation>Dokładność SoXR</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="72"/>
         <source>Target sample rate</source>
-        <translation type="unfinished">Docelowa częstotliwość próbkowania</translation>
+        <translation>Docelowa częstotliwość próbkowania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="39"/>
         <source>Do not skip initial silence</source>
-        <translation type="unfinished">Nie pomijaj początkowej ciszy</translation>
+        <translation>Nie pomijaj początkowej ciszy</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="40"/>
         <source>Skip silence in the middle of a track</source>
-        <translation type="unfinished">Pomijaj ciszę w środku utworu</translation>
+        <translation>Pomijaj ciszę w środku utworu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="46"/>
         <source>Minimum silence duration to activate removal:</source>
-        <translation type="unfinished">Minimalny czas ciszy, aby aktywować usuwanie:</translation>
+        <translation>Minimalny czas trwania ciszy, aby aktywować usuwanie:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="55"/>
         <source>Short</source>
-        <translation type="unfinished">Krótki</translation>
+        <translation>Krótki</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="57"/>
         <source>Long</source>
-        <translation type="unfinished">Długi</translation>
+        <translation>Długi</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="67"/>
         <source>Silence detection threshold:</source>
-        <translation type="unfinished">Próg wykrywania ciszy:</translation>
+        <translation>Próg wykrywania ciszy:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="76"/>
         <source>Quiet</source>
-        <translation type="unfinished">Cichy</translation>
+        <translation>Cichy</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="78"/>
         <source>Loud</source>
-        <translation type="unfinished">Głośny</translation>
+        <translation>Głośny</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="149"/>
         <source> ms</source>
-        <translation type="unfinished"> ms</translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="150"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="94"/>
         <source>Image Files</source>
-        <translation type="unfinished">Pliki obrazów</translation>
+        <translation>Pliki obrazów</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="94"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Wszystkie pliki (*)</translation>
+        <translation>Wszystkie pliki (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="98"/>
         <source>Extract Artwork</source>
-        <translation type="unfinished">Wyodrębnij okładkę</translation>
+        <translation>Wyodrębnij okładkę</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="262"/>
         <source>No embedded artwork found to extract</source>
-        <translation type="unfinished">Nie znaleziono osadzonej okładki do wyeksportowania</translation>
+        <translation>Nie znaleziono osadzonej okładki do wyodrębnienia</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="265"/>
         <source>Extracted artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform>Wyeskportowano okładkę do %Ln pliku</numerusform>
-            <numerusform>Wyeskportowano okładkę do %Ln plików</numerusform>
-            <numerusform>Wyeskportowano okładkę do %Ln plików</numerusform>
+        <translation>
+            <numerusform>Wyodrębniono okładkę do %Ln pliku</numerusform>
+            <numerusform>Wyodrębniono okładkę do %Ln plików</numerusform>
+            <numerusform>Wyodrębniono okładkę do %Ln plików</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="270"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
-        <translation type="unfinished">
-            <numerusform>Wyeskportowano okładkę do %Ln pliku; niektóre wyeksportowania nie powiodły się</numerusform>
-            <numerusform>Wyeskportowano okładkę do %Ln plików; niektóre wyeksportowania nie powiodły się</numerusform>
-            <numerusform>Wyeskportowano okładkę do %Ln plików; niektóre wyeksportowania nie powiodły się</numerusform>
+        <translation>
+            <numerusform>Wyodrębniono okładkę do %Ln pliku; niektóre wyodrębnienia się nie powiodły</numerusform>
+            <numerusform>Wyodrębniono okładkę do %Ln plików; niektóre wyodrębnienia się nie powiodły</numerusform>
+            <numerusform>Wyodrębniono okładkę do %Ln plików; niektóre wyodrębnienia się nie powiodły</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="268"/>
         <source>Failed to extract artwork</source>
-        <translation type="unfinished">Nie udało się wyodrębnić okładki</translation>
+        <translation>Nie udało się wyodrębnić okładki</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="63"/>
         <source>Images</source>
-        <translation type="unfinished">Obrazy</translation>
+        <translation>Obrazy</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="64"/>
         <source>Open Image</source>
-        <translation type="unfinished">Otwórz obraz</translation>
+        <translation>Otwórz obraz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="96"/>
         <source>Tempo multiplier</source>
-        <translation type="unfinished">Mnożnik tempa</translation>
+        <translation>Mnożnik tempa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="98"/>
         <source>Pitch shift</source>
-        <translation type="unfinished">Przesunięcie tonacji</translation>
+        <translation>Przesunięcie tonacji</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="100"/>
         <source>Rate multiplier</source>
-        <translation type="unfinished">Mnożnik szybkości</translation>
+        <translation>Mnożnik szybkości</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="112"/>
@@ -14913,50 +14916,52 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="114"/>
         <source>Pitch</source>
-        <translation type="unfinished">Tonacja</translation>
+        <translation>Tonacja</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="116"/>
         <source>Playback rate</source>
-        <translation type="unfinished">Prędkość odtwarzania</translation>
+        <translation>Prędkość odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenumodel.cpp" line="74"/>
         <source>Separator</source>
-        <translation type="unfinished">Rozdzielacz</translation>
+        <translation>Odstęp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="46"/>
         <source>Automatic detection</source>
-        <translation type="unfinished">Automatyczne wykrywanie</translation>
+        <translation>Automatyczne wykrywanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="76"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0-255 scale.</source>
-        <translation type="unfinished">Użyj domyślnej konwersji bajtów POPM fooyin podczas odczytu i zapisu ocen MP3. Obsługuje pośrednie stopnie ocen, ale nie traktuje bajtu POPM jako w pełni liniowej skali 0-255.</translation>
+        <translation>Użyj domyślnej konwersji bajtów POPM fooyin podczas odczytu i zapisu ocen MP3.
+Obsługuje pośrednie stopnie ocen, ale nie traktuje bajtu POPM jako w pełni liniowej skali 0-255.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="82"/>
         <source>Use common POPM byte values for whole-star ratings only.
 Intermediate ratings are rounded to one, two, three, four, or five stars.</source>
-        <translation type="unfinished">Użyj powszechnych wartości bajtów POPM tylko dla ocen w całych gwiazdkach. Pośrednie oceny są zaokrąglane do jednej, dwóch, trzech, czterech lub pięciu gwiazdek.</translation>
+        <translation>Użyj powszechnych wartości bajtów POPM tylko dla ocen w całych gwiazdkach.
+Pośrednie oceny są zaokrąglane do jednej, dwóch, trzech, czterech lub pięciu gwiazdek.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="86"/>
         <source>Map fooyin ratings directly onto the full POPM byte range.</source>
-        <translation type="unfinished">Mapuj oceny fooyin bezpośrednio na pełny zakres bajtów POPM.</translation>
+        <translation>Mapuj oceny fooyin bezpośrednio na pełny zakres bajtów POPM.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="112"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished">Szybkie tagowanie</translation>
+        <translation>Szybkie tagowanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Tagging</source>
-        <translation type="unfinished">Tagowanie</translation>
+        <translation>Tagowanie</translation>
     </message>
 </context>
 <context>
@@ -14964,7 +14969,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/quicktagger/quicktagger.cpp" line="135"/>
         <source>Rating</source>
-        <translation type="unfinished">Ocena</translation>
+        <translation>Ocena</translation>
     </message>
 </context>
 <context>
@@ -14972,7 +14977,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="395"/>
         <source>Artwork</source>
-        <translation type="unfinished">Okładka</translation>
+        <translation>Okładka</translation>
     </message>
 </context>
 </TS>
