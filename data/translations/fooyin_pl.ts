@@ -6087,7 +6087,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="99"/>
         <source>Open the library page in the settings dialog</source>
-        <translation>Otwórz stronę biblioteki w oknie dialogowym ustawień</translation>
+        <translation>Otwórz ustawienia na stronie konfiguracji bibliotek</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="106"/>
