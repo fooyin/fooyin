@@ -444,12 +444,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="185"/>
         <source>Full file path</source>
-        <translation type="unfinished"></translation>
+        <translation>Full filsökväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="187"/>
         <source>Path relative to the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Sökväg relativ till biblioteksroten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="189"/>
@@ -523,7 +523,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
         <source>Number of tracks in the list</source>
-        <translation type="unfinished"></translation>
+        <translation>Antal spår i listan</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
@@ -581,7 +581,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Numeric rating in stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Numeriskt betyg i stjärnor</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
@@ -643,17 +643,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
         <source>Returns 1 while playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar 1 medan uppspelning är aktiv</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Returns 1 while playback is paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar 1 medan uppspelning är pausad</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Returns 1 while playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar 1 medan uppspelning är stoppad</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="244"/>
@@ -766,7 +766,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Subtracts later values from the first</source>
-        <translation type="unfinished"></translation>
+        <translation>Subtraherar senare värden från den första</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
@@ -781,17 +781,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
         <source>Returns the smallest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar det minsta numeriska värdet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="280"/>
         <source>Returns the largest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar det största numeriska värdet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
         <source>Returns the remainder of a division</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar resten av en division</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
@@ -912,12 +912,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="322"/>
         <source>Returns the text length</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar textlängden</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="324"/>
         <source>Returns the longest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar den längsta strängen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="326"/>
@@ -982,12 +982,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="351"/>
         <source>Converts text to lowercase</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterar text till gemener</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
         <source>Converts text to uppercase</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterar text till versaler</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="355"/>
@@ -1030,12 +1030,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="369"/>
         <source>Returns a file extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar en filändelse</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="372"/>
         <source>Returns a filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar ett filnamn utan ändelse</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="375"/>
@@ -1058,32 +1058,32 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="381"/>
         <source>Builds a clickable document or web link</source>
-        <translation type="unfinished"></translation>
+        <translation>Bygger ett klickbart dokument- eller webblänk</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="384"/>
         <source>Builds a clickable link to a fooyin command</source>
-        <translation type="unfinished"></translation>
+        <translation>Bygger en klickbar länk till ett fooyin-kommando</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="387"/>
         <source>Percent-encodes text for use in URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>Procentkodar text för användning i URL:er</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
         <source>Checks if text contains only alphabetic characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollar om text innehåller endast alfabetiska karaktärer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
         <source>Checks if text contains only alphanumeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollar om text innehåller endast alfanumeriska karaktärer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="396"/>
         <source>Checks if text contains only numeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollar om text innehåller endast numeriska karaktärer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
@@ -1093,7 +1093,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="400"/>
         <source>Returns the four-digit year from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar det fyrsiffriga året från ett datum</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
@@ -1107,17 +1107,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="403"/>
         <source>Returns the two-digit month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar den tvåsiffriga månaden från ett datum</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="406"/>
         <source>Returns the two-digit day of month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar den tvåsiffriga dagen eller månaden från ett datum</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="408"/>
         <source>Returns the date formatted as YYYY-MM-DD</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar datumet formaterat som ÅÅÅÅ-MM-DD</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="411"/>
@@ -1127,7 +1127,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="414"/>
         <source>Returns the value stored in a script variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar värdet lagrat i en skriptvariabel</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="415"/>
@@ -1139,37 +1139,37 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="417"/>
         <source>Stores a script variable and returns the value</source>
-        <translation type="unfinished"></translation>
+        <translation>Lagrar en skriptvariabel och returnerar värdet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="420"/>
         <source>Stores a script variable and returns nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Lagrar en skriptvariabel och returnerar inget</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="423"/>
         <source>Returns true when all expressions are true</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar sant när alla uttryck är sanna</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="425"/>
         <source>Returns the opposite truth value</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar det motsatta sant-värdet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
         <source>Returns true when at least one expression is true</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar sant när mint ett uttryck är sant</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="431"/>
         <source>Returns true when an odd number of expressions are true</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar sant när ett udda antal uttryck är sanna</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="434"/>
         <source>Returns then when condition is true</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar då när villkoret är sant</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="453"/>
@@ -1193,7 +1193,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="437"/>
         <source>Returns the first non-empty value</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar det första icke-tomma värdet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="440"/>
@@ -1208,7 +1208,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="446"/>
         <source>Checks whether text is longer than a limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollar om text är längre än en gräns</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="454"/>
@@ -1853,7 +1853,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="206"/>
         <source>Fit to window</source>
-        <translation type="unfinished"></translation>
+        <translation>Passa till fönstret</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="207"/>
@@ -2021,7 +2021,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="81"/>
         <source>Open the folder of the currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna mappen för det aktuellt spelande spåret</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="164"/>
@@ -2171,7 +2171,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="175"/>
         <source>No custom icon selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen egen ikon vald</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="192"/>
@@ -2373,12 +2373,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="47"/>
         <source>Front</source>
-        <translation type="unfinished"></translation>
+        <translation>Fram</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="48"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Bak</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="49"/>
@@ -2393,7 +2393,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="63"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrerat</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="64"/>
@@ -2558,7 +2558,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="256"/>
         <source>Undo a Go-&gt;Back action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ångra en Gå→Bakåt-handling</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="266"/>
@@ -3250,7 +3250,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="492"/>
         <source>Remove spli&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ta bort split</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="506"/>
@@ -3357,7 +3357,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="173"/>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="184"/>
         <source>Estimated: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntad: %1</translation>
     </message>
 </context>
 <context>
@@ -3660,7 +3660,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="88"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="93"/>
@@ -3736,13 +3736,13 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="188"/>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="245"/>
         <source>Fade In</source>
-        <translation type="unfinished"></translation>
+        <translation>Intoning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="189"/>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="246"/>
         <source>Fade Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Uttoning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="190"/>
@@ -3762,7 +3762,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="229"/>
         <source>End of track</source>
-        <translation type="unfinished"></translation>
+        <translation>Slutet av spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="231"/>
@@ -4825,7 +4825,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="782"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished"></translation>
+        <translation>Växla sidruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="786"/>
@@ -5262,7 +5262,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="88"/>
         <source>Lock splitters</source>
-        <translation type="unfinished"></translation>
+        <translation>Lås splittrare</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="89"/>
@@ -5307,7 +5307,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="123"/>
         <source>Tool Buttons</source>
-        <translation type="unfinished"></translation>
+        <translation>Verktygsknappar</translation>
     </message>
 </context>
 <context>
@@ -6186,22 +6186,22 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="55"/>
         <source>Save ratings to file tags when possible</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara betyg till filtaggar när möjligt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="56"/>
         <source>Save playcounts to file tags when possible</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara antal spelningar till filtaggar när möjligt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="57"/>
         <source>Overwrite rating in database when songs are re-read</source>
-        <translation type="unfinished"></translation>
+        <translation>Överskriv betyg i databas när låtar är omlästa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="58"/>
         <source>Overwrite playcount in database when files are re-read</source>
-        <translation type="unfinished"></translation>
+        <translation>Överskriv antal spelningar i databas när filer är omlästa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="60"/>
@@ -6786,7 +6786,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="207"/>
         <source>&amp;Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Lägg till i uppspelningskö</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="208"/>
@@ -6796,7 +6796,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="209"/>
         <source>&amp;Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bo&amp;rt från uppspelningskö</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="210"/>
@@ -7191,12 +7191,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="121"/>
         <source>Rewind line (-100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Backa linje (−100&#xa0;ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="122"/>
         <source>Forward line (+100ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Gå fram linje (+100&#xa0;ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="132"/>
@@ -7617,7 +7617,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="285"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Låttext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="480"/>
@@ -7627,17 +7627,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="490"/>
         <source>Auto-search for lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Autosök efter låttext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="491"/>
         <source>Search for lyrics for the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök efter låttext för aktuellt spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="502"/>
         <source>Search for lyrics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök efter låttext…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="503"/>
@@ -7647,22 +7647,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="508"/>
         <source>Edit lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Redigera låttext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="509"/>
         <source>Open editor for the current lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna redigeraren för den aktuella låttexten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="515"/>
         <source>Save lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara låttext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="516"/>
         <source>Save lyrics using current settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara låttext med aktuella inställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="525"/>
@@ -8031,7 +8031,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="46"/>
         <source>Use Amiga resampler</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd Amiga-omsamplare</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="50"/>
@@ -8077,12 +8077,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="82"/>
         <source>Cubic</source>
-        <translation type="unfinished"></translation>
+        <translation>Kubisk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="83"/>
         <source>Sinc</source>
-        <translation type="unfinished"></translation>
+        <translation>Sinc</translation>
     </message>
 </context>
 <context>
@@ -8793,7 +8793,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="112"/>
         <source>Choose a custom background image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj en egen bakgrundsbildfil</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="124"/>
@@ -8813,7 +8813,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="127"/>
         <source>Custom image</source>
-        <translation type="unfinished"></translation>
+        <translation>Egen bild</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="128"/>
@@ -9250,7 +9250,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="53"/>
         <source>Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändelse</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="54"/>
@@ -9949,7 +9949,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="183"/>
         <source>Saving</source>
-        <translation type="unfinished"></translation>
+        <translation>Sparande</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="184"/>
@@ -9987,12 +9987,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="84"/>
         <source>Saving</source>
-        <translation type="unfinished"></translation>
+        <translation>Sparande</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="88"/>
         <source>Path type</source>
-        <translation type="unfinished"></translation>
+        <translation>Sökvägstyp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="93"/>
@@ -10660,7 +10660,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="212"/>
         <source>Remove all tracks in the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort alla spår i uppspelningskön</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="218"/>
@@ -10808,7 +10808,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="130"/>
         <source>Row %1: At least one value is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rad %1: Åtminstone ett värde behövs.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="155"/>
@@ -12805,7 +12805,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="151"/>
         <source>Automatically Fill Values</source>
-        <translation type="unfinished"></translation>
+        <translation>Fyll in värden automatiskt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="156"/>
@@ -12926,7 +12926,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="61"/>
         <source>Automatically &amp;fill values…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fyll in värden automatiskt…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="62"/>
@@ -14447,7 +14447,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="558"/>
         <source>Lists</source>
-        <translation type="unfinished"></translation>
+        <translation>Listor</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="561"/>
