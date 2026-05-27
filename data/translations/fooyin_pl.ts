@@ -648,7 +648,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Returns 1 while playback is paused</source>
-        <translation>Zwraca 1, gdy odtwarzanie jest wstrzymane</translation>
+        <translation>Zwraca 1, gdy odtwarzanie jest spauzowane</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
@@ -1265,37 +1265,37 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="47"/>
         <source>&amp;File</source>
-        <translation type="unfinished">&amp;Plik</translation>
+        <translation>&amp;Plik</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished">&amp;Edytuj</translation>
+        <translation>&amp;Edytuj</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
         <source>&amp;View</source>
-        <translation type="unfinished">&amp;Widok</translation>
+        <translation>&amp;Widok</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished">&amp;Układ</translation>
+        <translation>&amp;Układ</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Playback</source>
-        <translation type="unfinished">&amp;Odtwarzanie</translation>
+        <translation>&amp;Odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Library</source>
-        <translation type="unfinished">&amp;Biblioteka</translation>
+        <translation>&amp;Biblioteka</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="71"/>
         <source>&amp;Help</source>
-        <translation type="unfinished">&amp;Pomoc</translation>
+        <translation>Po&amp;moc</translation>
     </message>
 </context>
 <context>
@@ -1905,17 +1905,17 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="564"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">Do &amp;lewej</translation>
+        <translation>Do &amp;lewej</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="565"/>
         <source>&amp;Centre</source>
-        <translation type="unfinished">D&amp;o środka</translation>
+        <translation>Do ś&amp;rodka</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="566"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">Do p&amp;rawej</translation>
+        <translation>Do &amp;prawej</translation>
     </message>
 </context>
 <context>
@@ -1933,17 +1933,17 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Zapisz</translation>
+        <translation>&amp;Zapisz</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="56"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Usuń</translation>
+        <translation>&amp;Usuń</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="57"/>
         <source>&amp;Restore Defaults</source>
-        <translation type="unfinished">&amp;Przywróć ustawienia domyślne</translation>
+        <translation>Przywróć ustawienia &amp;domyślne</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="59"/>
@@ -2528,22 +2528,22 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="196"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Odtwarzaj</translation>
+        <translation>&amp;Odtwarzaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="197"/>
         <source>Add to &amp;current playlist</source>
-        <translation type="unfinished">Dodaj do &amp;bieżącej listy odtwarzania</translation>
+        <translation>Dodaj do &amp;bieżącej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="198"/>
         <source>Add to &amp;active playlist</source>
-        <translation type="unfinished">Dodaj do &amp;aktywnej listy odtwarzania</translation>
+        <translation>Dodaj do &amp;aktywnej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished">Dodaj do &amp;kolejki odtwarzania</translation>
+        <translation>Dodaj do &amp;kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
@@ -2643,17 +2643,17 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="199"/>
         <source>&amp;Replace current playlist</source>
-        <translation type="unfinished">&amp;Zastąp bieżącą listę odtwarzania</translation>
+        <translation>&amp;Zastąp bieżącą listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="200"/>
         <source>Create &amp;new playlist</source>
-        <translation type="unfinished">U&amp;twórz nową listę odtwarzania</translation>
+        <translation>Utwórz &amp;nową listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
         <source>Replace playback q&amp;ueue</source>
-        <translation type="unfinished">Zastąp k&amp;olejkę odtwarzania</translation>
+        <translation>Zastąp &amp;kolejkę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="268"/>
@@ -2861,7 +2861,7 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="70"/>
         <source>Clear on pause</source>
-        <translation>Czyść przy wstrzymaniu odtwarzania</translation>
+        <translation>Czyść przy pauzie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="73"/>
@@ -2896,7 +2896,7 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="106"/>
         <source>Clear status when paused</source>
-        <translation>Wyczyść status przy wstrzymaniu odtwarzania</translation>
+        <translation>Wyczyść status przy pauzie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="71"/>
@@ -3162,7 +3162,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="43"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished">Wy&amp;szukaj</translation>
+        <translation>Wy&amp;szukaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="44"/>
@@ -3172,7 +3172,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="51"/>
         <source>&amp;Settings</source>
-        <translation type="unfinished">&amp;Ustawienia</translation>
+        <translation>&amp;Ustawienia</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="53"/>
@@ -3185,89 +3185,89 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="520"/>
         <source>&amp;Before</source>
-        <translation type="unfinished">Pr&amp;zed</translation>
+        <translation>P&amp;rzed</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="527"/>
         <source>&amp;After</source>
-        <translation type="unfinished">P&amp;o</translation>
+        <translation>P&amp;o</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="538"/>
         <source>&amp;Inside</source>
-        <translation type="unfinished">W ś&amp;rodku</translation>
+        <translation>W śr&amp;odku</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">Do &amp;lewej</translation>
+        <translation>Do &amp;lewej</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="392"/>
         <location filename="../../src/gui/editablelayout.cpp" line="407"/>
         <source>Insert &amp;before</source>
-        <translation type="unfinished">Wstaw &amp;przed</translation>
+        <translation>Wstaw &amp;przed</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="397"/>
         <location filename="../../src/gui/editablelayout.cpp" line="412"/>
         <source>Insert &amp;after</source>
-        <translation type="unfinished">Wst&amp;aw po</translation>
+        <translation>Wst&amp;aw po</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="419"/>
         <source>Insert &amp;inside</source>
-        <translation type="unfinished">Wstaw &amp;w środku</translation>
+        <translation>Wstaw &amp;w środku</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="448"/>
         <source>&amp;Up</source>
-        <translation type="unfinished">W &amp;górę</translation>
+        <translation>W &amp;górę</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="455"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">W p&amp;rawo</translation>
+        <translation>W pr&amp;awo</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="455"/>
         <source>&amp;Down</source>
-        <translation type="unfinished">W &amp;dół</translation>
+        <translation>W &amp;dół</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="462"/>
         <source>Far Lef&amp;t</source>
-        <translation type="unfinished">Skrajnie w l&amp;ewo</translation>
+        <translation>Skrajnie w l&amp;ewo</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="462"/>
         <source>&amp;Top</source>
-        <translation type="unfinished">&amp;Na samą górę</translation>
+        <translation>&amp;Na samą górę</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="470"/>
         <source>Far Rig&amp;ht</source>
-        <translation type="unfinished">Skrajnie &amp;w prawo</translation>
+        <translation>Skra&amp;jnie w prawo</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="470"/>
         <source>&amp;Bottom</source>
-        <translation type="unfinished">&amp;Na sam dół</translation>
+        <translation>Na sa&amp;m dół</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="492"/>
         <source>Remove spli&amp;t</source>
-        <translation type="unfinished">Usuń podzi&amp;ał</translation>
+        <translation>Usuń podz&amp;iał</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="506"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished">&amp;Wklej</translation>
+        <translation>&amp;Wklej</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="509"/>
         <source>Rep&amp;lace</source>
-        <translation type="unfinished">Z&amp;astąp</translation>
+        <translation>Zas&amp;tąp</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="568"/>
@@ -3277,27 +3277,27 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="585"/>
         <source>R&amp;eplace</source>
-        <translation type="unfinished">Z&amp;astąp</translation>
+        <translation>Zas&amp;tąp</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="593"/>
         <source>&amp;Split</source>
-        <translation type="unfinished">&amp;Podziel</translation>
+        <translation>&amp;Podziel</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="607"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopiuj</translation>
+        <translation>&amp;Kopiuj</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="630"/>
         <source>&amp;Move</source>
-        <translation type="unfinished">Prze&amp;suń</translation>
+        <translation>Pr&amp;zesuń</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="640"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished">&amp;Usuń</translation>
+        <translation>&amp;Usuń</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="710"/>
@@ -3307,7 +3307,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="712"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Cofnij</translation>
+        <translation>&amp;Cofnij</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="713"/>
@@ -3317,7 +3317,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="724"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Ponów</translation>
+        <translation>&amp;Ponów</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="725"/>
@@ -3327,7 +3327,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="432"/>
         <source>&amp;Insert</source>
-        <translation type="unfinished">&amp;Wstaw</translation>
+        <translation>&amp;Wstaw</translation>
     </message>
 </context>
 <context>
@@ -3586,12 +3586,12 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="65"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished">&amp;Przeglądaj…</translation>
+        <translation>&amp;Przeglądaj…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="72"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Zapisz</translation>
+        <translation>&amp;Zapisz</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="111"/>
@@ -3735,7 +3735,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="177"/>
         <source>Pause, stop, and between-tracks fades without overlap. Between-tracks fades are used instead of auto track-change crossfades.</source>
-        <translation>Płynna zmiana głośności przy wstrzymywaniu, zatrzymywaniu i między utworami bez nakładania. Przejścia między utworami są używane zamiast automatycznego przenikania przy zmianie utworu.</translation>
+        <translation>Płynna zmiana głośności przy pauzowaniu, zatrzymywaniu i między utworami bez nakładania. Przejścia między utworami są używane zamiast automatycznego przenikania przy zmianie utworu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="234"/>
@@ -3785,7 +3785,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="48"/>
         <source>Add &amp;files…</source>
-        <translation type="unfinished">Dodaj &amp;pliki…</translation>
+        <translation>Dodaj &amp;pliki…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="49"/>
@@ -3795,7 +3795,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="55"/>
         <source>Ad&amp;d folders…</source>
-        <translation type="unfinished">Dodaj &amp;foldery…</translation>
+        <translation>Dodaj &amp;foldery…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="56"/>
@@ -3805,7 +3805,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="64"/>
         <source>&amp;New playlist</source>
-        <translation type="unfinished">Nowa &amp;lista odtwarzania</translation>
+        <translation>Nowa &amp;lista odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="65"/>
@@ -3815,7 +3815,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="72"/>
         <source>&amp;New autoplaylist</source>
-        <translation type="unfinished">Nowa &amp;automatyczna lista odtwarzania</translation>
+        <translation>Nowa &amp;automatyczna lista odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="73"/>
@@ -3830,12 +3830,12 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="87"/>
         <source>&amp;Save playlist…</source>
-        <translation type="unfinished">Zapi&amp;sz listę odtwarzania…</translation>
+        <translation>Zapi&amp;sz listę odtwarzania…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="103"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Wyjdź</translation>
+        <translation>&amp;Zakończ</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="105"/>
@@ -3860,7 +3860,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="94"/>
         <source>Save &amp;all playlists…</source>
-        <translation type="unfinished">Z&amp;apisz wszystkie listy odtwarzania…</translation>
+        <translation>Z&amp;apisz wszystkie listy odtwarzania…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="95"/>
@@ -3931,17 +3931,17 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="135"/>
         <source>&amp;Load</source>
-        <translation type="unfinished">W&amp;czytaj</translation>
+        <translation>W&amp;czytaj</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="136"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Zapisz</translation>
+        <translation>&amp;Zapisz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="137"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Usuń</translation>
+        <translation>&amp;Usuń</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="426"/>
@@ -4000,7 +4000,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="432"/>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="460"/>
         <source>&amp;Run</source>
-        <translation type="unfinished">&amp;Rozpocznij</translation>
+        <translation>&amp;Rozpocznij</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="265"/>
@@ -4040,7 +4040,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="448"/>
         <source>&amp;Abort</source>
-        <translation type="unfinished">&amp;Przerwij</translation>
+        <translation>&amp;Przerwij</translation>
     </message>
 </context>
 <context>
@@ -4122,27 +4122,27 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="146"/>
         <source>&amp;Copy to…</source>
-        <translation type="unfinished">&amp;Skopiuj do…</translation>
+        <translation>&amp;Skopiuj do…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="147"/>
         <source>&amp;Move to…</source>
-        <translation type="unfinished">&amp;Przenieś do…</translation>
+        <translation>&amp;Przenieś do…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="148"/>
         <source>&amp;Rename to…</source>
-        <translation type="unfinished">&amp;Zmień nazwę na…</translation>
+        <translation>&amp;Zmień nazwę na…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="149"/>
         <source>&amp;Extract to…</source>
-        <translation type="unfinished">&amp;Wyodrębnij do…</translation>
+        <translation>&amp;Wyodrębnij do…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="151"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Usuń</translation>
+        <translation>&amp;Usuń</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="154"/>
@@ -5017,17 +5017,17 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="86"/>
         <source>&amp;Load</source>
-        <translation type="unfinished">W&amp;czytaj</translation>
+        <translation>W&amp;czytaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="87"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Zapisz</translation>
+        <translation>&amp;Zapisz</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="88"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Usuń</translation>
+        <translation>&amp;Usuń</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="89"/>
@@ -5463,7 +5463,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="53"/>
         <source>&amp;Quick start</source>
-        <translation type="unfinished">&amp;Szybki start</translation>
+        <translation>&amp;Szybki start</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="54"/>
@@ -5473,7 +5473,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="59"/>
         <source>&amp;Scripting help</source>
-        <translation type="unfinished">&amp;Pomoc w skryptowaniu</translation>
+        <translation>Po&amp;moc w skryptowaniu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="60"/>
@@ -5483,7 +5483,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
         <source>S&amp;earching help</source>
-        <translation type="unfinished">Pomoc w kweren&amp;dowaniu</translation>
+        <translation>Pomoc w kw&amp;erendowaniu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="65"/>
@@ -5493,7 +5493,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
         <source>&amp;Frequently asked questions</source>
-        <translation type="unfinished">&amp;Często zadawane pytania</translation>
+        <translation>&amp;Często zadawane pytania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="70"/>
@@ -5503,7 +5503,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="74"/>
         <source>&amp;About</source>
-        <translation type="unfinished">&amp;O nas</translation>
+        <translation>&amp;O programie</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="76"/>
@@ -5517,7 +5517,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="158"/>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="200"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopiuj</translation>
+        <translation>&amp;Kopiuj</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="454"/>
@@ -5835,7 +5835,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="60"/>
         <source>&amp;Editing mode</source>
-        <translation type="unfinished">&amp;Tryb edytowania</translation>
+        <translation>&amp;Tryb edytowania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="61"/>
@@ -5845,7 +5845,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="72"/>
         <source>Loc&amp;k splitters</source>
-        <translation type="unfinished">Za&amp;blokuj rozdzielacze</translation>
+        <translation>Za&amp;blokuj rozdzielacze</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="73"/>
@@ -5855,7 +5855,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="83"/>
         <source>&amp;Import layout…</source>
-        <translation type="unfinished">&amp;Importuj układ…</translation>
+        <translation>&amp;Importuj układ…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="84"/>
@@ -6033,7 +6033,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="66"/>
         <source>Remove &amp;unavailable tracks</source>
-        <translation type="unfinished">Usuń &amp;niedostępne utwory</translation>
+        <translation>&amp;Usuń niedostępne utwory</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="67"/>
@@ -6043,7 +6043,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
         <source>&amp;Scan for changes</source>
-        <translation type="unfinished">Odśwież &amp;bibliotekę</translation>
+        <translation>Odśwież &amp;bibliotekę</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="73"/>
@@ -6053,7 +6053,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="78"/>
         <source>&amp;Reload tracks</source>
-        <translation type="unfinished">&amp;Przeładuj utwory</translation>
+        <translation>&amp;Przeładuj utwory</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="80"/>
@@ -6073,7 +6073,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="91"/>
         <source>&amp;Quick Search</source>
-        <translation type="unfinished">&amp;Szybkie wyszukiwanie</translation>
+        <translation>&amp;Szybkie wyszukiwanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="92"/>
@@ -6083,7 +6083,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="97"/>
         <source>&amp;Configure</source>
-        <translation type="unfinished">&amp;Skonfiguruj</translation>
+        <translation>&amp;Konfiguruj</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="99"/>
@@ -6451,17 +6451,17 @@ Poprawia to kompatybilność z innymi odtwarzaczami, ale przechowuje tylko warto
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="76"/>
         <source>&amp;Scan for changes</source>
-        <translation type="unfinished">Odśwież &amp;bibliotekę</translation>
+        <translation>Odśwież &amp;bibliotekę</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="80"/>
         <source>&amp;Reload tracks</source>
-        <translation type="unfinished">&amp;Przeładuj utwory</translation>
+        <translation>&amp;Przeładuj utwory</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="88"/>
         <source>&amp;Cancel scan</source>
-        <translation type="unfinished">&amp;Anuluj odświeżanie</translation>
+        <translation>&amp;Anuluj odświeżanie</translation>
     </message>
 </context>
 <context>
@@ -6727,7 +6727,7 @@ Poprawia to kompatybilność z innymi odtwarzaczami, ale przechowuje tylko warto
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</source>
-        <translation type="unfinished">Użyj &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; w poziomie wyświetlania, aby pokazać tekst wyrównany do prawej. Użyj &lt;code&gt;%trackcount%&lt;/code&gt; dla utworów i &lt;code&gt;%childcount%&lt;/code&gt; dla węzłów podrzędnych.</translation>
+        <translation>Użyj &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; w poziomie wyświetlania, aby pokazać tekst wyrównany do prawej. Użyj &lt;code&gt;%trackcount%&lt;/code&gt; dla utworów i &lt;code&gt;%childcount%&lt;/code&gt; dla węzłów podrzędnych.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
@@ -6807,22 +6807,22 @@ Poprawia to kompatybilność z innymi odtwarzaczami, ale przechowuje tylko warto
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="207"/>
         <source>&amp;Add to playback queue</source>
-        <translation type="unfinished">&amp;Dodaj do kolejki odtwarzania</translation>
+        <translation>Dodaj do &amp;kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="208"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished">&amp;Dodaj do kolejki odtwarzania jako następny do odtworzenia</translation>
+        <translation>&amp;Dodaj do kolejki odtwarzania jako następny do odtworzenia</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="209"/>
         <source>&amp;Remove from playback queue</source>
-        <translation type="unfinished">&amp;Usuń z kolejki odtwarzania</translation>
+        <translation>&amp;Usuń z kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="210"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Odtwarzaj</translation>
+        <translation>&amp;Odtwarzaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="240"/>
@@ -6870,12 +6870,12 @@ Poprawia to kompatybilność z innymi odtwarzaczami, ale przechowuje tylko warto
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="86"/>
         <source>Co&amp;py Log</source>
-        <translation type="unfinished">&amp;Kopiuj dziennik</translation>
+        <translation>S&amp;kopiuj dziennik</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="88"/>
         <source>&amp;Save Log</source>
-        <translation type="unfinished">&amp;Zapisz dziennik</translation>
+        <translation>&amp;Zapisz dziennik</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="96"/>
@@ -6901,7 +6901,7 @@ Poprawia to kompatybilność z innymi odtwarzaczami, ale przechowuje tylko warto
         <location filename="../../src/utils/logging/logwidget.cpp" line="117"/>
         <location filename="../../src/utils/logging/logwidget.cpp" line="235"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopiuj</translation>
+        <translation>&amp;Kopiuj</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="245"/>
@@ -7232,7 +7232,7 @@ Poprawia to kompatybilność z innymi odtwarzaczami, ale przechowuje tylko warto
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="205"/>
         <source>Pause</source>
-        <translation>Wstrzymaj</translation>
+        <translation>Pauzuj</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="209"/>
@@ -7851,7 +7851,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Show play/pause</source>
-        <translation>Pokazuj „odtwarzaj/wstrzymaj”</translation>
+        <translation>Pokazuj „odtwarzaj/pauzuj”</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
@@ -7905,7 +7905,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
         <source>Pause</source>
-        <translation>Wstrzymaj</translation>
+        <translation>Pauza</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="229"/>
@@ -7952,7 +7952,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
         <source>Play and pause</source>
-        <translation>Odtwarzaj i wstrzymaj</translation>
+        <translation>Odtwórz i pauzuj</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="99"/>
@@ -8340,53 +8340,53 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="44"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished">&amp;Stop</translation>
+        <translation>&amp;Zatrzymaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="282"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Odtwarzaj</translation>
+        <translation>&amp;Odtwarzaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>P&amp;revious</source>
-        <translation type="unfinished">Pop&amp;rzedni</translation>
+        <translation>Pop&amp;rzedni</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>&amp;Next</source>
-        <translation type="unfinished">&amp;Następny</translation>
+        <translation>&amp;Następny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Previous album</source>
-        <translation type="unfinished">&amp;Poprzedni album</translation>
+        <translation>&amp;Poprzedni album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
         <source>&amp;Next album</source>
-        <translation type="unfinished">&amp;Następny album</translation>
+        <translation>&amp;Następny album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Random &amp;track</source>
-        <translation type="unfinished">Losowy &amp;utwór</translation>
+        <translation>Losowy &amp;utwór</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Random &amp;album</source>
-        <translation type="unfinished">Losowy &amp;album</translation>
+        <translation>Losowy &amp;album</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="55"/>
         <source>Repeat &amp;playlist</source>
-        <translation type="unfinished">Powtórz &amp;listę odtwarzania</translation>
+        <translation>Powtarzaj listę &amp;odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="56"/>
         <source>&amp;Shuffle tracks</source>
-        <translation type="unfinished">&amp;Losuj utwory</translation>
+        <translation>Losuj &amp;utwory</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="57"/>
@@ -8396,17 +8396,17 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="58"/>
         <source>&amp;Random</source>
-        <translation type="unfinished">&amp;Losowy</translation>
+        <translation>&amp;Losowy</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="59"/>
         <source>Stop &amp;after current</source>
-        <translation type="unfinished">Z&amp;atrzymaj po obecnym utworze</translation>
+        <translation>Z&amp;atrzymaj po obecnym utworze</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="60"/>
         <source>&amp;Reset the above after stopping</source>
-        <translation type="unfinished">&amp;Resetuj powyższe po zatrzymaniu</translation>
+        <translation>&amp;Resetuj powyższe po zatrzymaniu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="68"/>
@@ -8441,7 +8441,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="106"/>
         <source>Ra&amp;ndom</source>
-        <translation type="unfinished">&amp;Losowy</translation>
+        <translation>&amp;Losowy</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="109"/>
@@ -8471,7 +8471,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="125"/>
         <source>Skip &amp;to</source>
-        <translation type="unfinished">Pr&amp;zejdź do</translation>
+        <translation>Pr&amp;zejdź do</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="128"/>
@@ -8501,7 +8501,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="155"/>
         <source>&amp;Order</source>
-        <translation type="unfinished">K&amp;olejność</translation>
+        <translation>K&amp;olejność</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="166"/>
@@ -8561,22 +8561,22 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="278"/>
         <source>&amp;Pause</source>
-        <translation type="unfinished">&amp;Pauza</translation>
+        <translation>Pauzu&amp;j</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
         <source>&amp;Default</source>
-        <translation type="unfinished">&amp;Domyślny</translation>
+        <translation>&amp;Domyślny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="53"/>
         <source>Repeat &amp;track</source>
-        <translation type="unfinished">Powtórz u&amp;twór</translation>
+        <translation>Powtarzaj u&amp;twór</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="54"/>
         <source>Repeat &amp;album</source>
-        <translation type="unfinished">Powtórz &amp;album</translation>
+        <translation>Powtarzaj albu&amp;m</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="84"/>
@@ -9073,29 +9073,29 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="53"/>
         <source>&amp;Edit autoplaylist</source>
-        <translation type="unfinished">Edytuj &amp;automatyczną listę odtwarzania</translation>
+        <translation>Edytuj &amp;automatyczną listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="56"/>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="252"/>
         <source>Re&amp;name playlist</source>
-        <translation type="unfinished">Zmień &amp;nazwę listy odtwarzania</translation>
+        <translation>Zmień &amp;nazwę listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="58"/>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="256"/>
         <source>&amp;Remove playlist</source>
-        <translation type="unfinished">&amp;Usuń listę odtwarzania</translation>
+        <translation>&amp;Usuń listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="60"/>
         <source>Add &amp;new playlist</source>
-        <translation type="unfinished">Dodaj &amp;nową listę odtwarzania</translation>
+        <translation>Dodaj &amp;nową listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="63"/>
         <source>Add new &amp;autoplaylist</source>
-        <translation type="unfinished">Dodaj nową &amp;automatyczną listę odtwarzania</translation>
+        <translation>Dodaj nową &amp;automatyczną listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="100"/>
@@ -9146,12 +9146,12 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="252"/>
         <source>Re&amp;name autoplaylist</source>
-        <translation type="unfinished">Zmień &amp;nazwę automatycznej listy odtwarzania</translation>
+        <translation>Zmień &amp;nazwę automatycznej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="256"/>
         <source>&amp;Remove autoplaylist</source>
-        <translation type="unfinished">&amp;Usuń automatyczną listę odtwarzania</translation>
+        <translation>&amp;Usuń automatyczną listę odtwarzania</translation>
     </message>
 </context>
 <context>
@@ -9572,29 +9572,29 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="99"/>
         <source>&amp;Edit autoplaylist</source>
-        <translation type="unfinished">Edytuj &amp;automatyczną listę odtwarzania</translation>
+        <translation>Edytuj &amp;automatyczną listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="102"/>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="359"/>
         <source>Re&amp;name playlist</source>
-        <translation type="unfinished">Zmień &amp;nazwę listy odtwarzania</translation>
+        <translation>Zmień &amp;nazwę listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="104"/>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="366"/>
         <source>&amp;Remove playlist</source>
-        <translation type="unfinished">&amp;Usuń listę odtwarzania</translation>
+        <translation>&amp;Usuń listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="106"/>
         <source>Add &amp;new playlist</source>
-        <translation type="unfinished">Dodaj &amp;nową listę odtwarzania</translation>
+        <translation>Dodaj &amp;nową listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="109"/>
         <source>Add new &amp;autoplaylist</source>
-        <translation type="unfinished">Dodaj nową &amp;automatyczną listę odtwarzania</translation>
+        <translation>Dodaj nową &amp;automatyczną listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="179"/>
@@ -9656,12 +9656,12 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="359"/>
         <source>Re&amp;name autoplaylist</source>
-        <translation type="unfinished">Zmień &amp;nazwę automatycznej listy odtwarzania</translation>
+        <translation>Zmień &amp;nazwę automatycznej listy odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="366"/>
         <source>&amp;Remove autoplaylist</source>
-        <translation type="unfinished">&amp;Usuń automatyczną listę odtwarzania</translation>
+        <translation>&amp;Usuń automatyczną listę odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="466"/>
@@ -10190,7 +10190,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="248"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Odtwarzaj</translation>
+        <translation>&amp;Odtwarzaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="537"/>
@@ -10234,7 +10234,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="764"/>
         <source>Select &amp;all</source>
-        <translation type="unfinished">Zaznacz &amp;wszystko</translation>
+        <translation>Zaznacz &amp;wszystko</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="765"/>
@@ -10306,47 +10306,47 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="201"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Cofnij</translation>
+        <translation>&amp;Cofnij</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="204"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Ponów</translation>
+        <translation>&amp;Ponów</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="207"/>
         <source>&amp;Crop</source>
-        <translation type="unfinished">&amp;Przytnij</translation>
+        <translation>&amp;Przytnij</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="210"/>
         <source>&amp;Stop after this</source>
-        <translation type="unfinished">&amp;Zatrzymaj po tym</translation>
+        <translation>&amp;Zatrzymaj po tym</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="214"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished">Wy&amp;tnij</translation>
+        <translation>Wy&amp;tnij</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="217"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopiuj</translation>
+        <translation>&amp;Kopiuj</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="220"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished">&amp;Wklej</translation>
+        <translation>&amp;Wklej</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="223"/>
         <source>C&amp;lear</source>
-        <translation type="unfinished">W&amp;yczyść</translation>
+        <translation>W&amp;yczyść</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="226"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished">&amp;Usuń</translation>
+        <translation>&amp;Usuń</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="230"/>
@@ -10361,17 +10361,17 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished">Dodaj do &amp;kolejki odtwarzania</translation>
+        <translation>Dodaj do &amp;kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="240"/>
         <source>&amp;Queue to play next</source>
-        <translation type="unfinished">&amp;Dodaj jako następny do kolejki odtwarzania</translation>
+        <translation>&amp;Dodaj jako następny do kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="244"/>
         <source>Remove from playback q&amp;ueue</source>
-        <translation type="unfinished">&amp;Usuń z kolejki odtwarzania</translation>
+        <translation>&amp;Usuń z kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="342"/>
@@ -10669,7 +10669,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="86"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished">&amp;Usuń</translation>
+        <translation>&amp;Usuń</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="88"/>
@@ -10942,7 +10942,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="97"/>
         <source>&amp;Update File Tags</source>
-        <translation type="unfinished">&amp;Zaktualizuj tagi pliku</translation>
+        <translation>Zaktualizuj &amp;tagi pliku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="114"/>
@@ -11396,7 +11396,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="125"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">&amp;Kopiuj</translation>
+        <translation>&amp;Kopiuj</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="134"/>
@@ -12783,42 +12783,42 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="285"/>
         <source>&amp;Position</source>
-        <translation type="unfinished">&amp;Pozycja</translation>
+        <translation>&amp;Pozycja</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="289"/>
         <source>&amp;Above</source>
-        <translation type="unfinished">P&amp;owyżej</translation>
+        <translation>P&amp;owyżej</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="290"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">Do p&amp;rawej</translation>
+        <translation>P&amp;rawo</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="291"/>
         <source>&amp;Below</source>
-        <translation type="unfinished">Po&amp;niżej</translation>
+        <translation>Po&amp;niżej</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="292"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">Do &amp;lewej</translation>
+        <translation>&amp;Lewo</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="331"/>
         <source>&amp;Rename</source>
-        <translation type="unfinished">&amp;Zmień nazwę</translation>
+        <translation>&amp;Zmień nazwę</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="335"/>
         <source>Re&amp;move</source>
-        <translation type="unfinished">&amp;Usuń</translation>
+        <translation>&amp;Usuń</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="338"/>
         <source>Remember &amp;last tab</source>
-        <translation type="unfinished">Zapamiętaj &amp;ostatnią zakładkę</translation>
+        <translation>Zapamiętaj &amp;ostatnią zakładkę</translation>
     </message>
 </context>
 <context>
@@ -12958,12 +12958,12 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="61"/>
         <source>Automatically &amp;fill values…</source>
-        <translation type="unfinished">Automatycznie &amp;wypełniaj wartości…</translation>
+        <translation>&amp;Wypełnij wartości automatycznie…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="62"/>
         <source>&amp;Change default fields…</source>
-        <translation type="unfinished">&amp;Zmień domyślne pola…</translation>
+        <translation>&amp;Zmień domyślne pola…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditoreditor.cpp" line="77"/>
@@ -13525,7 +13525,7 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="74"/>
         <source>&amp;Playlist Manager</source>
-        <translation type="unfinished">&amp;Menedżer list odtwarzania</translation>
+        <translation>&amp;Menedżer list odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="75"/>
@@ -14691,7 +14691,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
         <source>Pause playback</source>
-        <translation>Wstrzymaj odtwarzanie</translation>
+        <translation>Pauzuj odtwarzanie</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="128"/>
