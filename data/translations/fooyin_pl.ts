@@ -1928,7 +1928,7 @@
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="54"/>
         <source>&amp;Load</source>
-        <translation type="unfinished">&amp;Wczytaj</translation>
+        <translation>W&amp;czytaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="55"/>
@@ -3825,7 +3825,7 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="80"/>
         <source>&amp;Load playlist…</source>
-        <translation type="unfinished">&amp;Wczytaj listę odtwarzania…</translation>
+        <translation>W&amp;czytaj listę odtwarzania…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="87"/>
@@ -6013,7 +6013,7 @@ Jeśli domyślna połowa nie renderuje się poprawnie z fontem systemowym, wybie
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="56"/>
         <source>&amp;Clean</source>
-        <translation type="unfinished">&amp;Wyczyść</translation>
+        <translation>W&amp;yczyść</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="57"/>
@@ -6865,7 +6865,7 @@ Poprawia to kompatybilność z innymi odtwarzaczami, ale przechowuje tylko warto
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="84"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished">W&amp;yczyść</translation>
+        <translation>W&amp;yczyść</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="86"/>
@@ -8541,7 +8541,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="221"/>
         <source>Cursor follows play&amp;back</source>
-        <translation type="unfinished">&amp;Zaznaczenie podąża za kolejnością odtwarzania</translation>
+        <translation>Zaznaczenie podąża za kolejnością od&amp;twarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="222"/>
@@ -8551,7 +8551,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="223"/>
         <source>Playback follows &amp;cursor</source>
-        <translation type="unfinished">&amp;Kolejność odtwarzania podąża za zaznaczeniem</translation>
+        <translation>Kolejność odtwarzania podąża za zaz&amp;naczeniem</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="231"/>
@@ -10674,7 +10674,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="88"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished">&amp;Wyczyść</translation>
+        <translation>W&amp;yczyść</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="172"/>
@@ -10694,7 +10694,7 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="218"/>
         <source>&amp;Select all</source>
-        <translation type="unfinished">&amp;Zaznacz wszystko</translation>
+        <translation>Zaznacz &amp;wszystko</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="219"/>
