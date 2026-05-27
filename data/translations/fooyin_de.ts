@@ -653,17 +653,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Returns 1 while playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Gibt 1 zurück, solange die Wiedergabe gestoppt ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="244"/>
         <source>System</source>
-        <translation type="unfinished">System</translation>
+        <translation>System</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Current date and time formatted as YYYY-MM-DD HH:MM:SS</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelles Datum und aktuelle Zeit im Format YYYY-MM-DD hh:mm:ss</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
@@ -1800,27 +1800,27 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="116"/>
         <source>Placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Platzhalter</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="120"/>
         <source>Path to an image file to use when artwork of this type is missing; leave empty to use the default icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfad zu einer Bilddatei, die verwendet werden soll, wenn Artwork für diesen Artwork-Typen fehlt; leer lassen um das Standardsymbol zu verwenden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="124"/>
         <source>Choose a custom placeholder image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle eine benutzerdefinierte Platzhalter-Bilddatei</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="129"/>
         <source>Use built-in icon theme placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Platzhalter des eingebauten Symbolthemas verwenden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="133"/>
         <source>Image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilddatei</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="141"/>
@@ -1840,12 +1840,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="228"/>
         <source>Select Placeholder Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Platzhalter-Bild</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="229"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp *.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder (*.png, *.jpg, *.jpeg, *.bmp, *.webp)</translation>
     </message>
 </context>
 <context>
@@ -2763,18 +2763,18 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="95"/>
         <source>Expand/collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Aus-/Einklappen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="96"/>
         <source>Expand/collapse or play</source>
-        <translation type="unfinished"></translation>
+        <translation>Aus-/Einklappen oder abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="109"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge zur aktuellen Wiedergabeliste und spiele ab, wenn die Wiedergabe gestoppt wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
@@ -2877,7 +2877,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
         <source>Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
