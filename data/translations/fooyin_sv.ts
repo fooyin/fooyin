@@ -71,7 +71,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="368"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Obockade saker kommer vara dolda från mappbläddrarens snabbmeny.</translation>
     </message>
 </context>
 <context>
@@ -129,7 +129,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="379"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Obockade saker kommer vara dolda från layoutredigeringens snabbmeny.</translation>
     </message>
 </context>
 <context>
@@ -197,7 +197,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="57"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Obockade saker kommer vara dolda från biblioteksfiltrets snabbmeny.</translation>
     </message>
 </context>
 <context>
@@ -379,12 +379,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="149"/>
         <source>First played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Först spelad-tidsstämpel</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="151"/>
         <source>Last played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Senast spelad-tidsstämpel</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="153"/>
@@ -434,12 +434,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="181"/>
         <source>Library added timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotek tillagt-tidsstämpel</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="183"/>
         <source>Last modified timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Senast modifierad-tidsstämpel</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="185"/>
@@ -596,7 +596,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="179"/>
         <source>File created timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Fil skapad-tidsstämpel</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
@@ -698,12 +698,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
         <source>Makes the enclosed text italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Gör den inneslutna texten kursiv</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
         <source>Sets the font family for the enclosed text</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätter teckenfamiljen för den inneslutna texten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
@@ -731,17 +731,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="264"/>
         <source>Sets the text colour from red, green and blue components</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätter färgtexten från röda, gröna och blåa komponenter</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
         <source>Sets the text colour from red, green, blue, and alpha components</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätter färgtexten från röda, gröna, blåa, och alfakomponenter</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="269"/>
         <source>Sets the text colour from a named colour or hex code</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätter färgtexten från en döpt färg eller hexkod</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
@@ -1188,7 +1188,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="447"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="450"/>
         <source>Conditional</source>
-        <translation type="unfinished"></translation>
+        <translation>Konditional</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="437"/>
@@ -2358,7 +2358,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="40"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Toningslängd</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
@@ -3479,7 +3479,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="681"/>
         <source>Invalid value on line %L1.</source>
-        <translation>Ogiltigt värde på linje &amp;L1.</translation>
+        <translation>Ogiltigt värde på linje %L1.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="682"/>
@@ -4703,7 +4703,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="45"/>
         <source>Fade non-looping tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Tona icke-upprepande spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="47"/>
@@ -4728,7 +4728,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="67"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Toningslängd</translation>
     </message>
 </context>
 <context>
@@ -5211,7 +5211,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="70"/>
         <source>Use system icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd systemikoner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="72"/>
@@ -5221,7 +5221,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="75"/>
         <source>Icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Ikoner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guidisplaypage.cpp" line="86"/>
@@ -5333,7 +5333,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="227"/>
         <source>Track Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Spårdisplay</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="228"/>
@@ -5356,7 +5356,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="86"/>
         <source>Now Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nu spelar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="90"/>
@@ -7191,7 +7191,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="121"/>
         <source>Rewind line (-100ms)</source>
-        <translation>Backa linje (−100&#xa0;ms)</translation>
+        <translation>Gå bak linje (−100&#xa0;ms)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="122"/>
@@ -7206,7 +7206,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="140"/>
         <source>Timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidsstämplar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="205"/>
@@ -7557,7 +7557,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="84"/>
         <source>Only local lyrics will be used if unchecked</source>
-        <translation type="unfinished"></translation>
+        <translation>Endast lokala låttexter kommer användas om obockat</translation>
     </message>
 </context>
 <context>
@@ -7905,7 +7905,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="347"/>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
         <source>Now Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nu spelar</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
@@ -8144,7 +8144,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="318"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="333"/>
         <source>32-bit float</source>
-        <translation type="unfinished"></translation>
+        <translation>32-bit flyttal</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="321"/>
@@ -8242,7 +8242,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="128"/>
         <source>32-bit float</source>
-        <translation type="unfinished"></translation>
+        <translation>32-bit flyttal</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="129"/>
@@ -8268,16 +8268,16 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="176"/>
         <source>Resume decoding below %Ln ms</source>
         <translation>
-            <numerusform>Fortsätt avkodning under %L ms</numerusform>
-            <numerusform>Fortsätt avkodning under %L ms</numerusform>
+            <numerusform>Fortsätt avkodning under %L&#xa0;ms</numerusform>
+            <numerusform>Fortsätt avkodning under %L&#xa0;ms</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="177"/>
         <source>Pause decoding at %Ln ms</source>
         <translation>
-            <numerusform>Pausa avkodning vid %Ln ms</numerusform>
-            <numerusform>Pausa avkodning vid %Ln ms</numerusform>
+            <numerusform>Pausa avkodning vid %Ln&#xa0;ms</numerusform>
+            <numerusform>Pausa avkodning vid %Ln&#xa0;ms</numerusform>
         </translation>
     </message>
     <message>
@@ -8788,7 +8788,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="108"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Toningslängd</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="112"/>
@@ -8979,7 +8979,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="180"/>
         <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidslängd för toning mellan bakgrundsbilder. Sätt till 0 för att stänga av</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="189"/>
@@ -12316,7 +12316,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="55"/>
         <source>%1 is already assigned to %2</source>
         <extracomment>%1 is the shortcut text. %2 is the action currently using that shortcut.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 är redan utsedd till %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="327"/>
@@ -12378,7 +12378,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="174"/>
         <source>Overwrite Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Överskriv genväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="395"/>
@@ -12484,27 +12484,27 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="77"/>
         <source>Very High (168 dB)</source>
-        <translation>Mycket hög (168 dB)</translation>
+        <translation>Mycket hög (168&#xa0;dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="78"/>
         <source>High (120 dB)</source>
-        <translation>Hög (120 dB)</translation>
+        <translation>Hög (120&#xa0;dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="79"/>
         <source>Medium (108 dB)</source>
-        <translation>Medium (108 dB)</translation>
+        <translation>Medium (108&#xa0;dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="80"/>
         <source>Low (96 dB)</source>
-        <translation>Låg (96 dB)</translation>
+        <translation>Låg (96&#xa0;dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="81"/>
         <source>Quick (90 dB)</source>
-        <translation>Snabb (90 dB)</translation>
+        <translation>Snabb (90&#xa0;dB)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soxresampler/soxresamplersettingswidget.cpp" line="82"/>
@@ -12604,7 +12604,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/utils/stardelegate.cpp" line="93"/>
         <source>mixed</source>
         <extracomment>Indicates that the selected tracks have different ratings in the tag editor.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>blandat</translation>
     </message>
 </context>
 <context>
@@ -12617,7 +12617,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/context/staticcontextmenupage.cpp" line="46"/>
         <source>Context Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Snabbmeny</translation>
     </message>
 </context>
 <context>
@@ -13241,12 +13241,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="37"/>
         <source>Context Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Snabbmeny</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="40"/>
         <source>Unchecked items will be hidden from track selection context menus.</source>
-        <translation type="unfinished"></translation>
+        <translation>Obockade saker kommer vara dolda från spårselektioners snabbmemyer.</translation>
     </message>
 </context>
 <context>
@@ -13579,7 +13579,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
         <source>%1 fps</source>
-        <translation>%1 fps</translation>
+        <translation>%1&#xa0;fps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="70"/>
@@ -14351,12 +14351,12 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="450"/>
         <source>Preserve timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>Bevara tidsstämplar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="451"/>
         <source>Preserve file access and modification timestamps when updating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bevara filåtkomst- och modifikationstidsstämplar när taggar uppdateras.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="458"/>
@@ -14530,7 +14530,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="346"/>
         <source>Unchecked items will be hidden from the library tree context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Obockade saker kommer vara dolda från bibliotekträdets snabbmeny.</translation>
     </message>
 </context>
 <context>
@@ -14553,7 +14553,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="114"/>
         <source>Crop</source>
-        <translation type="unfinished"></translation>
+        <translation>Skär</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="117"/>
@@ -14603,7 +14603,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="358"/>
         <source>Unchecked items will be hidden from the playlist context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Obockade saker kommer vara dolda från spellistans snabbmeny.</translation>
     </message>
 </context>
 <context>
@@ -14641,7 +14641,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
         <source>Player options</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelaralternativ</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="127"/>
@@ -14885,7 +14885,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="116"/>
         <source>Playback rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppselningstakt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenumodel.cpp" line="74"/>
