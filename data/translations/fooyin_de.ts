@@ -2774,7 +2774,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="109"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation>Füge zur aktuellen Wiedergabeliste und spiele ab, wenn die Wiedergabe gestoppt wird</translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu und spiele ab, wenn die Wiedergabe gestoppt wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
@@ -2882,7 +2882,7 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Rich Presence</source>
-        <translation type="unfinished"></translation>
+        <translation>Rich Presence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="105"/>
@@ -2905,12 +2905,12 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="366"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished">Grundeinstellungen wiederherstellen</translation>
+        <translation>Voreinstellungen wiederherstellen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="381"/>
         <source>Configure…</source>
-        <translation type="unfinished">Konfigurieren…</translation>
+        <translation>Konfigurieren…</translation>
     </message>
 </context>
 <context>
@@ -2931,12 +2931,12 @@ Wenn deaktiviert, wird die bestehende Titelreihenfolge erhalten und nur neu hinz
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="207"/>
         <source>Instance</source>
-        <translation type="unfinished"></translation>
+        <translation>Instanz</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="224"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
 </context>
 <context>
@@ -4342,7 +4342,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="150"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu und spiele ab, wenn die Wiedergabe gestoppt wird</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="141"/>
@@ -6496,7 +6496,7 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Single-click expands/collapses nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Einzel-Klick klappt Knoten aus/ein</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
@@ -6613,18 +6613,18 @@ Diese Einstellung verbessert die Kompatibilität mit anderen Abspielprogrammen, 
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="179"/>
         <source>Expand/collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Aus-/Einklappen</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="180"/>
         <source>Expand/collapse or play</source>
-        <translation type="unfinished"></translation>
+        <translation>Aus-/Einklappen oder abspielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="182"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="193"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge zur aktuellen Wiedergabeliste hinzu und spiele ab, wenn die Wiedergabe gestoppt wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="191"/>
@@ -7818,7 +7818,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
         <source>Enable notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Benachrichtigungen aktivieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="76"/>
@@ -7833,32 +7833,32 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="81"/>
         <source>Show previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige „Vorheriger“</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Show play/pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige „Abspielen/Pausieren“</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
         <source>Show next</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige „Nächster“</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="87"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="89"/>
         <source>Content</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhalt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="91"/>
         <source>Playback Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabesteuerung</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="108"/>
@@ -7916,12 +7916,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="347"/>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
         <source>Now Playing</source>
-        <translation type="unfinished">Jetzt läuft</translation>
+        <translation>Jetzt läuft</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
         <source>Playback</source>
-        <translation type="unfinished">Wiedergabe</translation>
+        <translation>Wiedergabe</translation>
     </message>
 </context>
 <context>
@@ -7929,97 +7929,97 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="94"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="97"/>
         <source>Track changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelwechsel</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
         <source>Play and pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielen und pausieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="99"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="100"/>
         <source>Every second</source>
-        <translation type="unfinished"></translation>
+        <translation>Jede Sekunde</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="101"/>
         <source>Clipboard</source>
-        <translation type="unfinished">Zwischenablage</translation>
+        <translation>Zwischenablage</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
         <source>File</source>
-        <translation type="unfinished">Datei</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="103"/>
         <source>Path</source>
-        <translation type="unfinished">Pfad</translation>
+        <translation>Pfad</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="105"/>
         <source>Append instead of overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Anhängen anstatt zu überschreiben</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="106"/>
         <source>Maximum lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Zeilenanzahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="109"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="115"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Format</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="122"/>
         <source>No current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein aktiver Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="129"/>
         <source>Update events</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualisierungs-Ereignisse</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="138"/>
         <source>Output</source>
-        <translation type="unfinished">Ausgabe</translation>
+        <translation>Ausgabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="142"/>
         <source>Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbegrenzt</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="146"/>
         <source>Browse to an output file</source>
-        <translation type="unfinished"></translation>
+        <translation>Navigiere zu einer Ausgabe-Datei</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
         <source>Now Playing</source>
-        <translation type="unfinished">Jetzt läuft</translation>
+        <translation>Jetzt läuft</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
         <source>Text Files (*.txt);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Textdateien (*.txt);;Alle Dateien (*)</translation>
     </message>
 </context>
 <context>
@@ -8779,218 +8779,218 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="99"/>
         <source>Artwork type</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork-Typ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="101"/>
         <source>File</source>
-        <translation type="unfinished">Datei</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="106"/>
         <source>Blur</source>
-        <translation type="unfinished"></translation>
+        <translation>Unschärfe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="107"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Deckkraft</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="108"/>
         <source>Fade length</source>
-        <translation type="unfinished">Überblendlänge</translation>
+        <translation>Überblendlänge</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="112"/>
         <source>Choose a custom background image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle eine benutzerdefinierte Hintergrund-Bilddatei aus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="124"/>
         <source>No background image</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Hintergrundbild</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="125"/>
         <source>Current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork des aktuellen Titels</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="126"/>
         <source>Use the currently playing track&apos;s artwork as the playlist background</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze das Artwork des aktuell spielenden Titels als Hintergrund für die Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="127"/>
         <source>Custom image</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefiniertes Bild</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="128"/>
         <source>Use the selected image file as the playlist background</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze die ausgewählte Bilddatei als Hintergrund der Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="130"/>
         <source>Front</source>
-        <translation type="unfinished">Voderseite</translation>
+        <translation>Voderseite</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="131"/>
         <source>Use the front cover for current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze das Albumcover (Vorderseite) als Artwork des aktuellen Titels</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="132"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Rückseite</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="133"/>
         <source>Use the back cover for current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze das Albumcover (Rückseite) als Artwork des aktuellen Titels</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="134"/>
         <source>Artist</source>
-        <translation type="unfinished">Künstler</translation>
+        <translation>Künstler</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="135"/>
         <source>Use the artist picture for current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutze das Künstlerbild als Artwork des aktuellen Titels</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="137"/>
         <source>Scaled and cropped</source>
-        <translation type="unfinished"></translation>
+        <translation>Skaliert und zugeschnitten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="138"/>
         <source>Fill the playlist area while preserving proportions; edges may be cropped</source>
-        <translation type="unfinished"></translation>
+        <translation>Fülle den Wiedergabelistenbereich unter Beibehaltung der Proportionen; Kanten werden möglicherweise zugeschnitten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="139"/>
         <source>Scaled</source>
-        <translation type="unfinished"></translation>
+        <translation>Strecken</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="140"/>
         <source>Stretch the image to fill the playlist area; proportions may change</source>
-        <translation type="unfinished"></translation>
+        <translation>Strecke das Bild so, dass es den Wiedergabelistenbereich ausfüllt; Proportionen können sich ändern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="141"/>
         <source>Scaled, keep proportions</source>
-        <translation type="unfinished"></translation>
+        <translation>Skaliert, Proportionen beibehalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="143"/>
         <source>Fit the whole image inside the playlist area without cropping</source>
-        <translation type="unfinished"></translation>
+        <translation>Passe das ganze Bild in den Wiedergabelistenbereich ein ohne es zuzuschneiden</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="144"/>
         <source>Original size</source>
-        <translation type="unfinished"></translation>
+        <translation>Originalgröße</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="145"/>
         <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation type="unfinished"></translation>
+        <translation>Stelle das Bild in Originalgröße, mit einer optionalen Maximalgröße, dar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="147"/>
         <source>Top left</source>
-        <translation type="unfinished"></translation>
+        <translation>Oben links</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="149"/>
         <source>Top right</source>
-        <translation type="unfinished"></translation>
+        <translation>Oben rechts</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="150"/>
         <source>Left</source>
-        <translation type="unfinished">Links</translation>
+        <translation>Links</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="151"/>
         <source>Middle</source>
-        <translation type="unfinished"></translation>
+        <translation>Mitte</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="152"/>
         <source>Right</source>
-        <translation type="unfinished">Rechts</translation>
+        <translation>Rechts</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="153"/>
         <source>Bottom left</source>
-        <translation type="unfinished"></translation>
+        <translation>Unten links</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="154"/>
         <source>Bottom</source>
-        <translation type="unfinished">Unten</translation>
+        <translation>Unten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="155"/>
         <source>Bottom right</source>
-        <translation type="unfinished"></translation>
+        <translation>Unten rechts</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="160"/>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="170"/>
         <source>Disabled</source>
-        <translation type="unfinished">Deaktiviert</translation>
+        <translation>Deaktiviert</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="172"/>
         <source>Path to the custom background image</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfad zum benutzerdefinierten Hintergrundbild</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="173"/>
         <source>Select which image source to use for the playlist background</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle, welche Bildquelle für das Hintergrundbild der Wiedergabeliste verwendet werden soll</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="174"/>
         <source>Select which artwork type to use for current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle, welcher Artwork-Typ für „Artwork des aktuellen Titels“ genutzt werden soll</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="175"/>
         <source>Controls how the background image is scaled to the playlist area</source>
-        <translation type="unfinished"></translation>
+        <translation>Stellt ein, wie das Hintergrundbild auf den Wiedergabelistenbereich skaliert wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="176"/>
         <source>Alignment for original-size background images</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausrichtung für Hintergrundbilder in Originalgröße</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="177"/>
         <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Höhe oder Breite für Hintergrundbilder in Originalgröße</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="178"/>
         <source>Applies blur to the background image</source>
-        <translation type="unfinished"></translation>
+        <translation>Wendet Unschärfe auf das Hintergrundbild an</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="179"/>
         <source>Controls how strongly the background image is shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Stellt ein, wie sehr das Hintergrundbild zu sehen ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="180"/>
         <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished"></translation>
+        <translation>Überblenddauer zwischen Hintergrundbildern; zum Deaktivieren auf 0 setzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="189"/>
@@ -9000,57 +9000,57 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="196"/>
         <source>Image padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildauffüllung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="203"/>
         <source>Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundbild</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="207"/>
         <source>Image source</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildquelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="208"/>
         <source>Source</source>
-        <translation type="unfinished">Quelle</translation>
+        <translation>Quelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="214"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="215"/>
         <source>Scale mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalierungsmodus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="217"/>
         <source>Alignment</source>
-        <translation type="unfinished">Ausrichtung</translation>
+        <translation>Ausrichtung</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="219"/>
         <source>Maximum size</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximalgröße</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="221"/>
         <source>Effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Effekte</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="295"/>
         <source>Select Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundbild auswählen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="296"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp *.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder (*.png, *.jpg, *.jpeg, *.bmp, *.webp)</translation>
     </message>
 </context>
 <context>
@@ -10237,7 +10237,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1281"/>
         <source>Playlist settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen: Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1154"/>
@@ -11293,12 +11293,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="156"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschrift anzeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="165"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Abwechselnde Zeilenfarben</translation>
+        <translation>Abwechselnde Zeilenfarben</translation>
     </message>
 </context>
 <context>
@@ -11720,12 +11720,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="104"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="118"/>
         <source>Filtering</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtern</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="127"/>
@@ -12443,12 +12443,12 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="219"/>
         <source>Show name</source>
-        <translation type="unfinished"></translation>
+        <translation>Name anzeigen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="225"/>
         <source>Show value</source>
-        <translation type="unfinished"></translation>
+        <translation>Wert anzeigen</translation>
     </message>
 </context>
 <context>
@@ -12456,7 +12456,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="384"/>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>Tonhöhe</translation>
     </message>
 </context>
 <context>
@@ -12464,7 +12464,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="409"/>
         <source>Playback Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabegeschwindigkeit</translation>
     </message>
 </context>
 <context>
@@ -12472,7 +12472,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="359"/>
         <source>Tempo</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo</translation>
     </message>
 </context>
 <context>
@@ -14361,27 +14361,27 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
         <location filename="../../src/gui/widgets.cpp" line="449"/>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
         <source>Tagging</source>
-        <translation type="unfinished">Tagging</translation>
+        <translation>Tagging</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="450"/>
         <source>Preserve timestamps</source>
-        <translation type="unfinished">Zeitstempel beibehalten</translation>
+        <translation>Zeitstempel beibehalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="451"/>
         <source>Preserve file access and modification timestamps when updating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Behalte die Dateizugriffs- und Änderungs-Zeitstempel beim Aktualisieren von Tags bei.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="458"/>
         <source>Split ID3v2.3 semicolon-separated tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Trenne durch Semikola getrennte ID3v2.3-Tags</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="459"/>
         <source>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Trenne ID3v2.3-Werte, die nicht durch Standardtrenner „;“ getrennt sind, beim Einlesen von Tags.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="466"/>
@@ -14890,17 +14890,17 @@ Höhere Supersampling-Werte funktionieren am besten mit höherer Sampleanzahl.</
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="112"/>
         <source>Tempo</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="114"/>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>Tonhöhe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="116"/>
         <source>Playback rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabegeschwindigkeit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenumodel.cpp" line="74"/>
