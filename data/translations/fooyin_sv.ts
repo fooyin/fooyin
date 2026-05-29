@@ -10221,7 +10221,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1199"/>
         <source>Single-column mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Enkolumnsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1281"/>
@@ -12762,7 +12762,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="290"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">&amp;Höger</translation>
+        <translation>Höge&amp;r</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="291"/>
@@ -12782,7 +12782,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="335"/>
         <source>Re&amp;move</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ta &amp;bort</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="338"/>
@@ -14381,7 +14381,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="484"/>
         <source>Prefer FFmpeg for extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Föredra FFmpeg för ändelser</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="485"/>
