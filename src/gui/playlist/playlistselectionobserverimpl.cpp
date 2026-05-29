@@ -45,4 +45,11 @@ UId PlaylistSelectionObserverImpl::currentPlaylistId() const
 {
     return m_playlistController ? m_playlistController->currentPlaylistId() : UId{};
 }
+
+void PlaylistSelectionObserverImpl::changeCurrentPlaylist(const UId& id)
+{
+    if(m_playlistController) {
+        m_playlistController->changeCurrentPlaylist(id);
+    }
+}
 } // namespace Fooyin

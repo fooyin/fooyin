@@ -33,6 +33,7 @@ public:
 
     [[nodiscard]] Playlist* currentPlaylist() const override;
     [[nodiscard]] UId currentPlaylistId() const override;
+    void changeCurrentPlaylist(const UId& id) override;
 
 private:
     PlaylistController* m_playlistController;

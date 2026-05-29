@@ -39,6 +39,7 @@ public:
 
     [[nodiscard]] virtual Playlist* currentPlaylist() const = 0;
     [[nodiscard]] virtual UId currentPlaylistId() const     = 0;
+    virtual void changeCurrentPlaylist(const UId& id)       = 0;
 
 Q_SIGNALS:
     void currentPlaylistChanged(Fooyin::Playlist* previous, Fooyin::Playlist* current);
