@@ -29,13 +29,13 @@ namespace Fooyin {
 class Playlist;
 
 /*! Exposes the selected playlist in the main playlist UI flow to gui plugins. */
-class FYGUI_EXPORT PlaylistSelectionObserver : public QObject
+class FYGUI_EXPORT CurrentPlaylistController : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistSelectionObserver(QObject* parent = nullptr);
-    ~PlaylistSelectionObserver() override;
+    explicit CurrentPlaylistController(QObject* parent = nullptr);
+    ~CurrentPlaylistController() override;
 
     [[nodiscard]] virtual Playlist* currentPlaylist() const = 0;
     [[nodiscard]] virtual UId currentPlaylistId() const     = 0;

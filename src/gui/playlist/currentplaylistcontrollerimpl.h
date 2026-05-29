@@ -19,17 +19,17 @@
 
 #pragma once
 
-#include <gui/playlist/playlistselectionobserver.h>
+#include <gui/playlist/currentplaylistcontroller.h>
 
 namespace Fooyin {
 class PlaylistController;
 
-class PlaylistSelectionObserverImpl : public PlaylistSelectionObserver
+class CurrentPlaylistControllerImpl : public CurrentPlaylistController
 {
     Q_OBJECT
 
 public:
-    PlaylistSelectionObserverImpl(PlaylistController* playlistController, QObject* parent = nullptr);
+    CurrentPlaylistControllerImpl(PlaylistController* playlistController, QObject* parent = nullptr);
 
     [[nodiscard]] Playlist* currentPlaylist() const override;
     [[nodiscard]] UId currentPlaylistId() const override;

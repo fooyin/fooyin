@@ -17,36 +17,36 @@
  *
  */
 
-#include "playlistselectionobserverimpl.h"
+#include "currentplaylistcontrollerimpl.h"
 
 #include "playlistcontroller.h"
 
 namespace Fooyin {
-PlaylistSelectionObserver::PlaylistSelectionObserver(QObject* parent)
+CurrentPlaylistController::CurrentPlaylistController(QObject* parent)
     : QObject{parent}
 { }
 
-PlaylistSelectionObserver::~PlaylistSelectionObserver() = default;
+CurrentPlaylistController::~CurrentPlaylistController() = default;
 
-PlaylistSelectionObserverImpl::PlaylistSelectionObserverImpl(PlaylistController* playlistController, QObject* parent)
-    : PlaylistSelectionObserver{parent}
+CurrentPlaylistControllerImpl::CurrentPlaylistControllerImpl(PlaylistController* playlistController, QObject* parent)
+    : CurrentPlaylistController{parent}
     , m_playlistController{playlistController}
 {
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistChanged, this,
-                     &PlaylistSelectionObserver::currentPlaylistChanged);
+                     &CurrentPlaylistController::currentPlaylistChanged);
 }
 
-Playlist* PlaylistSelectionObserverImpl::currentPlaylist() const
+Playlist* CurrentPlaylistControllerImpl::currentPlaylist() const
 {
     return m_playlistController ? m_playlistController->currentPlaylist() : nullptr;
 }
 
-UId PlaylistSelectionObserverImpl::currentPlaylistId() const
+UId CurrentPlaylistControllerImpl::currentPlaylistId() const
 {
     return m_playlistController ? m_playlistController->currentPlaylistId() : UId{};
 }
 
-void PlaylistSelectionObserverImpl::changeCurrentPlaylist(const UId& id)
+void CurrentPlaylistControllerImpl::changeCurrentPlaylist(const UId& id)
 {
     if(m_playlistController) {
         m_playlistController->changeCurrentPlaylist(id);

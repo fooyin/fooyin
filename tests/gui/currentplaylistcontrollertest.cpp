@@ -21,7 +21,7 @@
 
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
-#include <gui/playlist/playlistselectionobserver.h>
+#include <gui/playlist/currentplaylistcontroller.h>
 
 #include <QCoreApplication>
 #include <QSignalSpy>
@@ -29,8 +29,8 @@
 
 #include <gtest/gtest.h>
 
+#include "playlist/currentplaylistcontrollerimpl.h"
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistselectionobserverimpl.h"
 
 using namespace Qt::StringLiterals;
 
@@ -45,7 +45,7 @@ QCoreApplication* ensureCoreApplication()
     }
 
     static int argc{1};
-    static char appName[]        = "fooyin-playlistselectionobserver-test";
+    static char appName[]        = "fooyin-currentplaylistcontroller-test";
     static char* argv[]          = {appName, nullptr};
     static QCoreApplication* app = []() {
         auto* instance = new QCoreApplication(argc, argv);
@@ -56,7 +56,7 @@ QCoreApplication* ensureCoreApplication()
 }
 } // namespace
 
-class PlaylistSelectionObserverTest : public ::testing::Test
+class CurrentPlaylistControllerTest : public ::testing::Test
 {
 protected:
     void SetUp() override
@@ -66,7 +66,7 @@ protected:
 
         m_app        = std::make_unique<Application>();
         m_controller = std::make_unique<PlaylistController>(m_app.get(), nullptr);
-        m_observer   = std::make_unique<PlaylistSelectionObserverImpl>(m_controller.get());
+        m_observer   = std::make_unique<CurrentPlaylistControllerImpl>(m_controller.get());
     }
 
     Playlist* createPlaylist(const QString& name) const
@@ -76,10 +76,10 @@ protected:
 
     std::unique_ptr<Application> m_app;
     std::unique_ptr<PlaylistController> m_controller;
-    std::unique_ptr<PlaylistSelectionObserver> m_observer;
+    std::unique_ptr<CurrentPlaylistController> m_observer;
 };
 
-TEST_F(PlaylistSelectionObserverTest, ReportsCurrentPlaylistIdentity)
+TEST_F(CurrentPlaylistControllerTest, ReportsCurrentPlaylistIdentity)
 {
     auto* firstPlaylist = createPlaylist(u"Observer A"_s);
     ASSERT_NE(firstPlaylist, nullptr);
@@ -93,14 +93,14 @@ TEST_F(PlaylistSelectionObserverTest, ReportsCurrentPlaylistIdentity)
     EXPECT_EQ(firstPlaylist->id(), m_observer->currentPlaylistId());
 }
 
-TEST_F(PlaylistSelectionObserverTest, EmitsWhenSelectedPlaylistChanges)
+TEST_F(CurrentPlaylistControllerTest, EmitsWhenSelectedPlaylistChanges)
 {
     auto* firstPlaylist  = createPlaylist(u"Observer A"_s);
     auto* secondPlaylist = createPlaylist(u"Observer B"_s);
     ASSERT_NE(firstPlaylist, nullptr);
     ASSERT_NE(secondPlaylist, nullptr);
 
-    QSignalSpy changedSpy{m_observer.get(), &PlaylistSelectionObserver::currentPlaylistChanged};
+    QSignalSpy changedSpy{m_observer.get(), &CurrentPlaylistController::currentPlaylistChanged};
 
     m_observer->changeCurrentPlaylist(firstPlaylist->id());
     ASSERT_EQ(1, changedSpy.count());
@@ -112,7 +112,7 @@ TEST_F(PlaylistSelectionObserverTest, EmitsWhenSelectedPlaylistChanges)
     EXPECT_EQ(secondPlaylist, changedSpy.at(1).at(1).value<Fooyin::Playlist*>());
 }
 
-TEST_F(PlaylistSelectionObserverTest, DoesNotEmitForActivePlaybackPlaylistChanges)
+TEST_F(CurrentPlaylistControllerTest, DoesNotEmitForActivePlaybackPlaylistChanges)
 {
     auto* firstPlaylist  = createPlaylist(u"Observer A"_s);
     auto* secondPlaylist = createPlaylist(u"Observer B"_s);
@@ -121,7 +121,7 @@ TEST_F(PlaylistSelectionObserverTest, DoesNotEmitForActivePlaybackPlaylistChange
 
     m_observer->changeCurrentPlaylist(firstPlaylist->id());
 
-    QSignalSpy changedSpy{m_observer.get(), &PlaylistSelectionObserver::currentPlaylistChanged};
+    QSignalSpy changedSpy{m_observer.get(), &CurrentPlaylistController::currentPlaylistChanged};
 
     m_app->playlistHandler()->changeActivePlaylist(secondPlaylist);
 
@@ -130,28 +130,28 @@ TEST_F(PlaylistSelectionObserverTest, DoesNotEmitForActivePlaybackPlaylistChange
     EXPECT_EQ(firstPlaylist->id(), m_observer->currentPlaylistId());
 }
 
-TEST_F(PlaylistSelectionObserverTest, DoesNotEmitWhenReselectingCurrentPlaylist)
+TEST_F(CurrentPlaylistControllerTest, DoesNotEmitWhenReselectingCurrentPlaylist)
 {
     auto* firstPlaylist = createPlaylist(u"Observer A"_s);
     ASSERT_NE(firstPlaylist, nullptr);
 
     m_observer->changeCurrentPlaylist(firstPlaylist->id());
 
-    QSignalSpy changedSpy{m_observer.get(), &PlaylistSelectionObserver::currentPlaylistChanged};
+    QSignalSpy changedSpy{m_observer.get(), &CurrentPlaylistController::currentPlaylistChanged};
 
     m_observer->changeCurrentPlaylist(firstPlaylist->id());
 
     EXPECT_EQ(0, changedSpy.count());
 }
 
-TEST_F(PlaylistSelectionObserverTest, IgnoresInvalidPlaylistIds)
+TEST_F(CurrentPlaylistControllerTest, IgnoresInvalidPlaylistIds)
 {
     auto* firstPlaylist = createPlaylist(u"Observer A"_s);
     ASSERT_NE(firstPlaylist, nullptr);
 
     m_observer->changeCurrentPlaylist(firstPlaylist->id());
 
-    QSignalSpy changedSpy{m_observer.get(), &PlaylistSelectionObserver::currentPlaylistChanged};
+    QSignalSpy changedSpy{m_observer.get(), &CurrentPlaylistController::currentPlaylistChanged};
 
     m_observer->changeCurrentPlaylist(UId{});
 

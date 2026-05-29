@@ -25,9 +25,9 @@ namespace Fooyin {
 class ActionManager;
 class AdvancedSettingsRegistry;
 class CoverRepository;
+class CurrentPlaylistController;
 class EditableLayout;
 class LayoutProvider;
-class PlaylistSelectionObserver;
 class PropertiesDialog;
 class SearchController;
 class ScriptCommandHandler;
@@ -43,7 +43,7 @@ struct FYGUI_EXPORT GuiPluginContext
 {
     GuiPluginContext(ActionManager* actionManager_, LayoutProvider* layoutProvider_,
                      TrackSelectionController* trackSelection_, SearchController* searchController_,
-                     PlaylistSelectionObserver* playlistSelection_, PropertiesDialog* propertiesDialog_,
+                     CurrentPlaylistController* playlistSelection_, PropertiesDialog* propertiesDialog_,
                      ScriptCommandHandler* scriptCommandHandler_, WidgetProvider* widgetProvider_,
                      EditableLayout* editableLayout_, WindowController* windowController_,
                      ThemeRegistry* themeRegistry_, AdvancedSettingsRegistry* advancedSettingsRegistry_,
@@ -67,7 +67,7 @@ struct FYGUI_EXPORT GuiPluginContext
     LayoutProvider* layoutProvider;
     TrackSelectionController* trackSelection;
     SearchController* searchController;
-    PlaylistSelectionObserver* playlistSelection;
+    CurrentPlaylistController* playlistSelection;
     PropertiesDialog* propertiesDialog;
     ScriptCommandHandler* scriptCommandHandler;
     WidgetProvider* widgetProvider;

@@ -35,10 +35,10 @@
 #include "menubar/mainmenubar.h"
 #include "menubar/playbackmenu.h"
 #include "menubar/viewmenu.h"
+#include "playlist/currentplaylistcontrollerimpl.h"
 #include "playlist/manager/playlistmanagerwidget.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
-#include "playlist/playlistselectionobserverimpl.h"
 #include "playlist/playlistuicontroller.h"
 #include "queueviewer/queueviewer.h"
 #include "scripting/scriptcommandhandler.h"
@@ -251,7 +251,7 @@ public:
     std::unique_ptr<SystemTrayIcon> m_trayIcon;
     WidgetContext* m_mainContext;
     std::unique_ptr<PlaylistController> m_playlistController;
-    std::unique_ptr<PlaylistSelectionObserver> m_playlistSelectionObserver;
+    std::unique_ptr<CurrentPlaylistController> m_playlistSelectionObserver;
     PlaylistInteractor m_playlistInteractor;
     TrackSelectionController m_selectionController;
     SearchController* m_searchController;
@@ -306,7 +306,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_mainWindow{std::make_unique<MainWindow>(m_actionManager, m_menubar.get(), m_library, m_settings)}
     , m_mainContext{new WidgetContext(m_mainWindow.get(), Context{"Fooyin.MainWindow"}, m_self)}
     , m_playlistController{std::make_unique<PlaylistController>(m_core, &m_selectionController)}
-    , m_playlistSelectionObserver{std::make_unique<PlaylistSelectionObserverImpl>(m_playlistController.get())}
+    , m_playlistSelectionObserver{std::make_unique<CurrentPlaylistControllerImpl>(m_playlistController.get())}
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library, m_settings}
     , m_selectionController{m_actionManager, m_core->audioLoader().get(), m_settings, m_playlistController.get()}
     , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
