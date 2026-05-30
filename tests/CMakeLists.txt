@@ -106,9 +106,6 @@ fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
 fooyin_add_test(test_filtercontroller gui/filters/filtercontrollertest.cpp)
 fooyin_add_test(test_filterpipeline gui/filters/filterpipelinetest.cpp)
 fooyin_add_test(test_scriptreferenceentries gui/scriptreferenceentriestest.cpp)
-fooyin_add_test(test_playlistviewrefresher gui/playlistviewrefreshertest.cpp
-                ${CMAKE_SOURCE_DIR}/src/gui/playlist/playlistviewrefresherimpl.cpp)
-target_include_directories(test_playlistviewrefresher PRIVATE ${CMAKE_SOURCE_DIR}/src/gui)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
 

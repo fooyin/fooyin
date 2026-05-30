@@ -43,7 +43,6 @@
 #include "playlist/manager/playlistmanagerwidget.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistuicontroller.h"
-#include "playlist/playlistviewrefresherimpl.h"
 #include "playlist/playlistwidget.h"
 #include "queueviewer/queueviewer.h"
 #include "quicksetup/quicksetupdialog.h"
@@ -291,7 +290,6 @@ GuiApplication::GuiApplication(Application* core)
     , m_scriptCommandHandler{std::make_unique<ScriptCommandHandler>(m_actionManager, m_playerController,
                                                                      m_propertiesDialog, m_selectionController.get(),
                                                                      m_playlistController.get())}
-    , m_playlistViewRefresher{m_playlistController.get(), this}
     , m_windowController{new WindowController(m_mainWindow.get())}
     , m_themeRegistry{new ThemeRegistry(m_settings, this)}
     , m_styleProvider{new GuiStyleProvider(m_settings, this)}
@@ -302,7 +300,7 @@ GuiApplication::GuiApplication(Application* core)
                          m_selectionController.get(),
                           m_searchController,
                           m_playlistController.get(),
-                          &m_playlistViewRefresher,
+                          m_playlistController.get(),
                           m_propertiesDialog,
                           m_scriptCommandHandler.get(),
                           &m_scriptVariableRegistry,

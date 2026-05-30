@@ -20,7 +20,7 @@
 #pragma once
 
 #include "playlist/playlistmodel.h"
-#include "playlist/playlistviewrefreshsource.h"
+#include <gui/playlist/playlistviewrefresher.h>
 
 #include <core/player/playbackqueue.h>
 #include <core/player/playerdefs.h>
@@ -61,7 +61,7 @@ struct PlaylistViewState
 
 class PlaylistController : public CurrentPlaylistController,
                            public PlaylistEditController,
-                           public PlaylistViewRefreshSource
+                           public PlaylistViewRefresher
 {
     Q_OBJECT
 
