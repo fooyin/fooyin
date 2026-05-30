@@ -5,7 +5,7 @@ export CC=clang
 export CXX=clang++
 export CXXFLAGS="-fexperimental-library"
 BUILD_CCACHE="${BUILD_CCACHE:-ON}"
-BUILD_PCH="${BUILD_PCH:-ON}"
+BUILD_PCH="${BUILD_PCH:-OFF}"
 
 if [ "$BUILD_CCACHE" = "ON" ]; then
   export CCACHE_DIR="${CCACHE_DIR:-$FOOYIN_DIR/.ccache}"
