@@ -26,6 +26,8 @@
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QAction>
+#include <QActionGroup>
 #include <QColor>
 #include <QContextMenuEvent>
 #include <QJsonArray>
@@ -628,7 +630,200 @@ void SpectrumWidget::showContextMenu(const QPoint& globalPos)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
-    addConfigureAction(menu, false);
+
+    auto* styleMenu  = new QMenu(tr("Style"), menu);
+    auto* styleGroup = new QActionGroup(styleMenu);
+
+    auto* bars = new QAction(tr("Bars"), styleGroup);
+    bars->setCheckable(true);
+    bars->setChecked(m_config.drawStyle == DrawStyle::Bars);
+    auto* curve = new QAction(tr("Curve"), styleGroup);
+    curve->setCheckable(true);
+    curve->setChecked(m_config.drawStyle == DrawStyle::Curve);
+
+    QObject::connect(bars, &QAction::triggered, this, [this]() {
+        auto config{m_config};
+        config.drawStyle = DrawStyle::Bars;
+        applyConfig(config);
+    });
+    QObject::connect(curve, &QAction::triggered, this, [this]() {
+        auto config{m_config};
+        config.drawStyle = DrawStyle::Curve;
+        applyConfig(config);
+    });
+
+    styleMenu->addAction(bars);
+    styleMenu->addAction(curve);
+
+    auto* axisMenu  = new QMenu(tr("Axis"), menu);
+    auto* axisGroup = new QActionGroup(axisMenu);
+
+    auto* frequencies = new QAction(tr("Frequencies"), axisGroup);
+    frequencies->setCheckable(true);
+    frequencies->setChecked(m_config.labelMode == LabelMode::Frequency);
+    auto* notes = new QAction(tr("Notes"), axisGroup);
+    notes->setCheckable(true);
+    notes->setChecked(m_config.labelMode == LabelMode::Notes);
+
+    QObject::connect(frequencies, &QAction::triggered, this, [this]() {
+        auto config{m_config};
+        config.labelMode = LabelMode::Frequency;
+        applyConfig(config);
+    });
+    QObject::connect(notes, &QAction::triggered, this, [this]() {
+        auto config{m_config};
+        config.labelMode = LabelMode::Notes;
+        applyConfig(config);
+    });
+
+    axisMenu->addAction(frequencies);
+    axisMenu->addAction(notes);
+
+    auto* fftSizeMenu  = new QMenu(tr("FFT size"), menu);
+    auto* fftSizeGroup = new QActionGroup(fftSizeMenu);
+
+    for(int fftSize{MinFftSize}; fftSize <= MaxFftSize; fftSize <<= 1) {
+        auto* action = new QAction(QString::number(fftSize), fftSizeGroup);
+        action->setCheckable(true);
+        action->setChecked(m_config.fftSize == fftSize);
+
+        QObject::connect(action, &QAction::triggered, this, [this, fftSize]() {
+            auto config{m_config};
+            config.fftSize = fftSize;
+            applyConfig(config);
+        });
+
+        fftSizeMenu->addAction(action);
+    }
+
+    auto* showPeaks = new QAction(tr("Show peaks"), menu);
+    showPeaks->setCheckable(true);
+    showPeaks->setChecked(m_config.peaksEnabled);
+    QObject::connect(showPeaks, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.peaksEnabled = checked;
+        applyConfig(config);
+    });
+
+    auto* fillSpectrum = new QAction(tr("Fill spectrum"), menu);
+    fillSpectrum->setCheckable(true);
+    fillSpectrum->setChecked(m_config.fillSpectrum);
+    QObject::connect(fillSpectrum, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.fillSpectrum = checked;
+        applyConfig(config);
+    });
+
+    auto* showTooltip = new QAction(tr("Show tooltip"), menu);
+    showTooltip->setCheckable(true);
+    showTooltip->setChecked(m_config.showTooltip);
+    QObject::connect(showTooltip, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showTooltip = checked;
+        applyConfig(config);
+    });
+
+    auto* labelsMenu = new QMenu(tr("Labels"), menu);
+
+    auto* topLabels = new QAction(tr("Top"), labelsMenu);
+    topLabels->setCheckable(true);
+    topLabels->setChecked(m_config.showTopLabels);
+    QObject::connect(topLabels, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showTopLabels = checked;
+        applyConfig(config);
+    });
+
+    auto* bottomLabels = new QAction(tr("Bottom"), labelsMenu);
+    bottomLabels->setCheckable(true);
+    bottomLabels->setChecked(m_config.showBottomLabels);
+    QObject::connect(bottomLabels, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showBottomLabels = checked;
+        applyConfig(config);
+    });
+
+    auto* leftLabels = new QAction(tr("Left"), labelsMenu);
+    leftLabels->setCheckable(true);
+    leftLabels->setChecked(m_config.showLeftLabels);
+    QObject::connect(leftLabels, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showLeftLabels = checked;
+        applyConfig(config);
+    });
+
+    auto* rightLabels = new QAction(tr("Right"), labelsMenu);
+    rightLabels->setCheckable(true);
+    rightLabels->setChecked(m_config.showRightLabels);
+    QObject::connect(rightLabels, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showRightLabels = checked;
+        applyConfig(config);
+    });
+
+    labelsMenu->addAction(topLabels);
+    labelsMenu->addAction(bottomLabels);
+    labelsMenu->addAction(leftLabels);
+    labelsMenu->addAction(rightLabels);
+
+    auto* gridMenu = new QMenu(tr("Gridlines"), menu);
+
+    auto* horizontalGrid = new QAction(tr("Horizontal"), gridMenu);
+    horizontalGrid->setCheckable(true);
+    horizontalGrid->setChecked(m_config.showHorizontalGrid);
+    QObject::connect(horizontalGrid, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showHorizontalGrid = checked;
+        applyConfig(config);
+    });
+
+    auto* verticalGrid = new QAction(tr("Vertical"), gridMenu);
+    verticalGrid->setCheckable(true);
+    verticalGrid->setChecked(m_config.showVerticalGrid);
+    QObject::connect(verticalGrid, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showVerticalGrid = checked;
+        applyConfig(config);
+    });
+
+    auto* whiteKeys = new QAction(tr("White keys"), gridMenu);
+    whiteKeys->setCheckable(true);
+    whiteKeys->setChecked(m_config.showWhiteKeys);
+    whiteKeys->setEnabled(m_config.labelMode == LabelMode::Notes);
+    QObject::connect(whiteKeys, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showWhiteKeys = checked;
+        applyConfig(config);
+    });
+
+    auto* blackKeys = new QAction(tr("Black keys"), gridMenu);
+    blackKeys->setCheckable(true);
+    blackKeys->setChecked(m_config.showBlackKeys);
+    blackKeys->setEnabled(m_config.labelMode == LabelMode::Notes);
+    QObject::connect(blackKeys, &QAction::triggered, this, [this](bool checked) {
+        auto config{m_config};
+        config.showBlackKeys = checked;
+        applyConfig(config);
+    });
+
+    gridMenu->addAction(horizontalGrid);
+    gridMenu->addAction(verticalGrid);
+    gridMenu->addSeparator();
+    gridMenu->addAction(whiteKeys);
+    gridMenu->addAction(blackKeys);
+
+    menu->addAction(showPeaks);
+    menu->addAction(fillSpectrum);
+    menu->addAction(showTooltip);
+    menu->addSeparator();
+    menu->addMenu(labelsMenu);
+    menu->addMenu(gridMenu);
+    menu->addSeparator();
+    menu->addMenu(styleMenu);
+    menu->addMenu(axisMenu);
+    menu->addMenu(fftSizeMenu);
+
+    addConfigureAction(menu);
     menu->popup(globalPos);
 }
 } // namespace Fooyin::Spectrum

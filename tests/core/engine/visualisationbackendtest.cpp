@@ -154,6 +154,69 @@ TEST(VisualisationBackendTest, ResetsBacklogWhenGapExceedsTolerance)
     EXPECT_GE(window.startTimeMs, discontinuityStartMs);
 }
 
+TEST(VisualisationBackendTest, MapsClockAcrossBridgedTimelineUntilReset)
+{
+    static constexpr auto frameCount = 100;
+    static constexpr auto sampleRate = 1000;
+    static constexpr auto fftSize    = 256;
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 2000);
+
+    for(uint64_t streamTimeMs{10000}; streamTimeMs < 10600; streamTimeMs += 100) {
+        backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, streamTimeMs));
+    }
+
+    backend.setCurrentTimeMs(10550);
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0));
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 100));
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 200));
+
+    Fooyin::VisualisationSession::SpectrumWindow spectrum;
+    ASSERT_TRUE(backend.getSpectrumWindowEndingAt(spectrum, 200, fftSize, {},
+                                                  Fooyin::VisualisationSession::SpectrumWindowFunction::Hann));
+    EXPECT_GT(spectrum.startTimeMs, 10000);
+
+    backend.setCurrentTimeMs(500);
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 500));
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 600));
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 700));
+    backend.setCurrentTimeMs(800);
+
+    ASSERT_TRUE(backend.getSpectrumWindowEndingAt(spectrum, 800, fftSize, {},
+                                                  Fooyin::VisualisationSession::SpectrumWindowFunction::Hann));
+    EXPECT_GE(spectrum.startTimeMs, 500);
+    EXPECT_LT(spectrum.startTimeMs, 600);
+}
+
+TEST(VisualisationBackendTest, AcceptsZeroTimeAfterBacklogResetLeavesOldTimeline)
+{
+    static constexpr auto frameCount = 100;
+    static constexpr auto sampleRate = 1000;
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 2000);
+
+    backend.setCurrentTimeMs(10000);
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 10000));
+
+    Fooyin::PcmFrame monoFrame;
+    monoFrame.format       = Fooyin::AudioFormat{Fooyin::SampleFormat::F32, sampleRate, 1};
+    monoFrame.frameCount   = frameCount;
+    monoFrame.streamTimeMs = 0;
+    std::fill_n(monoFrame.samples.data(), frameCount, 0.2F);
+    backend.appendFrame(monoFrame);
+
+    backend.setCurrentTimeMs(0);
+    EXPECT_EQ(backend.currentTimeMs(), 0);
+
+    backend.appendFrame(monoFrame);
+    EXPECT_GT(backend.currentTimeMs(), 0);
+    EXPECT_LT(backend.currentTimeMs(), 500);
+}
+
 TEST(VisualisationBackendTest, ChannelSelectionsSupportSingleChannelMidAndSide)
 {
     static constexpr auto fftSize    = 1024;

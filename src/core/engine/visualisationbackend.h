@@ -27,6 +27,7 @@
 
 #include <atomic>
 #include <mutex>
+#include <optional>
 #include <shared_mutex>
 #include <unordered_map>
 
@@ -96,6 +97,7 @@ private:
                                      WindowAnchor anchor) const;
     [[nodiscard]] bool resolveSpectrumWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
                                                      int minimumFrameCount) const;
+    [[nodiscard]] uint64_t mappedTimeMs(uint64_t timeMs) const;
     [[nodiscard]] bool fillWindow(VisualisationSession::PcmWindow& out, uint64_t startFrame, int frameCount,
                                   const ChannelSelection& selection) const;
     [[nodiscard]] bool fillSpectrumWindow(VisualisationSession::SpectrumWindow& out,
@@ -118,8 +120,10 @@ private:
     size_t m_frameCount;
     uint64_t m_startStreamFrame;
     uint64_t m_nextStreamFrame;
+    std::optional<int64_t> m_timelineFrameOffset;
 
     std::atomic<uint64_t> m_currentTimeMs;
+    std::atomic_bool m_currentTimePublished;
 
     mutable std::mutex m_fftMutex;
     mutable std::unordered_map<int, Dsp::RealFft> m_fftCache;

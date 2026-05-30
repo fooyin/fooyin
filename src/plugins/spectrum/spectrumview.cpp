@@ -179,7 +179,8 @@ SpectrumView::SpectrumView(EngineController* engine, PlayerController* playerCon
 
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      [this](const Player::PlayState state) { playStateChanged(state); });
-    QObject::connect(playerController, &PlayerController::currentTrackChanged, this, [this]() { clearLevels(); });
+    QObject::connect(playerController, &PlayerController::currentTrackChanged, this,
+                     &SpectrumView::currentTrackChanged);
 }
 
 void SpectrumView::setConfig(const SpectrumWidget::ConfigData& config)
@@ -295,6 +296,13 @@ void SpectrumView::playStateChanged(Player::PlayState state)
     }
     else {
         m_updateTimer.stop();
+    }
+}
+
+void SpectrumView::currentTrackChanged()
+{
+    if(m_paused || m_stopped) {
+        clearLevels();
     }
 }
 

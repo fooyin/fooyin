@@ -70,6 +70,7 @@ private:
     };
 
     void playStateChanged(Player::PlayState state);
+    void currentTrackChanged();
 
     void startUpdateTimer();
 
