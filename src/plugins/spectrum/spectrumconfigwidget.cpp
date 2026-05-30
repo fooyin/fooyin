@@ -23,6 +23,7 @@
 #include "spectrumcolours.h"
 #include "spectrumsettings.h"
 
+#include <gui/framerate.h>
 #include <gui/guiutils.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
@@ -168,7 +169,7 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     , m_peaksGroup{new QGroupBox(tr("Peaks"), this)}
     , m_peakHoldTime{new QSpinBox(this)}
     , m_peakGravity{new QSpinBox(this)}
-    , m_updateFps{new QSpinBox(this)}
+    , m_updateFps{new QComboBox(this)}
     , m_fftSize{new QComboBox(this)}
     , m_windowFunction{new QComboBox(this)}
     , m_drawStyle{new QComboBox(this)}
@@ -241,9 +242,11 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     m_peakGravity->setRange(MinPeakGravity, MaxPeakGravity);
     m_peakGravity->setSingleStep(10);
     m_peakGravity->setSuffix(u" dB/s"_s);
-    m_updateFps->setRange(MinUpdateFps, MaxUpdateFps);
-    m_updateFps->setSingleStep(5);
-    m_updateFps->setSuffix(u" fps"_s);
+
+    for(const auto preset : Gui::FrameRate::Presets) {
+        const int fps = Gui::FrameRate::toFps(preset);
+        m_updateFps->addItem(tr("%1 fps").arg(fps), fps);
+    }
 
     for(const int fftSize : {256, 512, 1024, 2048, 4096, 8192, 16384}) {
         m_fftSize->addItem(QString::number(fftSize), fftSize);
@@ -500,7 +503,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
         .peaksEnabled        = m_peaksGroup->isChecked(),
         .peakHoldTimeMs      = m_peakHoldTime->value(),
         .peakGravity         = m_peakGravity->value(),
-        .updateFps           = m_updateFps->value(),
+        .updateFps           = m_updateFps->currentData().toInt(),
         .fftSize             = m_fftSize->currentData().toInt(),
         .windowFunction      = static_cast<WindowFunction>(m_windowFunction->currentData().toInt()),
         .gradientOrientation = m_barGradient->orientation() == Qt::Vertical ? GradientOrientation::Vertical
@@ -561,7 +564,13 @@ void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
     m_peaksGroup->setChecked(config.peaksEnabled);
     m_peakHoldTime->setValue(config.peakHoldTimeMs);
     m_peakGravity->setValue(config.peakGravity);
-    m_updateFps->setValue(config.updateFps);
+
+    const int nearestFps = Gui::FrameRate::nearestPresetFps(config.updateFps);
+    int fpsIndex         = m_updateFps->findData(nearestFps);
+    if(fpsIndex < 0) {
+        fpsIndex = m_updateFps->findData(DefaultUpdateFps);
+    }
+    m_updateFps->setCurrentIndex(fpsIndex);
 
     int fftIndex = m_fftSize->findData(config.fftSize);
     if(fftIndex < 0) {

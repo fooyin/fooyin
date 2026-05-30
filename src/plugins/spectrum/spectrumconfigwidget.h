@@ -64,7 +64,7 @@ private:
     QGroupBox* m_peaksGroup;
     QSpinBox* m_peakHoldTime;
     QSpinBox* m_peakGravity;
-    QSpinBox* m_updateFps;
+    QComboBox* m_updateFps;
     QComboBox* m_fftSize;
     QComboBox* m_windowFunction;
     QComboBox* m_drawStyle;
