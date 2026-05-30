@@ -23,7 +23,6 @@
 
 #include "internalguisettings.h"
 #include "playlist/playlistinteractor.h"
-#include "playlist/playlistviewrefresherimpl.h"
 #include "widgets.h"
 
 #include <core/engine/enginedefs.h>
@@ -227,7 +226,6 @@ private:
 
     PropertiesDialog* m_propertiesDialog;
     std::unique_ptr<ScriptCommandHandler> m_scriptCommandHandler;
-    PlaylistViewRefresherImpl m_playlistViewRefresher;
     ScriptVariableRegistry m_scriptVariableRegistry;
     WindowController* m_windowController;
     ThemeRegistry* m_themeRegistry;

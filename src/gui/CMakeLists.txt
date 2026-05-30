@@ -265,9 +265,6 @@ set(SOURCES
     playlist/playlistcommands.h
     playlist/playlistcontroller.cpp
     playlist/playlistcontroller.h
-    playlist/playlistviewrefresherimpl.cpp
-    playlist/playlistviewrefresherimpl.h
-    playlist/playlistviewrefreshsource.h
     playlist/playlistuicontroller.cpp
     playlist/playlistuicontroller.h
     playlist/playlistworkspace.cpp
