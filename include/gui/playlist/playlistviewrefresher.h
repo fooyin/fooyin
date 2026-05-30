@@ -19,23 +19,16 @@
 
 #pragma once
 
-#include "fygui_export.h"
-
 #include <utils/id.h>
 
 #include <span>
 
-#include <QObject>
-
 namespace Fooyin {
 /*! Refreshes playlist row rendering for plugin-owned transient state. */
-class FYGUI_EXPORT PlaylistViewRefresher : public QObject
+class PlaylistViewRefresher
 {
-    Q_OBJECT
-
 public:
-    explicit PlaylistViewRefresher(QObject* parent = nullptr);
-    ~PlaylistViewRefresher() override;
+    virtual ~PlaylistViewRefresher() = default;
 
     virtual void refreshPlaylist(const UId& playlistId)                               = 0;
     virtual void refreshEntries(const UId& playlistId, std::span<const UId> entryIds) = 0;
