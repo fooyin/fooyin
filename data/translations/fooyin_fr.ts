@@ -801,12 +801,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="286"/>
         <source>Rounds a numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrondit une valeur numérique</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Formats a number with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>Mettre en forme une valeur à la longueur indiquée avec des zéros non significatifs</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
