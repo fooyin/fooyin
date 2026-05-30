@@ -74,7 +74,7 @@ public:
         bool showVerticalGrid{false};
         bool showWhiteKeys{false};
         bool showBlackKeys{false};
-        bool showTooltip{true};
+        bool showTooltip{false};
         bool fillSpectrum{true};
         bool interpolate{true};
         QString axisFont;
