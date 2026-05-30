@@ -1636,7 +1636,7 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, AudioEngineDispatchesPcmFrame
     EXPECT_FLOAT_EQ(frame.interleavedSamples().back(), 0.1F);
 }
 
-FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, VisualisationBackendUsesPresentedPosition)
+FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, PublishPositionDoesNotDriveVisualisationClock)
 {
     ensureCoreApplication();
 
@@ -1652,7 +1652,7 @@ FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, VisualisationBackendUsesPresent
 
     AudioEngineTestAccessor::publishPosition(engine, 1000, 120, 1.0, AudioClock::UpdateMode::Discontinuity, false);
 
-    EXPECT_EQ(AudioEngineTestAccessor::visualisationCurrentTimeMs(engine), 880);
+    EXPECT_EQ(AudioEngineTestAccessor::visualisationCurrentTimeMs(engine), 0);
 }
 
 FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, UpdateLiveDspSettingsHandlesUnknownInstanceGracefully)

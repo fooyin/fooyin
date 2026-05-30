@@ -220,7 +220,7 @@ PipelineRenderer::RenderResult PipelineRenderer::render(int framesToProcess, Out
 
     result.fadeCompletion = outputFader.takeCompletion();
 
-    tapAnalysis(analysisBus, playbackDelayMs);
+    tapAnalysis(analysisBus, playbackDelayMs, mixerRead.primaryStreamId);
 
     return result;
 }
@@ -762,7 +762,7 @@ void PipelineRenderer::rebuildProcessChunksFromMixerRead(const AudioMixer::ReadR
     }
 }
 
-void PipelineRenderer::tapAnalysis(AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs)
+void PipelineRenderer::tapAnalysis(AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs, const StreamId streamId)
 {
     if(!analysisBus
        || (!analysisBus->hasSubscription(Engine::AnalysisDataType::LevelFrameData)
@@ -842,6 +842,6 @@ void PipelineRenderer::tapAnalysis(AudioAnalysisBus* analysisBus, uint64_t playb
 
     const auto presentationTime = AudioAnalysisBus::Clock::now() + std::chrono::milliseconds{playbackDelayMs};
     analysisBus->push(std::span<const float>{m_analysisScratch.data(), writeOffset}, analysisFormat, streamTimeMs,
-                      presentationTime);
+                      streamId, presentationTime);
 }
 } // namespace Fooyin

@@ -1314,9 +1314,6 @@ void AudioEngine::logGaplessBoundaryDiagnostic(const char* reason, StreamId trig
 void AudioEngine::publishPosition(uint64_t sourcePositionMs, uint64_t outputDelayMs, double delayToSourceScale,
                                   AudioClock::UpdateMode mode, bool emitNow)
 {
-    m_visualisationBackend->setCurrentTimeMs(
-        AudioClock::presentedFromSource(sourcePositionMs, outputDelayMs, delayToSourceScale));
-
     m_audioClock.applyPosition(sourcePositionMs, outputDelayMs, delayToSourceScale, m_trackGeneration, mode, emitNow);
     if(mode == AudioClock::UpdateMode::Discontinuity) {
         m_positionCoordinator.notePublishedDiscontinuity(sourcePositionMs);
@@ -2187,6 +2184,7 @@ void AudioEngine::updatePosition()
 
     const auto updateMode
         = output.discontinuity ? AudioClock::UpdateMode::Discontinuity : AudioClock::UpdateMode::Continuous;
+
     publishPosition(output.relativePosMs, pipelineDelayMs, delayToSourceScale, updateMode, output.emitNow);
 
     bool boundaryFallbackReached = output.boundaryFallbackReached;
@@ -2279,6 +2277,11 @@ void AudioEngine::onLevelFrameReady(const LevelFrame& frame)
 void AudioEngine::onPcmFrameReady(const PcmFrame& frame)
 {
     m_visualisationBackend->appendFrame(frame);
+    if(frame.streamId != InvalidStreamId && frame.format.sampleRate() > 0 && frame.frameCount > 0) {
+        const auto frameDurationMs = frame.format.durationForFrames(frame.frameCount);
+        m_visualisationBackend->setCurrentTimeMs(frame.streamId, frame.streamTimeMs + frameDurationMs,
+                                                 frame.presentationTime + std::chrono::milliseconds{frameDurationMs});
+    }
 
     auto writer              = m_pcmFrameMailbox.writer();
     const size_t framesWrote = writer.write(&frame, 1, RingBufferOverflowPolicy::OverwriteOldest);

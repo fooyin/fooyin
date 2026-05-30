@@ -20,6 +20,7 @@
 #include "visualisationbackend.h"
 
 #include <algorithm>
+#include <chrono>
 #include <numbers>
 
 #include <functional>
@@ -30,9 +31,30 @@
 constexpr uint64_t BacklogPaddingMs       = 100;
 constexpr uint64_t ContinuityToleranceMs  = 100;
 constexpr uint64_t DefaultBacklogDuration = 250;
-constexpr uint64_t TimelineResetAlignMs   = 500;
+constexpr int MinimumSpectrumFrameCount   = 256;
 
 namespace {
+int64_t steadyClockMs()
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch())
+        .count();
+}
+
+int64_t steadyClockMs(std::chrono::steady_clock::time_point time)
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()).count();
+}
+
+uint64_t addSignedOffset(uint64_t value, int64_t offset)
+{
+    if(offset >= 0) {
+        return value + static_cast<uint64_t>(offset);
+    }
+
+    const auto delta = static_cast<uint64_t>(-offset);
+    return value > delta ? value - delta : 0;
+}
+
 int previousPowerOfTwo(int value)
 {
     int power{1};
@@ -93,8 +115,11 @@ VisualisationBackend::VisualisationBackend()
     , m_frameCount{0}
     , m_startStreamFrame{0}
     , m_nextStreamFrame{0}
+    , m_currentStreamId{0}
     , m_currentTimeMs{0}
+    , m_currentTimeReferenceClockMs{0}
     , m_currentTimePublished{false}
+    , m_currentTimeHasPresentationClock{false}
 { }
 
 bool VisualisationBackend::unregisterSession(SessionToken token)
@@ -119,35 +144,61 @@ bool VisualisationBackend::hasActiveSessions() const
 
 void VisualisationBackend::setCurrentTimeMs(uint64_t currentTimeMs)
 {
-    if(currentTimeMs == 0 && m_currentTimePublished.load(std::memory_order_relaxed)
-       && m_currentTimeMs.load(std::memory_order_relaxed) > 0) {
-        const std::unique_lock lock{m_mutex};
-        const int sampleRate = m_format.sampleRate();
-        const uint64_t toleranceFrames
-            = sampleRate > 0 ? std::max<uint64_t>(1, msToFrames(ContinuityToleranceMs, sampleRate)) : 0;
-        const uint64_t previousTimeMs        = m_currentTimeMs.load(std::memory_order_relaxed);
-        const uint64_t previousFrame         = msToFrames(previousTimeMs, sampleRate);
-        const bool previousTimeInsideBacklog = m_frameCount > 0 && sampleRate > 0
-                                            && previousFrame + toleranceFrames >= m_startStreamFrame
-                                            && previousFrame <= m_nextStreamFrame + toleranceFrames;
-        if(previousTimeInsideBacklog) {
-            return;
-        }
+    setCurrentTimeMs(0, currentTimeMs);
+}
+
+void VisualisationBackend::setCurrentTimeMs(uint32_t streamId, uint64_t currentTimeMs)
+{
+    uint64_t visualTimeMs{currentTimeMs};
+
+    {
+        const std::shared_lock lock{m_mutex};
+        visualTimeMs = mapSourceTimeToVisualTime(streamId, currentTimeMs);
     }
 
-    m_currentTimeMs.store(currentTimeMs, std::memory_order_relaxed);
+    m_currentTimeMs.store(visualTimeMs, std::memory_order_relaxed);
+    m_currentTimeReferenceClockMs.store(0, std::memory_order_relaxed);
     m_currentTimePublished.store(true, std::memory_order_relaxed);
+    m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+}
+
+void VisualisationBackend::setCurrentTimeMs(uint32_t streamId, uint64_t currentTimeMs,
+                                            std::chrono::steady_clock::time_point presentationTime)
+{
+    setCurrentTimeMs(streamId, currentTimeMs);
+    m_currentTimeReferenceClockMs.store(steadyClockMs(presentationTime), std::memory_order_relaxed);
+    m_currentTimeHasPresentationClock.store(true, std::memory_order_relaxed);
 }
 
 uint64_t VisualisationBackend::currentTimeMs() const
 {
-    return m_currentTimeMs.load(std::memory_order_relaxed);
+    const uint64_t currentTimeMs = m_currentTimeMs.load(std::memory_order_relaxed);
+    if(currentTimeMs == 0 || !m_currentTimeHasPresentationClock.load(std::memory_order_relaxed)) {
+        return currentTimeMs;
+    }
+
+    const int64_t referenceClockMs = m_currentTimeReferenceClockMs.load(std::memory_order_relaxed);
+    if(referenceClockMs <= 0) {
+        return currentTimeMs;
+    }
+
+    const int64_t elapsedMs = steadyClockMs() - referenceClockMs;
+    if(elapsedMs >= 0) {
+        return currentTimeMs + static_cast<uint64_t>(elapsedMs);
+    }
+
+    const auto earlyMs = static_cast<uint64_t>(-elapsedMs);
+    return currentTimeMs > earlyMs ? currentTimeMs - earlyMs : 0;
 }
 
 void VisualisationBackend::setStopped()
 {
     m_currentTimeMs.store(0, std::memory_order_relaxed);
+    m_currentTimeReferenceClockMs.store(0, std::memory_order_relaxed);
     m_currentTimePublished.store(false, std::memory_order_relaxed);
+    m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+    const std::unique_lock lock{m_mutex};
+    m_currentStreamId = 0;
 }
 
 void VisualisationBackend::appendFrame(const PcmFrame& frame)
@@ -172,76 +223,77 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
         return;
     }
 
-    bool resetBacklog{false};
-
+    const uint32_t sourceKey          = frame.streamId;
     const uint64_t reportedStartFrame = msToFrames(frame.streamTimeMs, sampleRate);
-    uint64_t resetStartFrame{reportedStartFrame};
+    const uint64_t reportedNextFrame  = reportedStartFrame + static_cast<uint64_t>(frameCount);
+    bool resetBacklog                 = false;
+    const bool formatChanged          = m_format.isValid() && m_format != format;
 
-    if(m_format != format) {
+    if(formatChanged) {
         resetBacklog = true;
     }
+    else if(m_frameCount > 0) {
+        if(const auto it = m_sourceTimelines.find(sourceKey); it != m_sourceTimelines.end()) {
+            const uint64_t toleranceFrames   = std::max<uint64_t>(1, msToFrames(ContinuityToleranceMs, sampleRate));
+            const bool sourceTimestampBehind = reportedStartFrame + toleranceFrames < it->second.nextFrame;
+            const bool sourceTimestampAhead  = reportedStartFrame > it->second.nextFrame + toleranceFrames;
 
-    if(m_frameCount == 0) {
-        m_startStreamFrame = reportedStartFrame;
-        m_nextStreamFrame  = reportedStartFrame;
-    }
-    else {
-        const uint64_t toleranceFrames   = std::max<uint64_t>(1, msToFrames(ContinuityToleranceMs, sampleRate));
-        const bool sourceTimestampBehind = reportedStartFrame + toleranceFrames < m_nextStreamFrame;
-        const bool sourceTimestampAhead  = reportedStartFrame > m_nextStreamFrame + toleranceFrames;
-
-        if(sourceTimestampBehind || sourceTimestampAhead) {
-            const uint64_t visualTimeMs         = currentTimeMs();
-            const uint64_t visualTimeFrame      = msToFrames(visualTimeMs, sampleRate);
-            const bool visualClockInsideBacklog = visualTimeMs > 0
-                                               && visualTimeFrame + toleranceFrames >= m_startStreamFrame
-                                               && visualTimeFrame <= m_nextStreamFrame + toleranceFrames;
-
-            if(visualClockInsideBacklog && m_format == format) {
-                if(sourceTimestampBehind) {
-                    m_timelineFrameOffset = static_cast<int64_t>(m_nextStreamFrame - reportedStartFrame);
-                }
-            }
-            else {
+            if(sourceTimestampBehind || sourceTimestampAhead) {
                 resetBacklog = true;
-                if(visualTimeMs > 0) {
-                    const uint64_t reportedMs = (reportedStartFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
-                    const uint64_t deltaMs
-                        = visualTimeMs > reportedMs ? (visualTimeMs - reportedMs) : (reportedMs - visualTimeMs);
-                    if(deltaMs <= TimelineResetAlignMs) {
-                        resetStartFrame = visualTimeFrame;
-                    }
-                }
             }
         }
     }
 
     if(resetBacklog) {
         resetLocked();
-        m_format           = format;
-        m_startStreamFrame = resetStartFrame;
-        m_nextStreamFrame  = resetStartFrame;
+        m_currentTimeMs.store(0, std::memory_order_relaxed);
+        m_currentTimeReferenceClockMs.store(0, std::memory_order_relaxed);
+        m_currentTimePublished.store(false, std::memory_order_relaxed);
+        m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+    }
+
+    if(!m_format.isValid()) {
+        m_format = format;
+    }
+
+    if(m_frameCount == 0) {
+        m_startStreamFrame = 0;
+        m_nextStreamFrame  = 0;
+    }
+
+    const uint64_t visualStartFrame = m_nextStreamFrame;
+    const uint64_t visualStartMs    = (visualStartFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+
+    auto& sourceTimeline              = m_sourceTimelines[sourceKey];
+    sourceTimeline.nextFrame          = reportedNextFrame;
+    sourceTimeline.visualTimeOffsetMs = static_cast<int64_t>(visualStartMs) - static_cast<int64_t>(frame.streamTimeMs);
+
+    if(frame.streamId != 0) {
+        m_currentStreamId = frame.streamId;
     }
 
     const size_t requiredFrames = std::max<size_t>(
         static_cast<size_t>(frameCount), requestedBacklogFrames(sampleRate) + static_cast<size_t>(frameCount));
     ensureCapacity(requiredFrames);
     appendFrames(std::span<const float>{frame.samples.data(), sampleCount}, static_cast<size_t>(frameCount),
-                 channelCount, m_nextStreamFrame);
+                 channelCount, visualStartFrame);
 
     const uint64_t availableEndMs = (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
-    if(availableEndMs > 0 && m_currentTimePublished.load(std::memory_order_relaxed)
-       && m_currentTimeMs.load(std::memory_order_relaxed) == 0) {
-        uint64_t expectedZero{0};
-        m_currentTimeMs.compare_exchange_strong(expectedZero, availableEndMs, std::memory_order_relaxed,
-                                                std::memory_order_relaxed);
+    if(availableEndMs > 0
+       && (!m_currentTimePublished.load(std::memory_order_relaxed)
+           || m_currentTimeMs.load(std::memory_order_relaxed) == 0)) {
+        m_currentTimeMs.store(availableEndMs, std::memory_order_relaxed);
+        m_currentTimePublished.store(true, std::memory_order_relaxed);
+        m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
     }
 }
 
 void VisualisationBackend::reset()
 {
-    const std::unique_lock lock{m_mutex};
-    resetLocked();
+    {
+        const std::unique_lock lock{m_mutex};
+        resetLocked();
+    }
     setStopped();
 }
 
@@ -262,7 +314,7 @@ bool VisualisationBackend::resolveWindow(WindowRange& out, uint64_t timeMs, int 
         return false;
     }
 
-    const uint64_t timeFrame = msToFrames(mappedTimeMs(timeMs), m_format.sampleRate());
+    const uint64_t timeFrame = msToFrames(timeMs, m_format.sampleRate());
     uint64_t startFrame{0};
 
     if(anchor == WindowAnchor::Center) {
@@ -293,7 +345,7 @@ bool VisualisationBackend::resolveSpectrumWindowEndingAt(WindowRange& out, uint6
 
     const uint64_t availableStartFrame = m_startStreamFrame;
     const uint64_t availableEndFrame   = m_nextStreamFrame;
-    const uint64_t timeFrame           = msToFrames(mappedTimeMs(endTimeMs), m_format.sampleRate());
+    const uint64_t timeFrame           = msToFrames(endTimeMs, m_format.sampleRate());
     const uint64_t clampedEndFrame     = std::clamp(timeFrame, availableStartFrame, availableEndFrame);
 
     if(clampedEndFrame <= availableStartFrame) {
@@ -314,27 +366,6 @@ bool VisualisationBackend::resolveSpectrumWindowEndingAt(WindowRange& out, uint6
     out.startFrame          = clampedEndFrame - windowFrames;
     out.frameCount          = frameCount;
     return true;
-}
-
-uint64_t VisualisationBackend::mappedTimeMs(uint64_t timeMs) const
-{
-    if(!m_timelineFrameOffset.has_value() || !m_format.isValid() || m_format.sampleRate() <= 0) {
-        return timeMs;
-    }
-
-    const int sampleRate      = m_format.sampleRate();
-    const auto timeFrame      = static_cast<int64_t>(msToFrames(timeMs, sampleRate));
-    const int64_t mappedFrame = timeFrame + m_timelineFrameOffset.value();
-    if(mappedFrame < 0) {
-        return timeMs;
-    }
-
-    const auto mappedFrameValue = static_cast<uint64_t>(mappedFrame);
-    if(mappedFrameValue < m_startStreamFrame || mappedFrameValue > m_nextStreamFrame) {
-        return timeMs;
-    }
-
-    return (mappedFrameValue * 1000ULL) / static_cast<uint64_t>(sampleRate);
 }
 
 bool VisualisationBackend::getPcmWindow(VisualisationSession::PcmWindow& out, uint64_t centerTimeMs,
@@ -392,13 +423,12 @@ bool VisualisationBackend::getSpectrumWindowEndingAt(VisualisationSession::Spect
                                                      SpectrumWindowFunction windowFunction) const
 {
     VisualisationSession::PcmWindow window;
-    const int startupFrameCount = std::min(fftSize, 4096);
 
     {
         const std::shared_lock lock{m_mutex};
 
         WindowRange range;
-        if(!resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, startupFrameCount)) {
+        if(!resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)) {
             return false;
         }
 
@@ -410,14 +440,26 @@ bool VisualisationBackend::getSpectrumWindowEndingAt(VisualisationSession::Spect
     return fillSpectrumWindow(out, window, selection, windowFunction);
 }
 
+uint64_t VisualisationBackend::mapSourceTimeToVisualTime(uint32_t streamId, uint64_t sourceTimeMs) const
+{
+    if(const auto it = m_sourceTimelines.find(streamId); it != m_sourceTimelines.end()) {
+        return addSignedOffset(sourceTimeMs, it->second.visualTimeOffsetMs);
+    }
+
+    if(m_format.isValid() && m_format.sampleRate() > 0 && m_nextStreamFrame > m_startStreamFrame) {
+        return (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(m_format.sampleRate());
+    }
+
+    return sourceTimeMs;
+}
+
 bool VisualisationBackend::fillWindow(VisualisationSession::PcmWindow& out, uint64_t startFrame, int frameCount,
                                       const ChannelSelection& selection) const
 {
     out.format = m_format;
 
-    const auto selectionMode       = selection.mixMode;
-    const bool outputSingleChannel = selectionMode != ChannelSelection::MixMode::AllChannels;
-    if(outputSingleChannel) {
+    const auto selectionMode = selection.mixMode;
+    if(selectionMode != ChannelSelection::MixMode::AllChannels) {
         out.format.setChannelCount(1);
         out.format.clearChannelLayout();
     }
@@ -430,7 +472,7 @@ bool VisualisationBackend::fillWindow(VisualisationSession::PcmWindow& out, uint
 
     const int sourceChannels = m_format.channelCount();
 
-    const auto relativeStart = static_cast<size_t>(startFrame - m_startStreamFrame);
+    const auto relativeStart = startFrame - m_startStreamFrame;
     if(selectionMode == ChannelSelection::MixMode::MonoAverage) {
         for(int frameIndex{0}; frameIndex < frameCount; ++frameIndex) {
             const size_t sourceFrame
@@ -593,12 +635,13 @@ uint64_t VisualisationBackend::msToFrames(uint64_t ms, int sampleRate)
 
 void VisualisationBackend::resetLocked()
 {
-    m_headFrame           = 0;
-    m_frameCount          = 0;
-    m_startStreamFrame    = 0;
-    m_nextStreamFrame     = 0;
-    m_timelineFrameOffset = std::nullopt;
-    m_format              = AudioFormat{SampleFormat::F32, 0, 0};
+    m_headFrame        = 0;
+    m_frameCount       = 0;
+    m_startStreamFrame = 0;
+    m_nextStreamFrame  = 0;
+    m_currentStreamId  = 0;
+    m_format           = AudioFormat{SampleFormat::F32, 0, 0};
+    m_sourceTimelines.clear();
 }
 
 void VisualisationBackend::ensureCapacity(size_t requiredFrames)

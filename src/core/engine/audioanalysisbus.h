@@ -99,7 +99,8 @@ public:
         setPcmReadyHandler([receiver, method](const PcmFrame& frame) { std::invoke(method, *receiver, frame); });
     }
 
-    void push(std::span<const float> samples, AudioFormat format, uint64_t streamTimeMs, TimePoint presentationTime);
+    void push(std::span<const float> samples, AudioFormat format, uint64_t streamTimeMs, uint32_t streamId,
+              TimePoint presentationTime);
     //! Drop queued analysis data and request hop-state reset.
     void flush();
 
@@ -113,6 +114,7 @@ private:
         AudioFormat format{SampleFormat::F32, 0, 0};
         int sampleCount{0};
         uint64_t streamTimeMs{0};
+        uint32_t streamId{0};
         TimePoint presentationTime;
         bool discontinuityBefore{false};
     };
@@ -146,6 +148,7 @@ private:
     int m_hopChannels;
     int m_hopSampleRate;
     uint64_t m_hopStreamTimeMs;
+    uint32_t m_hopStreamId;
     TimePoint m_hopPresentationTime;
     AudioFormat m_hopFormat;
 };

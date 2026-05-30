@@ -43,6 +43,7 @@ struct PcmFrame
     AudioFormat format{SampleFormat::F32, 0, 0};
     int frameCount{0};
     uint64_t streamTimeMs{0};
+    uint32_t streamId{0};
     std::chrono::steady_clock::time_point presentationTime;
 
     [[nodiscard]] size_t sampleCount() const
