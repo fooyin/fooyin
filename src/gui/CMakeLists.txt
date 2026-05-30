@@ -238,8 +238,7 @@ set(SOURCES
     playlist/playlistcommands.h
     playlist/playlistcontroller.cpp
     playlist/playlistcontroller.h
-    playlist/currentplaylistcontrollerimpl.cpp
-    playlist/currentplaylistcontrollerimpl.h
+    playlist/currentplaylistcontroller.cpp
     playlist/playlistuicontroller.cpp
     playlist/playlistuicontroller.h
     playlist/playlistworkspace.cpp

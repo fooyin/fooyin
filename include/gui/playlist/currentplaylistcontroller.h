@@ -25,7 +25,10 @@
 
 #include <QObject>
 
+#include <functional>
+
 namespace Fooyin {
+class GuiApplicationPrivate;
 class Playlist;
 
 /*! Exposes the selected playlist in the main playlist UI flow to gui plugins. */
@@ -37,11 +40,21 @@ public:
     explicit CurrentPlaylistController(QObject* parent = nullptr);
     ~CurrentPlaylistController() override;
 
-    [[nodiscard]] virtual Playlist* currentPlaylist() const = 0;
-    [[nodiscard]] virtual UId currentPlaylistId() const     = 0;
-    virtual void changeCurrentPlaylist(const UId& id)       = 0;
+    [[nodiscard]] Playlist* currentPlaylist() const;
+    [[nodiscard]] UId currentPlaylistId() const;
+    void changeCurrentPlaylist(const UId& id);
 
 Q_SIGNALS:
     void currentPlaylistChanged(Fooyin::Playlist* previous, Fooyin::Playlist* current);
+
+private:
+    friend class GuiApplicationPrivate;
+
+    void handleCurrentPlaylistChanged(Playlist* previous, Playlist* current);
+    void setCurrentPlaylistProvider(std::function<Playlist*()> provider);
+    void setChangeCurrentPlaylistHandler(std::function<void(const UId& id)> handler);
+
+    std::function<Playlist*()> m_currentPlaylist;
+    std::function<void(const UId& id)> m_changeCurrentPlaylist;
 };
 } // namespace Fooyin
