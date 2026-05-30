@@ -424,7 +424,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="175"/>
         <source>Encoding description</source>
-        <translation type="unfinished"></translation>
+        <translation>Description de l&apos;encodage</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="177"/>
@@ -434,82 +434,82 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="181"/>
         <source>Library added timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Horodatage d&apos;ajout à la bibliothèque</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="183"/>
         <source>Last modified timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Horodatage de dernière modification</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="185"/>
         <source>Full file path</source>
-        <translation type="unfinished"></translation>
+        <translation>Chemin de fichier complet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="187"/>
         <source>Path relative to the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Chemin relatif à la racine de la bibilothèque</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="189"/>
         <source>Filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de fichier sans extension</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="191"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Extension de fichier</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="193"/>
         <source>Filename including extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de fichier avec extension</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="195"/>
         <source>Containing directory name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de dossier parent</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="197"/>
         <source>Containing directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>Chemin de dossier parent</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="199"/>
         <source>Subsong index</source>
-        <translation type="unfinished"></translation>
+        <translation>Numéro de sous-piste</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="201"/>
         <source>ReplayGain track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Gain de piste ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="203"/>
         <source>ReplayGain track peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic de gain ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
         <source>ReplayGain track peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic de gain ReplayGain en dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
         <source>ReplayGain album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Gain d&apos;album ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>ReplayGain album peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic d&apos;album ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
         <source>ReplayGain album peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic d&apos;album ReplayGain en dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="212"/>
@@ -523,17 +523,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
         <source>Number of tracks in the list</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de pistes dans la liste</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Combined duration of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Durée totale de la liste de pistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="219"/>
         <source>Alias for total playlist duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Alias pour la durée totale de la playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="220"/>
@@ -550,12 +550,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="221"/>
         <source>Elapsed time within the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps écoulé de le la playlist active</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="223"/>
         <source>Unique genres across the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Genres uniques parmis la liste de pistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="320"/>
@@ -565,105 +565,105 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="449"/>
         <source>Checks whether two numeric values are equal</source>
-        <translation type="unfinished"></translation>
+        <translation>Test si deux valeurs numériques sont égales</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
         <source>First playback queue index for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Premier indice de la file d&apos;attente pour l&apos;élément spécifié</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="58"/>
         <source>Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonctions</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Numeric rating in stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Note numérique exprimée en étoiles</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Normalized rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Notation normalisée</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="163"/>
         <source>Rating shown as stars with trailing empty stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Note affichée en étoiles avec étoiles restantes vides</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="179"/>
         <source>File created timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Horodatage de création de fichier</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
         <source>Combined file size of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille des fichiers totale de la liste de pistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="224"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="226"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="228"/>
         <source>Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>File d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="227"/>
         <source>Playback queue indexes for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Indices dans la file d&apos;attente pour l&apos;élément spécifié</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="229"/>
         <source>Total amount of tracks in the playback queue for queued items</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre total de pistes dans la file d&apos;attente pour les éléments ajoutés</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
         <source>Current playback position formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Position actuelle de lecture exprimée en temps</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
         <source>Current playback position in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Position actuelle de lecture en secondes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <source>Remaining playback time formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps de lecture restant exprimé en temps</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
         <source>Remaining playback time in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps de lecture restant en secondes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
         <source>Returns 1 while playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>Renvoi 1 tant que la lecture est active</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Returns 1 while playback is paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Renvoi 1 tant que la lecture est en pause</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Returns 1 while playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Renvoi 1 tant que la lecture est stoppée</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="244"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Système</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Current date and time formatted as YYYY-MM-DD HH:MM:SS</source>
-        <translation type="unfinished"></translation>
+        <translation>Date et heure actuelles formatté en YYYY-MM-DD HH:MM:SS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
@@ -674,12 +674,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Current library name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de la bibliothèque actuelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
         <source>Current library path</source>
-        <translation type="unfinished"></translation>
+        <translation>Chemin de la bibliothèque actuelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="250"/>
@@ -693,27 +693,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
         <source>Makes the enclosed text bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatter le texte en balise en gras</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
         <source>Makes the enclosed text italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatter le texte en balise en italique</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
         <source>Sets the font family for the enclosed text</source>
-        <translation type="unfinished"></translation>
+        <translation>Définit la police pour le texte en balise</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
         <source>Sets the font size in points</source>
-        <translation type="unfinished"></translation>
+        <translation>Définit la taille de la police</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <source>Adjusts the current font size by a positive or negative delta</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuste la taille de police par un delta positif ou négatif</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="261"/>
@@ -721,32 +721,32 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="265"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="268"/>
         <source>Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
         <source>Sets the text alpha channel from 0 to 255</source>
-        <translation type="unfinished"></translation>
+        <translation>Définit le canal alpha du texte (0-255)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="264"/>
         <source>Sets the text colour from red, green and blue components</source>
-        <translation type="unfinished"></translation>
+        <translation>Définit la couleur du texte (rouge, vert, bleu)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
         <source>Sets the text colour from red, green, blue, and alpha components</source>
-        <translation type="unfinished"></translation>
+        <translation>Définit la couleur du texte (rouge, vert, bleu, canal alpha)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="269"/>
         <source>Sets the text colour from a named colour or hex code</source>
-        <translation type="unfinished"></translation>
+        <translation>Définit la couleur du texte (nom de couleur ou code hexadécimal)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Adds numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Additionne les valeurs en arguments</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="271"/>
@@ -761,42 +761,42 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="290"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="399"/>
         <source>Numeric</source>
-        <translation type="unfinished"></translation>
+        <translation>Numérique</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Subtracts later values from the first</source>
-        <translation type="unfinished"></translation>
+        <translation>Soustrait les valeurs dans l&apos;ordre indiqué</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Multiplies numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Multiplie les valeurs en arguments</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Divides the first value by the second</source>
-        <translation type="unfinished"></translation>
+        <translation>Divise les valeurs dans l&apos;ordre indiqué</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
         <source>Returns the smallest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Renvoi la plus petite valeur</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="280"/>
         <source>Returns the largest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Renvoi la plus grande valeur</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
         <source>Returns the remainder of a division</source>
-        <translation type="unfinished"></translation>
+        <translation>Renvoi le reste d&apos;une division (modulo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
         <source>Returns a random number in range</source>
-        <translation type="unfinished"></translation>
+        <translation>Renvoi un nombre aléatoire dans la plage indiqué (bornes incluses)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="286"/>
@@ -4564,7 +4564,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filterscolumnmodel.cpp" line="155"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation>Indice</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterscolumnmodel.cpp" line="157"/>
@@ -6719,7 +6719,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="159"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation>Indice</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="161"/>
@@ -9138,7 +9138,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="194"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation>Indice</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="196"/>
@@ -12391,7 +12391,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="155"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation>Indice</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="157"/>
@@ -13017,7 +13017,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="202"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation>Indice</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="204"/>
