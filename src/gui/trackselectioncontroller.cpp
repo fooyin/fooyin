@@ -176,6 +176,8 @@ public:
     std::unordered_map<WidgetContext*, TrackSelection> m_contextSelection;
     WidgetContext* m_activeContext{nullptr};
     TrackSelection m_tracks;
+    std::optional<TrackSelection> m_menuSelection;
+    QPointer<QMenu> m_menuSelectionMenu;
     Playlist* m_tempPlaylist{nullptr};
 
     MenuNode m_trackRoot;
@@ -632,6 +634,16 @@ void TrackSelectionControllerPrivate::renderArea(QMenu* menu, TrackContextMenuAr
         return;
     }
 
+    m_menuSelection     = selection;
+    m_menuSelectionMenu = menu;
+
+    QObject::connect(menu, &QObject::destroyed, m_self, [this, menu]() {
+        if(m_menuSelectionMenu == menu) {
+            m_menuSelection.reset();
+            m_menuSelectionMenu.clear();
+        }
+    });
+
     if(const auto* root = rootForArea(area)) {
         const auto entries = orderedRootEntries(*root);
 
@@ -897,6 +909,11 @@ void TrackSelectionControllerPrivate::updateActiveContext(QWidget* widget)
             }
             focusedWidget = focusedWidget->parentWidget();
         }
+    }
+
+    if(std::exchange(m_activeContext, nullptr)) {
+        updateActionState();
+        QMetaObject::invokeMethod(m_self, &TrackSelectionController::selectionChanged);
     }
 }
 
@@ -1300,6 +1317,10 @@ bool TrackSelectionControllerPrivate::canWrite(const TrackSelection& selection) 
 
 const TrackSelection* TrackSelectionControllerPrivate::currentSelection() const
 {
+    if(m_menuSelection) {
+        return &*m_menuSelection;
+    }
+
     if(!m_tracks.tracks.empty()) {
         return &m_tracks;
     }
