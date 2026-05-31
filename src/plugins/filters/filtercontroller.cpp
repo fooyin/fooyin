@@ -128,6 +128,7 @@ public:
 
         bool isActive{false};
         uint64_t revision{0};
+        uint64_t searchRevision{0};
     };
 
     struct FilterGroupState
@@ -775,6 +776,7 @@ void FilterControllerPrivate::refreshStageSearch(const Id& groupId, int stageInd
 
     auto& stage = group.stages.at(stageIndex);
     stage.searchedRows.reset();
+    const uint64_t searchRevision = ++stage.searchRevision;
 
     if(stage.searchText.isEmpty()) {
         publishStage(groupId, stageIndex);
@@ -785,41 +787,45 @@ void FilterControllerPrivate::refreshStageSearch(const Id& groupId, int stageInd
 
     Utils::asyncExec([rows = stage.rows, tracks = stage.inputTracks, searchText]() {
         return filterRowsBySearch(searchText, rows, tracks);
-    }).then(m_self, [this, groupId, stageIndex, revision, searchText](const FilterRowList& searchedRows) {
-        if(!m_groups.contains(groupId)) {
-            return;
-        }
+    })
+        .then(m_self,
+              [this, groupId, stageIndex, revision, searchRevision, searchText](const FilterRowList& searchedRows) {
+                  if(!m_groups.contains(groupId)) {
+                      return;
+                  }
 
-        auto& currentGroup = m_groups.at(groupId);
-        if(currentGroup.revision != revision || stageIndex < 0
-           || std::cmp_greater_equal(stageIndex, currentGroup.stages.size())) {
-            return;
-        }
+                  auto& currentGroup = m_groups.at(groupId);
+                  if(currentGroup.revision != revision || stageIndex < 0
+                     || std::cmp_greater_equal(stageIndex, currentGroup.stages.size())) {
+                      return;
+                  }
 
-        auto& currentStage = currentGroup.stages.at(stageIndex);
-        if(currentStage.revision != revision || currentStage.searchText != searchText) {
-            return;
-        }
+                  auto& currentStage = currentGroup.stages.at(stageIndex);
+                  if(currentStage.revision != revision || currentStage.searchRevision != searchRevision
+                     || currentStage.searchText != searchText) {
+                      return;
+                  }
 
-        currentStage.searchedRows = searchedRows;
+                  currentStage.searchedRows = searchedRows;
 
-        if(containsSummaryKey(currentStage.selectedKeys)) {
-            const FilterSelectionResolution selection = resolveFilterSelection(
-                *currentStage.searchedRows, currentStage.inputTracks, currentStage.selectedKeys);
-            currentStage.selectedKeys   = selection.selectedKeys;
-            currentStage.selectedTracks = selection.selectedTracks;
-            currentStage.isActive       = selection.isActive;
+                  if(containsSummaryKey(currentStage.selectedKeys)) {
+                      const FilterSelectionResolution selection = resolveFilterSelection(
+                          *currentStage.searchedRows, currentStage.inputTracks, currentStage.selectedKeys);
+                      currentStage.selectedKeys   = selection.selectedKeys;
+                      currentStage.selectedTracks = selection.selectedTracks;
+                      currentStage.isActive       = selection.isActive;
 
-            const bool hasPriorActive
-                = std::ranges::any_of(currentGroup.stages | std::views::take(stageIndex), &FilterStageState::isActive);
-            const TrackList nextTracks = currentStage.isActive ? currentStage.selectedTracks : currentStage.inputTracks;
-            const bool nextConstrained = hasPriorActive || currentStage.isActive;
+                      const bool hasPriorActive = std::ranges::any_of(
+                          currentGroup.stages | std::views::take(stageIndex), &FilterStageState::isActive);
+                      const TrackList nextTracks
+                          = currentStage.isActive ? currentStage.selectedTracks : currentStage.inputTracks;
+                      const bool nextConstrained = hasPriorActive || currentStage.isActive;
 
-            recomputeStage(groupId, stageIndex + 1, revision, nextTracks, nextConstrained);
-        }
+                      recomputeStage(groupId, stageIndex + 1, revision, nextTracks, nextConstrained);
+                  }
 
-        publishStage(groupId, stageIndex);
-    });
+                  publishStage(groupId, stageIndex);
+              });
 }
 
 void FilterControllerPrivate::publishStage(const Id& groupId, int stageIndex)
