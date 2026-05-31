@@ -32,8 +32,8 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QSignalBlocker>
-#include <QTextBlock>
 #include <QTextEdit>
+#include <QTextFormat>
 
 using namespace Qt::StringLiterals;
 
@@ -217,19 +217,13 @@ void LyricsEditor::updateButtons()
 
 void LyricsEditor::highlightCurrentLine()
 {
-    QTextBlock block = m_lyricsText->document()->firstBlock();
-    while(block.isValid()) {
-        QTextCursor tempCursor{block};
-        QTextBlockFormat format;
-        format.setBackground(Qt::NoBrush);
-        tempCursor.setBlockFormat(format);
-        block = block.next();
-    }
+    QTextEdit::ExtraSelection selection;
+    selection.format.setBackground(m_currentLineColour);
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = m_lyricsText->textCursor();
+    selection.cursor.clearSelection();
 
-    QTextCursor currentCursor{m_lyricsText->textCursor().block()};
-    QTextBlockFormat currentBlockFormat;
-    currentBlockFormat.setBackground(m_currentLineColour);
-    currentCursor.setBlockFormat(currentBlockFormat);
+    m_lyricsText->setExtraSelections({selection});
 }
 
 void LyricsEditor::insertOrUpdateTimestamp()
