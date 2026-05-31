@@ -55,6 +55,7 @@ public:
         MaximumValue,
         SingleStep,
         Suffix,
+        SpecialValueText,
         StableKey,
     };
 

@@ -69,6 +69,9 @@ stringListLineEditEditor(const AdvancedSettingDescriptor& descriptor)
 [[nodiscard]] QString displayText(const AdvancedSettingDescriptor& descriptor, const QVariant& value)
 {
     if(const auto* spinBox = spinBoxEditor(descriptor)) {
+        if(!spinBox->specialValueText.isEmpty() && value.toInt() == spinBox->minimum) {
+            return spinBox->specialValueText;
+        }
         return QString::number(value.toInt()) + spinBox->suffix;
     }
     if(const auto* stringList = stringListLineEditEditor(descriptor)) {
@@ -174,6 +177,11 @@ QVariant AdvancedSettingsModel::data(const QModelIndex& index, int role) const
         case Suffix:
             if(const auto* spinBox = spinBoxEditor(node->descriptor)) {
                 return spinBox->suffix;
+            }
+            return {};
+        case SpecialValueText:
+            if(const auto* spinBox = spinBoxEditor(node->descriptor)) {
+                return spinBox->specialValueText;
             }
             return {};
         case StableKey:

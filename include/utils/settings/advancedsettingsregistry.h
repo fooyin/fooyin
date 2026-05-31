@@ -81,6 +81,7 @@ struct AdvancedSettingSpinBox
     int maximum{100};
     int singleStep{1};
     QString suffix;
+    QString specialValueText;
 };
 
 using AdvancedSettingEditor

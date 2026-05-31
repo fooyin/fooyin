@@ -39,6 +39,7 @@ QWidget* AdvancedItemDelegate::createEditor(QWidget* parent, const QStyleOptionV
     spinBox->setRange(index.data(Role::MinimumValue).toInt(), index.data(Role::MaximumValue).toInt());
     spinBox->setSingleStep(std::max(1, index.data(Role::SingleStep).toInt()));
     spinBox->setSuffix(index.data(Role::Suffix).toString());
+    spinBox->setSpecialValueText(index.data(Role::SpecialValueText).toString());
     return spinBox;
 }
 
