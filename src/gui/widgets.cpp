@@ -421,16 +421,21 @@ void Widgets::registerAdvancedSettings()
         {.category    = {tr("Interface"), GuiApplication::tr("Display")},
          .label       = tr("Image allocation limit"),
          .description = tr("Maximum image allocation size in MB. Set to 0 to disable the limit."),
-         .editor      = AdvancedSettingSpinBox{.minimum = 0, .maximum = 1024, .singleStep = 1, .suffix = u" MB"_s},
+         .editor      = AdvancedSettingSpinBox{.minimum          = 0,
+                                               .maximum          = 1024,
+                                               .singleStep       = 1,
+                                               .suffix           = u" MB"_s,
+                                               .specialValueText = {}},
          .normalise   = {},
          .validate    = {}});
     advancedSettingsRegistry->add<Settings::Gui::Internal::EditingMenuLevels>(
         {.category    = {tr("Interface"), tr("Layout Editing")},
          .label       = tr("Menu levels"),
          .description = tr("Number of widget levels shown in the layout editing context menu."),
-         .editor      = AdvancedSettingSpinBox{.minimum = 1, .maximum = 4, .singleStep = 1, .suffix = {}},
-         .normalise   = {},
-         .validate    = {}});
+         .editor
+         = AdvancedSettingSpinBox{.minimum = 1, .maximum = 4, .singleStep = 1, .suffix = {}, .specialValueText = {}},
+         .normalise = {},
+         .validate  = {}});
     advancedSettingsRegistry->add<Settings::Gui::SeekBarMouseFocus>(
         {.category    = {tr("Interface"), tr("Seeking")},
          .label       = tr("Focus seekbars when clicked"),
@@ -442,9 +447,28 @@ void Widgets::registerAdvancedSettings()
         {.category    = {tr("Playback"), tr("Decoding")},
          .label       = tr("VBR update interval"),
          .description = tr("Interval used to refresh VBR playback information. Set to 0 to disable."),
-         .editor      = AdvancedSettingSpinBox{.minimum = 0, .maximum = 300000, .singleStep = 100, .suffix = u" ms"_s},
+         .editor      = AdvancedSettingSpinBox{.minimum          = 0,
+                                               .maximum          = 300000,
+                                               .singleStep       = 100,
+                                               .suffix           = u" ms"_s,
+                                               .specialValueText = {}},
          .normalise   = {},
          .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Gui::Internal::OutputDeviceRefreshMs>(
+        {.category    = {tr("Playback"), tr("Output")},
+         .label       = tr("Device refresh interval"),
+         .description = tr("Interval used to refresh the list of available output devices. Set to 0 to disable."),
+         .editor      = AdvancedSettingSpinBox{.minimum          = 0,
+                                               .maximum          = 60000,
+                                               .singleStep       = 500,
+                                               .suffix           = u" ms"_s,
+                                               .specialValueText = tr("Disabled")},
+         .normalise =
+             [](const QVariant& value) {
+                 const int interval = value.toInt();
+                 return interval <= 0 ? 0 : std::max(interval, 1000);
+             },
+         .validate = {}});
     advancedSettingsRegistry->add<Settings::Core::PreserveTimestamps>(
         {.category    = {tr("Tagging")},
          .label       = tr("Preserve timestamps"),

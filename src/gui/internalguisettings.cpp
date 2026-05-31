@@ -227,5 +227,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::NowPlayingOutputOptions>(
         static_cast<int>(NowPlayingOutputService::OutputDefaultOptions), u"NowPlayingOutput/Options"_s);
     m_settings->createSetting<Internal::NowPlayingOutputAppendLineLimit>(0, u"NowPlayingOutput/AppendLineLimit"_s);
+    m_settings->createSetting<Internal::OutputDeviceRefreshMs>(0, u"Engine/OutputDeviceRefreshMs"_s);
 }
 } // namespace Fooyin

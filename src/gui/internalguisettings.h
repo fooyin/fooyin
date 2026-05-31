@@ -254,6 +254,7 @@ enum GuiInternalSettings : uint32_t
     NowPlayingOutputFilePath                 = 68 | Type::String,
     NowPlayingOutputOptions                  = 69 | Type::Int,
     NowPlayingOutputAppendLineLimit          = 70 | Type::Int,
+    OutputDeviceRefreshMs                    = 71 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

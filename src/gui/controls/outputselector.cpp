@@ -67,6 +67,11 @@ OutputSelector::OutputSelector(OutputProfileManager* profileManager, SettingsMan
     });
 
     QObject::connect(m_profileManager, &OutputProfileManager::profilesChanged, this, &OutputSelector::reload);
+    QObject::connect(m_profileManager, &OutputProfileManager::devicesChanged, this, [this](const QString& output) {
+        if(output == m_profileManager->currentOutput()) {
+            reload();
+        }
+    });
     QObject::connect(m_profileManager, &OutputProfileManager::currentOutputChanged, this, &OutputSelector::reload);
 
     QObject::connect(m_label, &QWidget::customContextMenuRequested, this,

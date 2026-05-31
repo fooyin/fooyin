@@ -21,9 +21,15 @@
 
 #include <core/engine/enginecontroller.h>
 
+#include <QBasicTimer>
 #include <QObject>
+#include <QPointer>
 
+#include <map>
 #include <optional>
+#include <set>
+
+class QTimerEvent;
 
 namespace Fooyin {
 class DspChainStore;
@@ -59,14 +65,21 @@ public:
     void clearProfiles();
     bool applyProfile(const QString& output, const QString& device);
     void reapplyCurrentProfile();
+    void watchDeviceRefreshOutput(QObject* watcher, const QString& output);
 
 Q_SIGNALS:
     void profilesChanged(const QString& output);
+    void devicesChanged(const QString& output);
     void currentOutputChanged(const QString& output, const QString& device);
+
+protected:
+    void timerEvent(QTimerEvent* event) override;
 
 private:
     [[nodiscard]] Engine::OutputDeviceProfiles profiles() const;
     void storeProfiles(const Engine::OutputDeviceProfiles& profiles);
+    void refreshDevices();
+    void restartDeviceRefreshTimer();
     [[nodiscard]] std::optional<Engine::OutputDeviceProfile> profileFor(const QString& output,
                                                                         const QString& device) const;
     [[nodiscard]] Engine::DspChains resolveChain(int dspPresetId) const;
@@ -76,5 +89,9 @@ private:
     DspChainStore* m_chainStore;
     DspPresetRegistry* m_presetRegistry;
     SettingsManager* m_settings;
+
+    QBasicTimer m_deviceRefreshTimer;
+    std::map<QString, OutputDevices> m_deviceSnapshots;
+    std::map<QPointer<QObject>, QString> m_deviceRefreshWatchers;
 };
 } // namespace Fooyin

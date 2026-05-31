@@ -120,6 +120,12 @@ DevicePageWidget::DevicePageWidget(OutputProfileManager* profileManager, DspPres
         storeCurrentOutput();
         loadOutput(output);
     });
+    QObject::connect(m_profileManager, &OutputProfileManager::devicesChanged, this, [this](const QString& output) {
+        if(output == m_loadedOutput) {
+            storeCurrentOutput();
+            loadOutput(output);
+        }
+    });
     QObject::connect(m_devices, &QWidget::customContextMenuRequested, this, &DevicePageWidget::showDevicesMenu);
 
     updateColumnWidths();
@@ -239,8 +245,11 @@ void DevicePageWidget::loadOutput(const QString& output)
     if(output.isEmpty()) {
         m_model->setEntries({});
         m_loadedOutput.clear();
+        m_profileManager->watchDeviceRefreshOutput(this, {});
         return;
     }
+
+    m_profileManager->watchDeviceRefreshOutput(this, output);
 
     auto entries = m_profileManager->deviceEntries(output);
     if(const auto it = m_profilesByOutput.find(output); it != m_profilesByOutput.end()) {

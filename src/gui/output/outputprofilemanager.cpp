@@ -20,15 +20,31 @@
 #include "outputprofilemanager.h"
 
 #include "dsp/dsppresetregistry.h"
+#include "internalguisettings.h"
 
 #include <core/coresettings.h>
 #include <core/engine/dsp/dspchainstore.h>
 #include <core/internalcoresettings.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QTimerEvent>
+
 #include <algorithm>
+#include <ranges>
 
 using namespace Qt::StringLiterals;
+
+constexpr auto MinDeviceRefreshIntervalMs = 1000;
+constexpr auto MaxDeviceRefreshIntervalMs = 60000;
+
+namespace {
+bool devicesEqual(const Fooyin::OutputDevices& lhs, const Fooyin::OutputDevices& rhs)
+{
+    return std::ranges::equal(lhs, rhs, [](const auto& left, const auto& right) {
+        return left.name == right.name && left.desc == right.desc;
+    });
+}
+} // namespace
 
 namespace Fooyin {
 OutputProfileManager::OutputProfileManager(EngineController* engine, DspChainStore* chainStore,
@@ -49,6 +65,11 @@ OutputProfileManager::OutputProfileManager(EngineController* engine, DspChainSto
     });
     m_settings->subscribe<Settings::Core::Internal::OutputDeviceProfiles>(
         this, [this]() { Q_EMIT profilesChanged(currentOutput()); });
+    m_settings->subscribe<Settings::Gui::Internal::OutputDeviceRefreshMs>(
+        this, &OutputProfileManager::restartDeviceRefreshTimer);
+
+    refreshDevices();
+    restartDeviceRefreshTimer();
 }
 
 OutputNames OutputProfileManager::outputs() const
@@ -173,6 +194,77 @@ void OutputProfileManager::reapplyCurrentProfile()
     }
 
     applyProfile(output, device);
+}
+
+void OutputProfileManager::watchDeviceRefreshOutput(QObject* watcher, const QString& output)
+{
+    if(!watcher) {
+        return;
+    }
+
+    if(output.isEmpty()) {
+        m_deviceRefreshWatchers.erase(watcher);
+        return;
+    }
+
+    const bool wasEmpty              = !m_deviceRefreshWatchers.contains(watcher);
+    m_deviceRefreshWatchers[watcher] = output;
+
+    if(wasEmpty) {
+        QObject::connect(watcher, &QObject::destroyed, this,
+                         [this, watcher] { m_deviceRefreshWatchers.erase(watcher); });
+    }
+}
+
+void OutputProfileManager::refreshDevices()
+{
+    std::set<QString> outputsToRefresh;
+    if(const QString output = currentOutput(); !output.isEmpty()) {
+        outputsToRefresh.emplace(output);
+    }
+
+    for(const auto& output : m_deviceRefreshWatchers | std::views::values) {
+        if(!output.isEmpty()) {
+            outputsToRefresh.emplace(output);
+        }
+    }
+
+    for(const auto& output : outputsToRefresh) {
+        const auto devices        = m_engine->getOutputDevices(output);
+        const auto [it, inserted] = m_deviceSnapshots.try_emplace(output, devices);
+        if(inserted || devicesEqual(it->second, devices)) {
+            continue;
+        }
+
+        it->second = devices;
+        Q_EMIT devicesChanged(output);
+    }
+
+    std::erase_if(m_deviceSnapshots,
+                  [&outputsToRefresh](const auto& item) { return !outputsToRefresh.contains(item.first); });
+}
+
+void OutputProfileManager::restartDeviceRefreshTimer()
+{
+    m_deviceRefreshTimer.stop();
+
+    const int setting = m_settings->value<Settings::Gui::Internal::OutputDeviceRefreshMs>();
+    if(setting <= 0) {
+        return;
+    }
+
+    const int interval = std::clamp(setting, MinDeviceRefreshIntervalMs, MaxDeviceRefreshIntervalMs);
+    m_deviceRefreshTimer.start(interval, this);
+}
+
+void OutputProfileManager::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_deviceRefreshTimer.timerId()) {
+        refreshDevices();
+        return;
+    }
+
+    QObject::timerEvent(event);
 }
 
 Engine::OutputDeviceProfiles OutputProfileManager::profiles() const
