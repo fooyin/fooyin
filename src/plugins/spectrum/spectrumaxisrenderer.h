@@ -56,7 +56,7 @@ class SpectrumAxisRenderer
 public:
     void setConfig(const SpectrumWidget::ConfigData& config);
 
-    [[nodiscard]] SpectrumPlotGeometry layout(const QRect& rect, const QFont& axisFont, int bandCount) const;
+    [[nodiscard]] SpectrumPlotGeometry layout(const QRect& rect, const QFont& axisFont, int bandCount, qreal dpr) const;
     void paint(QPainter& painter, const SpectrumPlotGeometry& geometry, const QSize& size, const QPalette& palette,
                const QFont& axisFont) const;
 
@@ -78,14 +78,14 @@ private:
     [[nodiscard]] int frequencyToX(float frequencyHz, const QRect& plotRect) const;
     [[nodiscard]] std::vector<float> verticalGridFrequencies() const;
     [[nodiscard]] QRect plotRectForSpectrumRect(const QRect& spectrumRect) const;
-    [[nodiscard]] SpectrumPlotGeometry barGeometryForPlotRect(const QRect& plotRect, int bandCount) const;
+    [[nodiscard]] SpectrumPlotGeometry barGeometryForPlotRect(const QRect& plotRect, int bandCount, qreal dpr) const;
     [[nodiscard]] std::vector<SpectrumHorizontalLabel> horizontalLabelCandidates(const SpectrumPlotGeometry& geometry,
                                                                                  const QRect& plotRect, int bandCount,
                                                                                  int maxPriority) const;
     [[nodiscard]] std::vector<SpectrumHorizontalLabel> horizontalLabels(const QFontMetrics& metrics,
                                                                         const QRect& spectrumRect,
                                                                         const QRect& plotRect, int bandCount,
-                                                                        int maxPriority) const;
+                                                                        int maxPriority, qreal dpr) const;
     [[nodiscard]] std::vector<AmplitudeLabel> amplitudeLabels(const QFontMetrics& metrics, int height,
                                                               const QRect& plotRect) const;
     void drawKeyBackgrounds(QPainter& painter, const SpectrumPlotGeometry& geometry, const QPalette& palette) const;

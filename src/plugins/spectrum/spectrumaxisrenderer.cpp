@@ -84,6 +84,44 @@ QRect noteCellRect(const QRect& rect, int noteIndex, int noteCount)
     return {left, rect.top(), std::max(1, right - left), rect.height()};
 }
 
+struct DevicePlotRect
+{
+    qreal dpr{1.0};
+    int left{0};
+    int width{0};
+    int top{0};
+    int height{0};
+};
+
+int logicalToDevicePixel(qreal value, qreal dpr)
+{
+    return static_cast<int>(std::round(value * dpr));
+}
+
+qreal devicePixelToLogical(int value, qreal dpr)
+{
+    return static_cast<qreal>(value) / dpr;
+}
+
+DevicePlotRect toDevicePlotRect(const QRect& plotRect, qreal dpr)
+{
+    const int left   = logicalToDevicePixel(plotRect.left(), dpr);
+    const int right  = logicalToDevicePixel(plotRect.left() + plotRect.width(), dpr);
+    const int top    = logicalToDevicePixel(plotRect.top(), dpr);
+    const int bottom = logicalToDevicePixel(plotRect.top() + plotRect.height(), dpr);
+
+    const int width  = std::max(1, right - left);
+    const int height = std::max(1, bottom - top);
+
+    return {.dpr = dpr, .left = left, .width = width, .top = top, .height = height};
+}
+
+QRectF logicalBarRect(const DevicePlotRect& plot, int left, int width)
+{
+    return {devicePixelToLogical(left, plot.dpr), devicePixelToLogical(plot.top, plot.dpr),
+            devicePixelToLogical(width, plot.dpr), devicePixelToLogical(plot.height, plot.dpr)};
+}
+
 int equalSectionPlotHeight(int height, int sectionCount, int spacing)
 {
     sectionCount = std::max(1, sectionCount);
@@ -102,18 +140,21 @@ int equalSectionPlotHeight(int height, int sectionCount, int spacing)
 }
 
 bool horizontalLabelsFit(const QFontMetrics& metrics, const QRect& spectrumRect,
-                         std::span<const SpectrumHorizontalLabel> labels, int stride)
+                         std::span<const SpectrumHorizontalLabel> labels, int stride, qreal dpr)
 {
-    int previousRight = spectrumRect.left() - 1;
+    qreal previousRight{static_cast<qreal>(spectrumRect.left()) - 1.0};
 
     for(int index{0}; std::cmp_less(index, labels.size()); index += stride) {
         const auto& label = labels[static_cast<size_t>(index)];
-        const int width   = metrics.horizontalAdvance(label.text);
-        const int left = std::clamp(label.centerX - (width / 2), spectrumRect.left(), spectrumRect.right() - width + 1);
-        const int right       = left + width - 1;
-        const int requiredGap = previousRight < spectrumRect.left() ? 0 : LabelPadding;
+        const qreal width = static_cast<qreal>(metrics.horizontalAdvance(label.text)) / dpr;
+        const qreal left
+            = std::clamp(static_cast<qreal>(label.centerX) - (width / 2.0), static_cast<qreal>(spectrumRect.left()),
+                         static_cast<qreal>(spectrumRect.right()) - width + 1.0);
+        const qreal right = left + width - 1.0;
+        const qreal requiredGap
+            = previousRight < static_cast<qreal>(spectrumRect.left()) ? 0.0 : static_cast<qreal>(LabelPadding) / dpr;
 
-        if(right > spectrumRect.right() || left <= previousRight + requiredGap) {
+        if(right > static_cast<qreal>(spectrumRect.right()) || left <= previousRight + requiredGap) {
             return false;
         }
 
@@ -135,7 +176,8 @@ void SpectrumAxisRenderer::setConfig(const SpectrumWidget::ConfigData& config)
     m_config = config;
 }
 
-SpectrumPlotGeometry SpectrumAxisRenderer::layout(const QRect& widgetRect, const QFont& axisFont, int bandCount) const
+SpectrumPlotGeometry SpectrumAxisRenderer::layout(const QRect& widgetRect, const QFont& axisFont, int bandCount,
+                                                  qreal dpr) const
 {
     SpectrumPlotGeometry geometry;
     bandCount = std::max(1, bandCount);
@@ -164,7 +206,7 @@ SpectrumPlotGeometry SpectrumAxisRenderer::layout(const QRect& widgetRect, const
             = requestedAmplitudeLabels && !amplitudeLabels(metrics, widgetRect.height(), fitPlotRect).empty();
         const bool nextDrawHorizontalLabels
             = requestedHorizontalLabels
-           && !horizontalLabels(metrics, fitRect, fitPlotRect, bandCount, HighestHorizontalLabelPriority).empty();
+           && !horizontalLabels(metrics, fitRect, fitPlotRect, bandCount, HighestHorizontalLabelPriority, dpr).empty();
 
         if(drawAmplitudeLabels == geometry.drawAmplitudeLabels && nextDrawHorizontalLabels == drawHorizontalLabels) {
             break;
@@ -186,12 +228,12 @@ SpectrumPlotGeometry SpectrumAxisRenderer::layout(const QRect& widgetRect, const
         return geometry;
     }
 
-    SpectrumPlotGeometry barGeometry = barGeometryForPlotRect(geometry.plotRect, bandCount);
+    SpectrumPlotGeometry barGeometry = barGeometryForPlotRect(geometry.plotRect, bandCount, dpr);
     geometry.barRects                = std::move(barGeometry.barRects);
     geometry.sourceBands             = std::move(barGeometry.sourceBands);
     geometry.horizontalLabels = drawHorizontalLabels
                                   ? horizontalLabels(metrics, geometry.spectrumRect, geometry.plotRect, bandCount,
-                                                     HighestHorizontalLabelPriority)
+                                                     HighestHorizontalLabelPriority, dpr)
                                   : std::vector<SpectrumHorizontalLabel>{};
     return geometry;
 }
@@ -429,7 +471,7 @@ QRect SpectrumAxisRenderer::plotRectForSpectrumRect(const QRect& spectrumRect) c
     return plotRect;
 }
 
-SpectrumPlotGeometry SpectrumAxisRenderer::barGeometryForPlotRect(const QRect& plotRect, int bandCount) const
+SpectrumPlotGeometry SpectrumAxisRenderer::barGeometryForPlotRect(const QRect& plotRect, int bandCount, qreal dpr) const
 {
     SpectrumPlotGeometry geometry;
     if(plotRect.width() <= 0 || plotRect.height() <= 0 || bandCount <= 0) {
@@ -438,40 +480,50 @@ SpectrumPlotGeometry SpectrumAxisRenderer::barGeometryForPlotRect(const QRect& p
 
     if(m_config.labelMode == LabelMode::Notes) {
         const int visibleBarCount = std::max(1, bandCount);
-        const double noteWidth    = static_cast<double>(plotRect.width()) / static_cast<double>(visibleBarCount);
-        const int gap = (noteWidth <= 1.0) ? 0
-                                           : std::min(std::clamp(m_config.barSpacing, MinBarSpacing, MaxBarSpacing),
-                                                      static_cast<int>(std::floor(noteWidth - 1.0)));
+        const DevicePlotRect plot = toDevicePlotRect(plotRect, dpr);
+        const double noteWidth    = static_cast<double>(plot.width) / static_cast<double>(visibleBarCount);
+        const int requestedGap
+            = logicalToDevicePixel(std::clamp(m_config.barSpacing, MinBarSpacing, MaxBarSpacing), plot.dpr);
+        const int gap = (noteWidth <= 1.0) ? 0 : std::min(requestedGap, static_cast<int>(std::floor(noteWidth - 1.0)));
         geometry.barRects.reserve(visibleBarCount);
         geometry.sourceBands.reserve(visibleBarCount);
 
         for(int index{0}; index < visibleBarCount; ++index) {
-            const QRect cellRect = noteCellRect(plotRect, index, visibleBarCount);
-            const int cellGap    = std::min(gap, std::max(0, cellRect.width() - 1));
-            const int leftGap    = (cellGap + 1) / 2;
-            const int rightGap   = cellGap - leftGap;
-            const int x          = cellRect.left() + leftGap;
-            const int width      = std::max(1, cellRect.width() - leftGap - rightGap);
-            geometry.barRects.emplace_back(static_cast<double>(x), static_cast<double>(plotRect.top()),
-                                           static_cast<double>(width), static_cast<double>(plotRect.height()));
+            const int cellLeft
+                = plot.left
+                + static_cast<int>(std::round(static_cast<double>(index) * static_cast<double>(plot.width)
+                                              / static_cast<double>(visibleBarCount)));
+            const int cellRight
+                = plot.left
+                + static_cast<int>(std::round(static_cast<double>(index + 1) * static_cast<double>(plot.width)
+                                              / static_cast<double>(visibleBarCount)));
+            const int cellWidth = std::max(1, cellRight - cellLeft);
+            const int cellGap   = std::min(gap, std::max(0, cellWidth - 1));
+            const int leftGap   = (cellGap + 1) / 2;
+            const int rightGap  = cellGap - leftGap;
+            const int x         = cellLeft + leftGap;
+            const int width     = std::max(1, cellWidth - leftGap - rightGap);
+
+            geometry.barRects.emplace_back(logicalBarRect(plot, x, width));
             geometry.sourceBands.emplace_back(index);
         }
 
         return geometry;
     }
 
-    const int requestedBarCount = std::clamp(bandCount, 1, std::max(1, plotRect.width()));
-    int gap                     = std::clamp(m_config.barSpacing, MinBarSpacing, MaxBarSpacing);
-    if((requestedBarCount + (gap * std::max(0, requestedBarCount - 1))) > plotRect.width()) {
+    const DevicePlotRect plot   = toDevicePlotRect(plotRect, dpr);
+    const int requestedBarCount = std::clamp(bandCount, 1, std::max(1, plot.width));
+    int gap = logicalToDevicePixel(std::clamp(m_config.barSpacing, MinBarSpacing, MaxBarSpacing), plot.dpr);
+    if((requestedBarCount + (gap * std::max(0, requestedBarCount - 1))) > plot.width) {
         gap = 0;
     }
 
-    const auto desiredCellWidth = static_cast<double>(plotRect.width()) / static_cast<double>(requestedBarCount);
+    const auto desiredCellWidth = static_cast<double>(plot.width) / static_cast<double>(requestedBarCount);
     const int cellWidth         = std::max(gap + 1, static_cast<int>(std::round(desiredCellWidth)));
-    const int visibleBarCount   = std::clamp(plotRect.width() / cellWidth, 1, std::max(1, plotRect.width()));
+    const int visibleBarCount   = std::clamp(plot.width / cellWidth, 1, std::max(1, plot.width));
     const int barWidth          = std::max(1, cellWidth - gap);
     const int usedWidth         = ((visibleBarCount - 1) * cellWidth) + barWidth;
-    const int left              = plotRect.left() + (std::max(0, plotRect.width() - usedWidth) / 2);
+    const int left              = plot.left + (std::max(0, plot.width - usedWidth) / 2);
     geometry.barRects.reserve(visibleBarCount);
     geometry.sourceBands.reserve(visibleBarCount);
     if(visibleBarCount == 1) {
@@ -482,8 +534,7 @@ SpectrumPlotGeometry SpectrumAxisRenderer::barGeometryForPlotRect(const QRect& p
 
     for(int index{0}; index < visibleBarCount; ++index) {
         const int x = left + (index * (barWidth + gap));
-        geometry.barRects.emplace_back(static_cast<double>(x), static_cast<double>(plotRect.top()),
-                                       static_cast<double>(barWidth), static_cast<double>(plotRect.height()));
+        geometry.barRects.emplace_back(logicalBarRect(plot, x, barWidth));
         const double sourcePosition = static_cast<double>(index) * static_cast<double>(bandCount - 1)
                                     / static_cast<double>(visibleBarCount - 1);
         geometry.sourceBands.emplace_back(std::clamp(static_cast<int>(std::round(sourcePosition)), 0, bandCount - 1));
@@ -546,9 +597,9 @@ SpectrumAxisRenderer::horizontalLabelCandidates(const SpectrumPlotGeometry& geom
 std::vector<SpectrumHorizontalLabel> SpectrumAxisRenderer::horizontalLabels(const QFontMetrics& metrics,
                                                                             const QRect& spectrumRect,
                                                                             const QRect& plotRect, int bandCount,
-                                                                            int maxPriority) const
+                                                                            int maxPriority, qreal dpr) const
 {
-    const SpectrumPlotGeometry geometry = barGeometryForPlotRect(plotRect, bandCount);
+    const SpectrumPlotGeometry geometry = barGeometryForPlotRect(plotRect, bandCount, dpr);
     if(geometry.barRects.empty() || geometry.sourceBands.empty()) {
         return {};
     }
@@ -557,7 +608,7 @@ std::vector<SpectrumHorizontalLabel> SpectrumAxisRenderer::horizontalLabels(cons
         for(int priority = maxPriority; priority >= 0; --priority) {
             const std::vector<SpectrumHorizontalLabel> candidates
                 = horizontalLabelCandidates(geometry, plotRect, bandCount, priority);
-            if(!candidates.empty() && horizontalLabelsFit(metrics, spectrumRect, candidates, 1)) {
+            if(!candidates.empty() && horizontalLabelsFit(metrics, spectrumRect, candidates, 1, dpr)) {
                 return candidates;
             }
         }
@@ -565,7 +616,7 @@ std::vector<SpectrumHorizontalLabel> SpectrumAxisRenderer::horizontalLabels(cons
         const std::vector<SpectrumHorizontalLabel> octaveCandidates
             = horizontalLabelCandidates(geometry, plotRect, bandCount, 0);
         for(int stride{2}; std::cmp_less_equal(stride, octaveCandidates.size()); ++stride) {
-            if(!horizontalLabelsFit(metrics, spectrumRect, octaveCandidates, stride)) {
+            if(!horizontalLabelsFit(metrics, spectrumRect, octaveCandidates, stride, dpr)) {
                 continue;
             }
 
@@ -592,7 +643,7 @@ std::vector<SpectrumHorizontalLabel> SpectrumAxisRenderer::horizontalLabels(cons
             for(int offset{0}; offset < stride; ++offset) {
                 const std::span offsetCandidates{candidates.data() + offset,
                                                  candidates.size() - static_cast<size_t>(offset)};
-                if(!horizontalLabelsFit(metrics, spectrumRect, offsetCandidates, stride)) {
+                if(!horizontalLabelsFit(metrics, spectrumRect, offsetCandidates, stride, 1.0)) {
                     continue;
                 }
 

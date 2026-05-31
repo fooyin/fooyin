@@ -134,6 +134,7 @@ private:
     std::vector<int> m_barSourceBands;
     QRect m_spectrumRect;
     QRect m_plotRect;
+    qreal m_geometryDpr;
     std::vector<BandBinRange> m_bandBinRanges;
     std::vector<size_t> m_bandKeys;
     std::vector<double> m_bandCenterBins;
@@ -145,7 +146,7 @@ private:
     QPointer<ToolTip> m_toolTip;
     int m_toolTipBand;
     mutable QPixmap m_staticLayer;
-    mutable qreal m_staticLayerDpr{1.0};
+    mutable qreal m_staticLayerDpr;
     int m_bandMapFftSize;
     int m_bandMapSampleRate;
     int m_bandMapBandCount;

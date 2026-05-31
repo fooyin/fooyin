@@ -157,9 +157,11 @@ void drawBarOutline(QPainter& painter, const QRectF& barRect, int barHeight, con
 SpectrumView::SpectrumView(EngineController* engine, PlayerController* playerController, QWidget* parent)
     : QWidget(parent)
     , m_session{engine->visualisationService()->createSession()}
+    , m_geometryDpr{1.0}
     , m_paused{false}
     , m_stopped{true}
     , m_toolTipBand{-1}
+    , m_staticLayerDpr{1.0}
     , m_bandMapFftSize{0}
     , m_bandMapSampleRate{0}
     , m_bandMapBandCount{0}
@@ -225,6 +227,13 @@ void SpectrumView::refreshStyleColours()
 
 void SpectrumView::paintEvent(QPaintEvent* /*event*/)
 {
+    // TODO: Use QEvent::DevicePixelRatioChange when we bump min Qt version to >= 6.6
+    const qreal dpr = devicePixelRatioF();
+    if(!qFuzzyCompare(m_geometryDpr, dpr)) {
+        updateBarGeometry();
+        invalidateStaticLayer();
+    }
+
     QPainter painter{this};
     painter.setRenderHint(QPainter::Antialiasing, false);
     paint(painter, rect(), palette());
@@ -579,7 +588,8 @@ void SpectrumView::paint(QPainter& painter, const QRect& rect, const QPalette& p
 void SpectrumView::updateBarGeometry()
 {
     const int bandCount = static_cast<int>(std::max<size_t>(1, m_levels.size()));
-    m_geometry          = m_axisRenderer.layout(rect(), axisFont(), bandCount);
+    m_geometryDpr       = devicePixelRatioF();
+    m_geometry          = m_axisRenderer.layout(rect(), axisFont(), bandCount, m_geometryDpr);
     m_barRects          = m_geometry.barRects;
     m_barSourceBands    = m_geometry.sourceBands;
     m_spectrumRect      = m_geometry.spectrumRect;
