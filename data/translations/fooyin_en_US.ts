@@ -6011,7 +6011,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="61"/>
         <source>&amp;Optimise</source>
-        <translation>&amp;Optimise</translation>
+        <translation>&amp;Optimize</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="62"/>
@@ -13761,7 +13761,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="63"/>
         <source>Custom colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Custom colors</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="82"/>
