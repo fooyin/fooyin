@@ -69,6 +69,21 @@ bool isBlackKey(int semitone)
     return !isFullStep(semitone);
 }
 
+int noteEdgeX(const QRect& plotRect, int noteIndex, int noteCount)
+{
+    noteCount = std::max(1, noteCount);
+    return plotRect.left()
+         + static_cast<int>(std::round(static_cast<double>(noteIndex) * static_cast<double>(plotRect.width())
+                                       / static_cast<double>(noteCount)));
+}
+
+QRect noteCellRect(const QRect& rect, int noteIndex, int noteCount)
+{
+    const int left  = noteEdgeX(rect, noteIndex, noteCount);
+    const int right = noteEdgeX(rect, noteIndex + 1, noteCount);
+    return {left, rect.top(), std::max(1, right - left), rect.height()};
+}
+
 int equalSectionPlotHeight(int height, int sectionCount, int spacing)
 {
     sectionCount = std::max(1, sectionCount);
@@ -304,8 +319,10 @@ float SpectrumAxisRenderer::frequencyForBand(int band, int bandCount) const
     bandCount = std::max(1, bandCount);
     if(m_config.labelMode == LabelMode::Notes) {
         const double noteCount = std::max(1, m_config.maxNote - m_config.minNote + 1);
-        const double note      = static_cast<double>(m_config.minNote)
-                               + ((static_cast<double>(band) + 0.5) * noteCount / static_cast<double>(bandCount));
+        const double note = bandCount == static_cast<int>(noteCount)
+                              ? static_cast<double>(m_config.minNote + band)
+                              : static_cast<double>(m_config.minNote)
+                                    + ((static_cast<double>(band) + 0.5) * noteCount / static_cast<double>(bandCount));
         return frequencyForNote(static_cast<int>(std::round(note)), m_config.pitchHz, m_config.transpose);
     }
 
@@ -319,8 +336,10 @@ int SpectrumAxisRenderer::noteForBand(int band, int bandCount) const
 {
     bandCount              = std::max(1, bandCount);
     const double noteCount = std::max(1, m_config.maxNote - m_config.minNote + 1);
-    const double note      = static_cast<double>(m_config.minNote)
-                           + ((static_cast<double>(band) + 0.5) * noteCount / static_cast<double>(bandCount));
+    const double note      = bandCount == static_cast<int>(noteCount)
+                               ? static_cast<double>(m_config.minNote + band)
+                               : static_cast<double>(m_config.minNote)
+                                     + ((static_cast<double>(band) + 0.5) * noteCount / static_cast<double>(bandCount));
     return static_cast<int>(std::round(note));
 }
 
@@ -354,13 +373,11 @@ float SpectrumAxisRenderer::frequencyForNote(int noteIndex, int pitchHz, int tra
 
 int SpectrumAxisRenderer::noteCenterX(int note, const QRect& plotRect) const
 {
-    const int startNote    = m_config.minNote;
-    const int endNote      = m_config.maxNote;
-    const int noteCount    = std::max(1, endNote - startNote + 1);
-    const double noteWidth = static_cast<double>(plotRect.width()) / static_cast<double>(noteCount);
-    const double center
-        = static_cast<double>(plotRect.left()) + ((static_cast<double>(note - startNote) + 0.5) * noteWidth);
-    return std::clamp(static_cast<int>(std::round(center)), plotRect.left(), plotRect.right());
+    const int startNote  = m_config.minNote;
+    const int endNote    = m_config.maxNote;
+    const int noteCount  = std::max(1, endNote - startNote + 1);
+    const QRect cellRect = noteCellRect(plotRect, note - startNote, noteCount);
+    return std::clamp(cellRect.center().x(), plotRect.left(), plotRect.right());
 }
 
 int SpectrumAxisRenderer::frequencyToX(float frequencyHz, const QRect& plotRect) const
@@ -429,13 +446,14 @@ SpectrumPlotGeometry SpectrumAxisRenderer::barGeometryForPlotRect(const QRect& p
         geometry.sourceBands.reserve(visibleBarCount);
 
         for(int index{0}; index < visibleBarCount; ++index) {
-            const double cellLeft = static_cast<double>(plotRect.left()) + (static_cast<double>(index) * noteWidth);
-            const double cellRight
-                = static_cast<double>(plotRect.left()) + (static_cast<double>(index + 1) * noteWidth);
-            const double x     = cellLeft + (static_cast<double>(gap) / 2.0);
-            const double width = std::max(1.0, (cellRight - cellLeft) - static_cast<double>(gap));
-            geometry.barRects.emplace_back(x, static_cast<double>(plotRect.top()), width,
-                                           static_cast<double>(plotRect.height()));
+            const QRect cellRect = noteCellRect(plotRect, index, visibleBarCount);
+            const int cellGap    = std::min(gap, std::max(0, cellRect.width() - 1));
+            const int leftGap    = (cellGap + 1) / 2;
+            const int rightGap   = cellGap - leftGap;
+            const int x          = cellRect.left() + leftGap;
+            const int width      = std::max(1, cellRect.width() - leftGap - rightGap);
+            geometry.barRects.emplace_back(static_cast<double>(x), static_cast<double>(plotRect.top()),
+                                           static_cast<double>(width), static_cast<double>(plotRect.height()));
             geometry.sourceBands.emplace_back(index);
         }
 
@@ -670,20 +688,14 @@ void SpectrumAxisRenderer::drawKeyBackgrounds(QPainter& painter, const SpectrumP
             continue;
         }
 
-        const double left
-            = static_cast<double>(geometry.plotRect.left()) + (static_cast<double>(note - startNote) * noteWidth);
-        const double right
-            = static_cast<double>(geometry.plotRect.left()) + (static_cast<double>(note - startNote + 1) * noteWidth);
-        const QRectF rect{left, static_cast<double>(keyRect.top()), std::max(1.0, right - left),
-                          static_cast<double>(keyRect.height())};
+        const QRect rect = noteCellRect(keyRect, note - startNote, noteCount);
         painter.fillRect(rect, black ? blackKeyColour : whiteKeyColour);
     }
 
     if(noteWidth > 2.0) {
         painter.setPen(separatorColour);
         for(int note = startNote + 1; note <= endNote; ++note) {
-            const int x = geometry.plotRect.left()
-                        + static_cast<int>(std::round(static_cast<double>(note - startNote) * noteWidth));
+            const int x = noteEdgeX(geometry.plotRect, note - startNote, noteCount);
             painter.drawLine(x, keyRect.top(), x, keyRect.bottom());
         }
     }
