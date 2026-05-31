@@ -244,11 +244,16 @@ void ScrobblerService::resumePendingSubmissions()
     doDelayedSubmit();
 }
 
-void ScrobblerService::updateNowPlaying(const Track& track)
+void ScrobblerService::restartScrobbleSession(const Track& track)
 {
     m_currentTrack = track;
     m_timestamp    = static_cast<uint64_t>(QDateTime::currentSecsSinceEpoch());
     m_scrobbled    = false;
+}
+
+void ScrobblerService::updateNowPlaying(const Track& track)
+{
+    restartScrobbleSession(track);
 
     if(!shouldUpdateNowPlaying(track)) {
         return;

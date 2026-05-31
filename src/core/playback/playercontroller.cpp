@@ -384,8 +384,9 @@ void PlayerControllerPrivate::requestTrackChange(const Player::TrackChangeReques
 
 bool PlayerControllerPrivate::updatePlaystate(Player::PlayState state)
 {
-    if(std::exchange(m_playState, state) != state) {
-        Q_EMIT m_self->playStateChanged(state);
+    const auto prevState = std::exchange(m_playState, state);
+    if(prevState != state) {
+        Q_EMIT m_self->playStateChanged(state, prevState);
         Q_EMIT m_self->playbackSnapshotChanged(m_self->playbackSnapshot());
         return true;
     }

@@ -64,7 +64,7 @@ protected:
 
 private:
     void currentTrackChanged(const Track& track);
-    void handlePlayStateChanged(Player::PlayState state);
+    void handlePlayStateChanged(Player::PlayState state, Player::PlayState previous);
     [[nodiscard]] bool currentTrackReachedScrobbleThreshold() const;
     void updateScrobbleThreshold();
 
@@ -83,7 +83,6 @@ private:
     std::vector<std::unique_ptr<ScrobblerService>> m_services;
     QBasicTimer m_nowPlayingTimer;
     bool m_scrobbledCurrentTrack;
-    Player::PlayState m_previousPlayState;
 };
 } // namespace Scrobbler
 } // namespace Fooyin

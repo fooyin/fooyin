@@ -53,7 +53,6 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
     , m_network{std::move(network)}
     , m_settings{settings}
     , m_scrobbledCurrentTrack{false}
-    , m_previousPlayState{Player::PlayState::Stopped}
 {
     addDefaultServices();
     restoreServices();
@@ -97,15 +96,17 @@ void Scrobbler::currentTrackChanged(const Track& track)
     updateNowPlaying(track);
 }
 
-void Scrobbler::handlePlayStateChanged(Player::PlayState state)
+void Scrobbler::handlePlayStateChanged(Player::PlayState state, Player::PlayState previous)
 {
-    // Reset scrobbled flag and resend now-playing when transitioning from Stopped → Playing
-    // to allow replaying the current track with a fresh scrobble session
-    if(m_previousPlayState == Player::PlayState::Stopped && state == Player::PlayState::Playing) {
+    if(previous == Player::PlayState::Stopped && state == Player::PlayState::Playing) {
         m_scrobbledCurrentTrack = false;
-        updateNowPlaying(m_playerController->currentTrack());
+
+        const Track track = m_playerController->currentTrack();
+        for(auto& service : m_services) {
+            service->restartScrobbleSession(track);
+        }
     }
-    m_previousPlayState = state;
+
     updateNowPlayingTimer();
 }
 

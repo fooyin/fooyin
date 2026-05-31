@@ -80,6 +80,7 @@ public:
     void saveCache();
     void resumePendingSubmissions();
 
+    void restartScrobbleSession(const Track& track);
     void updateNowPlaying(const Track& track);
     void refreshNowPlaying();
     void scrobble(const Track& track);

@@ -153,7 +153,7 @@ public:
     void clearQueue();
 
 Q_SIGNALS:
-    void playStateChanged(Fooyin::Player::PlayState state);
+    void playStateChanged(Fooyin::Player::PlayState state, Fooyin::Player::PlayState previous);
     void playModeChanged(Fooyin::Playlist::PlayModes mode);
     void transportPlayRequested();
     void transportPauseRequested();
