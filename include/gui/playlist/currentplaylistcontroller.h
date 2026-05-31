@@ -21,13 +21,12 @@
 
 #include "fygui_export.h"
 
+#include <core/playlist/playlist.h>
 #include <utils/id.h>
 
 #include <QObject>
 
 namespace Fooyin {
-class Playlist;
-
 /*!
  * Provides access to the playlist currently selected in the UI.
  *
