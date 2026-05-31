@@ -144,7 +144,7 @@ void ShortcutsModel::populate(ActionManager* actionManager)
     const auto commands = actionManager->commands();
 
     for(Command* command : commands) {
-        if(command->action() && (command->action()->isSeparator() || !command->isActive())) {
+        if(command->action() && command->action()->isSeparator()) {
             continue;
         }
 

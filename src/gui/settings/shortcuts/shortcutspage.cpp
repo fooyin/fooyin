@@ -245,12 +245,6 @@ void ShortcutsPageWidget::repopulateShortcuts()
     m_model->populate(m_actionManager);
     updateConflictState();
     selectionChanged();
-
-    const auto commands = m_actionManager->commands();
-    for(Command* command : commands) {
-        QObject::disconnect(command, &Command::activeStateChanged, this, &ShortcutsPageWidget::repopulateShortcuts);
-        QObject::connect(command, &Command::activeStateChanged, this, &ShortcutsPageWidget::repopulateShortcuts);
-    }
 }
 
 void ShortcutsPageWidget::apply()

@@ -264,6 +264,7 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     });
 
     const QStringList tracksCategory{tr("Tracks")};
+    const QStringList queueCategory{tr("Tracks"), tr("Queue")};
 
     m_playAction->setStatusTip(tr("Start playback of the selected files"));
     QObject::connect(m_playAction, &QAction::triggered, this, [this]() { handleAction(TrackAction::Play, false); });
@@ -298,19 +299,19 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     m_addQueue->setStatusTip(tr("Add the selected tracks to the playback queue"));
     auto* addQueueCmd
         = m_actionManager->registerAction(m_addQueue, Constants::Actions::AddToQueue, m_context->context());
-    addQueueCmd->setCategories(tracksCategory);
+    addQueueCmd->setCategories(queueCategory);
     QObject::connect(m_addQueue, &QAction::triggered, this, [this]() { handleAction(TrackAction::AddToQueue, true); });
 
     m_queueNext->setStatusTip(tr("Add the selected tracks to the front of the playback queue"));
     auto* queueNextCmd
         = m_actionManager->registerAction(m_queueNext, Constants::Actions::QueueNext, m_context->context());
-    queueNextCmd->setCategories(tracksCategory);
+    queueNextCmd->setCategories(queueCategory);
     QObject::connect(m_queueNext, &QAction::triggered, this, [this]() { handleAction(TrackAction::QueueNext, true); });
 
     m_sendQueue->setStatusTip(tr("Replace the playback queue with the selected tracks"));
     auto* sendQueue
         = m_actionManager->registerAction(m_sendQueue, Constants::Actions::SendToQueue, m_context->context());
-    sendQueue->setCategories(tracksCategory);
+    sendQueue->setCategories(queueCategory);
     QObject::connect(m_sendQueue, &QAction::triggered, this,
                      [this]() { handleAction(TrackAction::SendToQueue, true); });
 
