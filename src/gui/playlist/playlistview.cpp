@@ -69,7 +69,7 @@ QPixmap blurredPixmap(const QPixmap& pixmap, qreal radius)
     }
 
     QImage blurred = pixmap.toImage().convertToFormat(QImage::Format_ARGB32_Premultiplied);
-    qt_blurImage(blurred, radius, true, false);
+    qt_blurImage(blurred, radius, true);
     return QPixmap::fromImage(blurred);
 }
 } // namespace
@@ -508,11 +508,13 @@ void PlaylistView::invalidateScaledBackground()
 QPixmap PlaylistView::preparedBackgroundPixmap(const QPixmap& source, BackgroundPixmapCache& cache) const
 {
     const QSize viewportSize = viewport()->size();
+    const qreal dpr          = devicePixelRatioF();
     if(viewportSize.isEmpty() || source.isNull()) {
         return {};
     }
 
-    if(cache.sourceKey == source.cacheKey() && cache.viewportSize == viewportSize && !cache.pixmap.isNull()) {
+    if(cache.sourceKey == source.cacheKey() && cache.viewportSize == viewportSize && qFuzzyCompare(cache.dpr, dpr)
+       && !cache.pixmap.isNull()) {
         return cache.pixmap;
     }
 
@@ -542,10 +544,15 @@ QPixmap PlaylistView::preparedBackgroundPixmap(const QPixmap& source, Background
         return {};
     }
 
+    targetSize = {static_cast<int>(std::ceil(static_cast<qreal>(targetSize.width()) * dpr)),
+                  static_cast<int>(std::ceil(static_cast<qreal>(targetSize.height()) * dpr))};
+
     cache.sourceKey    = source.cacheKey();
     cache.viewportSize = viewportSize;
+    cache.dpr          = dpr;
     cache.pixmap       = source.scaled(targetSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    cache.pixmap       = blurredPixmap(cache.pixmap, m_bgOptions.blur);
+    cache.pixmap.setDevicePixelRatio(dpr);
+    cache.pixmap = blurredPixmap(cache.pixmap, m_bgOptions.blur * dpr);
 
     return cache.pixmap;
 }
@@ -602,7 +609,7 @@ QPoint PlaylistView::backgroundPixmapPosition(const QSize& pixmapSize) const
 
 void PlaylistView::drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap)
 {
-    painter.drawPixmap(backgroundPixmapPosition(pixmap.size()), pixmap);
+    painter.drawPixmap(backgroundPixmapPosition(pixmap.deviceIndependentSize().toSize()), pixmap);
 }
 
 QAbstractItemView::DropIndicatorPosition PlaylistView::dropPosition(const QPoint& pos, const QRect& rect,

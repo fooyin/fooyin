@@ -123,6 +123,7 @@ private:
     {
         qint64 sourceKey{0};
         QSize viewportSize;
+        qreal dpr{1.0};
         QPixmap pixmap;
     };
     [[nodiscard]] QPixmap preparedBackgroundPixmap(const QPixmap& source, BackgroundPixmapCache& cache) const;
