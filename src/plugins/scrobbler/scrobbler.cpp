@@ -66,8 +66,7 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &Scrobbler::currentTrackChanged);
     QObject::connect(m_playerController, &PlayerController::positionChanged, this, &Scrobbler::updateScrobbleThreshold);
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
-                     &Scrobbler::handlePlayStateChanged);
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &Scrobbler::handlePlayStateChanged);
 }
 
 Scrobbler::~Scrobbler()
