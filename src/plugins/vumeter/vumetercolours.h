@@ -19,15 +19,22 @@
 
 #pragma once
 
+#include <utils/datastream.h>
+
 #include <QApplication>
 #include <QColor>
 #include <QDataStream>
 #include <QMetaType>
 #include <QPalette>
 
+#include <vector>
+
 namespace Fooyin::VuMeter {
 struct Colours
 {
+    static constexpr qint32 Magic   = 0x5655434F;
+    static constexpr qint32 Version = 1;
+
     enum class Type : uint8_t
     {
         Background = 0,
@@ -47,33 +54,66 @@ struct Colours
             case Type::Legend:
                 return palette.text().color();
             case Type::Gradient1:
-                return {65, 65, 65};
+                return defaultGradient(palette).front();
             case Type::Gradient2:
-                return palette.color(QPalette::Active, QPalette::Highlight);
+                return defaultGradient(palette).back();
         }
 
         return {};
     }
 
+    static std::vector<QColor> defaultGradient(const QPalette& palette = QApplication::palette())
+    {
+        return {{65, 65, 65}, palette.color(QPalette::Active, QPalette::Highlight)};
+    }
+
     QMap<Type, QColor> meterColours;
+    std::vector<QColor> barGradient;
 
     [[nodiscard]] QColor colour(Type type, const QPalette& palette = QApplication::palette()) const
     {
-        return meterColours.value(type, defaultColour(type, palette));
+        switch(type) {
+            case Type::Gradient1:
+                return gradient(palette).front();
+            case Type::Gradient2:
+                return gradient(palette).back();
+            default:
+                return meterColours.value(type, defaultColour(type, palette));
+        }
     }
 
     [[nodiscard]] bool hasOverride(Type type) const
     {
-        return meterColours.contains(type);
+        return type == Type::Gradient1 || type == Type::Gradient2 ? !barGradient.empty() : meterColours.contains(type);
     }
 
     [[nodiscard]] bool isEmpty() const
     {
-        return meterColours.isEmpty();
+        return meterColours.isEmpty() && barGradient.empty();
+    }
+
+    [[nodiscard]] std::vector<QColor> gradient(const QPalette& palette = QApplication::palette()) const
+    {
+        return barGradient.empty() ? defaultGradient(palette) : barGradient;
+    }
+
+    [[nodiscard]] const std::vector<QColor>& customGradient() const
+    {
+        return barGradient;
     }
 
     void setColour(Type type, const QColor& colour)
     {
+        if(type == Type::Gradient1 || type == Type::Gradient2) {
+            std::vector<QColor> colours = gradient();
+            if(colours.size() < 2) {
+                colours = defaultGradient();
+            }
+            colours.at(type == Type::Gradient1 ? 0 : colours.size() - 1) = colour;
+            setGradient(colours);
+            return;
+        }
+
         if(colour.isValid()) {
             meterColours[type] = colour;
         }
@@ -82,9 +122,19 @@ struct Colours
         }
     }
 
+    void setGradient(const std::vector<QColor>& colours)
+    {
+        barGradient.clear();
+        for(const QColor& colour : colours) {
+            if(colour.isValid()) {
+                barGradient.push_back(colour);
+            }
+        }
+    }
+
     bool operator==(const Colours& other) const
     {
-        return std::tie(meterColours) == std::tie(other.meterColours);
+        return std::tie(meterColours, barGradient) == std::tie(other.meterColours, other.barGradient);
     };
 
     bool operator!=(const Colours& other) const
@@ -94,13 +144,46 @@ struct Colours
 
     friend QDataStream& operator<<(QDataStream& stream, const Colours& colours)
     {
+        stream << Magic;
+        stream << Version;
         stream << colours.meterColours;
+        DataStream::writeContainer(stream, colours.barGradient);
         return stream;
     }
 
     friend QDataStream& operator>>(QDataStream& stream, Colours& colours)
     {
-        stream >> colours.meterColours;
+        qint32 magic{0};
+        qint32 version{0};
+
+        stream.startTransaction();
+        stream >> magic;
+        stream >> version;
+
+        if(magic == Magic && version == Version) {
+            stream >> colours.meterColours;
+            DataStream::readContainer(stream, colours.barGradient);
+            stream.commitTransaction();
+            return stream;
+        }
+
+        stream.rollbackTransaction();
+
+        QMap<Type, QColor> legacyColours;
+        stream >> legacyColours;
+
+        std::vector<QColor> legacyGradient;
+        if(legacyColours.contains(Type::Gradient1)) {
+            legacyGradient.emplace_back(legacyColours.value(Type::Gradient1));
+            legacyColours.remove(Type::Gradient1);
+        }
+        if(legacyColours.contains(Type::Gradient2)) {
+            legacyGradient.emplace_back(legacyColours.value(Type::Gradient2));
+            legacyColours.remove(Type::Gradient2);
+        }
+
+        colours.meterColours = legacyColours;
+        colours.setGradient(legacyGradient);
         return stream;
     }
 };

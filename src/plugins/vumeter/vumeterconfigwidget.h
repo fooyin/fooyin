@@ -24,11 +24,13 @@
 #include <gui/configdialog.h>
 
 class QComboBox;
+class QCheckBox;
 class QGroupBox;
 class QSpinBox;
 
 namespace Fooyin {
 class ColourButton;
+class GradientEditor;
 
 namespace VuMeter {
 class VuMeterConfigDialog : public WidgetConfigDialog<VuMeterWidget, VuMeterWidget::ConfigData>
@@ -46,6 +48,7 @@ private:
     QSpinBox* m_falloff;
     QSpinBox* m_peakFalloff;
     QComboBox* m_updateFps;
+    QCheckBox* m_showLegend;
     QGroupBox* m_peaksGroup;
 
     QSpinBox* m_channelSpacing;
@@ -58,8 +61,7 @@ private:
     ColourButton* m_bgColour;
     ColourButton* m_peakColour;
     ColourButton* m_legendColour;
-    ColourButton* m_leftColour;
-    ColourButton* m_rightColour;
+    GradientEditor* m_barGradient;
 };
 } // namespace VuMeter
 } // namespace Fooyin

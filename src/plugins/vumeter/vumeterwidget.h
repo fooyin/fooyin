@@ -56,6 +56,7 @@ public:
 
     void renderLevel(const LevelFrame& frame);
 
+    [[nodiscard]] Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orientation);
     void setShowLegend(bool show);
     void setChannelSpacing(int size);
@@ -72,6 +73,7 @@ public:
         int falloffTime{13};
         int peakFalloffTime{13};
         bool showPeaks{false};
+        bool showLegend{false};
         int updateFps{40};
         int channelSpacing{1};
         int barSize{0};

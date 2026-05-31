@@ -25,6 +25,7 @@
 #include <gui/configdialog.h>
 #include <gui/framerate.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/gradienteditor.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QActionGroup>
@@ -32,6 +33,7 @@
 #include <QContextMenuEvent>
 #include <QDialog>
 #include <QElapsedTimer>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QLabel>
 #include <QMenu>
@@ -58,6 +60,7 @@ constexpr auto PeakHoldTimeMsKey  = u"VuMeter/PeakHoldTimeMs";
 constexpr auto FalloffTimeKey     = u"VuMeter/FalloffTime";
 constexpr auto PeakFalloffTimeKey = u"VuMeter/PeakFalloffTime";
 constexpr auto ShowPeaksKey       = u"VuMeter/ShowPeaks";
+constexpr auto ShowLegendKey      = u"VuMeter/ShowLegend";
 constexpr auto UpdateFpsKey       = u"VuMeter/UpdateFps";
 constexpr auto ChannelSpacingKey  = u"VuMeter/ChannelSpacing";
 constexpr auto BarSizeKey         = u"VuMeter/BarSize";
@@ -383,8 +386,7 @@ void VuMeterWidgetPrivate::createGradient()
         pattern = {0, m_meterHeight, 0, 0};
     }
 
-    pattern.setColorAt(dbScale(-60), m_colours.colour(Colours::Type::Gradient1, m_self->palette()));
-    pattern.setColorAt(dbScale(3), m_colours.colour(Colours::Type::Gradient2, m_self->palette()));
+    setGradientColours(pattern, m_colours.gradient(m_self->palette()));
 
     m_gradient = pattern;
 }
@@ -802,7 +804,6 @@ void VuMeterWidget::saveLayoutData(QJsonObject& layout)
 {
     saveConfigToLayout(m_config, layout);
     layout["Orientation"_L1] = p->m_orientation;
-    layout["ShowLegend"_L1]  = p->m_showLegend;
 }
 
 void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
@@ -818,10 +819,6 @@ void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
             p->m_pendingOrientation = orientation;
         }
         p->m_defaultOrientationApplied = true;
-    }
-
-    if(layout.contains("ShowLegend"_L1)) {
-        setShowLegend(layout.value("ShowLegend"_L1).toBool());
     }
 }
 
@@ -839,6 +836,7 @@ VuMeterWidget::ConfigData VuMeterWidget::defaultConfig() const
     config.falloffTime     = m_settings->fileValue(FalloffTimeKey, config.falloffTime).toInt();
     config.peakFalloffTime = m_settings->fileValue(PeakFalloffTimeKey, config.peakFalloffTime).toInt();
     config.showPeaks       = m_settings->fileValue(ShowPeaksKey, config.showPeaks).toBool();
+    config.showLegend      = m_settings->fileValue(ShowLegendKey, config.showLegend).toBool();
     config.updateFps       = m_settings->fileValue(UpdateFpsKey, config.updateFps).toInt();
     config.channelSpacing  = m_settings->fileValue(ChannelSpacingKey, config.channelSpacing).toInt();
     config.barSize         = m_settings->fileValue(BarSizeKey, config.barSize).toInt();
@@ -883,6 +881,7 @@ void VuMeterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FalloffTimeKey, validated.falloffTime);
     m_settings->fileSet(PeakFalloffTimeKey, validated.peakFalloffTime);
     m_settings->fileSet(ShowPeaksKey, validated.showPeaks);
+    m_settings->fileSet(ShowLegendKey, validated.showLegend);
     m_settings->fileSet(UpdateFpsKey, validated.updateFps);
     m_settings->fileSet(ChannelSpacingKey, validated.channelSpacing);
     m_settings->fileSet(BarSizeKey, validated.barSize);
@@ -899,6 +898,7 @@ void VuMeterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FalloffTimeKey);
     m_settings->fileRemove(PeakFalloffTimeKey);
     m_settings->fileRemove(ShowPeaksKey);
+    m_settings->fileRemove(ShowLegendKey);
     m_settings->fileRemove(UpdateFpsKey);
     m_settings->fileRemove(ChannelSpacingKey);
     m_settings->fileRemove(BarSizeKey);
@@ -933,6 +933,8 @@ void VuMeterWidget::applyConfig(const ConfigData& config)
     p->m_falloffPerMs     = static_cast<float>(m_config.falloffTime) / DbRange / 1000.0F;
     p->m_peakFalloffPerMs = static_cast<float>(m_config.peakFalloffTime) / DbRange / 1000.0F;
     p->m_showPeaks        = m_config.showPeaks;
+    p->m_showLegend       = m_config.showLegend;
+
     p->setUpdateFps(m_config.updateFps);
 
     p->m_channelSpacing = static_cast<float>(m_config.channelSpacing);
@@ -964,6 +966,9 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
     }
     if(layout.contains("ShowPeaks"_L1)) {
         config.showPeaks = layout.value("ShowPeaks"_L1).toBool();
+    }
+    if(layout.contains("ShowLegend"_L1)) {
+        config.showLegend = layout.value("ShowLegend"_L1).toBool();
     }
     if(layout.contains("UpdateFps"_L1)) {
         config.updateFps = layout.value("UpdateFps"_L1).toInt();
@@ -1002,8 +1007,30 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
             setColour(u"BackgroundColour"_s, Colours::Type::Background);
             setColour(u"PeakColour"_s, Colours::Type::Peak);
             setColour(u"LegendColour"_s, Colours::Type::Legend);
-            setColour(u"Gradient1Colour"_s, Colours::Type::Gradient1);
-            setColour(u"Gradient2Colour"_s, Colours::Type::Gradient2);
+
+            if(const QJsonValue value = layout.value("BarGradientColours"_L1); value.isArray()) {
+                std::vector<QColor> gradient;
+                const QJsonArray array = value.toArray();
+                for(const auto& colourValue : array) {
+                    const QColor colour{colourValue.toString()};
+                    if(colour.isValid()) {
+                        gradient.push_back(colour);
+                    }
+                }
+                colours.setGradient(gradient);
+            }
+            else {
+                std::vector<QColor> gradient;
+                const QColor firstColour{layout.value("Gradient1Colour"_L1).toString()};
+                const QColor secondColour{layout.value("Gradient2Colour"_L1).toString()};
+                if(firstColour.isValid()) {
+                    gradient.push_back(firstColour);
+                }
+                if(secondColour.isValid()) {
+                    gradient.push_back(secondColour);
+                }
+                colours.setGradient(gradient);
+            }
 
             if(!colours.isEmpty()) {
                 config.meterColours = QVariant::fromValue(colours);
@@ -1023,6 +1050,7 @@ void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
     layout["FalloffTime"_L1]     = config.falloffTime;
     layout["PeakFalloffTime"_L1] = config.peakFalloffTime;
     layout["ShowPeaks"_L1]       = config.showPeaks;
+    layout["ShowLegend"_L1]      = config.showLegend;
     layout["UpdateFps"_L1]       = config.updateFps;
     layout["ChannelSpacing"_L1]  = config.channelSpacing;
     layout["BarSize"_L1]         = config.barSize;
@@ -1038,7 +1066,7 @@ void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
         const Colours colours = config.meterColours.value<Colours>();
         const auto saveColour = [&layout, &colours](const QString& key, Colours::Type type) {
             if(colours.hasOverride(type)) {
-                layout[key] = colours.meterColours.value(type).name(QColor::HexArgb);
+                layout[key] = colours.colour(type).name(QColor::HexArgb);
             }
             else {
                 layout.remove(key);
@@ -1048,13 +1076,27 @@ void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
         saveColour(u"BackgroundColour"_s, Colours::Type::Background);
         saveColour(u"PeakColour"_s, Colours::Type::Peak);
         saveColour(u"LegendColour"_s, Colours::Type::Legend);
-        saveColour(u"Gradient1Colour"_s, Colours::Type::Gradient1);
-        saveColour(u"Gradient2Colour"_s, Colours::Type::Gradient2);
+
+        const std::vector<QColor>& customGradient = colours.customGradient();
+        if(customGradient.empty()) {
+            layout.remove("BarGradientColours"_L1);
+        }
+        else {
+            QJsonArray gradientColours;
+            for(const QColor& colour : customGradient) {
+                gradientColours.append(colour.name(QColor::HexArgb));
+            }
+            layout["BarGradientColours"_L1] = gradientColours;
+        }
+
+        layout.remove("Gradient1Colour"_L1);
+        layout.remove("Gradient2Colour"_L1);
     }
     else {
         layout.remove("BackgroundColour"_L1);
         layout.remove("PeakColour"_L1);
         layout.remove("LegendColour"_L1);
+        layout.remove("BarGradientColours"_L1);
         layout.remove("Gradient1Colour"_L1);
         layout.remove("Gradient2Colour"_L1);
     }
@@ -1107,9 +1149,15 @@ void VuMeterWidget::setOrientation(Qt::Orientation orientation)
     p->setOrientation(orientation);
 }
 
+Qt::Orientation VuMeterWidget::orientation() const
+{
+    return p->m_orientation;
+}
+
 void VuMeterWidget::setShowLegend(bool show)
 {
-    p->m_showLegend = show;
+    p->m_showLegend     = show;
+    m_config.showLegend = show;
     p->updateSize();
     update();
 }
