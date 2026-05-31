@@ -399,7 +399,7 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     addGridRow(barLayout, row, tr("Axis font") + ":"_L1, m_axisFont, this);
     displayLayout->addLayout(barLayout);
 
-    m_colourGroup->setTitle(tr("Colors"));
+    m_colourGroup->setTitle(tr("Colours"));
     m_colourGroup->setCheckable(true);
 
     auto* coloursLayout      = new QGridLayout(m_colourGroup);
