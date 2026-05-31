@@ -404,7 +404,6 @@ void PlayerControllerPrivate::restartCurrentTrackProgressIfNeeded()
     }
 
     m_progressTracker.restartTracking();
-    Q_EMIT m_self->currentTrackRestartedAfterStop(m_session.currentTrack().track);
 }
 
 bool PlayerControllerPrivate::enterStoppedState(bool requestTransportStop)

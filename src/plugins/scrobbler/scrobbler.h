@@ -22,6 +22,7 @@
 #include "services/scrobblerservice.h"
 #include "services/servicedetails.h"
 
+#include <core/player/playerdefs.h>
 #include <QBasicTimer>
 #include <QTimerEvent>
 
@@ -63,6 +64,7 @@ protected:
 
 private:
     void currentTrackChanged(const Track& track);
+    void handlePlayStateChanged(Player::PlayState state);
     [[nodiscard]] bool currentTrackReachedScrobbleThreshold() const;
     void updateScrobbleThreshold();
 
@@ -81,6 +83,7 @@ private:
     std::vector<std::unique_ptr<ScrobblerService>> m_services;
     QBasicTimer m_nowPlayingTimer;
     bool m_scrobbledCurrentTrack;
+    Player::PlayState m_previousPlayState;
 };
 } // namespace Scrobbler
 } // namespace Fooyin
