@@ -50,8 +50,11 @@ public:
 
     [[nodiscard]] std::vector<QColor> colours() const;
     [[nodiscard]] Qt::Orientation orientation() const;
+    [[nodiscard]] bool isOrientationControlVisible() const;
+
     void setColours(const std::vector<QColor>& colours);
     void setOrientation(Qt::Orientation orientation);
+    void setOrientationControlVisible(bool visible);
 
 Q_SIGNALS:
     void coloursChanged();

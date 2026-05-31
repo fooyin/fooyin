@@ -214,6 +214,16 @@ public:
         m_orientation->setCurrentIndex(index >= 0 ? index : m_orientation->findData(static_cast<int>(Qt::Vertical)));
     }
 
+    void setOrientationControlVisible(bool visible)
+    {
+        m_orientation->setVisible(visible);
+    }
+
+    [[nodiscard]] bool isOrientationControlVisible() const
+    {
+        return m_orientation->isVisible();
+    }
+
     GradientEditor* m_self;
 
     std::vector<QColor> m_colours;
@@ -282,9 +292,19 @@ Qt::Orientation GradientEditor::orientation() const
     return p->orientation();
 }
 
+bool GradientEditor::isOrientationControlVisible() const
+{
+    return p->isOrientationControlVisible();
+}
+
 void GradientEditor::setOrientation(Qt::Orientation orientation)
 {
     p->setOrientation(orientation);
+}
+
+void GradientEditor::setOrientationControlVisible(bool visible)
+{
+    p->setOrientationControlVisible(visible);
 }
 } // namespace Fooyin
 
