@@ -22,9 +22,9 @@
 #include "services/scrobblerservice.h"
 #include "services/servicedetails.h"
 
-#include <core/player/playerdefs.h>
 #include <QBasicTimer>
 #include <QTimerEvent>
+#include <core/player/playerdefs.h>
 
 #include <memory>
 #include <vector>
