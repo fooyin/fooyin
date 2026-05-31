@@ -73,6 +73,15 @@ void ToolButton::paintEvent(QPaintEvent* /*event*/)
     QStyleOptionToolButton opt;
     initStyleOption(&opt);
 
+    const bool checked = opt.state & QStyle::State_On;
+    if(autoRaise() && checked) {
+        opt.state &= ~QStyle::State_On;
+
+        const QColor activeColour = opt.palette.color(QPalette::Active, QPalette::Highlight);
+        opt.palette.setColor(QPalette::ButtonText, activeColour);
+        opt.palette.setColor(QPalette::WindowText, activeColour);
+    }
+
     if(m_menuIndicatorHidden) {
         opt.features &= ~QStyleOptionToolButton::HasMenu;
     }
