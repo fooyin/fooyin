@@ -56,7 +56,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="261"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Visningsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
@@ -484,32 +484,32 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="201"/>
         <source>ReplayGain track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain spårförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="203"/>
         <source>ReplayGain track peak</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain spår-peak</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
         <source>ReplayGain track peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain spår-peak i dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
         <source>ReplayGain album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain albumförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>ReplayGain album peak</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain album-peak</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
         <source>ReplayGain album peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain album-peak i dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="212"/>
@@ -2603,7 +2603,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="585"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Visningsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="588"/>
@@ -5772,7 +5772,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="292"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Spår-förstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="297"/>
@@ -5782,7 +5782,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="302"/>
         <source>Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="307"/>
@@ -6274,22 +6274,22 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="150"/>
         <source>Read ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs ID3-POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="151"/>
         <source>Write ID3 POPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv ID3-POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="154"/>
         <source>Read WM/SharedUserRating</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs WM/SharedUserRating</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="155"/>
         <source>Write WM/SharedUserRating</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv WM/SharedUserRating</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="164"/>
@@ -8016,7 +8016,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="43"/>
         <source>Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Förstärkning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="44"/>
@@ -10907,7 +10907,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="85"/>
         <source>ReplayGain Scan Results</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain-skanningsresultat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="97"/>
@@ -10935,12 +10935,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="48"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Spårförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="50"/>
         <source>Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="52"/>
@@ -11108,22 +11108,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="160"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Spårförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="162"/>
         <source>Track Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Spår-peak</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="164"/>
         <source>Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumförstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="166"/>
         <source>Album Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Album-peak</translation>
     </message>
 </context>
 <context>
@@ -11154,7 +11154,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="69"/>
         <source>Apply gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Verkställ förstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="70"/>
@@ -11169,22 +11169,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="72"/>
         <source>Use track-based gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd spårbaserad förstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="73"/>
         <source>Use album-based gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd albumbaserat förstärkning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="74"/>
         <source>Use gain based on playback order</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd förstärkning baserat på uppspelningsordning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
         <source>Base normalisation on track loudness</source>
-        <translation type="unfinished"></translation>
+        <translation>Basera normalisering på spårljudstyrka</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="79"/>
