@@ -57,10 +57,14 @@ void LyricsEditor::setTrack(const Track& track)
 
 void LyricsEditor::setLyrics(const Lyrics& lyrics)
 {
+    const bool textChanged = m_lyricsText->toPlainText() != lyrics.data;
+
     m_lyrics = lyrics;
 
-    const QSignalBlocker blocker{m_lyricsText};
-    m_lyricsText->setPlainText(m_lyrics.data);
+    if(textChanged) {
+        const QSignalBlocker blocker{m_lyricsText};
+        m_lyricsText->setPlainText(m_lyrics.data);
+    }
 }
 
 void LyricsEditor::setControlsEnabled(bool enabled)
