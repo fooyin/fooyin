@@ -24,7 +24,6 @@
 #include <gui/configdialog.h>
 
 class QComboBox;
-class QDoubleSpinBox;
 class QGroupBox;
 class QSpinBox;
 
@@ -43,9 +42,11 @@ private:
     [[nodiscard]] VuMeterWidget::ConfigData config() const override;
     void setConfig(const VuMeterWidget::ConfigData& config) override;
 
-    QDoubleSpinBox* m_peakHold;
-    QDoubleSpinBox* m_falloff;
+    QSpinBox* m_peakHold;
+    QSpinBox* m_falloff;
+    QSpinBox* m_peakFalloff;
     QComboBox* m_updateFps;
+    QGroupBox* m_peaksGroup;
 
     QSpinBox* m_channelSpacing;
     QSpinBox* m_barSize;

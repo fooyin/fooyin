@@ -38,9 +38,11 @@ constexpr auto DefaultFps = Fooyin::Gui::FrameRate::Preset::Fps40;
 namespace Fooyin::VuMeter {
 VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidget* parent)
     : WidgetConfigDialog{vuMeter, tr("VU Meter Settings"), parent}
-    , m_peakHold{new QDoubleSpinBox(this)}
-    , m_falloff{new QDoubleSpinBox(this)}
+    , m_peakHold{new QSpinBox(this)}
+    , m_falloff{new QSpinBox(this)}
+    , m_peakFalloff{new QSpinBox(this)}
     , m_updateFps{new QComboBox(this)}
+    , m_peaksGroup{new QGroupBox(tr("Peaks"), this)}
     , m_channelSpacing{new QSpinBox(this)}
     , m_barSize{new QSpinBox(this)}
     , m_barSpacing{new QSpinBox(this)}
@@ -53,13 +55,19 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     , m_leftColour{new ColourButton(this)}
     , m_rightColour{new ColourButton(this)}
 {
-    auto* generalGroup  = new QGroupBox(tr("General"), this);
-    auto* generalLayout = new QGridLayout(generalGroup);
+    auto* meterGroup  = new QGroupBox(tr("Meter"), this);
+    auto* meterLayout = new QGridLayout(meterGroup);
+    auto* peaksLayout = new QGridLayout(m_peaksGroup);
 
-    m_peakHold->setRange(0.1, 30.0);
-    m_peakHold->setSuffix(u" s"_s);
-    m_falloff->setRange(0.1, 96.0);
+    m_peakHold->setRange(0, 5000);
+    m_peakHold->setSingleStep(100);
+    m_peakHold->setSuffix(u" ms"_s);
+    m_falloff->setRange(0, 500);
+    m_falloff->setSingleStep(10);
     m_falloff->setSuffix(u" dB/s"_s);
+    m_peakFalloff->setRange(0, 500);
+    m_peakFalloff->setSingleStep(10);
+    m_peakFalloff->setSuffix(u" dB/s"_s);
 
     for(const auto preset : Gui::FrameRate::Presets) {
         const int fps = Gui::FrameRate::toFps(preset);
@@ -67,13 +75,20 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     }
 
     int row = 0;
-    generalLayout->addWidget(new QLabel(tr("Peak hold time") + ":"_L1, this), row, 0);
-    generalLayout->addWidget(m_peakHold, row++, 1);
-    generalLayout->addWidget(new QLabel(tr("Falloff time") + ":"_L1, this), row, 0);
-    generalLayout->addWidget(m_falloff, row++, 1);
-    generalLayout->addWidget(new QLabel(tr("Refresh rate") + ":"_L1, this), row, 0);
-    generalLayout->addWidget(m_updateFps, row++, 1);
-    generalLayout->setColumnStretch(2, 1);
+    meterLayout->addWidget(new QLabel(tr("Falloff") + ":"_L1, this), row, 0);
+    meterLayout->addWidget(m_falloff, row++, 1);
+    meterLayout->addWidget(new QLabel(tr("Refresh rate") + ":"_L1, this), row, 0);
+    meterLayout->addWidget(m_updateFps, row++, 1);
+    meterLayout->setColumnStretch(2, 1);
+
+    m_peaksGroup->setCheckable(true);
+
+    row = 0;
+    peaksLayout->addWidget(new QLabel(tr("Hold time") + ":"_L1, this), row, 0);
+    peaksLayout->addWidget(m_peakHold, row++, 1);
+    peaksLayout->addWidget(new QLabel(tr("Falloff") + ":"_L1, this), row, 0);
+    peaksLayout->addWidget(m_peakFalloff, row++, 1);
+    peaksLayout->setColumnStretch(2, 1);
 
     auto* dimensionGroup  = new QGroupBox(tr("Dimension"), this);
     auto* dimensionLayout = new QGridLayout(dimensionGroup);
@@ -119,9 +134,10 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     coloursLayout->setColumnStretch(2, 1);
 
     auto* layout = contentLayout();
-    layout->addWidget(generalGroup, 0, 0);
-    layout->addWidget(dimensionGroup, 1, 0);
-    layout->addWidget(m_colourGroup, 2, 0);
+    layout->addWidget(meterGroup, 0, 0);
+    layout->addWidget(m_peaksGroup, 0, 1);
+    layout->addWidget(dimensionGroup, 1, 0, 1, 2);
+    layout->addWidget(m_colourGroup, 2, 0, 1, 2);
     layout->setRowStretch(layout->rowCount(), 1);
 
     loadCurrentConfig();
@@ -130,15 +146,17 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
 VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
 {
     VuMeterWidget::ConfigData config{
-        .peakHoldTime   = m_peakHold->value(),
-        .falloffTime    = m_falloff->value(),
-        .updateFps      = m_updateFps->currentData().toInt(),
-        .channelSpacing = m_channelSpacing->value(),
-        .barSize        = m_barSize->value(),
-        .barSpacing     = m_barSpacing->value(),
-        .barSections    = m_barSections->value(),
-        .sectionSpacing = m_sectionSpacing->value(),
-        .meterColours   = QVariant{},
+        .peakHoldTimeMs  = m_peakHold->value(),
+        .falloffTime     = m_falloff->value(),
+        .peakFalloffTime = m_peakFalloff->value(),
+        .showPeaks       = m_peaksGroup->isChecked(),
+        .updateFps       = m_updateFps->currentData().toInt(),
+        .channelSpacing  = m_channelSpacing->value(),
+        .barSize         = m_barSize->value(),
+        .barSpacing      = m_barSpacing->value(),
+        .barSections     = m_barSections->value(),
+        .sectionSpacing  = m_sectionSpacing->value(),
+        .meterColours    = QVariant{},
     };
 
     if(m_colourGroup->isChecked()) {
@@ -156,8 +174,10 @@ VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
 
 void VuMeterConfigDialog::setConfig(const VuMeterWidget::ConfigData& config)
 {
-    m_peakHold->setValue(config.peakHoldTime);
+    m_peakHold->setValue(config.peakHoldTimeMs);
     m_falloff->setValue(config.falloffTime);
+    m_peakFalloff->setValue(config.peakFalloffTime);
+    m_peaksGroup->setChecked(config.showPeaks);
 
     const int nearest = Gui::FrameRate::nearestPresetFps(config.updateFps);
     int fpsIndex      = m_updateFps->findData(nearest);

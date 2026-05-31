@@ -68,8 +68,10 @@ public:
 
     struct ConfigData
     {
-        double peakHoldTime{1.5};
-        double falloffTime{13.0};
+        int peakHoldTimeMs{1500};
+        int falloffTime{13};
+        int peakFalloffTime{13};
+        bool showPeaks{false};
         int updateFps{40};
         int channelSpacing{1};
         int barSize{0};
@@ -93,8 +95,9 @@ protected:
     void paintEvent(QPaintEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
-private:
     void openConfigDialog() override;
+
+private:
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
