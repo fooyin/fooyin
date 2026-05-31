@@ -53,6 +53,7 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
     , m_network{std::move(network)}
     , m_settings{settings}
     , m_scrobbledCurrentTrack{false}
+    , m_previousPlayState{Player::PlayState::Stopped}
 {
     addDefaultServices();
     restoreServices();
@@ -65,8 +66,7 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &Scrobbler::currentTrackChanged);
     QObject::connect(m_playerController, &PlayerController::positionChanged, this, &Scrobbler::updateScrobbleThreshold);
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
-                     [this]() { updateNowPlayingTimer(); });
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &Scrobbler::handlePlayStateChanged);
 }
 
 Scrobbler::~Scrobbler()
@@ -95,6 +95,18 @@ void Scrobbler::currentTrackChanged(const Track& track)
 {
     m_scrobbledCurrentTrack = false;
     updateNowPlaying(track);
+}
+
+void Scrobbler::handlePlayStateChanged(Player::PlayState state)
+{
+    // Reset scrobbled flag and resend now-playing when transitioning from Stopped → Playing
+    // to allow replaying the current track with a fresh scrobble session
+    if(m_previousPlayState == Player::PlayState::Stopped && state == Player::PlayState::Playing) {
+        m_scrobbledCurrentTrack = false;
+        updateNowPlaying(m_playerController->currentTrack());
+    }
+    m_previousPlayState = state;
+    updateNowPlayingTimer();
 }
 
 void Scrobbler::scrobble(const Track& track)
