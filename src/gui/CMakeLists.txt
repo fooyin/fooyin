@@ -17,6 +17,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiutils.h
     ${CMAKE_SOURCE_DIR}/include/gui/layoutprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/playlist/currentplaylistcontroller.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/dspguiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h

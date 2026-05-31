@@ -47,6 +47,7 @@
 #include "statusevent.h"
 #include "systemtrayicon.h"
 #include "widgets.h"
+#include <gui/playlist/currentplaylistcontroller.h>
 
 #include <core/application.h>
 #include <core/corepaths.h>
@@ -325,6 +326,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          &m_layoutProvider,
                          &m_selectionController,
                          m_searchController,
+                         m_playlistController.get(),
                          m_propertiesDialog,
                          m_scriptCommandHandler.get(),
                          &m_widgetProvider,
