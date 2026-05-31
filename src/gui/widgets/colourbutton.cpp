@@ -52,8 +52,12 @@ bool ColourButton::colourChanged() const
 
 void ColourButton::setColour(const QColor& colour)
 {
-    m_colour = colour;
+    if(std::exchange(m_colour, colour) == colour) {
+        return;
+    }
+
     update();
+    Q_EMIT colourUpdated(m_colour);
 }
 
 void ColourButton::mousePressEvent(QMouseEvent* event)

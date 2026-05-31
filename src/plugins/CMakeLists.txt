@@ -22,6 +22,7 @@ set(
     scrobbler
     sdl
     sndfile
+    spectrum
     soundtouch
     soxresampler
     tageditor
@@ -47,6 +48,7 @@ set(
     scrobbler
     sdl
     sndfile
+    spectrum
     soundtouch
     soxresampler
     tageditor
@@ -110,6 +112,7 @@ fooyin_add_selected_plugin(rgscanner)
 fooyin_add_selected_plugin(sdl)
 fooyin_add_selected_plugin(scrobbler)
 fooyin_add_selected_plugin(sndfile)
+fooyin_add_selected_plugin(spectrum)
 fooyin_add_selected_plugin(tageditor)
 fooyin_add_selected_plugin(soundtouch)
 fooyin_add_selected_plugin(soxresampler)

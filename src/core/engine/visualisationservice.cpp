@@ -42,7 +42,7 @@ public:
     ~VisualisationSessionPrivate()
     {
         if(backend && token != 0) {
-            (void)backend->unregisterSession(token);
+            backend->unregisterSession(token);
         }
         if(service) {
             Q_EMIT service->sessionActivityChanged();

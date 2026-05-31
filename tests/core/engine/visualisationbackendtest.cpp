@@ -27,7 +27,8 @@
 #include <ranges>
 
 namespace {
-Fooyin::PcmFrame makeStereoSineFrame(int frameCount, int sampleRate, int leftBin, int rightBin, uint64_t streamTimeMs)
+Fooyin::PcmFrame makeStereoSineFrame(int frameCount, int sampleRate, int leftBin, int rightBin, uint64_t streamTimeMs,
+                                     uint32_t streamId = 0)
 {
     static constexpr float twoPi = std::numbers::pi_v<float> * 2.0F;
 
@@ -35,6 +36,7 @@ Fooyin::PcmFrame makeStereoSineFrame(int frameCount, int sampleRate, int leftBin
     frame.format       = Fooyin::AudioFormat{Fooyin::SampleFormat::F32, sampleRate, 2};
     frame.frameCount   = frameCount;
     frame.streamTimeMs = streamTimeMs;
+    frame.streamId     = streamId;
 
     for(size_t index{0}; std::cmp_less(index, frameCount); ++index) {
         const float leftPhase
@@ -84,36 +86,143 @@ TEST(VisualisationBackendTest, ComputesSpectrumForMonoPcmBacklog)
     const auto dominant = std::ranges::max_element(spectrum.magnitudes);
     ASSERT_NE(dominant, spectrum.magnitudes.end());
     EXPECT_EQ(std::distance(spectrum.magnitudes.begin(), dominant), targetBin);
-    EXPECT_GT(*dominant, 0.2F);
+    EXPECT_GT(*dominant, 0.9F);
 }
 
-TEST(VisualisationBackendTest, ResetsBacklogWhenGapExceedsTolerance)
+TEST(VisualisationBackendTest, CompensatesWindowGainForSpectrumMagnitude)
+{
+    static constexpr int fftSize    = 1024;
+    static constexpr int sampleRate = 1024;
+    static constexpr int targetBin  = 7;
+    static constexpr float twoPi    = std::numbers::pi_v<float> * 2.0F;
+
+    Fooyin::PcmFrame frame;
+    frame.format       = Fooyin::AudioFormat{Fooyin::SampleFormat::F32, sampleRate, 1};
+    frame.frameCount   = fftSize;
+    frame.streamTimeMs = 0;
+
+    for(int index{0}; index < fftSize; ++index) {
+        const float phase
+            = twoPi * static_cast<float>(targetBin) * static_cast<float>(index) / static_cast<float>(fftSize);
+        frame.samples[static_cast<size_t>(index)] = std::sin(phase);
+    }
+
+    for(const auto windowFunction : {Fooyin::VisualisationSession::SpectrumWindowFunction::Hann,
+                                     Fooyin::VisualisationSession::SpectrumWindowFunction::BlackmanHarris,
+                                     Fooyin::VisualisationSession::SpectrumWindowFunction::None}) {
+        Fooyin::VisualisationBackend backend;
+        const auto token = backend.registerSession();
+        backend.requestBacklog(token, 1000);
+        backend.appendFrame(frame);
+
+        Fooyin::VisualisationSession::SpectrumWindow spectrum;
+        ASSERT_TRUE(backend.getSpectrumWindow(spectrum, 500, fftSize, {}, windowFunction));
+        ASSERT_TRUE(spectrum.isValid());
+
+        const auto dominant = std::ranges::max_element(spectrum.magnitudes);
+        ASSERT_NE(dominant, spectrum.magnitudes.end());
+        EXPECT_EQ(std::distance(spectrum.magnitudes.begin(), dominant), targetBin);
+        EXPECT_GT(*dominant, 0.9F);
+        EXPECT_LT(*dominant, 1.1F);
+    }
+}
+
+TEST(VisualisationBackendTest, DropsOldBacklogWhenScopedStreamGapExceedsTolerance)
 {
     static constexpr auto frameCount               = 128;
     static constexpr auto sampleRate               = 1000;
-    static constexpr uint64_t discontinuityStartMs = 300;
+    static constexpr uint64_t discontinuityStartMs = 400;
+    static constexpr uint32_t streamId             = 1;
 
     Fooyin::VisualisationBackend backend;
     const auto token = backend.registerSession();
     backend.requestBacklog(token, 1000);
 
-    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0));
-    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 128));
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0, streamId));
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 128, streamId));
 
     Fooyin::VisualisationSession::PcmWindow window;
     ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 128, 20, {}));
     EXPECT_EQ(window.startTimeMs, 108);
 
-    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, discontinuityStartMs));
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, discontinuityStartMs, streamId));
 
     ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 128, 20, {}));
-    EXPECT_GE(window.startTimeMs, discontinuityStartMs);
+    EXPECT_EQ(window.startTimeMs, 108);
+    EXPECT_EQ(window.frameCount, 20);
 
-    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 256, 20, {}));
-    EXPECT_GE(window.startTimeMs, discontinuityStartMs);
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 128, 200, {}));
+    EXPECT_EQ(window.startTimeMs, 0);
+    EXPECT_EQ(window.frameCount, frameCount);
 
-    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, discontinuityStartMs, 20, {}));
-    EXPECT_GE(window.startTimeMs, discontinuityStartMs);
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, discontinuityStartMs, 200, {}));
+    EXPECT_EQ(window.startTimeMs, 0);
+    EXPECT_EQ(window.frameCount, frameCount);
+}
+
+TEST(VisualisationBackendTest, PreservesTimelineWhenPcmStreamChanges)
+{
+    static constexpr auto frameCount = 100;
+    static constexpr auto sampleRate = 1000;
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 2000);
+
+    for(uint64_t streamTimeMs{10000}; streamTimeMs < 10400; streamTimeMs += 100) {
+        backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, streamTimeMs, 1));
+    }
+
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0, 2));
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 100, 2));
+
+    Fooyin::VisualisationSession::PcmWindow window;
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 600, 20, {}));
+
+    EXPECT_EQ(window.startTimeMs, 580);
+    EXPECT_EQ(window.frameCount, 20);
+
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 420, 40, {}));
+    EXPECT_LT(window.startTimeMs, 400);
+}
+
+TEST(VisualisationBackendTest, StreamScopedTimeUpdateSwitchesTimelineExplicitly)
+{
+    static constexpr auto frameCount = 100;
+    static constexpr auto sampleRate = 1000;
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 2000);
+
+    backend.setCurrentTimeMs(1, 180000);
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 180000, 1));
+    backend.setCurrentTimeMs(2, 0);
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0, 2));
+    ASSERT_GT(backend.currentTimeMs(), 0);
+    ASSERT_LT(backend.currentTimeMs(), 500);
+}
+
+TEST(VisualisationBackendTest, ResolvesStartupSpectrumAfterFirstAnalysisFrame)
+{
+    static constexpr auto frameCount = Fooyin::PcmFrame::MaxFrames;
+    static constexpr auto sampleRate = 44100;
+    static constexpr auto fftSize    = 8192;
+
+    Fooyin::VisualisationBackend backend;
+    const auto token = backend.registerSession();
+    backend.requestBacklog(token, 2000);
+
+    backend.appendFrame(makeStereoSineFrame(frameCount, sampleRate, 7, 19, 0, 1));
+
+    Fooyin::VisualisationSession::SpectrumWindow spectrum;
+    ASSERT_TRUE(backend.getSpectrumWindowEndingAt(spectrum, 23, fftSize, {},
+                                                  Fooyin::VisualisationSession::SpectrumWindowFunction::Hann));
+    ASSERT_TRUE(spectrum.isValid());
+    EXPECT_LT(spectrum.fftSize, fftSize);
+    EXPECT_GE(spectrum.fftSize, frameCount / 2);
+    EXPECT_EQ(spectrum.sampleRate, sampleRate);
+    EXPECT_LE(spectrum.startTimeMs, 12);
 }
 
 TEST(VisualisationBackendTest, ChannelSelectionsSupportSingleChannelMidAndSide)
@@ -185,7 +294,9 @@ TEST(VisualisationBackendTest, FormatChangeDropsOldHistory)
 
     Fooyin::VisualisationSession::PcmWindow window;
     ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 23, 20, {}));
-    EXPECT_GE(window.startTimeMs, 1000);
+    EXPECT_LT(window.startTimeMs, 23);
+    EXPECT_EQ(window.format.sampleRate(), 48000);
+    EXPECT_EQ(window.format.channelCount(), 1);
 
     ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 1021, 20, {}));
     EXPECT_EQ(window.format.sampleRate(), 48000);

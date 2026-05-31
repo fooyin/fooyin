@@ -38,6 +38,7 @@ AudioAnalysisBus::AudioAnalysisBus(size_t slotCapacity)
     , m_hopChannels{0}
     , m_hopSampleRate{0}
     , m_hopStreamTimeMs{0}
+    , m_hopStreamId{0}
 {
     m_worker = std::jthread{[this](std::stop_token stopToken) { run(stopToken); }};
 }
@@ -108,7 +109,7 @@ void AudioAnalysisBus::setPcmReadyHandler(PcmReadyHandler handler)
 }
 
 void AudioAnalysisBus::push(const std::span<const float> samples, AudioFormat format, uint64_t streamTimeMs,
-                            const TimePoint presentationTime)
+                            const uint32_t streamId, const TimePoint presentationTime)
 {
     if(!hasAnyActiveConsumer()) {
         return;
@@ -159,6 +160,7 @@ void AudioAnalysisBus::push(const std::span<const float> samples, AudioFormat fo
         slot->sampleCount         = static_cast<int>(slotSampleCount);
         slot->format              = format;
         slot->streamTimeMs        = streamTimeMs + offsetMs;
+        slot->streamId            = streamId;
         slot->presentationTime    = presentationTime + std::chrono::milliseconds{offsetMs};
         slot->discontinuityBefore = m_discontinuityPending.exchange(false, std::memory_order_relaxed);
         std::copy_n(samples.data() + static_cast<std::ptrdiff_t>(sampleOffset), slotSampleCount, slot->samples.data());
@@ -274,7 +276,8 @@ void AudioAnalysisBus::processSlot(const AudioAnalysisSlot& slot)
         resetHopState();
     }
 
-    if(m_hopFrames > 0 && (m_hopChannels != channelCount || m_hopSampleRate != sampleRate)) {
+    if(m_hopFrames > 0
+       && (m_hopChannels != channelCount || m_hopSampleRate != sampleRate || m_hopStreamId != slot.streamId)) {
         resetHopState();
     }
 
@@ -286,6 +289,7 @@ void AudioAnalysisBus::processSlot(const AudioAnalysisSlot& slot)
             m_hopChannels         = channelCount;
             m_hopSampleRate       = sampleRate;
             m_hopStreamTimeMs     = slot.streamTimeMs + offsetMs;
+            m_hopStreamId         = slot.streamId;
             m_hopPresentationTime = slot.presentationTime + std::chrono::milliseconds{offsetMs};
             m_hopFormat           = slot.format;
         }
@@ -331,6 +335,7 @@ void AudioAnalysisBus::emitCompletedHop()
         frame.format           = m_hopFormat;
         frame.frameCount       = m_hopFrames;
         frame.streamTimeMs     = m_hopStreamTimeMs;
+        frame.streamId         = m_hopStreamId;
         frame.presentationTime = m_hopPresentationTime;
 
         const auto sampleCount = static_cast<size_t>(m_hopFrames) * static_cast<size_t>(m_hopChannels);
@@ -372,6 +377,7 @@ void AudioAnalysisBus::resetHopState()
     m_hopChannels         = 0;
     m_hopSampleRate       = 0;
     m_hopStreamTimeMs     = 0;
+    m_hopStreamId         = 0;
     m_hopPresentationTime = {};
     m_hopFormat           = {};
 }

@@ -143,7 +143,7 @@ private:
     void setWorkingFormats(const AudioFormat& input, const AudioFormat& output);
     void clearFormats();
     void rebuildProcessChunksFromMixerRead(const AudioMixer::ReadResult& readResult, int framesRead);
-    void tapAnalysis(AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs);
+    void tapAnalysis(AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs, StreamId streamId);
 
     Engine::DspChain m_perTrackChainDefs;
 

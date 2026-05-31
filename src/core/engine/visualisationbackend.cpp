@@ -20,26 +20,77 @@
 #include "visualisationbackend.h"
 
 #include <algorithm>
+#include <chrono>
 #include <numbers>
 
-#include <algorithm>
-#include <chrono>
+#include <functional>
 #include <mutex>
+#include <ranges>
 #include <utility>
 
 constexpr uint64_t BacklogPaddingMs       = 100;
-constexpr uint64_t ContinuityToleranceMs  = 10;
+constexpr uint64_t ContinuityToleranceMs  = 100;
 constexpr uint64_t DefaultBacklogDuration = 250;
+constexpr int MinimumSpectrumFrameCount   = 256;
 
 namespace {
-int64_t nowNs()
+int64_t steadyClockMs()
 {
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch())
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch())
         .count();
 }
+
+int64_t steadyClockMs(std::chrono::steady_clock::time_point time)
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()).count();
+}
+
+uint64_t addSignedOffset(uint64_t value, int64_t offset)
+{
+    if(offset >= 0) {
+        return value + static_cast<uint64_t>(offset);
+    }
+
+    const auto delta = static_cast<uint64_t>(-offset);
+    return value > delta ? value - delta : 0;
+}
+
+int previousPowerOfTwo(int value)
+{
+    int power{1};
+    while(power <= value / 2) {
+        power *= 2;
+    }
+    return power;
+}
+
+float spectrumWindowGain(Fooyin::VisualisationSession::SpectrumWindowFunction windowFunction, float phase)
+{
+    using WindowFunction = Fooyin::VisualisationSession::SpectrumWindowFunction;
+
+    switch(windowFunction) {
+        case WindowFunction::BlackmanHarris:
+            return 0.35875F - (0.48829F * std::cos(phase)) + (0.14128F * std::cos(2.0F * phase))
+                 - (0.01168F * std::cos(3.0F * phase));
+        case WindowFunction::Hann:
+            return 0.5F * (1.0F - std::cos(phase));
+        case WindowFunction::None:
+            return 1.0F;
+    }
+
+    return 1.0F;
+}
+
 } // namespace
 
 namespace Fooyin {
+size_t VisualisationBackend::WindowCacheKeyHash::operator()(const WindowCacheKey& key) const
+{
+    const auto fftHash      = std::hash<int>{}(key.fftSize);
+    const auto functionHash = std::hash<int>{}(static_cast<int>(key.function));
+    return fftHash ^ (functionHash + 0x9e3779b9U + (fftHash << 6U) + (fftHash >> 2U));
+}
+
 VisualisationBackend::SessionToken VisualisationBackend::registerSession()
 {
     const std::unique_lock lock{m_mutex};
@@ -64,9 +115,11 @@ VisualisationBackend::VisualisationBackend()
     , m_frameCount{0}
     , m_startStreamFrame{0}
     , m_nextStreamFrame{0}
+    , m_currentStreamId{0}
     , m_currentTimeMs{0}
-    , m_timeAnchorNs{0}
-    , m_isPlaying{false}
+    , m_currentTimeReferenceClockMs{0}
+    , m_currentTimePublished{false}
+    , m_currentTimeHasPresentationClock{false}
 { }
 
 bool VisualisationBackend::unregisterSession(SessionToken token)
@@ -91,45 +144,61 @@ bool VisualisationBackend::hasActiveSessions() const
 
 void VisualisationBackend::setCurrentTimeMs(uint64_t currentTimeMs)
 {
-    m_currentTimeMs.store(currentTimeMs, std::memory_order_relaxed);
-    m_timeAnchorNs.store(nowNs(), std::memory_order_relaxed);
+    setCurrentTimeMs(0, currentTimeMs);
+}
+
+void VisualisationBackend::setCurrentTimeMs(uint32_t streamId, uint64_t currentTimeMs)
+{
+    uint64_t visualTimeMs{currentTimeMs};
+
+    {
+        const std::shared_lock lock{m_mutex};
+        visualTimeMs = mapSourceTimeToVisualTime(streamId, currentTimeMs);
+    }
+
+    m_currentTimeMs.store(visualTimeMs, std::memory_order_relaxed);
+    m_currentTimeReferenceClockMs.store(0, std::memory_order_relaxed);
+    m_currentTimePublished.store(true, std::memory_order_relaxed);
+    m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+}
+
+void VisualisationBackend::setCurrentTimeMs(uint32_t streamId, uint64_t currentTimeMs,
+                                            std::chrono::steady_clock::time_point presentationTime)
+{
+    setCurrentTimeMs(streamId, currentTimeMs);
+    m_currentTimeReferenceClockMs.store(steadyClockMs(presentationTime), std::memory_order_relaxed);
+    m_currentTimeHasPresentationClock.store(true, std::memory_order_relaxed);
 }
 
 uint64_t VisualisationBackend::currentTimeMs() const
 {
-    const uint64_t baseTimeMs = m_currentTimeMs.load(std::memory_order_relaxed);
-    if(!m_isPlaying.load(std::memory_order_relaxed)) {
-        return baseTimeMs;
+    const uint64_t currentTimeMs = m_currentTimeMs.load(std::memory_order_relaxed);
+    if(currentTimeMs == 0 || !m_currentTimeHasPresentationClock.load(std::memory_order_relaxed)) {
+        return currentTimeMs;
     }
 
-    const int64_t anchorNs = m_timeAnchorNs.load(std::memory_order_relaxed);
-    const int64_t deltaNs  = nowNs() - anchorNs;
-    if(deltaNs <= 0) {
-        return baseTimeMs;
+    const int64_t referenceClockMs = m_currentTimeReferenceClockMs.load(std::memory_order_relaxed);
+    if(referenceClockMs <= 0) {
+        return currentTimeMs;
     }
 
-    return baseTimeMs + static_cast<uint64_t>(deltaNs / 1'000'000LL);
-}
+    const int64_t elapsedMs = steadyClockMs() - referenceClockMs;
+    if(elapsedMs >= 0) {
+        return currentTimeMs + static_cast<uint64_t>(elapsedMs);
+    }
 
-void VisualisationBackend::setPlaying()
-{
-    m_currentTimeMs.store(currentTimeMs(), std::memory_order_relaxed);
-    m_timeAnchorNs.store(nowNs(), std::memory_order_relaxed);
-    m_isPlaying.store(true, std::memory_order_relaxed);
-}
-
-void VisualisationBackend::setPaused()
-{
-    m_currentTimeMs.store(currentTimeMs(), std::memory_order_relaxed);
-    m_timeAnchorNs.store(nowNs(), std::memory_order_relaxed);
-    m_isPlaying.store(false, std::memory_order_relaxed);
+    const auto earlyMs = static_cast<uint64_t>(-elapsedMs);
+    return currentTimeMs > earlyMs ? currentTimeMs - earlyMs : 0;
 }
 
 void VisualisationBackend::setStopped()
 {
     m_currentTimeMs.store(0, std::memory_order_relaxed);
-    m_timeAnchorNs.store(nowNs(), std::memory_order_relaxed);
-    m_isPlaying.store(false, std::memory_order_relaxed);
+    m_currentTimeReferenceClockMs.store(0, std::memory_order_relaxed);
+    m_currentTimePublished.store(false, std::memory_order_relaxed);
+    m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+    const std::unique_lock lock{m_mutex};
+    m_currentStreamId = 0;
 }
 
 void VisualisationBackend::appendFrame(const PcmFrame& frame)
@@ -154,42 +223,77 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
         return;
     }
 
-    bool resetBacklog{false};
-    if(m_format != format) {
+    const uint32_t sourceKey          = frame.streamId;
+    const uint64_t reportedStartFrame = msToFrames(frame.streamTimeMs, sampleRate);
+    const uint64_t reportedNextFrame  = reportedStartFrame + static_cast<uint64_t>(frameCount);
+    bool resetBacklog                 = false;
+    const bool formatChanged          = m_format.isValid() && m_format != format;
+
+    if(formatChanged) {
         resetBacklog = true;
     }
+    else if(m_frameCount > 0) {
+        if(const auto it = m_sourceTimelines.find(sourceKey); it != m_sourceTimelines.end()) {
+            const uint64_t toleranceFrames   = std::max<uint64_t>(1, msToFrames(ContinuityToleranceMs, sampleRate));
+            const bool sourceTimestampBehind = reportedStartFrame + toleranceFrames < it->second.nextFrame;
+            const bool sourceTimestampAhead  = reportedStartFrame > it->second.nextFrame + toleranceFrames;
 
-    const uint64_t reportedStartFrame = msToFrames(frame.streamTimeMs, sampleRate);
-    if(m_frameCount == 0) {
-        m_startStreamFrame = reportedStartFrame;
-        m_nextStreamFrame  = reportedStartFrame;
-    }
-    else {
-        const uint64_t toleranceFrames = std::max<uint64_t>(1, msToFrames(ContinuityToleranceMs, sampleRate));
-        if(reportedStartFrame + toleranceFrames < m_nextStreamFrame
-           || reportedStartFrame > m_nextStreamFrame + toleranceFrames) {
-            resetBacklog = true;
+            if(sourceTimestampBehind || sourceTimestampAhead) {
+                resetBacklog = true;
+            }
         }
     }
 
     if(resetBacklog) {
         resetLocked();
-        m_format           = format;
-        m_startStreamFrame = reportedStartFrame;
-        m_nextStreamFrame  = reportedStartFrame;
+        m_currentTimeMs.store(0, std::memory_order_relaxed);
+        m_currentTimeReferenceClockMs.store(0, std::memory_order_relaxed);
+        m_currentTimePublished.store(false, std::memory_order_relaxed);
+        m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+    }
+
+    if(!m_format.isValid()) {
+        m_format = format;
+    }
+
+    if(m_frameCount == 0) {
+        m_startStreamFrame = 0;
+        m_nextStreamFrame  = 0;
+    }
+
+    const uint64_t visualStartFrame = m_nextStreamFrame;
+    const uint64_t visualStartMs    = (visualStartFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+
+    auto& sourceTimeline              = m_sourceTimelines[sourceKey];
+    sourceTimeline.nextFrame          = reportedNextFrame;
+    sourceTimeline.visualTimeOffsetMs = static_cast<int64_t>(visualStartMs) - static_cast<int64_t>(frame.streamTimeMs);
+
+    if(frame.streamId != 0) {
+        m_currentStreamId = frame.streamId;
     }
 
     const size_t requiredFrames = std::max<size_t>(
         static_cast<size_t>(frameCount), requestedBacklogFrames(sampleRate) + static_cast<size_t>(frameCount));
     ensureCapacity(requiredFrames);
     appendFrames(std::span<const float>{frame.samples.data(), sampleCount}, static_cast<size_t>(frameCount),
-                 channelCount, m_nextStreamFrame);
+                 channelCount, visualStartFrame);
+
+    const uint64_t availableEndMs = (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+    if(availableEndMs > 0
+       && (!m_currentTimePublished.load(std::memory_order_relaxed)
+           || m_currentTimeMs.load(std::memory_order_relaxed) == 0)) {
+        m_currentTimeMs.store(availableEndMs, std::memory_order_relaxed);
+        m_currentTimePublished.store(true, std::memory_order_relaxed);
+        m_currentTimeHasPresentationClock.store(false, std::memory_order_relaxed);
+    }
 }
 
 void VisualisationBackend::reset()
 {
-    const std::unique_lock lock{m_mutex};
-    resetLocked();
+    {
+        const std::unique_lock lock{m_mutex};
+        resetLocked();
+    }
     setStopped();
 }
 
@@ -226,6 +330,41 @@ bool VisualisationBackend::resolveWindow(WindowRange& out, uint64_t timeMs, int 
 
     out.startFrame = startFrame;
     out.frameCount = frameCount;
+    return true;
+}
+
+bool VisualisationBackend::resolveSpectrumWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
+                                                         int minimumFrameCount) const
+{
+    // Keep startup/track change windows anchored to playback time. The generic end-window resolver clamps to
+    // the first full window, which makes larger FFT sizes appear frozen until playback catches up.
+    if(std::cmp_less(m_frameCount, minimumFrameCount) || !m_format.isValid() || m_format.sampleRate() <= 0
+       || m_format.channelCount() <= 0 || requestedFrameCount < minimumFrameCount) {
+        return false;
+    }
+
+    const uint64_t availableStartFrame = m_startStreamFrame;
+    const uint64_t availableEndFrame   = m_nextStreamFrame;
+    const uint64_t timeFrame           = msToFrames(endTimeMs, m_format.sampleRate());
+    const uint64_t clampedEndFrame     = std::clamp(timeFrame, availableStartFrame, availableEndFrame);
+
+    if(clampedEndFrame <= availableStartFrame) {
+        return false;
+    }
+
+    const uint64_t availableWindowFrames = clampedEndFrame - availableStartFrame;
+    int frameCount                       = requestedFrameCount;
+    if(std::cmp_less(availableWindowFrames, requestedFrameCount)) {
+        frameCount = previousPowerOfTwo(static_cast<int>(availableWindowFrames));
+    }
+
+    if(frameCount < minimumFrameCount) {
+        return false;
+    }
+
+    const auto windowFrames = static_cast<uint64_t>(frameCount);
+    out.startFrame          = clampedEndFrame - windowFrames;
+    out.frameCount          = frameCount;
     return true;
 }
 
@@ -289,7 +428,7 @@ bool VisualisationBackend::getSpectrumWindowEndingAt(VisualisationSession::Spect
         const std::shared_lock lock{m_mutex};
 
         WindowRange range;
-        if(!resolveWindow(range, endTimeMs, fftSize, 2, WindowAnchor::End)) {
+        if(!resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)) {
             return false;
         }
 
@@ -301,14 +440,26 @@ bool VisualisationBackend::getSpectrumWindowEndingAt(VisualisationSession::Spect
     return fillSpectrumWindow(out, window, selection, windowFunction);
 }
 
+uint64_t VisualisationBackend::mapSourceTimeToVisualTime(uint32_t streamId, uint64_t sourceTimeMs) const
+{
+    if(const auto it = m_sourceTimelines.find(streamId); it != m_sourceTimelines.end()) {
+        return addSignedOffset(sourceTimeMs, it->second.visualTimeOffsetMs);
+    }
+
+    if(m_format.isValid() && m_format.sampleRate() > 0 && m_nextStreamFrame > m_startStreamFrame) {
+        return (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(m_format.sampleRate());
+    }
+
+    return sourceTimeMs;
+}
+
 bool VisualisationBackend::fillWindow(VisualisationSession::PcmWindow& out, uint64_t startFrame, int frameCount,
                                       const ChannelSelection& selection) const
 {
     out.format = m_format;
 
-    const auto selectionMode       = selection.mixMode;
-    const bool outputSingleChannel = selectionMode != ChannelSelection::MixMode::AllChannels;
-    if(outputSingleChannel) {
+    const auto selectionMode = selection.mixMode;
+    if(selectionMode != ChannelSelection::MixMode::AllChannels) {
         out.format.setChannelCount(1);
         out.format.clearChannelLayout();
     }
@@ -321,7 +472,7 @@ bool VisualisationBackend::fillWindow(VisualisationSession::PcmWindow& out, uint
 
     const int sourceChannels = m_format.channelCount();
 
-    const auto relativeStart = static_cast<size_t>(startFrame - m_startStreamFrame);
+    const auto relativeStart = startFrame - m_startStreamFrame;
     if(selectionMode == ChannelSelection::MixMode::MonoAverage) {
         for(int frameIndex{0}; frameIndex < frameCount; ++frameIndex) {
             const size_t sourceFrame
@@ -421,9 +572,31 @@ bool VisualisationBackend::fillSpectrumWindow(VisualisationSession::SpectrumWind
     const int channelCount = window.format.channelCount();
 
     const int transformChannelCount = selection.mixMode == ChannelSelection::MixMode::AllChannels ? channelCount : 1;
+    const bool applyWindow          = window.frameCount > 2 && windowFunction != SpectrumWindowFunction::None;
+
+    float magnitudeScale{1.0F};
+    std::vector<float> windowGains;
+
+    if(applyWindow) {
+        windowGains.resize(static_cast<size_t>(window.frameCount), 1.0F);
+
+        float gainSum{0.0F};
+        const auto denom = static_cast<float>(window.frameCount - 1);
+
+        for(int frameIndex{0}; frameIndex < window.frameCount; ++frameIndex) {
+            const float phase = (static_cast<float>(frameIndex) * 2.0F * std::numbers::pi_v<float>) / denom;
+            const float gain  = spectrumWindowGain(windowFunction, phase);
+            windowGains[static_cast<size_t>(frameIndex)] = gain;
+            gainSum += gain;
+        }
+
+        if(gainSum > 0.0F) {
+            magnitudeScale = static_cast<float>(window.frameCount) / gainSum;
+        }
+    }
 
     for(int channel{0}; channel < transformChannelCount; ++channel) {
-        if(window.frameCount == 2 || windowFunction == SpectrumWindowFunction::None) {
+        if(!applyWindow) {
             for(int frameIndex{0}; frameIndex < window.frameCount; ++frameIndex) {
                 const size_t sampleIndex = (static_cast<size_t>(frameIndex) * static_cast<size_t>(channelCount))
                                          + static_cast<size_t>(channel);
@@ -431,26 +604,11 @@ bool VisualisationBackend::fillSpectrumWindow(VisualisationSession::SpectrumWind
             }
         }
         else {
-            const auto denom = static_cast<float>(window.frameCount - 1);
             for(int frameIndex{0}; frameIndex < window.frameCount; ++frameIndex) {
-                const float phase = (static_cast<float>(frameIndex) * 2.0F * std::numbers::pi_v<float>) / denom;
-                float windowGain{1.0};
-
-                switch(windowFunction) {
-                    case SpectrumWindowFunction::Hann:
-                        windowGain = 0.5F * (1.0F - std::cos(phase));
-                        break;
-                    case SpectrumWindowFunction::BlackmanHarris:
-                        windowGain = 0.35875F - (0.48829F * std::cos(phase)) + (0.14128F * std::cos(2.0F * phase))
-                                   - (0.01168F * std::cos(3.0F * phase));
-                        break;
-                    case SpectrumWindowFunction::None:
-                        break;
-                }
-
                 const size_t sampleIndex = (static_cast<size_t>(frameIndex) * static_cast<size_t>(channelCount))
                                          + static_cast<size_t>(channel);
-                fftInput[static_cast<size_t>(frameIndex)] = samples[sampleIndex] * windowGain;
+                fftInput[static_cast<size_t>(frameIndex)]
+                    = samples[sampleIndex] * windowGains[static_cast<size_t>(frameIndex)];
             }
         }
 
@@ -459,7 +617,7 @@ bool VisualisationBackend::fillSpectrumWindow(VisualisationSession::SpectrumWind
         }
 
         for(size_t bin{0}; bin < out.magnitudes.size(); ++bin) {
-            out.magnitudes[bin] = std::max(out.magnitudes[bin], magnitudes[bin]);
+            out.magnitudes[bin] = std::max(out.magnitudes[bin], magnitudes[bin] * magnitudeScale);
         }
     }
 
@@ -481,7 +639,9 @@ void VisualisationBackend::resetLocked()
     m_frameCount       = 0;
     m_startStreamFrame = 0;
     m_nextStreamFrame  = 0;
+    m_currentStreamId  = 0;
     m_format           = AudioFormat{SampleFormat::F32, 0, 0};
+    m_sourceTimelines.clear();
 }
 
 void VisualisationBackend::ensureCapacity(size_t requiredFrames)
@@ -513,8 +673,7 @@ void VisualisationBackend::ensureCapacity(size_t requiredFrames)
 size_t VisualisationBackend::requestedBacklogFrames(int sampleRate) const
 {
     uint64_t requestedBacklogMs{DefaultBacklogDuration};
-    for(const auto& [token, backlogMs] : m_backlogRequests) {
-        Q_UNUSED(token);
+    for(const auto& backlogMs : m_backlogRequests | std::views::values) {
         requestedBacklogMs = std::max(requestedBacklogMs, backlogMs);
     }
 
