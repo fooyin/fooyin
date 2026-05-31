@@ -118,6 +118,7 @@ private:
     void invalidateBandMap();
     void ensureBandMap(const VisualisationSession::SpectrumWindow& spectrum);
     void ensureStaticLayer(const QPalette& palette) const;
+    [[nodiscard]] QRectF staticLayerSourceRect(const QRect& logicalRect) const;
 
     VisualisationSessionPtr m_session;
     SpectrumWidget::ConfigData m_config;
@@ -144,6 +145,7 @@ private:
     QPointer<ToolTip> m_toolTip;
     int m_toolTipBand;
     mutable QPixmap m_staticLayer;
+    mutable qreal m_staticLayerDpr{1.0};
     int m_bandMapFftSize;
     int m_bandMapSampleRate;
     int m_bandMapBandCount;
