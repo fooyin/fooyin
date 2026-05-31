@@ -538,7 +538,7 @@ void SpectrumView::paint(QPainter& painter, const QRect& rect, const QPalette& p
 
     ensureStaticLayer(palette);
     if(!m_staticLayer.isNull()) {
-        painter.drawPixmap(rect.topLeft(), m_staticLayer, rect);
+        painter.drawPixmap(rect.topLeft(), m_staticLayer, staticLayerSourceRect(rect));
     }
 
     const Colours customColours{colours()};
@@ -1029,19 +1029,30 @@ void SpectrumView::ensureBandMap(const VisualisationSession::SpectrumWindow& spe
 
 void SpectrumView::ensureStaticLayer(const QPalette& palette) const
 {
-    const QSize size = this->size();
-    const qreal dpr  = devicePixelRatioF();
+    const QSize size       = this->size();
+    const qreal dpr        = devicePixelRatioF();
+    const QSize targetSize = {static_cast<int>(std::ceil(static_cast<qreal>(size.width()) * dpr)),
+                              static_cast<int>(std::ceil(static_cast<qreal>(size.height()) * dpr))};
 
-    if(!m_staticLayer.isNull() && m_staticLayer.size() == (size * dpr)
+    if(!m_staticLayer.isNull() && m_staticLayer.size() == targetSize
        && qFuzzyCompare(m_staticLayer.devicePixelRatio(), dpr)) {
         return;
     }
 
-    m_staticLayer = QPixmap{size * dpr};
+    m_staticLayer = QPixmap{targetSize};
     m_staticLayer.setDevicePixelRatio(dpr);
+    m_staticLayerDpr = dpr;
 
     QPainter painter{&m_staticLayer};
     m_axisRenderer.paint(painter, m_geometry, size, palette, axisFont());
+}
+
+QRectF SpectrumView::staticLayerSourceRect(const QRect& logicalRect) const
+{
+    return {static_cast<qreal>(logicalRect.x()) * m_staticLayerDpr,
+            static_cast<qreal>(logicalRect.y()) * m_staticLayerDpr,
+            static_cast<qreal>(logicalRect.width()) * m_staticLayerDpr,
+            static_cast<qreal>(logicalRect.height()) * m_staticLayerDpr};
 }
 } // namespace Fooyin::Spectrum
 
