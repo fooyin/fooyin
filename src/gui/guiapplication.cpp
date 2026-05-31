@@ -251,7 +251,6 @@ public:
     std::unique_ptr<SystemTrayIcon> m_trayIcon;
     WidgetContext* m_mainContext;
     std::unique_ptr<PlaylistController> m_playlistController;
-    std::unique_ptr<CurrentPlaylistController> m_currentPlaylistController;
     PlaylistInteractor m_playlistInteractor;
     TrackSelectionController m_selectionController;
     SearchController* m_searchController;
@@ -306,7 +305,6 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_mainWindow{std::make_unique<MainWindow>(m_actionManager, m_menubar.get(), m_library, m_settings)}
     , m_mainContext{new WidgetContext(m_mainWindow.get(), Context{"Fooyin.MainWindow"}, m_self)}
     , m_playlistController{std::make_unique<PlaylistController>(m_core, &m_selectionController)}
-    , m_currentPlaylistController{std::make_unique<CurrentPlaylistController>(m_self)}
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library, m_settings}
     , m_selectionController{m_actionManager, m_core->audioLoader().get(), m_settings, m_playlistController.get()}
     , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
@@ -328,7 +326,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          &m_layoutProvider,
                          &m_selectionController,
                          m_searchController,
-                         m_currentPlaylistController.get(),
+                         m_playlistController.get(),
                          m_propertiesDialog,
                          m_scriptCommandHandler.get(),
                          &m_widgetProvider,
@@ -341,13 +339,6 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_widgets{new Widgets(m_core, m_self, m_guiPluginContext, m_mainWindow.get(), &m_playlistInteractor, m_self)}
     , m_coverProvider{m_coverRepository}
 {
-    m_currentPlaylistController->setCurrentPlaylistProvider(
-        [this]() { return m_playlistController->currentPlaylist(); });
-    m_currentPlaylistController->setChangeCurrentPlaylistHandler(
-        [this](const UId& id) { m_playlistController->changeCurrentPlaylist(id); });
-    QObject::connect(m_playlistController.get(), &PlaylistController::currentPlaylistChanged,
-                     m_currentPlaylistController.get(), &CurrentPlaylistController::handleCurrentPlaylistChanged);
-
     m_scriptParser.addProvider(playlistVariableProvider());
 }
 

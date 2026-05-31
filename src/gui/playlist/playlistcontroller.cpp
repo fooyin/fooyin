@@ -38,7 +38,7 @@
 
 namespace Fooyin {
 PlaylistController::PlaylistController(Application* app, TrackSelectionController* selectionController, QObject* parent)
-    : QObject{parent}
+    : CurrentPlaylistController{parent}
     , m_handler{app->playlistHandler()}
     , m_playerController{app->playerController()}
     , m_selectionController{selectionController}

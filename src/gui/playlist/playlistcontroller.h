@@ -19,13 +19,12 @@
 
 #pragma once
 
-#include "fygui_export.h"
-
 #include "playlist/playlistmodel.h"
 
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlistchangeset.h>
+#include <gui/playlist/currentplaylistcontroller.h>
 
 #include <QObject>
 
@@ -54,7 +53,7 @@ struct PlaylistViewState
     int scrollPos{0};
 };
 
-class FYGUI_EXPORT PlaylistController : public QObject
+class PlaylistController : public CurrentPlaylistController
 {
     Q_OBJECT
 
@@ -78,11 +77,11 @@ public:
 
     [[nodiscard]] bool currentIsActive() const;
     [[nodiscard]] bool currentIsAuto() const;
-    [[nodiscard]] Playlist* currentPlaylist() const;
-    [[nodiscard]] UId currentPlaylistId() const;
+    [[nodiscard]] Playlist* currentPlaylist() const override;
+    [[nodiscard]] UId currentPlaylistId() const override;
 
     void changeCurrentPlaylist(Playlist* playlist);
-    void changeCurrentPlaylist(const UId& id);
+    void changeCurrentPlaylist(const UId& id) override;
     void changePlaylistIndex(const UId& playlistId, int index);
     [[nodiscard]] bool canClearCurrentPlaylist() const;
     void clearCurrentPlaylist();
@@ -106,7 +105,6 @@ public:
 
 Q_SIGNALS:
     void playlistsLoaded();
-    void currentPlaylistChanged(Fooyin::Playlist* prevPlaylist, Fooyin::Playlist* playlist);
     void currentPlaylistUpdated(Fooyin::Playlist* playlist);
     void currentPlaylistTracksPatched(const Fooyin::PlaylistChangeset& changeSet);
     void currentPlaylistTracksChanged(const std::vector<int>& indexes, bool allNew);
