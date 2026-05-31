@@ -374,9 +374,23 @@ bool EngineHandler::hasAutoTrackEndTransitionEnabled() const
 
 bool EngineHandler::hasDistinctUpcomingTrack() const
 {
-    return m_upcomingTrack.track.isValid()
-        && !samePlaybackItem(makePlaybackItem(m_upcomingTrack.track.track, m_upcomingTrack.itemId),
-                             makePlaybackItem(m_playerController->currentTrack(), m_currentTrackItemId));
+    if(!m_upcomingTrack.track.isValid()) {
+        return false;
+    }
+
+    const Track currentTrack  = m_playerController->currentTrack();
+    const Track upcomingTrack = m_upcomingTrack.track.track;
+
+    if(samePlaybackItem(makePlaybackItem(upcomingTrack, m_upcomingTrack.itemId),
+                        makePlaybackItem(currentTrack, m_currentTrackItemId))) {
+        return false;
+    }
+
+    if((m_playerController->playMode() & Playlist::RepeatTrack) && sameTrackSegment(upcomingTrack, currentTrack)) {
+        return false;
+    }
+
+    return true;
 }
 
 void EngineHandler::noteEngineOwnedTransition(const Track& track, uint64_t generation)
