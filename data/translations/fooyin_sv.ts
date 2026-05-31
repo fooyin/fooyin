@@ -1002,7 +1002,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="360"/>
         <source>Returns a directory name from a path</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar ett mappnamn från en sökväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="361"/>
@@ -1015,7 +1015,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="363"/>
         <source>Returns a parent directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar en föräldermapps sökväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="365"/>
@@ -7355,7 +7355,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="129"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="130"/>
