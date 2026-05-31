@@ -69,7 +69,7 @@ QPixmap blurredPixmap(const QPixmap& pixmap, qreal radius)
     }
 
     QImage blurred = pixmap.toImage().convertToFormat(QImage::Format_ARGB32_Premultiplied);
-    qt_blurImage(blurred, radius, true, false);
+    qt_blurImage(blurred, radius, true);
     return QPixmap::fromImage(blurred);
 }
 } // namespace
@@ -552,7 +552,7 @@ QPixmap PlaylistView::preparedBackgroundPixmap(const QPixmap& source, Background
     cache.dpr          = dpr;
     cache.pixmap       = source.scaled(targetSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     cache.pixmap.setDevicePixelRatio(dpr);
-    cache.pixmap = blurredPixmap(cache.pixmap, m_bgOptions.blur);
+    cache.pixmap = blurredPixmap(cache.pixmap, m_bgOptions.blur * dpr);
 
     return cache.pixmap;
 }
