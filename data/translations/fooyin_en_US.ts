@@ -3367,12 +3367,12 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="903"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="908"/>
         <source>Equaliser</source>
-        <translation type="unfinished"></translation>
+        <translation>Equalizer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="913"/>
         <source>Open Equaliser settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Open Equalizer settings</translation>
     </message>
 </context>
 <context>
@@ -3405,7 +3405,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="227"/>
         <source>Equaliser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Equalizer Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="267"/>
@@ -3464,13 +3464,13 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="680"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="692"/>
         <source>Import Equaliser Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Import Equalizer Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="651"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="713"/>
         <source>Equaliser Preset (*.feq)</source>
-        <translation type="unfinished"></translation>
+        <translation>Equalizer Preset (*.feq)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="659"/>
@@ -3511,7 +3511,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="738"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="750"/>
         <source>Export Equaliser Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Equalizer Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="739"/>
