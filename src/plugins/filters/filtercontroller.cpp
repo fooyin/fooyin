@@ -573,7 +573,6 @@ void FilterControllerPrivate::sortGroupedFilters(FilterGroupState& group)
     std::ranges::stable_sort(group.filters, [](const FilterWidget* left, const FilterWidget* right) {
         return left->index() < right->index();
     });
-    recalculateIndexesOfGroup(group.id);
 }
 
 void FilterControllerPrivate::scheduleRecompute(const Id& groupId)
@@ -862,6 +861,9 @@ void FilterControllerPrivate::handleFilterUpdated(FilterWidget* widget)
     if(oldGroupId && oldGroupId.value() == newGroupId) {
         if(m_groups.contains(newGroupId)) {
             auto& group = m_groups.at(newGroupId);
+            if(newPublicGroup.isValid() && widget->index() < 0) {
+                widget->setIndex(static_cast<int>(group.filters.size()) - 1);
+            }
             syncStages(group);
             scheduleRecompute(newGroupId);
         }
@@ -894,7 +896,7 @@ void FilterControllerPrivate::attachWidget(FilterWidget* widget, const Id& publi
         m_ungrouped.emplace(widget);
     }
 
-    if(publicGroupId.isValid() && (widget->index() < 0 || widget->index() > static_cast<int>(group.filters.size()))) {
+    if(publicGroupId.isValid() && widget->index() < 0) {
         widget->setIndex(static_cast<int>(group.filters.size()));
     }
 

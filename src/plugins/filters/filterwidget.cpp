@@ -359,6 +359,21 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
     layout["State"_L1] = QString::fromUtf8(state.toBase64());
 }
 
+void FilterWidget::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& context, bool isRoot)
+{
+    FyWidget::saveCopyLayoutData(layout, context, isRoot);
+
+    if(isRoot) {
+        layout["Index"_L1] = -1;
+        return;
+    }
+
+    const QString group = layout.value("Group"_L1).toString();
+    if(!group.isEmpty()) {
+        layout["Group"_L1] = context.mappedString(u"Fooyin.Filters.FilterGroup"_s, group);
+    }
+}
+
 void FilterWidget::loadLayoutData(const QJsonObject& layout)
 {
     applyConfig(configFromLayout(layout));
