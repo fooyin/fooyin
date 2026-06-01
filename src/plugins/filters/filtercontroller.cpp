@@ -514,6 +514,24 @@ void FilterControllerPrivate::handleSearchChanged(FilterWidget* filter, const QS
         return;
     }
 
+    if(!stage->selectedKeys.empty()) {
+        stage->selectedKeys.clear();
+        stage->selectedTracks.clear();
+        stage->isActive = false;
+        updateWidgetSelection(*stage);
+
+        ++group->revision;
+        stage->revision = group->revision;
+
+        const bool hasPriorActive
+            = std::ranges::any_of(group->stages | std::views::take(location->stageIndex), &FilterStageState::isActive);
+
+        publishStage(group->id, location->stageIndex);
+        refreshStageSearch(group->id, location->stageIndex, group->revision);
+        recomputeStage(group->id, location->stageIndex + 1, group->revision, stage->inputTracks, hasPriorActive);
+        return;
+    }
+
     refreshStageSearch(group->id, location->stageIndex, group->revision);
 }
 
