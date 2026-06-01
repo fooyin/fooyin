@@ -30,6 +30,15 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+QString LayoutCopyContext::mappedString(const QString& scope, const QString& value)
+{
+    const QString key = scope + u':' + value;
+    if(!m_stringMappings.contains(key)) {
+        m_stringMappings.emplace(key, Utils::generateUniqueHash());
+    }
+    return m_stringMappings.at(key);
+}
+
 FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
     , m_id{Utils::generateUniqueHash()}
@@ -112,6 +121,18 @@ void FyWidget::saveBaseLayout(QJsonArray& layout)
     layout.append(widgetObject);
 }
 
+void FyWidget::saveCopyLayout(QJsonArray& layout, LayoutCopyContext& context, bool isRoot)
+{
+    QJsonObject widgetData;
+
+    saveCopyLayoutData(widgetData, context, isRoot);
+
+    QJsonObject widgetObject;
+    widgetObject[layoutName()] = widgetData;
+
+    layout.append(widgetObject);
+}
+
 void FyWidget::loadLayout(const QJsonObject& layout)
 {
     if(layout.contains("ID"_L1)) {
@@ -126,6 +147,12 @@ void FyWidget::searchEvent(const SearchRequest& /*request*/) { }
 void FyWidget::layoutEditingMenu(QMenu* /*menu*/) { }
 
 void FyWidget::saveLayoutData(QJsonObject& /*object*/) { }
+
+void FyWidget::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& /*context*/, bool /*isRoot*/)
+{
+    saveLayoutData(layout);
+    layout.remove("ID"_L1);
+}
 
 void FyWidget::loadLayoutData(const QJsonObject& /*object*/) { }
 

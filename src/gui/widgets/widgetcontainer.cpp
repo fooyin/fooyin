@@ -26,6 +26,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
@@ -65,6 +67,25 @@ QByteArray WidgetContainer::saveState() const
 bool WidgetContainer::restoreState(const QByteArray& /*state*/)
 {
     return true;
+}
+
+void WidgetContainer::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& context, bool isRoot)
+{
+    FyWidget::saveCopyLayoutData(layout, context, isRoot);
+
+    const auto childWidgets = widgets();
+    if(childWidgets.empty()) {
+        return;
+    }
+
+    QJsonArray children;
+    for(FyWidget* widget : childWidgets) {
+        if(widget) {
+            widget->saveCopyLayout(children, context, false);
+        }
+    }
+
+    layout["Widgets"_L1] = children;
 }
 
 void WidgetContainer::loadWidgets(const QJsonArray& widgets)

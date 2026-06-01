@@ -26,11 +26,31 @@
 #include <QPointer>
 #include <QWidget>
 
+#include <unordered_map>
+
 class QAction;
 class QDialog;
 class QMenu;
 
 namespace Fooyin {
+class FYGUI_EXPORT LayoutCopyContext
+{
+public:
+    /*!
+     * Returns a copy-local replacement for @p value within @p scope.
+     *
+     * The first request for a scope/value pair creates a fresh stable value for
+     * this copy operation; later requests for the same pair return the same
+     * replacement. Widgets can use this to preserve relationships between copied
+     * descendants while avoiding shared cross-instance state with the original
+     * widgets.
+     */
+    [[nodiscard]] QString mappedString(const QString& scope, const QString& value);
+
+private:
+    std::unordered_map<QString, QString> m_stringMappings;
+};
+
 enum class EmptySearchMode : uint8_t
 {
     Clear = 0,
@@ -126,6 +146,13 @@ public:
      */
     void saveBaseLayout(QJsonArray& layout);
     /*!
+     * Serialises this widget for layout copy/paste.
+     *
+     * This omits persisted ids and gives widgets a chance to rewrite
+     * cross-instance state through @fn saveCopyLayoutData().
+     */
+    void saveCopyLayout(QJsonArray& layout, LayoutCopyContext& context, bool isRoot = true);
+    /*!
      * Restores this widget from saved layout data.
      *
      * Replaces the widget id if one was saved and then calls @fn loadLayoutData()
@@ -154,6 +181,13 @@ public:
      * @note the base class implementation of this function does nothing.
      */
     virtual void saveLayoutData(QJsonObject& layout);
+    /*!
+     * Called by @fn saveCopyLayout().
+     *
+     * The base implementation writes normal widget data through @fn saveLayoutData()
+     * and removes any persisted widget id.
+     */
+    virtual void saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& context, bool isRoot);
     /*!
      * Called by @fn loadLayout().
      * Reimplement to restore widget-specific data previously written by

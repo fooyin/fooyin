@@ -945,8 +945,9 @@ QJsonObject EditableLayout::saveWidget(FyWidget* widget)
 QJsonObject EditableLayout::saveBaseWidget(FyWidget* widget)
 {
     QJsonArray array;
+    LayoutCopyContext context;
 
-    widget->saveBaseLayout(array);
+    widget->saveCopyLayout(array, context);
 
     if(!array.empty() && array.constBegin()->isObject()) {
         return array.constBegin()->toObject();

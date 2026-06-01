@@ -65,6 +65,8 @@ public:
     [[nodiscard]] virtual QByteArray saveState() const;
     virtual bool restoreState(const QByteArray& state);
 
+    void saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& context, bool isRoot) override;
+
     /*!
      * Convenience method to load all widgets in the @p widgets array.
      */
