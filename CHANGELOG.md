@@ -1,5 +1,57 @@
 # Changelog
 
+# Unreleased
+
+### New Features
+
+* Spectrum
+  - Add a spectrum visualisation plugin ([#52](https://github.com/fooyin/fooyin/issues/52), [#1025](https://github.com/fooyin/fooyin/issues/1025), [#1238](https://github.com/fooyin/fooyin/pull/1238))
+
+### Improvements
+
+* Audio/Playback
+  - Improve gapless playback handling ([#1248](https://github.com/fooyin/fooyin/issues/1248))
+* Interface
+  - Add device refresh support ([#1225](https://github.com/fooyin/fooyin/issues/1225))
+  - Hide the checked frame for flat tool buttons
+* VU Meter
+  - Add peak falloff support and align peak decay with spectrum behaviour
+  - Improve configuration with peak, legend, and gradient controls
+
+### Fixes
+
+* Audio/Playback
+  - Fix repeat-track handling for the same logical segment ([#1232](https://github.com/fooyin/fooyin/issues/1232))
+* Filters
+  - Fix filter copy grouping and preserve saved filter order ([#1252](https://github.com/fooyin/fooyin/issues/1252))
+  - Ignore stale asynchronous search results ([#1235](https://github.com/fooyin/fooyin/issues/1235))
+* Interface
+  - Fix layout editing overlay geometry for containers
+  - Keep inactive commands visible in the shortcut editor ([#1233](https://github.com/fooyin/fooyin/issues/1233))
+  - Avoid stale track selection use in context actions ([#1237](https://github.com/fooyin/fooyin/issues/1237))
+  - Scale playlist background pixmaps with device pixel ratio ([#1247](https://github.com/fooyin/fooyin/pull/1247))
+* Lyrics
+  - Avoid resetting editor text on Apply ([#1234](https://github.com/fooyin/fooyin/issues/1234))
+  - Fix current line highlighting mutating the undo stack
+* Scrobbling
+  - Reset the timestamp when replaying the current track after stop ([#1217](https://github.com/fooyin/fooyin/pull/1217))
+
+### Build/System
+
+* CI
+  - Enable precompiled headers and ccache ([#1214](https://github.com/fooyin/fooyin/pull/1214))
+* Packaging
+  - Remove unnecessary executable bits ([#1213](https://github.com/fooyin/fooyin/pull/1213))
+* Translations
+  - Update translations and translation sources ([#1250](https://github.com/fooyin/fooyin/pull/1250), [#1251](https://github.com/fooyin/fooyin/pull/1251))
+
+### Dev/API
+* Plugin/Widget API
+  - Expose the selected playlist to GUI plugins ([#1222](https://github.com/fooyin/fooyin/pull/1222))
+  - Add copy-specific layout serialisation
+  - Add special value text support to Advanced settings
+
+
 ## [0.10.8](https://github.com/fooyin/fooyin/releases/tag/v0.10.8) (2026-05-21)
 
 ### New Features
