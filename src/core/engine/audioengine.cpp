@@ -2055,7 +2055,19 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
             = preparedCrossfadeArmed || deferPreparedGaplessCommit || deferRenderedGaplessCommit;
         const bool cueLogicalBoundary = cueBoundaryMode && audibleBoundaryReached;
 
-        if(boundaryEngineOwnsTransition || cueLogicalBoundary) {
+        if(boundaryEngineOwnsTransition || cueLogicalBoundary || preparedGaplessReleaseReady) {
+            if(preparedGaplessReleaseReady && boundaryRemainingOutputMs > 0) {
+                qCWarning(ENGINE) << "Prepared gapless boundary delay suppressed:"
+                                  << "trackId=" << boundaryTrack.id() << "generation=" << boundaryGeneration
+                                  << "suppressedRemainingOutputMs=" << boundaryRemainingOutputMs
+                                  << "preparedStreamId=" << m_preparedGaplessTransition.streamId
+                                  << "audibleOutputStreamId=" << audibleOutputStreamId
+                                  << "boundaryAudiblePosMs=" << boundaryAudiblePosMs
+                                  << "trackDurationMs=" << m_currentTrack.duration()
+                                  << "streamId=" << (stream ? stream->id() : InvalidStreamId)
+                                  << "streamBufferedMs=" << (stream ? stream->bufferedDurationMs() : 0)
+                                  << "pipelineDelayMs=" << m_pipeline.playbackDelayMs();
+            }
             boundaryRemainingOutputMs = 0;
         }
         else if(m_currentTrack.duration() > boundaryAudiblePosMs) {
@@ -2131,7 +2143,9 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
         // Same-file logical segment transitions can reach "track end" before
         // the underlying stream is actually drained. In that case, avoid
         // flushing DSP state.
-        const bool shouldFlushDspOnEnd = stream->endOfInput() && stream->bufferEmpty();
+        const bool engineOwnedGaplessEnd
+            = gaplessBoundaryMode && preparedGaplessActive && m_autoAdvanceState.boundaryAnchorSeen;
+        const bool shouldFlushDspOnEnd = stream->endOfInput() && stream->bufferEmpty() && !engineOwnedGaplessEnd;
         signalTrackEndOnce(shouldFlushDspOnEnd);
     }
 }
@@ -2180,12 +2194,31 @@ void AudioEngine::updatePosition()
         return;
     }
 
+    const bool preparedGaplessRendered = m_preparedGaplessTransition.active
+                                      && m_preparedGaplessTransition.sourceGeneration == m_trackGeneration
+                                      && pipelineStatus.renderedSegment.valid
+                                      && pipelineStatus.renderedSegment.streamId == m_preparedGaplessTransition.streamId
+                                      && pipelineStatus.renderedSegment.outputFrames > 0;
+    const bool preparedGaplessAudible
+        = preparedGaplessRendered && m_pipeline.audibleOutputStreamId() == m_preparedGaplessTransition.streamId;
+
     updatePositionContext(pipelineStatus.timelineEpoch);
 
-    const auto updateMode
-        = output.discontinuity ? AudioClock::UpdateMode::Discontinuity : AudioClock::UpdateMode::Continuous;
+    auto updateMode = output.discontinuity ? AudioClock::UpdateMode::Discontinuity : AudioClock::UpdateMode::Continuous;
+    uint64_t publishedPositionMs{output.relativePosMs};
+    uint64_t publishedDelayMs{pipelineDelayMs};
+    double publishedDelayToSourceScale{delayToSourceScale};
+    bool emitPositionNow{output.emitNow};
 
-    publishPosition(output.relativePosMs, pipelineDelayMs, delayToSourceScale, updateMode, output.emitNow);
+    if(preparedGaplessAudible && m_currentTrack.duration() > 0) {
+        publishedPositionMs         = std::max(publishedPositionMs, m_currentTrack.duration());
+        publishedDelayMs            = 0;
+        publishedDelayToSourceScale = 1.0;
+        updateMode                  = AudioClock::UpdateMode::Discontinuity;
+        emitPositionNow             = true;
+    }
+
+    publishPosition(publishedPositionMs, publishedDelayMs, publishedDelayToSourceScale, updateMode, emitPositionNow);
 
     bool boundaryFallbackReached = output.boundaryFallbackReached;
     if(!boundaryFallbackReached && output.preparedCrossfadeArmed && !m_preparedCrossfadeTransition.boundarySignalled
@@ -2198,17 +2231,14 @@ void AudioEngine::updatePosition()
         boundaryFallbackReached           = consumedMs >= m_preparedCrossfadeTransition.boundaryLeadMs;
     }
 
-    const bool preparedGaplessRendered = m_preparedGaplessTransition.active
-                                      && m_preparedGaplessTransition.sourceGeneration == m_trackGeneration
-                                      && pipelineStatus.renderedSegment.valid
-                                      && pipelineStatus.renderedSegment.streamId == m_preparedGaplessTransition.streamId
-                                      && pipelineStatus.renderedSegment.outputFrames > 0;
-
     if(output.evaluateTrackEnding) {
         uint64_t boundaryAudiblePosMs  = output.relativePosMs;
         const bool hasMappedAudiblePos = pipelineStatus.positionIsMapped || output.hasRenderedSegment;
 
-        if(!hasMappedAudiblePos || isBoundedSegmentTrack(m_currentTrack)) {
+        if(preparedGaplessAudible && m_currentTrack.duration() > 0) {
+            boundaryAudiblePosMs = std::max(boundaryAudiblePosMs, m_currentTrack.duration());
+        }
+        else if(!hasMappedAudiblePos || isBoundedSegmentTrack(m_currentTrack)) {
             uint64_t timelineDelayMs{pipelineDelayMs};
             if(timelineDelayMs > 0) {
                 timelineDelayMs = scaledDelayMs(timelineDelayMs, delayToSourceScale);

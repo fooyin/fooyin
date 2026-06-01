@@ -21,14 +21,19 @@
 
 #include "core/engine/enginehelpers.h"
 
+#include <QLoggingCategory>
+
 constexpr uint64_t MaxContinuousPositionJumpMs = 750;
 constexpr uint64_t MaxBackwardDriftToleranceMs = 50;
 constexpr uint64_t GaplessHoldFallbackGraceMs  = 250;
+
+Q_DECLARE_LOGGING_CATEGORY(ENGINE)
 
 namespace Fooyin {
 PositionCoordinator::PositionCoordinator()
     : m_lastSourcePositionValid{false}
     , m_lastSourcePositionMs{0}
+    , m_lastSourceStreamId{InvalidStreamId}
     , m_holdGaplessPositionUntilRendered{false}
     , m_gaplessHoldStreamId{InvalidStreamId}
 { }
@@ -37,6 +42,7 @@ void PositionCoordinator::reset()
 {
     m_lastSourcePositionValid          = false;
     m_lastSourcePositionMs             = 0;
+    m_lastSourceStreamId               = InvalidStreamId;
     m_holdGaplessPositionUntilRendered = false;
     m_gaplessHoldStreamId              = InvalidStreamId;
 }
@@ -45,6 +51,7 @@ void PositionCoordinator::resetContinuity()
 {
     m_lastSourcePositionValid = false;
     m_lastSourcePositionMs    = 0;
+    m_lastSourceStreamId      = InvalidStreamId;
 }
 
 void PositionCoordinator::clearGaplessHold()
@@ -155,11 +162,31 @@ PositionCoordinator::Output PositionCoordinator::evaluate(const Input& input)
 
     uint64_t relativePosMs = relativeTrackPositionMs(sourcePosMs, input.streamToTrackOriginMs, input.trackOffsetMs);
 
-    const bool shouldClampToLastKnown
-        = m_lastSourcePositionValid
-       && (output.pendingWithoutMappedAudio || (!output.hasRenderedSegment && !output.preparedCrossfadeArmed));
-    if(shouldClampToLastKnown) {
+    const bool sameContinuityStream = m_lastSourcePositionValid && m_lastSourceStreamId != InvalidStreamId
+                                   && m_lastSourceStreamId == input.streamId;
+    bool heldBackwardRegression{false};
+
+    if(sameContinuityStream && output.pendingWithoutMappedAudio) {
         relativePosMs = std::min(relativePosMs, m_lastSourcePositionMs);
+    }
+
+    const bool shouldHoldUnmappedSameStreamRegression
+        = sameContinuityStream && !output.pendingWithoutMappedAudio && !output.hasRenderedSegment
+       && !output.preparedCrossfadeArmed && relativePosMs + MaxBackwardDriftToleranceMs < m_lastSourcePositionMs;
+    if(shouldHoldUnmappedSameStreamRegression) {
+        qCWarning(ENGINE) << "Playback position regression guarded:"
+                          << "streamId=" << input.streamId << "previousPosMs=" << m_lastSourcePositionMs
+                          << "reportedPosMs=" << relativePosMs << "streamPositionMs=" << input.streamPositionMs
+                          << "streamEndOfInput=" << input.streamEndOfInput
+                          << "streamBufferedMs=" << input.streamBufferedDurationMs
+                          << "pipelineDelayMs=" << input.pipelineDelayMs
+                          << "delayToSourceScale=" << input.delayToSourceScale
+                          << "renderedSegmentValid=" << input.pipelineStatus.renderedSegment.valid
+                          << "renderedSegmentStreamId=" << input.pipelineStatus.renderedSegment.streamId
+                          << "renderedSegmentSourceEndMs=" << input.pipelineStatus.renderedSegment.sourceEndMs
+                          << "renderedSegmentOutputFrames=" << input.pipelineStatus.renderedSegment.outputFrames;
+        relativePosMs          = m_lastSourcePositionMs;
+        heldBackwardRegression = true;
     }
 
     output.positionAvailable   = true;
@@ -168,19 +195,21 @@ PositionCoordinator::Output PositionCoordinator::evaluate(const Input& input)
     output.emitNow             = false;
     output.evaluateTrackEnding = true;
 
-    if(m_lastSourcePositionValid) {
-        const bool backwardDrift = relativePosMs < m_lastSourcePositionMs
-                                && (m_lastSourcePositionMs - relativePosMs) > MaxBackwardDriftToleranceMs;
-        const bool forwardJump   = relativePosMs > m_lastSourcePositionMs
-                                && (relativePosMs - m_lastSourcePositionMs) > MaxContinuousPositionJumpMs;
+    if(sameContinuityStream) {
+        const bool backwardDrift         = relativePosMs < m_lastSourcePositionMs
+                                        && (m_lastSourcePositionMs - relativePosMs) > MaxBackwardDriftToleranceMs;
+        const bool forwardJump           = relativePosMs > m_lastSourcePositionMs
+                                        && (relativePosMs - m_lastSourcePositionMs) > MaxContinuousPositionJumpMs;
+        const bool forwardDecodeHeadJump = forwardJump && !output.hasRenderedSegment && !output.preparedCrossfadeArmed;
 
-        if(backwardDrift || forwardJump) {
+        if(backwardDrift || (forwardJump && !forwardDecodeHeadJump)) {
             output.discontinuity = true;
             output.emitNow       = true;
         }
     }
 
     m_lastSourcePositionMs    = relativePosMs;
+    m_lastSourceStreamId      = input.streamId;
     m_lastSourcePositionValid = true;
 
     const uint64_t decoderRelativePosMs
@@ -188,7 +217,11 @@ PositionCoordinator::Output PositionCoordinator::evaluate(const Input& input)
             ? relativePosMs
             : relativeTrackPositionMs(input.streamPositionMs, input.streamToTrackOriginMs, input.trackOffsetMs);
     output.trackEndingPosMs = decoderRelativePosMs;
-    if(output.hasRenderedSegment) {
+
+    if(heldBackwardRegression) {
+        output.trackEndingPosMs = relativePosMs;
+    }
+    else if(output.hasRenderedSegment) {
         if(input.streamEndOfInput) {
             output.trackEndingPosMs = relativePosMs;
         }

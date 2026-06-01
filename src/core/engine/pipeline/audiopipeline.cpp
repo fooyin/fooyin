@@ -1754,16 +1754,31 @@ bool AudioPipeline::drainPendingOutput(const OutputState& state, int& freeFrames
         const auto startOffsetInfo
             = sourceTimelineOffsetInfoForFrameOffset(pendingTimeline, pendingStartOffset, masterScale,
                                                      m_outputUnit.pendingStreamId(), m_outputUnit.pendingEpoch());
-        const auto segmentEndMs = sourceTimelinePositionForFrameOffset(pendingTimeline, pendingEndOffset, masterScale);
+        const auto endOffsetInfo
+            = sourceTimelineOffsetInfoForFrameOffset(pendingTimeline, pendingEndOffset, masterScale,
+                                                     m_outputUnit.pendingStreamId(), m_outputUnit.pendingEpoch());
 
-        if(startOffsetInfo && segmentEndMs) {
-            m_timelineUnit.setCycleMappedPosition(*segmentEndMs);
+        if(startOffsetInfo && endOffsetInfo) {
+            const bool sameRenderedStream = startOffsetInfo->streamId == endOffsetInfo->streamId
+                                         && startOffsetInfo->epoch == endOffsetInfo->epoch;
+            if(!sameRenderedStream) {
+                qCDebug(PIPELINE) << "Pending output write crossed timeline stream boundary:"
+                                  << "startStreamId=" << startOffsetInfo->streamId
+                                  << "startEpoch=" << startOffsetInfo->epoch
+                                  << "startPosMs=" << startOffsetInfo->positionMs
+                                  << "endStreamId=" << endOffsetInfo->streamId << "endEpoch=" << endOffsetInfo->epoch
+                                  << "endPosMs=" << endOffsetInfo->positionMs
+                                  << "pendingStartOffset=" << pendingStartOffset
+                                  << "pendingEndOffset=" << pendingEndOffset << "writtenFrames=" << pendingWritten;
+            }
+
+            m_timelineUnit.setCycleMappedPosition(endOffsetInfo->positionMs);
             m_timelineUnit.setCycleRenderedSegment({
                 .valid        = true,
-                .streamId     = startOffsetInfo->streamId,
-                .epoch        = startOffsetInfo->epoch,
-                .startMs      = startOffsetInfo->positionMs,
-                .endMs        = *segmentEndMs,
+                .streamId     = endOffsetInfo->streamId,
+                .epoch        = endOffsetInfo->epoch,
+                .startMs      = sameRenderedStream ? startOffsetInfo->positionMs : endOffsetInfo->positionMs,
+                .endMs        = endOffsetInfo->positionMs,
                 .outputFrames = pendingWritten,
             });
 
@@ -2244,6 +2259,10 @@ void AudioPipeline::updatePlaybackState(const OutputState& state, int framesWrit
         primaryPosMs = primary->positionMs();
     }
 
+    const StreamId audibleOutputStreamId = m_timelineUnit.audibleOutputStreamId();
+    const bool cycleMapsAudibleStream    = cycleSegment.valid && cycleSegment.streamId != InvalidStreamId
+                                        && cycleSegment.streamId == audibleOutputStreamId;
+
     if(acceptCycleMapped && m_timelineUnit.positionIsMapped()) {
         const uint64_t currentPos = m_timelineUnit.positionMs();
 
@@ -2255,7 +2274,7 @@ void AudioPipeline::updatePlaybackState(const OutputState& state, int framesWrit
                 allowBackwardJump        = streamPos + MaxMappedPositionRegressionMs < currentPos;
             }
 
-            if(!allowBackwardJump) {
+            if(!allowBackwardJump && !cycleMapsAudibleStream) {
                 acceptCycleMapped = false;
             }
         }
@@ -2266,7 +2285,7 @@ void AudioPipeline::updatePlaybackState(const OutputState& state, int framesWrit
         const bool streamMismatch = cycleSegment.streamId != InvalidStreamId && primaryId != InvalidStreamId
                                  && cycleSegment.streamId != primaryId;
 
-        if(epochMismatch || streamMismatch) {
+        if(epochMismatch || (streamMismatch && !cycleMapsAudibleStream)) {
             acceptCycleMapped = false;
         }
     }

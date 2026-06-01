@@ -89,6 +89,7 @@ public:
 private:
     bool m_lastSourcePositionValid;
     uint64_t m_lastSourcePositionMs;
+    StreamId m_lastSourceStreamId;
     bool m_holdGaplessPositionUntilRendered;
     StreamId m_gaplessHoldStreamId;
 };
