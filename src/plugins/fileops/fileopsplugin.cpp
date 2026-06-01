@@ -151,7 +151,7 @@ void FileOpsPlugin::setupMenu()
     auto* deleteAction = new QAction(tr("&Delete"), this);
     auto* deleteCmd
         = m_actionManager->registerAction(deleteAction, "FileOps.Delete", Context{Constants::Context::TrackSelection});
-    deleteCmd->setCategories({tr("Edit")});
+    deleteCmd->setCategories({tr("File operations")});
 
     QObject::connect(deleteAction, &QAction::triggered, deleteAction, [this]() {
         const auto* selection = m_trackSelectionController->selectedSelection();
