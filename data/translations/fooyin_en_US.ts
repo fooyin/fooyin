@@ -6,17 +6,17 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="228"/>
         <source>Play</source>
-        <translation type="unfinished">Play</translation>
+        <translation>Play</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="232"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Add to current playlist</translation>
+        <translation>Add to current playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="235"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Add to active playlist</translation>
+        <translation>Add to active playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="238"/>
@@ -36,12 +36,12 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Add to playback queue</translation>
+        <translation>Add to playback queue</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="251"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Queue to play next</translation>
+        <translation>Queue to play next</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="254"/>
@@ -51,7 +51,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="258"/>
         <source>Set as root</source>
-        <translation type="unfinished">Set as root</translation>
+        <translation>Set as root</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="261"/>
@@ -61,12 +61,12 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
         <source>Configure</source>
-        <translation type="unfinished">Configure</translation>
+        <translation>Configure</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="366"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Directory Browser</translation>
+        <translation>Directory Browser</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="368"/>
@@ -99,12 +99,12 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="68"/>
         <source>Copy</source>
-        <translation type="unfinished">Copy</translation>
+        <translation>Copy</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="71"/>
         <source>Paste</source>
-        <translation type="unfinished">Paste</translation>
+        <translation>Paste</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="75"/>
@@ -114,12 +114,12 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="78"/>
         <source>Move</source>
-        <translation type="unfinished">Move</translation>
+        <translation>Move</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="82"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Remove</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="377"/>
@@ -137,12 +137,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="48"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Add to current playlist</translation>
+        <translation>Add to current playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="51"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Add to active playlist</translation>
+        <translation>Add to active playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="54"/>
@@ -162,27 +162,27 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Add to playback queue</translation>
+        <translation>Add to playback queue</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="67"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Queue to play next</translation>
+        <translation>Queue to play next</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="71"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Remove from playback queue</translation>
+        <translation>Remove from playback queue</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="75"/>
         <source>Filter options</source>
-        <translation type="unfinished">Filter options</translation>
+        <translation>Filter options</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="78"/>
         <source>Configure</source>
-        <translation type="unfinished">Configure</translation>
+        <translation>Configure</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="82"/>
@@ -192,7 +192,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="55"/>
         <source>Library Filter</source>
-        <translation type="unfinished">Library Filter</translation>
+        <translation>Library Filter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="57"/>
@@ -575,7 +575,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="58"/>
         <source>Functions</source>
-        <translation type="unfinished">Functions</translation>
+        <translation>Functions</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
@@ -1312,7 +1312,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="77"/>
         <source>Filter</source>
-        <translation type="unfinished">Filter</translation>
+        <translation>Filter</translation>
     </message>
 </context>
 <context>
@@ -1461,7 +1461,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="179"/>
         <source>Cover type</source>
-        <translation type="unfinished">Cover type</translation>
+        <translation>Cover type</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="240"/>
@@ -2493,7 +2493,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="307"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Output</translation>
     </message>
 </context>
 <context>
@@ -2506,7 +2506,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="112"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Output</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="282"/>
@@ -2570,7 +2570,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="267"/>
         <source>Queue</source>
-        <translation type="unfinished">Queue</translation>
+        <translation>Queue</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="272"/>
@@ -2615,12 +2615,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="589"/>
         <source>List</source>
-        <translation type="unfinished">List</translation>
+        <translation>List</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="598"/>
         <source>Tree</source>
-        <translation type="unfinished">Tree</translation>
+        <translation>Tree</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="721"/>
@@ -2739,22 +2739,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Click Behavior</translation>
+        <translation>Click Behavior</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
         <source>Double-click</source>
-        <translation type="unfinished">Double-click</translation>
+        <translation>Double-click</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="58"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Middle-click</translation>
+        <translation>Middle-click</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="63"/>
         <source>Browser Mode</source>
-        <translation type="unfinished">Browser Mode</translation>
+        <translation>Browser Mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="69"/>
@@ -2764,7 +2764,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="74"/>
         <source>Display Options</source>
-        <translation type="unfinished">Display Options</translation>
+        <translation>Display Options</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="95"/>
@@ -2785,19 +2785,19 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
         <source>None</source>
-        <translation type="unfinished">None</translation>
+        <translation>None</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="97"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="108"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Add to current playlist</translation>
+        <translation>Add to current playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="100"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="111"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Add to active playlist</translation>
+        <translation>Add to active playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="101"/>
@@ -2815,13 +2815,13 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="114"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Add to playback queue</translation>
+        <translation>Add to playback queue</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="104"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="115"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished">Add to front of playback queue</translation>
+        <translation>Add to front of playback queue</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="105"/>
@@ -2835,7 +2835,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="171"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="172"/>
@@ -2868,17 +2868,17 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="73"/>
         <source>Title</source>
-        <translation type="unfinished">Title</translation>
+        <translation>Title</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="75"/>
         <source>Artist</source>
-        <translation type="unfinished">Artist</translation>
+        <translation>Artist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="77"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
@@ -2916,7 +2916,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="381"/>
         <source>Configure…</source>
-        <translation type="unfinished">Configure…</translation>
+        <translation>Configure…</translation>
     </message>
 </context>
 <context>
@@ -2924,12 +2924,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="35"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Remove</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="38"/>
         <source>Configure</source>
-        <translation type="unfinished">Configure</translation>
+        <translation>Configure</translation>
     </message>
 </context>
 <context>
@@ -2942,7 +2942,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="224"/>
         <source>Enabled</source>
-        <translation type="unfinished">Enabled</translation>
+        <translation>Enabled</translation>
     </message>
 </context>
 <context>
@@ -2950,7 +2950,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="850"/>
         <source>Playback</source>
-        <translation type="unfinished">Playback</translation>
+        <translation>Playback</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="850"/>
@@ -2963,7 +2963,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="202"/>
         <source>Load</source>
-        <translation type="unfinished">Load</translation>
+        <translation>Load</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="203"/>
@@ -2973,7 +2973,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="204"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="233"/>
@@ -3026,17 +3026,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="619"/>
         <source>Configure…</source>
-        <translation type="unfinished">Configure…</translation>
+        <translation>Configure…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="627"/>
         <source>Move Up</source>
-        <translation type="unfinished">Move Up</translation>
+        <translation>Move Up</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="633"/>
         <source>Move Down</source>
-        <translation type="unfinished">Move Down</translation>
+        <translation>Move Down</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="642"/>
@@ -3046,12 +3046,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="642"/>
         <source>Enable</source>
-        <translation type="unfinished">Enable</translation>
+        <translation>Enable</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="650"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Remove</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="668"/>
@@ -3066,7 +3066,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="796"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Preset already exists</translation>
+        <translation>Preset already exists</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="797"/>
@@ -12901,17 +12901,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="294"/>
         <source>Colour gradient used for bars and filled curves</source>
-        <translation type="unfinished"></translation>
+        <translation>Color gradient used for bars and filled curves</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="295"/>
         <source>Colour used for peak markers</source>
-        <translation type="unfinished"></translation>
+        <translation>Color used for peak markers</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="296"/>
         <source>Colour used for octave gridlines in note mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Color used for octave gridlines in note mode</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="328"/>
@@ -13020,12 +13020,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="414"/>
         <source>Text colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Text color</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="415"/>
         <source>Background colour</source>
-        <translation type="unfinished">Background color</translation>
+        <translation>Background color</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="416"/>
@@ -13050,7 +13050,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
         <source>Peaks colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Peaks color</translation>
     </message>
 </context>
 <context>
@@ -14244,7 +14244,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="113"/>
         <source>Legend colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Legend color</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="115"/>
