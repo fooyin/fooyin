@@ -2574,7 +2574,7 @@ Kiedy wyłączone, bieżąca kolejność utworów jest zachowana i tylko nowe ut
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="267"/>
         <source>Queue</source>
-        <translation type="unfinished">Kolejka</translation>
+        <translation>Kolejka</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="272"/>
@@ -4754,27 +4754,27 @@ Efekty tutaj przetwarzają ostateczne złożone wyjście.</translation>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="132"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Pionowo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="133"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Poziomo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="231"/>
         <source>Add</source>
-        <translation type="unfinished">Dodaj</translation>
+        <translation>Dodaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="232"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="233"/>
         <source>Reverse</source>
-        <translation type="unfinished"></translation>
+        <translation>Odwróć</translation>
     </message>
 </context>
 <context>
@@ -12645,442 +12645,442 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="152"/>
         <source>Spectrum Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia analizatora widma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="164"/>
         <source>Amplitudes</source>
-        <translation type="unfinished"></translation>
+        <translation>Amplitudy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="169"/>
         <source>Peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Wartości szczytowe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="176"/>
         <source>Top labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Górne etykiety</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="177"/>
         <source>Bottom labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolne etykiety</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="178"/>
         <source>Left labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Lewe etykiety</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="179"/>
         <source>Right labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Prawe etykiety</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="180"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="417"/>
         <source>Horizontal gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Poziome linie siatki</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="181"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="418"/>
         <source>Vertical gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Pionowe linie siatki</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="421"/>
         <source>White keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Białe klawisze</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="183"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="422"/>
         <source>Black keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Czarne klawisze</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="184"/>
         <source>Tooltip</source>
-        <translation type="unfinished">Podpowiedź</translation>
+        <translation>Podpowiedź</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="185"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Pełne widmo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="186"/>
         <source>Interpolate</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpoluj</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="188"/>
         <source>Custom colours</source>
-        <translation type="unfinished">Własne kolory</translation>
+        <translation>Własne kolory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="199"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Skaluj</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="201"/>
         <source>Analysis</source>
-        <translation type="unfinished"></translation>
+        <translation>Analiza</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="205"/>
         <source>Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Osie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="207"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="472"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyświetlanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="248"/>
         <source>%1 fps</source>
-        <translation type="unfinished">%1 kl/s</translation>
+        <translation>%1 kl/s</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="255"/>
         <source>Blackman-Harris</source>
-        <translation type="unfinished"></translation>
+        <translation>Blackman-Harris</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="256"/>
         <source>Hann</source>
-        <translation type="unfinished"></translation>
+        <translation>Hann</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="257"/>
         <source>None</source>
-        <translation type="unfinished">Brak</translation>
+        <translation>Brak</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="259"/>
         <source>Frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Częstotliwości</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="260"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuty</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="261"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="424"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Słupki</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="262"/>
         <source>Curve</source>
-        <translation type="unfinished">Krzywa</translation>
+        <translation>Krzywa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="264"/>
         <source>Choose whether bands are spaced by frequency or by musical note</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz, czy pasma mają być oddzielone częstotliwością, czy nutą</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="265"/>
         <source>Lowest frequency shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Najniższa widoczna częstotliwość</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="266"/>
         <source>Highest frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>Najwyższa widoczna częstotliwość</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="267"/>
         <source>Lowest note shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Najniższa widoczna nuta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
         <source>Highest note shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Najwyższa widoczna nuta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
         <source>Signal level mapped to the bottom of the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Poziom sygnału mapowany na dolną granicę widma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
         <source>Signal level mapped to the top of the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Poziom sygnału mapowany na górną granicę widma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
         <source>Number of frequency bands to draw</source>
-        <translation type="unfinished"></translation>
+        <translation>Liczba wyświetlanych pasm częstotliwości</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="272"/>
         <source>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</source>
-        <translation type="unfinished"></translation>
+        <translation>Liczba próbek analizowanych w każdej ramce widma; wyższe wartości poprawiają dokładność, ale działają wolniej</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
         <source>Window applied before FFT analysis</source>
-        <translation type="unfinished"></translation>
+        <translation>Funkcja okna stosowana przed analizą FFT</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="275"/>
         <source>Reference frequency for A4</source>
-        <translation type="unfinished"></translation>
+        <translation>Częstotliwość odniesienia dla A4</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Shift note labels and note-based bands by semitones</source>
-        <translation type="unfinished"></translation>
+        <translation>Przesuń etykiety nut i pasm nutowych o półtony</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
         <source>Enable smoothing for falling bar levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Włącz wygładzanie opadania słupków</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="278"/>
         <source>How long a raised bar level is held before it starts falling</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak długo podwyższony słupek jest wstrzymany przed rozpoczęciem opadania</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="279"/>
         <source>How quickly bar levels fall after the hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak szybko słupek opada po czasie wstrzymania</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="280"/>
         <source>Show peak markers above the current bar levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokazuj znaczniki wartości szczytowych nad bieżącymi poziomami słupków</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="281"/>
         <source>How long each peak marker is held before it starts falling</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak długo znacznik wartości szczytowej słupka jest wstrzymany przed rozpoczęciem opadania</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="282"/>
         <source>How quickly peak markers fall after the hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak szybko znacznik wartości szczytowej słupka opada po czasie wstrzymania</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="283"/>
         <source>Maximum spectrum refresh rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna częstotliwość odświeżania widma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="284"/>
         <source>Highlight white piano-key note ranges behind the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Podświetlaj zakresy białych klawiszy w tle widma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="285"/>
         <source>Highlight black piano-key note ranges behind the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Podświetlaj zakresy czarnych klawiszy w tle widma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="286"/>
         <source>Show frequency or note and level when hovering over the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokazuj częstotliwość lub nutę i poziom przy najechaniu na widmo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="287"/>
         <source>Fill the spectrum area instead of drawing only the outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Wypełniaj obszar widma zamiast rysować sam kontur</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
         <source>Smooth low-frequency bands when several bands map to the same FFT bin</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygładzaj pasma niskich częstotliwości, gdy kilka pasm przypada na ten sam prążek FFT</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="289"/>
         <source>Horizontal gap between adjacent bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Pionowy odstęp pomiędzy sąsiadującymi słupkami</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="290"/>
         <source>Split each bar into this many vertical segments</source>
-        <translation type="unfinished"></translation>
+        <translation>Dziel każdy słupek na tyle pionowych segmentów</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="291"/>
         <source>Vertical gap between bar segments</source>
-        <translation type="unfinished"></translation>
+        <translation>Pionowy odstęp pomiędzy segmentami słupków</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
         <source>Choose whether to draw separate bars or a continuous curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz, czy rysować oddzielne słupki, czy ciągłą krzywą</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
         <source>Font used for spectrum axis labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Font używany przez etykiety osi widma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="294"/>
         <source>Colour gradient used for bars and filled curves</source>
-        <translation type="unfinished"></translation>
+        <translation>Gradient koloru dla słupków i wypełnionych krzywych</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="295"/>
         <source>Colour used for peak markers</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor używany przez znaczniki wartości szczytowych</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="296"/>
         <source>Colour used for octave gridlines in note mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor używany przez siatkę oktaw w trybie nut</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="328"/>
         <source>Frequency or note range covered by the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakres częstotliwości lub nut pokrywany przez widmo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="333"/>
         <source>Decibel range mapped to the spectrum height</source>
-        <translation type="unfinished"></translation>
+        <translation>Liczba decybeli mapowanych na wysokość widma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="341"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Oś</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="342"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakres</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="343"/>
         <source>Amplitude</source>
-        <translation type="unfinished">Amplituda</translation>
+        <translation>Amplituda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="344"/>
         <source>Bands</source>
-        <translation type="unfinished"></translation>
+        <translation>Pasma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="347"/>
         <source>FFT size</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar FFT</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="348"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Okno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="349"/>
         <source>Pitch (A4)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wartość szczytowa (A4)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>Transpose</source>
-        <translation type="unfinished"></translation>
+        <translation>Transponuj</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="371"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="376"/>
         <source>Hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Czas podtrzymania</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="372"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="377"/>
         <source>Falloff</source>
-        <translation type="unfinished"></translation>
+        <translation>Opad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="394"/>
         <source>Update FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>Częstotliwość odświeżania ramek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="395"/>
         <source>Bar spacing</source>
-        <translation type="unfinished">Odstęp pomiędzy paskami</translation>
+        <translation>Odstępy pomiędzy słupkami</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="396"/>
         <source>Sections</source>
-        <translation type="unfinished">Przedziały</translation>
+        <translation>Przedziały</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="397"/>
         <source>Section spacing</source>
-        <translation type="unfinished">Odstęp pomiędzy przedziałami</translation>
+        <translation>Odstępy pomiędzy przedziałami</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="398"/>
         <source>Style</source>
-        <translation type="unfinished">Styl</translation>
+        <translation>Styl</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="399"/>
         <source>Axis font</source>
-        <translation type="unfinished"></translation>
+        <translation>Font osi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="402"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="473"/>
         <source>Colours</source>
-        <translation type="unfinished">Kolory</translation>
+        <translation>Kolory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="413"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="471"/>
         <source>General</source>
-        <translation type="unfinished">Ogólne</translation>
+        <translation>Ogólne</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="414"/>
         <source>Text colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor tekstu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="415"/>
         <source>Background colour</source>
-        <translation type="unfinished">Kolor tła</translation>
+        <translation>Kolor tła</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="416"/>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Siatka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="419"/>
         <source>Octave gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Linie siatki oktaw</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="420"/>
         <source>Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Klawisze</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="425"/>
         <source>Bar gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Gradient słupka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
         <source>Peaks colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor wartości szczytowych</translation>
     </message>
 </context>
 <context>
@@ -13088,12 +13088,12 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="47"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Widmo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="48"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Wizualizacje</translation>
+        <translation>Wizualizacje</translation>
     </message>
 </context>
 <context>
@@ -13101,107 +13101,107 @@ Usuń oryginał: usuwa poprzedni plik lub tag po zapisaniu.</translation>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="124"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Widmo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="634"/>
         <source>Style</source>
-        <translation type="unfinished">Styl</translation>
+        <translation>Styl</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="637"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Słupki</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="640"/>
         <source>Curve</source>
-        <translation type="unfinished">Krzywa</translation>
+        <translation>Krzywa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="658"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Oś</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="661"/>
         <source>Frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Częstotliwości</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="664"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuty</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="682"/>
         <source>FFT size</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar FFT</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="699"/>
         <source>Show peaks</source>
-        <translation type="unfinished">Pokaż szczyty</translation>
+        <translation>Pokazuj wartości szczytowe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="708"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Pełne widmo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="717"/>
         <source>Show tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż podpowiedź</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="726"/>
         <source>Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Etykiety</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="728"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Góra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="737"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dół</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="746"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Lewo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="755"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Prawo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="769"/>
         <source>Gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Linie siatki</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="771"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Poziome</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="780"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Pionowe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="789"/>
         <source>White keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Białe klawisze</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="799"/>
         <source>Black keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Czarne klawisze</translation>
     </message>
 </context>
 <context>
@@ -13990,7 +13990,7 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="276"/>
         <source>Queue</source>
-        <translation type="unfinished">Kolejka</translation>
+        <translation>Kolejka</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="278"/>
@@ -14220,7 +14220,7 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="70"/>
         <source>Peak hold time</source>
-        <translation>Czas utrzymania szczytu</translation>
+        <translation>Czas podtrzymania wartości szczytowej</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="72"/>
@@ -14270,7 +14270,7 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="111"/>
         <source>Peak colour</source>
-        <translation>Kolor szczytu</translation>
+        <translation>Kolor wartości szczytowej</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="113"/>
@@ -14297,7 +14297,7 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="776"/>
         <source>Peak Meter</source>
-        <translation>Wskaźnik szczytu</translation>
+        <translation>Miernik wartości szczytowych</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="776"/>
@@ -14307,7 +14307,7 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1202"/>
         <source>Show peaks</source>
-        <translation>Pokaż szczyty</translation>
+        <translation>Pokazuj wartości szczytowe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1207"/>
@@ -14355,7 +14355,7 @@ Nie obsługują pełnego skryptowania.</translation>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="47"/>
         <source>RMS</source>
-        <translation>Moc znamionowa</translation>
+        <translation>Moc znamionowa (RMS)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="48"/>
@@ -14494,7 +14494,7 @@ Próbkowanie nadmiarowe jest przeznaczone dla pasków 1 px z przerwą 0 px; inne
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="138"/>
         <source>Scale the displayed waveform so the loudest peak reaches full height</source>
-        <translation>Skaluj wykres fali, aby najgłośniejsze szczyty osiągały pełną wysokość</translation>
+        <translation>Skaluj wykres fali, aby najgłośniejsze wartości szczytowe osiągały pełną wysokość</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="139"/>
@@ -14519,12 +14519,12 @@ Próbkowanie nadmiarowe jest przeznaczone dla pasków 1 px z przerwą 0 px; inne
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="155"/>
         <source>How peaks are combined when waveform data is scaled to the current width</source>
-        <translation>Sposób łączenia szczytów podczas skalowania danych wykresu fali do bieżącej szerokości</translation>
+        <translation>Sposób łączenia wartości szczytowych podczas skalowania danych wykresu fali do bieżącej szerokości</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="159"/>
         <source>Peak display</source>
-        <translation>Wyświetlanie szczytów</translation>
+        <translation>Wyświetlanie wartości szczytowych</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="173"/>
@@ -14709,7 +14709,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="591"/>
         <source>Peak display</source>
-        <translation>Wyświetlanie szczytów</translation>
+        <translation>Wyświetlanie wartości szczytowych</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="594"/>
@@ -14739,7 +14739,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="633"/>
         <source>RMS</source>
-        <translation>Moc znamionowa (RMS)</translation>
+        <translation>Moc znamionowa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="634"/>
@@ -14975,7 +14975,7 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/widgets.cpp" line="448"/>
         <source>VBR update interval</source>
-        <translation>Częstotliwość odświeżania VBR</translation>
+        <translation>Częstotliwość odświeżania zmiennej przepływności (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="449"/>
@@ -14985,22 +14985,22 @@ Wyższe wartości próbkowania nadmiarowego działają najlepiej z większą lic
     <message>
         <location filename="../../src/gui/widgets.cpp" line="458"/>
         <source>Output</source>
-        <translation type="unfinished">Wyjście</translation>
+        <translation>Wyjście</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="459"/>
         <source>Device refresh interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Interwał odświeżania urządzeń</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="460"/>
         <source>Interval used to refresh the list of available output devices. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstęp czasu między odświeżaniem listy urządzeń wyjściowych. Ustaw 0, aby wyłączyć.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="465"/>
         <source>Disabled</source>
-        <translation type="unfinished">Wyłączone</translation>
+        <translation>Wyłączone</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="473"/>
