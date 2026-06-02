@@ -331,6 +331,22 @@ QString split(const QStringList& vec)
     return parts.at(index - 1);
 }
 
+QString join(const QStringList& vec)
+{
+    if(vec.size() < 2) {
+        return {};
+    }
+
+    QStringList parts;
+    for(auto it = vec.cbegin() + 1; it != vec.cend(); ++it) {
+        if(!it->isEmpty()) {
+            parts.emplace_back(*it);
+        }
+    }
+
+    return parts.join(vec.front());
+}
+
 QString len(const QStringList& vec)
 {
     if(vec.empty()) {

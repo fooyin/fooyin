@@ -38,6 +38,7 @@ QString stristr(const QStringList& vec);
 QString strstrLast(const QStringList& vec);
 QString stristrLast(const QStringList& vec);
 QString split(const QStringList& vec);
+QString join(const QStringList& vec);
 QString len(const QStringList& vec);
 QString longest(const QStringList& vec);
 QString crlf(const QStringList& vec);

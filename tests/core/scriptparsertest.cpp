@@ -429,6 +429,12 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"b", m_parser.evaluate(u"$split(a;b;c,;,2)"_s));
     EXPECT_EQ(u"c", m_parser.evaluate(u"$split(a;b;c,;,3)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$split(a;b;c,;,4)"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$join( - )"_s));
+    EXPECT_EQ(u"", m_parser.evaluate(u"$join( - ,,)"_s));
+    EXPECT_EQ(u"Album", m_parser.evaluate(u"$join( - ,,Album)"_s));
+    EXPECT_EQ(u"Artist", m_parser.evaluate(u"$join( - ,Artist,)"_s));
+    EXPECT_EQ(u"Artist - Album", m_parser.evaluate(u"$join( - ,Artist,Album)"_s));
+    EXPECT_EQ(u"A / B / C", m_parser.evaluate(u"$join( / ,A,,B,C)"_s));
 
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if($isalpha(abcXYZ),true,false)"_s));
     EXPECT_EQ(u"false", m_parser.evaluate(u"$if($isalpha(abc123),true,false)"_s));

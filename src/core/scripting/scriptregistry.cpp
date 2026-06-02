@@ -686,6 +686,7 @@ void ScriptRegistry::addDefaultFunctions()
     registerFunction(u"strstrlast"_s, makeScriptFunctionInvoker<Scripting::strstrLast>());
     registerFunction(u"stristrlast"_s, makeScriptFunctionInvoker<Scripting::stristrLast>());
     registerFunction(u"split"_s, makeScriptFunctionInvoker<Scripting::split>());
+    registerFunction(u"join"_s, makeScriptFunctionInvoker<Scripting::join>());
     registerFunction(u"len"_s, makeScriptFunctionInvoker<Scripting::len>());
     registerFunction(u"longest"_s, makeScriptFunctionInvoker<Scripting::longest>());
     registerFunction(u"strcmp"_s, makeScriptFunctionInvoker<Scripting::strcmp>());
