@@ -234,6 +234,7 @@ void QueueViewer::setupConnections()
     QObject::connect(m_playerController, &PlayerController::tracksQueued, this, &QueueViewer::resetModel);
     QObject::connect(m_playerController, &PlayerController::tracksDequeued, this, &QueueViewer::resetModel);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &QueueViewer::resetModel);
+    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &QueueViewer::resetModel);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, m_model,
                      &QueueViewerModel::playbackStateChanged);
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &QueueViewer::handleRowsChanged);
