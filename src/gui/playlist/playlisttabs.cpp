@@ -27,6 +27,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
+#include <gui/trackmimedata.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/editabletabbar.h>
@@ -428,7 +429,8 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
 void PlaylistTabs::dragEnterEvent(QDragEnterEvent* event)
 {
-    if(event->mimeData()->hasUrls() || event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
+    if(event->mimeData()->hasUrls() || event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::Tracks))
+       || event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
         event->acceptProposedAction();
     }
 }
@@ -501,7 +503,11 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
         }
     }
 
-    if(event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
+    if(const auto mimeTracks = TrackMimeData::tracksFrom(event->mimeData()); mimeTracks && !mimeTracks->empty()) {
+        Q_EMIT trackListDropped(*mimeTracks, id);
+        event->acceptProposedAction();
+    }
+    else if(event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
         Q_EMIT tracksDropped(event->mimeData()->data(QString::fromLatin1(Constants::Mime::TrackIds)), id);
         event->acceptProposedAction();
     }

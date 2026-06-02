@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/player/playerdefs.h>
+#include <core/track.h>
 #include <gui/widgetcontainer.h>
 
 #include <QBasicTimer>
@@ -76,6 +77,7 @@ public:
 Q_SIGNALS:
     void filesDropped(const QList<QUrl>& urls, const Fooyin::UId& playlistId);
     void tracksDropped(const QByteArray& data, const Fooyin::UId& playlistId);
+    void trackListDropped(const Fooyin::TrackList& tracks, const Fooyin::UId& playlistId);
     void savePlaylistRequested(const Fooyin::UId& playlistId);
 
 protected:
