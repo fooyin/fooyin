@@ -162,6 +162,7 @@ public:
     void updateAllPlaylistActions();
     void updateWidgetSelection(FilterStageState& stage) const;
     static const FilterRowList& rowsForSelection(const FilterStageState& stage);
+    static void markStagesCurrent(FilterGroupState& group, int lastStageIndex);
     void handleSelectionChanged(FilterWidget* filter, const std::vector<RowKey>& keys);
     void handleSearchChanged(FilterWidget* filter, const QString& search);
 
@@ -454,6 +455,18 @@ const FilterRowList& FilterControllerPrivate::rowsForSelection(const FilterStage
     return stage.searchedRows ? *stage.searchedRows : stage.rows;
 }
 
+void FilterControllerPrivate::markStagesCurrent(FilterGroupState& group, int lastStageIndex)
+{
+    if(lastStageIndex < 0) {
+        return;
+    }
+
+    const int stageCount = std::min(lastStageIndex + 1, static_cast<int>(group.stages.size()));
+    for(auto& state : group.stages | std::views::take(stageCount)) {
+        state.revision = group.revision;
+    }
+}
+
 void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const std::vector<RowKey>& keys)
 {
     const auto location = widgetLocation(filter);
@@ -493,7 +506,7 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     publishStage(group->id, stageIndex);
 
     ++group->revision;
-    stage->revision = group->revision;
+    markStagesCurrent(*group, stageIndex);
 
     const TrackList nextTracks = stage->isActive ? stage->selectedTracks : stage->inputTracks;
     const bool nextConstrained = hasPriorActive || stage->isActive;
@@ -521,14 +534,14 @@ void FilterControllerPrivate::handleSearchChanged(FilterWidget* filter, const QS
         updateWidgetSelection(*stage);
 
         ++group->revision;
-        stage->revision = group->revision;
-
-        const bool hasPriorActive
-            = std::ranges::any_of(group->stages | std::views::take(location->stageIndex), &FilterStageState::isActive);
+        markStagesCurrent(*group, location->stageIndex);
 
         publishStage(group->id, location->stageIndex);
-        refreshStageSearch(group->id, location->stageIndex, group->revision);
-        recomputeStage(group->id, location->stageIndex + 1, group->revision, stage->inputTracks, hasPriorActive);
+        scheduleRecompute(group->id);
+        return;
+    }
+
+    if(group->recomputePending) {
         return;
     }
 
@@ -731,7 +744,6 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
 
     stage.inputTracks = currentTracks;
     stage.selectedTracks.clear();
-    stage.rows.clear();
     stage.searchedRows.reset();
     stage.isActive = false;
     stage.revision = revision;
