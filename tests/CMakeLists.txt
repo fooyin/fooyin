@@ -71,10 +71,30 @@ fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
 
-fooyin_add_test(test_filtercontroller plugins/filters/filtercontrollertest.cpp)
-target_link_libraries(test_filtercontroller PRIVATE Fooyin::FiltersInternal)
-fooyin_add_test(test_filterpipeline plugins/filters/filterpipelinetest.cpp)
-target_link_libraries(test_filterpipeline PRIVATE Fooyin::FiltersInternal)
+set(FILTERS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/filters)
+set(FILTER_PIPELINE_TEST_SOURCES
+    ${FILTERS_SOURCE_DIR}/filterpipeline.cpp
+    ${FILTERS_SOURCE_DIR}/filterrows.cpp
+)
+set(FILTER_CONTROLLER_TEST_SOURCES
+    ${FILTERS_SOURCE_DIR}/filtercolumnregistry.cpp
+    ${FILTERS_SOURCE_DIR}/filtercolumneditordialog.cpp
+    ${FILTERS_SOURCE_DIR}/filterscolumnmodel.cpp
+    ${FILTERS_SOURCE_DIR}/filtercontroller.cpp
+    ${FILTERS_SOURCE_DIR}/filterdelegate.cpp
+    ${FILTERS_SOURCE_DIR}/filteritem.cpp
+    ${FILTERS_SOURCE_DIR}/filtermanager.cpp
+    ${FILTERS_SOURCE_DIR}/filtermodel.cpp
+    ${FILTERS_SOURCE_DIR}/filterpipeline.cpp
+    ${FILTERS_SOURCE_DIR}/filterrows.cpp
+    ${FILTERS_SOURCE_DIR}/filterwidget.cpp
+    ${FILTERS_SOURCE_DIR}/filterconfigwidget.cpp
+)
+
+fooyin_add_test(test_filtercontroller plugins/filters/filtercontrollertest.cpp ${FILTER_CONTROLLER_TEST_SOURCES})
+target_include_directories(test_filtercontroller PRIVATE ${CMAKE_SOURCE_DIR}/src)
+fooyin_add_test(test_filterpipeline plugins/filters/filterpipelinetest.cpp ${FILTER_PIPELINE_TEST_SOURCES})
+target_include_directories(test_filterpipeline PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 fooyin_add_test(test_tagfillpattern plugins/tageditor/tagfillpatterntest.cpp
                 ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tagfillpattern.cpp
