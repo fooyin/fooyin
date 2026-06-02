@@ -31,7 +31,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
@@ -147,17 +147,17 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="54"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Replace current playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="57"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Create new playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="64"/>
@@ -187,7 +187,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontextmenu.h" line="82"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Track menu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="55"/>
@@ -197,7 +197,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="57"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unchecked items will be hidden from the library filter context menu.</translation>
     </message>
 </context>
 <context>
@@ -601,7 +601,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
         <source>Combined file size of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Combined file size of the track list</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="224"/>
@@ -653,17 +653,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Returns 1 while playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns 1 while playback is stopped</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="244"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>System</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Current date and time formatted as YYYY-MM-DD HH:MM:SS</source>
-        <translation type="unfinished"></translation>
+        <translation>Current date and time formatted as YYYY-MM-DD HH:MM:SS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
@@ -1073,17 +1073,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
         <source>Checks if text contains only alphabetic characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Checks if text contains only alphabetic characters</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
         <source>Checks if text contains only alphanumeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Checks if text contains only alphanumeric characters</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="396"/>
         <source>Checks if text contains only numeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Checks if text contains only numeric characters</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
@@ -1149,22 +1149,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="423"/>
         <source>Returns true when all expressions are true</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns true when all expressions are true</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="425"/>
         <source>Returns the opposite truth value</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns the opposite truth value</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
         <source>Returns true when at least one expression is true</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns true when at least one expression is true</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="431"/>
         <source>Returns true when an odd number of expressions are true</source>
-        <translation type="unfinished"></translation>
+        <translation>Returns true when an odd number of expressions are true</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="434"/>
@@ -1522,17 +1522,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="102"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Thumbnails</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="105"/>
         <source>Grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>Grouping script</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="106"/>
         <source>Groups artwork thumbnails that should share the same cached image</source>
-        <translation type="unfinished"></translation>
+        <translation>Groups artwork thumbnails that should share the same cached image</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="114"/>
@@ -1800,27 +1800,27 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="116"/>
         <source>Placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Placeholder</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="120"/>
         <source>Path to an image file to use when artwork of this type is missing; leave empty to use the default icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Path to an image file to use when artwork of this type is missing; leave empty to use the default icon</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="124"/>
         <source>Choose a custom placeholder image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Choose a custom placeholder image file</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="129"/>
         <source>Use built-in icon theme placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Use built-in icon theme placeholder</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="133"/>
         <source>Image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Image file</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="141"/>
@@ -1840,12 +1840,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="228"/>
         <source>Select Placeholder Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Select Placeholder Image</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="229"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp *.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>Images (*.png *.jpg *.jpeg *.bmp *.webp)</translation>
     </message>
 </context>
 <context>
@@ -2213,22 +2213,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="77"/>
         <source>Insert separator before</source>
-        <translation type="unfinished"></translation>
+        <translation>Insert separator before</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="81"/>
         <source>Insert separator after</source>
-        <translation type="unfinished"></translation>
+        <translation>Insert separator after</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="87"/>
         <source>Add separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Add separator</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="92"/>
         <source>Remove separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove separator</translation>
     </message>
 </context>
 <context>
@@ -2276,7 +2276,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="477"/>
         <source>Artwork settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork settings…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="488"/>
@@ -2511,12 +2511,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="282"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Select all</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="287"/>
         <source>Select none</source>
-        <translation type="unfinished"></translation>
+        <translation>Select none</translation>
     </message>
 </context>
 <context>
@@ -2625,7 +2625,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="721"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="193"/>
@@ -2729,12 +2729,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="48"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Start playback immediately</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="51"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
@@ -2759,7 +2759,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="69"/>
         <source>Browser Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Browser Filters</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="74"/>
@@ -2769,18 +2769,18 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="95"/>
         <source>Expand/collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Expand/Collapse</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="96"/>
         <source>Expand/collapse or play</source>
-        <translation type="unfinished"></translation>
+        <translation>Expand/Collapse or play</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="98"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="109"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to current playlist and play if stopped</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
@@ -2803,13 +2803,13 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="101"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="112"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Replace current playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="113"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Create new playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
@@ -2827,7 +2827,7 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="105"/>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="116"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Replace playback queue</translation>
     </message>
 </context>
 <context>
@@ -2863,7 +2863,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="70"/>
         <source>Clear on pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear on pause</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="73"/>
@@ -2883,12 +2883,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
         <source>Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Connection</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Rich Presence</source>
-        <translation type="unfinished"></translation>
+        <translation>Rich Presence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="105"/>
@@ -2898,7 +2898,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="106"/>
         <source>Clear status when paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear status when paused</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="71"/>
@@ -2911,7 +2911,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="366"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore Defaults</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="381"/>
@@ -2937,7 +2937,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="207"/>
         <source>Instance</source>
-        <translation type="unfinished"></translation>
+        <translation>Instance</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="224"/>
@@ -2955,7 +2955,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="850"/>
         <source>DSP Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP Manager</translation>
     </message>
 </context>
 <context>
@@ -2968,7 +2968,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="203"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Save</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="204"/>
@@ -2978,7 +2978,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="233"/>
         <source>Per-Track DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Per-Track DSPs</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="234"/>
@@ -3221,18 +3221,18 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/editablelayout.cpp" line="411"/>
         <location filename="../../src/gui/editablelayout.cpp" line="426"/>
         <source>Insert &amp;before</source>
-        <translation type="unfinished"></translation>
+        <translation>Insert &amp;before</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="416"/>
         <location filename="../../src/gui/editablelayout.cpp" line="431"/>
         <source>Insert &amp;after</source>
-        <translation type="unfinished"></translation>
+        <translation>Insert &amp;after</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="438"/>
         <source>Insert &amp;inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Insert &amp;inside</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="467"/>
@@ -4103,12 +4103,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="82"/>
         <source>File Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>File Operations</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="83"/>
         <source>Confirm before deleting tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Confirm before deleting tracks</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="100"/>
@@ -4346,7 +4346,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="139"/>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="150"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to current playlist and play if stopped</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterconfigwidget.cpp" line="141"/>
@@ -4552,7 +4552,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="301"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="339"/>
@@ -4763,7 +4763,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="233"/>
         <source>Reverse</source>
-        <translation type="unfinished"></translation>
+        <translation>Reverse</translation>
     </message>
 </context>
 <context>
@@ -6527,7 +6527,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="52"/>
         <source>Single-click expands/collapses nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Single-click expands/collapses nodes</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
@@ -6644,18 +6644,18 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="179"/>
         <source>Expand/collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Expand/Collapse</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="180"/>
         <source>Expand/collapse or play</source>
-        <translation type="unfinished"></translation>
+        <translation>Expand/Collapse or play</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="182"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="193"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to current playlist and play if stopped</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="191"/>
@@ -6861,7 +6861,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="799"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="934"/>
@@ -7847,7 +7847,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="75"/>
         <source>Enable notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Enable notifications</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="76"/>
@@ -7862,17 +7862,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="81"/>
         <source>Show previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Show previous</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Show play/pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Show play/pause</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
         <source>Show next</source>
-        <translation type="unfinished"></translation>
+        <translation>Show next</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="87"/>
@@ -7882,12 +7882,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="89"/>
         <source>Content</source>
-        <translation type="unfinished"></translation>
+        <translation>Content</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="91"/>
         <source>Playback Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Playback Controls</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="108"/>
@@ -7945,7 +7945,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="347"/>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
         <source>Now Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Now Playing</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="348"/>
@@ -7963,12 +7963,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="97"/>
         <source>Track changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Track changes</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
         <source>Play and pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Play and pause</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="99"/>
@@ -7978,12 +7978,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="100"/>
         <source>Every second</source>
-        <translation type="unfinished"></translation>
+        <translation>Every second</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="101"/>
         <source>Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Clipboard</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="102"/>
@@ -7998,12 +7998,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="105"/>
         <source>Append instead of overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Append instead of overwrite</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="106"/>
         <source>Maximum lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum lines</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="109"/>
@@ -8018,12 +8018,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="122"/>
         <source>No current track</source>
-        <translation type="unfinished"></translation>
+        <translation>No current track</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="129"/>
         <source>Update events</source>
-        <translation type="unfinished"></translation>
+        <translation>Update events</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="138"/>
@@ -8033,22 +8033,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="142"/>
         <source>Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Unlimited</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="146"/>
         <source>Browse to an output file</source>
-        <translation type="unfinished"></translation>
+        <translation>Browse to an output file</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
         <source>Now Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Now Playing</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="330"/>
         <source>Text Files (*.txt);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Text Files (*.txt);;All Files (*)</translation>
     </message>
 </context>
 <context>
@@ -8808,7 +8808,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="99"/>
         <source>Artwork type</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork type</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="101"/>
@@ -8818,12 +8818,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="106"/>
         <source>Blur</source>
-        <translation type="unfinished"></translation>
+        <translation>Blur</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="107"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacity</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="108"/>
@@ -8833,32 +8833,32 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="112"/>
         <source>Choose a custom background image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Choose a custom background image file</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="124"/>
         <source>No background image</source>
-        <translation type="unfinished"></translation>
+        <translation>No background image</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="125"/>
         <source>Current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Current track artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="126"/>
         <source>Use the currently playing track&apos;s artwork as the playlist background</source>
-        <translation type="unfinished"></translation>
+        <translation>Use the currently playing track&apos;s artwork as the playlist background</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="127"/>
         <source>Custom image</source>
-        <translation type="unfinished"></translation>
+        <translation>Custom image</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="128"/>
         <source>Use the selected image file as the playlist background</source>
-        <translation type="unfinished"></translation>
+        <translation>Use the selected image file as the playlist background</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="130"/>
@@ -8868,7 +8868,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="131"/>
         <source>Use the front cover for current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Use the front cover for current track artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="132"/>
@@ -8878,7 +8878,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="133"/>
         <source>Use the back cover for current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Use the back cover for current track artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="134"/>
@@ -8888,57 +8888,57 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="135"/>
         <source>Use the artist picture for current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Use the artist picture for current track artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="137"/>
         <source>Scaled and cropped</source>
-        <translation type="unfinished"></translation>
+        <translation>Scaled and cropped</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="138"/>
         <source>Fill the playlist area while preserving proportions; edges may be cropped</source>
-        <translation type="unfinished"></translation>
+        <translation>Fill the playlist area while preserving proportions; edges may be cropped</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="139"/>
         <source>Scaled</source>
-        <translation type="unfinished"></translation>
+        <translation>Scaled</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="140"/>
         <source>Stretch the image to fill the playlist area; proportions may change</source>
-        <translation type="unfinished"></translation>
+        <translation>Stretch the image to fill the playlist area; proportions may change</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="141"/>
         <source>Scaled, keep proportions</source>
-        <translation type="unfinished"></translation>
+        <translation>Scaled, keep proportions</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="143"/>
         <source>Fit the whole image inside the playlist area without cropping</source>
-        <translation type="unfinished"></translation>
+        <translation>Fit the whole image inside the playlist area without cropping</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="144"/>
         <source>Original size</source>
-        <translation type="unfinished"></translation>
+        <translation>Original size</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="145"/>
         <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation type="unfinished"></translation>
+        <translation>Draw the image at its original size, optionally limited by maximum size</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="147"/>
         <source>Top left</source>
-        <translation type="unfinished"></translation>
+        <translation>Top left</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="149"/>
         <source>Top right</source>
-        <translation type="unfinished"></translation>
+        <translation>Top right</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="150"/>
@@ -8948,7 +8948,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="151"/>
         <source>Middle</source>
-        <translation type="unfinished"></translation>
+        <translation>Middle</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="152"/>
@@ -8958,7 +8958,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="153"/>
         <source>Bottom left</source>
-        <translation type="unfinished"></translation>
+        <translation>Bottom left</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="154"/>
@@ -8968,7 +8968,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="155"/>
         <source>Bottom right</source>
-        <translation type="unfinished"></translation>
+        <translation>Bottom right</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="160"/>
@@ -8979,47 +8979,47 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="172"/>
         <source>Path to the custom background image</source>
-        <translation type="unfinished"></translation>
+        <translation>Path to the custom background image</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="173"/>
         <source>Select which image source to use for the playlist background</source>
-        <translation type="unfinished"></translation>
+        <translation>Select which image source to use for the playlist background</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="174"/>
         <source>Select which artwork type to use for current track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Select which artwork type to use for current track artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="175"/>
         <source>Controls how the background image is scaled to the playlist area</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls how the background image is scaled to the playlist area</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="176"/>
         <source>Alignment for original-size background images</source>
-        <translation type="unfinished"></translation>
+        <translation>Alignment for original-size background images</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="177"/>
         <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum width or height for original-size background images</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="178"/>
         <source>Applies blur to the background image</source>
-        <translation type="unfinished"></translation>
+        <translation>Applies blur to the background image</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="179"/>
         <source>Controls how strongly the background image is shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls how strongly the background image is shown</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="180"/>
         <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished"></translation>
+        <translation>Duration for fading between background images; set to 0 to disable</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="189"/>
@@ -9029,17 +9029,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="196"/>
         <source>Image padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Image padding</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="203"/>
         <source>Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Background Image</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="207"/>
         <source>Image source</source>
-        <translation type="unfinished"></translation>
+        <translation>Image source</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="208"/>
@@ -9054,7 +9054,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="215"/>
         <source>Scale mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Scale mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="217"/>
@@ -9064,22 +9064,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="219"/>
         <source>Maximum size</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum size</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="221"/>
         <source>Effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Effects</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="295"/>
         <source>Select Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Select Background Image</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="296"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp *.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>Images (*.png *.jpg *.jpeg *.bmp *.webp)</translation>
     </message>
 </context>
 <context>
@@ -10208,7 +10208,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="537"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to another playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="725"/>
@@ -10266,7 +10266,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1281"/>
         <source>Playlist settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist settings…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1154"/>
@@ -11754,7 +11754,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="118"/>
         <source>Filtering</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="127"/>
@@ -12472,12 +12472,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="219"/>
         <source>Show name</source>
-        <translation type="unfinished"></translation>
+        <translation>Show name</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="225"/>
         <source>Show value</source>
-        <translation type="unfinished"></translation>
+        <translation>Show value</translation>
     </message>
 </context>
 <context>
@@ -12485,7 +12485,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="384"/>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>Pitch</translation>
     </message>
 </context>
 <context>
@@ -12493,7 +12493,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="409"/>
         <source>Playback Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Playback Rate</translation>
     </message>
 </context>
 <context>
@@ -12501,7 +12501,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="359"/>
         <source>Tempo</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo</translation>
     </message>
 </context>
 <context>
@@ -12620,61 +12620,61 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="152"/>
         <source>Spectrum Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Spectrum Settings</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="164"/>
         <source>Amplitudes</source>
-        <translation type="unfinished"></translation>
+        <translation>Amplitudes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="169"/>
         <source>Peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Peaks</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="176"/>
         <source>Top labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Top labels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="177"/>
         <source>Bottom labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Bottom labels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="178"/>
         <source>Left labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Left labels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="179"/>
         <source>Right labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Right labels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="180"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="417"/>
         <source>Horizontal gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontal gridlines</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="181"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="418"/>
         <source>Vertical gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical gridlines</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="421"/>
         <source>White keys</source>
-        <translation type="unfinished"></translation>
+        <translation>White keys</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="183"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="422"/>
         <source>Black keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Black keys</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="184"/>
@@ -12684,12 +12684,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="185"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Fill spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="186"/>
         <source>Interpolate</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="188"/>
@@ -12699,17 +12699,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="199"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Scale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="201"/>
         <source>Analysis</source>
-        <translation type="unfinished"></translation>
+        <translation>Analysis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="205"/>
         <source>Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Axes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="207"/>
@@ -12720,17 +12720,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="248"/>
         <source>%1 fps</source>
-        <translation type="unfinished"></translation>
+        <translation>%1&#xa0;fps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="255"/>
         <source>Blackman-Harris</source>
-        <translation type="unfinished"></translation>
+        <translation>Blackman-Harris</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="256"/>
         <source>Hann</source>
-        <translation type="unfinished"></translation>
+        <translation>Hann</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="257"/>
@@ -12740,168 +12740,168 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="259"/>
         <source>Frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Frequencies</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="260"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Notes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="261"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="424"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Bars</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="262"/>
         <source>Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Curve</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="264"/>
         <source>Choose whether bands are spaced by frequency or by musical note</source>
-        <translation type="unfinished"></translation>
+        <translation>Choose whether bands are spaced by frequency or by musical note</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="265"/>
         <source>Lowest frequency shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Lowest frequency shown</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="266"/>
         <source>Highest frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>Highest frequency</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="267"/>
         <source>Lowest note shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Lowest note shown</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
         <source>Highest note shown</source>
-        <translation type="unfinished"></translation>
+        <translation>Highest note shown</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
         <source>Signal level mapped to the bottom of the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Signal level mapped to the bottom of the spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
         <source>Signal level mapped to the top of the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Signal level mapped to the top of the spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
         <source>Number of frequency bands to draw</source>
-        <translation type="unfinished"></translation>
+        <translation>Number of frequency bands to draw</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="272"/>
         <source>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</source>
-        <translation type="unfinished"></translation>
+        <translation>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
         <source>Window applied before FFT analysis</source>
-        <translation type="unfinished"></translation>
+        <translation>Window applied before FFT analysis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="275"/>
         <source>Reference frequency for A4</source>
-        <translation type="unfinished"></translation>
+        <translation>Reference frequency for A4</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Shift note labels and note-based bands by semitones</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift note labels and note-based bands by semitones</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
         <source>Enable smoothing for falling bar levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Enable smoothing for falling bar levels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="278"/>
         <source>How long a raised bar level is held before it starts falling</source>
-        <translation type="unfinished"></translation>
+        <translation>How long a raised bar level is held before it starts falling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="279"/>
         <source>How quickly bar levels fall after the hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>How quickly bar levels fall after the hold time</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="280"/>
         <source>Show peak markers above the current bar levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Show peak markers above the current bar levels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="281"/>
         <source>How long each peak marker is held before it starts falling</source>
-        <translation type="unfinished"></translation>
+        <translation>How long each peak marker is held before it starts falling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="282"/>
         <source>How quickly peak markers fall after the hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>How quickly peak markers fall after the hold time</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="283"/>
         <source>Maximum spectrum refresh rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum spectrum refresh rate</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="284"/>
         <source>Highlight white piano-key note ranges behind the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Highlight white piano-key note ranges behind the spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="285"/>
         <source>Highlight black piano-key note ranges behind the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Highlight black piano-key note ranges behind the spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="286"/>
         <source>Show frequency or note and level when hovering over the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Show frequency or note and level when hovering over the spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="287"/>
         <source>Fill the spectrum area instead of drawing only the outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Fill the spectrum area instead of drawing only the outline</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
         <source>Smooth low-frequency bands when several bands map to the same FFT bin</source>
-        <translation type="unfinished"></translation>
+        <translation>Smooth low-frequency bands when several bands map to the same FFT bin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="289"/>
         <source>Horizontal gap between adjacent bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontal gap between adjacent bars</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="290"/>
         <source>Split each bar into this many vertical segments</source>
-        <translation type="unfinished"></translation>
+        <translation>Split each bar into this many vertical segments</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="291"/>
         <source>Vertical gap between bar segments</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical gap between bar segments</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
         <source>Choose whether to draw separate bars or a continuous curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Choose whether to draw separate bars or a continuous curve</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
         <source>Font used for spectrum axis labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Font used for spectrum axis labels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="294"/>
@@ -12921,69 +12921,69 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="328"/>
         <source>Frequency or note range covered by the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Frequency or note range covered by the spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="333"/>
         <source>Decibel range mapped to the spectrum height</source>
-        <translation type="unfinished"></translation>
+        <translation>Decibel range mapped to the spectrum height</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="341"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Axis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="342"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Range</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="343"/>
         <source>Amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Amplitude</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="344"/>
         <source>Bands</source>
-        <translation type="unfinished"></translation>
+        <translation>Bands</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="347"/>
         <source>FFT size</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT size</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="348"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Window</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="349"/>
         <source>Pitch (A4)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pitch (A4)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>Transpose</source>
-        <translation type="unfinished"></translation>
+        <translation>Transpose</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="371"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="376"/>
         <source>Hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Hold time</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="372"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="377"/>
         <source>Falloff</source>
-        <translation type="unfinished"></translation>
+        <translation>Falloff</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="394"/>
         <source>Update FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>Update FPS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="395"/>
@@ -13008,7 +13008,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="399"/>
         <source>Axis font</source>
-        <translation type="unfinished"></translation>
+        <translation>Axis font</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="402"/>
@@ -13035,22 +13035,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="416"/>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Grid</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="419"/>
         <source>Octave gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Octave gridlines</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="420"/>
         <source>Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Keys</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="425"/>
         <source>Bar gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Bar gradient</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
@@ -13063,7 +13063,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="47"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="48"/>
@@ -13076,7 +13076,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="124"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="634"/>
@@ -13086,32 +13086,32 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="637"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Bars</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="640"/>
         <source>Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Curve</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="658"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Axis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="661"/>
         <source>Frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Frequencies</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="664"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Notes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="682"/>
         <source>FFT size</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT size</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="699"/>
@@ -13121,17 +13121,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="708"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Fill spectrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="717"/>
         <source>Show tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>Show tooltip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="726"/>
         <source>Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Labels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="728"/>
@@ -13156,7 +13156,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="769"/>
         <source>Gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Gridlines</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="771"/>
@@ -13171,12 +13171,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="789"/>
         <source>White keys</source>
-        <translation type="unfinished"></translation>
+        <translation>White keys</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="799"/>
         <source>Black keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Black keys</translation>
     </message>
 </context>
 <context>
@@ -14365,7 +14365,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="60"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>dB scale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="63"/>
@@ -14460,47 +14460,47 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="129"/>
         <source>Amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Amplitude</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="138"/>
         <source>Scale the displayed waveform so the loudest peak reaches full height</source>
-        <translation type="unfinished"></translation>
+        <translation>Scale the displayed waveform so the loudest peak reaches full height</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="139"/>
         <source>Use a decibel scale to make quieter waveform details more visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Use a decibel scale to make quieter waveform details more visible</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="152"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="153"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>Average</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="154"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>Smoothed average</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="155"/>
         <source>How peaks are combined when waveform data is scaled to the current width</source>
-        <translation type="unfinished"></translation>
+        <translation>How peaks are combined when waveform data is scaled to the current width</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="159"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>Peak display</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="173"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>Rendering</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="184"/>
@@ -14673,27 +14673,27 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="582"/>
         <source>dB scale</source>
-        <translation type="unfinished"></translation>
+        <translation>dB scale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="591"/>
         <source>Peak display</source>
-        <translation type="unfinished"></translation>
+        <translation>Peak display</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="594"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="595"/>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation>Average</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="596"/>
         <source>Smoothed average</source>
-        <translation type="unfinished"></translation>
+        <translation>Smoothed average</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="630"/>
@@ -14918,12 +14918,12 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="441"/>
         <source>Focus seekbars when clicked</source>
-        <translation type="unfinished"></translation>
+        <translation>Focus seekbars when clicked</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="442"/>
         <source>Give seekbars keyboard focus after clicking them.</source>
-        <translation type="unfinished"></translation>
+        <translation>Give seekbars keyboard focus after clicking them.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="447"/>
@@ -14959,12 +14959,12 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="459"/>
         <source>Device refresh interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Device refresh interval</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="460"/>
         <source>Interval used to refresh the list of available output devices. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Interval used to refresh the list of available output devices. Set to 0 to disable.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="465"/>
@@ -14985,17 +14985,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="475"/>
         <source>Preserve file access and modification timestamps when updating tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Preserve file access and modification timestamps when updating tags.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="482"/>
         <source>Split ID3v2.3 semicolon-separated tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Split ID3v2.3 semicolon-separated tags</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="483"/>
         <source>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="490"/>
@@ -15114,7 +15114,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="189"/>
@@ -15202,7 +15202,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="130"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add to another playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="133"/>
@@ -15504,17 +15504,17 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="112"/>
         <source>Tempo</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="114"/>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>Pitch</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="116"/>
         <source>Playback rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Playback rate</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenumodel.cpp" line="74"/>
