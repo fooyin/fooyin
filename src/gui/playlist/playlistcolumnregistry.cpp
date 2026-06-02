@@ -44,7 +44,7 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 0, .name = tr("Track"), .field = u"[%disc%.]$num(%track%,2)"_s, .sortField = {}, .writeField = u"track"_s});
     addDefaultItem({.id = 1, .name = tr("Title"), .field = u"%title%"_s, .sortField = {}, .writeField = u"title"_s});
     addDefaultItem({.id = 2, .name = tr("Artist"), .field = u"%artist%"_s, .sortField = {}, .writeField = u"artist"_s});
-    addDefaultItem({.id = 3, .name = tr("Artist/Album"), .field = u"[%albumartist% - ]%album%"_s, .sortField = {}, .writeField = {}});
+    addDefaultItem({.id = 3, .name = tr("Artist/Album"), .field = u"$join( - ,%albumartist%,%album%)"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 4, .name = tr("Album Artist"), .field = u"%albumartist%"_s, .sortField = {}, .writeField = u"albumartist"_s});
     addDefaultItem({.id = 5, .name = tr("Album"), .field = u"%album%"_s, .sortField = {}, .writeField = u"album"_s});
     addDefaultItem({.id = 7, .name = tr("Duration"), .field = u"%duration%"_s, .sortField = u"%duration_ms%"_s, .writeField = {}});
