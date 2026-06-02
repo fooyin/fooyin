@@ -953,8 +953,8 @@ int PlaylistModel::columnCount(const QModelIndex& /*parent*/) const
 
 QStringList PlaylistModel::mimeTypes() const
 {
-    return {QString::fromLatin1(Constants::Mime::PlaylistItems), QString::fromLatin1(Constants::Mime::TrackIds),
-            QString::fromLatin1(Constants::Mime::QueueTracks)};
+    return {QString::fromLatin1(Constants::Mime::PlaylistItems), QString::fromLatin1(Constants::Mime::Tracks),
+            QString::fromLatin1(Constants::Mime::TrackIds), QString::fromLatin1(Constants::Mime::QueueTracks)};
 }
 
 bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
@@ -962,6 +962,7 @@ bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action
 {
     if((action == Qt::MoveAction || action == Qt::CopyAction)
        && (data->hasUrls() || data->hasFormat(QString::fromLatin1(Constants::Mime::PlaylistItems))
+           || data->hasFormat(QString::fromLatin1(Constants::Mime::Tracks))
            || data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds)))) {
         return true;
     }
