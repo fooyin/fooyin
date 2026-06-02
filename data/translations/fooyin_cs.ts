@@ -12693,13 +12693,13 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="421"/>
         <source>White keys</source>
-        <translation>Bílé noty</translation>
+        <translation>Bílé klávesy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="183"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="422"/>
         <source>Black keys</source>
-        <translation>Černé noty</translation>
+        <translation>Černé klávesy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="184"/>
@@ -12709,12 +12709,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="185"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit spektrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="186"/>
         <source>Interpolate</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolovat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="188"/>
@@ -12760,7 +12760,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="257"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="259"/>
@@ -12776,12 +12776,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="261"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="424"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Pruhy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="262"/>
         <source>Curve</source>
-        <translation type="unfinished">Křivka</translation>
+        <translation>Křivka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="264"/>
@@ -12826,7 +12826,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="272"/>
         <source>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet analyzovaných vzorků na snímek spektra; vyšší hodnoty zvýší přesnost zobrazení frekvencí, ale jsou pomalejší</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
@@ -12841,246 +12841,246 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Shift note labels and note-based bands by semitones</source>
-        <translation type="unfinished"></translation>
+        <translation>Posunout notové popisky a notové pruhy o půltóny</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
         <source>Enable smoothing for falling bar levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit vyhlazování klesání sloupců</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="278"/>
         <source>How long a raised bar level is held before it starts falling</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak dlouho podržet po zvýšení sloupce hodnotu před tím než začne klesat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="279"/>
         <source>How quickly bar levels fall after the hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak rychle budou sloupce padat po skončení doby podržení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="280"/>
         <source>Show peak markers above the current bar levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit nad sloupci ukazatele špičky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="281"/>
         <source>How long each peak marker is held before it starts falling</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak dlouho podržet ukazatel špičky před tím než začne klesat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="282"/>
         <source>How quickly peak markers fall after the hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak rychle budou ukazatele špičky padat po skončení doby podržení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="283"/>
         <source>Maximum spectrum refresh rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximální obnovovací frekvence spektra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="284"/>
         <source>Highlight white piano-key note ranges behind the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvýraznit na pozadí spektra rozsahy pro bílé noty piana</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="285"/>
         <source>Highlight black piano-key note ranges behind the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvýraznit na pozadí spektra rozsahy pro černé noty piana</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="286"/>
         <source>Show frequency or note and level when hovering over the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Po najetí myší zobrazit frekvenci nebo notu a úroveň</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="287"/>
         <source>Fill the spectrum area instead of drawing only the outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Místo zobrazení obrysu vyplnit celou oblast spektra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
         <source>Smooth low-frequency bands when several bands map to the same FFT bin</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhladit nízkofrekvenční pásma, když několik pásem spadá do stejného FFT koše</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="289"/>
         <source>Horizontal gap between adjacent bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontální mezera mezi sousedícími sloupci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="290"/>
         <source>Split each bar into this many vertical segments</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdělit každý sloupec na zadaný počet vertikálních segmentů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="291"/>
         <source>Vertical gap between bar segments</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikální mezera mezi segmenty sloupců</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
         <source>Choose whether to draw separate bars or a continuous curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Zda vykreslovat jednotlivé sloupce nebo spojitou křivku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
         <source>Font used for spectrum axis labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Písmo pro popisky os</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="294"/>
         <source>Colour gradient used for bars and filled curves</source>
-        <translation type="unfinished"></translation>
+        <translation>Barevný přechod použitý pro sloupce a vyplněné křivky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="295"/>
         <source>Colour used for peak markers</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva použitá pro ukazatele špiček</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="296"/>
         <source>Colour used for octave gridlines in note mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva pro oktávovou mřížku režimu zobrazení not</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="328"/>
         <source>Frequency or note range covered by the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozsah frekvencí nebo not pokrytý spektrem</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="333"/>
         <source>Decibel range mapped to the spectrum height</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozsah dB přiřazených pro výšku spektra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="341"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Osa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="342"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozsah</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="343"/>
         <source>Amplitude</source>
-        <translation type="unfinished">Amplituda</translation>
+        <translation>Amplituda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="344"/>
         <source>Bands</source>
-        <translation type="unfinished"></translation>
+        <translation>Pásma</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="347"/>
         <source>FFT size</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost FFT</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="348"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Okno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="349"/>
         <source>Pitch (A4)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tón (A4)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>Transpose</source>
-        <translation type="unfinished"></translation>
+        <translation>Posun</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="371"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="376"/>
         <source>Hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>Doba přidržení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="372"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="377"/>
         <source>Falloff</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="394"/>
         <source>Update FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizace FPS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="395"/>
         <source>Bar spacing</source>
-        <translation type="unfinished">Rozestup ukazatelů</translation>
+        <translation>Rozestup sloupců</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="396"/>
         <source>Sections</source>
-        <translation type="unfinished">Sekce</translation>
+        <translation>Sekce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="397"/>
         <source>Section spacing</source>
-        <translation type="unfinished">Rozestup sekcí</translation>
+        <translation>Rozestup sekcí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="398"/>
         <source>Style</source>
-        <translation type="unfinished">Styl</translation>
+        <translation>Styl</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="399"/>
         <source>Axis font</source>
-        <translation type="unfinished"></translation>
+        <translation>Písmo osy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="402"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="473"/>
         <source>Colours</source>
-        <translation type="unfinished">Barvy</translation>
+        <translation>Barvy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="413"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="471"/>
         <source>General</source>
-        <translation type="unfinished">Obecné</translation>
+        <translation>Obecné</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="414"/>
         <source>Text colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva textu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="415"/>
         <source>Background colour</source>
-        <translation type="unfinished">Barva pozadí</translation>
+        <translation>Barva pozadí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="416"/>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Mřížka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="419"/>
         <source>Octave gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Oktávová mřížka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="420"/>
         <source>Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Klávesy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="425"/>
         <source>Bar gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Přechod sloupců</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
         <source>Peaks colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva špiček</translation>
     </message>
 </context>
 <context>
@@ -13088,12 +13088,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="47"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Spektrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="48"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Vizualizace</translation>
+        <translation>Vizualizace</translation>
     </message>
 </context>
 <context>
@@ -13101,107 +13101,107 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="124"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Spektrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="634"/>
         <source>Style</source>
-        <translation type="unfinished">Styl</translation>
+        <translation>Styl</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="637"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Sloupce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="640"/>
         <source>Curve</source>
-        <translation type="unfinished">Křivka</translation>
+        <translation>Křivka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="658"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Osa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="661"/>
         <source>Frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Frekvence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="664"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Noty</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="682"/>
         <source>FFT size</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost FFT</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="699"/>
         <source>Show peaks</source>
-        <translation type="unfinished">Zobrazit špičky</translation>
+        <translation>Zobrazit špičky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="708"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit spektrum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="717"/>
         <source>Show tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit popisek</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="726"/>
         <source>Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="728"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Horní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="737"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="746"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Levé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="755"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Pravé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="769"/>
         <source>Gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>Mřížka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="771"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontální</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="780"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikální</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="789"/>
         <source>White keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Bílé klávesy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="799"/>
         <source>Black keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Černé klávesy</translation>
     </message>
 </context>
 <context>
@@ -13990,7 +13990,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="276"/>
         <source>Queue</source>
-        <translation type="unfinished">Fronta</translation>
+        <translation>Fronta</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="278"/>
@@ -14245,12 +14245,12 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="94"/>
         <source>Bar size</source>
-        <translation>Velikost ukazatele</translation>
+        <translation>Velikost sloupce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="96"/>
         <source>Bar spacing</source>
-        <translation>Rozestup ukazatelů</translation>
+        <translation>Rozestup sloupců</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="99"/>
@@ -14280,7 +14280,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="115"/>
         <source>Bar colours</source>
-        <translation>Barva ukazatele</translation>
+        <translation>Barva sloupce</translation>
     </message>
 </context>
 <context>
@@ -14985,22 +14985,22 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/widgets.cpp" line="458"/>
         <source>Output</source>
-        <translation type="unfinished">Výstup</translation>
+        <translation>Výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="459"/>
         <source>Device refresh interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Interval aktualizace zařízení</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="460"/>
         <source>Interval used to refresh the list of available output devices. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Interval aktualizace seznamu dostupných zařízení. Pro zakázání nastavte 0.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="465"/>
         <source>Disabled</source>
-        <translation type="unfinished">Zakázáno</translation>
+        <translation>Zakázáno</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="473"/>
