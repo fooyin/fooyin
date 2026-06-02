@@ -19,12 +19,14 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <core/track.h>
 
 #include <QMimeData>
 
 namespace Fooyin {
-class TrackMimeData : public QMimeData
+class FYGUI_EXPORT TrackMimeData : public QMimeData
 {
     Q_OBJECT
 
