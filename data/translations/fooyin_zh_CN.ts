@@ -309,7 +309,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="121"/>
         <source>Genres</source>
-        <translation>类型</translation>
+        <translation>流派</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="123"/>
@@ -2566,7 +2566,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="267"/>
         <source>Queue</source>
-        <translation type="unfinished">队列</translation>
+        <translation>队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="272"/>
@@ -4736,27 +4736,27 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="132"/>
         <source>Vertical</source>
-        <translation type="unfinished">竖直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="133"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="231"/>
         <source>Add</source>
-        <translation type="unfinished">添加</translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="232"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="233"/>
         <source>Reverse</source>
-        <translation type="unfinished"></translation>
+        <translation>反向</translation>
     </message>
 </context>
 <context>
@@ -11439,7 +11439,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="337"/>
         <source>Vertical</source>
-        <translation>竖直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="339"/>
@@ -11523,7 +11523,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="96"/>
         <source>Vertical</source>
-        <translation>竖直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="100"/>
@@ -12605,442 +12605,442 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="152"/>
         <source>Spectrum Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>频谱设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="164"/>
         <source>Amplitudes</source>
-        <translation type="unfinished"></translation>
+        <translation>振幅</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="169"/>
         <source>Peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="176"/>
         <source>Top labels</source>
-        <translation type="unfinished"></translation>
+        <translation>顶部标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="177"/>
         <source>Bottom labels</source>
-        <translation type="unfinished"></translation>
+        <translation>底部标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="178"/>
         <source>Left labels</source>
-        <translation type="unfinished"></translation>
+        <translation>左侧标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="179"/>
         <source>Right labels</source>
-        <translation type="unfinished"></translation>
+        <translation>右侧标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="180"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="417"/>
         <source>Horizontal gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>水平网格线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="181"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="418"/>
         <source>Vertical gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直网格线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="421"/>
         <source>White keys</source>
-        <translation type="unfinished"></translation>
+        <translation>白键</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="183"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="422"/>
         <source>Black keys</source>
-        <translation type="unfinished"></translation>
+        <translation>黑键</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="184"/>
         <source>Tooltip</source>
-        <translation type="unfinished">提示</translation>
+        <translation>工具提示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="185"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>填充频谱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="186"/>
         <source>Interpolate</source>
-        <translation type="unfinished"></translation>
+        <translation>插值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="188"/>
         <source>Custom colours</source>
-        <translation type="unfinished">自定义颜色</translation>
+        <translation>自定义颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="199"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>缩放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="201"/>
         <source>Analysis</source>
-        <translation type="unfinished"></translation>
+        <translation>分析</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="205"/>
         <source>Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>轴线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="207"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="472"/>
         <source>Display</source>
-        <translation type="unfinished">显示</translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="248"/>
         <source>%1 fps</source>
-        <translation type="unfinished">%1 fps</translation>
+        <translation>%1 fps</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="255"/>
         <source>Blackman-Harris</source>
-        <translation type="unfinished"></translation>
+        <translation>布莱克曼-哈里斯</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="256"/>
         <source>Hann</source>
-        <translation type="unfinished"></translation>
+        <translation>汉宁窗</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="257"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="259"/>
         <source>Frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>频率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="260"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>音符</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="261"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="424"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>小节</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="262"/>
         <source>Curve</source>
-        <translation type="unfinished">封面</translation>
+        <translation>封面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="264"/>
         <source>Choose whether bands are spaced by frequency or by musical note</source>
-        <translation type="unfinished"></translation>
+        <translation>选择是按照频率还是按照音符来排列音符组</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="265"/>
         <source>Lowest frequency shown</source>
-        <translation type="unfinished"></translation>
+        <translation>显示的最低频率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="266"/>
         <source>Highest frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>最高频率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="267"/>
         <source>Lowest note shown</source>
-        <translation type="unfinished"></translation>
+        <translation>显示的最低音符</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
         <source>Highest note shown</source>
-        <translation type="unfinished"></translation>
+        <translation>显示的最高音符</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
         <source>Signal level mapped to the bottom of the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>信号电平映射至频谱的底部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
         <source>Signal level mapped to the top of the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>信号电平映射至频谱的顶部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
         <source>Number of frequency bands to draw</source>
-        <translation type="unfinished"></translation>
+        <translation>要绘制的频段数量</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="272"/>
         <source>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</source>
-        <translation type="unfinished"></translation>
+        <translation>每个光谱帧所分析的样本数量；样本数量越多，频率细节表现得越清晰，但响应速度会更慢</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
         <source>Window applied before FFT analysis</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT 分析前应用的窗函数</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="275"/>
         <source>Reference frequency for A4</source>
-        <translation type="unfinished"></translation>
+        <translation>A4 的参考频率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
         <source>Shift note labels and note-based bands by semitones</source>
-        <translation type="unfinished"></translation>
+        <translation>按半音偏移音符标签和基于音符的频段</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
         <source>Enable smoothing for falling bar levels</source>
-        <translation type="unfinished"></translation>
+        <translation>启用下落柱状图水平线的平滑效果</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="278"/>
         <source>How long a raised bar level is held before it starts falling</source>
-        <translation type="unfinished"></translation>
+        <translation>升高的电平条在被保持多久后才开始回落</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="279"/>
         <source>How quickly bar levels fall after the hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>在保持时间结束后电平条回落的速度有多快</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="280"/>
         <source>Show peak markers above the current bar levels</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前电平条上方显示峰值标记</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="281"/>
         <source>How long each peak marker is held before it starts falling</source>
-        <translation type="unfinished"></translation>
+        <translation>每个峰值标记在被保持多久后才开始下落</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="282"/>
         <source>How quickly peak markers fall after the hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值标记在保持时间结束后下落的速度有多快</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="283"/>
         <source>Maximum spectrum refresh rate</source>
-        <translation type="unfinished"></translation>
+        <translation>最大频谱刷新率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="284"/>
         <source>Highlight white piano-key note ranges behind the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>在频谱图后方高亮显示白色钢琴键的音符范围</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="285"/>
         <source>Highlight black piano-key note ranges behind the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>在频谱图后方高亮显示黑色钢琴键的音符范围</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="286"/>
         <source>Show frequency or note and level when hovering over the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>当鼠标悬停在频谱图上时显示具体的频率（或音符）以及电平大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="287"/>
         <source>Fill the spectrum area instead of drawing only the outline</source>
-        <translation type="unfinished"></translation>
+        <translation>填充频谱区域而不是只绘制轮廓线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
         <source>Smooth low-frequency bands when several bands map to the same FFT bin</source>
-        <translation type="unfinished"></translation>
+        <translation>当多个低频段映射到同一个 FFT 频段时对这些低频段进行平滑处理</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="289"/>
         <source>Horizontal gap between adjacent bars</source>
-        <translation type="unfinished"></translation>
+        <translation>相邻柱状条之间的水平间距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="290"/>
         <source>Split each bar into this many vertical segments</source>
-        <translation type="unfinished"></translation>
+        <translation>将每个柱状条垂直分割成若干个小段</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="291"/>
         <source>Vertical gap between bar segments</source>
-        <translation type="unfinished"></translation>
+        <translation>柱状条分段之间的垂直间距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
         <source>Choose whether to draw separate bars or a continuous curve</source>
-        <translation type="unfinished"></translation>
+        <translation>选择绘制独立的柱状条还是连续的曲线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
         <source>Font used for spectrum axis labels</source>
-        <translation type="unfinished"></translation>
+        <translation>频谱图坐标轴标签所使用的字体</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="294"/>
         <source>Colour gradient used for bars and filled curves</source>
-        <translation type="unfinished"></translation>
+        <translation>用于柱状条和填充曲线的颜色渐变</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="295"/>
         <source>Colour used for peak markers</source>
-        <translation type="unfinished"></translation>
+        <translation>用于峰值标记的颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="296"/>
         <source>Colour used for octave gridlines in note mode</source>
-        <translation type="unfinished"></translation>
+        <translation>音符模式下用于八度网格线的颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="328"/>
         <source>Frequency or note range covered by the spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>频谱图所覆盖的频率或音符范围</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="333"/>
         <source>Decibel range mapped to the spectrum height</source>
-        <translation type="unfinished"></translation>
+        <translation>映射到频谱高度的分贝范围</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="341"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>轴线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="342"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>范围</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="343"/>
         <source>Amplitude</source>
-        <translation type="unfinished">振幅</translation>
+        <translation>振幅</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="344"/>
         <source>Bands</source>
-        <translation type="unfinished"></translation>
+        <translation>频段</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="347"/>
         <source>FFT size</source>
-        <translation type="unfinished"></translation>
+        <translation>采样大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="348"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>窗口</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="349"/>
         <source>Pitch (A4)</source>
-        <translation type="unfinished"></translation>
+        <translation>A4 音高</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>Transpose</source>
-        <translation type="unfinished"></translation>
+        <translation>移调</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="371"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="376"/>
         <source>Hold time</source>
-        <translation type="unfinished"></translation>
+        <translation>停留时间</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="372"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="377"/>
         <source>Falloff</source>
-        <translation type="unfinished"></translation>
+        <translation>回落速度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="394"/>
         <source>Update FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>更新 FPS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="395"/>
         <source>Bar spacing</source>
-        <translation type="unfinished">柱子间隔</translation>
+        <translation>柱子间距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="396"/>
         <source>Sections</source>
-        <translation type="unfinished">部分</translation>
+        <translation>部分</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="397"/>
         <source>Section spacing</source>
-        <translation type="unfinished">部分间距</translation>
+        <translation>部分间距</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="398"/>
         <source>Style</source>
-        <translation type="unfinished">样式</translation>
+        <translation>样式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="399"/>
         <source>Axis font</source>
-        <translation type="unfinished"></translation>
+        <translation>坐标轴字体</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="402"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="473"/>
         <source>Colours</source>
-        <translation type="unfinished">颜色</translation>
+        <translation>颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="413"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="471"/>
         <source>General</source>
-        <translation type="unfinished">常规</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="414"/>
         <source>Text colour</source>
-        <translation type="unfinished"></translation>
+        <translation>文本颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="415"/>
         <source>Background colour</source>
-        <translation type="unfinished">背景色</translation>
+        <translation>背景色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="416"/>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>网格</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="419"/>
         <source>Octave gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>八度网格线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="420"/>
         <source>Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>键</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="425"/>
         <source>Bar gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>柱子渐变</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
         <source>Peaks colour</source>
-        <translation type="unfinished"></translation>
+        <translation>峰值颜色</translation>
     </message>
 </context>
 <context>
@@ -13048,12 +13048,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="47"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>频谱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumplugin.cpp" line="48"/>
         <source>Visualisations</source>
-        <translation type="unfinished">可视化</translation>
+        <translation>可视化</translation>
     </message>
 </context>
 <context>
@@ -13061,107 +13061,107 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="124"/>
         <source>Spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>频谱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="634"/>
         <source>Style</source>
-        <translation type="unfinished">样式</translation>
+        <translation>样式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="637"/>
         <source>Bars</source>
-        <translation type="unfinished"></translation>
+        <translation>柱状图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="640"/>
         <source>Curve</source>
-        <translation type="unfinished">封面</translation>
+        <translation>封面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="658"/>
         <source>Axis</source>
-        <translation type="unfinished"></translation>
+        <translation>轴线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="661"/>
         <source>Frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>频率</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="664"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>音符</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="682"/>
         <source>FFT size</source>
-        <translation type="unfinished"></translation>
+        <translation>采样大小</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="699"/>
         <source>Show peaks</source>
-        <translation type="unfinished">显示峰值</translation>
+        <translation>显示峰值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="708"/>
         <source>Fill spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>填充频谱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="717"/>
         <source>Show tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>显示工具提示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="726"/>
         <source>Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="728"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="737"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="746"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左侧</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="755"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>右侧</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="769"/>
         <source>Gridlines</source>
-        <translation type="unfinished"></translation>
+        <translation>网格线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="771"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="780"/>
         <source>Vertical</source>
-        <translation type="unfinished">竖直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="789"/>
         <source>White keys</source>
-        <translation type="unfinished"></translation>
+        <translation>白键</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="799"/>
         <source>Black keys</source>
-        <translation type="unfinished"></translation>
+        <translation>黑键</translation>
     </message>
 </context>
 <context>
@@ -13950,7 +13950,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="276"/>
         <source>Queue</source>
-        <translation type="unfinished">队列</translation>
+        <translation>队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="278"/>
@@ -14287,7 +14287,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1216"/>
         <source>Vertical</source>
-        <translation>竖直</translation>
+        <translation>垂直</translation>
     </message>
 </context>
 <context>
@@ -14945,22 +14945,22 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="458"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>输出</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="459"/>
         <source>Device refresh interval</source>
-        <translation type="unfinished"></translation>
+        <translation>设备刷新间隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="460"/>
         <source>Interval used to refresh the list of available output devices. Set to 0 to disable.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于刷新可用输出设备列表的间隔时间。设置为 0 即可禁用此功能。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="465"/>
         <source>Disabled</source>
-        <translation type="unfinished">已禁用</translation>
+        <translation>已禁用</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="473"/>
