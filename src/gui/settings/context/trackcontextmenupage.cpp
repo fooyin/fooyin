@@ -45,10 +45,14 @@ TrackContextMenuPage::TrackContextMenuPage(TrackSelectionController* trackSelect
              .writeDisabledIds
              = ContextMenuSettings::makeStringListWriter<Settings::Gui::Internal::ContextMenuTrackDisabledSections>(
                  settings),
+             .defaultDisabledIds
+             = settings->defaultValue<Settings::Gui::Internal::ContextMenuTrackDisabledSections>().toStringList(),
              .readTopLevelOrder
              = ContextMenuSettings::makeStringListReader<Settings::Gui::Internal::ContextMenuTrackLayout>(settings),
              .writeTopLevelOrder
              = ContextMenuSettings::makeStringListWriter<Settings::Gui::Internal::ContextMenuTrackLayout>(settings),
+             .defaultTopLevelOrder
+             = settings->defaultValue<Settings::Gui::Internal::ContextMenuTrackLayout>().toStringList(),
              .allowReordering = true});
     });
 }

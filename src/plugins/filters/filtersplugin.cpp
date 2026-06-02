@@ -63,7 +63,8 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
             ContextMenuSettings::makeFileStringListWriter(m_core->settingsManager,
                                                           FilterContextMenu::DisabledSectionsKey),
             ContextMenuSettings::makeFileStringListReader(m_core->settingsManager, FilterContextMenu::LayoutKey),
-            ContextMenuSettings::makeFileStringListWriter(m_core->settingsManager, FilterContextMenu::LayoutKey)),
+            ContextMenuSettings::makeFileStringListWriter(m_core->settingsManager, FilterContextMenu::LayoutKey),
+            FilterContextMenu::defaultDisabledSections()),
         this);
 
     context.widgetProvider->registerWidget(

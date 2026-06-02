@@ -77,8 +77,10 @@ struct FYGUI_EXPORT StaticContextMenuDescriptor
     std::span<const StaticContextMenu::Item> items;
     StringListReader readDisabledIds;
     StringListWriter writeDisabledIds;
+    QStringList defaultDisabledIds;
     StringListReader readTopLevelOrder;
     StringListWriter writeTopLevelOrder;
+    QStringList defaultTopLevelOrder;
     bool allowReordering{true};
 };
 
@@ -88,18 +90,21 @@ StaticContextMenuDescriptor
 makeStaticContextMenuDescriptor(const char* pageId, TranslatableText pageName, TranslatableText description,
                                 const std::array<StaticContextMenu::Item, N>& items, ReadDisabledIds&& readDisabledIds,
                                 WriteDisabledIds&& writeDisabledIds, ReadTopLevelOrder&& readTopLevelOrder,
-                                WriteTopLevelOrder&& writeTopLevelOrder)
+                                WriteTopLevelOrder&& writeTopLevelOrder, const QStringList& defaultDisabledIds = {},
+                                const QStringList& defaultTopLevelOrder = {})
 {
     return {
-        .pageId             = pageId,
-        .pageName           = pageName,
-        .description        = description,
-        .items              = std::span<const StaticContextMenu::Item>{items},
-        .readDisabledIds    = std::forward<ReadDisabledIds>(readDisabledIds),
-        .writeDisabledIds   = std::forward<WriteDisabledIds>(writeDisabledIds),
-        .readTopLevelOrder  = std::forward<ReadTopLevelOrder>(readTopLevelOrder),
-        .writeTopLevelOrder = std::forward<WriteTopLevelOrder>(writeTopLevelOrder),
-        .allowReordering    = true,
+        .pageId               = pageId,
+        .pageName             = pageName,
+        .description          = description,
+        .items                = std::span<const StaticContextMenu::Item>{items},
+        .readDisabledIds      = std::forward<ReadDisabledIds>(readDisabledIds),
+        .writeDisabledIds     = std::forward<WriteDisabledIds>(writeDisabledIds),
+        .defaultDisabledIds   = defaultDisabledIds,
+        .readTopLevelOrder    = std::forward<ReadTopLevelOrder>(readTopLevelOrder),
+        .writeTopLevelOrder   = std::forward<WriteTopLevelOrder>(writeTopLevelOrder),
+        .defaultTopLevelOrder = defaultTopLevelOrder,
+        .allowReordering      = true,
     };
 }
 
@@ -108,11 +113,12 @@ StaticContextMenuDescriptor
 makeStaticContextMenuDescriptor(const char* pageId, TranslatableText pageName, TranslatableText description,
                                 const std::array<StaticContextMenu::Item, N>& items, SettingsManager* settings)
 {
-    return makeStaticContextMenuDescriptor(pageId, pageName, description, items,
-                                           ContextMenuSettings::makeStringListReader<DisabledKey>(settings),
-                                           ContextMenuSettings::makeStringListWriter<DisabledKey>(settings),
-                                           ContextMenuSettings::makeStringListReader<LayoutKey>(settings),
-                                           ContextMenuSettings::makeStringListWriter<LayoutKey>(settings));
+    return makeStaticContextMenuDescriptor(
+        pageId, pageName, description, items, ContextMenuSettings::makeStringListReader<DisabledKey>(settings),
+        ContextMenuSettings::makeStringListWriter<DisabledKey>(settings),
+        ContextMenuSettings::makeStringListReader<LayoutKey>(settings),
+        ContextMenuSettings::makeStringListWriter<LayoutKey>(settings),
+        settings->defaultValue<DisabledKey>().toStringList(), settings->defaultValue<LayoutKey>().toStringList());
 }
 
 class FYGUI_EXPORT StaticContextMenuPage : public SettingsPage

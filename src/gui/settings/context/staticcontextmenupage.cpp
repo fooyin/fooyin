@@ -48,12 +48,14 @@ StaticContextMenuPage::StaticContextMenuPage(SettingsManager* settings, StaticCo
     const QString description = translate(descriptor.description);
     setWidgetCreator([description, descriptor = std::move(descriptor)] {
         return new ConfigurableContextMenuWidget(
-            description, {.nodeFactory        = [items = descriptor.items] { return ::contextMenuNodes(items); },
-                          .readDisabledIds    = descriptor.readDisabledIds,
-                          .writeDisabledIds   = descriptor.writeDisabledIds,
-                          .readTopLevelOrder  = descriptor.readTopLevelOrder,
-                          .writeTopLevelOrder = descriptor.writeTopLevelOrder,
-                          .allowReordering    = descriptor.allowReordering});
+            description, {.nodeFactory          = [items = descriptor.items] { return ::contextMenuNodes(items); },
+                          .readDisabledIds      = descriptor.readDisabledIds,
+                          .writeDisabledIds     = descriptor.writeDisabledIds,
+                          .defaultDisabledIds   = descriptor.defaultDisabledIds,
+                          .readTopLevelOrder    = descriptor.readTopLevelOrder,
+                          .writeTopLevelOrder   = descriptor.writeTopLevelOrder,
+                          .defaultTopLevelOrder = descriptor.defaultTopLevelOrder,
+                          .allowReordering      = descriptor.allowReordering});
     });
 }
 } // namespace Fooyin

@@ -37,8 +37,10 @@ struct ConfigurableContextMenuDefinition
     std::function<std::vector<ConfigurableContextMenuNode>()> nodeFactory;
     StringListReader readDisabledIds;
     StringListWriter writeDisabledIds;
+    QStringList defaultDisabledIds;
     StringListReader readTopLevelOrder;
     StringListWriter writeTopLevelOrder;
+    QStringList defaultTopLevelOrder;
     bool allowReordering{false};
 };
 

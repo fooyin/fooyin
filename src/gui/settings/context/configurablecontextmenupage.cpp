@@ -129,10 +129,12 @@ void ConfigurableContextMenuWidget::apply()
 void ConfigurableContextMenuWidget::reset()
 {
     if(m_definition.writeTopLevelOrder) {
-        m_definition.writeTopLevelOrder({});
+        m_definition.writeTopLevelOrder(m_definition.defaultTopLevelOrder);
     }
     if(m_definition.writeDisabledIds) {
-        m_definition.writeDisabledIds({});
+        m_definition.writeDisabledIds(m_definition.defaultDisabledIds);
     }
+
+    load();
 }
 } // namespace Fooyin
