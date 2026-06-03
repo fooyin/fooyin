@@ -663,7 +663,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Current date and time formatted as YYYY-MM-DD HH:MM:SS</source>
-        <translation>Nuvarande datum och tid formaterat som YYYY-MM-DD HH:MM:SS</translation>
+        <translation>Nuvarande datum och tid formaterat som ÅÅÅÅ-MM-DD HH:MM:SS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
@@ -6313,7 +6313,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="151"/>
         <source>Write ID3 POPM</source>
-        <translation>Skriv ID3-POPM</translation>
+        <translation>Skriv ID3 POPM</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="154"/>
@@ -12780,12 +12780,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
         <source>Signal level mapped to the bottom of the spectrum</source>
-        <translation type="unfinished">Signalnivå avbildad till spektrumets botten</translation>
+        <translation>Signalnivå kartlagd till spektrumets botten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
         <source>Signal level mapped to the top of the spectrum</source>
-        <translation type="unfinished">Signalnivå avbildad till spektrumets topp</translation>
+        <translation>Signalnivå kartlagd till spektrumets topp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
