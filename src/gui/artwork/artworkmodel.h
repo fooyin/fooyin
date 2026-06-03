@@ -45,7 +45,7 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
 private:
-    void invalidateData();
+    void itemDataChanged(std::vector<ArtworkItem>::const_iterator item, const QList<int>& roles);
 
     SettingsManager* m_settings;
 

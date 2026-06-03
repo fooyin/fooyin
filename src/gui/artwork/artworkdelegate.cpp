@@ -54,6 +54,7 @@ void ArtworkDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
         painter->drawRect(textRect);
         painter->restore();
 
+        painter->setPen(Qt::white);
         painter->drawText(textRect, Qt::AlignCenter, sizeText);
     }
     else {

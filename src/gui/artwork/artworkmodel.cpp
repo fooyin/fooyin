@@ -22,9 +22,7 @@
 #include "internalguisettings.h"
 #include "sources/artworksource.h"
 
-#include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 namespace Fooyin {
 ArtworkModel::ArtworkModel(SettingsManager* settings, QObject* parent)
@@ -48,7 +46,7 @@ void ArtworkModel::loadCover(const QUrl& url, const ArtworkResult& result)
     }
 
     itemIt->load(result);
-    invalidateData();
+    itemDataChanged(itemIt, {Qt::DecorationRole, ArtworkItem::Result, ArtworkItem::Caption, ArtworkItem::IsLoaded});
 }
 
 void ArtworkModel::updateCoverProgress(const QUrl& url, int progress)
@@ -57,9 +55,12 @@ void ArtworkModel::updateCoverProgress(const QUrl& url, int progress)
     if(itemIt == m_items.cend()) {
         return;
     }
+    if(itemIt->isLoaded()) {
+        return;
+    }
 
     itemIt->setProgress(progress);
-    invalidateData();
+    itemDataChanged(itemIt, {ArtworkItem::Caption});
 }
 
 void ArtworkModel::removeCover(const QUrl& url)
@@ -129,9 +130,10 @@ QVariant ArtworkModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
-void ArtworkModel::invalidateData()
+void ArtworkModel::itemDataChanged(std::vector<ArtworkItem>::const_iterator item, const QList<int>& roles)
 {
-    beginResetModel();
-    endResetModel();
+    const int row                  = static_cast<int>(std::ranges::distance(m_items.cbegin(), item));
+    const QModelIndex changedIndex = index(row, 0);
+    Q_EMIT dataChanged(changedIndex, changedIndex, roles);
 }
 } // namespace Fooyin
