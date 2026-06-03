@@ -646,11 +646,15 @@ void VisualisationBackend::resetLocked()
 
 void VisualisationBackend::ensureCapacity(size_t requiredFrames)
 {
-    if(requiredFrames <= m_capacityFrames || !m_format.isValid() || m_format.channelCount() <= 0) {
+    if(!m_format.isValid() || m_format.channelCount() <= 0) {
         return;
     }
 
     const auto channelCount = static_cast<size_t>(m_format.channelCount());
+    if(requiredFrames <= m_capacityFrames && m_samples.size() >= (requiredFrames * channelCount)) {
+        return;
+    }
+
     std::vector<float> newSamples(requiredFrames * channelCount, 0.0);
 
     for(size_t frameIndex{0}; frameIndex < m_frameCount; ++frameIndex) {

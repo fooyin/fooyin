@@ -301,5 +301,11 @@ TEST(VisualisationBackendTest, FormatChangeDropsOldHistory)
     ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 1021, 20, {}));
     EXPECT_EQ(window.format.sampleRate(), 48000);
     EXPECT_EQ(window.format.channelCount(), 1);
+
+    backend.appendFrame(makeStereoSineFrame(fftSize, 44100, 7, 19, 2000));
+
+    ASSERT_TRUE(backend.getPcmWindowEndingAt(window, 2021, 20, {}));
+    EXPECT_EQ(window.format.sampleRate(), 44100);
+    EXPECT_EQ(window.format.channelCount(), 2);
 }
 } // namespace
