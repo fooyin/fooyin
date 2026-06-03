@@ -5400,7 +5400,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
         <source>Properties Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Egenskapsdialog</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
@@ -5529,7 +5529,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="76"/>
         <source>Open the about dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna om-dialogen</translation>
     </message>
 </context>
 <context>
@@ -6109,7 +6109,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="99"/>
         <source>Open the library page in the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna bibliotekssidan i inställningsdialogen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="106"/>
@@ -6873,7 +6873,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="82"/>
         <source>Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Logg</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="84"/>
@@ -6883,12 +6883,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="86"/>
         <source>Co&amp;py Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Ko&amp;piera logg</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="88"/>
         <source>&amp;Save Log</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Spara logg</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="96"/>
@@ -6919,7 +6919,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="245"/>
         <source>Save Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara logg</translation>
     </message>
 </context>
 <context>
@@ -14048,7 +14048,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="485"/>
         <source>Open the properties dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna egenskapsdialogen</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="937"/>
@@ -14077,12 +14077,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
         <source>&amp;Log</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Logg</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="60"/>
         <source>Open the log dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna loggdialogen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="66"/>
@@ -14092,7 +14092,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="68"/>
         <source>Open the script editor dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna skriptredigerardialogen</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="74"/>
